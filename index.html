@@ -3,8 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10121b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ผนึกอสูร">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
+<!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google Apps Script ระหว่างเครื่องหมายคำพูด ===== -->
+<script>window.SHEET_URL = 'https://script.google.com/macros/s/AKfycbxGu_f2j8K8UY2WToJrOcG-OOTYX6EVZI0O4MREbA9uaQvn2bptGCyvvwPfTqETvFQLfA/exec';</script>
 </head>
-<body style="margin:0">
+<body style="margin:0;height:100%">
 <title>ตำนานผนึกอสูร</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
@@ -106,7 +114,7 @@ h3{font-size:15px;font-weight:600}
 .overlay .card{max-width:380px;width:100%}
 .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);border-radius:10px;padding:8px 14px;font-size:14px;z-index:30;max-width:calc(100% - 32px);animation:pop2 2.4s forwards}
 @keyframes pop2{0%{opacity:0;transform:translate(-50%,8px)}10%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
-input[type=text]{width:100%;background:#0b0c14;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--fg);font:inherit}
+input[type=text],input[type=password]{width:100%;background:#0b0c14;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--fg);font:inherit}
 .pick{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;cursor:pointer;text-align:center}
 .pick.on{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
 .pick small{color:var(--muted);font-size:11px}
@@ -173,11 +181,15 @@ nav.bottom button.lock{opacity:.35}
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:none}20%{transform:translate(-6px,3px)}40%{transform:translate(5px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}
 @media (prefers-reduced-motion:reduce){#vfx .vx-p,#vfx .vx-slash,#vfx .vx-flash{display:none}}
+.lbrow .lbn{width:28px;text-align:center;font-weight:700;color:var(--muted);flex:none}
+.lbrow.me{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+textarea{background:#0b0c14;border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--fg);font:inherit;resize:vertical;box-sizing:border-box}
 </style>
 
 <div id="app"></div>
 <div id="vfx" aria-hidden="true"></div>
 <input type="file" id="imgIn" accept="image/*" hidden>
+<input type="file" id="saveFile" accept=".txt,text/plain" hidden>
 
 <script>
 'use strict';
@@ -1370,14 +1382,91 @@ const CLOUD={st:'init',info:null,busy:0};
 async function cloudInit(){try{const c=window.claude;if(!c||!c.use){CLOUD.st='off';return}
  const [db,user]=await Promise.all([c.use('db'),c.use('user')]);if(!db||!user){CLOUD.st='off';render();return}
  const id=await user.id();if(!id){CLOUD.st='off';render();return}
- CLOUD.ref=db.doc('data/users/'+id+'/save');CLOUD.st='ready';const s=await CLOUD.ref.get();CLOUD.info=s.exists?s.data():null;render()}catch(e){CLOUD.st='off';render()}}
+ CLOUD.db=db;CLOUD.uid=id;CLOUD.ref=db.doc('data/users/'+id+'/save');CLOUD.st='ready';const s=await CLOUD.ref.get();CLOUD.info=s.exists?s.data():null;render()}catch(e){CLOUD.st='off';render()}}
 async function cloudSave(){if(CLOUD.st!=='ready'||!S.P||CLOUD.busy)return;if(S.battle){toast('บันทึกระหว่างต่อสู้ไม่ได้');return}
  CLOUD.busy=1;render();const d={json:JSON.stringify({...S,battle:null,ui:{}}),at:Date.now(),name:S.P.name,lv:S.P.lv,cls:S.P.cls};
- try{await CLOUD.ref.set(d);CLOUD.info=d;toast('บันทึกขึ้นคลาวด์แล้ว')}catch(e){toast(e&&e.code==='invalid_argument'?'บัญชีนี้ยังไม่มีสิทธิ์บันทึกในเกมนี้ ให้เจ้าของแชร์แบบผู้ร่วมใช้งาน (Contributor)':e&&e.code==='quota_exceeded'?'พื้นที่คลาวด์เต็ม':'บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง')}
+ try{await CLOUD.ref.set(d);CLOUD.info=d;toast('บันทึกขึ้นคลาวด์แล้ว');lbSubmit(true)}catch(e){toast(e&&e.code==='invalid_argument'?'บัญชีนี้ยังไม่มีสิทธิ์บันทึกในเกมนี้ ให้เจ้าของแชร์แบบผู้ร่วมใช้งาน (Contributor)':e&&e.code==='quota_exceeded'?'พื้นที่คลาวด์เต็ม':'บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง')}
  CLOUD.busy=0;render()}
 async function cloudLoad(){if(CLOUD.st!=='ready'||CLOUD.busy)return;CLOUD.busy=1;render();
  try{const s=await CLOUD.ref.get();if(!s.exists){toast('ยังไม่มีเซฟบนคลาวด์')}else{const d=s.data();S=JSON.parse(d.json);S.ui={};S.battle=null;S.screen=S.zone?'zone':'town';migrate();save();CLOUD.info=d;toast('โหลดเซฟจากคลาวด์แล้ว')}}catch(e){toast('โหลดไม่สำเร็จ ลองใหม่อีกครั้ง')}
  CLOUD.busy=0;render()}
+/* ---- leaderboard (shared rows: everyone reads, each player writes only their own) ---- */
+/* ---- leaderboard on Google Sheets (Apps Script web app; URL set in index.html) ---- */
+const SHEET_URL=String(window.SHEET_URL||'').trim();
+const LB={rows:null,busy:0,lastKey:'',lastAt:0,err:''};
+const LBTAB={lv:{n:'เลเวล',v:r=>`Lv ${r.level}`,k:r=>r.level*1e9+(r.exp||0)},
+ zone:{n:'ด่านไกลสุด',v:r=>r.clears?`ปราบจอมมาร ${r.clears} ครั้ง`:(r.zoneName||`ด่าน ${r.zone}`),k:r=>(r.clears||0)*1e6+(r.zone||0)*1e3+r.level},
+ caught:{n:'จับอสูร',v:r=>`${r.caught} ชนิด`,k:r=>r.caught*1e4+r.seen},
+ seen:{n:'ค้นพบอสูร',v:r=>`${r.seen} ชนิด`,k:r=>r.seen*1e4+r.caught},
+ legend:{n:'ของในตำนาน',v:r=>`${r.legend} ชิ้น`,k:r=>r.legend*1e3+r.level}};
+function pid(){const P=S.P;if(!P.pid){const a=new Uint8Array(12);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<12;i++)a[i]=Math.floor(Math.random()*256)}P.pid=[...a].map(x=>x.toString(16).padStart(2,'0')).join('');save()}return P.pid}
+function lbEntry(){const P=S.P,zm=clamp(P.zoneMax,1,6),seen=Object.keys(P.seen).filter(k=>SP[k]&&!SP[k].noseal).length;
+ return {id:pid(),name:String(P.name).slice(0,20),cls:P.cls,clsName:CLS[P.cls].n,lv:P.lv,exp:P.exp,zone:zm,zoneName:ZN[zm-1].n,seen,caught:Object.keys(P.caught).filter(k=>SP[k]).length,legend:Object.keys(P.legend||{}).length,clear:P.cleared||0}}
+async function sheetRequest(options){const c=new AbortController(),timer=setTimeout(()=>c.abort(),25000);try{const r=await fetch(SHEET_URL, {...options,signal:c.signal});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(!j||typeof j.ok!=='boolean')throw new Error('Invalid response');return j}finally{clearTimeout(timer)}}
+async function lbPost(body){return sheetRequest({method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})}
+async function lbSubmit(force){if(!SHEET_URL||!S.P||S.P.lbOff)return;
+ if(LB.pending){await LB.pending;if(!force)return;if(!S.P||S.P.lbOff)return}
+ const e=lbEntry(),key=JSON.stringify(e);
+ if(key===LB.lastKey||(!force&&Date.now()-LB.lastAt<60000))return;
+ LB.lastAt=Date.now();
+ LB.pending=(async()=>{try{const r=await lbPost(e);if(!r.ok)throw new Error('submit failed');LB.lastKey=key}catch(err){LB.lastKey=''}})();
+ try{await LB.pending}finally{LB.pending=null}}
+async function lbLoad(){if(!SHEET_URL)return;LB.busy=1;LB.err='';render();await lbSubmit(true);
+ try{const r=await fetch(SHEET_URL+(SHEET_URL.includes('?')?'&':'?')+'t='+Date.now());const j=await r.json();if(!r.ok||!j||j.ok!==true||!Array.isArray(j.rows))throw new Error('Invalid leaderboard');LB.rows=j.rows}
+ catch(e){LB.err=window.claude?'กระดานคะแนนเชื่อมกับ Google Sheet ใช้ได้ในเวอร์ชัน GitHub':'โหลดกระดานคะแนนไม่สำเร็จ ตรวจการเชื่อมต่ออินเทอร์เน็ต แล้วกดรีเฟรช';LB.rows=LB.rows||[]}LB.busy=0;render()}
+function vLeader(){const tab=S.ui.lb||'lv',T=LBTAB[tab];
+ const head=`<div class="row"><h2 class="grow">หอเกียรติยศ</h2><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div>`;
+ if(!SHEET_URL)return `<div class="stack">${head}<div class="card"><p class="sub" style="margin:0">ยังไม่ได้เชื่อมกระดานคะแนนกับ Google Sheet ใส่ลิงก์ Apps Script ในบรรทัด SHEET_URL ของไฟล์ index.html</p></div></div>`;
+ const me=pid().slice(-6),rows=(LB.rows||[]).filter(r=>typeof r.level==='number').sort((a,b)=>T.k(b)-T.k(a)).slice(0,100);
+ return `<div class="stack">${head}<p class="sub" style="margin:0">อันดับผู้ผนึกทุกคน บันทึกลง Google Sheet อัตโนมัติเมื่อกลับเข้าเมือง (ไม่เกินนาทีละครั้ง)</p>
+ <div class="tabs">${Object.entries(LBTAB).map(([k,t])=>`<button class="${tab===k?'on':''}" data-a="lbtab" data-v="${k}">${t.n}</button>`).join('')}</div>
+ ${LB.err?`<p class="sub" style="margin:0;color:var(--bad)">${LB.err}</p>`:''}
+ ${LB.rows===null||LB.busy&&!rows.length?'<p class="sub">กำลังโหลดอันดับ...</p>':rows.length?`<div class="lst">${rows.map((r,i)=>`<div class="item lbrow ${r.pid===me?'me':''}"><span class="lbn num">${i<3?['🥇','🥈','🥉'][i]:i+1}</span>${portrait('cls:'+(CLS[r.cls]?r.cls:'swordsman'),34)}<div class="grow"><b>${esc(r.name||'ผู้ผนึก')}${r.pid===me?' <span class="badge">คุณ</span>':''}</b><small>${esc(r.clsName||'')} · Lv ${r.level} · ค้นพบ ${r.seen} · จับ ${r.caught}${r.clears?' · 🏆':''}</small></div><b class="num" style="color:var(--gold);text-align:right">${esc(T.v(r))}</b></div>`).join('')}</div>`:'<p class="sub">ยังไม่มีใครอยู่ในกระดาน</p>'}
+ <div class="row wrap" style="gap:8px"><button class="btn sm" data-a="lbload" ${LB.busy?'disabled':''}>${LB.busy?'กำลังโหลด...':'รีเฟรช'}</button>${S.P.lbOff?'<button class="btn sm pri" data-a="lbtoggle">แสดงชื่อของฉันในกระดาน</button>':'<button class="btn sm" data-a="lbtoggle">ซ่อนชื่อของฉันจากกระดาน</button>'}</div></div>`}
+/* ---- game saves on Google Sheets: player code + optional PIN ---- */
+const GS={busy:0,lastJson:'',lastAt:0};
+function sheetError(r){return ({pin:'PIN ไม่ถูกต้องหรือไม่ตรงกับเซฟบน Sheet',notfound:'ไม่พบรหัสผู้เล่นนี้','bad id':'โปรดอัปเดต Apps Script เป็นเวอร์ชันใหม่','bad code':'รหัสผู้เล่นไม่ถูกต้อง','too big':'ข้อมูลเซฟใหญ่เกินพื้นที่ที่รองรับ','bad data':'ข้อมูลเซฟไม่ถูกต้อง','bad pin':'PIN ต้องเป็นตัวเลขหรือตัวอักษร 4–12 ตัว',busy:'เซิร์ฟเวอร์กำลังทำงาน โปรดลองอีกครั้ง'})[r&&r.error]||'ดำเนินการไม่สำเร็จ โปรดตรวจการเชื่อมต่อและการ Deploy';}
+const CODE_AB='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function ensureCode(){const P=S.P;if(!P.code){const a=new Uint8Array(12);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<12;i++)a[i]=Math.floor(Math.random()*256)}P.code=[...a].map(x=>CODE_AB[x%CODE_AB.length]).join('');save()}return P.code}
+const fmtCode=c=>c.replace(/(.{4})(?=.)/g,'$1-');
+const gsData=()=>{const P={...S.P};delete P.cpin;delete P.gsAt;return JSON.stringify({...S,P,battle:null,ui:{}})};
+async function gsSave(manual,newPin){if(!SHEET_URL||!S.P||S.battle||GS.busy||S.ui.confirm)return;const P=S.P;ensureCode();const data=gsData();
+ if(!manual&&(data===GS.lastJson||Date.now()-GS.lastAt<120000))return;
+ GS.busy=1;GS.lastAt=Date.now();if(manual)render();
+ try{const body={action:'save',code:ensureCode(),pin:P.cpin||'',data,name:P.name,clsName:CLS[P.cls].n,lv:P.lv};if(newPin!=null)body.newPin=newPin;
+  const r=await lbPost(body);
+  if(r&&r.ok){GS.lastJson=data;P.gsAt=r.at;if(newPin!=null){P.cpin=newPin;const el=document.getElementById('gsnewpin');if(el)el.value=''}save();if(manual)toast(newPin!=null?(newPin?'ตั้ง PIN แล้ว':'ลบ PIN แล้ว'):'บันทึกลง Google Sheet แล้ว')}
+  else if(manual)toast(sheetError(r))}
+ catch(e){if(manual)toast('บันทึกไม่สำเร็จ ตรวจการเชื่อมต่ออินเทอร์เน็ต')}
+ GS.busy=0;render()}
+async function gsLoad(code,pin){if(GS.busy)return;code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(code.length<12||code.length>16){toast('รหัสผู้เล่นไม่ถูกต้อง');return}
+ GS.busy=1;render();
+ try{const r=await lbPost({action:'load',code,pin:pin||''});
+  if(r&&r.ok){const d=JSON.parse(r.data);if(!d.P)throw 0;d.P.code=code;d.P.cpin=pin||'';d.P.gsAt=r.at;PENDING=d;S.ui.confirm={msg:`โหลดเซฟของ ${esc(d.P.name)} Lv ${d.P.lv} จาก Google Sheet? ความคืบหน้าในเครื่องนี้จะถูกแทนที่`,act:'doloadcode'}}
+  else toast(sheetError(r))}
+ catch(e){toast('โหลดไม่สำเร็จ ตรวจการเชื่อมต่ออินเทอร์เน็ต')}
+ GS.busy=0;render()}
+function vSheetSave(startOnly){if(!SHEET_URL)return '';const P=S.P;
+ const loadForm=`<div class="row wrap" style="gap:6px"><input type="text" id="gscode" autocomplete="off" placeholder="รหัสผู้เล่น เช่น ABCD-EFGH-JKLM" style="flex:2;min-width:160px"><input type="password" id="gspin" autocomplete="off" placeholder="PIN (ถ้ามี)" style="flex:1;min-width:100px"></div><button class="btn sm" data-a="gsload" ${GS.busy?'disabled':''}>โหลดเซฟจาก Google Sheet</button>`;
+ if(startOnly)return `<div class="card stack" style="gap:8px"><h3>มีรหัสผู้เล่นอยู่แล้ว?</h3><p class="sub" style="margin:0">ใส่รหัสผู้เล่นเพื่อเล่นต่อจากเครื่องอื่น</p>${loadForm}</div>`;
+ return `<div class="card stack" style="gap:8px"><h3>เซฟบน Google Sheet</h3><p class="sub" style="margin:0">บันทึกอัตโนมัติเมื่อกลับเข้าเมือง ใช้รหัสผู้เล่นนี้โหลดเกมในเครื่องอื่น อย่าบอกรหัสและ PIN กับคนอื่น</p>
+ <div class="row wrap" style="gap:8px"><span class="sub">รหัสผู้เล่น</span><b class="num" style="font-size:17px;letter-spacing:.06em;color:var(--gold)">${fmtCode(ensureCode())}</b><button class="btn sm" data-a="copycode">คัดลอก</button></div>
+ <div class="sub">${P.gsAt?`บันทึกล่าสุด ${new Date(P.gsAt).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})}`:'ยังไม่เคยบันทึกขึ้น Google Sheet'} · ${P.cpin?'ตั้ง PIN แล้ว':'ยังไม่ได้ตั้ง PIN'}</div>
+ <div class="row wrap" style="gap:8px"><button class="btn sm pri" data-a="gssave" ${GS.busy?'disabled':''}>${GS.busy?'กำลังบันทึก...':'บันทึกตอนนี้'}</button><input type="password" id="gsnewpin" autocomplete="new-password" maxlength="12" placeholder="PIN ใหม่ 4–12 ตัว" style="width:150px"><button class="btn sm" data-a="gssetpin" ${GS.busy?'disabled':''}>${P.cpin?'เปลี่ยน PIN':'ตั้ง PIN'}</button></div>
+ <details><summary class="sub" style="cursor:pointer">โหลดเซฟของรหัสอื่น</summary><div class="stack" style="gap:6px;margin-top:6px">${loadForm}</div></details></div>`}
+/* ---- save backup: code / file (works anywhere, including GitHub) ---- */
+const encSave=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),decSave=t=>JSON.parse(decodeURIComponent(escape(atob(t))));
+const saveCode=()=>'SB1.'+encSave({...S,battle:null,ui:{}});
+let PENDING=null;
+function askLoadCode(t){t=String(t||'').trim().replace(/^SB1\./,'').replace(/\s+/g,'');if(!t){toast('วางรหัสเซฟก่อน');return}
+ try{const d=decSave(t);if(!d||!d.P)throw 0;PENDING=d}catch(e){toast('รหัสเซฟไม่ถูกต้อง');return}
+ S.ui.confirm={msg:`โหลดเซฟของ ${esc(PENDING.P.name)} Lv ${PENDING.P.lv}? ความคืบหน้าปัจจุบันในเครื่องนี้จะถูกแทนที่`,act:'doloadcode'};render()}
+function vBackup(startOnly){const show=S.ui.showCode;
+ return `<div class="card stack" style="gap:8px"><h3>สำรองและย้ายเซฟ</h3><p class="sub" style="margin:0">เซฟเก็บในเบราว์เซอร์ของเครื่องนี้ ใช้รหัสเซฟหรือไฟล์เซฟเพื่อย้ายไปเล่นเครื่องอื่น หรือเก็บสำรองกันหาย (รูปที่ใส่เองไม่รวมในเซฟ)</p>
+ ${startOnly?'':`<div class="row wrap" style="gap:8px"><button class="btn sm pri" data-a="copysave">คัดลอกรหัสเซฟ</button>${window.claude?'':'<button class="btn sm" data-a="dlsave">ดาวน์โหลดไฟล์เซฟ</button>'}</div>`}
+ ${show&&!startOnly?`<textarea id="codeout" readonly rows="3" style="width:100%;font-size:11px">${saveCode()}</textarea>`:''}
+ <textarea id="savein" rows="2" placeholder="วางรหัสเซฟที่นี่" style="width:100%;font-size:12px"></textarea>
+ <div class="row wrap" style="gap:8px"><button class="btn sm" data-a="loadcode">โหลดจากรหัสเซฟ</button><button class="btn sm" data-a="pickfile">โหลดจากไฟล์เซฟ</button></div></div>`}
 function vCloud(){const i=CLOUD.info,has=S.P;
  if(CLOUD.st==='init')return `<div class="card"><span class="sub">กำลังเชื่อมต่อเซฟบนคลาวด์...</span></div>`;
  if(CLOUD.st==='off')return `<div class="card stack" style="gap:4px"><h3>เซฟบนคลาวด์</h3><p class="sub" style="margin:0">ใช้ได้เมื่อล็อกอิน Claude ตอนนี้เกมเซฟไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น</p></div>`;
@@ -1385,8 +1474,8 @@ function vCloud(){const i=CLOUD.info,has=S.P;
  <div class="sub">${i?`เซฟล่าสุด: <b style="color:var(--fg)">${esc(i.name)} · ${CLS[i.cls]?CLS[i.cls].n:''} Lv ${i.lv}</b> · ${new Date(i.at).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})}`:'ยังไม่มีเซฟบนคลาวด์'}</div>
  <div class="row wrap" style="gap:8px">${has?`<button class="btn sm pri" data-a="cloudsave" ${CLOUD.busy?'disabled':''}>${CLOUD.busy?'กำลังบันทึก...':'บันทึกขึ้นคลาวด์'}</button>`:''}${i?`<button class="btn sm" data-a="cloudload" ${CLOUD.busy?'disabled':''}>โหลดจากคลาวด์</button>`:''}</div></div>`}
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2500)}
-function go(s){if(S.zone&&['town','shop','hospital','arena','forge'].includes(s)){toast('ออกจากป่าไม่ได้ จนกว่าจะชนะบอส เจอทางออก หรือพ่ายแพ้');return}if(S.zone&&s==='wild')s='zone';
- S.screen=s;S.ui.petView=null;save();render();document.querySelector('main')?.scrollTo(0,0)}
+function go(s){if(S.zone&&['town','shop','hospital','arena','forge','leader'].includes(s)){toast('ออกจากป่าไม่ได้ จนกว่าจะชนะบอส เจอทางออก หรือพ่ายแพ้');return}if(S.zone&&s==='wild')s='zone';
+ S.screen=s;S.ui.petView=null;save();render();if(s==='leader')lbLoad();document.querySelector('main')?.scrollTo(0,0)}
 const healCost=()=>5+S.P.lv*4;
 function allFull(){const P=S.P,s=pStats();return P.hp>=s.hp&&P.mp>=s.mp&&P.pets.every(p=>{const q=calcPet(p);return p.hp>=q.hp&&p.mp>=q.mp})}
 function fullHeal(){const P=S.P,s=pStats();P.hp=s.hp;P.mp=s.mp;P.pets.forEach(p=>{const q=calcPet(p);p.hp=q.hp;p.mp=q.mp})}
@@ -1436,6 +1525,17 @@ const handlers={
  dorelease:v=>{const P=S.P;if(P.pets.length<=1){toast('ต้องมีอสูรอย่างน้อย 1 ตัว');S.ui.confirm=null;render();return}P.pets=P.pets.filter(p=>p.uid!==+v);fixParty();S.ui.confirm=null;S.ui.petView=null;save();render()},
  cancel:()=>{S.ui.confirm=null;render()},
  cloudsave:()=>cloudSave(),
+ lbtab:v=>{S.ui.lb=v;render()},lbload:()=>lbLoad(),
+ lbtoggle:async()=>{const P=S.P;P.lbOff=!P.lbOff;save();if(P.lbOff){const me=pid().slice(-6);LB.rows=(LB.rows||[]).filter(r=>r.pid!==me);LB.lastKey='';toast('ซ่อนชื่อของคุณจากกระดานแล้ว');render();if(SHEET_URL){try{if(LB.pending)await LB.pending;const r=await lbPost({action:'delete',id:pid()});if(!r.ok)throw new Error('delete failed')}catch(e){toast('ซ่อนในเครื่องแล้ว แต่ลบบน Sheet ไม่สำเร็จ โปรดแสดงชื่อแล้วลองซ่อนอีกครั้ง')}}}else{toast('แสดงชื่อของคุณในกระดานแล้ว');lbLoad()}},
+ gssave:()=>gsSave(true),
+ gssetpin:()=>{const v=(document.getElementById('gsnewpin')?.value||'').trim();if(!/^[0-9A-Za-z]{4,12}$/.test(v)){toast('PIN ต้องเป็นตัวเลขหรือตัวอักษร 4–12 ตัว');return}gsSave(true,v)},
+ gsload:()=>gsLoad(document.getElementById('gscode')?.value,document.getElementById('gspin')?.value),
+ copycode:()=>{const c=fmtCode(ensureCode());try{navigator.clipboard.writeText(c).then(()=>toast('คัดลอกรหัสผู้เล่นแล้ว'),()=>toast('รหัสผู้เล่น: '+c))}catch(e){toast('รหัสผู้เล่น: '+c)}},
+ copysave:()=>{const c=saveCode();const ok=()=>toast('คัดลอกรหัสเซฟแล้ว นำไปวางในเครื่องอื่นได้');try{navigator.clipboard.writeText(c).then(ok,()=>{S.ui.showCode=1;render();toast('คัดลอกอัตโนมัติไม่ได้ กดค้างที่กล่องรหัสเพื่อคัดลอก')})}catch(e){S.ui.showCode=1;render()}},
+ dlsave:()=>{try{const b=new Blob([saveCode()],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`sealbeast-${S.P.name}-Lv${S.P.lv}.txt`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}catch(e){S.ui.showCode=1;render();toast('ดาวน์โหลดไม่ได้ ใช้การคัดลอกรหัสเซฟแทน')}},
+ loadcode:()=>askLoadCode(document.getElementById('savein')?.value),
+ pickfile:()=>{const el=document.getElementById('saveFile');el.value='';el.click()},
+ doloadcode:()=>{if(!PENDING)return;S=PENDING;PENDING=null;GS.lastJson='';GS.lastAt=0;LB.lastKey='';LB.lastAt=0;S.ui={};S.battle=null;S.screen=S.zone?'zone':'town';migrate();save();render();toast('โหลดเซฟแล้ว')},
  cloudload:()=>{if(!S.P){cloudLoad();return}S.ui.confirm={msg:'โหลดเซฟจากคลาวด์? ความคืบหน้าในเครื่องนี้ที่ยังไม่ได้บันทึกขึ้นคลาวด์จะถูกแทนที่',act:'docloudload'};render()},
  docloudload:()=>{S.ui.confirm=null;cloudLoad()},
  use:v=>{const [id,who]=v.split(':'),P=S.P,it=CON[id];if(!(P.items[id]>0))return;
@@ -1448,6 +1548,7 @@ const handlers={
  doreset:()=>{S={screen:'start',ui:{}};save();render()},
 };
 document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t||t.disabled)return;const f=handlers[t.dataset.a];if(f)f(t.dataset.v??'')});
+document.getElementById('saveFile')?.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>askLoadCode(rd.result);rd.readAsText(f)});
 document.getElementById('imgIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f||!pendingImg)return;const key=pendingImg;const rd=new FileReader();
  rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),z=256;c.width=c.height=z;const g=c.getContext('2d'),m=Math.min(im.width,im.height);
   g.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,z,z);let u=c.toDataURL('image/webp',.85);if(!u.startsWith('data:image/webp'))u=c.toDataURL('image/png');IMG[key]=u;saveImg();render();toast('ใส่รูปแล้ว')};im.src=rd.result};rd.readAsDataURL(f)});
@@ -1461,7 +1562,7 @@ function vStart(){const cl=S.ui.cls||'swordsman',sel=starterSel(),c=CLS[cl];retu
   <div class="card" style="background:var(--panel2)"><b>${c.n}</b> <span class="sub">· ${c.d}</span><div class="lines" style="margin:6px 0 0;font-size:13px"><div><span class="eff up">ข้อดี</span> ${c.pro}</div><div><span class="eff down">ข้อเสีย</span> ${c.con}</div>
   <div class="sub">เลื่อนขั้น Lv 25: ${childrenOf(cl).map(x=>CLS[x].n).join(' / ')} · Lv 40: ${childrenOf(cl).flatMap(childrenOf).map(x=>CLS[x].n).join(' / ')}</div></div></div></div>
  <div class="card stack"><h3>${clsSum(cl)>1?'อสูรคู่หูเริ่มต้น เลือกได้ 2 ตัว':'อสูรคู่หูตัวแรก'}</h3><div class="grid3">${STARTERS.map(k=>`<button class="pick ${sel.includes(k)?'on':''}" data-a="starterpick" data-v="${k}">${portrait(k,48)}<b>${SP[k].n}</b><small>${SP[k].o}</small><span class="row wrap" style="gap:3px;justify-content:center">${tChips(SP[k].t)}</span></button>`).join('')}</div></div>
- <button class="btn pri full" data-a="newgame">เริ่มการเดินทาง</button>${CLOUD.info?vCloud():''}</div>`}
+ <button class="btn pri full" data-a="newgame">เริ่มการเดินทาง</button>${CLOUD.info?vCloud():''}${vSheetSave(true)}${vBackup(true)}</div>`}
 function miniStatus(){const P=S.P,s=pStats();return `<div class="card mini">
  <div class="row">${portrait('player',36)}<div class="grow"><div class="row"><b class="grow">${esc(P.name)}</b><span class="num sub">${P.hp}/${s.hp}</span></div>${bar(P.hp,s.hp)}</div></div>
  ${party().map(p=>{const q=calcPet(p);return `<div class="row">${portrait(p.sp,30)}<div class="grow"><div class="row"><span class="grow" style="font-size:13px">${petName(p)}</span><span class="num sub">${p.hp<=0?'หมดสติ':p.hp+'/'+q.hp}</span></div>${bar(Math.max(0,p.hp),q.hp)}</div></div>`}).join('')}</div>`}
@@ -1474,6 +1575,7 @@ function vTown(){const P=S.P;return `<div class="stack">
   <button class="place" data-a="go" data-v="hospital"><span class="glyph">รักษา</span><b>โรงพยาบาลวิหารขาว</b><small>ฟื้น HP และ MP ให้คุณกับอสูรทุกตัว</small></button>
   <button class="place" data-a="go" data-v="arena"><span class="glyph">ประลอง</span><b>ลานประลองจันทร์แดง</b><small>ท้าดวลผู้ผนึกคนอื่น ชนะได้เงินรางวัล</small></button>
   <button class="place" data-a="go" data-v="wild"><span class="glyph">ป่า</span><b>ประตูสู่พงไพร</b><small>ป่าเขาวงกต 5 แห่ง และปราสาทจอมมาร</small></button>
+  <button class="place" data-a="go" data-v="leader" style="grid-column:1/-1;min-height:0"><span class="glyph">เกียรติ</span><b>หอเกียรติยศ</b><small>กระดานคะแนน เลเวล สมุดอสูร ของในตำนาน และผู้ปราบจอมมาร</small></button>
   <button class="place" data-a="go" data-v="forge" style="grid-column:1/-1;min-height:0"><span class="glyph">หลอม</span><b>โรงหลอมเทพอสูร</b><small>นำชิ้นส่วนอสูรมาหลอมเป็นอาวุธและอุปกรณ์ ได้ความสามารถของอสูรตัวนั้น</small></button>
  </div></div>`}
 function vShop(){const P=S.P,tab=S.ui.shop||'wp',tier=S.ui.tier??0,mw=clsWeapon(P.cls);
@@ -1592,7 +1694,7 @@ function vHero(){const P=S.P,s=pStats(),tab=S.ui.hero||'stat',w=EQ[P.eq.weapon],
  <div class="card stack"><h3>อุปกรณ์ในกระเป๋า</h3>${P.owned.length?`<div class="lst">${P.owned.map(id=>{const it=EQ[id],bad=it.lv>P.lv||(it.slot==='weapon'&&it.wt!==clsWeapon(P.cls));return `<div class="row"><div class="grow"><b>${itemName(it)}</b> <span class="sub">${SLOTN[it.slot]}${it.wt?' · '+WT[it.wt].n:''}</span><div class="sub" style="font-size:12px">${statLine(it.st)}${itemExtra(it)}${it.lv>P.lv?` · ต้องการ Lv ${it.lv}`:''}</div></div><button class="btn sm pri" data-a="equip" data-v="${id}" ${bad?'disabled':''}>สวม</button></div>`}).join('')}</div>`:'<p class="sub" style="margin:0">ซื้ออุปกรณ์ได้ที่ตลาด หรือเปิดหีบสมบัติในป่า</p>'}</div>`;
  if(tab==='gear')body+=vLegend();
  if(tab==='tree')body=vClassTree();
- return `<div class="stack">${head}${promo}${vCloud()}${tabs}${body}<button class="btn danger sm" data-a="reset">เริ่มเกมใหม่</button></div>`}
+ return `<div class="stack">${head}${promo}${CLOUD.st==='off'?'':vCloud()}${vSheetSave()}${vBackup()}${tabs}${body}<button class="btn danger sm" data-a="reset">เริ่มเกมใหม่</button></div>`}
 function vPet(p){const s=calcPet(p),sp=SP[p.sp],inP=S.P.party.includes(p.uid);return `<div class="stack"><button class="btn sm" data-a="petview" data-v="" style="align-self:flex-start">← กลับรายการ</button>
  <div class="card row">${portrait(p.sp,80)}<div class="grow"><h2>${petName(p)}</h2><div class="sub">ตำนาน${sp.o} · <span class="num">Lv ${p.lv}</span>${inP?' <span class="badge">ในทีม</span>':''}${sp.rare?' <span class="chip" style="color:var(--gold)">หายาก</span>':''}</div><div class="row wrap" style="gap:4px;margin:4px 0">${tChips(sp.t)}${pasChip(sp.pas)}</div>${bar(p.exp,need(p.lv),'xp')}<div class="sub num">EXP ${fmt(p.exp)}/${fmt(need(p.lv))}</div></div></div>
  <div class="card stack" style="gap:4px"><h3>ความสามารถติดตัว</h3><div class="sub"><b>${PAS[sp.pas].n}</b> — ${PAS[sp.pas].d}</div></div>
@@ -1625,18 +1727,19 @@ function render(){
  if(S.screen==='battle'&&!S.battle)S.screen=S.zone?'zone':'town';
  if(S.screen==='zone'&&!S.zone)S.screen='wild';
  if(S.screen==='wild'&&S.zone)S.screen='zone';
- const V={forge:vForge,start:vStart,town:vTown,shop:vShop,hospital:vHospital,arena:vArena,wild:vWild,zone:vZone,battle:vBattle,hero:vHero,team:vTeam,bag:vBag}[S.screen]||vTown;
+ const V={leader:vLeader,forge:vForge,start:vStart,town:vTown,shop:vShop,hospital:vHospital,arena:vArena,wild:vWild,zone:vZone,battle:vBattle,hero:vHero,team:vTeam,bag:vBag}[S.screen]||vTown;
  const P=S.P,inB=S.screen==='battle',start=S.screen==='start';
- const navOn=k=>({town:['town','shop','hospital','arena','forge'],wild:['wild','zone'],hero:['hero'],team:['team'],bag:['bag']})[k].includes(S.screen);
- const keepNm=document.getElementById('nm')?.value;
+ const navOn=k=>({town:['town','shop','hospital','arena','forge','leader'],wild:['wild','zone'],hero:['hero'],team:['team'],bag:['bag']})[k].includes(S.screen);
+ const KEEP=['nm','savein','gscode','gspin','gsnewpin'],kept={};KEEP.forEach(id=>{const el=document.getElementById(id);if(el&&el.value)kept[id]=el.value});
  app.innerHTML=(start?'':`<header class="top">${portrait('player',34)}<div class="who"><b>${esc(P.name)} <span class="sub" style="font-weight:400">${CLS[P.cls].n}</span></b><small class="num">Lv ${P.lv} · ${S.zone?ZN[S.zone.id-1].n+' · ก้าว '+S.zone.depth:'นครพันผนึก'}</small></div><span class="coin" style="${P.gold<0?'color:var(--bad)':''}">${P.gold<0?'หนี้ ':''}${fmt(P.gold)} <small style="font-family:var(--f-body);font-weight:400">เหรียญ</small></span></header>`)
   +`<main>${V()}</main>`
   +(start||inB?'':`<nav class="bottom">${[['town','เมือง','城'],['wild','ป่า','林'],['hero','ตัวละคร','我'],['team','อสูร','封'],['bag','กระเป๋า','包']].map(([k,n,g])=>`<button class="${navOn(k)?'on':''} ${S.zone&&k==='town'?'lock':''}" data-a="go" data-v="${k}"><span class="g">${g}</span>${n}${k==='hero'&&canPromote(P)?' •':''}</button>`).join('')}</nav>`)
   +(S.ui.confirm?`<div class="overlay"><div class="card stack"><p style="margin:0">${S.ui.confirm.msg}</p><div class="row" style="justify-content:flex-end"><button class="btn" data-a="cancel">ยกเลิก</button><button class="btn danger" data-a="${S.ui.confirm.act}" data-v="${S.ui.confirm.v??''}">ยืนยัน</button></div></div></div>`:'');
- if(keepNm!=null&&document.getElementById('nm'))document.getElementById('nm').value=keepNm;
+ for(const id in kept){const el=document.getElementById(id);if(el)el.value=kept[id]}
  const lg=document.getElementById('blog');if(lg)lg.scrollTop=lg.scrollHeight;
  if(inB&&VQ.length)(window.requestAnimationFrame||setTimeout)(flushVfx);
- if(!inB)save()}
+ if(!inB)save();
+ if(S.screen==='town'&&S.P&&SHEET_URL){lbSubmit();gsSave(false)}}
 
 /* ================= BOOT & MIGRATION ================= */
 function migrate(){if(!S.P)return;const P=S.P;
