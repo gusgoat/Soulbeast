@@ -1,0 +1,1663 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body style="margin:0">
+<title>ตำนานผนึกอสูร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
+<style>
+/* Layout: one-screen phone game — status bar on top, scrolling stage, fixed bottom nav; night-ink world with gold seal accents */
+:root{
+  --bg:#10121b; --panel:#1a1d2b; --panel2:#232739; --line:#323650; --fg:#ece6d6; --muted:#9a97ab;
+  --gold:#d9b35b; --gold-ink:#1d1606; --seal:#6dcfc1; --bad:#e46a5c; --good:#7fd08a; --mp:#6f9cf0;
+  --f-display:'Chonburi','Anuphan',Georgia,serif; --f-body:'Anuphan',system-ui,sans-serif; --f-num:'Chakra Petch','Anuphan',ui-monospace,monospace;
+  color-scheme:dark;
+}
+html{height:100%;box-sizing:border-box}
+*,*::before,*::after{box-sizing:border-box}
+body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5}
+button{font:inherit;color:inherit}
+#app{max-width:560px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:radial-gradient(120% 60% at 50% -10%,#1e2236 0%,var(--bg) 60%)}
+.top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 85%,transparent)}
+.top .who{flex:1;min-width:0;display:flex;flex-direction:column}
+.top .who b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .who small{color:var(--muted);font-size:12px}
+.coin{font-family:var(--f-num);color:var(--gold);font-weight:600;white-space:nowrap}
+main{flex:1;overflow-y:auto;padding-block:14px 20px;padding-inline:16px}
+nav.bottom{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:var(--panel)}
+nav.bottom button{background:none;border:0;padding:9px 2px 10px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+nav.bottom button .g{font-family:var(--f-display);font-size:17px;line-height:1}
+nav.bottom button.on{color:var(--gold)}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font-family:var(--f-display);font-weight:400;font-size:28px;line-height:1.25;color:var(--gold)}
+h2{font-family:var(--f-display);font-weight:400;font-size:20px;line-height:1.3}
+h3{font-size:15px;font-weight:600}
+.sub{color:var(--muted);font-size:13px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;gap:10px}
+.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:500;min-height:40px;text-align:center}
+.btn:hover{border-color:var(--gold)}
+.btn:focus-visible,nav.bottom button:focus-visible,.ucard:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+.btn.pri{background:var(--gold);color:var(--gold-ink);border-color:var(--gold);font-weight:700}
+.btn.seal{border-color:var(--seal);color:var(--seal)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.sm{min-height:32px;padding:5px 10px;font-size:13px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.full{width:100%}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid currentColor;white-space:nowrap;letter-spacing:.02em}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:4px;background:#0006;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--good);transition:width .35s}
+.bar.mp>i{background:var(--mp)}
+.bar.xp>i{background:var(--gold)}
+.bar.low>i{background:var(--bad)}
+.pt{--s:52px;width:var(--s);height:var(--s);flex:none;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--ec) 55%,#fff 8%),color-mix(in srgb,var(--ec) 25%,#0b0c14) 70%);
+  box-shadow:0 0 0 2px var(--ec),0 0 14px color-mix(in srgb,var(--ec) 40%,transparent);overflow:hidden;font-size:calc(var(--s)*.5);line-height:1}
+.pt::after{content:"";position:absolute;inset:4px;border-radius:50%;border:1px dashed color-mix(in srgb,#fff 35%,transparent);pointer-events:none}
+.pt img{width:100%;height:100%;object-fit:cover}
+.pt.unk{filter:grayscale(1) brightness(.5)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.tabs button{flex:none;border:1px solid var(--line);background:none;border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
+.tabs button.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.statgrid{display:grid;grid-template-columns:1fr auto auto;gap:4px 10px;align-items:center;font-size:14px}
+.statgrid .num{text-align:right}
+.lst{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px}
+.item .grow small{display:block;color:var(--muted);font-size:12px;line-height:1.4}
+.place{display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:118px}
+.place:hover{border-color:var(--gold)}
+.place .glyph{font-family:var(--f-display);font-size:26px;color:var(--gold);line-height:1}
+.place small{color:var(--muted);font-size:12px}
+.hero{padding:6px 0 4px}
+.log{background:#0a0b12;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;min-height:96px;max-height:132px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.log p{margin:0;color:var(--muted)}
+.log p:last-child{color:var(--fg)}
+/* battle */
+.field{display:flex;flex-direction:column;gap:10px}
+.side{display:grid;grid-template-columns:repeat(var(--n,1),minmax(0,1fr));gap:8px}
+.ucard{position:relative;display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;text-align:left;cursor:default;min-width:0}
+.ucard.foe{cursor:pointer}
+.ucard.tg{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
+.ucard.turn{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 18px #d9b35b33}
+.ucard.down{opacity:.38}
+.ucard .grow{display:flex;flex-direction:column;gap:3px}
+.ucard .nm{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ucard .meta{font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.fx{position:absolute;right:10px;top:4px;font-family:var(--f-num);font-weight:600;font-size:18px;animation:pop 1s ease-out forwards;pointer-events:none;text-shadow:0 1px 3px #000}
+.fx.bad{color:var(--bad)}.fx.good{color:var(--good)}.fx.muted{color:var(--muted)}.fx.mp{color:var(--mp)}
+@keyframes pop{0%{transform:translateY(6px);opacity:0}20%{transform:none;opacity:1}100%{transform:translateY(-16px);opacity:0}}
+.order{display:flex;gap:4px;flex-wrap:wrap;font-size:11px;color:var(--muted);align-items:center}
+.order span{padding:1px 7px;border-radius:6px;background:var(--panel2)}
+.order span.now{background:var(--gold);color:var(--gold-ink);font-weight:700}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.acts .btn{min-height:46px;font-size:14px;flex-direction:column;gap:0;line-height:1.25}
+.acts .btn small{font-size:11px;color:inherit;opacity:.75;font-family:var(--f-num)}
+.badge{font-size:11px;padding:1px 7px;border-radius:6px;background:var(--seal);color:#082320;font-weight:700}
+.overlay{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:16px;z-index:20}
+.overlay .card{max-width:380px;width:100%}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);border-radius:10px;padding:8px 14px;font-size:14px;z-index:30;max-width:calc(100% - 32px);animation:pop2 2.4s forwards}
+@keyframes pop2{0%{opacity:0;transform:translate(-50%,8px)}10%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+input[type=text]{width:100%;background:#0b0c14;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--fg);font:inherit}
+.pick{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;cursor:pointer;text-align:center}
+.pick.on{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.pick small{color:var(--muted);font-size:11px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dex{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.dex .card{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:12px 8px}
+.res{text-align:center;padding:14px}
+.res h2{color:var(--gold);font-size:24px}
+.lines{display:flex;flex-direction:column;gap:3px;font-size:14px;margin:10px 0}
+.door{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;cursor:pointer;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:14px 14px 10px 10px;padding:14px 10px;min-height:170px}
+.door:hover,.door:focus-visible{border-color:var(--gold);outline:none}
+.door small{color:var(--muted);font-size:12px;line-height:1.4}
+.door-g{font-family:var(--f-display);font-size:30px;color:var(--gold);line-height:1.1}
+.steps{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.steps i{height:8px;border-radius:3px;background:var(--panel2)}
+.steps i.done{background:var(--seal)}
+.steps i.now{background:var(--gold)}
+.steps i.boss{background:color-mix(in srgb,var(--bad) 45%,var(--panel2))}
+.steps i.boss.now{background:var(--bad)}
+nav.bottom button.lock{opacity:.35}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.door.hid{background:repeating-linear-gradient(135deg,var(--panel) 0 10px,#151724 10px 20px)}
+.door.hid .door-g{color:var(--muted)}
+.chest{width:92px;height:70px;margin:4px auto 2px;position:relative;border-radius:10px 10px 6px 6px;background:linear-gradient(180deg,color-mix(in srgb,var(--cc) 85%,#fff 15%),color-mix(in srgb,var(--cc) 70%,#000 30%));box-shadow:0 0 22px color-mix(in srgb,var(--cc) 45%,transparent),inset 0 -6px 0 #0004}
+.chest::before{content:"";position:absolute;left:0;right:0;top:24px;height:6px;background:#0005}
+.chest::after{content:"";position:absolute;left:50%;top:20px;width:14px;height:16px;margin-left:-7px;border-radius:3px;background:#f3d98a;box-shadow:0 0 0 2px #0006}
+.chest.open{opacity:.55;filter:saturate(.6)}
+.stchip{font-size:10px;padding:0 6px}
+.tchart{display:flex;flex-direction:column;gap:6px}
+.tchart .item{align-items:flex-start}
+.tchart .item>.chip{margin-top:2px}
+.eff{font-family:var(--f-num);font-weight:600}
+.eff.up{color:var(--good)}.eff.down{color:var(--bad)}.eff.zero{color:var(--muted)}
+.ucard.ally{cursor:pointer}
+.ucard.at{border-color:var(--seal);box-shadow:inset 0 0 0 1px var(--seal)}
+.ucard.turn.at,.ucard.turn.tg{box-shadow:0 0 0 1px var(--gold),0 0 18px #d9b35b33}
+.chip.pas{color:var(--seal)}
+.mini{display:flex;flex-direction:column;gap:6px}
+.tree{display:flex;flex-direction:column;gap:8px}
+.order{justify-content:space-between}
+.order .grow{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.lgn{color:var(--gold);font-weight:600}
+#vfx{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+.vx{position:absolute;left:0;top:0;transform:translate(-50%,-50%);will-change:transform,opacity}
+.vx-burst{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle,#fff 0,var(--c) 28%,color-mix(in srgb,var(--c) 40%,transparent) 48%,transparent 70%);animation:vburst .55s ease-out forwards}
+@keyframes vburst{0%{transform:translate(-50%,-50%) scale(.2);opacity:1}100%{transform:translate(-50%,-50%) scale(1.7);opacity:0}}
+.vx-ring{width:72px;height:72px;border-radius:50%;border:3px solid var(--c);box-shadow:0 0 14px var(--c);animation:vring .6s ease-out forwards}
+@keyframes vring{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(-50%,-50%) scale(1.8);opacity:0}}
+.vx-slash{width:130px;height:5px;border-radius:5px;background:linear-gradient(90deg,transparent,#fff 45%,var(--c) 60%,transparent);box-shadow:0 0 14px var(--c);animation:vslash .38s ease-out forwards}
+@keyframes vslash{0%{transform:translate(-50%,-50%) rotate(var(--r)) scaleX(0);opacity:1}65%{opacity:1}100%{transform:translate(-50%,-50%) rotate(var(--r)) scaleX(1.25);opacity:0}}
+.vx-p{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);animation:vp .75s ease-out forwards}
+.vx-p.shard{border-radius:1px;width:5px;height:13px}
+.vx-p.leaf{border-radius:0 70% 0 70%;width:10px;height:10px}
+.vx-p.star{width:13px;height:13px;border-radius:0;box-shadow:none;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
+@keyframes vp{0%{transform:translate(-50%,-50%) rotate(0);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot));opacity:0}}
+.vx-cast{top:40%;left:50%;padding:6px 22px;border-radius:999px;font-family:var(--f-display);font-size:20px;color:#fff;white-space:nowrap;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--c) 65%,#000 20%) 20%,color-mix(in srgb,var(--c) 65%,#000 20%) 80%,transparent);text-shadow:0 0 12px var(--c),0 1px 2px #000;animation:vcast .95s ease-out forwards}
+@keyframes vcast{0%{transform:translate(-50%,-50%) scaleX(.6);opacity:0}15%{transform:translate(-50%,-50%) scaleX(1);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-80%);opacity:0}}
+.vx-aura{width:84px;height:84px;border-radius:50%;box-shadow:0 0 0 3px var(--c),inset 0 0 28px var(--c);animation:vaura .85s ease-out forwards}
+@keyframes vaura{0%{transform:translate(-50%,-30%) scale(.6);opacity:0}30%{opacity:1}100%{transform:translate(-50%,-90%) scale(1.15);opacity:0}}
+.vx-charge{width:110px;height:110px;border-radius:50%;border:2px dashed var(--c);box-shadow:0 0 18px var(--c);animation:vcharge .8s ease-in forwards}
+@keyframes vcharge{0%{transform:translate(-50%,-50%) scale(1.6) rotate(0);opacity:0}40%{opacity:1}100%{transform:translate(-50%,-50%) scale(.3) rotate(220deg);opacity:0}}
+.vx-flash{left:0;top:0;width:100%;height:100%;transform:none;background:var(--c);animation:vflash .4s ease-out forwards}
+@keyframes vflash{0%{opacity:.25}100%{opacity:0}}
+.shake{animation:shake .35s}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-6px,3px)}40%{transform:translate(5px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}
+@media (prefers-reduced-motion:reduce){#vfx .vx-p,#vfx .vx-slash,#vfx .vx-flash{display:none}}
+</style>
+
+<div id="app"></div>
+<div id="vfx" aria-hidden="true"></div>
+<input type="file" id="imgIn" accept="image/*" hidden>
+
+<script>
+'use strict';
+/* ================= CORE STATS ================= */
+const K=['hp','mp','patk','matk','pdef','mdef','acc','eva','spd','crit'];
+const LBL={hp:'พลังชีวิต (HP)',mp:'พลังเวทย์ (MP)',patk:'โจมตีกายภาพ',matk:'โจมตีเวทย์',pdef:'ป้องกันกายภาพ',mdef:'ป้องกันเวทย์',acc:'ความแม่นยำ',eva:'การหลบหลีก',spd:'ความเร็ว',crit:'โอกาสคริติคอล %'};
+const SH={hp:'HP',mp:'MP',patk:'ตีกาย',matk:'ตีเวทย์',pdef:'กันกาย',mdef:'กันเวทย์',acc:'แม่นยำ',eva:'หลบ',spd:'เร็ว',crit:'คริ'};
+const PER={hp:8,mp:5,patk:1.5,matk:1.5,pdef:1.5,mdef:1.5,acc:2,eva:1.5,spd:1,crit:.5};
+const PB=[60,30,8,8,5,5,90,8,10,5], PG=[6,3,1,1,1,1,1,.8,.6,.1];
+const MAXLV=60, FM=[1,1.2,1.4], SKLV=[1,5,11,18], SIGLV=12;
+const grow=(k,b)=>({hp:b*.2,mp:b*.12,acc:1.1,eva:.5+b*.03,spd:b*.08,crit:.1})[k] ?? b*.17;
+
+/* ================= ELEMENTS ================= */
+const EL={normal:{n:'ปกติ',c:'#b3b28a'},fire:{n:'ไฟ',c:'#ee8130'},water:{n:'น้ำ',c:'#6f9cf3'},grass:{n:'พืช',c:'#7ac74c'},electric:{n:'ไฟฟ้า',c:'#f7d02c'},ice:{n:'น้ำแข็ง',c:'#96d9d6'},
+ fighting:{n:'ต่อสู้',c:'#e0564e'},poison:{n:'พิษ',c:'#c060be'},ground:{n:'ดิน',c:'#e2bf65'},flying:{n:'บิน',c:'#a98ff3'},psychic:{n:'จิต',c:'#f95587'},bug:{n:'แมลง',c:'#a6b91a'},
+ rock:{n:'หิน',c:'#c4ad4a'},ghost:{n:'ผี',c:'#9a7cc4'},dragon:{n:'มังกร',c:'#8a62ff'},dark:{n:'มืด',c:'#a08470'},steel:{n:'เหล็ก',c:'#b7b7ce'},fairy:{n:'เทพ',c:'#e58fbc'}};
+const TC={
+ normal:{rock:.5,ghost:0,steel:.5},
+ fire:{fire:.5,water:.5,grass:2,ice:2,bug:2,rock:.5,dragon:.5,steel:2},
+ water:{fire:2,water:.5,grass:.5,ground:2,rock:2,dragon:.5},
+ grass:{fire:.5,water:2,grass:.5,poison:.5,ground:2,flying:.5,bug:.5,rock:2,dragon:.5,steel:.5},
+ electric:{water:2,grass:.5,electric:.5,ground:0,flying:2,dragon:.5},
+ ice:{fire:.5,water:.5,grass:2,ice:.5,ground:2,flying:2,dragon:2,steel:.5},
+ fighting:{normal:2,ice:2,poison:.5,flying:.5,psychic:.5,bug:.5,rock:2,ghost:0,dark:2,steel:2,fairy:.5},
+ poison:{grass:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:0,fairy:2},
+ ground:{fire:2,grass:.5,electric:2,poison:2,flying:0,bug:.5,rock:2,steel:2},
+ flying:{grass:2,electric:.5,fighting:2,bug:2,rock:.5,steel:.5},
+ psychic:{fighting:2,poison:2,psychic:.5,dark:0,steel:.5},
+ bug:{fire:.5,grass:2,fighting:.5,poison:.5,flying:.5,psychic:2,ghost:.5,dark:2,steel:.5,fairy:.5},
+ rock:{fire:2,ice:2,fighting:.5,ground:.5,flying:2,bug:2,steel:.5},
+ ghost:{normal:0,psychic:2,ghost:2,dark:.5},
+ dragon:{dragon:2,steel:.5,fairy:0},
+ dark:{fighting:.5,psychic:2,ghost:2,dark:.5,fairy:.5},
+ steel:{fire:.5,water:.5,electric:.5,ice:2,rock:2,steel:.5,fairy:2},
+ fairy:{fire:.5,fighting:2,poison:.5,dragon:2,dark:2,steel:.5},
+};
+const typeMult=(el,types)=>!el||!types?1:types.reduce((m,t)=>m*((TC[el]&&TC[el][t])??1),1);
+
+/* ================= STATUSES & PASSIVES ================= */
+const STS={
+ burn:{n:'ติดไฟ',c:'#ee8130',d:()=>3,info:'เสีย HP 6% ทุกตา'},
+ poison:{n:'ติดพิษ',c:'#c060be',d:()=>4,info:'เสีย HP 8% ทุกตา'},
+ freeze:{n:'แช่แข็ง',c:'#96d9d6',d:()=>R(2,3),info:'ขยับไม่ได้ แต่ป้องกันเพิ่ม 50% (โดนธาตุไฟจะละลาย)'},
+ chill:{n:'เยือกแข็ง',c:'#9ec9e6',d:()=>3,info:'ความเร็วลด 40%'},
+ love:{n:'หลงรัก',c:'#f08ab0',d:()=>3,info:'45% เหม่อลอยไม่ยอมโจมตี'},
+ sleep:{n:'นอนหลับ',c:'#9a9fd0',d:()=>R(3,5),info:'ข้ามตาจนกว่าจะโดนโจมตีหรือครบ 3–5 ตา'},
+ confuse:{n:'มึนงง',c:'#d9b35b',d:()=>3,info:'35% ทำร้ายตัวเองแทนการโจมตี'},
+ static:{n:'ไฟฟ้าสถิต',c:'#f7d02c',d:()=>3,info:'ความเร็วลด 30% แม่นยำลด 10%'},
+ charm:{n:'มนต์สะกด',c:'#c77ae0',d:()=>2,info:'45% หันไปโจมตีพวกเดียวกัน'},
+ para:{n:'อัมพาต',c:'#e2c044',d:()=>4,info:'25% ขยับไม่ได้ในตานั้น'},
+};
+const IMM={burn:['fire'],freeze:['ice'],chill:['ice'],poison:['poison','steel'],static:['electric'],para:['electric']};
+const PAS={
+ imm_poison:{n:'ภูมิต้านพิษ',d:'ไม่ติดพิษ',imm:['poison']},
+ imm_burn:{n:'กายทนไฟ',d:'ไม่ติดไฟ',imm:['burn']},
+ imm_freeze:{n:'เลือดอุ่น',d:'ไม่ติดแช่แข็งและเยือกแข็ง',imm:['freeze','chill']},
+ imm_para:{n:'กล้ามเนื้อยืดหยุ่น',d:'ไม่ติดอัมพาตและไฟฟ้าสถิต',imm:['para','static']},
+ imm_sleep:{n:'ไม่หลับใหล',d:'ไม่ติดนอนหลับ',imm:['sleep']},
+ imm_mind:{n:'จิตแน่วแน่',d:'ไม่ติดมึนงง มนต์สะกด หลงรัก',imm:['confuse','charm','love']},
+ rainbow:{n:'บริสุทธิ์ศักดิ์สิทธิ์',d:'ไม่ติดสถานะผิดปกติใด ๆ',imm:Object.keys(STS)},
+ nocrit:{n:'เกราะแกร่ง',d:'ไม่โดนคริติคอล'},
+ rage:{n:'โทสะ',d:'พลังโจมตี +30% เมื่อ HP ต่ำกว่า 50%'},
+ regen:{n:'ฟื้นฟูตนเอง',d:'ฟื้น HP 6% ทุกตา'},
+ mpregen:{n:'สมาธิไหลเวียน',d:'ฟื้น MP 8% ทุกตา'},
+ thick:{n:'ไขมันหนา',d:'รับดาเมจธาตุไฟและน้ำแข็งครึ่งเดียว'},
+ levitate:{n:'ลอยตัว',d:'ไม่โดนท่าธาตุดิน'},
+ sturdy:{n:'อึดทน',d:'ถ้า HP เต็ม จะรอดจากการโจมตีที่ถึงตายด้วย HP 1'},
+ swift:{n:'ฝีเท้าไว',d:'ความเร็ว +20%'},
+ keen:{n:'สายตาคม',d:'โอกาสคริติคอล +10%'},
+ eagle:{n:'ตาเหยี่ยว',d:'ความแม่นยำ +15%'},
+ elusive:{n:'พลิ้วไหว',d:'การหลบหลีก +25%'},
+ thorns:{n:'ผิวหนาม',d:'สะท้อนดาเมจกายภาพ 15%'},
+ thorns2:{n:'ท่าสวนกลับ',d:'สะท้อนดาเมจกายภาพ 40%'},
+ poisonTouch:{n:'สัมผัสพิษ',d:'โจมตีกายภาพ 25% ทำให้ติดพิษ'},
+ poisonTouch2:{n:'คมพิษร้าย',d:'โจมตีกายภาพ 50% ทำให้ติดพิษ'},
+ flameBody:{n:'กายเพลิง',d:'ผู้โจมตีกายภาพ 25% ติดไฟ'},
+ staticbody:{n:'ประจุไฟฟ้า',d:'ผู้โจมตีกายภาพ 25% ติดอัมพาต'},
+ intimidate:{n:'ข่มขวัญ',d:'เริ่มต่อสู้ ศัตรูทุกตัวโจมตีกายภาพ -20% 3 ตา'},
+ lifesteal:{n:'ดูดเลือด',d:'ฟื้น HP 15% ของดาเมจที่ทำได้'},
+ adapt:{n:'สายเลือดบริสุทธิ์',d:'ท่าธาตุเดียวกับตัวเองแรงขึ้น 50% แทน 25%'},
+ pierce:{n:'ทะลวงเกราะ',d:'เมินป้องกันเป้าหมาย 25%'},
+ lucky:{n:'โชคลาภ',d:'ได้เงินจากการต่อสู้ +25%'},
+ healer:{n:'ผู้เยียวยา',d:'สกิลรักษาแรงขึ้น 30%'},
+ rebirth:{n:'ฟื้นคืนชีพ',d:'ล้มครั้งแรกในการต่อสู้ จะฟื้นด้วย HP 40%'},
+ multihit:{n:'หลายเศียร',d:'30% โจมตีซ้ำอีกครั้งด้วยพลังครึ่งหนึ่ง'},
+ guardian:{n:'ผู้พิทักษ์',d:'ฝ่ายเดียวกันรับดาเมจลดลง 10%'},
+ deadly:{n:'จุดตาย',d:'คริติคอลแรง ×2 แทน ×1.5'},
+ sealer:{n:'มือผนึก',d:'โอกาสผนึกอสูรสำเร็จ ×1.5'},
+ omni:{n:'หลอมรวมธาตุ',d:'ทุกธาตุได้โบนัสธาตุเดียวกัน'},
+};
+
+/* ================= SKILLS ================= */
+/* t: p physical | m magic | h hybrid | auto | heal | buff | debuff | status | form | revert | rest
+   tg (heal/buff): self | ally | team. all: hits every enemy. hits: repeat. rt: random target per hit.
+   st:{status:chance} bf:{stat:amount} tn: turns. ls lifesteal, pi pierce, cb crit bonus, gc gold cost ×Lv,
+   steal, gold, self (self-damage %), taunt, rev/revAll, cure, pas (temporary passive) */
+const SK={
+ attack:{n:'โจมตีปกติ',t:'auto',pw:100},
+ rest:{n:'พักฟื้น',t:'rest'},
+ revert:{n:'คืนร่างมนุษย์',t:'revert'},
+ heal_self:{n:'ฟื้นฟูตนเอง',t:'heal',tg:'self',pw:35,mp:6},
+ teamheal:{n:'ร่ายรำเยียวยา',t:'heal',tg:'team',pw:22,mp:9},
+};
+/* element skill families: [p1, p2, m1, m2, aoe, utility] */
+const ELN={
+ normal:['พุ่งชน','ทุบสุดแรง','คลื่นเสียง','ลำแสงพลัง','กระแทกรอบทิศ','คำรามข่มขวัญ'],
+ fire:['หมัดเพลิง','กรงเล็บเพลิง','ประกายไฟ','ลมหายใจเพลิง','ทะเลเพลิง','เปลวไฟสาป'],
+ water:['หางน้ำฟาด','กีบวารี','ลำน้ำพุ่ง','ปืนใหญ่วารี','คลื่นยักษ์','ม่านหมอกน้ำ'],
+ grass:['ใบมีดพฤกษา','ค้อนไม้ยักษ์','เมล็ดดูดพลัง','ลำแสงสุริยะ','พายุใบไม้','ผงสปอร์นิทรา'],
+ electric:['เขี้ยวอัสนี','พุ่งสายฟ้า','ประจุไฟฟ้า','สายฟ้าฟาด','พายุอสนี','คลื่นไฟฟ้าสถิต'],
+ ice:['เขี้ยวน้ำแข็ง','หมัดน้ำแข็ง','ลมเยือกแข็ง','ลำแสงน้ำแข็ง','พายุหิมะ','ลมหนาวเหน็บ'],
+ fighting:['ฝ่ามือกระแทก','หมัดทลายภูผา','คลื่นปราณ','ลูกพลังออร่า','เตะกวาด','รวมลมปราณ'],
+ poison:['กัดพิษ','เหล็กไนพิษ','กรดพิษ','ระเบิดโคลนพิษ','หมอกพิษ','ผงพิษ'],
+ ground:['ขุดดินจู่โจม','ค้อนแผ่นดิน','โคลนสาด','พลังแผ่นดิน','แผ่นดินไหว','ทรายเข้าตา'],
+ flying:['จิก','โฉบจู่โจม','ลมกรรโชก','พายุอากาศ','ใบมีดวายุ','ลมส่งท้าย'],
+ psychic:['โขกจิต','ใบมีดจิต','ลำแสงจิต','คลื่นจิตทำลาย','ระเบิดจิต','ภาพลวงตา'],
+ bug:['กัดแมลง','เขาด้วงแทง','เสียงหึ่ง','ลำแสงแมลง','ฝูงแมลงรุม','ใยรัด'],
+ rock:['ขว้างศิลา','หินแหลมทะลวง','อัญมณีส่องแสง','ศิลาพลังโบราณ','หินถล่ม','เกราะศิลา'],
+ ghost:['เลียผี','หมัดเงา','ไฟผี','ลูกบอลเงา','พายุวิญญาณ','มนต์สะกดวิญญาณ'],
+ dragon:['กรงเล็บมังกร','หางมังกรฟาด','ลมหายใจมังกร','อุกกาบาตมังกร','พิโรธมังกร','ร่ายรำมังกร'],
+ dark:['กัดกระชาก','เขี้ยวรัตติกาล','คลื่นมืด','เงามืดกลืนกิน','อสูรราตรี','เสียงกระซิบมืด'],
+ steel:['กรงเล็บเหล็ก','โขกหัวเหล็ก','ลำแสงกระจก','ปืนใหญ่ลำแสงเหล็ก','ระเบิดเหล็ก','ร่างเหล็กไหล'],
+ fairy:['จูบนางฟ้า','ค้อนภูต','ลมภูต','พลังจันทรา','แสงพร่างพราว','เสน่ห์ภูต'],
+};
+const PHYS_AOE=new Set(['normal','fighting','ground','rock','bug','steel','flying','dark']);
+const ELST={fire:['burn',.2],electric:['para',.2],ice:['freeze',.1],poison:['poison',.3],psychic:['confuse',.15],fairy:['love',.15],ghost:['charm',.1]};
+const UTIL={
+ normal:{t:'debuff',all:1,bf:{patk:-.3},tn:3,mp:5},
+ fire:{t:'status',st:{burn:.85},mp:6},
+ water:{t:'buff',tg:'team',bf:{eva:.4},tn:3,mp:6},
+ grass:{t:'status',st:{sleep:.6},mp:7},
+ electric:{t:'status',all:1,st:{static:.6},mp:7},
+ ice:{t:'status',all:1,st:{chill:.6},mp:7},
+ fighting:{t:'buff',tg:'self',bf:{patk:.4,pdef:.3},tn:3,mp:5},
+ poison:{t:'status',st:{poison:.9},mp:5},
+ ground:{t:'debuff',bf:{acc:-.35},tn:3,mp:5},
+ flying:{t:'buff',tg:'team',bf:{spd:.4},tn:3,mp:6},
+ psychic:{t:'status',st:{confuse:.7},mp:6},
+ bug:{t:'debuff',all:1,bf:{spd:-.4},tn:3,mp:6},
+ rock:{t:'buff',tg:'self',bf:{pdef:.7,mdef:.3},tn:3,mp:5},
+ ghost:{t:'status',st:{charm:.55},mp:7},
+ dragon:{t:'buff',tg:'self',bf:{patk:.4,spd:.4},tn:3,mp:7},
+ dark:{t:'debuff',bf:{pdef:-.3,mdef:-.3},tn:3,mp:5},
+ steel:{t:'buff',tg:'self',bf:{pdef:1,spd:-.2},tn:3,mp:6},
+ fairy:{t:'status',st:{love:.65},mp:6},
+};
+for(const el in ELN){const N=ELN[el],es=ELST[el],add=(k,o,sc=1)=>{if(es)o.st={[es[0]]:+(es[1]*sc).toFixed(2)};if(el==='grass')o.ls=.25;SK[`${el}_${k}`]=o};
+ add('p1',{n:N[0],t:'p',pw:120,el,mp:3});add('p2',{n:N[1],t:'p',pw:175,el,mp:9});
+ add('m1',{n:N[2],t:'m',pw:125,el,mp:4});add('m2',{n:N[3],t:'m',pw:180,el,mp:10});
+ add('aoe',{n:N[4],t:PHYS_AOE.has(el)?'p':'m',pw:125,el,mp:10,all:1},.6);
+ SK[el+'_st']={n:N[5],el,...UTIL[el]}}
+
+Object.assign(SK,{
+/* ---- swordsman line ---- */
+sw_bash:{n:'ฟันกระแทก',t:'p',pw:150,el:'normal',mp:3,st:{para:.12}},
+sw_magnum:{n:'ดาบระเบิดเพลิง',t:'p',pw:120,el:'fire',mp:6,all:1},
+sw_endure:{n:'ปลุกพลังนักดาบ',t:'buff',tg:'self',bf:{patk:.5,pdef:.2},tn:3,mp:5},
+sw_twin:{n:'ฟันสองจังหวะ',t:'p',pw:90,hits:2,el:'normal',mp:6},
+sw_break:{n:'ฟันทลายเกราะ',t:'p',pw:150,el:'fighting',mp:7,bf:{pdef:-.3},tn:3},
+sw_whirl:{n:'ดาบวายุหมุน',t:'p',pw:150,el:'flying',mp:9,all:1},
+sa_iai:{n:'อิไอกิริ',t:'p',pw:260,el:'normal',mp:12,cb:30},
+sa_zanshin:{n:'ซันชิน',t:'buff',tg:'self',bf:{crit:1,acc:.2,patk:.3},tn:3,mp:8},
+ke_thousand:{n:'พันคมดาบ',t:'p',pw:85,hits:5,rt:1,el:'steel',mp:16},
+sh_army:{n:'บัญชาทัพซามูไร',t:'buff',tg:'team',bf:{patk:.4,pdef:.3,spd:.15},tn:3,mp:14},
+sb_thunder:{n:'ดาบเวทอัสนี',t:'h',pw:180,el:'electric',mp:9,st:{para:.25}},
+sb_frost:{n:'ดาบเวทเหมันต์',t:'h',pw:140,el:'ice',mp:12,all:1,st:{chill:.3}},
+sbs_unite:{n:'ผสานวิญญาณอสูร',t:'buff',tg:'team',bf:{patk:.4,matk:.4,crit:.5},tn:3,mp:15},
+sbw_doom:{n:'ดาบเวทหายนะ',t:'h',pw:190,el:'fire',mp:18,all:1,st:{burn:.3}},
+/* ---- gladiator line ---- */
+gl_shield:{n:'กระแทกโล่',t:'p',pw:130,el:'fighting',mp:3,st:{para:.25}},
+gl_taunt:{n:'ยั่วยุ',t:'buff',tg:'self',bf:{pdef:.3},tn:3,mp:4,taunt:3},
+gl_wall:{n:'กำแพงเหล็ก',t:'buff',tg:'self',bf:{pdef:.8,mdef:.5},tn:3,mp:6},
+gl_quake:{n:'ทุบพื้นดิน',t:'p',pw:125,el:'ground',mp:8,all:1},
+gl_counter:{n:'ท่าสวนกลับ',t:'buff',tg:'self',bf:{pdef:.2},pas:'thorns2',tn:3,mp:7},
+gl_roar:{n:'เสียงคำรามนักสู้',t:'buff',tg:'team',bf:{patk:.3,pdef:.25},tn:3,mp:10},
+pa_holy:{n:'แสงศักดิ์สิทธิ์ปกป้อง',t:'heal',tg:'team',pw:20,bf:{mdef:.3},tn:3,mp:12},
+pa_hammer:{n:'ค้อนศักดิ์สิทธิ์',t:'h',pw:200,el:'fairy',mp:11},
+te_judge:{n:'แสงพิพากษา',t:'h',pw:185,el:'fairy',mp:18,all:1},
+et_bastion:{n:'ปราการนิรันดร์',t:'heal',tg:'self',pw:35,cure:1,bf:{pdef:1,mdef:.6},tn:3,taunt:3,mp:16},
+be_frenzy:{n:'บ้าคลั่ง',t:'buff',tg:'self',bf:{patk:.8,spd:.2,pdef:-.3},tn:3,mp:7},
+be_storm:{n:'ขวานพายุคลั่ง',t:'p',pw:165,el:'fighting',mp:12,all:1},
+wl_split:{n:'ขวานแยกปฐพี',t:'p',pw:215,el:'ground',mp:18,all:1},
+bw_drain:{n:'ฟันสูบโลหิต',t:'p',pw:230,el:'dark',mp:14,ls:.5},
+/* ---- archer line ---- */
+ar_double:{n:'ยิงสองดอก',t:'p',pw:75,hits:2,el:'normal',mp:3},
+ar_fire:{n:'ศรเพลิง',t:'p',pw:140,el:'fire',mp:5,st:{burn:.25}},
+ar_hawk:{n:'สายตาเหยี่ยว',t:'buff',tg:'self',bf:{acc:.3,crit:1},tn:3,mp:5},
+ar_rain:{n:'ฝนธนู',t:'p',pw:115,el:'normal',mp:9,all:1},
+ar_ice:{n:'ศรเยือกแข็ง',t:'p',pw:150,el:'ice',mp:8,st:{freeze:.25}},
+ar_pierce:{n:'ศรทะลวงเกราะ',t:'p',pw:200,el:'steel',mp:11,pi:.4},
+ra_falcon:{n:'เหยี่ยวคู่ใจ',t:'p',pw:175,el:'flying',mp:9,acc:100},
+ra_trap:{n:'กับดักเถาวัลย์',t:'status',el:'grass',mp:10,all:1,bf:{spd:-.4},tn:3,st:{sleep:.25}},
+sn_heart:{n:'ศรเจาะหัวใจ',t:'p',pw:320,el:'normal',mp:18,cb:50},
+wd_storm:{n:'พายุศรพงไพร',t:'p',pw:175,el:'grass',mp:16,all:1},
+bd_rally:{n:'เพลงปลุกใจ',t:'buff',tg:'team',bf:{patk:.3,matk:.3},tn:3,mp:9},
+bd_lullaby:{n:'เพลงกล่อมนิทรา',t:'status',el:'normal',mp:12,all:1,st:{sleep:.45}},
+ma_heal:{n:'บทเพลงสวรรค์',t:'heal',tg:'team',pw:35,cure:1,mp:18},
+di_requiem:{n:'บทเพลงอาลัย',t:'m',pw:175,el:'ghost',mp:17,all:1,st:{confuse:.3}},
+/* ---- mage line ---- */
+mg_fire:{n:'ลูกไฟ',t:'m',pw:135,el:'fire',mp:4,st:{burn:.15}},
+mg_ice:{n:'หอกน้ำแข็ง',t:'m',pw:135,el:'ice',mp:4,st:{freeze:.1}},
+mg_bolt:{n:'สายฟ้า',t:'m',pw:135,el:'electric',mp:4,st:{para:.15}},
+mg_rock:{n:'ศิลาร่วง',t:'m',pw:150,el:'rock',mp:6},
+mg_firestorm:{n:'พายุเพลิง',t:'m',pw:125,el:'fire',mp:10,all:1,st:{burn:.15}},
+mg_blizzard:{n:'พายุหิมะ',t:'m',pw:125,el:'ice',mp:10,all:1,st:{chill:.3}},
+mg_thunderstorm:{n:'พายุอสนี',t:'m',pw:135,el:'electric',mp:12,all:1,st:{para:.15}},
+sg_barrier:{n:'ม่านเวทคุ้มกัน',t:'buff',tg:'team',bf:{mdef:.4,pdef:.3},tn:3,mp:10},
+sg_holy:{n:'แสงศักดิ์สิทธิ์',t:'m',pw:200,el:'fairy',mp:11},
+am_meteor:{n:'อุกกาบาตถล่ม',t:'m',pw:200,el:'rock',mp:22,all:1,st:{burn:.2}},
+el_omni:{n:'หลอมรวมธาตุ',t:'buff',tg:'self',bf:{matk:.4},pas:'omni',tn:3,mp:14},
+wk_curse:{n:'คำสาปมรณะ',t:'m',pw:195,el:'dark',mp:10},
+wk_plague:{n:'คำสาปโรคระบาด',t:'status',el:'poison',mp:13,all:1,st:{poison:.6},bf:{mdef:-.2},tn:3},
+ne_soul:{n:'ดูดวิญญาณ',t:'m',pw:210,el:'ghost',mp:16,ls:.4},
+en_mind:{n:'ควบคุมจิตหมู่',t:'status',el:'psychic',mp:18,all:1,st:{charm:.4,confuse:.35}},
+/* ---- merchant line ---- */
+me_mammon:{n:'ทุ่มเงิน',t:'p',pw:210,el:'normal',mp:2,gc:4},
+me_cart:{n:'รถเข็นถล่ม',t:'p',pw:120,el:'normal',mp:7,all:1},
+me_potion:{n:'โยนยาสมุนไพร',t:'heal',tg:'ally',pw:30,cure:1,mp:6},
+me_shout:{n:'ตะโกนเรียกขวัญ',t:'buff',tg:'team',bf:{patk:.25,spd:.1},tn:3,mp:6},
+me_coinbomb:{n:'ระเบิดเหรียญ',t:'p',pw:175,el:'steel',mp:6,all:1,gc:8},
+me_insure:{n:'ประกันภัยหมู่',t:'buff',tg:'team',bf:{pdef:.3,mdef:.3},tn:3,mp:9},
+bs_hammer:{n:'ค้อนสะเทือนพสุธา',t:'p',pw:100,el:'ground',mp:10,all:1,st:{para:.45}},
+bs_sharpen:{n:'ลับคมอาวุธ',t:'buff',tg:'team',bf:{patk:.35,crit:.6},tn:3,mp:10},
+ms_godhammer:{n:'ค้อนเทพทลาย',t:'p',pw:270,el:'steel',mp:18},
+mc_cannon:{n:'ปืนใหญ่ไอน้ำ',t:'p',pw:190,el:'steel',mp:18,all:1},
+al_acid:{n:'ขวดกรด',t:'m',pw:155,el:'poison',mp:8,bf:{pdef:-.3},tn:3,st:{poison:.3}},
+al_brew:{n:'ปรุงยาฉุกเฉิน',t:'heal',tg:'team',pw:28,mp:12},
+bc_elixir:{n:'ยาอายุวัฒนะ',t:'heal',tg:'team',pw:45,cure:1,mp:20},
+ga_transmute:{n:'แปรธาตุเป็นทอง',t:'m',pw:200,el:'steel',mp:14,gold:1},
+/* ---- gunner line ---- */
+gn_rapid:{n:'ยิงรัว',t:'p',pw:55,hits:3,el:'normal',mp:3},
+gn_fire:{n:'กระสุนเพลิง',t:'p',pw:140,el:'fire',mp:5,st:{burn:.3}},
+gn_aim:{n:'เล็งหัว',t:'buff',tg:'self',bf:{acc:.4,crit:1.2},tn:3,mp:5},
+gn_spread:{n:'ยิงกระจาย',t:'p',pw:110,el:'normal',mp:9,all:1},
+gn_shock:{n:'กระสุนช็อต',t:'p',pw:150,el:'electric',mp:8,st:{para:.3}},
+gn_execute:{n:'ยิงปลิดชีพ',t:'p',pw:235,el:'normal',mp:12,cb:20},
+mk_bullseye:{n:'ยิงตาวัว',t:'p',pw:270,el:'normal',mp:13,cb:40,acc:20},
+mk_ap:{n:'กระสุนเจาะเกราะ',t:'p',pw:190,el:'steel',mp:11,pi:.5},
+gs_infinite:{n:'กระสุนนิรันดร์',t:'p',pw:75,hits:6,rt:1,el:'steel',mp:20},
+bh_bounty:{n:'ล่าค่าหัว',t:'p',pw:240,el:'dark',mp:15,gold:1},
+at_grenade:{n:'ระเบิดมือ',t:'p',pw:150,el:'fire',mp:10,all:1,st:{burn:.2}},
+at_flash:{n:'ระเบิดแสง',t:'debuff',el:'normal',mp:9,all:1,bf:{acc:-.35},tn:3,st:{confuse:.2}},
+cn_barrage:{n:'ปืนใหญ่ระดมยิง',t:'p',pw:215,el:'steel',mp:20,all:1},
+dm_blast:{n:'ระเบิดทลายฟ้า',t:'p',pw:270,el:'fire',mp:20,all:1,self:.15,st:{burn:.3}},
+/* ---- druid line ---- */
+dr_wolf:{n:'แปลงร่างหมาป่า',t:'form',form:'wolf',mp:6},
+dr_leaf:{n:'ใบไม้สมานแผล',t:'heal',tg:'ally',pw:35,mp:6},
+dr_bear:{n:'แปลงร่างหมี',t:'form',form:'bear',mp:6},
+dr_thorn:{n:'หนามพิษพงไพร',t:'m',pw:130,el:'poison',mp:8,all:1,st:{poison:.3}},
+dr_hawk:{n:'แปลงร่างเหยี่ยว',t:'form',form:'hawk',mp:7},
+dr_treant:{n:'แปลงร่างพฤกษา',t:'form',form:'treant',mp:8},
+fe_saber:{n:'แปลงร่างเสือเขี้ยวดาบ',t:'form',form:'saber',mp:10},
+fe_instinct:{n:'สัญชาตญาณป่า',t:'heal',tg:'self',pw:25,bf:{patk:.3,crit:.5},tn:3,mp:9},
+wg_dragon:{n:'แปลงร่างมังกรพงไพร',t:'form',form:'gdragon',mp:16},
+pk_howl:{n:'หอนนำฝูง',t:'buff',tg:'team',bf:{patk:.4,spd:.3},tn:3,mp:12},
+gv_rain:{n:'ฝนชโลมพฤกษา',t:'heal',tg:'team',pw:30,mp:12},
+gv_storm:{n:'พายุพงไพร',t:'m',pw:165,el:'grass',mp:13,all:1,ls:.2},
+ad_moon:{n:'แปลงร่างวิญญาณจันทรา',t:'form',form:'moon',mp:16},
+sc_tempest:{n:'พายุอสนีโกลาหล',t:'m',pw:205,el:'electric',mp:20,all:1,st:{para:.3}},
+f_wolfbite:{n:'กัดฉีก',t:'p',pw:150,el:'dark',mp:3,cb:15},
+f_howl:{n:'หอนเรียกฝูง',t:'buff',tg:'team',bf:{patk:.3},tn:3,mp:6},
+f_maul:{n:'ตบหนัก',t:'p',pw:165,el:'ground',mp:5,st:{para:.2}},
+f_bearroar:{n:'คำรามหมีป่า',t:'debuff',el:'normal',mp:7,all:1,bf:{patk:-.3},tn:3},
+f_hibernate:{n:'จำศีลฟื้นพลัง',t:'heal',tg:'self',pw:35,mp:8},
+f_hawkeye:{n:'ตาเหยี่ยวเวหา',t:'buff',tg:'self',bf:{acc:.3,crit:1},tn:3,mp:5},
+f_roots:{n:'รากพันธนาการ',t:'status',el:'grass',mp:10,all:1,bf:{spd:-.4},tn:3,st:{sleep:.2}},
+f_bloom:{n:'บุปผาฟื้นฟู',t:'heal',tg:'team',pw:30,mp:12},
+f_saberpounce:{n:'ตะปบสังหาร',t:'p',pw:240,el:'normal',mp:10,cb:25},
+f_saberleap:{n:'กระโจนขย้ำ',t:'p',pw:150,el:'fighting',mp:12,all:1},
+f_dragonbreath:{n:'ลมหายใจมังกรพงไพร',t:'m',pw:200,el:'dragon',mp:16,all:1},
+f_dragonroar:{n:'คำรามมังกร',t:'buff',tg:'team',bf:{patk:.4,matk:.4},tn:3,mp:12},
+f_moonbeam:{n:'ลำแสงจันทราพิโรธ',t:'m',pw:190,el:'fairy',mp:16,all:1,st:{love:.2}},
+f_moonbless:{n:'พรแห่งจันทรา',t:'heal',tg:'team',pw:35,cure:1,mp:16},
+/* ---- thief line ---- */
+th_double:{n:'แทงคู่',t:'p',pw:70,hits:2,el:'normal',mp:2},
+th_venom:{n:'แทงพิษ',t:'p',pw:120,el:'poison',mp:4,st:{poison:.5}},
+th_hide:{n:'ซ่อนตัว',t:'buff',tg:'self',bf:{eva:1.2,crit:.5},tn:2,mp:5},
+th_steal:{n:'ฉกชิง',t:'p',pw:110,el:'dark',mp:5,steal:1},
+th_back:{n:'แทงข้างหลัง',t:'p',pw:220,el:'dark',mp:10,cb:30},
+th_smoke:{n:'ระเบิดควัน',t:'debuff',el:'normal',mp:9,all:1,bf:{acc:-.3},tn:3},
+ro_mug:{n:'ปล้นกลางศึก',t:'p',pw:170,el:'dark',mp:9,steal:1},
+ro_dirty:{n:'เตะสกปรก',t:'p',pw:140,el:'fighting',mp:9,st:{confuse:.45}},
+mt_plunder:{n:'ปล้นสะดม',t:'p',pw:130,el:'dark',mp:16,all:1,steal:1},
+tr_trick:{n:'กลลวงพันหน้า',t:'status',el:'psychic',mp:14,st:{charm:.6,love:.5}},
+as_sonic:{n:'ฟันกากบาทสายฟ้า',t:'p',pw:65,hits:4,el:'dark',mp:11},
+as_venomblade:{n:'เคลือบพิษร้าย',t:'buff',tg:'self',bf:{patk:.3},pas:'poisonTouch2',tn:4,mp:8},
+nj_shuriken:{n:'ดาวกระจายเงา',t:'p',pw:130,el:'dark',mp:14,all:1},
+nj_clone:{n:'คาถาแยกร่าง',t:'buff',tg:'self',bf:{eva:1.5,spd:.3},tn:3,mp:12},
+rn_wander:{n:'ดาบพเนจร',t:'p',pw:280,el:'steel',mp:16,cb:40},
+rn_masterless:{n:'ไร้นาย',t:'buff',tg:'self',bf:{patk:.6,crit:1,eva:-.3},tn:3,mp:10},
+/* ---- summoner line ---- */
+su_empower:{n:'ปลุกพลังอสูร',t:'buff',tg:'ally',bf:{patk:.4,matk:.4},tn:3,mp:4},
+su_mend:{n:'รักษาอสูร',t:'heal',tg:'ally',pw:35,mp:5},
+su_ward:{n:'เกราะผนึก',t:'buff',tg:'team',bf:{pdef:.3,mdef:.3},tn:3,mp:8},
+su_link:{n:'สายใยวิญญาณ',t:'buff',tg:'team',bf:{spd:.3,acc:.15},tn:3,mp:8},
+su_command:{n:'สั่งจู่โจม',t:'buff',tg:'team',bf:{patk:.3,matk:.3,crit:.6},tn:3,mp:12},
+su_revive:{n:'คืนชีพอสูร',t:'heal',tg:'ally',pw:40,rev:1,mp:14},
+tm_double:{n:'ผนึกพลังคู่',t:'buff',tg:'ally',bf:{patk:.7,matk:.7,spd:.2},tn:3,mp:10},
+tm_instinct:{n:'ปลุกสัญชาตญาณ',t:'buff',tg:'team',bf:{crit:1,acc:.2},tn:3,mp:10},
+bk_order:{n:'คำสั่งราชันย์',t:'buff',tg:'team',bf:{patk:.5,matk:.5,spd:.2},tn:3,mp:18},
+sm_bind:{n:'ตรึงวิญญาณ',t:'status',el:'ghost',mp:12,st:{para:.8}},
+sl_share:{n:'แบ่งปันชีวิต',t:'heal',tg:'team',pw:30,mp:12},
+sl_spirit:{n:'เสริมจิตวิญญาณ',t:'buff',tg:'team',bf:{mdef:.4,matk:.3},tn:3,mp:10},
+ss_rebirth:{n:'วัฏจักรวิญญาณ',t:'heal',tg:'team',pw:35,cure:1,revAll:1,mp:24},
+sp_storm:{n:'พายุภูติ',t:'m',pw:190,el:'fairy',mp:18,all:1},
+/* ---- beast signature skills ---- */
+s_kappa:{n:'ซูโม่ธารา',t:'p',pw:220,el:'fighting',mp:12,st:{para:.3}},
+s_wisp:{n:'เพลิงวิญญาณมรณะ',t:'m',pw:220,el:'ghost',mp:13,st:{burn:.4}},
+s_mandrake:{n:'กรีดร้องสังหาร',t:'m',pw:165,el:'grass',mp:15,all:1,st:{sleep:.3}},
+s_tanuki:{n:'พันหน้าลวงตา',t:'status',el:'psychic',mp:14,all:1,st:{confuse:.5,love:.3}},
+s_raiju:{n:'อัสนีเทพอสูร',t:'m',pw:235,el:'electric',mp:14,st:{para:.3}},
+s_pixie:{n:'วงแหวนภูต',t:'heal',tg:'team',pw:40,cure:1,mp:16},
+s_redcap:{n:'หมวกโลหิต',t:'p',pw:220,el:'dark',mp:12,ls:.5},
+s_kodama:{n:'เสียงสะท้อนพงไพร',t:'heal',tg:'team',pw:30,bf:{mdef:.3},tn:3,mp:14},
+s_griffin:{n:'กรงเล็บราชันย์เวหา',t:'p',pw:230,el:'flying',mp:13,cb:20},
+s_kitsune:{n:'ไฟจิ้งจอกเก้าหาง',t:'m',pw:185,el:'fire',mp:18,all:1,st:{burn:.3,confuse:.2}},
+s_tengu:{n:'พัดใบตองพายุ',t:'m',pw:175,el:'flying',mp:16,all:1,st:{confuse:.2}},
+s_nil:{n:'ทะยานนิลมังกร',t:'p',pw:240,el:'dragon',mp:14},
+s_kelpie:{n:'ลากลงทะเลสาบ',t:'p',pw:230,el:'water',mp:14,ls:.3},
+s_nue:{n:'เมฆาทมิฬอสนี',t:'m',pw:180,el:'electric',mp:17,all:1,st:{para:.25}},
+s_joro:{n:'ใยไหมมรณะ',t:'status',el:'bug',mp:14,all:1,bf:{spd:-.5},tn:3,st:{poison:.5}},
+s_basilisk:{n:'เนตรศิลามรณะ',t:'m',pw:200,el:'rock',mp:16,st:{para:.5}},
+s_cerberus:{n:'กัดสามเศียร',t:'p',pw:95,hits:3,el:'dark',mp:14,st:{burn:.15}},
+s_yeti:{n:'หิมะถล่มทลาย',t:'p',pw:190,el:'ice',mp:18,all:1,st:{freeze:.15}},
+s_golem:{n:'หมัดอาดามันไทต์',t:'p',pw:260,el:'steel',mp:16},
+s_scarab:{n:'กลิ้งตะวัน',t:'p',pw:240,el:'bug',mp:15,st:{burn:.3}},
+s_dragon:{n:'ลมหายใจราชันย์มังกร',t:'m',pw:210,el:'fire',mp:22,all:1,st:{burn:.3}},
+s_naga:{n:'นาคราชพ่นพิษน้ำ',t:'m',pw:205,el:'water',mp:20,all:1,st:{poison:.3}},
+s_tbird:{n:'ฟ้าผ่าพันสาย',t:'m',pw:200,el:'electric',mp:20,all:1,st:{para:.3}},
+s_gargoyle:{n:'ปีกศิลาถล่ม',t:'p',pw:250,el:'rock',mp:16},
+s_jiangshi:{n:'กระโดดผีดิบ',t:'p',pw:240,el:'ghost',mp:15,st:{para:.35}},
+s_qilin:{n:'พรกิเลน',t:'heal',tg:'team',pw:40,cure:1,bf:{patk:.2,matk:.2},tn:3,mp:18},
+s_unicorn:{n:'เขาบริสุทธิ์',t:'p',pw:230,el:'fairy',mp:14,ls:.3},
+s_pegasus:{n:'ควบสายฟ้าซุส',t:'p',pw:200,el:'electric',mp:18,all:1,st:{para:.2}},
+s_erawan:{n:'งาเอราวัณสามสิบสามเศียร',t:'p',pw:200,el:'fairy',mp:20,all:1},
+s_baihu:{n:'กรงเล็บพยัคฆ์ขาว',t:'p',pw:255,el:'steel',mp:16,cb:25},
+s_lamassu:{n:'ปราการลามัสซู',t:'buff',tg:'team',bf:{pdef:.5,mdef:.5},tn:3,mp:16},
+s_fenrir:{n:'กลืนตะวัน',t:'p',pw:270,el:'dark',mp:20},
+s_kraken:{n:'หนวดยักษ์รัดเรือ',t:'p',pw:90,hits:4,rt:1,el:'water',mp:18,st:{para:.15}},
+s_phoenix:{n:'เปลวไฟคืนชีพ',t:'heal',tg:'team',pw:45,cure:1,revAll:1,mp:24},
+s_garuda:{n:'กรงเล็บพญาครุฑ',t:'p',pw:260,el:'flying',mp:18,cb:20},
+});
+
+/* ================= DRUID FORMS ================= */
+const FORMS={
+ wolf:{n:'ร่างหมาป่า',em:'🐺',t:['dark'],m:{patk:1.5,spd:1.3,crit:1.5,matk:.5},sk:['f_wolfbite','f_howl','dark_p2']},
+ bear:{n:'ร่างหมี',em:'🐻',t:['ground'],m:{pdef:1.7,mdef:1.3,patk:1.3,spd:.75},sk:['f_maul','f_bearroar','f_hibernate']},
+ hawk:{n:'ร่างเหยี่ยว',em:'🦅',t:['flying'],m:{eva:1.8,spd:1.5,acc:1.2,patk:1.2},sk:['flying_p2','flying_aoe','f_hawkeye']},
+ treant:{n:'ร่างพฤกษา',em:'🌳',t:['grass'],m:{matk:1.4,mdef:1.5,pdef:1.2,spd:.8},sk:['f_roots','grass_m2','f_bloom']},
+ saber:{n:'ร่างเสือเขี้ยวดาบ',em:'🐅',t:['normal','fighting'],m:{patk:1.9,crit:2,spd:1.3},sk:['f_saberpounce','f_saberleap','fighting_p2']},
+ gdragon:{n:'ร่างมังกรพงไพร',em:'🐲',t:['dragon','grass'],m:{patk:1.6,matk:1.6,pdef:1.4,mdef:1.4,spd:1.1},sk:['f_dragonbreath','dragon_p2','f_dragonroar']},
+ moon:{n:'ร่างวิญญาณจันทรา',em:'🌙',t:['fairy','psychic'],m:{matk:1.8,mdef:1.5,eva:1.3},sk:['f_moonbeam','f_moonbless','psychic_m2']},
+};
+
+/* ================= CLASSES ================= */
+const CLS={
+swordsman:{n:'นักดาบ',w:'sword',em:'🤺',m:{hp:1.15,mp:.7,patk:1.2,matk:.6,pdef:1.1,mdef:.9,crit:1.2},pas:[],sk:[[1,'sw_bash'],[4,'sw_magnum'],[8,'sw_endure'],[12,'sw_twin'],[17,'sw_break'],[22,'sw_whirl']],
+ d:'สมดุลทั้งโจมตีและป้องกัน',pro:'HP และโจมตีกายภาพดี ใช้ง่าย มีสกิลหมู่',con:'เวทย์ต่ำ ไม่มีสกิลรักษา'},
+ samurai:{n:'ซามูไร',p:'swordsman',m:{patk:1.1,crit:1.4,spd:1.1},pas:['keen'],sk:[[25,'sa_iai'],[32,'sa_zanshin']],d:'ดาบเดียวชี้ขาด คริติคอลรุนแรง'},
+  kensei:{n:'เคนเซย์',p:'samurai',m:{patk:1.1,acc:1.1},pas:['deadly'],sk:[[40,'ke_thousand']],d:'ปรมาจารย์ดาบ ฟันรัว 5 ครั้ง คริติคอลแรง ×2'},
+  shogun:{n:'โชกุน',p:'samurai',m:{hp:1.15,pdef:1.1},pas:['intimidate'],sk:[[40,'sh_army']],d:'แม่ทัพซามูไร บัฟทั้งทีม ข่มขวัญศัตรู'},
+ spellblade:{n:'ดาบเวทย์',p:'swordsman',m:{matk:1.7,mp:1.5},pas:['mpregen'],sk:[[25,'sb_thunder'],[32,'sb_frost']],d:'ผสานเวทย์เข้ากับคมดาบ โจมตีแบบผสมกายภาพและเวทย์'},
+  sbsummon:{n:'ดาบเวทย์อัญเชิญ',p:'spellblade',m:{matk:1.1},pas:['guardian'],sum:2,sk:[[40,'sbs_unite']],d:'นำอสูรออกสู้ได้ 2 ตัว ผสานพลังกับอสูร'},
+  sbwar:{n:'ดาบเวทย์สงคราม',p:'spellblade',m:{patk:1.1,matk:1.1},pas:['pierce'],sk:[[40,'sbw_doom']],d:'ดาบเวทย์ทำลายล้างหมู่ เมินเกราะ'},
+gladiator:{n:'กลาดิเอเตอร์',w:'axe',em:'🛡️',m:{hp:1.4,mp:.6,patk:1.05,matk:.5,pdef:1.4,mdef:1.2,eva:.6,spd:.85,crit:.8},pas:['nocrit'],sk:[[1,'gl_shield'],[4,'gl_taunt'],[8,'gl_wall'],[12,'gl_quake'],[17,'gl_counter'],[22,'gl_roar']],
+ d:'ปราการแนวหน้า ยั่วยุให้ศัตรูโจมตีตัวเอง',pro:'HP และป้องกันสูงสุด ไม่โดนคริติคอล ปกป้องอสูรได้',con:'ช้า หลบหลีกต่ำ ดาเมจไม่สูง'},
+ paladin:{n:'พาลาดิน',p:'gladiator',m:{mdef:1.15,matk:1.6},pas:['guardian'],sk:[[25,'pa_holy'],[32,'pa_hammer']],d:'อัศวินศักดิ์สิทธิ์ ป้องกันและรักษาทีม'},
+  templar:{n:'เทมพลาร์',p:'paladin',m:{matk:1.15},pas:['imm_mind'],sk:[[40,'te_judge']],d:'แสงพิพากษาโจมตีหมู่ จิตไม่หวั่นไหว'},
+  eternal:{n:'ผู้พิทักษ์นิรันดร์',p:'paladin',m:{hp:1.2,pdef:1.15},pas:['regen'],sk:[[40,'et_bastion']],d:'ปราการที่ไม่มีวันล้ม'},
+ berserker:{n:'เบอร์เซิร์กเกอร์',p:'gladiator',m:{patk:1.25,pdef:.9},pas:['rage'],sk:[[25,'be_frenzy'],[32,'be_storm']],d:'ยิ่งเจ็บยิ่งแรง แลกป้องกันเป็นพลังโจมตี'},
+  warlord:{n:'ราชันย์สนามรบ',p:'berserker',m:{hp:1.1},pas:['intimidate'],sk:[[40,'wl_split']],d:'ขวานแยกปฐพีถล่มศัตรูทั้งหมด'},
+  bloodwar:{n:'นักรบโลหิต',p:'berserker',m:{patk:1.1},pas:['lifesteal'],sk:[[40,'bw_drain']],d:'ดูดเลือดศัตรูมาเป็นพลังชีวิต'},
+archer:{n:'นักธนู',w:'bow',em:'🏹',m:{hp:.9,mp:.8,patk:1.15,matk:.7,pdef:.85,mdef:.9,acc:1.3,eva:1.2,spd:1.15,crit:1.5},pas:['eagle'],sk:[[1,'ar_double'],[4,'ar_fire'],[8,'ar_hawk'],[12,'ar_rain'],[17,'ar_ice'],[22,'ar_pierce']],
+ d:'ยิงไกล แม่นยำ คริติคอลสูง',pro:'แม่นยำและเร็ว มีทั้งสกิลเดี่ยวและหมู่ ธนูติดสถานะ',con:'HP และป้องกันต่ำ'},
+ ranger:{n:'พรานป่า',p:'archer',m:{patk:1.1,acc:1.1},pas:['keen'],sk:[[25,'ra_falcon'],[32,'ra_trap']],d:'นายพรานกับเหยี่ยวคู่ใจ วางกับดัก'},
+  sniper:{n:'สไนเปอร์',p:'ranger',m:{patk:1.1,crit:1.2},pas:['deadly'],sk:[[40,'sn_heart']],d:'ยิงนัดเดียวจอดสนิท'},
+  wildlord:{n:'นายพรานพงไพร',p:'ranger',m:{spd:1.1},pas:['swift'],sum:2,sk:[[40,'wd_storm']],d:'นำอสูรออกล่าได้ 2 ตัว'},
+ bard:{n:'นักกวี',p:'archer',m:{matk:1.5,mp:1.3},pas:['swift'],sk:[[25,'bd_rally'],[32,'bd_lullaby']],d:'ร้องเพลงเสริมพลังทีมและกล่อมศัตรู'},
+  maestro:{n:'คีตกวีสวรรค์',p:'bard',m:{mdef:1.1},pas:['healer'],sk:[[40,'ma_heal']],d:'บทเพลงเยียวยาทั้งทีม'},
+  dirge:{n:'นักดนตรีมรณะ',p:'bard',m:{matk:1.15},pas:['imm_mind'],sk:[[40,'di_requiem']],d:'บทเพลงแห่งความตายโจมตีหมู่'},
+mage:{n:'นักเวทย์',w:'staff',em:'🧙',m:{hp:.8,mp:1.5,patk:.5,matk:1.35,pdef:.75,mdef:1.2,eva:.9,spd:.95},pas:['mpregen'],sk:[[1,'mg_fire'],[3,'mg_ice'],[6,'mg_bolt'],[10,'mg_rock'],[14,'mg_firestorm'],[18,'mg_blizzard'],[22,'mg_thunderstorm']],
+ d:'เวทย์ธาตุ ไฟ น้ำแข็ง สายฟ้า หิน',pro:'โจมตีเวทย์และ MP สูงสุด สกิลหมู่เยอะ เลือกธาตุแพ้ทางได้',con:'HP และป้องกันกายภาพต่ำมาก'},
+ sage:{n:'ปราชญ์',p:'mage',m:{mdef:1.15,mp:1.1},pas:['healer'],sk:[[25,'sg_barrier'],[32,'sg_holy']],d:'เวทย์ศักดิ์สิทธิ์และเวทป้องกัน'},
+  archmage:{n:'อาร์คเมจ',p:'sage',m:{matk:1.15},pas:['adapt'],sk:[[40,'am_meteor']],d:'เรียกอุกกาบาตถล่มศัตรูทั้งหมด'},
+  elementalist:{n:'จอมเวทธาตุ',p:'sage',m:{matk:1.1,mp:1.1},pas:['pierce'],sk:[[40,'el_omni']],d:'หลอมรวมทุกธาตุ ทุกเวทย์ได้โบนัสธาตุ'},
+ warlock:{n:'พ่อมดมืด',p:'mage',m:{matk:1.15},pas:['lifesteal'],sk:[[25,'wk_curse'],[32,'wk_plague']],d:'คำสาปและเวทมืด'},
+  necro:{n:'เนโครแมนเซอร์',p:'warlock',m:{hp:1.15},pas:['regen'],sk:[[40,'ne_soul']],d:'ดูดวิญญาณศัตรู'},
+  enchanter:{n:'จอมมนตร์สะกด',p:'warlock',m:{spd:1.1},pas:['imm_mind'],sk:[[40,'en_mind']],d:'ควบคุมจิตศัตรูทั้งกลุ่ม'},
+merchant:{n:'พ่อค้า',w:'mace',em:'💰',m:{hp:1.1,mp:.8,matk:.7,pdef:1.05,mdef:.95,spd:.95},pas:['lucky'],merch:1,sk:[[1,'me_mammon'],[4,'me_cart'],[8,'me_potion'],[12,'me_shout'],[17,'me_coinbomb'],[22,'me_insure']],
+ d:'ใช้เงินเป็นอาวุธ ซื้อถูก ขายแพง',pro:'ได้เงินจากการต่อสู้ +25% ร้านลด 15% ขายชิ้นส่วน +20%',con:'ค่าสถานะกลาง ๆ บางสกิลต้องจ่ายเงิน'},
+ blacksmith:{n:'ช่างตีเหล็ก',p:'merchant',m:{patk:1.2},pas:['pierce'],sk:[[25,'bs_hammer'],[32,'bs_sharpen']],d:'ค้อนหนัก ลับคมอาวุธให้ทีม'},
+  mastersmith:{n:'ช่างเทพตีอาวุธ',p:'blacksmith',m:{patk:1.1},pas:['deadly'],sk:[[40,'ms_godhammer']],d:'ค้อนเทพทุบทำลายเป้าหมายเดียว'},
+  mechanic:{n:'วิศวกรจักรกล',p:'blacksmith',m:{pdef:1.2,hp:1.1},pas:['thorns'],sk:[[40,'mc_cannon']],d:'ปืนใหญ่ไอน้ำยิงหมู่'},
+ alchemist:{n:'นักเล่นแร่แปรธาตุ',p:'merchant',m:{matk:1.5,mp:1.2},pas:['imm_poison'],sk:[[25,'al_acid'],[32,'al_brew']],d:'ขวดกรดและยาวิเศษ'},
+  biochem:{n:'นักชีวเคมี',p:'alchemist',m:{mdef:1.1},pas:['healer'],sk:[[40,'bc_elixir']],d:'ยาอายุวัฒนะรักษาทั้งทีม'},
+  goldalch:{n:'นักแปรธาตุทองคำ',p:'alchemist',m:{matk:1.1},pas:['lucky'],sk:[[40,'ga_transmute']],d:'แปรศัตรูเป็นทองคำ เงินไหลมาเทมา'},
+gunner:{n:'มือปืน',w:'gun',em:'🔫',m:{hp:.9,mp:.8,patk:1.2,matk:.6,pdef:.85,mdef:.85,acc:1.35,crit:1.8,spd:1.05},pas:['eagle'],sk:[[1,'gn_rapid'],[4,'gn_fire'],[8,'gn_aim'],[12,'gn_spread'],[17,'gn_shock'],[22,'gn_execute']],
+ d:'ยิงรัว คริติคอลแรง',pro:'แม่นยำและคริติคอลสูงมาก ยิงหลายนัดต่อตา',con:'HP และป้องกันต่ำ'},
+ marksman:{n:'มือปืนแม่นยำ',p:'gunner',m:{acc:1.1,crit:1.2},pas:['keen'],sk:[[25,'mk_bullseye'],[32,'mk_ap']],d:'ยิงเจาะจุดตาย'},
+  gunsaint:{n:'เทพปืน',p:'marksman',m:{patk:1.1},pas:['deadly'],sk:[[40,'gs_infinite']],d:'กระสุนนิรันดร์ 6 นัด'},
+  bounty:{n:'นักล่าค่าหัว',p:'marksman',m:{spd:1.1},pas:['lucky'],sk:[[40,'bh_bounty']],d:'ล่าค่าหัว ได้เงินทุกนัด'},
+ artillery:{n:'พลปืนใหญ่',p:'gunner',m:{patk:1.1,hp:1.15},pas:['sturdy'],sk:[[25,'at_grenade'],[32,'at_flash']],d:'ระเบิดหมู่ กดดันทั้งกลุ่ม'},
+  cannoneer:{n:'นายพลปืนใหญ่',p:'artillery',m:{patk:1.1},pas:['pierce'],sk:[[40,'cn_barrage']],d:'ปืนใหญ่ระดมยิงศัตรูทั้งหมด'},
+  demolisher:{n:'ช่างระเบิด',p:'artillery',m:{patk:1.15},pas:['imm_burn'],sk:[[40,'dm_blast']],d:'ระเบิดรุนแรงที่สุด แต่เจ็บตัวเอง'},
+druid:{n:'ดรูอิด',w:'staff',em:'🌿',m:{hp:1.05,mp:1.2,matk:1.1,mdef:1.1,pdef:.95},pas:['regen'],sk:[[1,'dr_wolf'],[3,'dr_leaf'],[7,'dr_bear'],[11,'dr_thorn'],[15,'dr_hawk'],[20,'dr_treant']],
+ d:'แปลงร่างเป็นสัตว์ป่า แต่ละร่างมีสกิลของตัวเอง',pro:'ปรับตัวได้ทุกสถานการณ์ ฟื้น HP เองทุกตา',con:'เสียตาตอนแปลงร่าง ร่างคนค่าสถานะกลาง ๆ'},
+ feral:{n:'ราชันย์สัตว์ป่า',p:'druid',m:{patk:1.2},pas:['rage'],sk:[[25,'fe_saber'],[32,'fe_instinct']],d:'ร่างเสือเขี้ยวดาบ เน้นบุกหนัก'},
+  wildgod:{n:'เทพอสูรพงไพร',p:'feral',m:{patk:1.1,matk:1.1},pas:['adapt'],sk:[[40,'wg_dragon']],d:'แปลงร่างเป็นมังกรพงไพร'},
+  packlord:{n:'จ้าวแห่งฝูง',p:'feral',m:{spd:1.1},pas:['swift'],sum:2,sk:[[40,'pk_howl']],d:'นำอสูรออกสู้ได้ 2 ตัว นำฝูงบุก'},
+ grove:{n:'ผู้พิทักษ์พงไพร',p:'druid',m:{matk:1.2},pas:['healer'],sk:[[25,'gv_rain'],[32,'gv_storm']],d:'เวทพฤกษา รักษาและโจมตีหมู่'},
+  archdruid:{n:'อาร์คดรูอิด',p:'grove',m:{matk:1.1},pas:['mpregen'],sk:[[40,'ad_moon']],d:'แปลงร่างเป็นวิญญาณจันทรา'},
+  stormcaller:{n:'ผู้เรียกพายุ',p:'grove',m:{matk:1.15},pas:['imm_para'],sk:[[40,'sc_tempest']],d:'พายุอสนีโกลาหลถล่มทั้งสนาม'},
+thief:{n:'โจร',w:'dagger',em:'🥷',m:{hp:.72,mp:.8,patk:1.1,matk:.6,pdef:.8,mdef:.85,acc:1.1,eva:1.8,spd:1.35,crit:3},pas:['elusive'],sk:[[1,'th_double'],[4,'th_venom'],[8,'th_hide'],[12,'th_steal'],[17,'th_back'],[22,'th_smoke']],
+ d:'โจมตีรวดเร็ว หลบหลีกสูง คริติคอลบ่อย',pro:'เร็วที่สุด หลบหลีกและคริติคอลสูงมาก ขโมยของได้',con:'HP ต่ำมาก สกิลหมู่น้อย'},
+ rogue:{n:'อันธพาล',p:'thief',m:{hp:1.1,patk:1.1},pas:['lucky'],sk:[[25,'ro_mug'],[32,'ro_dirty']],d:'ปล้นกลางศึก เล่นสกปรก'},
+  masterthief:{n:'จอมโจร',p:'rogue',m:{spd:1.1},pas:['lucky'],sk:[[40,'mt_plunder']],d:'ปล้นสะดมศัตรูทั้งกลุ่ม'},
+  trickster:{n:'นักต้มตุ๋น',p:'rogue',m:{eva:1.15},pas:['imm_mind'],sk:[[40,'tr_trick']],d:'กลลวงสะกดศัตรู'},
+ assassin:{n:'นักฆ่า',p:'thief',m:{patk:1.15,crit:1.3},pas:['deadly'],sk:[[25,'as_sonic'],[32,'as_venomblade']],d:'ฟันรัวสังหาร คริติคอลแรง ×2'},
+  ninja:{n:'นินจา',p:'assassin',m:{spd:1.1,eva:1.1},pas:['swift'],sk:[[40,'nj_shuriken'],[46,'nj_clone']],d:'ดาวกระจายและคาถาแยกร่าง'},
+  ronin:{n:'โรนิน',p:'assassin',m:{patk:1.15},pas:['keen'],sk:[[40,'rn_wander'],[46,'rn_masterless']],d:'ซามูไรไร้นาย ดาบพเนจรฟันเดียวตาย'},
+summoner:{n:'นักอัญเชิญ',w:'whip',em:'🔔',m:{hp:.9,mp:1.4,patk:.6,matk:1.1,pdef:.85,mdef:1.1},pas:[],sum:2,sk:[[1,'su_empower'],[4,'su_mend'],[8,'su_ward'],[12,'su_link'],[17,'su_command'],[22,'su_revive']],
+ d:'นำอสูรออกสู้ 2 ตัวพร้อมกัน เน้นเสริมพลังอสูร',pro:'อสูรออกสู้หลายตัว บัฟและรักษาอสูรเก่ง',con:'ตัวเองโจมตีอ่อน HP ต่ำ'},
+ tamer:{n:'ผู้ฝึกอสูร',p:'summoner',m:{matk:1.1},pas:['swift'],sk:[[25,'tm_double'],[32,'tm_instinct']],d:'ปลุกพลังอสูรขั้นสูง'},
+  beastking:{n:'ราชันย์อสูร',p:'tamer',m:{hp:1.1},pas:['intimidate'],sum:3,sk:[[40,'bk_order']],d:'นำอสูรออกสู้ได้ 3 ตัว'},
+  sealmaster:{n:'ปรมาจารย์ผนึก',p:'tamer',m:{mp:1.1},pas:['sealer'],sum:2,sk:[[40,'sm_bind']],d:'ผนึกอสูรสำเร็จง่ายขึ้น 50%'},
+ soullink:{n:'ผู้เชื่อมวิญญาณ',p:'summoner',m:{mdef:1.15},pas:['healer'],sk:[[25,'sl_share'],[32,'sl_spirit']],d:'เชื่อมวิญญาณกับอสูร แบ่งปันชีวิต'},
+  soulsage:{n:'ปราชญ์วิญญาณ',p:'soullink',m:{mp:1.1},pas:['regen'],sum:3,sk:[[40,'ss_rebirth']],d:'อสูร 3 ตัว ชุบชีวิตทั้งทีมได้'},
+  spiritlord:{n:'เจ้าแห่งภูติ',p:'soullink',m:{matk:1.2},pas:['mpregen'],sum:2,sk:[[40,'sp_storm']],d:'พายุภูติโจมตีหมู่'},
+};
+const BASES=Object.keys(CLS).filter(k=>!CLS[k].p);
+
+/* ================= WEAPONS & GEAR ================= */
+const WT={sword:{n:'ดาบ',t:'p'},axe:{n:'ขวาน',t:'p'},bow:{n:'ธนู',t:'p'},staff:{n:'คทา',t:'m'},mace:{n:'ค้อน',t:'p'},gun:{n:'ปืน',t:'p'},dagger:{n:'มีดสั้น',t:'p'},whip:{n:'แส้',t:'m'}};
+const WN={
+ sword:[['ดาบฝึกหัด'],['ดาบเหล็กกล้า','fire','ฟันเพลิง'],['ดาบวารีจันทรา','water','ฟันกระแสน้ำ'],['ดาบอสนีบาต','electric','ฟันพายุสายฟ้า'],['ดาบมังกรเพลิง','dragon','ฟันมังกรผงาด'],['ดาบเทพครุฑ','flying','ปีกครุฑผ่าฟ้า']],
+ axe:[['ขวานฝึกหัด'],['ขวานศิลา','rock','ทุบศิลา'],['ขวานเหล็กกล้า','steel','ผ่าเหล็กกล้า'],['ขวานแผ่นดิน','ground','ขวานแยกแผ่นดิน'],['ขวานราชันย์อสูร','dark','ขวานทมิฬ'],['ขวานไททัน','fighting','ทลายไททัน']],
+ bow:[['ธนูไม้ฝึกหัด'],['ธนูลมพัด','flying','ศรลมกรด'],['ธนูหิมะ','ice','ศรน้ำแข็ง'],['ธนูพฤกษา','grass','ฝนศรพฤกษา'],['ธนูตะวัน','fire','ศรสุริยัน'],['ธนูจันทราเทพ','fairy','ศรจันทราพร่างพราย']],
+ staff:[['ไม้เท้าฝึกหัด'],['คทาเปลวไฟ','fire','ระเบิดเปลวไฟ'],['คทาน้ำแข็ง','ice','หอกหิมะ'],['คทาอสนี','electric','พายุอสนีบาต'],['คทาจิตวิญญาณ','psychic','คลื่นจิตทำลาย'],['คทาอเวจี','dark','ห้วงอเวจี']],
+ mace:[['กระบองฝึกหัด'],['กระบองเหล็ก','steel','ทุบเหล็ก'],['ค้อนหิน','rock','ค้อนหินผา'],['ค้อนทองคำ','normal','ค้อนทองคำถล่ม'],['ค้อนพายุ','electric','ค้อนสายฟ้า'],['ค้อนเทพธนบดี','fairy','ค้อนแห่งความมั่งคั่ง']],
+ gun:[['ปืนพกฝึกหัด'],['ปืนพกเหล็ก','steel','กระสุนเหล็ก'],['ปืนเพลิง','fire','กระสุนระเบิดเพลิง'],['ปืนลูกซอง','normal','ลูกปรายกระจาย'],['ปืนอสนี','electric','กระสุนสายฟ้า'],['ปืนใหญ่มังกร','dragon','กระสุนมังกร']],
+ dagger:[['มีดสั้นฝึกหัด'],['มีดพิษ','poison','เชือดพิษ'],['มีดเงา','dark','เชือดเงา'],['มีดลม','flying','พายุใบมีด'],['มีดผี','ghost','แทงวิญญาณ'],['มีดนาคราช','water','เขี้ยวนาคราช']],
+ whip:[['แส้ฝึกหัด'],['แส้เถาวัลย์','grass','แส้เถาวัลย์รัด'],['แส้ไฟ','fire','แส้เพลิง'],['แส้ภูต','fairy','แส้พรภูต'],['แส้วิญญาณ','ghost','แส้กระชากวิญญาณ'],['แส้มังกร','dragon','แส้มังกรคำราม']],
+};
+const WF=[4,10,17,27,40,56],WLV=[1,6,13,21,30,40],WPR=[40,300,900,2400,6000,15000],WPW=[0,140,160,135,205,185],WMP=[0,5,7,9,11,14];
+function wStats(type,t){const f=WF[t],o=({sword:{patk:f,acc:t*2},axe:{patk:f*1.1,pdef:t*3},bow:{patk:f*.95,acc:t*3,crit:t},staff:{matk:f,mp:t*8},mace:{patk:f,hp:t*15},gun:{patk:f,acc:t*3,crit:t},dagger:{patk:f*.85,crit:t*1.5,spd:t},whip:{matk:f*.85,mp:t*8,spd:t}})[type];
+ const s={};for(const k in o){const v=Math.round(o[k]);if(v)s[k]=v}return s}
+const EQ={};
+for(const type in WN)WN[type].forEach(([n,el,skn],t)=>{const id=`wp_${type}${t}`;EQ[id]={n,slot:'weapon',wt:type,t:WT[type].t,lv:WLV[t],price:WPR[t],st:wStats(type,t),el:el||null,tier:t};
+ if(t>0){const ws='ws_'+type+t,es=ELST[el];SK[ws]={n:skn,t:WT[type].t,pw:WPW[t],el,mp:WMP[t],...(t===3||t===5?{all:1}:{}),...(es?{st:{[es[0]]:+(es[1]*1.5).toFixed(2)}}:{})};EQ[id].ws=ws}});
+const SLOTS=[['weapon','อาวุธ'],['armor','เกราะ'],['gloves','ถุงมือ'],['boots','รองเท้า'],['belt','เข็มขัด'],['bracelet','กำไล'],['ring','แหวน'],['necklace','สร้อยคอ'],['crown','มงกุฎ']];
+const SLOTN=Object.fromEntries(SLOTS);
+const SLOTBASE={armor:{pdef:4,mdef:2,hp:15},gloves:{patk:2,acc:3},boots:{spd:2,eva:2},belt:{hp:14,pdef:2},bracelet:{matk:2,mdef:2},ring:{patk:1,matk:1,acc:2,eva:1},necklace:{mp:10,mdef:3},crown:{matk:2,mp:8,mdef:2}};
+const TIERS=[['ฝึกหัด',1,1,50],['เหล็กกล้า',6,2.4,260],['เงินจันทร์',13,4.5,1000],['เกล็ดมังกร',21,7.5,3500],['อาดามันไทต์',30,11,8000]];
+for(const sl in SLOTBASE)TIERS.forEach(([tn,lv,m,pr],ti)=>{const st={};for(const k in SLOTBASE[sl])st[k]=Math.max(1,Math.round(SLOTBASE[sl][k]*m));EQ[sl+'_'+ti]={n:SLOTN[sl]+tn,slot:sl,lv,price:pr,st,tier:ti}});
+/* special gear: passives and item skills */
+const SG={
+ ring_antidote:{n:'แหวนต้านพิษ',slot:'ring',lv:4,price:350,st:{mdef:2},pas:'imm_poison'},
+ brace_luck:{n:'กำไลโชคลาภ',slot:'bracelet',lv:5,price:600,st:{eva:2},pas:'lucky'},
+ ring_fire:{n:'แหวนลูกไฟ',slot:'ring',lv:5,price:500,st:{matk:3},sk:'fire_m1'},
+ belt_alert:{n:'เข็มขัดตื่นตัว',slot:'belt',lv:7,price:500,st:{hp:20},pas:'imm_sleep'},
+ ring_heal:{n:'แหวนเยียวยา',slot:'ring',lv:8,price:800,st:{mp:10},sk:'teamheal'},
+ boots_wind:{n:'รองเท้าลมกรด',slot:'boots',lv:8,price:900,st:{spd:4,eva:3},pas:'swift'},
+ neck_calm:{n:'สร้อยจิตสงบ',slot:'necklace',lv:9,price:700,st:{mdef:4},pas:'imm_mind'},
+ neck_sun:{n:'สร้อยตะวันอุ่น',slot:'necklace',lv:10,price:800,st:{mdef:4,hp:20},pas:'imm_freeze'},
+ brace_static:{n:'กำไลอสนี',slot:'bracelet',lv:10,price:900,st:{matk:3},pas:'imm_para',sk:'electric_m1'},
+ crown_eagle:{n:'มงกุฎตาเหยี่ยว',slot:'crown',lv:11,price:1000,st:{acc:10},pas:'eagle'},
+ belt_rock:{n:'เข็มขัดหินผา',slot:'belt',lv:12,price:1200,st:{hp:40,pdef:4},pas:'sturdy'},
+ brace_thorn:{n:'กำไลหนาม',slot:'bracelet',lv:12,price:1100,st:{pdef:5},pas:'thorns'},
+ crown_sage:{n:'มงกุฎปราชญ์',slot:'crown',lv:14,price:1600,st:{matk:5,mp:20},pas:'mpregen'},
+ ring_wind:{n:'แหวนสายลม',slot:'ring',lv:15,price:1500,st:{spd:3},sk:'flying_st'},
+ armor_berserk:{n:'เกราะคลั่ง',slot:'armor',lv:15,price:1900,st:{patk:6,hp:40,pdef:8},pas:'rage'},
+ glove_assassin:{n:'ถุงมือนักฆ่า',slot:'gloves',lv:16,price:1800,st:{patk:6,crit:3},pas:'keen'},
+ boots_float:{n:'รองเท้าลอยฟ้า',slot:'boots',lv:18,price:2400,st:{eva:6,spd:3},pas:'levitate'},
+ ring_blood:{n:'แหวนโลหิต',slot:'ring',lv:20,price:3000,st:{patk:4,matk:4},pas:'lifesteal'},
+ glove_guard:{n:'ถุงมือผู้พิทักษ์',slot:'gloves',lv:20,price:2800,st:{pdef:8,mdef:4},pas:'guardian'},
+ neck_storm:{n:'สร้อยเทพพายุ',slot:'necklace',lv:22,price:3600,st:{matk:8,mp:20},sk:'electric_aoe'},
+ armor_dragon:{n:'เกราะเกล็ดมังกร',slot:'armor',lv:24,price:5200,st:{pdef:28,mdef:16,hp:80},pas:'thick'},
+ crown_pierce:{n:'มงกุฎทะลวง',slot:'crown',lv:26,price:6000,st:{patk:8,matk:8},pas:'pierce'},
+ neck_phoenix:{n:'สร้อยขนฟีนิกซ์',slot:'necklace',lv:30,price:9000,st:{hp:60,mdef:10},pas:'rebirth'},
+ armor_saint:{n:'เกราะศักดิ์สิทธิ์',slot:'armor',lv:32,price:14000,st:{pdef:40,mdef:40,hp:120},pas:'rainbow'},
+ ring_deadly:{n:'แหวนจุดตาย',slot:'ring',lv:34,price:12000,st:{crit:5,acc:8},pas:'deadly'},
+};
+for(const k in SG)EQ[k]={...SG[k],special:1};
+
+const CON={
+ pot:{n:'ยาฟื้นพลัง',d:'ฟื้น HP 60',price:20,hp:60},
+ pot2:{n:'ยาฟื้นพลังชั้นสูง',d:'ฟื้น HP 250',price:90,hp:250,lv:10},
+ pot3:{n:'ยาฟื้นพลังเต็มขวด',d:'ฟื้น HP 700',price:300,hp:700,lv:25},
+ eth:{n:'น้ำมนต์เวท',d:'ฟื้น MP 30',price:30,mp:30},
+ eth2:{n:'น้ำมนต์เวทชั้นสูง',d:'ฟื้น MP 120',price:150,mp:120,lv:20},
+ rev:{n:'ธูปเรียกวิญญาณ',d:'ปลุกอสูรที่หมดสติ ฟื้น HP ครึ่งหนึ่ง',price:120,rev:.5},
+ antidote:{n:'ยาแก้พิษ',d:'รักษาติดพิษ',price:15,cure:['poison']},
+ burnheal:{n:'ขี้ผึ้งดับร้อน',d:'รักษาติดไฟ',price:15,cure:['burn']},
+ thaw:{n:'น้ำมันอุ่นกาย',d:'รักษาแช่แข็งและเยือกแข็ง',price:15,cure:['freeze','chill']},
+ relax:{n:'ยาคลายเส้น',d:'รักษาอัมพาตและไฟฟ้าสถิต',price:15,cure:['para','static']},
+ calm:{n:'ธูปสงบจิต',d:'รักษานอนหลับ มึนงง หลงรัก มนต์สะกด',price:25,cure:['sleep','confuse','love','charm']},
+ allcure:{n:'โอสถครอบจักรวาล',d:'รักษาทุกสถานะ',price:70,lv:8,cure:Object.keys(STS)},
+ seal1:{n:'ผนึกกระดาษ',d:'พลังผนึก ×1.0',price:30,seal:1},
+ seal2:{n:'ผนึกหยก',d:'พลังผนึก ×1.7',price:120,seal:1.7,lv:6},
+ seal3:{n:'ผนึกทองคำ',d:'พลังผนึก ×2.6',price:420,seal:2.6,lv:13},
+ seal4:{n:'ผนึกจักรพรรดิ',d:'พลังผนึก ×4.0',price:1300,seal:4,lv:21},
+ seal5:{n:'ผนึกสวรรค์',d:'พลังผนึก ×6.0',price:3500,seal:6,lv:32},
+};
+const CURES=['antidote','burnheal','thaw','relax','calm'];
+const SEALS=['seal1','seal2','seal3','seal4','seal5'];
+
+/* ================= BEASTS (50) ================= */
+/* b: [hp,mp,patk,matk,pdef,mdef,acc,eva,spd]; ev: evolution forms [lv,name]; sig: signature skill */
+const SP={
+/* zone 1 */
+kappa:{n:'คัปปะ',o:'ญี่ปุ่น',t:['water','fighting'],em:'🐢',r:1,b:[46,20,9,6,8,6,90,6,8],sk:['water_p1','fighting_p1','rock_st','water_aoe'],pas:'sturdy',ev:[[14,'คัปปะนักรบ'],[30,'ราชาคัปปะ']],sig:'s_kappa',parts:[['จานน้ำบนหัวคัปปะ',16],['กระดองคัปปะ',24]]},
+wisp:{n:'วิลโอเดอะวิสป์',o:'อังกฤษ',t:['fire','ghost'],em:'👻',r:1,b:[36,30,5,10,4,7,92,10,11],sk:['fire_m1','ghost_p1','ghost_st','fire_aoe'],pas:'levitate',ev:[[14,'วิสป์เพลิงผี'],[30,'โคมวิญญาณมรณะ']],sig:'s_wisp',parts:[['แก่นเปลวไฟวิญญาณ',20],['ฝุ่นแสงภูต',14]]},
+mandrake:{n:'แมนเดรก',o:'ยุโรป',t:['grass','poison'],em:'🌱',r:1,b:[46,26,7,9,7,7,90,6,7],sk:['grass_m1','poison_st','grass_st','grass_aoe'],pas:'imm_poison',ev:[[14,'แมนเดรกกรีดร้อง'],[30,'ราชินีแมนเดรก']],sig:'s_mandrake',parts:[['รากแมนเดรก',18],['ใบแมนเดรก',12]]},
+jackalope:{n:'แจ็กคาโลป',o:'อเมริกา',t:['normal','flying'],em:'🐇',r:1,b:[38,22,9,5,5,5,92,12,13],sk:['normal_p1','flying_p1','flying_st','normal_p2'],pas:'swift',parts:[['เขากวางแจ็กคาโลป',18],['ขนนุ่มกระต่ายเขา',12]]},
+tanuki:{n:'บาเคดานุกิ',o:'ญี่ปุ่น',t:['normal','psychic'],em:'🦝',r:1.2,b:[50,22,8,7,8,6,88,6,7],sk:['normal_p1','psychic_st','heal_self','psychic_m2'],pas:'lucky',ev:[[14,'ทานุกิแปลงกาย'],[30,'ทานุกิพันหน้า']],sig:'s_tanuki',parts:[['ใบไม้แปลงกาย',12],['หางพองทานุกิ',20]]},
+raiju:{n:'ไรจู',o:'ญี่ปุ่น',t:['electric'],em:'⚡',r:1.3,b:[40,26,9,11,5,6,92,11,14],sk:['electric_p1','electric_m1','electric_st','electric_aoe'],pas:'staticbody',ev:[[14,'ไรจูอัสนี'],[30,'เทพอสูรสายฟ้า']],sig:'s_raiju',parts:[['ขนสายฟ้าไรจู',22],['เขี้ยวอัสนี',26]]},
+pixie:{n:'พิกซี่',o:'อังกฤษ',t:['fairy'],em:'🧚',r:1.3,b:[34,34,4,11,5,9,94,14,13],sk:['fairy_m1','fairy_st','teamheal','fairy_m2'],pas:'elusive',ev:[[14,'พิกซี่ดอกไม้'],[30,'ราชินีภูตไททาเนีย']],sig:'s_pixie',parts:[['ผงภูตพิกซี่',20],['ปีกใสพิกซี่',26]]},
+kodama:{n:'โคดามะ',o:'ญี่ปุ่น',t:['grass'],em:'🌳',r:1.1,b:[54,24,6,8,9,8,88,5,6],sk:['grass_p1','heal_self','grass_st','grass_m2'],pas:'regen',ev:[[14,'โคดามะพันปี'],[30,'วิญญาณต้นไม้ศักดิ์สิทธิ์']],sig:'s_kodama',parts:[['เปลือกไม้วิญญาณ',15],['ยางไม้ศักดิ์สิทธิ์',22]]},
+redcap:{n:'เรดแคป',o:'สกอตแลนด์',t:['dark','fighting'],em:'👹',r:1.2,b:[42,18,11,4,6,4,90,8,11],sk:['dark_p1','fighting_p1','dark_st','dark_p2'],pas:'rage',ev:[[14,'เรดแคปเลือดเย็น'],[30,'ราชันย์เรดแคป']],sig:'s_redcap',parts:[['หมวกแดงเปื้อนเลือด',20],['ขวานเล็กสนิมเขรอะ',16]]},
+/* zone 2 */
+kitsune:{n:'จิ้งจอกสามหาง',o:'จีน · ญี่ปุ่น',t:['fire','psychic'],em:'🦊',r:2,b:[44,32,7,12,6,9,94,12,13],sk:['fire_m1','psychic_st','fire_m2','psychic_m2'],pas:'mpregen',ev:[[22,'จิ้งจอกหกหาง'],[38,'จิ้งจอกเก้าหาง']],sig:'s_kitsune',parts:[['หางจิ้งจอกเงิน',60],['ไข่มุกจิ้งจอก',95]]},
+tengu:{n:'เทงงุ',o:'ญี่ปุ่น',t:['flying','fighting'],em:'👺',r:1.8,b:[44,26,12,7,7,7,94,10,14],sk:['flying_p1','fighting_st','flying_p2','fighting_p2'],pas:'eagle',ev:[[22,'คาราสึเทงงุ'],[38,'ไดเทงงุ']],sig:'s_tengu',parts:[['ขนปีกเทงงุ',45],['พัดใบตองเทงงุ',40]]},
+griffin:{n:'กริฟฟิน',o:'กรีก',t:['flying','normal'],em:'🦅',r:2,b:[54,20,13,5,9,6,92,8,12],sk:['flying_p1','normal_st','flying_p2','normal_aoe'],pas:'intimidate',ev:[[22,'กริฟฟินศึก'],[38,'ราชันย์กริฟฟิน']],sig:'s_griffin',parts:[['ขนปีกกริฟฟิน',55],['กรงเล็บกริฟฟิน',50]]},
+nilmangkorn:{n:'ม้านิลมังกร',o:'ไทย',t:['water','dragon'],em:'🐎',r:2.2,b:[56,26,12,9,9,8,92,8,12],sk:['water_p1','dragon_st','water_p2','dragon_p2'],pas:'swift',ev:[[22,'ม้านิลมังกรศึก'],[38,'ม้านิลมังกรทรงเครื่อง']],sig:'s_nil',parts:[['เกล็ดนิลมังกร',70],['แผงคอม้านิล',55]]},
+jorogumo:{n:'โจโรกุโมะ',o:'ญี่ปุ่น',t:['bug','poison'],em:'🕷️',r:2,b:[48,30,11,10,8,8,94,10,12],sk:['bug_p1','bug_st','poison_p2','poison_aoe'],pas:'poisonTouch',ev:[[22,'โจโรกุโมะสาว'],[38,'ราชินีแมงมุมโจโร']],sig:'s_joro',parts:[['ใยไหมทองคำ',55],['เขี้ยวพิษแมงมุม',60]]},
+baku:{n:'บาคุ',o:'ญี่ปุ่น · จีน',t:['psychic','normal'],em:'🐽',r:1.8,b:[62,30,7,11,10,11,88,5,7],sk:['psychic_m1','heal_self','psychic_st','psychic_aoe'],pas:'imm_sleep',parts:[['งวงกินฝัน',50],['ขนลายบาคุ',40]]},
+harpy:{n:'ฮาร์ปี้',o:'กรีก',t:['flying','dark'],em:'🦜',r:1.8,b:[40,24,11,8,6,6,94,15,15],sk:['flying_p1','dark_p1','flying_st','flying_aoe'],pas:'elusive',parts:[['ขนนกฮาร์ปี้',45],['กรงเล็บฮาร์ปี้',45]]},
+kelpie:{n:'เคลปี้',o:'สกอตแลนด์',t:['water','ghost'],em:'🐴',r:2,b:[52,28,10,10,8,8,92,9,12],sk:['water_p1','ghost_st','water_aoe','ghost_m2'],pas:'lifesteal',ev:[[22,'เคลปี้หลอน'],[38,'ม้าวิญญาณทะเลสาบ']],sig:'s_kelpie',parts:[['สาหร่ายแผงคอ',45],['บังเหียนวิญญาณ',70]]},
+nue:{n:'นุเอะ',o:'ญี่ปุ่น',t:['dark','electric'],em:'🐒',r:2,b:[50,28,11,11,8,8,92,10,12],sk:['electric_p1','dark_p1','electric_st','dark_m2'],pas:'staticbody',ev:[[22,'นุเอะทมิฬ'],[38,'นุเอะราชาเมฆา']],sig:'s_nue',parts:[['หางงูนุเอะ',55],['ขนลิงนุเอะ',45]]},
+/* zone 3 */
+sphinx:{n:'สฟิงซ์',o:'อียิปต์',t:['ground','psychic'],em:'🦁',r:3,b:[64,34,12,13,12,12,94,8,10],sk:['ground_p1','psychic_st','psychic_m2','ground_aoe'],pas:'imm_mind',parts:[['กรงเล็บสฟิงซ์',110],['แผงคอทองคำ',140]]},
+basilisk:{n:'บาซิลิสก์',o:'ยุโรป',t:['poison','dark'],em:'🦎',r:3,b:[52,30,13,10,10,9,95,12,13],sk:['poison_p1','poison_st','dark_p2','poison_aoe'],pas:'poisonTouch',ev:[[30,'บาซิลิสก์ศิลา'],[44,'ราชันย์อสรพิษ']],sig:'s_basilisk',parts:[['เขี้ยวพิษบาซิลิสก์',120],['ดวงตาศิลา',160]]},
+cerberus:{n:'สุนัขนรก',o:'กรีก',t:['dark','fire'],em:'🐕',r:3,b:[62,24,15,8,11,8,92,7,11],sk:['dark_p1','fire_p1','normal_st','fire_p2'],pas:'intimidate',ev:[[30,'ออร์ธรอส'],[44,'เคอร์เบอรัส']],sig:'s_cerberus',parts:[['เขี้ยวสุนัขนรก',130],['ปลอกคอนรก',100]]},
+manticore:{n:'แมนติคอร์',o:'เปอร์เซีย',t:['ground','poison'],em:'🦂',r:3,b:[60,26,14,10,11,9,93,9,11],sk:['ground_p1','poison_p2','fighting_st','ground_p2'],pas:'thorns',parts:[['เหล็กไนแมนติคอร์',140],['แผงคอแมนติคอร์',90]]},
+yeti:{n:'เยติ',o:'หิมาลัย',t:['ice','fighting'],em:'🦍',r:3,b:[70,22,15,8,12,9,90,6,9],sk:['ice_p1','fighting_p1','ice_st','ice_aoe'],pas:'thick',ev:[[30,'เยติภูเขา'],[44,'ราชาเยติ']],sig:'s_yeti',parts:[['ขนเยติ',100],['กรงเล็บน้ำแข็ง',120]]},
+golem:{n:'โกเลม',o:'ยิว · ยุโรปตะวันออก',t:['rock','steel'],em:'🗿',r:3,b:[80,16,15,6,18,10,88,3,6],sk:['rock_p1','rock_st','steel_p2','rock_aoe'],pas:'nocrit',ev:[[30,'โกเลมเหล็กกล้า'],[44,'โกเลมอาดามันไทต์']],sig:'s_golem',parts:[['แกนหินโกเลม',150],['ศิลาจารึกชีวิต',190]]},
+minotaur:{n:'มิโนทอร์',o:'กรีก',t:['fighting','normal'],em:'🐂',r:3,b:[72,20,17,6,12,8,90,6,10],sk:['normal_p1','fighting_p2','fighting_st','ground_aoe'],pas:'rage',parts:[['เขามิโนทอร์',130],['ขวานสำริดหัก',100]]},
+mummy:{n:'มัมมี่',o:'อียิปต์',t:['ghost','ground'],em:'🧟',r:2.6,b:[64,30,11,12,12,13,88,4,6],sk:['ghost_p1','ground_st','ghost_m2','poison_st'],pas:'regen',parts:[['ผ้าพันศพโบราณ',90],['เครื่องรางสุสาน',130]]},
+scarab:{n:'สคารับ',o:'อียิปต์',t:['bug','ground'],em:'🪲',r:2.8,b:[58,26,13,9,14,10,92,8,10],sk:['bug_p1','ground_p1','rock_st','bug_aoe'],pas:'imm_burn',ev:[[30,'สคารับทองคำ'],[44,'เคปรีเทพสุริยา']],sig:'s_scarab',parts:[['กระดองสคารับ',110],['อำพันสุริยา',150]]},
+/* zone 4 */
+dragon:{n:'ลูกมังกร',o:'ยุโรป',t:['fire','dragon'],em:'🐉',r:4,b:[78,36,16,16,14,13,94,8,11],sk:['dragon_p1','fire_m1','dragon_st','fire_m2'],pas:'intimidate',ev:[[34,'มังกรหนุ่ม'],[48,'มังกรตะวันตก']],sig:'s_dragon',parts:[['เกล็ดมังกร',300],['หัวใจมังกร',520]]},
+naga:{n:'งูนาค',o:'ไทย · ลาว',t:['water','dragon'],em:'🐍',r:4,b:[74,40,13,17,12,15,94,9,11],sk:['water_m1','dragon_m1','teamheal','water_aoe'],pas:'regen',ev:[[34,'นาคราช'],[48,'พญานาค']],sig:'s_naga',parts:[['เกล็ดพญานาค',280],['ลูกแก้วนาคา',460]]},
+hydra:{n:'ไฮดรา',o:'กรีก',t:['poison','dragon'],em:'🐊',r:3.8,b:[90,30,15,12,13,11,90,5,8],sk:['poison_p1','dragon_p1','heal_self','poison_aoe'],pas:'multihit',parts:[['หัวไฮดรา',260],['เลือดพิษไฮดรา',400]]},
+thunderbird:{n:'ธันเดอร์เบิร์ด',o:'ชนพื้นเมืองอเมริกา',t:['electric','flying'],em:'⛈️',r:3.6,b:[64,34,13,15,10,11,94,11,15],sk:['flying_p1','electric_m1','flying_st','electric_aoe'],pas:'imm_para',ev:[[34,'ธันเดอร์เบิร์ดพายุ'],[48,'นกอัสนีจ้าวพายุ']],sig:'s_tbird',parts:[['ขนนกอัสนี',240],['หินฟ้าผ่า',360]]},
+gargoyle:{n:'การ์กอยล์',o:'ฝรั่งเศส',t:['rock','flying'],em:'🦇',r:3.4,b:[70,22,15,8,17,11,90,6,9],sk:['rock_p1','flying_p1','rock_st','rock_p2'],pas:'sturdy',ev:[[34,'การ์กอยล์ศิลา'],[48,'การ์กอยล์ปีศาจ']],sig:'s_gargoyle',parts:[['ปีกหินการ์กอยล์',220],['ดวงตาทับทิม',330]]},
+jiangshi:{n:'เจียงซือ',o:'จีน',t:['ghost','fighting'],em:'🧛',r:3.4,b:[72,24,16,8,12,10,90,5,8],sk:['ghost_p1','fighting_p1','ghost_st','fighting_p2'],pas:'imm_sleep',ev:[[34,'เจียงซือร้อยปี'],[48,'ราชันย์เจียงซือ']],sig:'s_jiangshi',parts:[['ยันต์เหลืองแปะหน้า',200],['ชุดขุนนางชิง',300]]},
+banshee:{n:'แบนชี',o:'ไอร์แลนด์',t:['ghost','fairy'],em:'💀',r:3.6,b:[56,40,8,17,9,14,94,13,13],sk:['ghost_m1','fairy_st','ghost_aoe','fairy_m2'],pas:'levitate',parts:[['หยดน้ำตาแบนชี',250],['หวีเงินแบนชี',340]]},
+/* zone 5 */
+behemoth:{n:'เบฮีมอธ',o:'ตะวันออกกลาง',t:['ground','steel'],em:'🦏',r:4.5,b:[110,24,20,8,20,12,90,4,7],sk:['ground_p2','steel_p1','ground_aoe','rock_st'],pas:'nocrit',parts:[['เขาเบฮีมอธ',480],['หนังเหล็กเบฮีมอธ',600]]},
+ifrit:{n:'อิฟริต',o:'อาหรับ',t:['fire','dark'],em:'😈',r:4.5,b:[78,44,15,20,12,14,94,9,13],sk:['fire_m2','dark_m1','fire_st','fire_aoe'],pas:'flameBody',parts:[['ตะเกียงอิฟริต',500],['แก่นเปลวไฟนรก',620]]},
+nidhogg:{n:'นีดฮ็อก',o:'นอร์ส',t:['dragon','dark'],em:'🐲',r:5,b:[96,36,19,16,15,13,94,8,11],sk:['dragon_p2','dark_p2','dark_st','dragon_aoe'],pas:'lifesteal',parts:[['เขี้ยวนีดฮ็อก',560],['รากต้นอิกดราซิล',700]]},
+jormungandr:{n:'โยรมุนกันด์',o:'นอร์ส',t:['poison','water'],em:'🌊',r:5,b:[104,34,17,15,16,14,92,6,9],sk:['poison_p2','water_p2','poison_st','water_aoe'],pas:'regen',parts:[['เกล็ดอสรพิษโลก',540],['พิษกลืนโลก',680]]},
+chimera:{n:'คิเมร่า',o:'กรีก',t:['fire','poison'],em:'🐐',r:4.5,b:[84,32,17,15,13,12,93,9,12],sk:['fire_p2','poison_p1','normal_st','fire_aoe'],pas:'multihit',parts:[['หัวแพะคิเมร่า',460],['หางงูคิเมร่า',520]]},
+ammit:{n:'อัมมิต',o:'อียิปต์',t:['dark','ground'],em:'🦛',r:4.5,b:[92,26,19,10,15,12,92,7,10],sk:['dark_p2','ground_p2','dark_st','ground_aoe'],pas:'rage',parts:[['เขี้ยวผู้กลืนวิญญาณ',500],['เกล็ดอัมมิต',560]]},
+/* rare (mist only) */
+qilin:{n:'กิเลน',o:'จีน',t:['fairy','fire'],em:'🦌',r:3.5,rare:1,b:[60,36,10,13,11,13,94,9,11],sk:['fairy_m1','fire_m1','teamheal','fairy_m2'],pas:'rainbow',sig:'s_qilin',parts:[['เขากิเลน',150],['เกล็ดกิเลน',120]]},
+unicorn:{n:'ยูนิคอร์น',o:'ยุโรป',t:['fairy','psychic'],em:'🦄',r:3.5,rare:1,b:[58,36,11,13,9,12,94,11,13],sk:['fairy_p1','psychic_m1','heal_self','fairy_p2'],pas:'imm_mind',sig:'s_unicorn',parts:[['เขายูนิคอร์น',180],['แผงคอสีรุ้ง',120]]},
+pegasus:{n:'เพกาซัส',o:'กรีก',t:['flying','electric'],em:'✨',r:3.8,rare:1,b:[62,30,14,12,10,10,96,13,16],sk:['flying_p1','electric_p1','flying_st','electric_m2'],pas:'swift',sig:'s_pegasus',parts:[['ขนปีกเพกาซัส',220],['เกือกม้าสายฟ้า',260]]},
+erawan:{n:'ช้างเอราวัณ',o:'ไทย · อินเดีย',t:['fairy','normal'],em:'🐘',r:4,rare:1,b:[110,30,15,12,15,15,90,4,8],sk:['normal_p2','fairy_m1','normal_st','fairy_aoe'],pas:'guardian',sig:'s_erawan',parts:[['งาเอราวัณ',300],['เครื่องทรงช้างเผือก',360]]},
+baihu:{n:'เสือขาวไป๋หู่',o:'จีน',t:['steel','fighting'],em:'🐅',r:4,rare:1,b:[72,24,19,8,14,10,95,11,15],sk:['steel_p1','fighting_p1','steel_st','fighting_p2'],pas:'keen',sig:'s_baihu',parts:[['เขี้ยวพยัคฆ์ขาว',380],['หนังลายเงิน',420]]},
+lamassu:{n:'ลามัสซู',o:'อัสซีเรีย',t:['rock','fairy'],em:'🦬',r:4.5,rare:1,b:[96,30,14,13,18,16,90,5,8],sk:['rock_p1','fairy_m1','rock_st','rock_aoe'],pas:'guardian',sig:'s_lamassu',parts:[['ปีกศิลาลามัสซู',420],['มงกุฎเขาวัว',480]]},
+fenrir:{n:'เฟนเรียร์',o:'นอร์ส',t:['dark','ice'],em:'🐺',r:4.5,rare:1,b:[80,30,20,12,13,11,95,11,16],sk:['dark_p2','ice_p1','normal_st','ice_aoe'],pas:'pierce',sig:'s_fenrir',parts:[['ขนเฟนเรียร์',520],['โซ่ไกลพนีร์ที่ขาด',640]]},
+kraken:{n:'คราเคน',o:'นอร์ส',t:['water','dark'],em:'🦑',r:4.5,rare:1,b:[110,36,17,15,14,14,90,5,8],sk:['water_p2','dark_p1','water_st','water_aoe'],pas:'thick',sig:'s_kraken',parts:[['หนวดคราเคน',500],['หมึกดำทะเลลึก',600]]},
+phoenix:{n:'ฟีนิกซ์',o:'กรีก · อียิปต์',t:['fire','flying'],em:'🔥',r:5,rare:1,b:[72,44,11,20,12,16,95,12,15],sk:['fire_m2','flying_p1','heal_self','fire_aoe'],pas:'rebirth',sig:'s_phoenix',parts:[['ขนนกฟีนิกซ์',700],['น้ำตาฟีนิกซ์',900]]},
+garuda:{n:'พญาครุฑ',o:'ไทย · อินเดีย',t:['flying','fairy'],em:'👑',r:5,rare:1,b:[82,32,21,12,14,12,96,11,17],sk:['flying_p2','fairy_p1','flying_st','fairy_p2'],pas:'adapt',sig:'s_garuda',parts:[['ขนครุฑทองคำ',680],['กรงเล็บครุฑ',820]]},
+};
+const STARTERS=['mandrake','wisp','kappa'];
+const MAXPETS=80;
+
+const ZN=[
+ {id:1,n:'ป่าแสงจันทร์',d:'ป่าโปร่งริมลำธาร อสูรตัวเล็กชอบซ่อนในพุ่มหญ้า',lv:[1,7],sp:['kappa','wisp','mandrake','jackalope','tanuki','raiju','pixie','kodama','redcap'],rare:['qilin','unicorn'],boss:{sp:'tanuki',lv:9,n:'ราชาทานุกิ'},mini:0},
+ {id:2,n:'หุบเขาหมอกเซียน',d:'หมอกหนาปกคลุมศาลเจ้าร้าง ได้ยินเสียงกระดิ่งตลอดเวลา',lv:[7,15],sp:['kitsune','tengu','griffin','nilmangkorn','jorogumo','baku','harpy','kelpie','nue'],rare:['pegasus','erawan'],boss:{sp:'kitsune',lv:17,n:'จิ้งจอกพันปี'},mini:1},
+ {id:3,n:'ทะเลทรายสุสานทอง',d:'ซากวิหารใต้ผืนทราย ผู้เฝ้าประตูยังไม่เคยหลับ',lv:[14,23],sp:['sphinx','basilisk','cerberus','manticore','yeti','golem','minotaur','mummy','scarab'],rare:['baihu','lamassu'],boss:{sp:'sphinx',lv:25,n:'สฟิงซ์ผู้เฝ้าสุสาน'},mini:1},
+ {id:4,n:'ยอดเขามังกรหลับ',d:'ยอดเขาเหนือเมฆ ที่อยู่ของอสูรระดับตำนาน',lv:[23,34],sp:['dragon','naga','hydra','thunderbird','gargoyle','jiangshi','banshee'],rare:['fenrir','kraken'],boss:{sp:'dragon',lv:37,n:'มังกรเพลิงโบราณ'},mini:2},
+ {id:5,n:'แดนสวรรค์ล่มสลาย',d:'ซากอาณาจักรเทพที่ร่วงจากฟากฟ้า อสูรวันสิ้นโลกเดินเพ่นพ่าน',lv:[33,46],sp:['behemoth','ifrit','nidhogg','jormungandr','chimera','ammit'],rare:['phoenix','garuda'],boss:{sp:'nidhogg',lv:50,n:'นีดฮ็อกผู้กัดกินรากโลก'},mini:2},
+];
+const NPC=[
+ {n:'ต้นกล้า เด็กฝึกผนึก',lv:3,cls:'swordsman',pets:[['jackalope',3]],gold:60},
+ {n:'ปาริฉัตร นักล่าแห่งป่าจันทร์',lv:6,cls:'archer',pets:[['raiju',7]],gold:150},
+ {n:'หลินเฟย นักพรตเต๋า',lv:10,cls:'mage',pets:[['baku',10]],gold:400},
+ {n:'แกเร็ธ อัศวินเกราะเงิน',lv:14,cls:'gladiator',pets:[['griffin',15]],gold:800},
+ {n:'จันทร์เพ็ญ ผู้พิทักษ์ลุ่มน้ำ',lv:18,cls:'summoner',pets:[['nilmangkorn',18],['kelpie',17]],gold:1400},
+ {n:'เนเฟอร์ ฟาโรห์ร่างเงา',lv:24,cls:'thief',pets:[['scarab',24],['mummy',23]],gold:2500},
+ {n:'มอร์แกนา จอมขมังเวทย์',lv:30,cls:'warlock',pets:[['hydra',30]],gold:4500},
+ {n:'ธาราเทพ ปรมาจารย์ผนึก',lv:38,cls:'tamer',pets:[['dragon',38],['naga',37]],gold:9000},
+ {n:'คาเงะโทระ โชกุนเงา',lv:44,cls:'shogun',pets:[['jiangshi',44],['gargoyle',43]],gold:16000},
+ {n:'ราชันย์ไร้นาม',lv:50,cls:'archmage',pets:[['nidhogg',50],['ifrit',48]],gold:32000},
+];
+
+/* ================= v5 ADDITIONS ================= */
+Object.assign(PAS,{
+ counter:{n:'สวนกลับเงา',d:'25% โจมตีสวนกลับเมื่อโดนโจมตีกายภาพ'},
+ echo:{n:'เสียงสะท้อนเวท',d:'20% ใช้สกิลโจมตีซ้ำอีกครั้งฟรี'},
+ mpsave:{n:'ประหยัดพลัง',d:'ใช้ MP น้อยลง 30%'},
+ toxin:{n:'พิษร้ายแรง',d:'โอกาสทำให้ติดสถานะ ×1.5'},
+ laststand:{n:'ฮึดสู้',d:'HP ต่ำกว่า 30% ป้องกันทั้งหมด +50%'},
+ firstblood:{n:'จู่โจมก่อน',d:'ตาแรกของการต่อสู้ ความเร็ว ×2'},
+ manadrain:{n:'ดูดมานา',d:'ฟื้น MP 8% ของดาเมจที่ทำได้'},
+ aoeboost:{n:'ผู้ทำลายล้าง',d:'สกิลหมู่แรง 90% ต่อตัว แทน 75%'},
+});
+Object.assign(SK,{
+ focus_p:{n:'รวบรวมพลัง',t:'buff',tg:'self',charge:2,mp:4},
+ heavy_stance:{n:'ตั้งท่าหนัก',t:'buff',tg:'self',bf:{spd:-.5,pdef:.4,mdef:.2},tn:2,charge:1.6,mp:4},
+ sw_quick:{n:'ก้าวพริบตา',t:'buff',tg:'self',bf:{spd:.5,eva:.3},tn:3,mp:4},
+ sw_charge:{n:'ฟันจันทราผ่าฟ้า',t:'p',pw:340,el:'normal',mp:12,ct:1},
+ gl_crush:{n:'กระแทกปลดอาวุธ',t:'p',pw:115,el:'fighting',mp:5,bf:{patk:-.3,matk:-.3},tn:3},
+ gl_stance:{n:'ตั้งท่าหนักแน่น',t:'buff',tg:'self',bf:{spd:-.5,pdef:.6,mdef:.4},tn:2,charge:1.8,mp:6},
+ ar_pin:{n:'ศรตรึงเงา',t:'p',pw:110,el:'dark',mp:4,bf:{spd:-.4},tn:3},
+ ar_charge:{n:'ง้างศรเต็มแรง',t:'p',pw:350,el:'normal',mp:12,ct:1,cb:20},
+ mg_slow:{n:'เวทถ่วงเวลา',t:'debuff',el:'psychic',mp:8,all:1,bf:{spd:-.35},tn:3},
+ mg_chant:{n:'ร่ายเวทยาว',t:'buff',tg:'self',charge:2.2,bf:{mdef:.2},tn:2,mp:6},
+ me_bribe:{n:'ติดสินบน',t:'debuff',el:'normal',mp:3,all:1,bf:{patk:-.25,matk:-.25},tn:3,gc:2},
+ me_bigdeal:{n:'ทุ่มสุดตัว',t:'p',pw:380,el:'steel',mp:10,ct:1,gc:6},
+ gn_leg:{n:'ยิงขา',t:'p',pw:110,el:'normal',mp:4,bf:{spd:-.45},tn:3},
+ gn_snipe:{n:'เล็งยิงระยะไกล',t:'p',pw:350,el:'steel',mp:12,ct:1,cb:30},
+ dr_wind:{n:'สายลมพงไพร',t:'buff',tg:'team',bf:{spd:.3},tn:3,mp:7},
+ dr_chant:{n:'ร่ายพลังพงไพร',t:'buff',tg:'self',charge:2,mp:5},
+ th_cripple:{n:'เฉือนเอ็นข้อเท้า',t:'p',pw:100,el:'dark',mp:4,bf:{spd:-.4},tn:3},
+ th_ambush:{n:'ซุ่มรอจังหวะ',t:'buff',tg:'self',bf:{eva:1},tn:2,charge:2.2,mp:6},
+ su_weaken:{n:'แส้สาปอ่อนแรง',t:'debuff',el:'ghost',mp:6,bf:{patk:-.3,pdef:-.3},tn:3},
+ su_focus:{n:'รวมพลังวิญญาณ',t:'buff',tg:'team',charge:1.5,mp:12},
+ s_neko:{n:'กรงเล็บวิญญาณแมว',t:'p',pw:80,hits:3,el:'ghost',mp:12,st:{charm:.15}},
+ s_amabie:{n:'คำพยากรณ์ปัดเป่าโรค',t:'heal',tg:'team',pw:35,cure:1,bf:{mdef:.3},tn:3,mp:15},
+ s_kinnaree:{n:'ร่ายรำหิมพานต์',t:'buff',tg:'team',bf:{spd:.4,matk:.3,patk:.3},tn:3,mp:16},
+ s_salam:{n:'ลาวาปะทุ',t:'m',pw:300,el:'fire',mp:16,ct:1,all:1,st:{burn:.4}},
+ s_cyclops:{n:'ค้อนสายฟ้าซุส',t:'p',pw:380,el:'electric',mp:16,ct:1,st:{para:.4}},
+ s_wendigo:{n:'ความหิวนิรันดร์',t:'p',pw:240,el:'ice',mp:15,ls:.5,bf:{spd:-.3},tn:3},
+ s_bunyip:{n:'ดึงลงบึงลึก',t:'p',pw:230,el:'water',mp:16,bf:{spd:-.5},tn:3,st:{para:.3}},
+ s_wyvern:{n:'ดิ่งพสุธาพายุ',t:'p',pw:390,el:'flying',mp:18,ct:1,cb:20},
+ s_roc:{n:'พายุปีกยักษ์',t:'p',pw:210,el:'flying',mp:20,all:1,bf:{spd:-.3},tn:3},
+ s_rajasi:{n:'คำรามราชสีห์',t:'debuff',el:'normal',mp:16,all:1,bf:{patk:-.35,pdef:-.3,spd:-.2},tn:3},
+});
+const ADDSK={swordsman:[[6,'sw_quick'],[15,'sw_charge']],gladiator:[[6,'gl_crush'],[15,'gl_stance']],archer:[[6,'ar_pin'],[15,'ar_charge']],mage:[[8,'mg_slow'],[12,'mg_chant']],
+ merchant:[[6,'me_bribe'],[15,'me_bigdeal']],gunner:[[6,'gn_leg'],[15,'gn_snipe']],druid:[[9,'dr_wind'],[13,'dr_chant']],thief:[[6,'th_cripple'],[15,'th_ambush']],summoner:[[6,'su_weaken'],[15,'su_focus']]};
+for(const k in ADDSK){CLS[k].sk.push(...ADDSK[k]);CLS[k].sk.sort((a,b)=>a[0]-b[0])}
+SP.minotaur.sk[2]='heavy_stance';SP.golem.sk[1]='heavy_stance';SP.behemoth.sk[3]='heavy_stance';SP.dragon.sk[2]='focus_p';SP.redcap.sk[2]='focus_p';
+Object.assign(SP,{
+nekomata:{n:'บาเกเนโกะ',o:'ญี่ปุ่น',t:['normal','ghost'],em:'🐈',r:1.2,b:[40,26,10,8,5,6,92,13,14],sk:['normal_p1','ghost_st','focus_p','ghost_p2'],pas:'elusive',ev:[[16,'เนโกะมาตะ']],sig:'s_neko',parts:[['หางแฉกแมวปีศาจ',22],['กระดิ่งแมวผี',18]]},
+amabie:{n:'อามาบิเอะ',o:'ญี่ปุ่น',t:['water','psychic'],em:'🐟',r:1.3,b:[44,32,5,11,6,10,92,8,9],sk:['water_m1','psychic_m1','teamheal','psychic_m2'],pas:'healer',ev:[[16,'อามาบิเอะผู้พยากรณ์']],sig:'s_amabie',parts:[['เกล็ดอามาบิเอะ',20],['ผมยาวสาหร่าย',24]]},
+kinnaree:{n:'กินรี',o:'ไทย',t:['fairy','flying'],em:'🦢',r:2,b:[46,34,8,13,7,10,94,13,14],sk:['flying_p1','fairy_m1','fairy_st','fairy_m2'],pas:'swift',ev:[[24,'กินรีราชินีหิมพานต์']],sig:'s_kinnaree',parts:[['ขนหางกินรี',60],['กำไลทองกินรี',85]]},
+salamander:{n:'ซาลาแมนเดอร์',o:'ยุโรป',t:['fire','rock'],em:'🦎',r:2,b:[52,26,11,12,11,8,92,7,10],sk:['fire_p1','rock_st','heavy_stance','fire_p2'],pas:'imm_burn',ev:[[24,'จ้าวซาลาแมนเดอร์']],sig:'s_salam',parts:[['หางเพลิงซาลาแมนเดอร์',65],['หนังทนไฟ',70]]},
+cyclops:{n:'ไซคลอปส์',o:'กรีก',t:['rock','electric'],em:'👁️',r:2.8,b:[76,22,16,9,14,9,86,4,7],sk:['rock_p1','electric_p1','focus_p','rock_p2'],pas:'laststand',ev:[[32,'ไซคลอปส์ช่างอสนี']],sig:'s_cyclops',parts:[['ดวงตาเดียวไซคลอปส์',140],['ค้อนอสนีบาต',160]]},
+wendigo:{n:'เวนดิโก',o:'ชนพื้นเมืองอเมริกา',t:['ice','ghost'],em:'🥶',r:2.8,b:[60,30,14,12,10,10,93,10,13],sk:['ice_p1','ghost_p1','ice_st','ice_p2'],pas:'lifesteal',ev:[[32,'เวนดิโกหิวโหย']],sig:'s_wendigo',parts:[['เขากวางน้ำแข็ง',130],['หัวใจน้ำแข็ง',160]]},
+bunyip:{n:'บันยิป',o:'ออสเตรเลีย',t:['water','ground'],em:'🦭',r:3.4,b:[88,26,15,11,14,12,90,5,7],sk:['water_p1','ground_p1','heavy_stance','ground_aoe'],pas:'thick',ev:[[38,'บันยิปแห่งบึงมรณะ']],sig:'s_bunyip',parts:[['ขนบึงบันยิป',220],['เขี้ยวบันยิป',260]]},
+wyvern:{n:'ไวเวิร์น',o:'ยุโรป',t:['dragon','flying'],em:'🦖',r:3.6,b:[72,30,17,12,12,10,94,10,15],sk:['flying_p1','dragon_p1','dragon_st','dragon_p2'],pas:'swift',ev:[[38,'ไวเวิร์นพายุ']],sig:'s_wyvern',parts:[['ปีกหนังไวเวิร์น',240],['หางพิษไวเวิร์น',280]]},
+roc:{n:'นกรุค',o:'อาหรับ',t:['flying','normal'],em:'🦚',r:4.5,b:[94,30,19,10,14,11,94,9,14],sk:['flying_p2','normal_p2','flying_st','flying_aoe'],pas:'firstblood',ev:[[44,'นกรุคราชาเวหา']],sig:'s_roc',parts:[['ขนนกรุคยักษ์',480],['ไข่นกรุค',560]]},
+rajasi:{n:'ราชสีห์',o:'ไทย',t:['fighting','fire'],em:'🐯',r:4.5,b:[90,28,20,10,15,12,93,8,13],sk:['fighting_p2','fire_p1','normal_st','focus_p'],pas:'intimidate',ev:[[44,'ราชสีห์ทองหิมพานต์']],sig:'s_rajasi',parts:[['แผงคอราชสีห์',500],['เขี้ยวราชสีห์',540]]},
+});
+[['nekomata','amabie'],['kinnaree','salamander'],['cyclops','wendigo'],['bunyip','wyvern'],['roc','rajasi']].forEach((a,i)=>ZN[i].sp.push(...a));
+
+/* ---- legendary gear: one per equipment slot per zone ---- */
+const LGLV=[6,12,19,27,36];
+const LGW=[['จันทร์เสี้ยวราตรี','fairy','แสงจันทร์เสี้ยว',{pw:180,st:{love:.25}},'mpsave'],
+ ['จิ้งจอกเพลิง','fire','อัคคีจิ้งจอกวิญญาณ',{pw:200,st:{burn:.35}},'echo'],
+ ['ฟาโรห์','ground','พิพากษาแห่งดูอัต',{pw:225,st:{para:.25}},'pierce'],
+ ['มังกรโบราณ','dragon','ลมหายใจมังกรผู้หลับใหล',{pw:200,all:1,st:{burn:.2}},'adapt'],
+ ['แห่งวันสิ้นโลก','dark','แร็กนาร็อก',{pw:220,all:1},'deadly']];
+const LGA=[
+ {armor:['เสื้อเปลือกไม้โคดามะ','regen'],gloves:['ถุงมือหางทานุกิ','lucky','th_steal'],boots:['รองเท้าขนแจ็กคาโลป','firstblood'],belt:['เข็มขัดกระดองคัปปะ','sturdy'],bracelet:['กำไลเปลวไฟวิสป์','flameBody'],ring:['แหวนรากแมนเดรก','toxin'],necklace:['สร้อยปีกพิกซี่','elusive','teamheal'],crown:['มงกุฎขนไรจู','staticbody','electric_aoe']},
+ {armor:['เสื้อขนนกเทงงุ','elusive'],gloves:['ถุงมือกรงเล็บกริฟฟิน','keen'],boots:['รองเท้ากีบนิลมังกร','swift','flying_st'],belt:['เข็มขัดใยทองโจโร','poisonTouch'],bracelet:['กำไลกินฝันบาคุ','manadrain'],ring:['แหวนบังเหียนเคลปี้','lifesteal'],necklace:['สร้อยระฆังศาลเจ้า','imm_mind','psychic_st'],crown:['มงกุฎเมฆนุเอะ','counter']},
+ {armor:['ผ้าพันศพนิรันดร์','laststand'],gloves:['ถุงมือขนเยติ','imm_freeze','ice_p2'],boots:['รองเท้าเดินผืนทราย','levitate'],belt:['เข็มขัดแกนโกเลม','nocrit'],bracelet:['กำไลสคารับสุริยะ','imm_burn','fire_aoe'],ring:['แหวนเนตรบาซิลิสก์','toxin','poison_st'],necklace:['สร้อยปริศนาสฟิงซ์','mpsave','psychic_st'],crown:['มงกุฎเขามิโนทอร์','rage','fighting_st']},
+ {armor:['เกราะเกล็ดพญานาค','regen'],gloves:['ถุงมือหัวไฮดรา','multihit'],boots:['รองเท้าธันเดอร์เบิร์ด','firstblood'],belt:['เข็มขัดศิลาการ์กอยล์','thorns'],bracelet:['กำไลยันต์เจียงซือ','imm_para','ghost_st'],ring:['แหวนน้ำตาแบนชี','echo'],necklace:['สร้อยลูกแก้วนาคา','healer','water_aoe'],crown:['มงกุฎเขามังกร','aoeboost']},
+ {armor:['เกราะหนังเบฮีมอธ','guardian'],gloves:['ถุงมือเพลิงอิฟริต','flameBody','fire_m2'],boots:['รองเท้าปีกนกรุค','swift','flying_aoe'],belt:['เข็มขัดเกล็ดโยรมุนกันด์','regen'],bracelet:['กำไลโซ่ไกลพนีร์','pierce'],ring:['แหวนหัวใจคิเมร่า','multihit'],necklace:['สร้อยตาชั่งอัมมิต','lifesteal','dark_st'],crown:['มงกุฎเทพผู้ล่วงลับ','mpsave','el_omni']},
+];
+LGA.forEach((set,i)=>{const z=i+1;
+ for(const sl in set){const [n,pas,sk]=set[sl],st={};for(const k in SLOTBASE[sl])st[k]=Math.max(2,Math.round(SLOTBASE[sl][k]*TIERS[i][2]*1.6));
+  EQ[`lg${z}_${sl}`]={n,slot:sl,lv:LGLV[i],price:3000*z,st,pas,...(sk?{sk}:{}),legend:z}}
+ const [wn,el,skn,def,pas]=LGW[i];
+ for(const type in WT){const st=wStats(type,z);for(const k in st)st[k]=Math.round(st[k]*1.2);const ws=`lgs${z}_${type}`;
+  SK[ws]={n:skn,t:WT[type].t,el,mp:10+i*2,...def};EQ[`lg${z}_weapon_${type}`]={n:WT[type].n+wn,slot:'weapon',wt:type,t:WT[type].t,lv:LGLV[i],price:4000*z,st,el,ws,pas,legend:z}}});
+
+
+/* ================= v6 ADDITIONS ================= */
+TIERS.push(['ทมิฬ',40,15,15000]);
+for(const sl in SLOTBASE){const [tn,lv,m,pr]=TIERS[5],st={};for(const k in SLOTBASE[sl])st[k]=Math.max(1,Math.round(SLOTBASE[sl][k]*m));EQ[sl+'_5']={n:SLOTN[sl]+tn,slot:sl,lv,price:pr,st,tier:5}}
+WF.push(74);
+/* final zone */
+SP.demonlord={n:'จอมมาร',o:'ปราสาทจอมมาร',t:['dark','fire'],em:'👿',r:99,noseal:1,b:[150,60,19,19,18,18,96,10,13],sk:['dark_p2','fire_m2','dark_aoe','fire_aoe'],pas:'rebirth',sig:'s_demon',parts:[['เขาจอมมาร',3000],['หัวใจรัตติกาล',5000]]};
+SK.s_demon={n:'วันพิพากษาแห่งจอมมาร',t:'m',pw:200,el:'dark',all:1,mp:24,st:{burn:.3,charm:.2}};
+ZN.push({id:6,n:'ปราสาทจอมมาร',d:'ป้อมปราการทมิฬบนยอดเหว ทุกห้องมีปีศาจเฝ้า จอมมารรออยู่บนบัลลังก์ชั้นบนสุด',lv:[40,50],sp:['cerberus','basilisk','jiangshi','gargoyle','banshee','ifrit','nidhogg','ammit','wendigo'],rare:['fenrir','phoenix'],boss:{sp:'demonlord',lv:60,n:'จอมมารผู้ครองรัตติกาล'},mini:0,final:1});
+LGLV.push(44);
+LGW.push(['จอมมาร','dark','ทมิฬาวสาน',{pw:240,all:1,st:{charm:.15}},'lifesteal']);
+LGA.push({armor:['เกราะแม่ทัพปีศาจ','laststand'],gloves:['ถุงมือกรงเล็บปีศาจ','deadly'],boots:['รองเท้าเงามรณะ','firstblood'],belt:['เข็มขัดโซ่นรก','sturdy'],bracelet:['กำไลวิญญาณทาส','manadrain'],ring:['แหวนสัญญาปีศาจ','aoeboost'],necklace:['สร้อยหัวใจจอมมาร','rebirth'],crown:['มงกุฎจอมมาร','rainbow','dark_aoe']});
+(()=>{const i=5,z=6,set=LGA[i];
+ for(const sl in set){const [n,pas,sk]=set[sl],st={};for(const k in SLOTBASE[sl])st[k]=Math.max(2,Math.round(SLOTBASE[sl][k]*TIERS[i][2]*1.6));EQ[`lg${z}_${sl}`]={n,slot:sl,lv:LGLV[i],price:3000*z,st,pas,...(sk?{sk}:{}),legend:z}}
+ const [wn,el,skn,def,pas]=LGW[i];
+ for(const type in WT){const st=wStats(type,z);for(const k in st)st[k]=Math.round(st[k]*1.2);const ws=`lgs${z}_${type}`;SK[ws]={n:skn,t:WT[type].t,el,mp:20,...def};EQ[`lg${z}_weapon_${type}`]={n:WT[type].n+wn,slot:'weapon',wt:type,t:WT[type].t,lv:LGLV[i],price:4000*z,st,el,ws,pas,legend:z}}})();
+
+/* special milestone skills at Lv 10/20/30/40/50/60 for each class line */
+const MILE={
+ swordsman:{10:{n:'ดาบคู่พายุ',t:'p',pw:85,hits:3,el:'flying',mp:8},20:{n:'ใจดาบไม่หวั่น',t:'heal',tg:'self',pw:20,cure:1,bf:{patk:.4,pdef:.4},tn:3,mp:10},30:{n:'ฟันทะลวงฟ้า',t:'p',pw:260,el:'normal',pi:.3,mp:14},
+  40:{n:'ร้อยดาบสะท้านภพ',t:'p',pw:175,el:'steel',all:1,mp:18},50:{n:'จิตวิญญาณนักดาบ',t:'buff',tg:'team',bf:{patk:.5,crit:.5},tn:3,mp:18},60:{n:'ดาบพิฆาตเทพ',t:'p',pw:480,el:'normal',ct:1,cb:30,mp:28}},
+ gladiator:{10:{n:'โล่สะท้อน',t:'buff',tg:'self',bf:{pdef:.5},pas:'thorns2',tn:3,mp:8},20:{n:'ทุบแผ่นดินแยก',t:'p',pw:150,el:'ground',all:1,st:{para:.2},mp:12},30:{n:'ป้อมปราการเหล็ก',t:'buff',tg:'team',bf:{pdef:.4,mdef:.3},tn:3,taunt:3,mp:14},
+  40:{n:'ขวานสังหาร',t:'p',pw:280,el:'fighting',cb:20,mp:16},50:{n:'ไม่มีวันล้ม',t:'heal',tg:'self',pw:50,cure:1,mp:20},60:{n:'พิโรธแห่งกลาดิเอเตอร์',t:'p',pw:310,el:'fighting',all:1,ct:1,mp:28}},
+ archer:{10:{n:'ศรพิษสามดอก',t:'p',pw:70,hits:3,el:'poison',st:{poison:.2},mp:8},20:{n:'ฝนศรเพลิง',t:'p',pw:140,el:'fire',all:1,st:{burn:.2},mp:12},30:{n:'ตาเทพเหยี่ยว',t:'buff',tg:'team',bf:{acc:.3,crit:.6},tn:3,mp:14},
+  40:{n:'ศรสายฟ้าฟาด',t:'p',pw:260,el:'electric',st:{para:.3},mp:16},50:{n:'ศรนับพัน',t:'p',pw:70,hits:6,rt:1,el:'normal',mp:20},60:{n:'ศรสวรรค์ทะลุมิติ',t:'p',pw:480,el:'fairy',ct:1,pi:.5,mp:28}},
+ mage:{10:{n:'ลูกไฟสามลูก',t:'m',pw:70,hits:3,rt:1,el:'fire',st:{burn:.1},mp:8},20:{n:'หมอกน้ำแข็งพิฆาต',t:'m',pw:200,el:'ice',st:{freeze:.25},mp:12},30:{n:'ม่านมานา',t:'buff',tg:'self',bf:{mdef:.6},pas:'mpsave',tn:3,mp:10},
+  40:{n:'เมเทออร์เพลิง',t:'m',pw:200,el:'fire',all:1,st:{burn:.25},mp:20},50:{n:'มหาสายฟ้าพิโรธ',t:'m',pw:300,el:'electric',st:{para:.4},mp:22},60:{n:'มหาเวทวันสิ้นโลก',t:'m',pw:330,el:'dragon',all:1,ct:1,mp:34}},
+ merchant:{10:{n:'โยนถุงทอง',t:'p',pw:150,el:'steel',all:1,gc:3,mp:4},20:{n:'บริการพิเศษ',t:'heal',tg:'team',pw:25,mp:12},30:{n:'ค้อนทองคำ',t:'p',pw:260,el:'steel',gold:1,mp:14},
+  40:{n:'จ้างทหารรับจ้าง',t:'buff',tg:'team',bf:{patk:.4,pdef:.3},tn:3,gc:10,mp:10},50:{n:'ระเบิดคลังสมบัติ',t:'p',pw:240,el:'steel',all:1,gc:12,mp:14},60:{n:'ทุ่มทั้งอาณาจักร',t:'p',pw:600,el:'steel',ct:1,gc:20,mp:20}},
+ gunner:{10:{n:'กระสุนน้ำแข็ง',t:'p',pw:150,el:'ice',st:{freeze:.2},mp:7},20:{n:'ยิงกวาด',t:'p',pw:130,el:'normal',all:1,mp:12},30:{n:'กระสุนพิษ',t:'p',pw:190,el:'poison',st:{poison:.5},mp:12},
+  40:{n:'ระดมยิง',t:'p',pw:60,hits:6,rt:1,el:'steel',mp:18},50:{n:'โหมดแม่นปืน',t:'buff',tg:'self',bf:{acc:.5,crit:1.5,patk:.3},tn:3,mp:14},60:{n:'กระสุนมหาประลัย',t:'p',pw:500,el:'fire',ct:1,cb:40,mp:28}},
+ druid:{10:{n:'แสงตะวันรักษา',t:'heal',tg:'ally',pw:45,mp:9},20:{n:'เถาวัลย์พันธนาการ',t:'status',el:'grass',all:1,bf:{spd:-.4},tn:3,st:{para:.3},mp:14},30:{n:'พายุใบมีด',t:'m',pw:170,el:'grass',all:1,ls:.2,mp:16},
+  40:{n:'วิญญาณพงไพร',t:'buff',tg:'team',bf:{patk:.3,matk:.3},pas:'regen',tn:3,mp:16},50:{n:'แผ่นดินไหวพงไพร',t:'m',pw:240,el:'ground',all:1,mp:22},60:{n:'คืนชีพพงไพร',t:'heal',tg:'team',pw:50,cure:1,revAll:1,mp:30}},
+ thief:{10:{n:'มีดเงาสามคม',t:'p',pw:70,hits:3,el:'dark',mp:7},20:{n:'จู่โจมไร้เงา',t:'p',pw:220,el:'dark',acc:100,cb:20,mp:12},30:{n:'ยาพิษร้ายแรง',t:'status',el:'poison',bf:{pdef:-.3},tn:3,st:{poison:.9},mp:10},
+  40:{n:'พันมีดมรณะ',t:'p',pw:60,hits:6,el:'steel',mp:18},50:{n:'ฆาตกรรมเงียบ',t:'p',pw:320,el:'dark',cb:50,mp:20},60:{n:'เงามรณะสังหาร',t:'p',pw:520,el:'dark',ct:1,cb:50,mp:28}},
+ summoner:{10:{n:'พลังผนึกเชื่อมใจ',t:'buff',tg:'team',bf:{spd:.2,acc:.2,crit:.3},tn:3,mp:9},20:{n:'ปลุกสัญชาตญาณดิบ',t:'buff',tg:'ally',bf:{patk:.6,matk:.6},tn:3,mp:10},30:{n:'ม่านวิญญาณ',t:'buff',tg:'team',bf:{pdef:.4,mdef:.4},pas:'guardian',tn:3,mp:16},
+  40:{n:'ฟื้นฟูวิญญาณ',t:'heal',tg:'team',pw:40,cure:1,revAll:1,mp:24},50:{n:'พลังผนึกจักรพรรดิ',t:'buff',tg:'team',bf:{patk:.5,matk:.5,spd:.3},tn:3,mp:22},60:{n:'อัญเชิญเทพอสูร',t:'m',pw:320,el:'fairy',all:1,ct:1,mp:32}},
+};
+for(const b in MILE)for(const lv in MILE[b]){const id=`ms_${b}${lv}`;SK[id]={...MILE[b][lv],mile:1};CLS[b].sk.push([+lv,id])}
+for(const b in MILE)CLS[b].sk.sort((a,c)=>a[0]-c[0]);
+
+/* crafting: one recipe per beast, built from its materials */
+const CRAFT={},CSL=['weapon','armor','gloves','boots','belt','bracelet','ring','necklace','crown'];
+const zoneOfSp=k=>{let i=ZN.findIndex(z=>z.sp.includes(k));if(i<0)i=ZN.findIndex(z=>z.rare.includes(k));return Math.max(0,i)};
+Object.keys(SP).filter(k=>!SP[k].noseal).forEach((k,idx)=>{const s=SP[k],zi=zoneOfSp(k),sl=CSL[idx%9],fn=s.ev?s.ev[s.ev.length-1][1]:s.n,mul=1.35*(s.rare?1.12:1),skl=s.sig||s.sk[3];
+ const mats=[[k+'|0',s.rare?2:3+zi],[k+'|1',s.rare?1:2+Math.floor(zi/2)]],gold=Math.round(150*(zi+1)**2*(s.rare?2:1)),lv=[5,11,18,26,35,44][zi];
+ CRAFT[k]={sl,mats,gold,lv,zi};
+ if(sl==='weapon'){for(const type in WT){const st=wStats(type,Math.min(6,zi+1));for(const x in st)st[x]=Math.round(st[x]*1.1*(s.rare?1.1:1));EQ[`cf_${k}_${type}`]={n:WT[type].n+fn,slot:'weapon',wt:type,t:WT[type].t,lv,price:gold,st,el:s.t[0],ws:skl,pas:s.pas,craft:k}}}
+ else{const st={};for(const x in SLOTBASE[sl])st[x]=Math.max(2,Math.round(SLOTBASE[sl][x]*TIERS[zi][2]*mul));EQ[`cf_${k}`]={n:SLOTN[sl]+fn,slot:sl,lv,price:gold,st,pas:s.pas,sk:skl,craft:k}}});
+
+/* ================= v8: training forest ================= */
+ZN.push({id:7,n:'ป่าฝึกหัด',d:'ป่าเล็กหลังเมือง อสูรตัวเล็กไม่ดุร้าย เหมาะสำหรับผู้ผนึกมือใหม่ฝึกต่อสู้และเก็บเลเวล',lv:[1,4],sp:['kappa','wisp','mandrake','jackalope','tanuki','pixie','kodama'],rare:['qilin','unicorn'],boss:{sp:'jackalope',lv:5,n:'หัวหน้าฝูงแจ็กคาโลป'},mini:0,train:1});
+
+
+/* ================= STATE & HELPERS ================= */
+const SAVE='sealbeast_save_v1', SAVEIMG='sealbeast_img_v1';
+let S=null, IMG={};
+function load(){try{const t=localStorage.getItem(SAVE);if(t)S=JSON.parse(t)}catch(e){}try{const t=localStorage.getItem(SAVEIMG);if(t)IMG=JSON.parse(t)||{}}catch(e){}if(!S)S={screen:'start',ui:{}}}
+function save(){try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
+function saveImg(){try{localStorage.setItem(SAVEIMG,JSON.stringify(IMG))}catch(e){toast('พื้นที่เก็บรูปเต็ม ลองใช้รูปขนาดเล็กลง')}}
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const fmt=n=>Math.round(n).toLocaleString('th-TH');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const need=l=>Math.floor(18*Math.pow(l,1.6)*(1+Math.max(0,l-20)*.03));
+const expFor=l=>Math.floor(8*Math.pow(l,1.35)+6);
+function rnd(s){for(const k in s)s[k]=Math.round(s[k]);return s}
+function wsel(obj){const t=Object.values(obj).reduce((a,b)=>a+b,0);let r=Math.random()*t;for(const k in obj){r-=obj[k];if(r<0)return k}return Object.keys(obj)[0]}
+
+/* ---- classes ---- */
+function chain(k){const a=[];while(k){a.unshift(k);k=CLS[k].p}return a}
+const tierOf=k=>chain(k).length-1;
+const baseOf=k=>chain(k)[0];
+const childrenOf=k=>Object.keys(CLS).filter(c=>CLS[c].p===k);
+const clsMult=(k,s)=>chain(k).reduce((m,c)=>m*(CLS[c].m[s]||1),1);
+const clsSkills=(k,lv)=>chain(k).flatMap(c=>CLS[c].sk.filter(([l])=>lv>=l).map(x=>x[1]));
+const clsSkillsAt=(k,lv)=>chain(k).flatMap(c=>CLS[c].sk.filter(([l])=>lv===l).map(x=>x[1]));
+const clsPas=k=>chain(k).flatMap(c=>CLS[c].pas);
+const clsSum=k=>Math.max(1,...chain(k).map(c=>CLS[c].sum||1));
+const clsWeapon=k=>CLS[baseOf(k)].w;
+const isMerchant=()=>S.P&&baseOf(S.P.cls)==='merchant';
+const priceOf=it=>Math.round(it.price*(isMerchant()?.85:1));
+const partPrice=v=>Math.round(v*(isMerchant()?1.2:1));
+function canPromote(P){const t=tierOf(P.cls);return (t===0&&P.lv>=25)||(t===1&&P.lv>=40)}
+
+/* ---- humans ---- */
+function humanStats(cls,lv,pts,eq){const s={};K.forEach((k,i)=>s[k]=(PB[i]+PG[i]*(lv-1))*clsMult(cls,k)+((pts&&pts[k])||0)*PER[k]);
+ for(const sl in eq){const it=EQ[eq[sl]];if(it)for(const k in it.st)s[k]+=it.st[k]}return rnd(s)}
+function humanSkills(cls,lv,eq){const a=['attack',...clsSkills(cls,lv)];for(const sl in eq){const it=EQ[eq[sl]];if(!it)continue;if(it.ws)a.push(it.ws);if(it.sk)a.push(it.sk)}return [...new Set(a)]}
+function humanPas(cls,eq){const a=[...clsPas(cls)];for(const sl in eq){const it=EQ[eq[sl]];if(it&&it.pas)a.push(it.pas)}return a}
+const pStats=()=>humanStats(S.P.cls,S.P.lv,S.P.pts,S.P.eq);
+
+/* ---- beasts ---- */
+function formFor(k,lv){const e=SP[k].ev||[];let f=0;e.forEach((x,i)=>{if(lv>=x[0])f=i+1});return f}
+const formName=(k,f)=>f?SP[k].ev[f-1][1]:SP[k].n;
+const petName=p=>formName(p.sp,p.form||0);
+const sigLearned=p=>{const s=SP[p.sp];if(!s.sig)return false;return s.rare?p.lv>=SIGLV:s.ev?(p.form||0)>=s.ev.length:false};
+function calcPet(p,wild=1){const sp=SP[p.sp],fm=FM[p.form||0],s={};
+ K.forEach((k,i)=>{const b=i<9?sp.b[i]:5,f=(k==='acc'||k==='crit'||k==='eva')?1:fm;s[k]=(b+grow(k,b)*(p.lv-1)*wild)*f+((p.pts&&p.pts[k])||0)*PER[k]});return rnd(s)}
+function petSkills(p){const s=SP[p.sp],a=['attack',...s.sk.filter((_,i)=>p.lv>=SKLV[i])];if(sigLearned(p))a.push(s.sig);return a}
+const petBy=uid=>S.P.pets.find(p=>p.uid===uid);
+const party=()=>S.P.party.map(petBy).filter(Boolean);
+function fixParty(){const P=S.P,n=clsSum(P.cls);P.party=[...new Set(P.party.filter(u=>petBy(u)))].slice(0,n);if(!P.party.length&&P.pets[0])P.party=[P.pets[0].uid]}
+function mkPet(sp,lv,form){const p={uid:S.P.uid++,sp,lv,form:form??formFor(sp,lv),exp:0,pts:{},free:(lv-1)*3};const s=calcPet(p);p.hp=s.hp;p.mp=s.mp;return p}
+
+function gainExp(o,amt,isP){const lines=[];o.exp+=amt;
+ while(o.lv<MAXLV&&o.exp>=need(o.lv)){const before=isP?pStats():calcPet(o);o.exp-=need(o.lv);o.lv++;o.free=(o.free||0)+(isP?5:3);
+  if(!isP){const nf=formFor(o.sp,o.lv);if(nf>(o.form||0)){o.form=nf;lines.push(`✦ ${SP[o.sp].n} พัฒนาร่างเป็น ${formName(o.sp,nf)}!`);if(nf===SP[o.sp].ev.length&&SP[o.sp].sig)lines.push(`${formName(o.sp,nf)} เรียนรู้สกิลเฉพาะตัว ${SK[SP[o.sp].sig].n}`)}}
+  const after=isP?pStats():calcPet(o);o.hp+=after.hp-before.hp;o.mp+=after.mp-before.mp;
+  lines.push(`${isP?o.name:petName(o)} เลเวลอัปเป็น Lv ${o.lv}!`);
+  if(isP){clsSkillsAt(o.cls,o.lv).forEach(id=>lines.push(`เรียนรู้สกิล ${SK[id].n}`));if(canPromote(o)&&(o.lv===25||o.lv===40))lines.push('★ เลื่อนอาชีพได้แล้ว! ไปที่หน้าตัวละคร')}
+  else{const i=SKLV.indexOf(o.lv);if(i>0&&SP[o.sp].sk[i])lines.push(`${petName(o)} เรียนรู้ ${SK[SP[o.sp].sk[i]].n}`);if(SP[o.sp].rare&&o.lv===SIGLV)lines.push(`${petName(o)} เรียนรู้สกิลเฉพาะตัว ${SK[SP[o.sp].sig].n}`)}}
+ if(o.lv>=MAXLV)o.exp=0;
+ return lines}
+function loseExp(o,frac){const l=Math.floor(need(o.lv)*frac),lost=Math.min(o.exp,l);o.exp-=lost;return lost}
+
+/* ================= PORTRAITS & TEXT ================= */
+function portrait(key,size,opts={}){
+ let em='?',ec='#d9b35b',img=IMG[key];
+ if(key==='player'){em=CLS[baseOf(S.P.cls)].em}
+ else if(key&&key.startsWith('npc:')){em=CLS[baseOf(key.slice(4))].em;ec='#b8a27a'}
+ else if(key&&key.startsWith('form:')){const f=FORMS[key.slice(5)];em=f.em;ec=EL[f.t[0]].c;img=null}
+ else if(key&&key.startsWith('cls:')){em=CLS[baseOf(key.slice(4))].em}
+ else if(SP[key]){em=SP[key].em;ec=EL[SP[key].t[0]].c}
+ return `<div class="pt ${opts.unk?'unk':''}" style="--s:${size}px;--ec:${ec}">${img?`<img src="${img}" alt="">`:em}</div>`}
+const elChip=e=>e?`<span class="chip" style="color:${EL[e].c}">${EL[e].n}</span>`:'';
+const tChips=ts=>(ts||[]).map(elChip).join('');
+const pasChip=k=>k&&PAS[k]?`<span class="chip pas" title="${esc(PAS[k].d)}">${PAS[k].n}</span>`:'';
+const bar=(v,m,cls='')=>`<div class="bar ${cls} ${!cls&&v/m<.3?'low':''}"><i style="width:${clamp(m?v/m*100:0,0,100)}%"></i></div>`;
+const multTxt=m=>m===1?'':`<span class="eff ${m>1?'up':m===0?'zero':'down'}">×${m===.5?'½':m===.25?'¼':m}</span>`;
+function skTag(s){if(s.ct)return s.all?'2 ตา หมู่':'2 ตา';if(['heal','buff'].includes(s.t))return s.tg==='team'?'ทั้งทีม':s.tg==='ally'?'เลือกฝ่ายเรา':'ตัวเอง';if(s.t==='form')return 'แปลงร่าง';if(s.all)return 'หมู่';if(s.hits)return `${s.hits} ครั้ง`;return 'เดี่ยว'}
+function skillDesc(id){const s=SK[id],a=[];
+ if(['p','m','h','auto'].includes(s.t))a.push(`${s.t==='p'?'กายภาพ':s.t==='m'?'เวทย์':s.t==='h'?'ผสม':'ตามอาวุธ'} พลัง ${s.pw}${s.hits?` × ${s.hits} ครั้ง${s.rt?' สุ่มเป้า':''}`:''}`);
+ if(s.t==='heal')a.push(`ฟื้น HP ${s.pw}%${s.rev||s.revAll?' ชุบชีวิตได้':''}${s.cure?' ล้างสถานะ':''}`);
+ if(s.t==='form')a.push(`เปลี่ยนเป็น${FORMS[s.form].n} ได้สกิลชุดใหม่`);
+ if(s.bf){const pos=Object.entries(s.bf).filter(([,v])=>v>0),neg=Object.entries(s.bf).filter(([,v])=>v<0);
+  if(pos.length)a.push(`เพิ่ม ${pos.map(([k,v])=>`${SH[k]} ${Math.round(v*100)}%`).join(' ')}`);
+  if(neg.length)a.push(`${['buff','heal'].includes(s.t)?'ลดของตัวเอง':'ลดของเป้า'} ${neg.map(([k,v])=>`${SH[k]} ${Math.round(-v*100)}%`).join(' ')}`);
+  if(s.tn)a.push(`${s.tn} ตา`)}
+ if(s.st)a.push(Object.entries(s.st).map(([k,v])=>`${STS[k].n} ${Math.round(v*100)}%`).join(' '));
+ if(s.ct)a.push('ตาแรกรวบรวมพลัง ตาถัดไปปล่อยท่าอัตโนมัติ');if(s.charge)a.push(`การโจมตีครั้งถัดไปแรง ×${s.charge}${s.tg==='team'?' ทั้งทีม':''}`);
+ if(s.pas)a.push(`ได้ผล${PAS[s.pas].n}`);if(s.taunt)a.push('ยั่วยุศัตรู');if(s.ls)a.push(`ดูดเลือด ${s.ls*100}%`);if(s.pi)a.push(`เมินเกราะ ${s.pi*100}%`);if(s.cb)a.push(`คริ +${s.cb}%`);
+ if(s.acc>=100)a.push('ไม่พลาด');if(s.steal)a.push('ขโมยของ');if(s.gold)a.push('ได้เงิน');if(s.self)a.push(`เสีย HP ตัวเอง ${s.self*100}%`);if(s.ls&&s.t==='heal')a.push('');
+ if(s.gc)a.push(`จ่าย ${s.gc}×Lv เหรียญ`);if(s.mp)a.push(`${s.mp} MP`);return a.filter(Boolean).join(' · ')}
+function statLine(st){return Object.entries(st).map(([k,v])=>`${SH[k]} +${v}`).join(' · ')}
+const itemName=it=>it.legend?`<span class="lgn">✦ ${it.n}</span>`:it.n;
+function itemExtra(it){return `${it.pas?' · '+PAS[it.pas].n:''}${it.ws?' · สกิล '+SK[it.ws].n:''}${it.sk?' · สกิล '+SK[it.sk].n:''}`}
+
+/* ================= BATTLE ENGINE ================= */
+const B=()=>S.battle;
+/* ---- skill visual effects (queued during battle logic, played after each render) ---- */
+const VQ=[],vfx=(k,id,o={})=>{if(S.battle)VQ.push({k,id,...o})};
+const ELSHAPE={ice:'shard',electric:'shard',rock:'shard',steel:'shard',grass:'leaf',bug:'leaf',fairy:'star',psychic:'star',dragon:'star'};
+function vSpawn(L,cls,pos,c,txt,vars){const d=document.createElement('div');d.className='vx '+cls;d.style.setProperty('--c',c);if(pos){d.style.left=pos[0]+'px';d.style.top=pos[1]+'px'}
+ if(vars)for(const k in vars)d.style.setProperty(k,vars[k]);if(txt)d.textContent=txt;L.appendChild(d);setTimeout(()=>d.remove(),1100)}
+function vParts(L,x,y,c,shape,n,dist,up){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,r=dist*(.5+Math.random()*.7);vSpawn(L,'vx-p '+shape,[x,y],c,null,{'--dx':Math.cos(a)*r+'px','--dy':(Math.sin(a)*r+up*28)+'px','--rot':R(0,360)+'deg'})}}
+function flushVfx(){if(!VQ.length)return;const q=VQ.splice(0);try{const L=document.getElementById('vfx'),app=document.getElementById('app');if(!L||!app||!app.querySelector)return;
+ let delay=0,shake=false;
+ q.forEach(e=>{const c=e.c||(e.el?EL[e.el].c:'#f3e3b0');
+  const play=()=>{if(e.k==='cast')return vSpawn(L,'vx-cast',null,c,e.n);if(e.k==='flash')return vSpawn(L,'vx-flash',null,c);
+   const el=app.querySelector(`[data-u="${e.id}"]`);if(!el)return;const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+   if(e.k==='hit'){if(e.phys){vSpawn(L,'vx-slash',[x,y],c,null,{'--r':R(-50,-20)+'deg'});if(e.crit)vSpawn(L,'vx-slash',[x,y],c,null,{'--r':R(20,50)+'deg'})}
+    vSpawn(L,'vx-burst',[x,y],c);vParts(L,x,y,c,ELSHAPE[e.el]||'',e.crit?14:8,e.crit?80:55,e.el==='fire'?-1:e.el==='water'||e.el==='poison'?1:0)}
+   else if(e.k==='heal'){vSpawn(L,'vx-ring',[x,y],'#7fd08a');vParts(L,x,y,'#9be89f','star',8,40,-2)}
+   else if(e.k==='buff')vSpawn(L,'vx-aura',[x,y],c);
+   else if(e.k==='debuff'){vSpawn(L,'vx-ring',[x,y],c);vParts(L,x,y,c,'',6,38,1)}
+   else if(e.k==='miss')vSpawn(L,'vx-ring',[x,y],'#9a97ab');
+   else if(e.k==='charge'){vSpawn(L,'vx-charge',[x,y],'#6f9cf0');vSpawn(L,'vx-aura',[x,y],'#6f9cf0')}};
+  if(e.k==='hit'&&e.crit)shake=true;setTimeout(play,delay);if(e.k==='hit')delay+=90});
+ if(shake)setTimeout(()=>{app.classList.remove('shake');void app.offsetWidth;app.classList.add('shake')},60)}catch(err){}}
+function unit(o){return {buffs:[],status:{},pas:[],stab:[],types:[],taunt:0,...o}}
+function playerUnit(){const P=S.P,s=pStats(),w=EQ[P.eq.weapon];
+ return unit({id:'P',side:'ally',kind:'player',name:P.name,lv:P.lv,st:s,hp:Math.min(P.hp,s.hp),mp:Math.min(P.mp,s.mp),skills:humanSkills(P.cls,P.lv,P.eq),pas:humanPas(P.cls,P.eq),stab:w&&w.el?[w.el]:[],atkType:w?w.t:'p',img:'player',cls:P.cls})}
+function petUnit(p){const s=calcPet(p);return unit({id:'pet'+p.uid,uid:p.uid,side:'ally',kind:'pet',sp:p.sp,name:petName(p),types:SP[p.sp].t.slice(),stab:SP[p.sp].t,lv:p.lv,st:s,hp:Math.min(p.hp,s.hp),mp:Math.min(p.mp,s.mp),skills:petSkills(p),pas:[SP[p.sp].pas],atkType:s.patk>=s.matk?'p':'m',img:p.sp})}
+function wildUnit(sp,lv,i,boss){const t={sp,lv,form:formFor(sp,lv),pts:{}},s=calcPet(t,1.1);
+ if(boss){s.hp=Math.round(s.hp*2);['patk','matk','pdef','mdef'].forEach(k=>s[k]=Math.round(s[k]*1.15))}
+ return unit({id:'e'+i,side:'enemy',kind:'beast',sp,evo:t.form,name:boss||petName(t),types:SP[sp].t.slice(),stab:SP[sp].t,lv,st:s,hp:s.hp,mp:s.mp,skills:petSkills(t),pas:[SP[sp].pas],atkType:s.patk>=s.matk?'p':'m',boss:!!boss,r:SP[sp].r*(boss?2.5:1),img:sp})}
+function npcEq(cls,lv){const t=WLV.reduce((a,l,i)=>lv>=l?i:a,0),g=TIERS.reduce((a,x,i)=>lv>=x[1]?i:a,0);return {weapon:`wp_${clsWeapon(cls)}${t}`,armor:'armor_'+g,gloves:'gloves_'+g,boots:'boots_'+g}}
+function humanUnit(name,cls,lv,i){const eq=npcEq(cls,lv),focus=clsMult(cls,'patk')>=clsMult(cls,'matk')?'patk':'matk',pts={},n=5*(lv-1);
+ Object.entries({[focus]:.35,hp:.25,pdef:.1,mdef:.1,spd:.1,acc:.1}).forEach(([k,v])=>pts[k]=n*v);
+ const s=humanStats(cls,lv,pts,eq);s.hp=Math.round(s.hp*1.3);const w=EQ[eq.weapon];
+ return unit({id:'e'+i,side:'enemy',kind:'human',name,cls,lv,st:s,hp:s.hp,mp:s.mp,skills:humanSkills(cls,lv,eq).filter(k=>!['form','revert'].includes(SK[k].t)&&!SK[k].gc),pas:humanPas(cls,eq),stab:w&&w.el?[w.el]:[],atkType:w.t,img:'npc:'+cls})}
+
+function startBattle(enemies,kind,meta,pre){VQ.length=0;
+ const P=S.P,allies=[playerUnit()],used=[];
+ party().filter(p=>p.hp>0).slice(0,clsSum(P.cls)).forEach(p=>{allies.push(petUnit(p));used.push(p.uid)});
+ enemies.forEach(e=>{if(e.sp)P.seen[e.sp]=1});
+ S.battle={v:4,kind,meta,enemies,allies,round:0,queue:[],cur:null,log:[],target:0,atarget:allies.length>1&&baseOf(P.cls)==='summoner'?1:0,menu:'wait',over:null,used,fx:[]};
+ S.screen='battle';if(pre)blog(pre);
+ blog(kind==='npc'?`${enemies[0].name} ท้าประลองกับคุณ!`:kind==='traveler'?`นักเดินทางถอดผ้าคลุมออก... ${enemies[0].name} Lv ${enemies[0].lv} พุ่งเข้าโจมตี!`:kind==='bandit'?`${enemies[0].name} ตะโกนว่า "ทิ้งเงินไว้แล้วไปซะ!"`:kind==='boss'?`${enemies[0].name} ปรากฏตัว! บรรยากาศหนักอึ้ง`:enemies[0].rare?`★ ${enemies[0].name} ปรากฏตัวจากหมอก! อสูรหายาก`:enemies.length>1?`ฝูงอสูร ${enemies.length} ตัวพุ่งเข้าใส่!`:`${enemies[0].name} Lv ${enemies[0].lv} โผล่ออกมา!`);
+ allU().forEach(u=>{if(hasPas(u,'intimidate')&&u.hp>0){foesOf(u).forEach(f=>f.buffs.push({st:'patk',amt:-.2,tn:4}));blog(`${u.name} ข่มขวัญ! ฝ่ายตรงข้ามโจมตีกายภาพลดลง`)}});
+ newRound()}
+function blog(t){const b=B();b.log.push(t);if(b.log.length>60)b.log.shift()}
+const allU=()=>[...B().allies,...B().enemies];
+const uById=id=>allU().find(u=>u.id===id);
+const sideOf=u=>u.side==='ally'?B().allies:B().enemies;
+const foesOf=u=>u.side==='ally'?B().enemies:B().allies;
+const hasPas=(u,k)=>u.pas.includes(k)||u.buffs.some(b=>b.pas===k);
+function eff(u,k){const a=u.buffs.reduce((s,b)=>b.st===k?s+b.amt:s,0);let v=u.st[k]*(1+Math.max(-.6,a));
+ if(u.form){const f=FORMS[u.form].m[k];if(f)v*=f}
+ const s=u.status;if(s.freeze&&(k==='pdef'||k==='mdef'))v*=1.5;if(k==='spd'){if(s.chill)v*=.6;if(s.static)v*=.7}if(k==='acc'&&s.static)v*=.9;
+ if(k==='spd'&&hasPas(u,'swift'))v*=1.2;if(k==='eva'&&hasPas(u,'elusive'))v*=1.25;if(k==='acc'&&hasPas(u,'eagle'))v*=1.15;if(k==='crit'&&hasPas(u,'keen'))v+=10;
+ if((k==='patk'||k==='matk')&&hasPas(u,'rage')&&u.hp<u.st.hp/2)v*=1.3;
+ if((k==='pdef'||k==='mdef')&&hasPas(u,'laststand')&&u.hp<u.st.hp*.3)v*=1.5;
+ return Math.max(k==='crit'?0:1,v)}
+const hitChance=(u,t,sk)=>clamp(eff(u,'acc')-eff(t,'eva')+15+((sk&&sk.acc)||0),25,100);
+function fxAdd(u,t,c){B().fx.push({id:u.id,t,c})}
+function newRound(){const b=B();b.round++;const sp=u=>eff(u,'spd')*(b.round===1&&hasPas(u,'firstblood')?2:1);
+ const ord=allU().filter(u=>u.hp>0).map(u=>[u,sp(u)*(0.97+Math.random()*.06)]).sort((x,y)=>y[1]-x[1]);b.queue=[];
+ ord.forEach(([u])=>{b.queue.push(u.id);const opp=foesOf(u).filter(x=>x.hp>0);if(opp.length&&sp(u)>=2*Math.max(...opp.map(sp)))b.queue.push(u.id+'*')});advance()}
+const costOf=(u,sk)=>sk.mp?Math.round(sk.mp*(hasPas(u,'mpsave')?.7:1)):0;
+function releaseCharge(u){const b=B();if(!b||b.over)return;const c=u.charging;u.charging=null;const t=c.tid&&uById(c.tid);blog(`${u.name} ปลดปล่อยพลัง!`);act(u,c.id,t&&t.hp>0?t:null,null,true);render();setTimeout(advance,650)}
+function checkEnd(){const b=B();if(b.over)return true;if(b.allies[0].hp<=0){endBattle('lose');return true}if(b.enemies.every(e=>e.hp<=0)){endBattle('win');return true}return false}
+function hurt(u,d,c='bad'){u.hp=Math.max(0,u.hp-d);fxAdd(u,'-'+d,c);
+ if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status={};blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else blog(`${u.name} ล้มลง`)}}
+function heal(u,a){const v=Math.min(u.st.hp-u.hp,Math.round(a));if(v>0){u.hp+=v;fxAdd(u,'+'+v,'good')}return v}
+function turnStart(u){const s=u.status;
+ u.buffs.forEach(x=>x.tn--);u.buffs=u.buffs.filter(x=>x.tn>0);if(u.taunt>0)u.taunt--;
+ if(hasPas(u,'regen')&&u.hp<u.st.hp)heal(u,u.st.hp*.06);
+ if(hasPas(u,'mpregen'))u.mp=Math.min(u.st.mp,u.mp+Math.round(u.st.mp*.08));
+ for(const k of ['burn','poison'])if(s[k]){const d=Math.max(1,Math.round(u.st.hp*(k==='burn'?.06:.08)));blog(`${u.name} ${k==='burn'?'โดนไฟเผา':'โดนพิษกัดกร่อน'} เสีย ${d} HP`);hurt(u,d);if(u.hp<=0)return true}
+ if(s.freeze){s.freeze--;if(s.freeze<=0){delete s.freeze;blog(`น้ำแข็งที่ห่อหุ้ม ${u.name} ละลายแล้ว`)}else{blog(`${u.name} ถูกแช่แข็ง ขยับไม่ได้`);return true}}
+ if(s.sleep){s.sleep--;if(s.sleep<=0){delete s.sleep;blog(`${u.name} ตื่นขึ้นแล้ว`)}else{blog(`${u.name} หลับปุ๋ย...`);fxAdd(u,'Zzz','muted');return true}}
+ let skip=null;
+ if(s.para&&Math.random()<.25)skip=`${u.name} เป็นอัมพาต ขยับตัวไม่ได้`;
+ else if(s.love&&Math.random()<.45)skip=`${u.name} หลงรักจนเหม่อลอย ไม่ยอมโจมตี`;
+ else if(s.confuse&&Math.random()<.35){const d=Math.max(1,Math.round(u.st.hp*.06));skip=`${u.name} มึนงง ทำร้ายตัวเอง ${d} HP`;hurt(u,d)}
+ for(const k of ['burn','poison','chill','static','love','confuse','charm','para'])if(s[k]){s[k]--;if(s[k]<=0){delete s[k];blog(`${u.name} หายจากอาการ${STS[k].n}`)}}
+ if(skip){blog(skip);return true}return false}
+function advance(){const b=B();if(!b||b.over)return;b.fx=[];if(checkEnd()){render();return}
+ while(b.queue.length){const q=b.queue.shift(),extra=q.endsWith('*'),u=uById(q.replace('*',''));if(!u||u.hp<=0)continue;
+  if(!extra&&turnStart(u)){if(checkEnd()){render();return}continue}
+  if(extra&&(u.status.freeze||u.status.sleep))continue;
+  b.cur=u.id;b.extra=extra;if(extra)blog(`${u.name} เร็วกว่าเกิน 2 เท่า ได้เคลื่อนไหวอีกครั้ง!`);
+  if(u.charging){b.menu='wait';render();setTimeout(()=>releaseCharge(u),550);return}if(!(b.enemies[b.target]&&b.enemies[b.target].hp>0))b.target=b.enemies.findIndex(e=>e.hp>0);
+  if(u.side==='enemy'||(u.kind==='pet'&&S.ui.autoPet)){b.menu='wait';render();setTimeout(aiAct,u.side==='enemy'?700:450)}else{b.menu='main';render()}
+  return}
+ newRound()}
+function applyStatus(t,k,ch){if(t.hp<=0||t.status[k])return;if(IMM[k]&&t.types.some(x=>IMM[k].includes(x)))return;
+ if(t.pas.some(p=>PAS[p]&&PAS[p].imm&&PAS[p].imm.includes(k)))return;
+ if((k==='freeze'||k==='sleep')&&(t.status.freeze||t.status.sleep))return;
+ if(Math.random()<ch){t.status[k]=STS[k].d();blog(`${t.name} ${STS[k].n}!`);fxAdd(t,STS[k].n,'mp')}}
+function addBuffs(x,sk){if(sk.bf)for(const k in sk.bf)x.buffs.push({st:k,amt:sk.bf[k],tn:(sk.tn||3)+1});if(sk.pas)x.buffs.push({pas:sk.pas,tn:(sk.tn||3)+1})}
+function steal(u,t){const P=S.P;if(u.side==='ally'){if(Math.random()<.6){const g=R(t.lv*3,t.lv*6);P.gold+=g;blog(`ขโมยได้ ${g} เหรียญ`)}else{const k=pick(['pot','eth','seal1','antidote',t.lv>12?'pot2':'pot',t.lv>12?'seal2':'seal1']);P.items[k]=(P.items[k]||0)+1;blog(`ขโมยได้ ${CON[k].n}`)}}
+ else if(t.kind==='player'){const g=Math.min(P.gold,u.lv*4);P.gold-=g;if(g)blog(`${u.name} ขโมยเงินคุณไป ${g} เหรียญ!`)}}
+function act(u,id,tgt,atgt,free){const sk=SK[id],b=B(),cost=costOf(u,sk);
+ if(!free){if(cost&&u.mp<cost){blog(`MP ไม่พอสำหรับ ${sk.n}`);return false}
+  if(sk.gc&&u.kind==='player'){const c=sk.gc*u.lv;if(S.P.gold<c){blog('เงินไม่พอ');return false}S.P.gold-=c;blog(`จ่าย ${fmt(c)} เหรียญ`)}
+  u.mp-=cost;
+  if(sk.ct){u.charging={id,tid:tgt?tgt.id:null};blog(`${u.name} รวบรวมพลังเตรียมใช้ ${sk.n}!`);fxAdd(u,'ชาร์จ','mp');vfx('charge',u.id);return true}}
+ if(id!=='attack'&&id!=='rest')vfx('cast',u.id,{n:sk.n,el:sk.el,c:sk.t==='heal'?'#7fd08a':!sk.el?'#d9b35b':null});
+ const mates=sideOf(u);
+ if(sk.t==='rest'){const m=Math.round(u.st.mp*.3);u.mp=Math.min(u.st.mp,u.mp+m);blog(`${u.name} ตั้งสมาธิ ฟื้น MP ${m}`);fxAdd(u,'+'+m+' MP','mp');return true}
+ if(sk.t==='form'){const f=FORMS[sk.form];if(!u.baseSkills)u.baseSkills=u.skills;u.form=sk.form;u.types=f.t.slice();u.skills=[...f.sk,'revert'];u.img='form:'+sk.form;blog(`${u.name} แปลงเป็น${f.n}!`);fxAdd(u,f.n,'good');return true}
+ if(sk.t==='revert'){u.form=null;u.types=[];u.skills=u.baseSkills||u.skills;u.img=u.kind==='player'?'player':u.img;blog(`${u.name} คืนร่างมนุษย์`);return true}
+ if(sk.t==='heal'||sk.t==='buff'){
+  let list=sk.tg==='team'?mates.filter(x=>x.hp>0||((sk.revAll)&&x.kind!=='player')):sk.tg==='self'?[u]:[atgt&&(atgt.hp>0||sk.rev)&&mates.includes(atgt)?atgt:u];
+  const hm=hasPas(u,'healer')?1.3:1;
+  list.forEach(x=>{if(sk.t==='heal'){if(x.hp<=0){if(sk.rev||sk.revAll){x.hp=Math.round(x.st.hp*sk.pw/100);x.status={};blog(`${x.name} ฟื้นคืนชีพ!`);fxAdd(x,'คืนชีพ','good')}return}
+   heal(x,(x.st.hp*sk.pw/100+eff(u,'matk')*.5)*hm);if(sk.cure)x.status={};vfx('heal',x.id)}
+   if(sk.t==='buff')vfx('buff',x.id,{c:sk.charge?'#6f9cf0':'#d9b35b'});
+   addBuffs(x,sk);if(sk.charge){x.charge=sk.charge;fxAdd(x,'×'+sk.charge,'mp')}});
+  if(sk.taunt)u.taunt=sk.taunt;
+  blog(`${u.name} ใช้ ${sk.n}${sk.tg==='team'?' ให้ทั้งทีม':list[0]!==u?` ให้ ${list[0].name}`:''}`);return true}
+ let side=foesOf(u);
+ if(u.status.charm&&Math.random()<.45){side=mates;tgt=pick(mates.filter(x=>x.hp>0));blog(`${u.name} ถูกมนต์สะกด หันไปโจมตี ${tgt.name}!`)}
+ const alive=side.filter(x=>x.hp>0);if(!alive.length)return true;
+ if(!tgt||tgt.hp<=0||!side.includes(tgt))tgt=alive[0];
+ blog(`${u.name} ใช้ ${sk.n}${sk.all?'':sk.rt?'':` ใส่ ${tgt.name}`}`);
+ if(sk.all&&['p','m','h'].includes(sk.t))vfx('flash',null,{el:sk.el});
+ if(sk.all)alive.forEach(t=>hitOne(u,sk,t,hasPas(u,'aoeboost')?.9:.75));
+ else{for(let i=0;i<(sk.hits||1);i++){const al=side.filter(x=>x.hp>0);if(!al.length)break;const t=sk.rt?pick(al):tgt.hp>0?tgt:al[0];hitOne(u,sk,t,1)}
+  if(hasPas(u,'multihit')&&['p','m','h','auto'].includes(sk.t)&&Math.random()<.3&&tgt.hp>0){blog(`${u.name} โจมตีซ้ำด้วยเศียรอื่น!`);hitOne(u,sk,tgt,.5)}}
+ if(sk.self&&u.hp>0)hurt(u,Math.round(u.st.hp*sk.self));
+ const dmgSk=['p','m','h','auto'].includes(sk.t);if(dmgSk&&u.charge)u.charge=0;
+ if(!free&&dmgSk&&sk.t!=='auto'&&u.hp>0&&hasPas(u,'echo')&&Math.random()<.2&&foesOf(u).some(x=>x.hp>0)){blog(`เสียงสะท้อนเวท! ${u.name} ใช้ ${sk.n} ซ้ำ`);act(u,id,tgt&&tgt.hp>0?tgt:null,atgt,true)}
+ return true}
+function hitOne(u,sk,t,scale){
+ const dmgT=['p','m','h','auto'].includes(sk.t);
+ const m=typeMult(sk.el,t.types)*(sk.el==='ground'&&hasPas(t,'levitate')?0:1);
+ if(m===0){blog(`ไม่มีผลต่อ ${t.name}`);fxAdd(t,'×0','muted');vfx('miss',t.id);return}
+ if(Math.random()*100>hitChance(u,t,sk)){blog(`${t.name} หลบได้`);fxAdd(t,'พลาด','muted');vfx('miss',t.id);return}
+ const tx=hasPas(u,'toxin')?1.5:1;
+ if(!dmgT){vfx('debuff',t.id,{el:sk.el,c:sk.el?null:'#a07ad8'});addBuffs(t,{bf:sk.bf,tn:sk.tn});if(sk.bf)fxAdd(t,'↓','bad');if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*tx);return}
+ const type=sk.t==='auto'?u.atkType:sk.t;let atk,def;
+ if(type==='h'){atk=(eff(u,'patk')+eff(u,'matk'))/2;def=(eff(t,'pdef')+eff(t,'mdef'))/2}else{atk=eff(u,type==='p'?'patk':'matk');def=eff(t,type==='p'?'pdef':'mdef')}
+ def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0));
+ const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1;
+ let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*scale*(u.charge||1)*(.9+Math.random()*.2);
+ if(hasPas(t,'thick')&&(sk.el==='fire'||sk.el==='ice'))d*=.5;
+ if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;
+ const crit=!hasPas(t,'nocrit')&&Math.random()*100<eff(u,'crit')+(sk.cb||0);if(crit)d*=hasPas(u,'deadly')?2:1.5;
+ d=Math.max(1,Math.round(d));
+ if(hasPas(t,'sturdy')&&t.hp===t.st.hp&&d>=t.hp&&t.hp>1){d=t.hp-1;blog(`${t.name} อึดทนไว้ได้!`)}
+ blog(`→ ${t.name} ${d} ดาเมจ${crit?' คริติคอล!':''}${m>1?' ได้ผลดีมาก':m<1?' ไม่ค่อยได้ผล':''}`);
+ vfx('hit',t.id,{el:sk.el,phys:type!=='m',crit});
+ hurt(t,d);
+ const ls=(sk.ls||0)+(hasPas(u,'lifesteal')?.15:0);if(ls&&u.hp>0)heal(u,d*ls);
+ if(hasPas(u,'manadrain'))u.mp=Math.min(u.st.mp,u.mp+Math.round(d*.08));
+ if(sk.steal)steal(u,t);
+ if(sk.gold&&u.kind==='player'){const g=u.lv*8;S.P.gold+=g;blog(`ได้ ${g} เหรียญ`)}
+ if((type==='p'||type==='h')&&u.hp>0){const tf=hasPas(t,'thorns2')?.4:hasPas(t,'thorns')?.15:0;if(tf){const r=Math.max(1,Math.round(d*tf));blog(`${u.name} โดนสะท้อน ${r}`);hurt(u,r)}
+  if(hasPas(t,'flameBody')&&Math.random()<.25)applyStatus(u,'burn',1);if(hasPas(t,'staticbody')&&Math.random()<.25)applyStatus(u,'para',1);
+  const pt=hasPas(u,'poisonTouch2')?.5:hasPas(u,'poisonTouch')?.25:0;if(pt)applyStatus(t,'poison',pt*tx);
+  if(t.hp>0&&u.hp>0&&hasPas(t,'counter')&&!t._ctr&&Math.random()<.25){t._ctr=1;blog(`${t.name} สวนกลับ!`);hitOne(t,SK.attack,u,1);t._ctr=0}}
+ if(t.hp<=0)return;
+ if(t.status.sleep){delete t.status.sleep;blog(`${t.name} สะดุ้งตื่น!`)}
+ if(t.status.freeze&&sk.el==='fire'){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
+ if(sk.bf)addBuffs(t,{bf:sk.bf,tn:sk.tn});
+ if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*(scale<1?.7:1)*tx)}
+/* simple AI for enemies and auto pets */
+function aiChoose(u){const b=B(),mates=sideOf(u).filter(x=>x.hp>0),foes=foesOf(u).filter(x=>x.hp>0);
+ const ok=u.skills.filter(id=>{const s=SK[id];return costOf(u,s)<=u.mp&&!['form','revert','rest'].includes(s.t)&&!(s.gc&&u.kind==='player')&&!(s.charge&&u.charge)});
+ const T=t=>ok.filter(id=>SK[id].t===t);
+ let tgt=foes.find(x=>x.taunt>0);
+ if(!tgt){if(u.side==='enemy'){const w={};foes.forEach((f,i)=>w[i]=f.kind==='player'?(foes.length>1?40:100):60/(foes.length-1||1));tgt=foes[+wsel(w)]}
+  else tgt=foes.slice().sort((a,c)=>a.hp/a.st.hp-c.hp/c.st.hp)[0]}
+ const hurtM=mates.slice().sort((a,c)=>a.hp/a.st.hp-c.hp/c.st.hp)[0];
+ if(hurtM.hp/hurtM.st.hp<.4&&T('heal').length&&Math.random()<.7){const h=T('heal');return [h.find(id=>SK[id].tg==='team')||h[0],tgt,hurtM]}
+ if(T('buff').length&&!u.buffs.some(x=>x.amt>0)&&Math.random()<.22)return [pick(T('buff')),tgt,pick(mates)];
+ const sts=ok.filter(id=>['status','debuff'].includes(SK[id].t));
+ if(sts.length&&!Object.keys(tgt.status).length&&Math.random()<.22)return [pick(sts),tgt];
+ const dmg=ok.filter(id=>['p','m','h','auto'].includes(SK[id].t));
+ const score=id=>{const s=SK[id];const ty=s.t==='auto'?u.atkType:s.t;const a=ty==='m'?u.st.matk:ty==='h'?(u.st.patk+u.st.matk)/2:u.st.patk;
+  const tg=s.all?foes:[tgt];return tg.reduce((sum,f)=>sum+s.pw*(s.hits||1)*typeMult(s.el,f.types)*(s.all?.75:1),0)*a*((s.el&&u.stab.includes(s.el))?1.25:1)*(s.ct?.55:1)};
+ const best=dmg.slice().sort((a,c)=>score(c)-score(a));
+ return [Math.random()<.7?best[0]:pick(dmg),tgt]}
+function aiAct(){const b=B();if(!b||b.over)return;const u=uById(b.cur);if(!u||u.hp<=0){advance();return}
+ const [id,t,a]=aiChoose(u);if(!act(u,id,t,a))act(u,'attack',t);render();setTimeout(advance,600)}
+function after(){const b=B();b.menu='wait';render();setTimeout(advance,450)}
+function curTarget(){const b=B();let t=b.enemies[b.target];if(!t||t.hp<=0){b.target=b.enemies.findIndex(e=>e.hp>0);t=b.enemies[b.target]}return t}
+const curAlly=()=>B().allies[B().atarget]||B().allies[0];
+const sealable=e=>e&&e.hp>0&&!(e.sp&&SP[e.sp].noseal)&&(e.kind==='beast'||(e.kind==='npcpet'&&B()&&['bandit','traveler'].includes(B().kind)));
+function sealChance(e,pow){if(!sealable(e))return 0;
+ const lf=clamp(1+(S.P.lv-e.lv)*.03,.6,1.3);let c=pow*(1-.85*e.hp/e.st.hp)*(.55/e.r)*lf;const s=e.status;
+ if(s.sleep||s.freeze||s.para)c*=1.5;else if(Object.keys(s).length)c*=1.15;if(hasPas(B().allies[0],'sealer'))c*=1.5;return clamp(c,.01,.97)}
+function syncBack(){const b=B(),P=S.P,pu=b.allies[0];P.hp=pu.hp;P.mp=pu.mp;b.allies.slice(1).forEach(u=>{const p=petBy(u.uid);if(p){p.hp=u.hp;p.mp=u.mp}})}
+function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,lines=[];
+ if(res==='win'){let exp=0,gold=0;
+  b.enemies.forEach(e=>{let x=expFor(e.lv)*(e.boss?3:e.rare?2:1)*(e.kind==='human'?1.5:1);if(e.captured)x*=.5;exp+=x;
+   if(e.kind==='human'&&b.kind==='traveler')x*=2;
+   if(e.kind==='human'&&b.kind==='bandit'){const g=e.lv*20+R(0,e.lv*10);gold+=g;lines.push(`ยึดถุงเงินโจรได้ ${fmt(g)} เหรียญ`)}
+   if(e.kind!=='human'&&!e.captured&&e.sp){gold+=e.lv*4+R(0,e.lv*3);const n=e.boss||e.rare?2:Math.random()<.6?1:0;
+    for(let i=0;i<n;i++){const pi=e.boss||e.rare?i:(Math.random()<.7?0:1),key=e.sp+'|'+pi;P.parts[key]=(P.parts[key]||0)+1;lines.push(`ได้ ${SP[e.sp].parts[pi][0]}`)}}});
+  exp=Math.round(exp);
+  if(b.kind==='npc'){const n=NPC[b.meta],first=!P.arena[b.meta];const g=first?n.gold:Math.round(n.gold*.3);gold+=g;P.arena[b.meta]=(P.arena[b.meta]||0)+1;lines.unshift(`เงินรางวัลประลอง ${fmt(g)} เหรียญ${first?' (ชนะครั้งแรก)':''}`)}
+  if(b.kind==='traveler')lines.push(...travelerLoot(b.enemies[0]));
+  if(b.kind==='boss'&&ZN[b.meta-1].final){if(!P.cleared){gold+=20000;lines.push('🏆 ปราบจอมมารสำเร็จเป็นครั้งแรก! รางวัลพิเศษ 20,000 เหรียญ')}else lines.push('🏆 ปราบจอมมารได้อีกครั้ง!');P.cleared=(P.cleared||0)+1}
+  if(b.kind==='boss'){const z=b.meta;if(P.zoneMax<=z&&z<ZN.length){P.zoneMax=z+1;lines.push(`ปลดล็อกพื้นที่ใหม่: ${ZN[z].n}`)}gold+=ZN[z-1].boss.lv*25}
+  const lucky=b.allies[0].pas.filter(k=>k==='lucky').length;if(lucky)gold=Math.round(gold*(1+.25*lucky));
+  P.gold+=gold;lines.unshift(`ได้ EXP ${fmt(exp)} · ${fmt(gold)} เหรียญ`);
+  lines.push(...gainExp(P,exp,true));b.used.forEach(uid=>{const p=petBy(uid);if(p)lines.push(...gainExp(p,exp,false))});
+  b.over={res,title:'ชัยชนะ',lines}}
+ else if(res==='lose'){const band=b.kind==='bandit'||b.kind==='traveler';
+  const lost=Math.max(0,Math.floor(P.gold*(band?.25:.1)));P.gold-=lost;const xl=loseExp(P,band?.15:.08);
+  P.hp=Math.max(1,Math.round(pStats().hp*.3));
+  lines.push(b.kind==='traveler'?`${b.enemies[0].name} เอาชนะคุณ แล้วชิงข้าวของไป`:band?'โจรป่ารุมซ้อมจนหมดสติ แล้วปล้นข้าวของไป':'คุณหมดสติ ชาวบ้านช่วยพากลับมาที่โรงพยาบาล',`เสียเงิน ${fmt(lost)} เหรียญ · เสีย EXP ${fmt(xl)} (เลเวลไม่ลด)`);
+  b.used.forEach(uid=>{const p=petBy(uid);if(p)loseExp(p,band?.15:.08)});
+  if(band&&P.pets.length>1&&Math.random()<.4){const v=pick(P.pets);P.pets=P.pets.filter(p=>p!==v);fixParty();lines.push(`โจรขโมย ${petName(v)} Lv ${v.lv} ไปจากผนึก!`)}
+  if(band){const ks=Object.keys(P.items).filter(k=>P.items[k]>0);if(ks.length){const k=pick(ks),n=Math.ceil(P.items[k]/2);P.items[k]-=n;lines.push(`ถูกยึด ${CON[k].n} ${n} ชิ้น`)}}
+  b.over={res,title:'พ่ายแพ้',lines};S.zone=null}
+ else b.over={res,title:'หนีสำเร็จ',lines:['คุณถอยออกจากการต่อสู้อย่างปลอดภัย']};
+ b.menu='end';save()}
+
+function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
+ if(k==='target'){const i=+a;if(b.enemies[i]&&b.enemies[i].hp>0){b.target=i;render()}return}
+ if(k==='ally'){b.atarget=+a;render();return}
+ if(k==='auto'){S.ui.autoPet=!S.ui.autoPet;const u=uById(b.cur);render();if(S.ui.autoPet&&u&&u.kind==='pet'&&b.menu!=='wait'&&b.menu!=='end'){b.menu='wait';setTimeout(aiAct,300)}return}
+ if(k==='done'){const res=b.over.res,kind=b.kind;S.battle=null;
+  if(res==='lose'){S.zone=null;S.screen='hospital'}
+  else if(kind==='npc')S.screen='arena';
+  else if(kind==='boss'&&res==='win'){S.zone=null;S.screen='town';toast('ชนะบอสแล้ว! กลับสู่นครพันผนึกอย่างผู้ชนะ')}
+  else{S.screen='zone';if(S.zone){if(S.zone.after){S.zone.ev=S.zone.after;S.zone.after=null;S.zone.fork=null}else newFork()}}
+  save();render();return}
+ if(b.menu==='wait'||b.menu==='end')return;const u=uById(b.cur);if(!u)return;
+ if(k==='menu'){b.menu=a;render();return}
+ if(k==='sk'){const sk=SK[a];if(costOf(u,sk)>u.mp){toast('MP ไม่พอ');return}if(sk.gc&&S.P.gold<sk.gc*u.lv){toast('เงินไม่พอ');return}if(!act(u,a,curTarget(),curAlly()))return;after();return}
+ if(k==='item'){const it=CON[a];if(!(S.P.items[a]>0))return;const tgt=curAlly();
+  if(it.rev){if(tgt.hp>0||tgt.kind==='player'){toast('เลือกอสูรที่หมดสติก่อน (แตะการ์ดฝ่ายเรา)');return}tgt.hp=Math.round(tgt.st.hp*it.rev);tgt.status={};blog(`${tgt.name} ฟื้นคืนสติ`)}
+  else if(tgt.hp<=0){toast('เป้าหมายหมดสติ ใช้ธูปเรียกวิญญาณก่อน');return}
+  else if(it.cure){const has=it.cure.filter(x=>tgt.status[x]);if(!has.length){toast(`${tgt.name} ไม่มีสถานะที่ยานี้รักษาได้`);return}has.forEach(x=>delete tgt.status[x]);blog(`ใช้ ${it.n} กับ ${tgt.name} หายจาก${has.map(x=>STS[x].n).join(' ')}`);fxAdd(tgt,'หาย','good')}
+  else{if(it.hp)heal(tgt,it.hp);if(it.mp){tgt.mp=Math.min(tgt.st.mp,tgt.mp+it.mp);fxAdd(tgt,'+'+it.mp+' MP','mp')}blog(`ใช้ ${it.n} กับ ${tgt.name}`)}
+  vfx('heal',tgt.id);S.P.items[a]--;after();return}
+ if(k==='seal'){const it=CON[a],t=curTarget();if(!(S.P.items[a]>0)||!t)return;if(!sealable(t)){toast('ผนึกเป้าหมายนี้ไม่ได้');return}if(S.P.pets.length>=MAXPETS){toast('ผนึกเต็มแล้ว ปล่อยอสูรบางตัวก่อน');return}
+  S.P.items[a]--;vfx('buff',t.id,{c:'#6dcfc1'});const ch=sealChance(t,it.seal);blog(`คุณขว้าง${it.n}ใส่ ${t.name}...`);
+  if(Math.random()<ch){const p=mkPet(t.sp,t.lv,t.evo);const s=calcPet(p);p.hp=Math.max(1,Math.round(s.hp*t.hp/t.st.hp));p.mp=s.mp;S.P.pets.push(p);S.P.caught[t.sp]=1;
+   if(S.P.party.length<clsSum(S.P.cls))S.P.party.push(p.uid);
+   t.captured=true;t.hp=0;fxAdd(t,'ผนึก!','good');blog(`สำเร็จ! ${petName(p)} ถูกผนึกแล้ว`)}
+  else{fxAdd(t,'หลุด','muted');blog(`ผนึกแตก! ${t.name} ดิ้นหลุดออกมา`)}
+  after();return}
+ if(k==='swap'){const p=petBy(+a);if(!p||p.hp<=0)return;const n=clsSum(S.P.cls),pets=b.allies.slice(1);let slot;
+  const sel=b.allies[b.atarget];
+  if(sel&&sel.kind==='pet')slot=b.allies.indexOf(sel);else if(pets.length<n)slot=b.allies.length;else slot=1;
+  const old=b.allies[slot];if(old){const op=petBy(old.uid);if(op){op.hp=old.hp;op.mp=old.mp}b.queue=b.queue.filter(x=>x.replace('*','')!==old.id)}
+  b.allies[slot]=petUnit(p);if(!b.used.includes(p.uid))b.used.push(p.uid);
+  S.P.party=b.allies.slice(1).map(x=>x.uid);blog(`เรียก ${petName(p)} ออกจากผนึก!`);after();return}
+ if(k==='flee'){if(!['wild','bandit','traveler'].includes(b.kind)){toast('หนีไม่ได้ในการต่อสู้นี้');return}const es=b.enemies.filter(e=>e.hp>0);const avg=es.reduce((s,e)=>s+eff(e,'spd'),0)/es.length;
+  if(Math.random()<clamp(.5+(eff(u,'spd')-avg)*.03,.2,.92)){endBattle('flee');render()}else{blog('หนีไม่สำเร็จ!');after()}return}
+}
+
+/* ================= FOREST ================= */
+const ZDEPTH=10;
+const EV={
+ beast:{n:'รอยเท้าอสูร',g:'足',d:'รอยเท้าสด ๆ หลายคู่ อสูร 1–4 ตัวรออยู่',w:0},
+ bush:{n:'พุ่มไม้รก',g:'叢',d:'มีบางอย่างขยับอยู่ข้างใน อาจเป็นอสูรหรือหีบสมบัติ',w:18},
+ mist:{n:'ม่านหมอก',g:'霧',d:'มองไม่เห็นอะไรเลย อาจเจออสูรหายาก ของดี หรือถูกซุ่มโจมตี',w:15},
+ ruins:{n:'ซากวิหารร้าง',g:'墟',d:'มักมีหีบสมบัติชั้นดีซ่อนอยู่ บางครั้งมีผู้เฝ้า',w:8},
+ bandit:{n:'ค่ายโจรป่า',g:'賊',d:'โจรพร้อมอสูร ชนะได้เงิน แพ้อาจโดนปล้นหนัก',w:11},
+ spring:{n:'ลำธารใส',g:'泉',d:'แวะพักดื่มน้ำ ฟื้น HP และ MP บางส่วนฟรี',w:8},
+ shrine:{n:'ศาลเจ้าเก่า',g:'祠',d:'ขอพรจากเทพประจำป่า ผลลัพธ์แล้วแต่ดวง',w:7},
+ village:{n:'หมู่บ้านกลางป่า',g:'村',d:'มีร้านค้า ซื้อยาและผนึก ขายชิ้นส่วนอสูรได้',w:6},
+ hospital:{n:'ศาลาหมอยา',g:'醫',d:'รักษา HP MP และสถานะเต็มทั้งทีม มีค่าใช้จ่าย',w:5},
+ stranger:{n:'นักเดินทางปริศนา',g:'旅',d:'ร่างในผ้าคลุมยืนรออยู่กลางทาง อาจเป็นมิตร หรือศัตรูที่แข็งแกร่ง',w:9},
+ exit:{n:'แสงปลายทาง',g:'門',d:'ทางเดินมีแสงลอดเข้ามา อาจเป็นทางออกสู่เมือง',w:7},
+};
+const SAFE=['spring','village','hospital','exit'];
+const TRAPS=[
+ {n:'ทรายดูด',p:.2,d:'ทุกคนจมลงในทรายดูด กว่าจะตะเกียกตะกายขึ้นมาได้ก็หมดแรง'},
+ {n:'บ่อปลิง',p:.12,mp:.25,d:'ปลิงนับร้อยเกาะดูดทั้งเลือดและพลังเวทย์'},
+ {n:'กำแพงเพลิง',p:.25,d:'กำแพงไฟพุ่งขึ้นขวางทาง ต้องฝ่าเปลวไฟออกมา'},
+ {n:'หลุมหนามพิษ',p:.15,d:'พื้นดินยุบลงเป็นหลุมหนามอาบพิษ'},
+ {n:'หินถล่ม',p:.22,d:'หินก้อนใหญ่กลิ้งลงมาจากเนิน'},
+ {n:'เถาวัลย์รัดคอ',p:.1,mp:.1,d:'เถาวัลย์มีชีวิตรัดแน่นจนหายใจไม่ออก'},
+];
+const CHESTS={
+ wood:{n:'หีบไม้',c:'#9a6a3c',d:'ของใช้ทั่วไป เหรียญและยา'},
+ jade:{n:'หีบหยก',c:'#3fae7a',d:'ยารักษาและยาแก้สถานะ'},
+ azure:{n:'หีบคราม',c:'#3f78d8',d:'ผนึกจับอสูร'},
+ amethyst:{n:'หีบอเมทิสต์',c:'#9a5cd6',d:'อุปกรณ์สวมใส่ อาจมีความสามารถพิเศษ'},
+ gold:{n:'หีบทองคำ',c:'#e0b43c',d:'หายาก เหรียญมหาศาลและอุปกรณ์พิเศษ'},
+ blood:{n:'หีบโลหิต',c:'#c0392b',d:'ต้องคำสาป เปิดแล้วเจ็บตัว แต่ของข้างในล้ำค่า'},
+ legend:{n:'หีบโบราณแห่งตำนาน',c:'#7fe3e8',d:'หายากที่สุด บรรจุอุปกรณ์ในตำนานประจำแผนที่นี้ 1 ชิ้น'},
+};
+const CHESTW={bush:{wood:40,jade:24,azure:20,amethyst:10,gold:3,blood:3},mist:{wood:14,jade:18,azure:20,amethyst:22,gold:12,blood:14,legend:4},ruins:{wood:5,jade:14,azure:18,amethyst:30,gold:19,blood:14,legend:7}};
+const BANDITS=['เสือดำ หัวหน้าโจรป่า','บุญเรือง โจรหน้าบาก','แม่นางมีด โจรสาว','ไอ้เขี้ยว นักล่าเถื่อน','ขุนโจรตาเดียว','สมิง จอมโจรเงา'];
+const BANDCLS=[['thief','gunner','swordsman','gladiator','archer'],['rogue','assassin','marksman','berserker','ranger'],['masterthief','ninja','ronin','gunsaint','warlord']];
+function newFork(){const z=S.zone,zd=ZN[z.id-1];z.ev=null;if(z.depth>=ZDEPTH){z.fork=null;return}
+ const VH=['village','hospital'],clash=(a,k)=>k===a||(VH.includes(a)&&VH.includes(k));
+ const keys=Object.keys(EV).filter(k=>k!=='beast'&&(k!=='exit'||(z.depth>=3&&z.depth<ZDEPTH-1))&&!(zd.train&&['bandit','stranger'].includes(k)));
+ const w=ks=>wsel(Object.fromEntries(ks.map(k=>[k,EV[k].w])));let a,c;
+ if(z.depth===ZDEPTH-1){a=pick(['spring','hospital','village']);c=Math.random()<.5?'beast':w(keys.filter(k=>!clash(a,k)&&k!=='exit'))}
+ else{a=Math.random()<.5?'beast':w(keys);c=w(keys.filter(k=>!clash(a,k)))}
+ const hid=Math.random()<.18?R(0,1):-1;
+ z.fork=(Math.random()<.5?[a,c]:[c,a]).map((k,i)=>({k,h:i===hid&&!SAFE.includes(k)}))}
+function zlog(t){const zl=S.zone.log;zl.push(t);if(zl.length>12)zl.shift()}
+function trap(){const t=pick(TRAPS),P=S.P,s=pStats();
+ P.hp=Math.max(1,P.hp-Math.round(s.hp*t.p));if(t.mp)P.mp=Math.max(0,P.mp-Math.round(s.mp*t.mp));
+ party().forEach(p=>{if(p.hp>0){const q=calcPet(p);p.hp=Math.max(1,p.hp-Math.round(q.hp*t.p));if(t.mp)p.mp=Math.max(0,p.mp-Math.round(q.mp*t.mp))}});
+ return `กับดัก${t.n}! ${t.d} ทั้งทีมเสีย HP ${Math.round(t.p*100)}%${t.mp?` และ MP ${Math.round(t.mp*100)}%`:''}`}
+const ZT=id=>ZN[id-1].train?0:id-1;
+function gearDrop(tier,special){if(special){const zl=ZN[S.zone.id-1].lv[1]+6;const ks=Object.keys(SG).filter(k=>SG[k].lv<=zl);return pick(ks)}return pick(Object.keys(SLOTBASE))+'_'+clamp(tier,0,5)}
+function openChest(c){const z=ZN[S.zone.id-1],P=S.P,out=[],tier=ZT(z.id),add=(id,n=1)=>{P.items[id]=(P.items[id]||0)+n;out.push(`${CON[id].n}${n>1?' ×'+n:''}`)};
+ const gold=g=>{P.gold+=g;out.push(`${fmt(g)} เหรียญ`)},gear=id=>{P.owned.push(id);out.push((EQ[id].legend?'✦ ':'')+EQ[id].n+(EQ[id].pas?` (${PAS[EQ[id].pas].n})`:''))},lg=ch=>{if(Math.random()<ch){const id=legendDrop(z.id);if(id)gear(id)}};
+ const base=R(6,14)*z.lv[0]+R(5,20),pot=['pot','pot','pot2','pot2','pot3','pot3'][tier];
+ if(c==='wood'){gold(base);add(pot,R(1,2));if(Math.random()<.4)add(tier>=3?'eth2':'eth')}
+ if(c==='jade'){for(let i=0;i<3;i++)add(pick(CURES));add(pot);if(Math.random()<.35)add('allcure')}
+ if(c==='azure'){add(SEALS[Math.min(4,tier)],R(2,3));if(Math.random()<.3&&tier<4)add(SEALS[tier+1])}
+ if(c==='amethyst'){gear(gearDrop(tier+(Math.random()<.2?1:0),Math.random()<.35));if(Math.random()<.15)gear(`wp_${clsWeapon(P.cls)}${Math.min(5,tier+2)}`)}
+ if(c==='legend'){const id=legendDrop(z.id);if(id){gear(id);gold(base*2)}else{out.push('ของในตำนานของแผนที่นี้ถูกพบครบแล้ว');c='gold'}}
+ if(c==='gold'){lg(.12);gold(base*4);gear(gearDrop(tier+1,Math.random()<.6));add(SEALS[Math.min(4,tier+1)]);add(pot,2);add('allcure')}
+ if(c==='blood'){lg(.18);out.push(trap().split('!')[0]+'จากคำสาป');gold(base*3);gear(gearDrop(tier+1,true));gear(gearDrop(tier,false));add(SEALS[Math.min(4,tier+1)],2);add('rev')}
+ return out}
+function legendDrop(z){const P=S.P;if(ZN[z-1].train)return null;P.legend=P.legend||{};const left=SLOTS.map(x=>x[0]).filter(sl=>!P.legend[z+'_'+sl]);if(!left.length)return null;
+ const sl=pick(left);P.legend[z+'_'+sl]=1;return sl==='weapon'?`lg${z}_weapon_${clsWeapon(P.cls)}`:`lg${z}_${sl}`}
+const SUF=['ผู้หลงผิด','ปีศาจ','ถูกครอบงำ','ไร้วิญญาณ','ผู้ถูกสาป','คลั่งเลือด','แห่งความมืด','จากขุมนรก','ผู้ทรยศ','ไร้นาม'];
+function travelerUnits(zd){const P=S.P,lv=clamp(P.lv+R(-5,2),zd.lv[0],zd.boss.lv),tier=lv>=40?2:lv>=25?1:0;
+ const cls=pick(Object.keys(CLS).filter(k=>tierOf(k)===tier)),h=humanUnit(CLS[cls].n+pick(SUF),cls,lv,0);
+ ['hp','patk','matk','pdef','mdef','spd'].forEach(k=>h.st[k]=Math.round(h.st[k]*1.1));h.hp=h.st.hp;h.mp=h.st.mp;
+ const np=clamp(+wsel({1:55,2:35,3:10})+(clsSum(cls)>1?1:0),1,3),es=[h];
+ for(let i=0;i<np;i++){const u=wildUnit(pick(Math.random()<.12?zd.rare:zd.sp),Math.max(1,lv-R(0,3)),i+1);u.name=`${u.name}ของ${CLS[cls].n}`;u.kind='npcpet';es.push(u)}return es}
+function travelerLoot(h){const P=S.P,z=S.zone?S.zone.id:Math.min(5,Math.ceil(h.lv/9)),out=[],tier=ZT(z),g=h.lv*40+R(0,h.lv*20);P.gold+=g;out.push(`ค่าหัวนักเดินทาง ${fmt(g)} เหรียญ`);
+ const give=id=>{P.owned.push(id);out.push('ได้ '+(EQ[id].legend?'✦ ':'')+EQ[id].n)};
+ let id=Math.random()<.3?legendDrop(z):null;if(id)give(id);
+ give(Math.random()<.5?pick(Object.keys(SG).filter(k=>SG[k].lv<=h.lv+6)):pick(Object.keys(SLOTBASE))+'_'+clamp(tier+1,0,4));
+ const it=[SEALS[Math.min(4,tier+1)],['pot','pot2','pot2','pot3','pot3','pot3'][tier],'allcure'];it.forEach(k=>{P.items[k]=(P.items[k]||0)+1});out.push('ได้ '+it.map(k=>CON[k].n).join(', '));return out}
+const chestEv=(src,msg)=>({type:'chest',chest:wsel(CHESTW[src]),msg,opened:false});
+function wildGroup(zd,ns){const n=+wsel(ns||{1:45,2:33,3:14,4:8}),hi=zd.lv[1]-(n>=3?2:n===2?1:0);
+ return Array.from({length:n},(_,i)=>wildUnit(pick(zd.sp),R(zd.lv[0],Math.max(zd.lv[0],hi)),i))}
+function banditGroup(zd){const lv=R(zd.lv[0]+1,zd.lv[1]),tier=lv>=40?2:lv>=25?1:0,cls=pick(BANDCLS[tier]);
+ const es=[humanUnit(pick(BANDITS),cls,lv,0)],np=+wsel(zd.id>=3?{1:40,2:40,3:20}:{1:70,2:30});
+ for(let i=0;i<np;i++){const sp=pick(zd.sp),u=wildUnit(sp,Math.max(1,lv-R(0,2)),i+1);u.name=`${u.name}ของโจร`;u.kind='npcpet';es.push(u)}return es}
+function chooseFork(i){const z=S.zone,zd=ZN[z.id-1],P=S.P,door=z.fork[i],type=door.k;z.fork=null;z.depth++;
+ zlog(`ก้าวที่ ${z.depth}: เลือกทาง${i?'ขวา':'ซ้าย'}${door.h?'ซึ่งมืดมิด':''} — ${EV[type].n}`);
+ let pre='';if(!SAFE.includes(type)&&Math.random()<.14){pre=trap();zlog(pre)}
+ const fight=(es,kind='wild',aft=null)=>{z.ev=null;z.after=aft;startBattle(es,kind,z.id,pre||null);save();render()};
+ const show=ev=>{if(pre)ev.msg=`<span style="color:var(--bad)">${pre}</span><br>${ev.msg}`;z.ev=ev};
+ if(type==='beast')return fight(wildGroup(zd,zd.train?{1:65,2:30,3:5}:undefined));
+ if(type==='bush'){const r=Math.random();if(r<.5)return fight(wildGroup(zd,{1:60,2:30,3:10}));
+  if(r<.88)show(chestEv('bush','ในพุ่มไม้มีหีบซ่อนอยู่'));else{P.items.pot=(P.items.pot||0)+1;show({type,msg:'เจอสมุนไพรป่า ทำเป็นยาฟื้นพลังได้ 1 ขวด'})}}
+ if(type==='mist'){const r=Math.random();
+  if(r<.33){const e=wildUnit(pick(zd.rare),zd.lv[1]+R(0,2),0);e.rare=true;e.name='★ '+e.name;return fight([e])}
+  if(r<.58)show(chestEv('mist','หมอกจางลงเผยให้เห็นหีบสมบัติโบราณ'));
+  else if(r<.82)return fight(wildGroup(zd,zd.train?{2:1}:{2:35,3:40,4:25}));
+  else show({type,msg:'หลงวนอยู่ในหมอกจนเหนื่อย ไม่เจออะไรเลย'})}
+ if(type==='ruins'){if(Math.random()<.35){const e=wildUnit(pick(zd.sp),zd.lv[1]+1,0);e.name='ผู้เฝ้า'+e.name;return fight([e],'wild',chestEv('ruins','ผู้เฝ้าล้มลง เผยให้เห็นหีบที่มันปกป้องไว้'))}
+  show(chestEv('ruins','ในห้องลับของวิหารมีหีบสมบัติวางอยู่'))}
+ if(type==='bandit')return fight(banditGroup(zd),'bandit');
+ if(type==='spring'){const s=pStats();P.hp=Math.min(s.hp,P.hp+Math.round(s.hp*.35));P.mp=Math.min(s.mp,P.mp+Math.round(s.mp*.35));
+  P.pets.forEach(p=>{if(p.hp>0){const q=calcPet(p);p.hp=Math.min(q.hp,p.hp+Math.round(q.hp*.35));p.mp=Math.min(q.mp,p.mp+Math.round(q.mp*.35))}});show({type,msg:'น้ำในลำธารเย็นสดชื่น ทุกคนฟื้น HP และ MP 35%'})}
+ if(type==='shrine'){const r=Math.random();
+  if(r<.45){const x=expFor(zd.lv[1])*2,l=gainExp(P,x,true);party().forEach(p=>l.push(...gainExp(p,x,false)));show({type,msg:`เทพประทานพร ได้ EXP ${fmt(x)}${l.length?'<br>'+l.join('<br>'):''}`})}
+  else if(r<.75){const id=SEALS[Math.min(4,ZT(z.id))];P.items[id]=(P.items[id]||0)+2;show({type,msg:`บนแท่นบูชามี${CON[id].n} 2 ใบ คุณเก็บมาอย่างนอบน้อม`})}
+  else{const s=pStats();P.mp=s.mp;P.pets.forEach(p=>{if(p.hp>0)p.mp=calcPet(p).mp});show({type,msg:'แสงศักดิ์สิทธิ์โอบล้อม MP ของทุกคนเต็ม'})}}
+ if(type==='village')show({type,msg:'ชาวบ้านต้อนรับนักเดินทาง ร้านค้าเปิดให้ซื้อขาย ราคาแพงกว่าในเมืองนิดหน่อย'});
+ if(type==='hospital')show({type,msg:'หมอยาประจำป่ายินดีรักษาให้ ถ้ามีค่าตอบแทน',healed:false});
+ if(type==='stranger'){const r=Math.random();
+  if(r<.6)return fight(travelerUnits(zd),'traveler');
+  if(r<.8)show({type,msg:pick(['ชาวบ้านเก็บสมุนไพรเปิดผ้าคลุมทักทาย แล้วเดินจากไป','นักแสวงบุญขอทางผ่าน แล้วหายไปในหมอก','พ่อค้าเร่ที่หลงทางถามทางไปเมือง คุณชี้ทางให้','นักบวชชราพยักหน้าให้เงียบ ๆ แล้วเดินสวนไป'])});
+  else{const out=[];if(Math.random()<.15){const id=legendDrop(zd.id);if(id){P.owned.push(id);out.push('✦ '+EQ[id].n)}}
+   if(!out.length){const ks=[SEALS[Math.min(4,ZT(z.id))],['pot','pot2','pot2','pot3','pot3','pot3'][ZT(z.id)],pick(CURES),'eth'];ks.slice(0,R(2,4)).forEach(k=>{P.items[k]=(P.items[k]||0)+1;out.push(CON[k].n)})}
+   show({type,msg:`นักเดินทางผู้ใจดีมอบของให้: ${out.join(', ')}`})}}
+ if(type==='exit')show({type,msg:'แสงแดดลอดผ่านต้นไม้ เห็นกำแพงเมืองอยู่ไกล ๆ จะกลับเมืองตอนนี้ หรือเดินลึกเข้าไปต่อ?'});
+ if(z.ev)zlog(z.ev.msg.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,100));save();render()}
+
+/* ================= ACTIONS ================= */
+let pendingImg=null;
+const CLOUD={st:'init',info:null,busy:0};
+async function cloudInit(){try{const c=window.claude;if(!c||!c.use){CLOUD.st='off';return}
+ const [db,user]=await Promise.all([c.use('db'),c.use('user')]);if(!db||!user){CLOUD.st='off';render();return}
+ const id=await user.id();if(!id){CLOUD.st='off';render();return}
+ CLOUD.ref=db.doc('data/users/'+id+'/save');CLOUD.st='ready';const s=await CLOUD.ref.get();CLOUD.info=s.exists?s.data():null;render()}catch(e){CLOUD.st='off';render()}}
+async function cloudSave(){if(CLOUD.st!=='ready'||!S.P||CLOUD.busy)return;if(S.battle){toast('บันทึกระหว่างต่อสู้ไม่ได้');return}
+ CLOUD.busy=1;render();const d={json:JSON.stringify({...S,battle:null,ui:{}}),at:Date.now(),name:S.P.name,lv:S.P.lv,cls:S.P.cls};
+ try{await CLOUD.ref.set(d);CLOUD.info=d;toast('บันทึกขึ้นคลาวด์แล้ว')}catch(e){toast(e&&e.code==='invalid_argument'?'บัญชีนี้ยังไม่มีสิทธิ์บันทึกในเกมนี้ ให้เจ้าของแชร์แบบผู้ร่วมใช้งาน (Contributor)':e&&e.code==='quota_exceeded'?'พื้นที่คลาวด์เต็ม':'บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง')}
+ CLOUD.busy=0;render()}
+async function cloudLoad(){if(CLOUD.st!=='ready'||CLOUD.busy)return;CLOUD.busy=1;render();
+ try{const s=await CLOUD.ref.get();if(!s.exists){toast('ยังไม่มีเซฟบนคลาวด์')}else{const d=s.data();S=JSON.parse(d.json);S.ui={};S.battle=null;S.screen=S.zone?'zone':'town';migrate();save();CLOUD.info=d;toast('โหลดเซฟจากคลาวด์แล้ว')}}catch(e){toast('โหลดไม่สำเร็จ ลองใหม่อีกครั้ง')}
+ CLOUD.busy=0;render()}
+function vCloud(){const i=CLOUD.info,has=S.P;
+ if(CLOUD.st==='init')return `<div class="card"><span class="sub">กำลังเชื่อมต่อเซฟบนคลาวด์...</span></div>`;
+ if(CLOUD.st==='off')return `<div class="card stack" style="gap:4px"><h3>เซฟบนคลาวด์</h3><p class="sub" style="margin:0">ใช้ได้เมื่อล็อกอิน Claude ตอนนี้เกมเซฟไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น</p></div>`;
+ return `<div class="card stack" style="gap:8px"><h3>เซฟบนคลาวด์</h3><p class="sub" style="margin:0">ผูกกับบัญชี Claude ของคุณ เปิดเกมจากเครื่องไหนก็โหลดต่อได้ รูปที่ใส่เองไม่ถูกบันทึกขึ้นคลาวด์</p>
+ <div class="sub">${i?`เซฟล่าสุด: <b style="color:var(--fg)">${esc(i.name)} · ${CLS[i.cls]?CLS[i.cls].n:''} Lv ${i.lv}</b> · ${new Date(i.at).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})}`:'ยังไม่มีเซฟบนคลาวด์'}</div>
+ <div class="row wrap" style="gap:8px">${has?`<button class="btn sm pri" data-a="cloudsave" ${CLOUD.busy?'disabled':''}>${CLOUD.busy?'กำลังบันทึก...':'บันทึกขึ้นคลาวด์'}</button>`:''}${i?`<button class="btn sm" data-a="cloudload" ${CLOUD.busy?'disabled':''}>โหลดจากคลาวด์</button>`:''}</div></div>`}
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2500)}
+function go(s){if(S.zone&&['town','shop','hospital','arena','forge'].includes(s)){toast('ออกจากป่าไม่ได้ จนกว่าจะชนะบอส เจอทางออก หรือพ่ายแพ้');return}if(S.zone&&s==='wild')s='zone';
+ S.screen=s;S.ui.petView=null;save();render();document.querySelector('main')?.scrollTo(0,0)}
+const healCost=()=>5+S.P.lv*4;
+function allFull(){const P=S.P,s=pStats();return P.hp>=s.hp&&P.mp>=s.mp&&P.pets.every(p=>{const q=calcPet(p);return p.hp>=q.hp&&p.mp>=q.mp})}
+function fullHeal(){const P=S.P,s=pStats();P.hp=s.hp;P.mp=s.mp;P.pets.forEach(p=>{const q=calcPet(p);p.hp=q.hp;p.mp=q.mp})}
+const handlers={
+ go:v=>go(v),
+ clspick:v=>{S.ui.cls=v;render()},starterpick:v=>{const n=clsSum(S.ui.cls||'swordsman');let a=starterSel().filter(k=>k!==v);if(a.length===starterSel().length){a.push(v);if(a.length>n)a.shift()}if(!a.length)a=[v];S.ui.starters=a;render()},
+ craft:v=>{const P=S.P,c=CRAFT[v];if(!canCraft(v)){toast('วัตถุดิบหรือเงินไม่พอ');return}c.mats.forEach(([k,n])=>{P.parts[k]-=n;if(!P.parts[k])delete P.parts[k]});P.gold-=c.gold;const id=craftId(v);P.owned.push(id);save();render();toast(`หลอม ${EQ[id].n} สำเร็จ!`)},
+ forgetab:v=>{S.ui.forge=+v;render()},
+ newgame:()=>{const name=(document.getElementById('nm').value||'').trim()||'ผู้ผนึก',cls=S.ui.cls||'swordsman',sts=starterSel();
+  S={ver:6,screen:'town',ui:{},zone:null,battle:null,P:{name:name.slice(0,20),cls,lv:3,exp:0,gold:150,pts:{},free:10,eq:{weapon:`wp_${CLS[cls].w}0`},owned:[],items:{pot:5,seal1:5,eth:2,antidote:1,calm:1},parts:{},pets:[],party:[],legend:{},zoneMax:1,arena:{},seen:{},caught:{},uid:1}};
+  const s=pStats();S.P.hp=s.hp;S.P.mp=s.mp;sts.forEach(st=>{const p=mkPet(st,3);S.P.pets.push(p);S.P.party.push(p.uid);S.P.seen[st]=1;S.P.caught[st]=1});save();render();toast(`${sts.map(k=>SP[k].n).join(' และ ')} เข้ามาอยู่ในผนึกของคุณ`)},
+ shoptab:v=>{if(v==='wpall'){S.ui.allw=!S.ui.allw;v='wp'}S.ui.shop=v;render()},tier:v=>{S.ui.tier=+v;render()},teamtab:v=>{S.ui.team=v;S.ui.petView=null;render()},herotab:v=>{S.ui.hero=v;render()},
+ buy:v=>{const P=S.P,it=EQ[v]||CON[v],pr=priceOf(it);if(P.gold<pr){toast('เหรียญไม่พอ');return}if(it.lv&&P.lv<it.lv&&!EQ[v]){toast(`ต้องเลเวล ${it.lv}`);return}
+  P.gold-=pr;if(EQ[v])P.owned.push(v);else P.items[v]=(P.items[v]||0)+1;save();render();toast(`ซื้อ ${it.n} แล้ว`)},
+ sellpart:v=>{const [key,all]=v.split('~'),P=S.P,[sp,i]=key.split('|'),pr=partPrice(SP[sp].parts[+i][1]),n=all?P.parts[key]:1;if(!(P.parts[key]>0))return;
+  P.parts[key]-=n;P.gold+=pr*n;if(!P.parts[key])delete P.parts[key];save();render();toast(`ขายได้ ${fmt(pr*n)} เหรียญ`)},
+ sellgear:v=>{const P=S.P,i=P.owned.indexOf(v);if(i<0)return;P.owned.splice(i,1);const g=Math.floor(EQ[v].price/2);P.gold+=g;save();render();toast(`ขายได้ ${fmt(g)} เหรียญ`)},
+ equip:v=>{const P=S.P,it=EQ[v],i=P.owned.indexOf(v);if(i<0)return;if(P.lv<it.lv){toast(`ต้องเลเวล ${it.lv}`);return}
+  if(it.slot==='weapon'&&it.wt!==clsWeapon(P.cls)){toast(`อาชีพ${CLS[P.cls].n}ใช้${WT[clsWeapon(P.cls)].n}เท่านั้น`);return}
+  P.owned.splice(i,1);if(P.eq[it.slot])P.owned.push(P.eq[it.slot]);P.eq[it.slot]=v;const s=pStats();P.hp=Math.min(P.hp,s.hp);P.mp=Math.min(P.mp,s.mp);save();render()},
+ unequip:v=>{const P=S.P;if(v==='weapon'){toast('ต้องมีอาวุธติดตัวเสมอ');return}if(P.eq[v]){P.owned.push(P.eq[v]);delete P.eq[v]}const s=pStats();P.hp=Math.min(P.hp,s.hp);P.mp=Math.min(P.mp,s.mp);save();render()},
+ pt:v=>{const P=S.P;if(P.free<=0)return;P.pts[v]=(P.pts[v]||0)+1;P.free--;if(v==='hp')P.hp+=PER.hp;if(v==='mp')P.mp+=PER.mp;save();render()},
+ ppt:v=>{const [uid,k]=v.split(':'),p=petBy(+uid);if(!p||p.free<=0)return;p.pts[k]=(p.pts[k]||0)+1;p.free--;if(k==='hp')p.hp+=PER.hp;if(k==='mp')p.mp+=PER.mp;save();render()},
+ promote:v=>{const c=CLS[v];S.ui.confirm={msg:`เลื่อนอาชีพเป็น "${c.n}"? ${c.d} — เลือกแล้วเปลี่ยนกลับไม่ได้`,act:'dopromote',v};render()},
+ dopromote:v=>{const P=S.P;if(CLS[v].p!==P.cls||!canPromote(P))return;P.cls=v;S.ui.confirm=null;fixParty();const s=pStats();P.hp=s.hp;P.mp=s.mp;save();render();toast(`เลื่อนอาชีพเป็น ${CLS[v].n} แล้ว!`)},
+ heal:()=>{if(allFull()){toast('ทุกคนพลังเต็มอยู่แล้ว ไม่ต้องรักษา');return}const P=S.P,c=healCost();P.gold-=c;fullHeal();save();render();toast(P.gold<0?`รักษาเรียบร้อย ติดหนี้วิหาร ${fmt(-P.gold)} เหรียญ`:`รักษาเรียบร้อย จ่าย ${fmt(c)} เหรียญ`)},
+ arena:v=>{if(S.zone)return;const n=NPC[+v];if(S.P.hp<=0){toast('ต้องรักษาตัวก่อน');return}
+  const es=[humanUnit(n.n,n.cls,n.lv,0)];n.pets.forEach(([sp,lv],i)=>{const u=wildUnit(sp,lv,i+1);u.name=`${u.name}ของ${n.n.split(' ')[0]}`;u.kind='npcpet';es.push(u)});startBattle(es,'npc',+v);save();render()},
+ zone:v=>{if(S.P.hp<=0){toast('ต้องรักษาตัวก่อน');return}S.ui.confirm={msg:`เข้า${ZN[+v-1].n}? เข้าไปแล้วจะกลับเมืองไม่ได้ จนกว่าจะชนะบอส เจอทางออก หรือพ่ายแพ้ เตรียมยาและผนึกให้พร้อม`,act:'dozone',v};render()},
+ dozone:v=>{S.ui.confirm=null;S.zone={id:+v,depth:0,log:[`เข้าสู่${ZN[+v-1].n}`],fork:null,ev:null};newFork();go('zone')},
+ fork:v=>chooseFork(+v),
+ cont:()=>{newFork();save();render();document.querySelector('main')?.scrollTo(0,0)},
+ openchest:()=>{const ev=S.zone.ev;if(!ev||ev.opened)return;const out=openChest(ev.chest);ev.opened=true;ev.got=out;zlog(`เปิด${CHESTS[ev.chest].n} ได้ ${out.join(', ')}`.slice(0,120));save();render()},
+ exitzone:()=>{S.zone=null;S.screen='town';save();render();toast('ออกจากป่ากลับสู่นครพันผนึกได้อย่างปลอดภัย')},
+ boss:()=>{const z=ZN[S.zone.id-1];zlog(`เผชิญหน้ากับ${z.boss.n}!`);const es=[wildUnit(z.boss.sp,z.boss.lv,0,z.boss.n)];
+  if(z.final){const d=es[0];['hp','patk','matk','pdef','mdef'].forEach(k=>d.st[k]=Math.round(d.st[k]*(k==='hp'?1.4:1.08)));d.hp=d.st.hp;d.skills.push(SP[z.boss.sp].sig);
+   Object.keys(CLS).filter(k=>tierOf(k)===2).sort(()=>Math.random()-.5).slice(0,2).forEach((c,i)=>{const h=humanUnit('แม่ทัพปีศาจ'+CLS[c].n,c,50,i+1);es.push(h)})}
+  for(let i=0;i<z.mini;i++){const u=wildUnit(pick(z.sp),z.lv[1]-1,i+1);u.name='สมุน'+u.name;es.push(u)}startBattle(es,'boss',z.id);save();render()},
+ vbuy:v=>{const P=S.P,it=CON[v],pr=Math.round(priceOf(it)*1.25);if(P.gold<pr){toast('เหรียญไม่พอ');return}if(it.lv&&P.lv<it.lv){toast(`ต้องเลเวล ${it.lv}`);return}P.gold-=pr;P.items[v]=(P.items[v]||0)+1;save();render();toast(`ซื้อ ${it.n} แล้ว`)},
+ vsell:v=>{const P=S.P,n=P.parts[v];if(!(n>0))return;const [sp,i]=v.split('|'),g=Math.round(partPrice(SP[sp].parts[+i][1])*.8)*n;P.gold+=g;delete P.parts[v];save();render();toast(`ขายได้ ${fmt(g)} เหรียญ`)},
+ zheal:()=>{if(allFull()){toast('ทุกคนพลังเต็มอยู่แล้ว ไม่ต้องรักษา');return}const P=S.P,c=Math.round(healCost()*1.5);P.gold-=c;fullHeal();S.zone.ev.healed=true;save();render();toast(`รักษาเรียบร้อย จ่าย ${fmt(c)} เหรียญ`)},
+ bt:v=>battleAction(v),
+ partytoggle:v=>{const P=S.P,u=+v,n=clsSum(P.cls);if(P.party.includes(u)){if(P.party.length<=1){toast('ต้องมีอสูรในทีมอย่างน้อย 1 ตัว');return}P.party=P.party.filter(x=>x!==u)}
+  else{if(P.party.length>=n){P.party.shift()}P.party.push(u)}save();render()},
+ petview:v=>{S.ui.petView=v===''?null:+v;render();document.querySelector('main')?.scrollTo(0,0)},
+ release:v=>{S.ui.confirm={msg:`ปล่อย ${petName(petBy(+v))} คืนสู่ป่า? การกระทำนี้ย้อนกลับไม่ได้`,act:'dorelease',v};render()},
+ dorelease:v=>{const P=S.P;if(P.pets.length<=1){toast('ต้องมีอสูรอย่างน้อย 1 ตัว');S.ui.confirm=null;render();return}P.pets=P.pets.filter(p=>p.uid!==+v);fixParty();S.ui.confirm=null;S.ui.petView=null;save();render()},
+ cancel:()=>{S.ui.confirm=null;render()},
+ cloudsave:()=>cloudSave(),
+ cloudload:()=>{if(!S.P){cloudLoad();return}S.ui.confirm={msg:'โหลดเซฟจากคลาวด์? ความคืบหน้าในเครื่องนี้ที่ยังไม่ได้บันทึกขึ้นคลาวด์จะถูกแทนที่',act:'docloudload'};render()},
+ docloudload:()=>{S.ui.confirm=null;cloudLoad()},
+ use:v=>{const [id,who]=v.split(':'),P=S.P,it=CON[id];if(!(P.items[id]>0))return;
+  if(who==='P'){const s=pStats();if(it.hp)P.hp=Math.min(s.hp,P.hp+it.hp);if(it.mp)P.mp=Math.min(s.mp,P.mp+it.mp)}
+  else{const p=petBy(+who);if(!p)return;const s=calcPet(p);if(it.rev){if(p.hp>0){toast('อสูรตัวนี้ยังไม่หมดสติ');return}p.hp=Math.round(s.hp*it.rev)}else{if(p.hp<=0){toast('ต้องใช้ธูปเรียกวิญญาณก่อน');return}if(it.hp)p.hp=Math.min(s.hp,p.hp+it.hp);if(it.mp)p.mp=Math.min(s.mp,p.mp+it.mp)}}
+  P.items[id]--;save();render();toast(`ใช้ ${it.n} แล้ว`)},
+ img:v=>{pendingImg=v;const el=document.getElementById('imgIn');el.value='';el.click()},
+ delimg:v=>{delete IMG[v];saveImg();render()},
+ reset:()=>{S.ui.confirm={msg:'เริ่มเกมใหม่? ข้อมูลตัวละครและอสูรทั้งหมดจะหายไป (รูปที่ใส่ไว้ยังอยู่)',act:'doreset'};render()},
+ doreset:()=>{S={screen:'start',ui:{}};save();render()},
+};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t||t.disabled)return;const f=handlers[t.dataset.a];if(f)f(t.dataset.v??'')});
+document.getElementById('imgIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f||!pendingImg)return;const key=pendingImg;const rd=new FileReader();
+ rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),z=256;c.width=c.height=z;const g=c.getContext('2d'),m=Math.min(im.width,im.height);
+  g.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,z,z);let u=c.toDataURL('image/webp',.85);if(!u.startsWith('data:image/webp'))u=c.toDataURL('image/png');IMG[key]=u;saveImg();render();toast('ใส่รูปแล้ว')};im.src=rd.result};rd.readAsDataURL(f)});
+
+/* ================= VIEWS ================= */
+function starterSel(){const n=clsSum(S.ui.cls||'swordsman');let a=(S.ui.starters||[]).filter(k=>STARTERS.includes(k)).slice(0,n);if(!a.length)a=STARTERS.slice(0,n);return a}
+function vStart(){const cl=S.ui.cls||'swordsman',sel=starterSel(),c=CLS[cl];return `<div class="stack">
+ <div class="hero"><h1>ตำนานผนึกอสูร</h1><p class="sub">ออกเดินทางจับอสูรในตำนานจากทั่วโลกลงผนึก ฝึกฝนไปด้วยกัน แล้วท้าประลองกับยอดฝีมือแห่งนครพันผนึก</p></div>
+ <div class="card stack"><h3>ชื่อผู้ผนึก</h3><input type="text" id="nm" maxlength="20" placeholder="เช่น ภูผา" value=""></div>
+ <div class="card stack"><h3>เลือกอาชีพ</h3><div class="grid3">${BASES.map(k=>`<button class="pick ${cl===k?'on':''}" data-a="clspick" data-v="${k}">${portrait('cls:'+k,40)}<b>${CLS[k].n}</b><small>${WT[CLS[k].w].n}</small></button>`).join('')}</div>
+  <div class="card" style="background:var(--panel2)"><b>${c.n}</b> <span class="sub">· ${c.d}</span><div class="lines" style="margin:6px 0 0;font-size:13px"><div><span class="eff up">ข้อดี</span> ${c.pro}</div><div><span class="eff down">ข้อเสีย</span> ${c.con}</div>
+  <div class="sub">เลื่อนขั้น Lv 25: ${childrenOf(cl).map(x=>CLS[x].n).join(' / ')} · Lv 40: ${childrenOf(cl).flatMap(childrenOf).map(x=>CLS[x].n).join(' / ')}</div></div></div></div>
+ <div class="card stack"><h3>${clsSum(cl)>1?'อสูรคู่หูเริ่มต้น เลือกได้ 2 ตัว':'อสูรคู่หูตัวแรก'}</h3><div class="grid3">${STARTERS.map(k=>`<button class="pick ${sel.includes(k)?'on':''}" data-a="starterpick" data-v="${k}">${portrait(k,48)}<b>${SP[k].n}</b><small>${SP[k].o}</small><span class="row wrap" style="gap:3px;justify-content:center">${tChips(SP[k].t)}</span></button>`).join('')}</div></div>
+ <button class="btn pri full" data-a="newgame">เริ่มการเดินทาง</button>${CLOUD.info?vCloud():''}</div>`}
+function miniStatus(){const P=S.P,s=pStats();return `<div class="card mini">
+ <div class="row">${portrait('player',36)}<div class="grow"><div class="row"><b class="grow">${esc(P.name)}</b><span class="num sub">${P.hp}/${s.hp}</span></div>${bar(P.hp,s.hp)}</div></div>
+ ${party().map(p=>{const q=calcPet(p);return `<div class="row">${portrait(p.sp,30)}<div class="grow"><div class="row"><span class="grow" style="font-size:13px">${petName(p)}</span><span class="num sub">${p.hp<=0?'หมดสติ':p.hp+'/'+q.hp}</span></div>${bar(Math.max(0,p.hp),q.hp)}</div></div>`}).join('')}</div>`}
+function vTown(){const P=S.P;return `<div class="stack">
+ <div class="hero"><h1>นครพันผนึก</h1><p class="sub">ศูนย์กลางของผู้ผนึกอสูร ตลาดเปิดทั้งวัน ลานประลองเปิดทั้งคืน</p></div>${miniStatus()}
+ ${canPromote(P)?`<button class="card row" style="text-align:left;cursor:pointer;border-color:var(--gold)" data-a="go" data-v="hero"><span class="badge">อาชีพ</span><span class="grow">เลื่อนอาชีพได้แล้ว! แตะเพื่อเลือกสายอาชีพใหม่</span></button>`:''}
+ ${(P.free>0||P.pets.some(p=>p.free>0))?`<button class="card row" style="text-align:left;cursor:pointer;border-color:var(--gold)" data-a="go" data-v="${P.free>0?'hero':'team'}"><span class="badge">แต้ม</span><span class="grow">มีแต้มสถานะที่ยังไม่ได้ใช้ แตะเพื่ออัปสถานะ</span></button>`:''}
+ <div class="grid2">
+  <button class="place" data-a="go" data-v="shop"><span class="glyph">ร้าน</span><b>ตลาดช่างตีเหล็ก</b><small>อาวุธ เกราะ เครื่องประดับพิเศษ ยา ผนึก รับซื้อชิ้นส่วน</small></button>
+  <button class="place" data-a="go" data-v="hospital"><span class="glyph">รักษา</span><b>โรงพยาบาลวิหารขาว</b><small>ฟื้น HP และ MP ให้คุณกับอสูรทุกตัว</small></button>
+  <button class="place" data-a="go" data-v="arena"><span class="glyph">ประลอง</span><b>ลานประลองจันทร์แดง</b><small>ท้าดวลผู้ผนึกคนอื่น ชนะได้เงินรางวัล</small></button>
+  <button class="place" data-a="go" data-v="wild"><span class="glyph">ป่า</span><b>ประตูสู่พงไพร</b><small>ป่าเขาวงกต 5 แห่ง และปราสาทจอมมาร</small></button>
+  <button class="place" data-a="go" data-v="forge" style="grid-column:1/-1;min-height:0"><span class="glyph">หลอม</span><b>โรงหลอมเทพอสูร</b><small>นำชิ้นส่วนอสูรมาหลอมเป็นอาวุธและอุปกรณ์ ได้ความสามารถของอสูรตัวนั้น</small></button>
+ </div></div>`}
+function vShop(){const P=S.P,tab=S.ui.shop||'wp',tier=S.ui.tier??0,mw=clsWeapon(P.cls);
+ const row=(id,it,extra='')=>{const lock=it.lv&&P.lv<it.lv,pr=priceOf(it);return `<div class="item"><div class="grow"><b>${it.n}</b>${it.el?' '+elChip(it.el):''}<small>${it.st?statLine(it.st):it.d}${it.st?itemExtra(it):''}${it.lv>1?` · ต้องการ Lv ${it.lv}`:''}${extra}</small></div>
+  <button class="btn sm ${lock?'':'pri'}" data-a="buy" data-v="${id}" ${P.gold<pr?'disabled':''}><span class="num">${fmt(pr)}</span></button></div>`};
+ let body='';
+ if(tab==='wp')body=Object.entries(EQ).filter(([,w])=>w.slot==='weapon'&&(w.wt===mw||S.ui.allw)).map(([id,w])=>row(id,w,w.wt!==mw?` · ${WT[w.wt].n} (อาชีพอื่น)`:'')).join('')+`<button class="btn sm" data-a="shoptab" data-v="wpall">${S.ui.allw?`แสดงเฉพาะ${WT[mw].n}`:'ดูอาวุธของอาชีพอื่น'}</button>`;
+ if(tab==='gear')body=`<div class="tabs">${TIERS.map((t,i)=>`<button class="${tier===i?'on':''}" data-a="tier" data-v="${i}">${t[0]} · Lv ${t[1]}</button>`).join('')}</div>`+Object.entries(EQ).filter(([,g])=>!g.special&&g.slot!=='weapon'&&g.tier===tier).map(([id,g])=>row(id,g)).join('');
+ if(tab==='sp')body=`<p class="sub" style="margin:0">อุปกรณ์ที่มีความสามารถพิเศษหรือสกิลติดมา หาได้จากหีบอเมทิสต์และหีบทองคำด้วย</p>`+Object.entries(SG).map(([id,g])=>row(id,EQ[id],` · ${SLOTN[g.slot]}`)).join('');
+ if(tab==='con')body=Object.entries(CON).map(([id,c])=>row(id,c,` · มีอยู่ ${P.items[id]||0}`)).join('');
+ if(tab==='sell'){const parts=Object.entries(P.parts).filter(([,n])=>n>0);
+  body=`<h3>ชิ้นส่วนอสูร${isMerchant()?' <span class="chip" style="color:var(--gold)">พ่อค้า +20%</span>':''}</h3>`+(parts.length?parts.map(([key,n])=>{const [sp,i]=key.split('|'),pt=SP[sp].parts[+i];return `<div class="item">${portrait(sp,36)}<div class="grow"><b>${pt[0]}</b><small>×${n} · ชิ้นละ ${fmt(partPrice(pt[1]))} เหรียญ</small></div><button class="btn sm" data-a="sellpart" data-v="${key}">ขาย 1</button><button class="btn sm pri" data-a="sellpart" data-v="${key}~all">ขายหมด</button></div>`}).join(''):`<p class="sub">ยังไม่มีชิ้นส่วน ล้มอสูรในป่าแล้วจะได้ชิ้นส่วนมาขาย</p>`)
+   +`<h3>อุปกรณ์ในกระเป๋า</h3>`+(P.owned.length?P.owned.map(id=>`<div class="item"><div class="grow"><b>${itemName(EQ[id])}</b><small>${statLine(EQ[id].st)}${itemExtra(EQ[id])}</small></div><button class="btn sm" data-a="sellgear" data-v="${id}">ขาย <span class="num">${fmt(EQ[id].price/2)}</span></button></div>`).join(''):`<p class="sub">ไม่มีอุปกรณ์ที่ไม่ได้สวมใส่</p>`)}
+ return `<div class="stack"><div class="row"><h2 class="grow">ตลาดช่างตีเหล็ก</h2><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div>
+ ${isMerchant()?'<p class="sub" style="margin:0">ส่วนลดพ่อค้า 15% คิดในราคาแล้ว</p>':''}
+ <div class="tabs">${[['wp','อาวุธ'],['gear','ชุดเกราะ'],['sp','ของพิเศษ'],['con','ยาและผนึก'],['sell','รับซื้อ']].map(([k,n])=>`<button class="${tab===k?'on':''}" data-a="shoptab" data-v="${k}">${n}</button>`).join('')}</div>
+ <div class="lst">${body}</div></div>`}
+function vHospital(){const P=S.P,s=pStats();return `<div class="stack"><div class="row"><h2 class="grow">โรงพยาบาลวิหารขาว</h2><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div>
+ <p class="sub">หมอประจำวิหารรักษาทั้งผู้ผนึกและอสูรทุกตัวในผนึก รวมถึงตัวที่หมดสติ</p>
+ <div class="lst"><div class="item">${portrait('player',40)}<div class="grow"><b>${esc(P.name)}</b>${bar(P.hp,s.hp)}<small class="num">HP ${P.hp}/${s.hp} · MP ${P.mp}/${s.mp}</small></div></div>
+ ${P.pets.map(p=>{const q=calcPet(p);return `<div class="item">${portrait(p.sp,40)}<div class="grow"><b>${petName(p)} <span class="sub num">Lv ${p.lv}</span></b>${bar(Math.max(0,p.hp),q.hp)}<small class="num">${p.hp<=0?'หมดสติ':`HP ${p.hp}/${q.hp}`}</small></div></div>`}).join('')}</div>
+ ${allFull()?'<button class="btn full" disabled>ทุกคนพลังเต็มอยู่แล้ว</button>':`<button class="btn pri full" data-a="heal">รักษาทั้งหมด · <span class="num">${fmt(healCost())}</span> เหรียญ</button>`}${P.gold<healCost()?`<p class="sub" style="margin:0">เงินไม่พอ วิหารให้ติดหนี้ได้ เงินจะติดลบจนกว่าจะหามาใช้คืน (ระหว่างติดหนี้ซื้อของไม่ได้)</p>`:''}</div>`}
+function vArena(){const P=S.P;return `<div class="stack"><div class="row"><h2 class="grow">ลานประลองจันทร์แดง</h2><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div>
+ <p class="sub">ผู้ผนึกพร้อมอสูร ชนะครั้งแรกได้รางวัลเต็ม ครั้งต่อไปได้ 30%</p>${miniStatus()}
+ <div class="lst">${NPC.map((n,i)=>{const w=P.arena[i];return `<div class="item">${portrait('npc:'+n.cls,44)}<div class="grow"><b>${n.n}</b><small>Lv ${n.lv} · ${CLS[n.cls].n} · อสูร ${n.pets.map(([s,l])=>`${formName(s,formFor(s,l))} Lv ${l}`).join(', ')}<br>รางวัล <span class="num">${fmt(w?n.gold*.3:n.gold)}</span> เหรียญ${w?` · ชนะแล้ว ${w} ครั้ง`:''}</small></div><button class="btn sm ${P.lv+3>=n.lv?'pri':''}" data-a="arena" data-v="${i}">ท้าประลอง</button></div>`}).join('')}</div></div>`}
+function vWild(){const P=S.P;return `<div class="stack"><h2>ประตูสู่พงไพร</h2><p class="sub" style="margin:0">ป่าแต่ละแห่งเป็นเขาวงกตลึก ${ZDEPTH} ก้าว ทุกก้าวมีทางแยกซ้ายขวา อสูรมาครั้งละ 1–4 ตัว ระวังกับดัก ออกได้เมื่อชนะบอส เจอทางออก หรือพ่ายแพ้</p>${miniStatus()}
+ <div class="lst">${[...ZN.filter(z=>z.train),...ZN.filter(z=>!z.train)].map(z=>{const open=z.train||P.zoneMax>=z.id;return `<div class="card stack" style="${open?'':'opacity:.55'}"><div class="row"><div class="grow"><h3>${z.n}</h3><span class="sub">อสูร Lv ${z.lv[0]}–${z.lv[1]} · บอส ${z.boss.n} Lv ${z.boss.lv}</span></div>
+  ${z.train?'<span class="badge">มือใหม่</span>':''}<button class="btn sm ${open?'pri':''}" data-a="zone" data-v="${z.id}" ${open?'':'disabled'}>${open?'เข้าป่า':'ล็อก'}</button></div>
+  <p class="sub" style="margin:0">${open?z.d:`ชนะบอสของ${ZN[z.id-2].n}เพื่อปลดล็อก`}</p>
+  <div class="row wrap" style="gap:6px">${z.sp.map(s=>portrait(s,28,{unk:!P.seen[s]})).join('')}<span class="sub">หายาก</span>${z.rare.map(s=>portrait(s,28,{unk:!P.seen[s]})).join('')}</div></div>`}).join('')}</div></div>`}
+function vZone(){const zs=S.zone,z=ZN[zs.id-1],P=S.P;let main='';
+ if(zs.ev){const ev=zs.ev,e=EV[ev.type]||{n:'หีบสมบัติ',g:'寶'};let extra='',contLbl='เดินลึกเข้าไปต่อ';
+  if(ev.type==='chest'){const c=CHESTS[ev.chest];
+   extra=`<div class="chest ${ev.opened?'open':''}" style="--cc:${c.c}"></div><div style="text-align:center"><b style="color:${c.c}">${c.n}</b><div class="sub">${c.d}</div></div>
+   ${ev.opened?`<div class="card" style="background:var(--panel2)"><b>ได้รับ</b><div class="lines" style="margin:4px 0 0">${ev.got.map(x=>`<div>${x}</div>`).join('')}</div></div>`:`<button class="btn pri full" data-a="openchest">เปิดหีบ</button>`}`;
+   if(!ev.opened)contLbl='เดินผ่านไป ไม่เปิด'}
+  if(ev.type==='village'){const parts=Object.entries(P.parts).filter(([,n])=>n>0);
+   extra=`<div class="lst">${Object.entries(CON).map(([id,c])=>{const pr=Math.round(priceOf(c)*1.25),lock=c.lv&&P.lv<c.lv;return `<div class="item"><div class="grow"><b>${c.n}</b><small>${c.d} · มีอยู่ ${P.items[id]||0}${c.lv>1?` · ต้องการ Lv ${c.lv}`:''}</small></div><button class="btn sm ${lock?'':'pri'}" data-a="vbuy" data-v="${id}" ${P.gold<pr||lock?'disabled':''}><span class="num">${fmt(pr)}</span></button></div>`}).join('')}</div>
+   ${parts.length?`<h3>รับซื้อชิ้นส่วน (80% ของราคาในเมือง)</h3><div class="lst">${parts.map(([key,n])=>{const [sp,i]=key.split('|'),pt=SP[sp].parts[+i];return `<div class="item">${portrait(sp,32)}<div class="grow"><b>${pt[0]} ×${n}</b><small class="num">${fmt(Math.round(partPrice(pt[1])*.8)*n)} เหรียญ</small></div><button class="btn sm" data-a="vsell" data-v="${key}">ขายหมด</button></div>`}).join('')}</div>`:''}`}
+  if(ev.type==='hospital')extra=ev.healed?'<p class="sub" style="margin:0">ทุกคนหายดีแล้ว</p>':allFull()?'<button class="btn full" disabled>ทุกคนพลังเต็มอยู่แล้ว</button>':`<button class="btn pri full" data-a="zheal">รักษาทั้งทีม · <span class="num">${fmt(Math.round(healCost()*1.5))}</span> เหรียญ</button>`;
+  if(ev.type==='exit')extra=`<button class="btn pri full" data-a="exitzone">กลับเมือง</button>`;
+  main=`<div class="card stack"><div class="row"><span class="door-g">${e.g}</span><div class="grow"><h3>${e.n}</h3></div></div><p style="margin:0">${ev.msg}</p>${extra}</div>
+  <button class="btn ${ev.type==='chest'&&!ev.opened?'':'pri'} full" data-a="cont" style="min-height:50px">${contLbl}</button>`}
+ else if(!zs.fork){main=`<div class="card stack" style="border-color:var(--bad)"><div class="row"><span class="door-g" style="color:var(--bad)">王</span><div class="grow"><h3>รังของ${z.boss.n}</h3><div class="sub">บอส Lv ${z.boss.lv} · ${tChips(SP[z.boss.sp].t)}${z.mini?` · มีสมุน ${z.mini} ตัว`:''} · หนีไม่ได้</div></div></div>
+  <p class="sub" style="margin:0">ทางสิ้นสุดตรงนี้ ชนะบอสเพื่อกลับเมืองและปลดล็อกพื้นที่ถัดไป ถ้าต้องการใช้ยา เปิดกระเป๋าก่อนได้</p>
+  <div class="row"><button class="btn" data-a="go" data-v="bag">กระเป๋า</button><button class="btn danger grow" data-a="boss">เข้าสู้บอส</button></div></div>`}
+ else main=`<p class="sub" style="margin:0">ทางแยกข้างหน้า เลือกทางที่จะเดินต่อ</p><div class="grid2">${zs.fork.map((d,i)=>{const e=d.h?{g:'?',n:'ทางมืด',d:'มืดจนมองไม่เห็นว่ามีอะไรรออยู่'}:EV[d.k];return `<button class="door ${d.h?'hid':''}" data-a="fork" data-v="${i}"><span class="sub">ทาง${i?'ขวา':'ซ้าย'}</span><span class="door-g">${e.g}</span><b>${e.n}</b><small>${e.d}</small></button>`}).join('')}</div>`;
+ return `<div class="stack"><div><h2>${z.n}</h2><span class="sub">อสูร Lv ${z.lv[0]}–${z.lv[1]} · ออกได้เมื่อชนะบอส เจอทางออก หรือพ่ายแพ้</span></div>
+ <div class="card stack" style="gap:6px"><div class="row"><span class="grow sub">ความลึก</span><span class="num">${Math.min(zs.depth,ZDEPTH)}/${ZDEPTH}</span></div><div class="steps">${Array.from({length:ZDEPTH+1},(_,i)=>`<i class="${i<zs.depth?'done':i===zs.depth?'now':''} ${i===ZDEPTH?'boss':''}"></i>`).join('')}</div></div>
+ ${miniStatus()}${main}<div class="log">${zs.log.map(l=>`<p>${l}</p>`).join('')}</div></div>`}
+function ucard(u,i){const b=B(),fx=b.fx.filter(f=>f.id===u.id).map(f=>`<span class="fx ${f.c}">${f.t}</span>`).join(''),foe=u.side==='enemy';
+ const sts=Object.keys(u.status).map(k=>`<span class="chip stchip" style="color:${STS[k].c}">${STS[k].n}</span>`).join('');
+ const bs={};u.buffs.forEach(x=>{if(x.st)bs[x.st]=(bs[x.st]||0)+x.amt});
+ const bf=Object.entries(bs).filter(([,v])=>v).map(([k,v])=>`<span class="chip stchip" style="color:var(--${v>0?'good':'bad'})">${SH[k]}${v>0?'↑':'↓'}</span>`).join('')+(u.taunt>0?'<span class="chip stchip" style="color:var(--gold)">ยั่วยุ</span>':'')+(u.charging?'<span class="chip stchip" style="color:var(--mp)">กำลังชาร์จ</span>':'')+(u.charge>1?`<span class="chip stchip" style="color:var(--mp)">พลัง×${u.charge}</span>`:'')+(u.form?`<span class="chip stchip" style="color:var(--seal)">${FORMS[u.form].n}</span>`:'');
+ const sel=foe?(i===b.target&&u.hp>0&&!b.over?'tg':''):(i===b.atarget&&!b.over&&b.allies.length>1?'at':'');
+ return `<button data-u="${u.id}" class="ucard ${foe?'foe':'ally'} ${sel} ${b.cur===u.id&&!b.over?'turn':''} ${u.hp<=0?'down':''}" data-a="bt" data-v="${foe?'target':'ally'}:${i}">
+ ${portrait(u.img,foe?44:38)}<div class="grow"><span class="nm">${esc(u.name)}</span><span class="meta"><span class="num">Lv ${u.lv}</span>${tChips(u.types)}${u.captured?'<span class="chip" style="color:var(--seal)">ถูกผนึก</span>':''}</span>
+ ${sts||bf?`<span class="meta">${sts}${bf}</span>`:''}
+ ${bar(u.hp,u.st.hp)}<span class="meta num">HP ${u.hp}/${u.st.hp}${foe?'':` · MP ${u.mp}`}</span>${foe?'':bar(u.mp,u.st.mp,'mp')}</div>${fx}</button>`}
+function vBattle(){const b=B(),u=uById(b.cur),P=S.P;
+ const order=b.over?'':`<div class="order"><span class="grow">ลำดับตา: ${[b.cur,...b.queue].map(q=>[uById(q.replace('*','')),q.endsWith('*')]).filter(([x])=>x&&x.hp>0).slice(0,9).map(([x,e],i)=>`<span class="${i===0?'now':''}">${esc(x.name.replace('★ ','').split(' ')[0])}${e?' ×2':''}</span>`).join('')}</span>${b.allies.length>1?`<button class="btn sm" style="min-height:26px;padding:2px 8px;font-size:11px" data-a="bt" data-v="auto:1">อสูรออโต้ ${S.ui.autoPet?'เปิด':'ปิด'}</button>`:''}</div>`;
+ let panel='';
+ if(b.over){panel=`<div class="panel res"><h2 style="${b.over.res==='lose'?'color:var(--bad)':''}">${b.over.title}</h2><div class="lines">${b.over.lines.map(l=>`<div>${l}</div>`).join('')}</div><button class="btn pri full" data-a="bt" data-v="done">ไปต่อ</button></div>`}
+ else if(b.menu==='wait'||!u||u.side==='enemy'){panel=`<div class="panel"><p class="sub" style="margin:0;text-align:center">${u?`${esc(u.name)} กำลังเคลื่อนไหว...`:'...'}</p></div>`}
+ else{const t=curTarget(),al=curAlly(),head=`<div class="row wrap" style="gap:4px 10px"><b class="grow">ตาของ ${esc(u.name)}</b><span class="sub">เป้า: ${t?esc(t.name):'-'}${t?` · โดน ${Math.round(hitChance(u,t))}%`:''}${b.allies.length>1?` · ฝ่ายเรา: ${esc(al.name)}`:''}</span></div>`,back=`<button class="btn" data-a="bt" data-v="menu:main">ย้อนกลับ</button>`;
+  const skBtn=id=>{const s=SK[id],off=['p','m','h','auto','status','debuff'].includes(s.t),m=off&&t&&!s.all?typeMult(s.el,t.types):1,stab=s.el&&(u.stab.includes(s.el)||u.types.includes(s.el));
+   const c=costOf(u,s),dis=(c&&u.mp<c)||(s.gc&&P.gold<s.gc*u.lv);
+   return `<button class="btn ${['heal','buff','form'].includes(s.t)?'seal':''}" data-a="bt" data-v="sk:${id}" ${dis?'disabled':''}>${s.n}<small>${c?c+' MP':'—'}${s.gc?' · '+fmt(s.gc*u.lv)+'฿':''} · ${skTag(s)}${s.el?' · '+EL[s.el].n:''}${stab?'★':''} ${multTxt(m)}</small></button>`};
+  if(u.kind==='pet')panel=`<div class="panel">${head}<div class="acts">${u.skills.map(skBtn).join('')}${skBtn('rest')}</div><p class="sub" style="margin:0">แตะการ์ดศัตรูเพื่อเลือกเป้า · ×2 ได้ผลดี ×½ ไม่ค่อยได้ผล · ★ ธาตุเดียวกับผู้ใช้ +25%</p></div>`;
+  else if(b.menu==='skill')panel=`<div class="panel">${head}<div class="acts">${u.skills.filter(s=>s!=='attack').map(skBtn).join('')}${skBtn('rest')}${back}</div><p class="sub" style="margin:0">สกิล "เลือกฝ่ายเรา" ใช้กับการ์ดฝ่ายเราที่เลือกไว้ (แตะเพื่อเปลี่ยน)</p></div>`;
+  else if(b.menu==='item'){const its=Object.keys(CON).filter(k=>!CON[k].seal&&P.items[k]>0);
+   panel=`<div class="panel">${head}<p class="sub" style="margin:0">ใช้กับ: <b>${esc(al.name)}</b> — แตะการ์ดฝ่ายเราเพื่อเปลี่ยน</p><div class="lst">${its.length?its.map(k=>`<div class="item"><div class="grow"><b>${CON[k].n} ×${P.items[k]}</b><small>${CON[k].d}</small></div><button class="btn sm" data-a="bt" data-v="item:${k}">ใช้</button></div>`).join(''):'<p class="sub">ไม่มียาในกระเป๋า</p>'}</div>${back}</div>`}
+  else if(b.menu==='seal'){const its=Object.keys(CON).filter(k=>CON[k].seal&&P.items[k]>0);panel=`<div class="panel">${head}<p class="sub" style="margin:0">HP เป้าหมายยิ่งน้อยยิ่งผนึกง่าย ถ้าเป้าหมายหลับ แช่แข็ง หรืออัมพาต ผนึกง่ายขึ้นอีก 50%</p><div class="lst">${its.length?its.map(k=>`<div class="item"><div class="grow"><b>${CON[k].n} ×${P.items[k]}</b><small>โอกาสสำเร็จประมาณ <span class="num">${Math.round(sealChance(t,CON[k].seal)*100)}%</span></small></div><button class="btn sm seal" data-a="bt" data-v="seal:${k}" ${sealable(t)?'':'disabled'}>ขว้าง</button></div>`).join(''):'<p class="sub">ไม่มีผนึกเหลือ</p>'}</div>${back}</div>`}
+  else if(b.menu==='swap'){const inF=b.allies.slice(1).map(x=>x.uid),ps=P.pets.filter(p=>!inF.includes(p.uid)&&p.hp>0);
+   panel=`<div class="panel">${head}<p class="sub" style="margin:0">${b.allies.length-1<clsSum(P.cls)?'มีช่องว่าง อสูรที่เลือกจะลงสนามเพิ่ม':`จะสลับกับ ${b.allies[b.atarget]&&b.allies[b.atarget].kind==='pet'?esc(b.allies[b.atarget].name):esc(b.allies[1]?b.allies[1].name:'-')} (แตะการ์ดอสูรฝ่ายเราเพื่อเลือก)`}</p><div class="lst">${ps.length?ps.map(p=>{const q=calcPet(p);return `<div class="item">${portrait(p.sp,36)}<div class="grow"><b>${petName(p)} <span class="num sub">Lv ${p.lv}</span></b><span class="row wrap" style="gap:3px">${tChips(SP[p.sp].t)}</span>${bar(p.hp,q.hp)}</div><button class="btn sm pri" data-a="bt" data-v="swap:${p.uid}">เรียก</button></div>`}).join(''):'<p class="sub">ไม่มีอสูรตัวอื่นที่พร้อมสู้</p>'}</div>${back}</div>`}
+  else{const canSeal=b.enemies.some(sealable),canFlee=['wild','bandit','traveler'].includes(b.kind);
+   panel=`<div class="panel">${head}<div class="acts">${skBtn('attack')}<button class="btn" data-a="bt" data-v="menu:skill">สกิล<small>${u.skills.length-1} ท่า</small></button><button class="btn" data-a="bt" data-v="menu:item">ไอเทม<small>ยา · แก้สถานะ</small></button>
+   <button class="btn seal" data-a="bt" data-v="menu:seal" ${canSeal?'':'disabled'}>ผนึก<small>จับอสูร</small></button><button class="btn" data-a="bt" data-v="menu:swap">เรียกอสูร<small>เสียตา</small></button><button class="btn" data-a="bt" data-v="flee" ${canFlee?'':'disabled'}>หนี<small>${canFlee?'ลุ้นความเร็ว':'หนีไม่ได้'}</small></button></div></div>`}}
+ return `<div class="field">${order}<div class="side" style="--n:${Math.min(2,b.enemies.length)}">${b.enemies.map((e,i)=>ucard(e,i)).join('')}</div>
+ <div class="log" id="blog">${b.log.slice(-14).map(l=>`<p>${l}</p>`).join('')}</div>
+ <div class="side" style="--n:${Math.min(2,b.allies.length)}">${b.allies.map((a,i)=>ucard(a,i)).join('')}</div>${panel}</div>`}
+function statGrid(s,free,act,uid){return `<div class="statgrid">${K.map(k=>`<span>${LBL[k]}</span><span class="num">${s[k]}</span>${free>0?`<button class="btn sm" style="min-height:28px;padding:2px 10px" data-a="${act}" data-v="${uid!=null?uid+':':''}${k}" aria-label="เพิ่ม ${LBL[k]}">+${PER[k]}</button>`:'<span></span>'}`).join('')}</div>`}
+function skillRow(id,on=true,lvTxt){const k=SK[id];return `<div class="row" style="${on?'':'opacity:.45'}"><div class="grow"><b>${k.n}</b> ${elChip(k.el)} <span class="chip" style="color:var(--muted)">${skTag(k)}</span>${k.mile?' <span class="chip" style="color:var(--gold)">สกิลพิเศษ</span>':''}<div class="sub" style="font-size:12px">${skillDesc(id)}</div></div>${lvTxt?`<span class="sub num" style="white-space:nowrap">${lvTxt}</span>`:''}</div>`}
+function vClassTree(){const P=S.P,cur=chain(P.cls);return `<div class="tree">${BASES.map(b=>`<div class="card stack" style="gap:6px;${cur[0]===b?'border-color:var(--gold)':''}"><div class="row">${portrait('cls:'+b,30)}<b class="grow">${CLS[b].n}</b><span class="sub">${WT[CLS[b].w].n}</span></div><div class="sub" style="font-size:12px">${CLS[b].pro} · <span style="color:var(--bad)">${CLS[b].con}</span></div>
+ ${childrenOf(b).map(c=>`<div style="padding-left:10px;border-left:2px solid ${cur.includes(c)?'var(--gold)':'var(--line)'}"><b style="font-size:13px">Lv25 ${CLS[c].n}</b> <span class="sub" style="font-size:12px">${CLS[c].d}</span>
+  ${childrenOf(c).map(g=>`<div style="padding-left:10px;font-size:12px;${cur.includes(g)?'color:var(--gold)':''}">Lv40 <b>${CLS[g].n}</b> <span class="sub">${CLS[g].d}</span></div>`).join('')}</div>`).join('')}</div>`).join('')}</div>`}
+function vLegend(){const P=S.P,L=P.legend||{},n=Object.keys(L).length;return `<div class="card stack"><div class="row"><h3 class="grow">ของในตำนาน</h3><span class="num sub">${n}/${ZN.filter(z=>!z.train).length*SLOTS.length}</span></div>
+ <p class="sub" style="margin:0">แต่ละแผนที่มีของในตำนานครบทุกช่องสวมใส่ ช่องละ 1 ชิ้น หาได้จากหีบโบราณแห่งตำนาน หีบทองคำ หีบโลหิต และนักเดินทางปริศนาเท่านั้น</p>
+ ${ZN.filter(z=>!z.train).map(z=>`<div><b style="font-size:13px">${z.n}</b> <span class="sub">${SLOTS.filter(([sl])=>L[z.id+'_'+sl]).length}/${SLOTS.length}</span><div class="sub" style="font-size:12px;line-height:1.7">${SLOTS.map(([sl,nm])=>{const it=EQ[sl==='weapon'?`lg${z.id}_weapon_${clsWeapon(P.cls)}`:`lg${z.id}_${sl}`];return L[z.id+'_'+sl]?`<span class="lgn">${it.n}</span> <span>(${PAS[it.pas].n}${it.sk?' · '+SK[it.sk].n:''}${it.ws?' · '+SK[it.ws].n:''})</span>`:`<span>${nm}: ???</span>`}).join('<br>')}</div></div>`).join('')}</div>`}
+const craftId=k=>CRAFT[k].sl==='weapon'?`cf_${k}_${clsWeapon(S.P.cls)}`:`cf_${k}`;
+const canCraft=k=>{const c=CRAFT[k],P=S.P;return P.gold>=c.gold&&c.mats.every(([m,n])=>(P.parts[m]||0)>=n)};
+function vForge(){const P=S.P,zi=S.ui.forge??0,z=ZN[zi],ks=[...z.sp,...z.rare].filter(k=>CRAFT[k]&&CRAFT[k].zi===zi);
+ return `<div class="stack"><div class="row"><h2 class="grow">โรงหลอมเทพอสูร</h2><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div>
+ <p class="sub" style="margin:0">ใช้ชิ้นส่วนอสูรหลอมอุปกรณ์ที่ได้ความสามารถติดตัวและสกิลของอสูรตัวนั้น พลังใกล้เคียงของในตำนาน หลอมซ้ำได้ อาวุธจะออกเป็นอาวุธประเภทของอาชีพคุณ</p>
+ <div class="tabs">${ZN.filter(x=>!x.final&&!x.train).map((x,i)=>`<button class="${zi===i?'on':''}" data-a="forgetab" data-v="${i}">${x.n}</button>`).join('')}</div>
+ <div class="lst">${ks.map(k=>{const c=CRAFT[k],s=SP[k];if(!P.seen[k])return `<div class="item">${portrait(k,40,{unk:1})}<div class="grow"><b>???</b><small>พบอสูรตัวนี้ก่อนเพื่อดูสูตร</small></div></div>`;
+  const it=EQ[craftId(k)],ok=canCraft(k);
+  return `<div class="item" style="align-items:flex-start">${portrait(k,40)}<div class="grow"><b>${it.n}</b> <span class="sub">${SLOTN[it.slot]}</span> ${elChip(it.el)}<small>${statLine(it.st)} · ต้องการ Lv ${it.lv}<br>ความสามารถ: <b>${PAS[it.pas].n}</b> — ${PAS[it.pas].d}<br>สกิล: <b>${SK[it.ws||it.sk].n}</b> — ${skillDesc(it.ws||it.sk)}<br>
+  วัตถุดิบ: ${c.mats.map(([m,n])=>{const [sp,i]=m.split('|'),have=P.parts[m]||0;return `<span style="color:var(--${have>=n?'good':'bad'})">${SP[sp].parts[+i][0]} ${have}/${n}</span>`}).join(' · ')} · <span style="color:var(--${P.gold>=c.gold?'good':'bad'})">${fmt(c.gold)} เหรียญ</span></small></div>
+  <button class="btn sm ${ok?'pri':''}" data-a="craft" data-v="${k}" ${ok?'':'disabled'}>หลอม</button></div>`}).join('')}</div></div>`}
+function vHero(){const P=S.P,s=pStats(),tab=S.ui.hero||'stat',w=EQ[P.eq.weapon],ch=chain(P.cls);
+ const tabs=`<div class="tabs">${[['stat','สถานะ'],['skill','สกิล'],['gear','อุปกรณ์'],['tree','สายอาชีพ']].map(([k,n])=>`<button class="${tab===k?'on':''}" data-a="herotab" data-v="${k}">${n}</button>`).join('')}</div>`;
+ const head=`<div class="card row">${portrait('player',68)}<div class="grow"><h2>${esc(P.name)}</h2><div class="sub">${ch.map(c=>CLS[c].n).join(' → ')} · <span class="num">Lv ${P.lv}</span></div>${bar(P.lv>=MAXLV?1:P.exp,P.lv>=MAXLV?1:need(P.lv),'xp')}<div class="sub num">${P.lv>=MAXLV?'เลเวลสูงสุด':`EXP ${fmt(P.exp)}/${fmt(need(P.lv))}`}${P.cleared?' · 🏆 ผู้ปราบจอมมาร':''} · อสูรออกสู้ได้ ${clsSum(P.cls)} ตัว</div>
+  <div class="row wrap" style="gap:6px;margin-top:6px"><button class="btn sm" data-a="img" data-v="player">ใส่รูปตัวละคร</button>${IMG.player?'<button class="btn sm" data-a="delimg" data-v="player">ลบรูป</button>':''}</div></div></div>`;
+ const promo=canPromote(P)?`<div class="card stack" style="border-color:var(--gold)"><h3>เลื่อนอาชีพได้แล้ว!</h3>${childrenOf(P.cls).map(c=>`<div class="item"><div class="grow"><b>${CLS[c].n}</b><small>${CLS[c].d}<br>สกิล: ${CLS[c].sk.map(([l,k])=>`${SK[k].n} (Lv ${l})`).join(', ')}${CLS[c].pas.length?' · ความสามารถ: '+CLS[c].pas.map(k=>PAS[k].n).join(', '):''}${CLS[c].sum?` · อสูรออกสู้ ${CLS[c].sum} ตัว`:''}</small></div><button class="btn sm pri" data-a="promote" data-v="${c}">เลือก</button></div>`).join('')}</div>`:'';
+ let body='';
+ if(tab==='stat')body=`<div class="card stack"><div class="row"><h3 class="grow">ค่าสถานะ</h3>${P.free>0?`<span class="badge">แต้มเหลือ ${P.free}</span>`:''}</div>
+  <div class="row"><span class="grow sub">HP / MP ปัจจุบัน</span><span class="num">${P.hp}/${s.hp} · ${P.mp}/${s.mp}</span></div>
+  ${statGrid(s,P.free,'pt')}<p class="sub" style="margin:0">เลเวลอัปได้ 5 แต้ม ค่าสถานะรวมอาชีพและอุปกรณ์แล้ว · ความแม่นยำหักลบการหลบหลีกของเป้าหมาย = โอกาสโจมตีโดน</p></div>
+  <div class="card stack"><h3>ความสามารถติดตัว</h3><div class="row wrap" style="gap:6px">${humanPas(P.cls,P.eq).map(k=>`<span class="chip pas">${PAS[k].n}</span>`).join('')||'<span class="sub">ไม่มี</span>'}</div>${[...new Set(humanPas(P.cls,P.eq))].map(k=>`<div class="sub" style="font-size:12px"><b>${PAS[k].n}</b> — ${PAS[k].d}</div>`).join('')}</div>`;
+ if(tab==='skill'){const learn=ch.flatMap(c=>CLS[c].sk.map(([l,k])=>[l,k,c]));
+  body=`<div class="card stack"><h3>สกิลอาชีพ (เรียนตามเลเวล)</h3>${learn.map(([l,k,c])=>skillRow(k,P.lv>=l,`${CLS[c].n} Lv ${l}`)).join('')}</div>
+  <div class="card stack"><h3>สกิลจากอุปกรณ์</h3>${Object.values(P.eq).map(id=>EQ[id]).filter(it=>it&&(it.ws||it.sk)).map(it=>[it.ws,it.sk].filter(Boolean).map(k=>skillRow(k,true,it.n)).join('')).join('')||'<p class="sub" style="margin:0">อาวุธระดับ 1 ขึ้นไปและเครื่องประดับพิเศษบางชิ้นมีสกิลติดมา</p>'}</div>
+  ${baseOf(P.cls)==='druid'?`<div class="card stack"><h3>ร่างแปลง</h3>${Object.entries(FORMS).map(([k,f])=>`<div><b>${f.em} ${f.n}</b> ${tChips(f.t)}<div class="sub" style="font-size:12px">${Object.entries(f.m).map(([x,v])=>`${SH[x]} ×${v}`).join(' ')} · สกิล ${f.sk.map(x=>SK[x].n).join(', ')}</div></div>`).join('')}</div>`:''}`}
+ if(tab==='gear')body=`<div class="card stack"><h3>อุปกรณ์ที่สวมใส่</h3><div class="lst">${SLOTS.map(([sl,n])=>{const it=EQ[P.eq[sl]];return `<div class="row"><span class="sub" style="width:58px;flex:none">${n}</span><div class="grow">${it?`<b>${itemName(it)}</b> ${elChip(it.el)}<div class="sub" style="font-size:12px">${statLine(it.st)}${itemExtra(it)}</div>`:'<span class="sub">ว่าง</span>'}</div>${it&&sl!=='weapon'?`<button class="btn sm" data-a="unequip" data-v="${sl}">ถอด</button>`:''}</div>`}).join('')}</div></div>
+ <div class="card stack"><h3>อุปกรณ์ในกระเป๋า</h3>${P.owned.length?`<div class="lst">${P.owned.map(id=>{const it=EQ[id],bad=it.lv>P.lv||(it.slot==='weapon'&&it.wt!==clsWeapon(P.cls));return `<div class="row"><div class="grow"><b>${itemName(it)}</b> <span class="sub">${SLOTN[it.slot]}${it.wt?' · '+WT[it.wt].n:''}</span><div class="sub" style="font-size:12px">${statLine(it.st)}${itemExtra(it)}${it.lv>P.lv?` · ต้องการ Lv ${it.lv}`:''}</div></div><button class="btn sm pri" data-a="equip" data-v="${id}" ${bad?'disabled':''}>สวม</button></div>`}).join('')}</div>`:'<p class="sub" style="margin:0">ซื้ออุปกรณ์ได้ที่ตลาด หรือเปิดหีบสมบัติในป่า</p>'}</div>`;
+ if(tab==='gear')body+=vLegend();
+ if(tab==='tree')body=vClassTree();
+ return `<div class="stack">${head}${promo}${vCloud()}${tabs}${body}<button class="btn danger sm" data-a="reset">เริ่มเกมใหม่</button></div>`}
+function vPet(p){const s=calcPet(p),sp=SP[p.sp],inP=S.P.party.includes(p.uid);return `<div class="stack"><button class="btn sm" data-a="petview" data-v="" style="align-self:flex-start">← กลับรายการ</button>
+ <div class="card row">${portrait(p.sp,80)}<div class="grow"><h2>${petName(p)}</h2><div class="sub">ตำนาน${sp.o} · <span class="num">Lv ${p.lv}</span>${inP?' <span class="badge">ในทีม</span>':''}${sp.rare?' <span class="chip" style="color:var(--gold)">หายาก</span>':''}</div><div class="row wrap" style="gap:4px;margin:4px 0">${tChips(sp.t)}${pasChip(sp.pas)}</div>${bar(p.exp,need(p.lv),'xp')}<div class="sub num">EXP ${fmt(p.exp)}/${fmt(need(p.lv))}</div></div></div>
+ <div class="card stack" style="gap:4px"><h3>ความสามารถติดตัว</h3><div class="sub"><b>${PAS[sp.pas].n}</b> — ${PAS[sp.pas].d}</div></div>
+ ${sp.ev?`<div class="card stack" style="gap:4px"><h3>สายพัฒนาร่าง</h3><div class="sub">${[sp.n,...sp.ev.map(e=>e[1])].map((n,i)=>`<span style="${(p.form||0)===i?'color:var(--gold);font-weight:600':''}">${n}${i?` (Lv ${sp.ev[i-1][0]})`:''}</span>`).join(' → ')}</div><div class="sub" style="font-size:12px">ค่าสถานะ ×1.2 และ ×1.4 ตามร่าง ร่างสุดท้ายได้สกิลเฉพาะตัว</div></div>`:''}
+ <div class="card stack"><div class="row"><h3 class="grow">ค่าสถานะ</h3>${p.free>0?`<span class="badge">แต้มเหลือ ${p.free}</span>`:''}</div>
+  <div class="row"><span class="grow sub">HP ปัจจุบัน</span><span class="num">${p.hp<=0?'หมดสติ':p.hp+'/'+s.hp}</span></div>${statGrid(s,p.free,'ppt',p.uid)}<p class="sub" style="margin:0">อสูรไม่มีเครื่องสวมใส่ เติบโตด้วยเลเวล ร่างพัฒนา และแต้มสถานะ (เลเวลละ 3 แต้ม)</p></div>
+ <div class="card stack"><h3>สกิล</h3>${sp.sk.map((id,i)=>skillRow(id,p.lv>=SKLV[i],p.lv>=SKLV[i]?'':'Lv '+SKLV[i])).join('')}${sp.sig?skillRow(sp.sig,sigLearned(p),sigLearned(p)?'เฉพาะตัว':sp.rare?'Lv '+SIGLV:'ร่างสุดท้าย'):''}</div>
+ <div class="row wrap" style="gap:8px"><button class="btn ${inP?'':'pri'}" data-a="partytoggle" data-v="${p.uid}">${inP?'เอาออกจากทีม':'เพิ่มเข้าทีม'}</button><button class="btn" data-a="img" data-v="${p.sp}">ใส่รูป</button><button class="btn danger" data-a="release" data-v="${p.uid}">ปล่อยคืนป่า</button></div></div>`}
+function vChart(){const ks=Object.keys(EL);return `<p class="sub" style="margin:0">ผลของธาตุท่าโจมตีต่อธาตุของเป้าหมาย อสูร 2 ธาตุคูณผลเข้าด้วยกัน ท่าที่ธาตุตรงกับผู้ใช้แรงขึ้น 25% (ผู้ผนึกได้โบนัสจากธาตุอาวุธ)</p>
+ <div class="tchart">${ks.map(a=>{const row=TC[a]||{},g=ks.filter(d=>row[d]===2),h=ks.filter(d=>row[d]===.5),z=ks.filter(d=>row[d]===0);
+  return `<div class="item">${elChip(a)}<div class="grow" style="font-size:13px;display:flex;flex-direction:column;gap:3px">
+  ${g.length?`<div><span class="eff up">×2</span> ${g.map(elChip).join(' ')}</div>`:''}${h.length?`<div><span class="eff down">×½</span> ${h.map(elChip).join(' ')}</div>`:''}${z.length?`<div><span class="eff zero">×0</span> ${z.map(elChip).join(' ')}</div>`:''}</div></div>`}).join('')}</div>
+ <h3>สถานะผิดปกติ</h3><div class="lst">${Object.entries(STS).map(([k,s])=>`<div class="item"><span class="chip" style="color:${s.c}">${s.n}</span><div class="grow" style="font-size:13px">${s.info}${IMM[k]?`<div class="sub" style="font-size:12px">ธาตุ${IMM[k].map(x=>EL[x].n).join(' ')}ไม่ติดสถานะนี้</div>`:''}</div></div>`).join('')}</div>`}
+function vTeam(){const P=S.P,tab=S.ui.team||'team';if(S.ui.petView!=null){const p=petBy(S.ui.petView);if(p)return vPet(p)}
+ const tabs=`<div class="tabs"><button class="${tab==='team'?'on':''}" data-a="teamtab" data-v="team">อสูรในผนึก ${P.pets.length}/${MAXPETS}</button><button class="${tab==='dex'?'on':''}" data-a="teamtab" data-v="dex">สมุดอสูร</button><button class="${tab==='chart'?'on':''}" data-a="teamtab" data-v="chart">ตารางธาตุ</button></div>`;
+ if(tab==='chart')return `<div class="stack"><h2>ตารางธาตุ</h2>${tabs}${vChart()}</div>`;
+ if(tab==='dex'){const ks=Object.keys(SP).filter(k=>!SP[k].noseal);return `<div class="stack"><h2>สมุดอสูร</h2>${tabs}<p class="sub">จับแล้ว ${ks.filter(k=>P.caught[k]).length}/${ks.length} · ใส่รูปของคุณเองให้อสูรแต่ละตัวได้ รูปสี่เหลี่ยมจัตุรัสจะสวยที่สุด</p>
+  <div class="dex">${ks.map(k=>{const s=SP[k],seen=P.seen[k];return `<div class="card">${portrait(k,60,{unk:!seen&&!IMG[k]})}<b>${seen?s.n:'???'}</b>${s.rare?'<span class="chip" style="color:var(--gold)">หายาก</span>':''}<span class="sub" style="font-size:12px">${s.o}</span><span class="row wrap" style="gap:3px;justify-content:center">${tChips(s.t)}</span>
+   ${seen?`<span class="sub" style="font-size:11px">${PAS[s.pas].n}${s.ev?` · ${s.ev.map(e=>e[1]).join(' → ')}`:''}</span>`:''}<span class="sub" style="font-size:12px">${P.caught[k]?'จับแล้ว':seen?'พบแล้ว':'ยังไม่พบ'}</span>
+   <div class="row" style="gap:4px"><button class="btn sm" data-a="img" data-v="${k}">ใส่รูป</button>${IMG[k]?`<button class="btn sm" data-a="delimg" data-v="${k}">ลบ</button>`:''}</div></div>`}).join('')}</div></div>`}
+ const n=clsSum(P.cls);
+ return `<div class="stack"><h2>อสูรในผนึก</h2>${tabs}<p class="sub" style="margin:0">ทีมออกสู้ ${P.party.length}/${n} ตัว (ตามอาชีพ) · แตะอสูรเพื่อดูรายละเอียด อัปสถานะ หรือจัดทีม</p>
+ <div class="lst">${P.pets.map(p=>{const q=calcPet(p),inP=P.party.includes(p.uid);return `<div class="item">${portrait(p.sp,44)}<button class="grow" style="text-align:left;background:none;border:0;padding:0;cursor:pointer" data-a="petview" data-v="${p.uid}"><b>${petName(p)} <span class="num sub">Lv ${p.lv}</span> ${p.free>0?`<span class="chip" style="color:var(--gold)">+${p.free}</span>`:''}</b>${bar(Math.max(0,p.hp),q.hp)}<small class="num">${p.hp<=0?'หมดสติ':`HP ${p.hp}/${q.hp}`} · ${SP[p.sp].t.map(x=>EL[x].n).join('/')}</small></button><button class="btn sm ${inP?'pri':''}" data-a="partytoggle" data-v="${p.uid}">${inP?'ในทีม':'เข้าทีม'}</button></div>`}).join('')}</div></div>`}
+function vBag(){const P=S.P,its=Object.keys(CON).filter(k=>P.items[k]>0),parts=Object.entries(P.parts).filter(([,n])=>n>0),pp=party();
+ return `<div class="stack"><h2>กระเป๋า</h2>${miniStatus()}<div class="card stack"><h3>ยา ยาแก้สถานะ และผนึก</h3>${its.length?`<div class="lst">${its.map(k=>{const c=CON[k];return `<div class="row wrap"><div class="grow"><b>${c.n} ×${P.items[k]}</b><div class="sub" style="font-size:12px">${c.d}</div></div>${c.seal||c.cure?'<span class="sub">ใช้ในการต่อสู้</span>':`<div class="row wrap" style="gap:4px">${c.rev?'':`<button class="btn sm" data-a="use" data-v="${k}:P">ตัวเอง</button>`}${pp.map(p=>`<button class="btn sm" data-a="use" data-v="${k}:${p.uid}">${petName(p).slice(0,8)}</button>`).join('')}</div>`}</div>`}).join('')}</div>`:'<p class="sub">ว่างเปล่า</p>'}</div>
+ <div class="card stack"><h3>ชิ้นส่วนอสูร</h3>${parts.length?`<div class="lst">${parts.map(([key,n])=>{const [sp,i]=key.split('|');return `<div class="row">${portrait(sp,28)}<span class="grow">${SP[sp].parts[+i][0]}</span><span class="num">×${n}</span></div>`}).join('')}</div>${S.zone?'':'<button class="btn sm" data-a="go" data-v="shop">ไปขายที่ตลาด</button>'}`:'<p class="sub" style="margin:0">ล้มอสูรในป่าเพื่อเก็บชิ้นส่วนไปขาย</p>'}</div></div>`}
+
+function render(){
+ const app=document.getElementById('app');if(S.screen!=='start'&&!S.P)S.screen='start';
+ if(S.screen==='battle'&&!S.battle)S.screen=S.zone?'zone':'town';
+ if(S.screen==='zone'&&!S.zone)S.screen='wild';
+ if(S.screen==='wild'&&S.zone)S.screen='zone';
+ const V={forge:vForge,start:vStart,town:vTown,shop:vShop,hospital:vHospital,arena:vArena,wild:vWild,zone:vZone,battle:vBattle,hero:vHero,team:vTeam,bag:vBag}[S.screen]||vTown;
+ const P=S.P,inB=S.screen==='battle',start=S.screen==='start';
+ const navOn=k=>({town:['town','shop','hospital','arena','forge'],wild:['wild','zone'],hero:['hero'],team:['team'],bag:['bag']})[k].includes(S.screen);
+ const keepNm=document.getElementById('nm')?.value;
+ app.innerHTML=(start?'':`<header class="top">${portrait('player',34)}<div class="who"><b>${esc(P.name)} <span class="sub" style="font-weight:400">${CLS[P.cls].n}</span></b><small class="num">Lv ${P.lv} · ${S.zone?ZN[S.zone.id-1].n+' · ก้าว '+S.zone.depth:'นครพันผนึก'}</small></div><span class="coin" style="${P.gold<0?'color:var(--bad)':''}">${P.gold<0?'หนี้ ':''}${fmt(P.gold)} <small style="font-family:var(--f-body);font-weight:400">เหรียญ</small></span></header>`)
+  +`<main>${V()}</main>`
+  +(start||inB?'':`<nav class="bottom">${[['town','เมือง','城'],['wild','ป่า','林'],['hero','ตัวละคร','我'],['team','อสูร','封'],['bag','กระเป๋า','包']].map(([k,n,g])=>`<button class="${navOn(k)?'on':''} ${S.zone&&k==='town'?'lock':''}" data-a="go" data-v="${k}"><span class="g">${g}</span>${n}${k==='hero'&&canPromote(P)?' •':''}</button>`).join('')}</nav>`)
+  +(S.ui.confirm?`<div class="overlay"><div class="card stack"><p style="margin:0">${S.ui.confirm.msg}</p><div class="row" style="justify-content:flex-end"><button class="btn" data-a="cancel">ยกเลิก</button><button class="btn danger" data-a="${S.ui.confirm.act}" data-v="${S.ui.confirm.v??''}">ยืนยัน</button></div></div></div>`:'');
+ if(keepNm!=null&&document.getElementById('nm'))document.getElementById('nm').value=keepNm;
+ const lg=document.getElementById('blog');if(lg)lg.scrollTop=lg.scrollHeight;
+ if(inB&&VQ.length)(window.requestAnimationFrame||setTimeout)(flushVfx);
+ if(!inB)save()}
+
+/* ================= BOOT & MIGRATION ================= */
+function migrate(){if(!S.P)return;const P=S.P;
+ if(!P.cls){P.cls=P.style==='m'?'mage':'swordsman';delete P.style}
+ if(!P.eq.weapon||!EQ[P.eq.weapon]){P.eq.weapon=`wp_${clsWeapon(P.cls)}0`}
+ for(const sl in P.eq)if(!EQ[P.eq[sl]])delete P.eq[sl];
+ const bad=P.owned.filter(id=>!EQ[id]);if(bad.length){P.gold+=bad.length*300;P.owned=P.owned.filter(id=>EQ[id])}
+ P.pets=P.pets.filter(p=>SP[p.sp]);P.pets.forEach(p=>{if(p.form==null)p.form=formFor(p.sp,p.lv);p.pts=p.pts||{}});
+ if(!P.party){P.party=P.active!=null?[P.active]:[];delete P.active}
+ P.legend=P.legend||{};if(P.lv>=MAXLV){P.lv=MAXLV;P.exp=0}fixParty();S.ver=6}
+function boot(data){if(data&&data.S){S=data.S;try{const t=localStorage.getItem(SAVEIMG);if(t)IMG=JSON.parse(t)||{}}catch(e){}}else load();
+ S.ui=S.ui||{};S.ui.confirm=null;migrate();
+ if(S.battle&&S.battle.v!==4){S.battle=null;S.screen=S.zone?'zone':'town'}
+ if(S.zone&&(S.zone.depth==null||(S.zone.fork&&typeof S.zone.fork[0]==='string'))){S.zone.depth=S.zone.depth||0;S.zone.log=S.zone.log||[];S.zone.ev=null;newFork()}
+ if(S.zone&&!S.zone.fork&&!S.zone.ev&&S.zone.depth<ZDEPTH&&!S.battle)newFork();
+ render();cloudInit();
+ const b=S.battle;if(b&&!b.over){const u=b.cur&&uById(b.cur);if(!u||u.side==='enemy'||b.menu==='wait'){if(u&&u.side==='ally'&&!(u.kind==='pet'&&S.ui.autoPet)){b.menu='main';render()}else setTimeout(u?aiAct:advance,600)}}}
+window.claude?.hot?.snapshot?.(()=>({S}));
+window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
+
+</script>
+
+</body>
+</html>
