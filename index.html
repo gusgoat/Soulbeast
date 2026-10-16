@@ -3062,6 +3062,24 @@ function compareWeaponBook(a,b){
  return rank[weaponBookRarity(a[1])]-rank[weaponBookRarity(b[1])]||(a[1].lv||1)-(b[1].lv||1);
 }
 
+let forestForkShown=null;
+function focusForestChoices(){
+ const fork=S.screen==='zone'&&!S.battle&&!S.zone?.ev?S.zone?.fork:null;
+ if(!fork){forestForkShown=null;return;}
+ if(forestForkShown===fork)return;
+ forestForkShown=fork;
+ const target=document.querySelector('[data-a="fork"]')?.closest?.('.grid2');
+ target?.scrollIntoView?.({block:'start',behavior:'instant'});
+}
+const forestFocusRender=render;
+render=function(){forestFocusRender();focusForestChoices();};
+const forestFocusContinue=handlers.cont;
+handlers.cont=function(...args){forestFocusContinue(...args);focusForestChoicesAfterContinue();};
+function focusForestChoicesAfterContinue(){
+ // The original continue handler resets scroll after rendering.
+ forestForkShown=null;focusForestChoices();
+}
+
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 
