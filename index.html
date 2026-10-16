@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="ผนึกอสูร">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
 <!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
-<script>window.SHEET_URL = 'https://script.google.com/macros/s/AKfycbzYutJocT-RQAmtCVgY2IT2CerXCjO8fwfn7DBprf3qL9pb3atm2Q0-fyj-TLP_kmVF8g/exec';</script>
+<script>window.SHEET_URL = 'https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api';</script>
 <link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
 </head>
 <body style="margin:0;height:100%">
@@ -2955,7 +2955,7 @@ for(const id of new Set(ZN.flatMap(zone=>zone.rare||[]))){
 const ONLINE_UI={count:0,label:'',retry:false},ONLINE_NET={queue:[],running:false,sequence:0};
 function onlineMessage(error){const text=String(error?.message||error||'');return ({busy:ct('ระบบกำลังมีผู้ใช้งานพร้อมกัน กรุณารอสักครู่แล้วลองอีกครั้ง','The server is busy. Please wait a moment and retry.','服务器繁忙，请稍候重试。'),'room too big':ct('ข้อมูลห้องมีขนาดใหญ่เกินไป กรุณาตรวจสถานะห้องอีกครั้ง','Room data is too large. Please check the room status.','房间数据过大，请重新查看状态。'),'room not found':ct('ไม่พบห้องหรือห้องปิดไปแล้ว','Room not found or already closed','房间不存在或已关闭'),'world pets':ct('เลือกอสูรที่พกติดตัวก่อนสร้างห้อง','Select a carried beast before creating a room','创建房间前请选择携带妖兽'),'not lobby':ct('ห้องเริ่มแล้วหรือปิดไปแล้ว','Room started or closed','房间已开始或关闭'),'world weekly limit':ct('ใช้สิทธิ์บอสโลกครบ 3 ครั้งในสัปดาห์นี้แล้ว','All 3 weekly World Boss entries are used','本周3次世界首领次数已用完'),'world ready':ct('ทุกคนต้องยืนยันพร้อมก่อนเริ่ม','Everyone must be ready before starting','所有玩家准备后才能开始'),'finish other battle':ct('จบการต่อสู้อื่นและออกจากป่าก่อน','Finish other battles and leave the forest first','请先结束其他战斗并离开森林'),'pin':ct('PIN ไม่ตรงกับเซฟออนไลน์','Online save PIN does not match','在线存档PIN不匹配')})[text]||text;}
 const ONLINE_LABELS={wb_create:['กำลังสร้างปาร์ตี้บอสโลก','Creating a World Boss party','正在创建世界首领队伍'],wb_join:['กำลังเข้าร่วมปาร์ตี้','Joining the party','正在加入队伍'],wb_leave:['กำลังออกจากห้อง','Leaving the room','正在退出房间'],wb_start:['กำลังประมวลผลการต่อสู้บอสโลก','Processing the World Boss battle','正在处理世界首领战斗'],wb_ready:['กำลังยืนยันความพร้อม','Confirming readiness','正在确认准备'],save:['กำลังบันทึกเซฟออนไลน์','Saving online','正在保存在线存档'],load:['กำลังโหลดเซฟออนไลน์','Loading online save','正在读取在线存档']};
-function onlineOverlay(){return `<div class="online-wait-overlay" role="dialog" aria-modal="true" aria-labelledby="onlineWaitTitle" tabindex="-1"><div class="gacha-draw-panel"><div class="online-hourglass" aria-hidden="true"><img src="assets/ui/online-hourglass.webp" alt="" width="280" height="280"><i></i></div><h2 id="onlineWaitTitle" translate="no">${ONLINE_UI.label||ct('กรุณารอ ระบบกำลังดำเนินการ','Please wait — processing your request','请稍候，系统正在处理请求')}</h2><p role="status" aria-live="polite" translate="no">${ONLINE_UI.retry?ct('ระบบกำลังตรวจสถานะและลองเชื่อมต่ออีกครั้ง…','Checking the status and reconnecting…','正在核验状态并重新连接…'):ct('กรุณารอการตอบกลับจากระบบ…','Waiting for the server response…','正在等待服务器响应…')}</p><div class="summoning-progress" aria-hidden="true"><i></i></div><small translate="no">${ct('การเชื่อมต่ออาจใช้เวลาประมาณ 10 วินาทีหรือนานกว่า กรุณาเปิดหน้านี้ไว้ ระบบจะตรวจผลก่อนทำรายการซ้ำ','This may take about 10 seconds or longer. Keep this page open; the system checks the result before repeating a request.','连接可能需要约10秒或更长时间。请保持页面打开，系统会先核验结果再重试。')}</small></div></div>`;}
+function onlineOverlay(){return `<div class="online-wait-overlay" role="dialog" aria-modal="true" aria-labelledby="onlineWaitTitle" tabindex="-1"><div class="gacha-draw-panel"><div class="online-hourglass" aria-hidden="true"><img src="assets/ui/online-hourglass.webp" alt="" width="280" height="280"><i></i></div><h2 id="onlineWaitTitle" translate="no">${ONLINE_UI.label||ct('กรุณารอ ระบบกำลังดำเนินการ','Please wait — processing your request','请稍候，系统正在处理请求')}</h2><p role="status" aria-live="polite" translate="no">${ONLINE_UI.retry?ct('ระบบกำลังตรวจสถานะและลองเชื่อมต่ออีกครั้ง…','Checking the status and reconnecting…','正在核验状态并重新连接…'):ct('กรุณารอการตอบกลับจากระบบ…','Waiting for the server response…','正在等待服务器响应…')}</p><div class="summoning-progress" aria-hidden="true"><i></i></div><small translate="no">${ct('กรุณาเปิดหน้านี้ไว้ ระบบกำลังตรวจและบันทึกรายการให้ครบถ้วน','Keep this page open while the server checks and completes your request.','请保持页面打开，服务器正在核验并完成请求。')}</small></div></div>`;}
 function onlineShow(){if(!ONLINE_UI.count||GACHA.busy)return;const app=document.getElementById('app');if(!app?.insertAdjacentHTML||app.querySelector('.online-wait-overlay'))return;app.insertAdjacentHTML('beforeend',onlineOverlay());for(const el of app.children||[])if(!el.classList.contains('online-wait-overlay'))el.inert=true;app.querySelector('.online-wait-overlay')?.focus?.({preventScroll:true});}
 async function withOnline(label,fn){const first=!ONLINE_UI.count;ONLINE_UI.count++;if(first){ONLINE_UI.label=ct(...(ONLINE_LABELS[label]||['กรุณารอ ระบบกำลังดำเนินการ','Please wait — processing your request','请稍候，系统正在处理请求']));ONLINE_UI.retry=false;}onlineShow();try{return await fn();}finally{ONLINE_UI.count--;if(!ONLINE_UI.count){document.querySelector('.online-wait-overlay')?.remove?.();const app=document.getElementById('app');for(const el of app?.children||[])el.inert=false;ONLINE_UI.retry=false;}else onlineShow();}}
 const reliabilityRender=render;render=function(){reliabilityRender();onlineShow();};
@@ -2979,7 +2979,7 @@ wbCall=async function(action,extra={}){
  try{
   if(intent&&['wb_status','wb_create','wb_join','wb_leave','wb_start'].includes(action)){effective=intent.action;extra=intent.extra||{};}
   if(!intent&&['wb_create','wb_join'].includes(effective)){
-   if(communityBattleBusy())throw Error('finish other battle');await communitySave();
+   if(communityBattleBusy())throw Error('finish other battle');
   }
   const packet=intent?{...intent.packet,...communityAuth()}:{action:effective,...communityAuth(),room:WORLD.room?.id||WORLD.roomId,...extra};
   if(['wb_create','wb_join','wb_leave','wb_start'].includes(effective)&&!intent){const stored={...packet};delete stored.pin;intent={endpoint:SHEET_URL,action:effective,extra,packet:stored};worldSaveIntent(intent);}
@@ -3005,6 +3005,47 @@ const reliabilityLbToggle=handlers.lbtoggle;handlers.lbtoggle=()=>withOnline('le
 const reliabilityPvpError=pvpError;pvpError=function(message){return message==='busy'?onlineMessage(message):reliabilityPvpError(message);};
 const reliabilityCommunityError=communityError;communityError=function(message){return message==='busy'?onlineMessage(message):reliabilityCommunityError(message);};
 const crystalIcon=itemIcon;itemIcon=function(id,size=44){const i=['petExp1','petExp2','petExp3'].indexOf(id);return i<0?crystalIcon(id,size):`<span class="growth-crystal" role="img" aria-label="${esc(CON[id].n)}" title="${esc(CON[id].n)}" style="--s:${size}px;--crystal-x:${i*50}%"></span>`;};
+
+// Isolated staging build: never uses the live game's local-storage namespace.
+const SB_KEY='sb_publishable_-m9RbNVXYhaKjUZYSGGdMQ_rrkCuEL6';
+const SB_ENV='live';
+const sbTransport=sheetRequest;
+const SB_CHECK={pending:null,needed:false,lastLoaded:null};
+function sbMarkReady(code){try{localStorage.setItem('sealbeast_supabase_ready_'+code,SHEET_URL);}catch(e){}SB_CHECK.needed=false;}
+async function sbCheckReady(code,pin){
+ if(SB_ENV!=='live')return true;
+ try{if(localStorage.getItem('sealbeast_supabase_ready_'+code)===SHEET_URL)return true;}catch(e){}
+ if(SB_CHECK.pending)return SB_CHECK.pending;
+ SB_CHECK.pending=(async()=>{
+  const result=await sbTransport({method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,'x-soulbeast-environment':SB_ENV},body:JSON.stringify({action:'load',code,pin,_sbRequest:crypto.randomUUID()})});
+  if(!result.ok){if(result.error==='notfound'){sbMarkReady(code);return true;}return result;}
+  const remote=JSON.parse(result.data).P;
+  if(S.P?.code===code&&Math.abs(Number(S.P.gsAt||0)-Number(result.at))<=2&&Number(S.P.gachaRevision||0)===Number(remote.gachaRevision||0)){sbMarkReady(code);return true;}
+  SB_CHECK.needed=true;return {ok:false,error:'migration load required'};
+ })();
+ try{return await SB_CHECK.pending;}finally{SB_CHECK.pending=null;}
+}
+sheetRequest=async function(options={}){
+ const next={...options,headers:{...options.headers,apikey:SB_KEY,'x-soulbeast-environment':SB_ENV}};
+ let packet=null;
+ if(next.body){packet=JSON.parse(next.body);packet._sbRequest??=packet.request||crypto.randomUUID();if(S.P){packet.code??=ensureCode();packet.pin??=S.P.cpin||'';}
+  if(SB_ENV==='live'&&packet.action!=='load'&&packet.action!=='health'&&S.P){const ready=await sbCheckReady(packet.code,packet.pin);if(ready!==true)return ready;}
+  if(['wb_create','wb_join'].includes(packet.action))packet._preSave=gsData();next.body=JSON.stringify(packet);}
+ const result=await sbTransport(next);
+ if(packet?._preSave&&result.savedAt&&S.P?.code===packet.code){applyAccount(result.account);S.P.gsAt=result.savedAt;GS.lastAt=Date.now();GS.lastJson=gsData();if(result.coupons!=null)GACHA.coupons=result.coupons;}
+ if(packet?.action==='load'&&result.ok)SB_CHECK.lastLoaded={code:packet.code,at:result.at};
+ return result;
+};
+const sbConfirmLoad=handlers.doloadcode;
+handlers.doloadcode=function(){const remote=SB_CHECK.lastLoaded,confirmed=PENDING?.P;if(SB_ENV==='live'&&remote&&confirmed?.code===remote.code&&Number(confirmed.gsAt)===Number(remote.at)){
+ try{if(S.P)localStorage.setItem('sealbeast_before_supabase_'+ensureCode(),JSON.stringify(S));}catch(e){}sbMarkReady(remote.code);SB_CHECK.lastLoaded=null;
+}return sbConfirmLoad();};
+handlers.sbMigrationLoad=()=>gsLoad(ensureCode(),S.P.cpin||'');
+const sbSheetError=sheetError;sheetError=function(r){return r?.error==='migration load required'?'กรุณาโหลดเซฟออนไลน์ที่ตรวจย้ายแล้วก่อนใช้ระบบออนไลน์':sbSheetError(r);};
+const sbRender=render;render=function(){sbRender();const main=document.querySelector('main');if(!main?.querySelector)return;
+ if(SB_ENV==='test'&&!main.querySelector('.sb-test-notice'))main.insertAdjacentHTML('afterbegin','<p class="sb-test-notice" style="padding:8px;border:1px solid #d9b35b;color:#f1d48a">SUPABASE TEST · ข้อมูลจำลอง แยกจากเกมจริง</p>');
+ if(SB_ENV==='live'&&SB_CHECK.needed&&!main.querySelector('.sb-migration-notice'))main.insertAdjacentHTML('afterbegin',`<div class="card stack sb-migration-notice"><b>ยืนยันเซฟหลังย้ายระบบออนไลน์</b><p>พบเซฟออนไลน์ที่ต่างจากในเครื่อง กรุณาตรวจและโหลดเซฟก่อนทำรายการ ข้อมูลในเครื่องจะสำรองไว้เมื่อคุณยืนยันโหลด</p><button class="btn pri" data-a="sbMigrationLoad">ตรวจและโหลดเซฟออนไลน์</button></div>`);
+};
 
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
