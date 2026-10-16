@@ -381,6 +381,10 @@ nav.bottom{grid-template-columns:1fr 1fr 1.15fr 1fr 1fr;align-items:end}.bottom 
 @media(max-width:380px){.acts .btn:has(.skill-painted){grid-template-columns:44px minmax(0,1fr);padding:9px;column-gap:7px}.acts .skill-painted{width:44px;height:44px;min-width:44px}.acts .btn:has(.skill-painted)>.skill-name{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.skill-paint{transition:none}}
 
+.mist-beast-art{display:block;position:absolute;inset:0;background-image:url('assets/beasts/mist-beasts.webp');background-size:400% 400%;background-position:var(--beast-x) var(--beast-y);background-repeat:no-repeat;border-radius:inherit}
+.rarity-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rarity-filters .btn{display:flex;justify-content:space-between;gap:8px}.rarity-filters .num{font-size:11px;opacity:.75}
+.rarity-legendary{border-color:#e8c47288!important;background:linear-gradient(145deg,#30283d,#14202b)!important}.legend-locked{border-color:#d9b36677;color:#efd49b;line-height:1.7}.legend-note{color:#eed095}.rarity-rare{border-color:#93cfc666!important}
+
 </style>
 
 <div id="app"></div>
@@ -1239,6 +1243,60 @@ const petName=p=>formName(p.sp,p.form||0);
 const sigLearned=p=>{const s=SP[p.sp];if(!s.sig)return false;return s.rare?p.lv>=SIGLV:s.ev?(p.form||0)>=s.ev.length:false};
 function calcPet(p,wild=1){const sp=SP[p.sp],fm=FM[p.form||0],s={};
  K.forEach((k,i)=>{const b=i<9?sp.b[i]:5,f=(k==='acc'||k==='crit'||k==='eva')?1:fm;s[k]=(b+grow(k,b)*(p.lv-1)*wild)*f+((p.pts&&p.pts[k])||0)*PER[k]});return rnd(s)}
+/* Mist expansion: additive species/skills; no changes to existing pets or saves. */
+const MIST_RARE_DEFS=[
+ ['jade_moon_hare','กระต่ายหยกจันทรา',['fairy','ice'],'jackalope',1,'imm_mind','จันทรา','จีน'],
+ ['tempest_lynx','ลิงซ์อัสนี',['electric','flying'],'raiju',2,'swift','อัสนี','ป่าพายุ'],
+ ['bloom_jade_mare','อาชาบุปผาหยก',['grass','fairy'],'kelpie',2,'regen','บุปผา','หุบเขาหยก'],
+ ['obsidian_scarab','ด้วงราชันออบซิเดียน',['rock','bug'],'scarab',3,'nocrit','ออบซิเดียน','สุสานโบราณ'],
+ ['aurora_whale','วาฬน้อยแสงเหนือ',['water','psychic'],'mermaid',4,'mpsave','แสงเหนือ','ทะเลเมฆา'],
+ ['ember_jackal','หมาไนเถ้าเพลิง',['fire','dark'],'ifrit',4,'flameBody','เถ้าเพลิง','ทะเลเพลิง'],
+ ['prism_owl','นกฮูกปริซึม',['psychic','flying'],'moon_cat',5,'eagle','ปริซึม','นครดารา'],
+ ['dusk_panther','เสือดาวหมอกทมิฬ',['dark','ghost'],'wendigo',6,'elusive','หมอกทมิฬ','ชายแดนรัตติกาล']
+];
+const MIST_LEGEND_DEFS=[
+ ['primordial_ouroboros','อุโรโบรอสปฐมกาล',['dragon','dark'],'jade_moon_hare','pierce','ปฐมกาล'],
+ ['dawn_valkyrie','วาลคิรีรุ่งอรุณ',['fairy','fighting'],'tempest_lynx','healer','รุ่งอรุณ'],
+ ['astral_dragon','มังกรดารานภา',['dragon','psychic'],'bloom_jade_mare','adapt','ดารานภา'],
+ ['cosmic_tortoise','เต่าจักรวาล',['rock','water'],'obsidian_scarab','guardian','จักรวาล'],
+ ['solar_sovereign','พญาราชสีห์สุริยะ',['fire','fairy'],'aurora_whale','rebirth','สุริยะ'],
+ ['infinite_sea_serpent','อสรพิษอนันตวารี',['water','ice'],'ember_jackal','thick','อนันตวารี'],
+ ['void_phoenix','วิหคสุญญตา',['ghost','flying'],'prism_owl','manadrain','สุญญตา'],
+ ['eclipse_wolf','หมาป่าคราสนิรันดร์',['dark','ice'],'dusk_panther','deadly','คราสนิรันดร์']
+];
+const MIST_SIGNATURES={
+ jade_moon_hare:{n:'พรจันทร์หยก',t:'heal',pw:35,tg:'team',cure:1,mp:18,cd:3},
+ tempest_lynx:{n:'อัสนีไล่ล่า',t:'m',pw:165,el:'electric',all:1,st:{para:.15},mp:20,cd:3},
+ bloom_jade_mare:{n:'สวนบุปผาพิทักษ์',t:'buff',tg:'team',bf:{pdef:.3,mdef:.3},tn:3,mp:16,cd:3},
+ obsidian_scarab:{n:'เขี้ยวศิลาเจาะเกราะ',t:'p',pw:190,el:'rock',pi:.35,mp:16,cd:2},
+ aurora_whale:{n:'ธารแสงเหนือ',t:'heal',pw:35,tg:'team',cure:1,mp:20,cd:3},
+ ember_jackal:{n:'เขี้ยวเถ้ากินวิญญาณ',t:'p',pw:180,el:'fire',ls:.2,st:{burn:.35},mp:18,cd:2},
+ prism_owl:{n:'เนตรปริซึมลวงจิต',t:'m',pw:185,el:'psychic',st:{confuse:.4},mp:18,cd:2},
+ dusk_panther:{n:'ตะปบเงาสามภพ',t:'p',pw:70,hits:3,el:'dark',cb:15,mp:20,cd:3},
+ primordial_ouroboros:{n:'วงแหวนกลืนกาล',t:'h',pw:260,el:'dark',all:1,pi:.4,mp:32,cd:4},
+ dawn_valkyrie:{n:'รุ่งอรุณคืนชีพ',t:'heal',pw:45,tg:'team',revAll:1,cure:1,mp:32,cd:5},
+ astral_dragon:{n:'มหาฝนดาวมังกร',t:'m',pw:240,el:'dragon',all:1,st:{confuse:.2},mp:30,cd:4},
+ cosmic_tortoise:{n:'ปราการจักรวาล',t:'buff',tg:'team',bf:{pdef:.55,mdef:.55},tn:3,mp:28,cd:4},
+ solar_sovereign:{n:'สุริยพิพากษา',t:'m',pw:270,el:'fire',all:1,st:{burn:.5},mp:34,cd:4},
+ infinite_sea_serpent:{n:'คลื่นเยือกแข็งอนันต์',t:'p',pw:100,hits:3,el:'water',st:{freeze:.25},mp:32,cd:4},
+ void_phoenix:{n:'พายุวิญญาณสูญ',t:'m',pw:250,el:'ghost',all:1,ls:.25,mp:32,cd:4},
+ eclipse_wolf:{n:'เขี้ยวคราสดับตะวัน',t:'p',pw:280,el:'dark',pi:.5,ls:.3,mp:30,cd:3}
+};
+MIST_RARE_DEFS.forEach(([key,n,t,ref,zone,pas,part,o])=>{
+ SP[key]={n,o,t,em:'✧',r:4.8,rare:1,mistNew:1,mistZone:zone,b:SP[ref].b.slice(),sk:[t[0]+'_p1',t[1]+'_m1',t[0]+'_st',t[0]+'_m2'],pas,sig:'mist_sig_'+key,parts:[['แก่น'+part,400+zone*80],['ผนึกเศษ'+part,500+zone*90]]};
+ SK['mist_sig_'+key]=MIST_SIGNATURES[key];
+});
+MIST_LEGEND_DEFS.forEach(([key,n,t,ref,pas,part])=>{
+ SP[key]={n,o:'ตำนานหลังจอมมาร',t,em:'✦',r:7.2,rare:1,legendary:1,mistNew:1,rarePair:ref,b:SP[ref].b.slice(),sk:[t[0]+'_p2',t[1]+'_m2',t[0]+'_st',t[0]+'_aoe'],pas,sig:'mist_sig_'+key,parts:[['แก่นตำนาน'+part,1500],['เศษผนึก'+part,1900]]};
+ SK['mist_sig_'+key]=MIST_SIGNATURES[key];
+});
+const mistBaseCalcPet=calcPet;
+calcPet=function(p,wild=1){
+ const sp=SP[p.sp];
+ if(sp.legendary){const s=calcPet({...p,sp:sp.rarePair,form:0},wild);for(const k of K)s[k]=Math.round(s[k]*1.2);return s;}
+ const s=mistBaseCalcPet(p,wild);if(sp.mistNew)for(const k of K)s[k]=Math.round(s[k]*1.2);return s;
+};
+
 function petSkills(p){const s=SP[p.sp],a=['attack',...s.sk.filter((_,i)=>p.lv>=SKLV[i])];if(sigLearned(p))a.push(s.sig);return a}
 const petBy=uid=>S.P.pets.find(p=>p.uid===uid);
 const party=()=>S.P.party.map(petBy).filter(Boolean);
@@ -1382,7 +1440,7 @@ function vPvpBase(){const r=PVP.room;let content;
  return `<div class="stack"><div class="row"><h2 class="grow">PVP · ผู้ผนึกดวลกัน</h2><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div><p class="sub" style="margin:0">ตรวจคำสั่งระหว่างสู้ประมาณทุก 2.5 วินาทีเมื่อเปิดหน้านี้ ไม่ควรปิดหน้าขณะเป็นตาของคุณ · กติกาสมดุลใหม่: คริสูงสุด 65% · โบนัสความเร็วท้ายรอบคู่ · อสูรยั่วยุตั้งรับเปิดเกม · รวมทุกตัว 30 เทิร์น</p>${r&&PVP.balanceVersion!==4?'<div class="card" style="color:var(--bad)">เซิร์ฟเวอร์ยังใช้กติกาเดิม ต้องอัปเดตระบบก่อนเริ่มห้องใหม่</div>':''}${PVP.error?`<div class="card" style="color:var(--bad)">${esc(PVP.error)}</div>`:''}${content}</div>`}
 
 Object.assign(BUILTIN_ART,{"iron_armadillo": "assets/media/401430be488dd1a0c2229940.webp", "moss_treant": "assets/media/24ed88fde99267c885043753.webp", "coral_crab": "assets/media/c418011f0afeb90e874a3ff7.webp", "bastion_golem": "assets/media/89c5bc3ac2d2483de0125fdf.webp", "obsidian_rhino": "assets/media/c807a166fdf38512d27a016f.webp", "jade_bull": "assets/media/4573193fd1be9c6cd76fdf47.webp", "glacier_bear": "assets/media/9a37d3ea0b52579e1a6bb6e8.webp", "thunder_gorilla": "assets/media/309afc3aa99e58bbcfbf7950.webp", "abyss_turtle": "assets/media/7852f226f52a40b80d1e7b12.webp", "mist_serpent": "assets/media/c19c317808811f4c7dbf0da2.webp", "lunar_stag": "assets/media/4b0a2196167c8ed764adbcbe.webp", "crow_emperor": "assets/media/7e072f0e64cd160e21c337f5.webp", "sand_colossus": "assets/media/2c16ac22fe502a09609ecb88.webp", "thorn_queen": "assets/media/0eb5fdd83f1f6243cde572a5.webp", "scorpion_pharaoh": "assets/media/14223d5f6936da182382d6ef.webp", "storm_wyvern": "assets/media/03dfce2222898d89a486de11.webp", "frost_lich": "assets/media/7fb6bb38aeca3da2ad55807c.webp", "fallen_seraph": "assets/media/c0f2a25d9a2841b900d41bc9.webp", "goblin": "assets/media/e0fc3526648d608de7cb8486.webp", "sun_devourer": "assets/media/a32799c94f8c7ea4c1876fc1.webp", "vampire_queen": "assets/media/5285257e210501529040eae3.webp", "moon_cat": "assets/media/e4e7df73fa3488e1a4e825c7.webp", "silver_fox": "assets/media/9d391f5f3023b17abc09dc66.webp", "abyss_emperor": "assets/media/c175dddb0800084a19e3deac.webp", "eagle": "assets/media/390eb2671c674e4912958ed6.webp", "mermaid": "assets/media/6318bfc978f9ec935213a824.webp", "crocodile": "assets/media/ebcfd16ce9eed2dd4d42071f.webp", "ice_wolf": "assets/media/4b43211ba2027c302b89e3fe.webp", "night_horse": "assets/media/06e0966fb8f09eaa544ebca2.webp", "fire_imp": "assets/media/4e922db7d0213a3aaf51c533.webp", "desert_witch": "assets/media/af3c535926581963b864e66b.webp", "stone_lion": "assets/media/7946be0d65908c1e5eee09be.webp", "celestial_deer": "assets/media/13b8ee84b41d9d00616e3a80.webp", "mummy_king": "assets/media/a393ce3a0274deaa2b6c48ee.webp", "zombie": "assets/media/0a5acb409633962b12b8d60b.webp", "storm_drake": "assets/media/2deeaf4ff4521bdc5c9c59c7.webp", "void_mantis": "assets/media/966743a81c05526e0bba1efa.webp", "cls:samurai": "assets/media/8c628fd27f0ebf437da4928d.webp", "demon_knight": "assets/media/42501bd7973678ce43800b42.webp", "cls:kensei": "assets/media/f99140d5d7bc1dbd1ad53d79.webp", "cls:shogun": "assets/media/79d7e16fbb2a77ed107b7b1d.webp", "cls:sbwar": "assets/media/370ac7f96c1a063c51ddbb7f.webp", "cls:spellblade": "assets/media/74050a5b623c8b65b4b73a92.webp", "cls:paladin": "assets/media/59e21d9b4da45d70ccd820bc.webp", "cls:sbsummon": "assets/media/30aec114193fda971b2cd95b.webp", "cls:templar": "assets/media/92a5cc7dcf1145bc166ad964.webp", "cls:eternal": "assets/media/08591beed2d1368433518fef.webp", "cls:berserker": "assets/media/c420c85ef0f3a3a452d44415.webp", "cls:warlord": "assets/media/85e0774684eaa2a3d2f085d5.webp", "cls:sniper": "assets/media/7da2ab7ea88e953fc31b97d8.webp", "cls:bloodwar": "assets/media/363b464b19416411e5b60b47.webp", "cls:wildlord": "assets/media/299fe0604957388436998a17.webp", "cls:ranger": "assets/media/06347b703223fa233daa7719.webp", "cls:dirge": "assets/media/d30258fecea6925f37dc1a1b.webp", "cls:bard": "assets/media/b9195a29c4848a2beda995a8.webp", "cls:sage": "assets/media/c82b181189554f5639b19353.webp", "cls:maestro": "assets/media/607f320e9acaa03b856c1e09.webp", "cls:archmage": "assets/media/0b4927af4ffc84fdace94f27.webp", "cls:warlock": "assets/media/0c593df2d8edc4c06680ee78.webp", "cls:elementalist": "assets/media/50bb01502f8f437195f4714b.webp", "cls:necro": "assets/media/a3f8dd001fdec6100971770f.webp", "cls:mastersmith": "assets/media/f38f8d39cb09f8497d868308.webp", "cls:enchanter": "assets/media/bed934ac20532737bc743084.webp", "cls:mechanic": "assets/media/bfc22e20353085be6f650a6b.webp", "cls:blacksmith": "assets/media/a91c5ca22268e0ce9f30d1a5.webp", "cls:biochem": "assets/media/6991e010ac3a0b012920fb76.webp", "cls:alchemist": "assets/media/a9f357fd607397ce3acaa90a.webp", "cls:goldalch": "assets/media/cf35300d19132882b39b0f19.webp", "cls:marksman": "assets/media/37ba7a00b691e7e535241125.webp", "cls:artillery": "assets/media/87f12408643bd26db13066b7.webp", "cls:cannoneer": "assets/media/4f51a4c6baa9162e2aca5387.webp", "cls:gunsaint": "assets/media/bd04626365dc998fe889082d.webp", "cls:feral": "assets/media/1d29daec3e9d19210f1bb1c6.webp", "cls:bounty": "assets/media/ddf0fa418d689c3e0c8e8ff2.webp", "cls:demolisher": "assets/media/b431c61f28be2039e607daa0.webp", "cls:wildgod": "assets/media/27eef2d25a8ba1d503036dd8.webp", "cls:stormcaller": "assets/media/7eb48eb1bfcd81dda8aba905.webp", "cls:packlord": "assets/media/890cd5a936dedd2e1318d904.webp", "cls:rogue": "assets/media/879b9541ee4b21b165f0cda2.webp", "cls:grove": "assets/media/2b4a4ff309ab722d5cc0d0f5.webp", "cls:masterthief": "assets/media/dfacbe85989451f5f26bfeab.webp", "cls:archdruid": "assets/media/98e794c91c6a73f8c5c464a5.webp", "cls:trickster": "assets/media/63479a2e8324b132ab55c806.webp", "cls:ronin": "assets/media/9ed220cb7b4cf1a9d4356a0f.webp", "cls:assassin": "assets/media/4bcc3a38c17a5ef587a800a6.webp", "cls:tamer": "assets/media/0b19756d9a92ea8767e21afd.webp", "cls:ninja": "assets/media/b120fe3d5f90bca07c982ae0.webp", "cls:sealmaster": "assets/media/12ead833b275d39307c44eeb.webp", "cls:beastking": "assets/media/7e190ec415a441ee0e6c0fb2.webp", "cls:soulsage": "assets/media/4a5b5f59dc77a9a50f765b85.webp", "cls:soullink": "assets/media/52b350b1ff30711a6c5df436.webp", "cls:spiritlord": "assets/media/6b8a5d54fe77812738c115b4.webp", "moon_tortoise": "assets/media/45c0b116ee6d8255152ecf49.webp"});
-function atlasFace(key,form=0){
+function atlasFace(key,form=0){if(SP[key]?.mistNew)return mistPortrait(key);
  let artKey=key;
  if(key==='player'||key?.startsWith('cls:')||key?.startsWith('npc:')){const cls=key==='player'?(S.P?.cls||S.ui.cls||'swordsman'):key.slice(4);artKey=BUILTIN_ART['cls:'+cls]?'cls:'+cls:'cls:'+baseOf(cls)}
  const src=BUILTIN_ART[form>0?key+':'+form:artKey]||BUILTIN_ART[artKey];return src?`<img class="atlas-face" src="${src}" alt="">`:''}
@@ -1797,7 +1855,7 @@ function aiAct(){const b=B();if(!b||b.over)return;const u=uById(b.cur);if(!u||u.
 function after(){const b=B();b.menu='wait';render();battleLater(advance,450)}
 function curTarget(){const b=B();let t=b.enemies[b.target];if(!t||t.hp<=0){b.target=b.enemies.findIndex(e=>e.hp>0);t=b.enemies[b.target]}return t}
 const curAlly=()=>B().allies[B().atarget]||B().allies[0];
-const sealable=e=>e&&e.hp>0&&B()?.kind!=='pvp'&&B()?.kind!=='raid'&&!(e.sp&&SP[e.sp].noseal)&&(e.kind==='beast'||(e.kind==='npcpet'&&B()&&['bandit','traveler','npc'].includes(B().kind)&&!B().enemies.some(x=>x.kind==='human'&&x.hp>0)));
+const sealable=e=>!(SP[e?.sp]?.legendary&&!mistLegendsUnlocked())&&e&&e.hp>0&&B()?.kind!=='pvp'&&B()?.kind!=='raid'&&!(e.sp&&SP[e.sp].noseal)&&(e.kind==='beast'||(e.kind==='npcpet'&&B()&&['bandit','traveler','npc'].includes(B().kind)&&!B().enemies.some(x=>x.kind==='human'&&x.hp>0)));
 function sealChance(e,pow){if(!sealable(e))return 0;
  if(pow===Infinity)return 1;const lf=clamp(1+(S.P.lv-e.lv)*.03,.6,1.3);let c=pow*(1-.85*e.hp/e.st.hp)*(.55/e.r)*lf;const s=e.status;
  if(s.sleep||s.freeze||s.para)c*=1.5;else if(Object.keys(s).length)c*=1.15;if(hasPas(B().allies[0],'sealer'))c*=1.5;return clamp(c,.01,.97)}
@@ -1966,7 +2024,7 @@ function chooseFork(i){const z=S.zone,zd=ZN[z.id-1],P=S.P,door=z.fork[i],type=do
  if(type==='bush'){const r=Math.random();if(r<.5)return fight(wildGroup(zd,{1:60,2:30,3:10}));
   if(r<.88)show(chestEv('bush','ในพุ่มไม้มีหีบซ่อนอยู่'));else{P.items.pot=(P.items.pot||0)+1;show({type,msg:'เจอสมุนไพรป่า ทำเป็นยาฟื้นพลังได้ 1 ขวด'})}}
  if(type==='mist'){const r=Math.random();
-  if(r<.33){const e=wildUnit(pick(zd.rare),zd.lv[1]+R(0,2),0);e.rare=true;e.name='★ '+e.name;return fight([e])}
+  const mistBeast=mistEncounter(zd,r);if(mistBeast)return fight([mistBeast]);
   if(r<.58)show(chestEv('mist','หมอกจางลงเผยให้เห็นหีบสมบัติโบราณ'));
   else if(r<.82)return fight(wildGroup(zd,zd.train?{2:1}:{2:35,3:40,4:25}));
   else show({type,msg:'หลงวนอยู่ในหมอกจนเหนื่อย ไม่เจออะไรเลย'})}
@@ -2590,6 +2648,30 @@ const replayWorldSchedule=wbClientSchedule;wbClientSchedule=function(){if(WORLD.
 handlers.campMove=()=>toast('โหมดนี้ต่อสู้อัตโนมัติเท่านั้น');handlers.wbMove=()=>toast('โหมดนี้ต่อสู้อัตโนมัติเท่านั้น');
 
 const replayPvpReceive=pvpReceive;pvpReceive=function(result){replayPvpReceive(result);localReplay('pvp',result.room);};
+const mistLegendsUnlocked=(P=S.P)=>!!P&&Number(P.cleared)>0;
+const beastRarity=q=>q.legendary?'legendary':q.rare?'rare':'normal';
+const BEAST_RARITY_LABELS={all:'อสูรทั้งหมด',normal:'อสูรทั่วไป',rare:'อสูรหายาก',legendary:'อสูรในตำนาน'};
+function mistRarePool(zd){return [...zd.rare,...MIST_RARE_DEFS.filter(x=>x[4]===zd.id).map(x=>x[0])];}
+function mistEncounter(zd,roll,P=S.P){
+ let sp;
+ if(!zd.train&&mistLegendsUnlocked(P)&&roll<.03)sp=pick(MIST_LEGEND_DEFS.map(x=>x[0]));
+ else if(roll<.33)sp=pick(mistRarePool(zd));else return null;
+ const legendary=!!SP[sp].legendary,lv=legendary?clamp(Math.max(45,zd.lv[1]+R(0,2)),1,MAXLV):zd.lv[1]+R(0,2),e=wildUnit(sp,lv,0);
+ e.rare=true;e.legendary=legendary;e.name=(legendary?'✦ ':'★ ')+e.name;return e;
+}
+function mistPortrait(key){
+ const i=[...MIST_RARE_DEFS,...MIST_LEGEND_DEFS].findIndex(x=>x[0]===key);if(i<0)return '';
+ return `<span class="mist-beast-art" role="img" aria-label="${esc(SP[key].n)}" style="--beast-x:${i%4*100/3}%;--beast-y:${Math.floor(i/4)*100/3}%"></span>`;
+}
+function mistLocations(k){const q=SP[k];if(q.legendary)return ['ม่านหมอกในป่าหลักทุกแห่ง · หลังชนะบอสจอมมารเท่านั้น · Lv 45–52'];if(q.mistNew){const z=ZN.find(z=>z.id===q.mistZone);return [z.n+' · ม่านหมอกเท่านั้น · Lv '+z.lv[1]+'–'+(z.lv[1]+2)];}return beastLocations(k);}
+function bestiaryKeys(filter=S.ui.dexRarity||'all'){return Object.keys(SP).filter(k=>filter==='all'||beastRarity(SP[k])===filter);}
+fullBestiary=function(tabs){
+ const P=S.P,filter=Object.hasOwn(BEAST_RARITY_LABELS,S.ui.dexRarity)?S.ui.dexRarity:'all',ks=bestiaryKeys(filter),all=Object.keys(SP);
+ const controls=`<div class="rarity-filters" role="group" aria-label="กรองประเภทอสูร">${Object.entries(BEAST_RARITY_LABELS).map(([v,n])=>`<button class="btn sm ${filter===v?'pri':''}" data-a="dexRarity" data-v="${v}" aria-pressed="${filter===v}">${n}<span class="num">${v==='all'?all.length:bestiaryKeys(v).length}</span></button>`).join('')}</div>`;
+ return `<div class="stack"><h2>สมุดอสูร · ${ks.length}/${all.length} ตัว</h2>${tabs}${controls}<p class="sub">ดูข้อมูลได้ทุกตัว ประวัติพบและจับยังนับจากการเล่นจริง · อสูรใหม่ทั้ง 16 ตัวมีร่างเดียวและสกิลเฉพาะตัว<br>อสูรในตำนาน: ค่าสถานะ +20% จากอสูรหายากคู่เทียบที่เลเวลและแต้มเท่ากัน</p>${!mistLegendsUnlocked(P)&&(filter==='all'||filter==='legendary')?'<div class="card legend-locked">✦ อสูรในตำนานยังไม่ปรากฏในโลก ต้องชนะบอสจอมมารก่อนจึงจะพบและผนึกได้ในม่านหมอก</div>':''}<div class="dex">${ks.map(k=>{const q=SP[k],locked=q.legendary&&!mistLegendsUnlocked(P),loc=mistLocations(k);return `<article class="card stack rarity-${beastRarity(q)}"><b>${esc(q.n)}</b>${dexForms(k)}<div>${tChips(q.t)} <span class="chip">${q.noseal?'บอสพิเศษ · ผนึกไม่ได้':BEAST_RARITY_LABELS[beastRarity(q)]}</span>${q.mistNew?' <span class="chip">ร่างเดียว</span>':''}</div><small>${esc(q.o||'')} · ${esc(PAS[q.pas]?.n||'')}</small>${q.legendary?`<small class="legend-note">ค่าสถานะ +20% เทียบ ${esc(SP[q.rarePair].n)} · สกิลตำนานเฉพาะตัว</small>`:''}<small>คะแนนต่อเลเวล: ${q.rare?20:8} · เมื่อเป็นบอส: 30</small><small>พบที่: ${loc.map(esc).join('<br>')}</small><small>${locked?'ยังไม่ปลดล็อก':P.caught[k]?'จับแล้ว':P.seen[k]?'เคยพบ':'ยังไม่เคยพบ'}</small><details><summary>สกิล${q.sig?'และสกิลเฉพาะตัว':''}</summary>${q.sk.map(id=>skillRow(id)).join('')}${q.sig?skillRow(q.sig,true,'เฉพาะตัว · Lv '+SIGLV):''}</details><button class="btn sm" data-a="img" data-v="${k}">ใส่รูป</button></article>`}).join('')}</div></div>`;
+};
+handlers.dexRarity=v=>{if(!Object.hasOwn(BEAST_RARITY_LABELS,v))return;S.ui.dexRarity=v;render();};
+
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 
