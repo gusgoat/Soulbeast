@@ -1,7 +1,7 @@
 {
   "ADMIN-GUIDE-TH.md": "01405aeeee146eaaf848c2f66b08db303e1997675db5357f89f12a02b62350a3",
-  "index.html": "d59f80c50930097d234f35b9a91bf62b6406d0e21850ed62af18e5bd15e0a793",
-  "README-TH.txt": "2bc20daf12ce84ccca82f11cb6c4749ac54558bff6df3d08b786fdac2fb63613",
+  "index.html": "98f127ffc370b913bd6a38a45383fea65b87a82d4c3594f91757b458a9c6099c",
+  "README-TH.txt": "c0fa23671a383c745b47cd8cdaf6f12452e976b1ee98edbab04ee9863b7409f4",
   "assets/beasts/mist-beasts.webp": "1838ae23e77aba33cac206314e50d0f38c3fb74bb347d83fb1d5bbe202410d03",
   "assets/media/00d6dd41329e230760ded92f.webp": "00d6dd41329e230760ded92f38cf05107d16a63c50c4518944c07cd14be77ef2",
   "assets/media/00f53b8f7c9f2ca72cd3aa25.webp": "00f53b8f7c9f2ca72cd3aa257ab306e6f3acef99d4974d8f2dbd0adda73f1975",
@@ -478,7 +478,10 @@
   "assets/story/7-before-1.webp": "440176176a447e15d4712a45661fd9624c24cd06afb61136bb5baf9669199eed",
   "assets/ui/gachapon.webp": "a656e234ef4b77dcbe5bc9189b8ee66866bb5d8d999d96fe31c594a09dde6263",
   "assets/ui/handbook.webp": "1223bedc9bf2d4a0cfb0a23d882f62d4e59cb28b67948b1f8fdabe5ef62d72ff",
+  "assets/ui/soulbeast-logo-v2.webp": "c28d0682b1a21362a44fe996ba6d01feba5c44f60e3d546ea2baa210c0498d15",
   "assets/ui/soulbeast-logo.webp": "af4bd6f53046f7ddc86dfc08d88a61107e3e6f2b7bb2d7689694332a43e18bc6",
+  "assets/ui/soulbeast-trim.svg": "601babc86ca873642ed89534f1ed39692c81e42a5f00c4f3342b89c8c20b80f6",
+  "assets/ui/soulseal-summoning.webp": "202f27a9f9e1c4cc54471959abc798df5cee8796cad991e1e9a9ba0d02d69c01",
   "assets/weapons/craft.webp": "9d55bf268cda98ec72fa3685ed9c5a518b89d4a46b6a018405e53fbfdfd14c0a",
   "assets/weapons/legend.webp": "98bf7fedbd8058ded2f3fe73b6d7983986a9ecc018a497d23ef5324f3924c595"
 }
