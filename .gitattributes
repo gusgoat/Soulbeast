@@ -1,0 +1,4 @@
+# Preserve packaged admin asset bytes so published hashes match the release manifest.
+admin.html -text
+admin.js -text
+admin.css -text
