@@ -3195,7 +3195,7 @@ const playRosterBase=vRoster;vRoster=function(tabs){let html=playRosterBase(tabs
 const playForestBase=forestDetail;forestDetail=function(z){const original=portrait;portrait=function(key,size,opts){const image=original(key,size,opts);return SP[key]&&!S.P.seen?.[key]?'<span class="forest-unseen" title="ยังไม่เคยพบ">'+image+'</span>':image;};try{return playForestBase(z);}finally{portrait=original;}};
 const HeroLevelNotice={queue:[],playing:false};
 function showHeroLevelNotice(){if(HeroLevelNotice.playing||!HeroLevelNotice.queue.length)return;if(EvolutionNotice.playing){setTimeout(showHeroLevelNotice,300);return;}HeroLevelNotice.playing=true;const n=HeroLevelNotice.queue.shift(),el=document.createElement('div');el.className='hero-level-notice';el.setAttribute('role','status');el.innerHTML='<div><small>✦ LEVEL UP ✦</small><h2>'+esc(n.name)+'</h2><strong>Lv '+n.from+' → Lv '+n.to+'</strong></div>';document.body.appendChild(el);setTimeout(()=>{el.remove();HeroLevelNotice.playing=false;showHeroLevelNotice();},1800);}
-function notifyHeroLevels(o,from){for(let lv=from;lv<o.lv;lv++)HeroLevelNotice.queue.push({name:o.name,from:lv,to:lv+1});showHeroLevelNotice();}
+function notifyHeroLevels(o,from){for(let lv=from;lv<o.lv;lv++)HeroLevelNotice.queue.push({name:o.name,from:lv,to:lv+1});setTimeout(showHeroLevelNotice,0);}
 const playEvolutionNotice=showEvolutionNotice;showEvolutionNotice=function(){if(HeroLevelNotice.playing||HeroLevelNotice.queue.length){setTimeout(showEvolutionNotice,300);return;}return playEvolutionNotice();};
 const playGainExp=gainExp;gainExp=function(o,amount,isP){const from=o.lv,result=playGainExp(o,amount,isP);if(isP)notifyHeroLevels(o,from);return result;};
 const playWorldApply=worldApply;worldApply=function(P,a){const from=P.lv,result=playWorldApply(P,a);if(P===S.P&&P.lv>from)notifyHeroLevels(P,from);return result;};
@@ -3304,6 +3304,17 @@ const statusWorldCard=worldCard;worldCard=function(u,me){return statusBattleCard
 let PVP_TIMEOUT_POLL='';
 function pvpTurnTimeText(){const r=PVP.room;if(!r||r.replaying||r.status!=='active')return r?.replaying?'รีเพลย์':'';const actor=[...r.battle.allies,...r.battle.enemies].find(u=>u.id===r.battle.cur);if(r.players[actor?.owner]?.auto)return 'ออโต้';return Math.max(0,Math.ceil((r.deadline-(Date.now()-(PVP.clock||0)))/1000))+' วินาที';}
 onlineClockTick=function(){const clock=document.getElementById('pvpTurnTimer');if(clock)clock.textContent=pvpTurnTimeText();const popup=document.getElementById('turnClockPopup');if(popup)popup.hidden=true;const r=PVP.room;if(S.screen!=='pvp'||!r||r.replaying||r.status!=='active'||!PVP.token||PVP.busy||document.hidden)return;const actor=[...r.battle.allies,...r.battle.enemies].find(u=>u.id===r.battle.cur);if(r.players[actor?.owner]?.auto||Date.now()-(PVP.clock||0)<r.deadline)return;const stamp=r.id+':'+r.rev+':'+r.deadline;if(PVP_TIMEOUT_POLL===stamp)return;PVP_TIMEOUT_POLL=stamp;pvpRequest({action:'pvp_poll'},true);};
+
+// Presentation must never interrupt experience, loot or battle completion.
+function optionalProgressEffect(fn){try{return fn();}catch(error){console.warn('Skipped game presentation effect',error);}}
+const progressionSoundFx=Sound.fx;
+Sound.fx=function(...args){return optionalProgressEffect(()=>progressionSoundFx.apply(this,args));};
+const progressionExtraPlay=ExtraAudio.play;
+ExtraAudio.play=function(...args){return optionalProgressEffect(()=>progressionExtraPlay.apply(this,args));};
+const progressionHeroNotice=showHeroLevelNotice;
+showHeroLevelNotice=function(){try{return progressionHeroNotice();}catch(error){HeroLevelNotice.playing=false;HeroLevelNotice.queue.length=0;document.querySelectorAll('.hero-level-notice').forEach(el=>el.remove());console.warn('Skipped hero level animation',error);}};
+const progressionEvolutionNotice=showEvolutionNotice;
+showEvolutionNotice=function(){try{return progressionEvolutionNotice();}catch(error){EvolutionNotice.playing=false;EvolutionNotice.queue.length=0;document.querySelectorAll('.evolution-notice').forEach(el=>el.remove());console.warn('Skipped evolution animation',error);}};
 
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
