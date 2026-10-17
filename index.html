@@ -2521,7 +2521,7 @@ function teamAutoAllowed(){return !!B()&&!['pvp','raid','world'].includes(B().ki
 function teamAutoUnit(u){return !!u&&u.side==='ally'&&((teamAutoAllowed()&&S.ui.autoTeam)||(u.kind==='pet'&&S.ui.autoPet)||(u.kind==='summon'&&u.name.startsWith('ทหาร')))}
 function toggleTeamAuto(){const b=B();if(!b||b.over||!teamAutoAllowed())return;S.ui.autoTeam=!S.ui.autoTeam;const u=uById(b.cur);if(S.ui.autoTeam&&u&&u.side==='ally'&&b.menu!=='wait'){b.menu='wait';battleLater(aiAct,500)}save();render()}
 function potionUseful(it,o,st){if(!it||!o||!st)return false;if(it.rev)return o.hp<=0;if(it.hp||it.mp)return o.hp>0&&!!((it.hp&&o.hp<st.hp)||(it.mp&&o.mp<st.mp));return true}
-function bagPotionDisabled(id,who){if(CON[id]?.petExp){const p=who==='P'?null:petBy(Number(who));return !p||p.lv>=MAXLV||p.hp<=0||statsLocked()}const o=who==='P'?S.P:petBy(Number(who));return !potionUseful(CON[id],o,who==='P'?pStats():o&&calcPet(o))}
+function bagPotionDisabled(id,who){if(CON[id]?.petExp){const p=who==='P'?null:petBy(Number(who));return !p||p.lv>=Math.min(MAXLV,S.P.lv)||p.hp<=0||statsLocked()}const o=who==='P'?S.P:petBy(Number(who));return !potionUseful(CON[id],o,who==='P'?pStats():o&&calcPet(o))}
 function beastLocations(k){return ZN.flatMap(z=>{const tags=[];if(z.sp.includes(k))tags.push('ทั่วไป Lv '+z.lv.join('–'));if(z.rare.includes(k))tags.push('หายาก Lv '+z.lv.join('–'));if((z.bosses||[z.boss]).some(b=>b.sp===k))tags.push('บอส Lv '+z.boss.lv);return tags.length?[z.n+' · '+tags.join(' / ')]:[]})}
 function fullBestiary(tabs){const P=S.P,ks=Object.keys(SP);return `<div class="stack"><h2>สมุดอสูร · ${ks.length} ตัว</h2>${tabs}<p class="sub">ดูข้อมูลและร่างพัฒนาได้ทุกตัว · ประวัติพบและจับยังนับจากการเล่นจริง<br>คะแนนสังหาร/จับ = เลเวล × 8 (ทั่วไป), ×20 (ตัวหายาก), ×30 (บอส) · คะแนนขึ้นกับเลเวลและประเภทที่พบจริง</p><div class="dex">${ks.map(k=>{const q=SP[k],loc=beastLocations(k);return `<article class="card stack"><b>${esc(q.n)}</b>${dexForms(k)}<div>${tChips(q.t)} <span class="chip">${q.noseal?'บอสพิเศษ · ผนึกไม่ได้':q.rare?'หายาก':'ทั่วไป'}</span></div><small>${esc(q.o||'')} · ${esc(PAS[q.pas]?.n||'')}</small><small>คะแนนต่อเลเวล: ${q.rare?20:8} · เมื่อเป็นบอส: 30</small><small>พบที่: ${loc.length?loc.map(esc).join('<br>'):'ไม่พบในตารางป่าโดยตรง'}</small><small>${P.caught[k]?'จับแล้ว':P.seen[k]?'เคยพบ':'ยังไม่เคยพบ'}</small><details><summary>สกิล</summary>${q.sk.map(id=>skillRow(id)).join('')}</details><button class="btn sm" data-a="img" data-v="${k}">ใส่รูป</button></article>`}).join('')}</div></div>`}
 Object.assign(handlers,{teamAuto:toggleTeamAuto});
@@ -2644,7 +2644,7 @@ function boot(data){if(data&&data.S){S=data.S;try{const t=localStorage.getItem(S
 
 /* Additive compatibility patch: existing saves keep all pets and inventories. */
 function latestForestArt(){const p=S.P,id=Number(p?.lastForestId)||Math.max(1,Math.min(6,p?.zoneMax||1));return BUILTIN_SCENES[id===7?8:id+1]||BUILTIN_SCENES[2];}
-const expBagUse=handlers.use;handlers.use=function(v){const [id,who]=v.split(':'),it=CON[id];if(!it?.petExp)return expBagUse(v);const p=who==='P'?null:petBy(Number(who));if(!p||!carriedPets().some(x=>x.uid===p.uid)||p.lv>=MAXLV||p.hp<=0||statsLocked()||!(S.P.items[id]>0)){toast('ใช้กับอสูรที่พกติดตัวและยังไม่ถึงเลเวลสูงสุด นอกการต่อสู้เท่านั้น');return}const text=gainExp(p,it.petExp,false);S.P.items[id]--;save();render();toast(text.join(' · ')||('เพิ่ม EXP '+it.petExp+' ให้ '+petName(p)));};
+const expBagUse=handlers.use;handlers.use=function(v){const [id,who]=v.split(':'),it=CON[id];if(!it?.petExp)return expBagUse(v);const p=who==='P'?null:petBy(Number(who));if(p&&p.lv>=S.P.lv){toast('อสูรมีเลเวลเท่ากับหรือสูงกว่าผู้เล่นแล้ว ใช้ผลึกเติบโตไม่ได้');return;}if(!p||!carriedPets().some(x=>x.uid===p.uid)||p.lv>=MAXLV||p.hp<=0||statsLocked()||!(S.P.items[id]>0)){toast('ใช้กับอสูรที่พกติดตัวและยังไม่ถึงเลเวลสูงสุด นอกการต่อสู้เท่านั้น');return}const growth=growthCrystalExp(p,it.petExp);if(growth<=0)return;const text=gainExp(p,growth,false);S.P.items[id]--;save();render();toast((text.join(' · ')||('เพิ่ม EXP '+growth+' ให้ '+petName(p)))+(growth<it.petExp?' · ถึงขีดจำกัดเลเวลผู้เล่นแล้ว EXP ส่วนเกินไม่สะสม':''));};
 const skillElementOnly=skillElementIcon;
 // Painted atlas: 64 shared motifs selected by each skill's actual effect and element.
 const SKILL_ART_ATLAS='assets/skills/skill-atlas.webp';
@@ -3205,6 +3205,10 @@ const playAutoAct=aiAct;aiAct=function(){const b=B(),u=b&&uById(b.cur);if(b&&!b.
  const slot=b.allies.findIndex((a,i)=>i>0&&a.kind==='pet'&&a.hp<=0),reserve=carriedPets().find(p=>p.hp>0&&!b.allies.some(a=>a.uid===p.uid));
  if(slot>0&&reserve){b.atarget=slot;b.menu='main';battleAction('swap:'+reserve.uid);}
  }return playAutoAct();};
+
+// Crystal experience stops exactly at the owner's level, without banking overflow.
+function growthCrystalExp(p,amount){const cap=Math.min(MAXLV,Math.max(1,Math.floor(S.P.lv)));if(p.lv>=cap)return 0;let remaining=-(Math.max(0,Number(p.exp)||0));for(let lv=p.lv;lv<cap;lv++)remaining+=need(lv);return Math.max(0,Math.min(amount,remaining));}
+for(const it of Object.values(CON)){if(it.petExp)it.d+=' · ใช้เพิ่มเลเวลได้สูงสุดเท่าผู้เล่น EXP ส่วนเกินไม่สะสม';}
 
 // Keep audio preferences on this device, separate from player progression.
 const AUDIO_PREF_KEY=SB_ENV==='test'?'sealbeast_audio_v1':'sealbeast_audio_v1';
