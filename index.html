@@ -1697,7 +1697,7 @@ function newRound(){const b=B();b.round++;const sp=u=>eff(u,'spd')*(b.round===1&
  const ord=allU().filter(u=>u.hp>0).map(u=>[u,sp(u)*(0.97+Math.random()*.06)]).sort((x,y)=>y[1]-x[1]);b.queue=[];
  ord.forEach(([u])=>{b.queue.push(u.id);const opp=foesOf(u).filter(x=>x.hp>0);if(opp.length&&sp(u)>=2*Math.max(...opp.map(sp)))b.queue.push(u.id+'*')});advance()}
 const costOf=(u,sk)=>sk.mp?Math.round(sk.mp*(hasPas(u,'mpsave')?.7:1)):0;
-function releaseCharge(u){const b=B();if(!b||b.over)return;const c=u.charging;u.charging=null;const t=c.tid&&uById(c.tid);blog(`${u.name} ปลดปล่อยพลัง!`);act(u,c.id,t&&t.hp>0?t:null,null,true);render();battleLater(advance,650)}
+function releaseCharge(u){const b=B();if(!b||b.over)return;const c=u.charging;u.charging=null;const t=c.tid&&uById(c.tid);blog(`${u.name} ปลดปล่อยพลัง!`);act(u,c.id,t&&t.hp>0?t:null,null,true);if(checkEnd()){render();return}battleLater(advance,650);render()}
 function checkEnd(){const b=B();if(b.over)return true;if(b.allies[0].hp<=0){endBattle('lose');return true}if(b.enemies.every(e=>e.hp<=0)){endBattle('win');return true}return false}
 function hurt(u,d,c='bad'){if(isWorldBattle()&&u.immortalWorld){const b=B(),damage=Math.max(0,Math.min(1e12,Math.round(Number(d)||0)));b.damageTotal=(b.damageTotal||0)+damage;const owner=b.wbDamageOwner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;u.hp=u.st.hp;fxAdd(u,'-'+damage,c);return;}const wasAlive=u.hp>0;u.hp=Math.max(0,u.hp-d);fxAdd(u,'-'+d,c);
  if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status={};blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else{blog(`${u.name} ล้มลง`);if(wasAlive)Sound.cry(u.sp,true)}}}
@@ -1720,8 +1720,8 @@ function advance(){const b=B();if(!b||b.over)return;b.fx=[];if(checkEnd()){rende
   if(!extra&&turnStart(u)){if(checkEnd()){render();return}continue}
   if(extra&&(u.status.freeze||u.status.sleep))continue;
   b.cur=u.id;b.extra=extra;if(extra)blog(`${u.name} เร็วกว่าเกิน 2 เท่า ได้เคลื่อนไหวอีกครั้ง!`);
-  if(u.charging){b.menu='wait';render();setTimeout(()=>releaseCharge(u),550);return}if(!(b.enemies[b.target]&&b.enemies[b.target].hp>0))b.target=b.enemies.findIndex(e=>e.hp>0);
-  if(u.side==='enemy'||teamAutoUnit(u)){b.menu='wait';render();battleLater(aiAct,u.side==='enemy'?700:450)}else{b.menu='main';render()}
+  if(u.charging){b.menu='wait';battleLater(()=>releaseCharge(u),550);render();return}if(!(b.enemies[b.target]&&b.enemies[b.target].hp>0))b.target=b.enemies.findIndex(e=>e.hp>0);
+  if(u.side==='enemy'||teamAutoUnit(u)){b.menu='wait';battleLater(aiAct,u.side==='enemy'?700:450);render()}else{b.menu='main';render()}
   return}
  newRound()}
 function applyStatus(t,k,ch){if(t.hp<=0||t.status[k])return;if(IMM[k]&&t.types.some(x=>IMM[k].includes(x)))return;
@@ -1905,8 +1905,8 @@ function aiChoose(u){if(u.side!=='enemy')return aiChooseLegacy(u);
  return [chosen.id,chosen.t,chosen.a]}
 function battleLater(fn,ms){const battle=S.battle;const run=()=>{if(S.battle!==battle||!battle)return;if(S.ui.confirm?.act==='dosurrender'){setTimeout(run,150);return}fn()};setTimeout(run,ms)}
 function aiAct(){const b=B();if(!b||b.over)return;const u=uById(b.cur);if(!u||u.hp<=0){advance();return}
- if(u.side==='ally'&&!teamAutoUnit(u)){b.menu='main';render();return}const [id,t,a]=aiChoose(u);if(!act(u,id,t,a))act(u,'attack',t);render();battleLater(advance,600)}
-function after(){const b=B();b.menu='wait';render();battleLater(advance,450)}
+ if(u.side==='ally'&&!teamAutoUnit(u)){b.menu='main';render();return}const [id,t,a]=aiChoose(u);if(!act(u,id,t,a))act(u,'attack',t);if(checkEnd()){render();return}battleLater(advance,600);render()}
+function after(){const b=B();if(!b)return;if(checkEnd()){render();return}b.menu='wait';battleLater(advance,450);render()}
 function curTarget(){const b=B();let t=b.enemies[b.target];if(!t||t.hp<=0){b.target=b.enemies.findIndex(e=>e.hp>0);t=b.enemies[b.target]}return t}
 const curAlly=()=>B().allies[B().atarget]||B().allies[0];
 const sealable=e=>!e?.bossHelper&&!(SP[e?.sp]?.legendary&&!mistLegendsUnlocked())&&e&&e.hp>0&&B()?.kind!=='pvp'&&B()?.kind!=='raid'&&!(e.sp&&SP[e.sp].noseal)&&(e.kind==='beast'||(e.kind==='npcpet'&&B()&&['bandit','traveler','npc'].includes(B().kind)&&!B().enemies.some(x=>x.kind==='human'&&x.hp>0)));
@@ -3312,6 +3312,7 @@ const progressionSoundFx=Sound.fx;
 Sound.fx=function(...args){return optionalProgressEffect(()=>progressionSoundFx.apply(this,args));};
 const progressionExtraPlay=ExtraAudio.play;
 ExtraAudio.play=function(...args){return optionalProgressEffect(()=>progressionExtraPlay.apply(this,args));};
+for(const key of ['sync','cry','skill']){const original=Sound[key];Sound[key]=function(...args){return optionalProgressEffect(()=>original.apply(this,args));};}
 const progressionHeroNotice=showHeroLevelNotice;
 showHeroLevelNotice=function(){try{return progressionHeroNotice();}catch(error){HeroLevelNotice.playing=false;HeroLevelNotice.queue.length=0;document.querySelectorAll('.hero-level-notice').forEach(el=>el.remove());console.warn('Skipped hero level animation',error);}};
 const progressionEvolutionNotice=showEvolutionNotice;
