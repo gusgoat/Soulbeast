@@ -3,7 +3,7 @@
   "admin.css": "203080b84cdba80cea81ce4318a862f6c52152f9086774b60f4f8c38727cf62f",
   "admin.html": "51bf7b9d0b91aa30a027adab9f1422aa94d477e9432acbf3468e2c5f89cb5bd7",
   "admin.js": "e41e40290f526cc614f22bdc14b5d9866b36d6a99e207a7e4f69a9e639fcd6ea",
-  "index.html": "79bfc6f7b1942fb85dead4f19b488506b1602f50bb9d1252b8304f43b6a46ab5",
+  "index.html": "424eef885984b8f9665b0316c57a68e68bd0c5823f7ea82bb37b0db2210c1aed",
   "README-TH.txt": "87b9c5473305940e3247cdd512d5e930fb62ed013d676103ad0c4f6fe6432abf",
   "assets/beasts/mist-beasts.webp": "1838ae23e77aba33cac206314e50d0f38c3fb74bb347d83fb1d5bbe202410d03",
   "assets/media/00d6dd41329e230760ded92f.webp": "00d6dd41329e230760ded92f38cf05107d16a63c50c4518944c07cd14be77ef2",
@@ -517,5 +517,6 @@
   "assets/ui/status/sleep.webp": "0f4c503d163c203ae666b7fa035e4e52acfa0478ecca7bee66f5b9bcc9f6ca8e",
   "assets/ui/status/spd-down.webp": "ff9696b003a5a51165e484a48075bae3a84c311b00e90a0c9d85d3fa5a34b454",
   "assets/ui/status/spd-up.webp": "771c9522d3c5e25f57398a158e3b3b3ee2e09f0bfc14cb4631696451722f474d",
+  "assets/ui/status/special-atlas-v1.webp": "1fafa7fbdafd91123b9de7dc671e771826d475c8370f009992fdc258d974770b",
   "assets/ui/status/static.webp": "1378eba55a283c3d40e996cf2a925c4d736193bf7bf7f77f5e5292a111c0e611"
 }

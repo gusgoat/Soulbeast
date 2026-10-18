@@ -451,6 +451,8 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 
 .battle-effect-icon:has(.battle-effect-image){border:0;box-shadow:none;background:transparent;border-radius:3px;overflow:hidden}.battle-effect-image{display:block;width:100%;height:100%;object-fit:contain;flex:none;pointer-events:none}
 
+.battle-effect-icon.special-effect{border:0;box-shadow:none;background:transparent;overflow:hidden}.battle-special-image{display:block;width:100%;height:100%;flex:none;background-image:url('assets/ui/status/special-atlas-v1.webp');background-size:600% 400%;background-repeat:no-repeat;pointer-events:none}
+
 </style>
 
 <div id="app"></div>
@@ -3410,9 +3412,26 @@ function villageGearPrice(id){return Math.max(500,Math.round(priceOf(EQ[id])*1.7
 handlers.villageGear=function(value){const ev=S.zone?.ev;if(ev?.type!=='village'||S.battle||towerActive())return;const entry=villageGearStock(ev)[+value];if(!entry||entry.sold)return;const price=villageGearPrice(entry.id);if(S.P.gold<price)return toast('เหรียญไม่พอ');S.P.gold-=price;S.P.owned.push(entry.id);entry.sold=true;ExtraAudio.play('buy');save();render();};
 const forestZoneView=vZone;vZone=function(){let html=forestZoneView(),ev=S.zone?.ev;if(ev?.type!=='village')return html;const cont='<button class="btn pri full" data-a="cont">เดินป่าต่อ →</button>',gear='<section class="card stack village-gear"><h3>อาวุธหลอม / คราฟต์หายาก · สุ่มขาย 2 ชิ้น</h3><small>ราคาสูงกว่าร้านทั่วไป · ชิ้นละหนึ่งชิ้นต่อการพบหมู่บ้าน</small>'+villageGearStock(ev).map((v,i)=>'<div class="item">'+itemIcon(v.id)+'<div class="grow"><b>'+esc(EQ[v.id].n)+'</b><small>คราฟต์หายาก · Lv '+EQ[v.id].lv+' · '+statLine(EQ[v.id].st)+'</small></div><button class="btn sm" data-a="villageGear" data-v="'+i+'" '+(v.sold||S.P.gold<villageGearPrice(v.id)?'disabled':'')+'>'+(v.sold?'ขายแล้ว':fmt(villageGearPrice(v.id))+' เหรียญ')+'</button></div>').join('')+'</section>';return html.replace(/(<div class="card stack">)(<img class="route-banner")/,'$1'+cont+'$2').replace(/(<button class="btn [^"]*full" data-a="cont" style="min-height:50px">)/,gear+'$1');};
 
-function battleEffectIcons(html,u){if(html.includes('battle-effect-strip'))return html;const symbols={burn:'🔥',poison:'☠',freeze:'❄',chill:'🕸',love:'♥',sleep:'Zz',confuse:'✫',static:'ϟ',charm:'◎',para:'⛓'},stats={patk:['⚔','พลังโจมตีกายภาพ'],matk:['⚚','พลังโจมตีเวท'],crit:['✦','คริติคอล'],acc:['⊕','แม่นยำ'],eva:['➶','หลบหลีก'],spd:['➟','ความเร็ว'],pdef:['⬟','เกราะกายภาพ'],mdef:['◈','เกราะเวท']};const icons=[];for(const [k,n] of Object.entries(u.status||{}))if(n&&STS[k])icons.push('<span class="battle-effect-icon" title="'+esc(STS[k].n+' · '+STS[k].info)+'" aria-label="'+esc(STS[k].n)+'">'+battleEffectImage(k,STS[k].n)+'</span>');const sums={};for(const b of u.buffs||[])if(b.tn>0&&b.st)sums[b.st]=(sums[b.st]||0)+b.amt;for(const [k,n] of Object.entries(sums))if(n){const q=stats[k]||['✧',k],label=(n>0?'เพิ่ม':'ลด')+q[1]+' '+Math.round(Math.abs(n)*100)+'%';icons.push('<span class="battle-effect-icon '+(n>0?'good':'bad')+'" title="'+esc(label)+'" aria-label="'+esc(label)+'">'+(stats[k]?battleEffectImage(k+(n>0?'-up':'-down'),label):q[0])+'</span>');}if(!icons.length)return html;html=html.replace(/<span class="online-unit-status">[^<]*<\/span>/g,'');return html.replace(/<\/button>$/, '<span class="battle-effect-strip" aria-label="บัฟและดีบัฟ">'+icons.join('')+'</span></button>');}
+function battleEffectIcons(html,u){if(html.includes('battle-effect-strip'))return html;const symbols={burn:'🔥',poison:'☠',freeze:'❄',chill:'🕸',love:'♥',sleep:'Zz',confuse:'✫',static:'ϟ',charm:'◎',para:'⛓'},stats={patk:['⚔','พลังโจมตีกายภาพ'],matk:['⚚','พลังโจมตีเวท'],crit:['✦','คริติคอล'],acc:['⊕','แม่นยำ'],eva:['➶','หลบหลีก'],spd:['➟','ความเร็ว'],pdef:['⬟','เกราะกายภาพ'],mdef:['◈','เกราะเวท']};const icons=[];for(const [k,n] of Object.entries(u.status||{}))if(n&&STS[k])icons.push('<span class="battle-effect-icon" title="'+esc(STS[k].n+' · '+STS[k].info)+'" aria-label="'+esc(STS[k].n)+'">'+battleEffectImage(k,STS[k].n)+'</span>');const sums={};for(const b of u.buffs||[])if(b.tn>0&&b.st)sums[b.st]=(sums[b.st]||0)+b.amt;for(const [k,n] of Object.entries(sums))if(n){const q=stats[k]||['✧',k],label=(n>0?'เพิ่ม':'ลด')+q[1]+' '+Math.round(Math.abs(n)*100)+'%';icons.push('<span class="battle-effect-icon '+(n>0?'good':'bad')+'" title="'+esc(label)+'" aria-label="'+esc(label)+'">'+(stats[k]?battleEffectImage(k+(n>0?'-up':'-down'),label):q[0])+'</span>');}icons.push(...battleSpecialEffects(u));if(!icons.length)return html;html=html.replace(/<span class="online-unit-status">[^<]*<\/span>/g,'');return html.replace(/<\/button>$/, '<span class="battle-effect-strip" aria-label="บัฟและดีบัฟ">'+icons.join('')+'</span></button>');}
 
 function battleEffectImage(key,label){return '<img class="battle-effect-image" src="assets/ui/status/'+key+'.webp" alt="'+esc(label)+'" width="20" height="20" decoding="async">';}
+
+// One generated atlas, indexed left-to-right in six columns and four rows.
+const BATTLE_SPECIAL_ICONS={taunt:[0,'neutral'],charging:[1,'good'],empowered:[2,'good'],physicalImmune:[3,'good'],magicImmune:[4,'good'],enchant:[5,'good'],firestorm:[6,'bad'],whirlpool:[7,'bad'],constrict:[8,'bad'],thorns2:[9,'good'],omni:[10,'good'],poisonTouch2:[11,'good'],mpsave:[12,'good'],regen:[13,'good'],guardian:[14,'good'],wolf:[15,'neutral'],bear:[16,'neutral'],hawk:[17,'good'],treant:[18,'neutral'],saber:[19,'good'],gdragon:[20,'good'],moon:[21,'good'],defending:[22,'good'],summonLife:[23,'neutral']};
+function battleSpecialEffects(u){const effects=[],add=(key,label)=>{const icon=BATTLE_SPECIAL_ICONS[key];if(icon)effects.push({key,label,index:icon[0],kind:icon[1]});};
+ if(u.taunt>0)add('taunt','ยั่วยุ · ดึงการโจมตีเข้าหาตัว '+u.taunt+' เทิร์น');
+ if(u.charging)add('charging','กำลังชาร์จ'+(SK[u.charging.id]?' · '+SK[u.charging.id].n:''));
+ if(u.charge>1)add('empowered','พลังโจมตีครั้งถัดไป ×'+u.charge);
+ if(u.immune==='p')add('physicalImmune','ป้องกันกายภาพ 100%');
+ if(u.immune==='m')add('magicImmune','ป้องกันเวท 100%');
+ if(u.enchant)add('enchant','ประทับธาตุอาวุธ · '+(EL[u.enchant]?.n||u.enchant));
+ const dots={'พายุไฟ':'firestorm','วังน้ำวน':'whirlpool','บีบรัด':'constrict'};
+ for(const d of u.dots||[])if(d.turns>0)add(dots[d.n],d.n+' · '+d.turns+' เทิร์น');
+ const passive=new Set();for(const b of u.buffs||[])if(b.tn>0&&b.pas&&!passive.has(b.pas)){passive.add(b.pas);add(b.pas,(PAS[b.pas]?.n||b.pas)+' · '+b.tn+' เทิร์น');}
+ if(u.form&&FORMS[u.form])add(u.form,FORMS[u.form].n);
+ if(u.summonLife>0)add('summonLife','อสูรอัญเชิญชั่วคราว · เหลือ '+u.summonLife+' เทิร์น');
+ return effects.map(e=>'<span class="battle-effect-icon special-effect '+e.kind+'" data-effect="'+e.key+'" title="'+esc(e.label)+'" aria-label="'+esc(e.label)+'"><span class="battle-special-image" role="img" aria-label="'+esc(e.label)+'" style="background-position:'+(e.index%6*20)+'% '+(Math.floor(e.index/6)*100/3)+'%"></span></span>');
+}
 
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
