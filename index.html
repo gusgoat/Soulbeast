@@ -453,6 +453,8 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 
 .battle-effect-icon.special-effect{border:0;box-shadow:none;background:transparent;overflow:hidden}.battle-special-image{display:block;width:100%;height:100%;flex:none;background-image:url('assets/ui/status/special-atlas-v1.webp');background-size:600% 400%;background-repeat:no-repeat;pointer-events:none}
 
+.bag-ailments{display:grid;gap:6px;border-top:1px solid #e8747455;padding-top:8px;min-width:0}.bag-ailments>b{font-size:12px;color:#ffb5a6}.bag-ailment-row{display:flex;align-items:center;gap:7px;min-width:0}.bag-ailment-row>.battle-effect-icon{width:26px;height:26px}.bag-ailment-row>div{min-width:0;flex:1}.bag-ailment-row strong{font-size:12px}.bag-ailment-row small{display:block;white-space:normal;overflow-wrap:anywhere;font-size:10px;color:var(--muted)}.bag-cure-actions{gap:4px}.bag-cure-actions .btn{font-size:11px;white-space:normal;min-height:34px}
+
 </style>
 
 <div id="app"></div>
@@ -3432,6 +3434,9 @@ function battleSpecialEffects(u){const effects=[],add=(key,label)=>{const icon=B
  if(u.summonLife>0)add('summonLife','อสูรอัญเชิญชั่วคราว · เหลือ '+u.summonLife+' เทิร์น');
  return effects.map(e=>'<span class="battle-effect-icon special-effect '+e.kind+'" data-effect="'+e.key+'" title="'+esc(e.label)+'" aria-label="'+esc(e.label)+'"><span class="battle-special-image" role="img" aria-label="'+esc(e.label)+'" style="background-position:'+(e.index%6*20)+'% '+(Math.floor(e.index/6)*100/3)+'%"></span></span>');
 }
+
+function bagAilmentInfo(o,who){const states=Object.keys(storedAilments(o));if(!states.length)return '';const cures=Object.entries(CON).filter(([,it])=>it.cure?.some(k=>states.includes(k)));return '<section class="bag-ailments" aria-label="สถานะที่ติดค้าง"><b>สถานะที่ติดค้าง</b>'+states.map(k=>'<div class="bag-ailment-row"><span class="battle-effect-icon">'+battleEffectImage(k,STS[k].n)+'</span><div><strong>'+esc(STS[k].n)+'</strong><small>รักษาด้วย '+cures.filter(([,it])=>it.cure.includes(k)).map(([,it])=>esc(it.n)).join(' / ')+'</small></div></div>').join('')+'<div class="row wrap bag-cure-actions">'+cures.map(([id,it])=>'<button class="btn sm" data-a="use" data-v="'+id+':'+who+'" '+(!(S.P.items[id]>0)||statsLocked()||towerActive()?'disabled':'')+'>ใช้'+esc(it.n)+' · มี '+fmt(S.P.items[id]||0)+'</button>').join('')+'</div></section>';}
+bagVitals=function(){return '<div class="bag-vitals">'+bagHealTargets().map(t=>'<div class="card stack"><b '+(t.key==='P'?'data-user-content':'')+'>'+esc(t.name)+'</b><small>HP '+t.o.hp+'/'+t.st.hp+'</small>'+bar(t.o.hp,t.st.hp)+'<small>MP '+t.o.mp+'/'+t.st.mp+'</small>'+bar(t.o.mp,t.st.mp,'mp')+bagAilmentInfo(t.o,t.key)+'</div>').join('')+'</div>';};
 
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
