@@ -447,6 +447,8 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 .has-battle-status{border:2px solid var(--status-main)!important;box-shadow:0 0 7px var(--status-main)!important}.multi-battle-status{border-color:transparent!important;background:linear-gradient(#152739,#152739) padding-box,var(--status-gradient) border-box!important}.has-battle-status.selected,.has-battle-status.tg,.has-battle-status.at{outline:1px solid #fff2c4;outline-offset:1px}.has-battle-status.acting,.has-battle-status.turn{outline:2px solid #f7df95;outline-offset:1px}.pvp-turn-timer{font-size:11px;color:#ffe39b;white-space:nowrap}
 .battle-portrait-elements{position:absolute;z-index:3;top:0;left:-1px;right:-1px;display:flex;justify-content:space-between;gap:2px;pointer-events:none}.battle-portrait-elements .element-icon{width:clamp(13px,3.5vw,20px);height:clamp(13px,3.5vw,20px);padding:1px;flex:none;border:1px solid currentColor;border-radius:50%;background:#0c1b2bf5;box-shadow:0 1px 3px #000b}.battle-portrait-elements .element-icon svg{width:100%;height:100%}.online-unit-grid[style*="--unit-cols:4"] .battle-portrait-elements .element-icon{width:12px;height:12px}
 
+.battle-portrait-elements{flex-wrap:wrap;align-content:flex-start;row-gap:1px}
+
 .battle-effect-strip{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:2px;grid-column:1/-1;max-width:100%;padding-top:2px;align-items:center}.battle-effect-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:1px solid #f26565;border-radius:4px;background:#29151f;color:#ff8080;box-shadow:0 0 3px #f4433655;flex:none;font-size:14px;line-height:1}.battle-effect-icon.good{border-color:#52df83;background:#102b20;color:#7affad}.battle-effect-icon svg{width:16px;height:16px}.battle-effect-icon small{font-size:8px}.battle-vital,.online-unit{flex-wrap:wrap}.battle-effect-strip:empty{display:none}.online-unit-grid[style*="--unit-cols:4"] .battle-effect-icon{width:15px;height:15px;font-size:11px}.online-unit-grid[style*="--unit-cols:4"] .battle-effect-icon svg{width:12px;height:12px}.forest-auto-notice{border-color:#e7cd81}.village-gear .grow{min-width:0}.village-gear b{overflow-wrap:anywhere}
 
 .battle-effect-icon:has(.battle-effect-image){border:0;box-shadow:none;background:transparent;border-radius:3px;overflow:hidden}.battle-effect-image{display:block;width:100%;height:100%;object-fit:contain;flex:none;pointer-events:none}
@@ -1720,7 +1722,7 @@ function eff(u,k){const a=u.buffs.reduce((s,b)=>b.st===k?s+b.amt:s,0);let v=u.st
  if((k==='patk'||k==='matk')&&hasPas(u,'rage')&&u.hp<u.st.hp/2)v*=1.3;
  if((k==='pdef'||k==='mdef')&&hasPas(u,'laststand')&&u.hp<u.st.hp*.3)v*=1.5;
  if(isWorldBattle()&&u.immortalWorld&&['patk','matk'].includes(k))v*=Math.pow(1.05,Math.max(0,(B().bossTurns||1)-1));return Math.max(k==='crit'?0:1,pvpOffense(u,k,v))}
-const hitChance=(u,t,sk)=>clamp(eff(u,'acc')-eff(t,'eva')+15+((sk&&sk.acc)||0),25,100);
+const hitChance=(u,t,sk)=>clamp(eff(u,'acc')-eff(t,'eva')+15+((sk&&sk.acc)||0),minimumHitChance(u,t),100);
 function fxAdd(u,t,c){B().fx.push({id:u.id,t,c})}
 function newRound(){const b=B();b.round++;const sp=u=>eff(u,'spd')*(b.round===1&&hasPas(u,'firstblood')?2:1);
  const ord=allU().filter(u=>u.hp>0).map(u=>[u,sp(u)*(0.97+Math.random()*.06)]).sort((x,y)=>y[1]-x[1]);b.queue=[];
@@ -1769,8 +1771,8 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
  if(id!=='attack'&&id!=='rest')vfx('cast',u.id,{skill:id,n:sk.n,el:sk.el,c:sk.t==='heal'?'#7fd08a':!sk.el?'#d9b35b':null});
  const mates=sideOf(u);
  if(sk.t==='rest'){const m=Math.round(u.st.mp*.3);u.mp=Math.min(u.st.mp,u.mp+m);blog(`${u.name} ตั้งสมาธิ ฟื้น MP ${m}`);fxAdd(u,'+'+m+' MP','mp');return true}
- if(sk.t==='form'){const f=FORMS[sk.form];if(!u.baseSkills)u.baseSkills=u.skills;u.form=sk.form;u.types=f.t.slice();u.skills=[...f.sk,'revert'];u.img='form:'+sk.form;blog(`${u.name} แปลงเป็น${f.n}!`);fxAdd(u,f.n,'good');return true}
- if(sk.t==='revert'){u.form=null;u.types=[];u.skills=u.baseSkills||u.skills;u.img=u.kind==='player'?'player':u.img;blog(`${u.name} คืนร่างมนุษย์`);return true}
+ if(sk.t==='form'){const f=FORMS[sk.form];if(!u.baseSkills)u.baseSkills=u.skills;u.form=sk.form;u.types=u.defenseTypes?u.defenseTypes.slice():f.t.slice();u.skills=[...f.sk,'revert'];u.img='form:'+sk.form;blog(`${u.name} แปลงเป็น${f.n}!`);fxAdd(u,f.n,'good');return true}
+ if(sk.t==='revert'){u.form=null;u.types=u.defenseTypes?u.defenseTypes.slice():[];u.skills=u.baseSkills||u.skills;u.img=u.kind==='player'?'player':u.img;blog(`${u.name} คืนร่างมนุษย์`);return true}
  if(sk.t==='heal'||sk.t==='buff'){
   let list=sk.tg==='team'?mates.filter(x=>x.hp>0||((sk.revAll)&&x.kind!=='player')):sk.tg==='self'?[u]:[atgt&&(atgt.hp>0||sk.rev)&&mates.includes(atgt)?atgt:u];
   const hm=hasPas(u,'healer')?1.3:1;
@@ -1786,8 +1788,8 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
  if(!tgt||tgt.hp<=0||!side.includes(tgt))tgt=alive[0];
  blog(`${u.name} ใช้ ${sk.n}${sk.all?'':sk.rt?'':` ใส่ ${tgt.name}`}`);
  if(sk.all&&['p','m','h'].includes(sk.t))vfx('flash',null,{el:sk.el});
- if(sk.all)alive.forEach(t=>hitOne(u,sk,t,sk.areaScale||.65));
- else{for(let i=0;i<(sk.hits||1);i++){const al=side.filter(x=>x.hp>0);if(!al.length)break;const t=sk.rt?pick(al):tgt.hp>0?tgt:al[0];hitOne(u,sk,t,1)}
+ if(sk.all)alive.forEach(t=>u.hp>0&&hitOne(u,sk,t,areaDamageScale(sk,alive.length),alive.length));
+ else{for(let i=0;i<(sk.hits||1);i++){const al=side.filter(x=>x.hp>0);if(!al.length||u.hp<=0)break;const t=sk.rt?pick(al):tgt.hp>0?tgt:al[0];hitOne(u,sk,t,1)}
   if(hasPas(u,'multihit')&&['p','m','h','auto'].includes(sk.t)&&Math.random()<.3&&tgt.hp>0){blog(`${u.name} โจมตีซ้ำด้วยเศียรอื่น!`);hitOne(u,sk,tgt,.5)}}
  if(sk.self&&u.hp>0)hurt(u,Math.round(u.st.hp*sk.self));
  const dmgSk=['p','m','h','auto'].includes(sk.t);if(dmgSk&&u.charge)u.charge=0;
@@ -1827,7 +1829,7 @@ function pvpOffense(u,k,v){
   if(u.cls==='paladin')v=Math.max(v,u.st[k==='patk'?'matk':'patk']*.9);
   if(u.cls==='sage'&&k==='matk')v*=1.25;
   if((u.cls==='gunner'||u.cls==='marksman')&&k==='patk')v*=1.15;
-  if(u.cls==='wildgod'){if(u.form)v=Math.max(v,Math.max(u.st.patk,u.st.matk)*(FORMS[u.form].m[k]||1));v*=1.2;}
+  if(u.cls==='wildgod'&&u.form)v*=1.05;
   // Retain a bounded benefit for legacy critical/speed allocations without moving saved points.
   if(baseOf(u.cls)==='thief'){const legacy=Math.min(1,Math.max(0,u.st.spd/Math.max(u.st.patk,u.st.matk)-.8));v*=1+legacy*(Math.min(.25,Math.max(0,u.st.crit-65)*.004)+.15);}
  }else if(u.kind==='pet'){
@@ -1851,7 +1853,7 @@ function pvpSkill(id,inPvp=isBalancedPvp(),mode=null){const sk=SK[id];if(sk&&(mo
  return changes?{...sk,...changes,_pvpId:id}:sk;
 }
 
-function hitOne(u,sk,t,scale){
+function hitOne(u,sk,t,scale,areaCount=0){
  const dmgT=['p','m','h','auto'].includes(sk.t);
  const attackEl=effectiveElement(u,sk);const m=typeMult(attackEl,t.types)*(sk.el==='ground'&&hasPas(t,'levitate')?0:1);
  if(m===0){blog(`ไม่มีผลต่อ ${t.name}`);fxAdd(t,'×0','muted');ExtraAudio.play('miss');vfx('miss',t.id);return}
@@ -1860,18 +1862,18 @@ function hitOne(u,sk,t,scale){
  if(!dmgT){vfx('debuff',t.id,{el:sk.el,c:sk.el?null:'#a07ad8'});addBuffs(t,{bf:sk.bf,tn:sk.tn});if(sk.bf)fxAdd(t,'↓','bad');if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*tx);return}
  const type=sk.t==='auto'?u.atkType:sk.t;if((type==='p'&&t.immune==='p')||(type==='m'&&t.immune==='m')){blog(t.name+' ป้องกันสมบูรณ์');vfx('buff',t.id);return}if(type==='h'&&t.immune)scale*=.5;let atk,def;
  if(type==='h'){atk=(eff(u,'patk')+eff(u,'matk'))/2;def=(eff(t,'pdef')+eff(t,'mdef'))/2}else{atk=eff(u,type==='p'?'patk':'matk');def=eff(t,type==='p'?'pdef':'mdef')}
- if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0));
- const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1;
+ if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0)+frontlinePierce(u,t));
+ const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1;
  let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*scale*(u.charge||1)*(.9+Math.random()*.2);
- d*=pvpDamageFactor(u,t);
+ d*=pvpDamageFactor(u,t)*classCombatFactor(u,t,sk);
  if(hasPas(t,'thick')&&(sk.el==='fire'||sk.el==='ice'))d*=.5;
  if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;
- const crit=!hasPas(t,'nocrit')&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0));if(crit)d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5; if(crit)ExtraAudio.skill(VSKID.get(sk),u,true);
+ const crit=!hasPas(t,'nocrit')&&!rogueCritBlocked(u,t)&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0));if(crit)d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5; if(crit)ExtraAudio.skill(VSKID.get(sk),u,true);
  d=Math.max(1,Math.round(d));
  if(hasPas(t,'sturdy')&&t.hp===t.st.hp&&d>=t.hp&&t.hp>1){d=t.hp-1;blog(`${t.name} อึดทนไว้ได้!`)}
  blog(`→ ${t.name} ${d} ดาเมจ${crit?' คริติคอล!':''}${m>1?' ได้ผลดีมาก':m<1?' ไม่ค่อยได้ผล':''}`);
  vfx('hit',t.id,{skill:VSKID.get(sk)||sk._pvpId,el:sk.el,phys:type!=='m',crit});
- if(isWorldBattle()&&t.immortalWorld)B().wbDamageOwner=u.owner;hurt(t,d);if(sk.dot&&t.hp>0){t.dots=t.dots||[];t.dots=t.dots.filter(x=>x.n!==sk.dot.n);t.dots.push({...sk.dot})}
+ if(isWorldBattle()&&t.immortalWorld)B().wbDamageOwner=u.owner;hurt(t,d);if(sk.dot&&t.hp>0){t.dots=t.dots||[];t.dots=t.dots.filter(x=>x.n!==sk.dot.n);t.dots.push({...sk.dot,rate:sk.dot.rate*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):1)})}
  const ls=(sk.ls||0)+(hasPas(u,'lifesteal')?.15:0);if(ls&&u.hp>0)heal(u,d*ls);
  if(hasPas(u,'manadrain'))u.mp=Math.min(u.st.mp,u.mp+Math.round(d*.08));
  if(sk.steal)steal(u,t);
@@ -1884,7 +1886,7 @@ function hitOne(u,sk,t,scale){
  if(t.status.sleep){delete t.status.sleep;blog(`${t.name} สะดุ้งตื่น!`)}
  if(t.status.freeze&&sk.el==='fire'&&!persistentBattleUnit(t)){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
  if(sk.bf)addBuffs(t,{bf:sk.bf,tn:sk.tn});
- if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*(scale<1?.7:1)*tx)}
+ if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):scale<1?.7:1)*tx)}
 /* simple AI for enemies and auto pets */
 function aiChooseLegacy(u){const b=B(),mates=sideOf(u).filter(x=>x.hp>0),foes=foesOf(u).filter(x=>x.hp>0);
  const ok=u.skills.filter(id=>{const s=SK[id];return !cooldownOf(u,id)&&costOf(u,s)<=u.mp&&!['form','revert','rest'].includes(s.t)&&!(s.gc&&u.kind==='player')&&!(s.charge&&u.charge)});
@@ -1898,8 +1900,7 @@ function aiChooseLegacy(u){const b=B(),mates=sideOf(u).filter(x=>x.hp>0),foes=fo
  const sts=ok.filter(id=>['status','debuff'].includes(SK[id].t));
  if(sts.length&&!Object.keys(tgt.status).length&&Math.random()<.22)return [pick(sts),tgt];
  const dmg=ok.filter(id=>['p','m','h','auto'].includes(SK[id].t));
- const score=id=>{const s=SK[id];const ty=s.t==='auto'?u.atkType:s.t;const a=ty==='m'?u.st.matk:ty==='h'?(u.st.patk+u.st.matk)/2:u.st.patk;
-  const tg=s.all?foes:[tgt];return tg.reduce((sum,f)=>sum+s.pw*(s.hits||1)*typeMult(s.el,f.types)*(s.all?.75:1),0)*a*((s.el&&u.stab.includes(s.el))?1.25:1)*(s.ct?.55:1)};
+ const score=id=>combatSkillScore(u,id,tgt,foes);
  const best=dmg.slice().sort((a,c)=>score(c)-score(a));
  return [Math.random()<.7?best[0]:pick(dmg),tgt]}
 function enemyGrade(u){const b=B();const zone=S.zone&&ZN[S.zone.id-1];let g=zone?(zone.train?1:zone.id):Math.ceil(u.lv/10);return clamp(g+(u.boss?1:0),1,6)}
@@ -1918,7 +1919,7 @@ function aiChoose(u){if(u.side!=='enemy')return aiChooseLegacy(u);
   for(const t of targets){const ty=s.t==='auto'?u.atkType:s.t;
    if(['p','m','h'].includes(ty)){const atk=ty==='m'?u.st.matk:ty==='h'?(u.st.patk+u.st.matk)/2:u.st.patk;
     const scoreTarget=f=>{const mult=typeMult(s.el,f.types),def=ty==='m'?f.st.mdef:ty==='h'?(f.st.pdef+f.st.mdef)/2:f.st.pdef;return Math.min(f.hp,atk*(s.pw||100)/100*(s.hits||1)*mult/(1+def/50)*(s.el&&u.stab.includes(s.el)?1.25:1))};
-    let value=s.all?foes.reduce((n,f)=>n+scoreTarget(f)*.75,0):s.rt?foes.reduce((n,f)=>n+scoreTarget(f),0)/foes.length:scoreTarget(t);
+    let value=s.all?foes.reduce((n,f)=>n+scoreTarget(f)*areaDamageScale(s,foes.length),0):s.rt?foes.reduce((n,f)=>n+scoreTarget(f),0)/foes.length:scoreTarget(t);
     if(!s.all&&!s.rt&&t.hp/t.st.hp<.3)value*=1.2;if(s.ct)value*=.65;add(id,t,null,value);continue}
    if(s.t==='status'||s.t==='debuff'){const useful=Object.keys(s.st||{}).some(k=>!t.status[k]&&!(IMM[k]&&t.types.some(e=>IMM[k].includes(e))))||Object.keys(s.bf||{}).some(k=>!t.buffs.some(b=>b.st===k&&b.amt<0));if(useful)add(id,t,null,Math.max(u.st.patk,u.st.matk)*(.35+grade*.08))}
   }
@@ -2483,7 +2484,7 @@ function vHero(){const P=S.P,s=pStats(),tab=S.ui.hero||'stat',w=EQ[P.eq.weapon],
   <div class="card stack"><h3>สกิลจากอุปกรณ์</h3>${Object.values(P.eq).map(id=>EQ[id]).filter(it=>it&&(it.ws||it.sk)).map(it=>[it.ws,it.sk].filter(Boolean).map(k=>skillRow(k,true,it.n)).join('')).join('')||'<p class="sub" style="margin:0">อาวุธระดับ 1 ขึ้นไปและเครื่องประดับพิเศษบางชิ้นมีสกิลติดมา</p>'}</div>
   ${baseOf(P.cls)==='druid'?`<div class="card stack"><h3>ร่างแปลง</h3>${Object.entries(FORMS).map(([k,f])=>`<div><b>${f.em} ${f.n}</b> ${tChips(f.t)}<div class="sub" style="font-size:12px">${Object.entries(f.m).map(([x,v])=>`${SH[x]} ×${v}`).join(' ')} · สกิล ${f.sk.map(x=>SK[x].n).join(', ')}</div></div>`).join('')}</div>`:''}`}
  if(tab==='gear')body=`<div class="card stack"><h3>อุปกรณ์ที่สวมใส่</h3><div class="lst">${SLOTS.map(([sl,n])=>{const it=EQ[P.eq[sl]];return `<div class="row">${it?itemIcon(P.eq[sl],38):''}<span class="sub" style="width:58px;flex:none">${n}</span><div class="grow">${it?`<b>${itemName(it)}</b> ${elChip(it.el)}<div class="sub" style="font-size:12px">${statLine(it.st)}${itemExtra(it)}</div>`:'<span class="sub">ว่าง</span>'}</div>${it&&sl!=='weapon'?`<button class="btn sm" data-a="unequip" data-v="${sl}">ถอด</button>`:''}</div>`}).join('')}</div></div>
- <div class="card stack"><h3>อุปกรณ์ในกระเป๋า</h3>${P.owned.length?`<div class="lst">${P.owned.map(id=>{const it=EQ[id],same=P.eq[it.slot]===id,bad=same||it.lv>P.lv;return `<div class="row">${itemIcon(id)}<div class="grow"><b>${itemName(it)}</b> <span class="sub">${SLOTN[it.slot]}${it.wt?' · '+WT[it.wt].n:''}${it.slot==='weapon'&&it.wt!==clsWeapon(P.cls)?' · ข้ามอาชีพ: ค่าสถานะอาวุธ 80%':''}${same?' · ชิ้นสำรอง รุ่นเดียวกับที่สวม':''}</span><div class="sub" style="font-size:12px">${compareGear(it)}${itemExtra(it)}${it.lv>P.lv?` · ต้องการ Lv ${it.lv}`:''}</div></div><button class="btn sm pri" data-a="equip" data-v="${id}" ${bad?'disabled':''}>${same?'สวมรุ่นนี้อยู่':'สวม'}</button></div>`}).join('')}</div>`:'<p class="sub" style="margin:0">ซื้ออุปกรณ์ได้ที่ตลาด หรือเปิดหีบสมบัติในป่า</p>'}</div>`;
+ <div class="card stack"><h3>อุปกรณ์ในกระเป๋า</h3>${P.owned.length?`<div class="lst">${P.owned.map(id=>{const it=EQ[id],same=P.eq[it.slot]===id,bad=same||it.lv>P.lv;return `<div class="row">${itemIcon(id)}<div class="grow"><b>${itemName(it)}</b> <span class="sub">${SLOTN[it.slot]}${it.wt?' · '+WT[it.wt].n:''}${it.slot==='weapon'&&it.wt!==clsWeapon(P.cls)?' · ข้ามอาชีพ: ค่าสถานะอาวุธ 80%':''}${same?' · ชิ้นสำรอง รุ่นเดียวกับที่สวม':''}</span><div class="sub" style="font-size:12px">${compareGear(it)}${elementItemExtra(it)}${it.lv>P.lv?` · ต้องการ Lv ${it.lv}`:''}</div></div><button class="btn sm pri" data-a="equip" data-v="${id}" ${bad?'disabled':''}>${same?'สวมรุ่นนี้อยู่':'สวม'}</button></div>`}).join('')}</div>`:'<p class="sub" style="margin:0">ซื้ออุปกรณ์ได้ที่ตลาด หรือเปิดหีบสมบัติในป่า</p>'}</div>`;
  if(tab==='gear')body+=vLegend();
  if(tab==='tree')body=vClassTree();
  return `<div class="stack">${head}<details class="card career-current"><summary>ข้อดีและข้อควรระวัง · ${CLS[P.cls].n}</summary>${careerPanel(P.cls)}</details>${tabs}${advicePanel()}${promo}${body}</div>`}
@@ -3329,7 +3330,7 @@ const compactCampView=vCamp;vCamp=function(){return compactBattleReady('camp')?c
 const compactGuildView=vGuildWar;vGuildWar=function(){return compactBattleReady('guildwar')?compactOnlineBattle('guildwar',GUILD_UI.warRoom):compactGuildView();};
 const compactRenderBase=render;render=function(){const active=compactBattleReady(),room=active?compactRoom():null,key=active?S.screen+':'+room.id:'';const previousBody=document.querySelector('.online-command-body'),scroll=ONLINE_COMPACT.key===key?previousBody?.scrollTop||0:0;if(ONLINE_COMPACT.key!==key){ONLINE_COMPACT.key=key;ONLINE_COMPACT.hidden=false;ONLINE_COMPACT.details=false;ONLINE_COMPACT.effectStamp='';}compactRenderBase();const main=document.querySelector('main');main?.classList?.toggle('online-combat-screen',active);document.getElementById('app')?.classList?.toggle?.('online-combat-mode',active);if(active){if(main)main.scrollTop=0;const body=document.querySelector('.online-command-body');if(body)body.scrollTop=scroll;if(S.screen==='guildwar'&&room.replaying){const b=room.battle,stamp=key+':'+b.cur+':'+b.round+':'+JSON.stringify([b.effects,[...b.allies,...b.enemies].map(u=>[u.id,u.hp,u.mp])]);if(stamp!==ONLINE_COMPACT.effectStamp){ONLINE_COMPACT.effectStamp=stamp;VQ.push(...(b.effects||[]).slice(-64));(window.requestAnimationFrame||setTimeout)(flushVfx);}}}};
 
-function battlePortraitElements(html,u){if(!u.sp||html.includes('class="battle-portrait-elements"'))return html;const types=[...new Set(u.types||SP[u.sp]?.t||[])].filter(k=>EL[k]);if(!types.length)return html;return html.replace(/(<span class="battle-face"[^>]*>)/,'$1<span class="battle-portrait-elements">'+types.map(elementIcon).join('')+'</span>');}
+function battlePortraitElements(html,u){if(html.includes('class="battle-portrait-elements"'))return html;const types=[...new Set(u.types||SP[u.sp]?.t||[])].filter(k=>EL[k]);if(!types.length)return html;return html.replace(/(<span class="battle-face"[^>]*>)/,'$1<span class="battle-portrait-elements">'+types.map(elementIcon).join('')+'</span>');}
 function statusBattleCard(html,u){html=battleEffectIcons(battlePortraitElements(html,u),u);const statuses=Object.keys(u.status||{}).filter(k=>STS[k]&&u.status[k]);if(!statuses.length)return html;const colors=statuses.map(k=>STS[k].c),label=statuses.map(k=>STS[k].n).join(' · ');return html.replace(/<button\b[^>]*>/,tag=>{tag=tag.replace('class="','class="has-battle-status '+(colors.length>1?'multi-battle-status ':'')).replace(/style="/, 'style="--status-main:'+colors[0]+';--status-gradient:linear-gradient(120deg,'+colors.join(',')+');');if(!tag.includes('style="'))tag=tag.replace('<button','<button style="--status-main:'+colors[0]+';--status-gradient:linear-gradient(120deg,'+colors.join(',')+');"');if(tag.includes('title="'))tag=tag.replace('title="','title="'+esc(label)+' · ');else tag=tag.replace('<button','<button title="'+esc(label)+'"');return tag.replace('<button','<button data-status="'+statuses.join(' ')+'"');});}
 const statusUnitCard=ucard;ucard=function(u,i){return statusBattleCard(statusUnitCard(u,i),u);};
 const statusPvpCard=pvpCard;pvpCard=function(u,own,me){return statusBattleCard(statusPvpCard(u,own,me),u);};
@@ -3405,7 +3406,7 @@ endBattle=function(result){const b=S.battle,first=b&&!b.over&&b.kind==='boss'&&r
 
 // Durable ailments belong to player saves; online match snapshots remain independent.
 const PERSISTENT_AILMENTS=['poison','burn','confuse','para','static','freeze','chill'];
-function persistentBattleUnit(u){return !!S.battle&&u.side==='ally'&&['player','pet'].includes(u.kind);}
+function persistentBattleUnit(u){return !!S.battle&&!['pvp','world','camp','guildwar'].includes(S.battle.kind)&&u.side==='ally'&&['player','pet'].includes(u.kind);}
 function retainedBattleAilments(u){return persistentBattleUnit(u)?Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>u.status?.[k]).map(k=>[k,u.status[k]])):{};}
 function storedAilments(o){return Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>o.ailments?.[k]).map(k=>[k,Math.max(2,Number(o.ailments[k])||2)]));}
 const forestPlayerUnit=playerUnit;playerUnit=function(){const u=forestPlayerUnit();u.status={...u.status,...storedAilments(S.P)};return u;};
@@ -3516,6 +3517,53 @@ function signatureEffectBurst(L,e,x,y){const p=signatureEffectProfile(e.skill);i
  }return true;
 }
 const originalSignatureSpellBurst=spellBurst;spellBurst=function(L,e,x,y){try{if(signatureEffectBurst(L,e,x,y))return;}catch(error){console.warn('Skipped signature effect',error);}return originalSignatureSpellBurst(L,e,x,y);};
+
+// Shared by the browser and authoritative API; inventory IDs and saved stats stay intact.
+const ARMOR_ELEMENTS_V4={armor_0:['normal'],armor_1:['ground'],armor_2:['water'],armor_3:['dragon'],armor_4:['steel'],armor_5:['dark'],crown_0:['normal'],crown_1:['rock'],crown_2:['ice'],crown_3:['dragon'],crown_4:['psychic'],crown_5:['fairy'],crown_eagle:['flying'],crown_sage:['psychic'],armor_berserk:['fighting'],armor_dragon:['dragon','fire'],crown_pierce:['ground'],armor_saint:['fairy'],lg1_armor:['grass'],lg1_crown:['electric'],lg2_armor:['flying'],lg2_crown:['electric','ghost'],lg3_armor:['ghost'],lg3_crown:['ground','fighting'],lg4_armor:['water','dragon'],lg4_crown:['dragon'],lg5_armor:['ground'],lg5_crown:['psychic','fairy'],lg6_armor:['dark','fighting'],lg6_crown:['dark','psychic'],wl_armor:['steel'],wl_crown:['fairy']};
+for(const [id,it]of Object.entries(EQ))if(['armor','crown'].includes(it.slot)){const types=ARMOR_ELEMENTS_V4[id]||(it.craft&&SP[it.craft]?.t)||['normal'];it.defTypes=[...new Set(types.map(k=>k==='steel'&&it.lv<30?'rock':k))].filter(k=>EL[k]);if(!it.defTypes.length)it.defTypes=['normal'];}
+function equipmentElements(eq){const types=[...new Set(['armor','crown'].flatMap(slot=>EQ[eq?.[slot]]?.defTypes||[]))];return types.length?types:['normal'];}
+function areaTotalBudget(count){return Math.min(1.5,.5+.25*Math.max(1,count));}
+function areaDamageScale(sk,count){return areaTotalBudget(count)/Math.max(1,count)*(sk.ct?2:1);}
+for(const sk of Object.values(SK))if(sk.all&&['p','m','h','auto'].includes(sk.t)){sk.pw=sk.basePower||sk.pw;sk.areaScale=null;}
+// Strong forms retain their role, with a cost for sustained burst and area pressure.
+FORMS.moon.m.matk=1.45;FORMS.moon.m.mdef=1.3;SK.f_moonbeam.mp=24;SK.f_moonbeam.cd=2;
+FORMS.saber.m.patk=1.65;FORMS.saber.m.crit=1.5;FORMS.gdragon.m.patk=1.45;FORMS.gdragon.m.matk=1.45;
+SK.gs_infinite.pw=68;SK.ke_thousand.pw=80;SK.sbs_unite.bf={patk:.3,matk:.3,crit:.3};
+PAS.arcaneMastery={n:'เชี่ยวชาญมหาเวท',d:'สกิลโจมตีเวทแรงขึ้น 15% แม้ธาตุไม่ตรงกับอาวุธ'};
+CLS.archmage.pas=CLS.archmage.pas.filter(k=>k!=='adapt').concat('arcaneMastery');
+if(!CLS.gladiator.pas.includes('counter'))CLS.gladiator.pas.push('counter');
+if(!CLS.gladiator.pas.includes('thorns'))CLS.gladiator.pas.push('thorns');
+SK.th_ambush.charge=1.65;SK.th_ambush.bf.eva=.35;
+function classCombatFactor(u,t,sk){const type=sk.t==='auto'?u.atkType:sk.t;let f=1;if(isBalancedPvp()&&u.kind==='pet'){const n=Math.max(1,sideOf(u).filter(x=>x.kind==='pet'&&x.owner===u.owner&&x.hp>0).length);const hero=sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner),growth=hero?.cls&&baseOf(hero.cls)==='summoner'?.35:.15;f*=(1+growth*(n-1))/n;if(t.kind==='player')f*=.6;}if(u.cls&&baseOf(u.cls)==='thief'&&['p','h'].includes(type)){if(t.cls){const victim=baseOf(t.cls);if(['mage','gunner','archer'].includes(victim))f*=1.25;else if(['gladiator','druid'].includes(victim))f*=.4;}}
+if(u.cls&&t.cls&&baseOf(t.cls)==='gladiator'&&['mage','archer'].includes(baseOf(u.cls)))f*=1.35;
+if(isBalancedPvp()){if(u.cls==='packlord')f*=.75;if(t.cls==='packlord')f*=1.25;}
+if(isBalancedPvp()&&u.cls&&baseOf(u.cls)==='mage'&&type==='m')f*=1.15;
+if(u.cls==='gunsaint'&&type==='p')f*=.95;if(hasPas(u,'arcaneMastery')&&type==='m')f*=1.15;return f;}
+const elementsPlayerUnit=playerUnit;playerUnit=function(){const u=elementsPlayerUnit();u.defenseTypes=equipmentElements(S.P.eq);u.types=u.defenseTypes.slice();return u;};
+const elementsHumanUnit=humanUnit;humanUnit=function(name,cls,lv,i){const u=elementsHumanUnit(name,cls,lv,i);u.defenseTypes=equipmentElements(npcEq(cls,lv));u.types=u.defenseTypes.slice();return u;};
+
+function minimumHitChance(u,t){return u.cls&&t.cls&&['gladiator','druid'].includes(baseOf(u.cls))&&baseOf(t.cls)==='thief'?80:25;}
+
+if(!CLS.druid.pas.includes('thorns'))CLS.druid.pas.push('thorns');
+function rogueCritBlocked(u,t){return !!(u.cls&&t.cls&&baseOf(u.cls)==='thief'&&baseOf(t.cls)==='druid');}
+
+function frontlinePierce(u,t){return u.cls&&t.cls&&baseOf(u.cls)==='archer'&&baseOf(t.cls)==='gladiator'?.3:0;}
+
+SK.sbw_doom.pw=230;SK.sbw_doom.basePower=230;SK.sbw_doom.pi=.3;SK.sbw_doom.mp=20;
+// Deterministic pressure estimate: autoplay respects armor elements and the same area budget.
+function combatSkillScore(u,id,target,targets=foesOf(u).filter(x=>x.hp>0)){
+ const sk=pvpSkill(id);if(!sk||!['p','m','h','auto'].includes(sk.t)||!targets.length)return 0;
+ const type=sk.t==='auto'?u.atkType:sk.t,atk=type==='h'?(eff(u,'patk')+eff(u,'matk'))/2:eff(u,type==='m'?'matk':'patk'),list=sk.all?targets:sk.rt?targets:[target||targets[0]];
+ let score=0;for(const t of list){if(type===t.immune&&type!=='h')continue;const m=typeMult(effectiveElement(u,sk),t.types)*(sk.el==='ground'&&hasPas(t,'levitate')?0:1);if(!m)continue;let def=type==='h'?(eff(t,'pdef')+eff(t,'mdef'))/2:eff(t,type==='m'?'mdef':'pdef');if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0)+frontlinePierce(u,t));const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1,crit=hasPas(t,'nocrit')||rogueCritBlocked(u,t)?0:Math.min(isBalancedPvp()?65:100,eff(u,'crit')+(sk.cb||0))/100;let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*(sk.all?areaDamageScale(sk,targets.length):1)*(sk.hits||1)*(u.charge||1)*(1+crit*((hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5)-1))*classCombatFactor(u,t,sk)*pvpDamageFactor(u,t);if(type==='h'&&t.immune)d*=.5;if(hasPas(t,'thick')&&['fire','ice'].includes(sk.el))d*=.5;if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;d*=sk.acc>=100?1:hitChance(u,t,sk)/100;score+=d;}
+ return score/(sk.ct?2:1)/(sk.rt?targets.length:1);
+}
+
+const elementItemExtra=itemExtra;itemExtra=function(it){return elementItemExtra(it)+(it.defTypes?' · ธาตุตั้งรับ '+it.defTypes.map(k=>EL[k].n).join(' / '):'');};
+const elementTeamView=vHero;vHero=function(){return elementTeamView().replace('<h3>อุปกรณ์ที่สวมใส่</h3>','<h3>อุปกรณ์ที่สวมใส่</h3><div class="row wrap"><small>ธาตุตั้งรับจากเกราะ / มงกุฎ</small>'+tChips(equipmentElements(S.P.eq))+'</div>');};
+const elementBagVitals=bagVitals;bagVitals=function(){return elementBagVitals().replace('</b><small>HP','</b><div class="row wrap"><small>ธาตุตั้งรับ</small>'+tChips(equipmentElements(S.P.eq))+'</div><small>HP');};
+const elementCompareGear=compareGear;compareGear=function(it){return elementCompareGear(it)+(it.defTypes?' · ธาตุตั้งรับ '+it.defTypes.map(k=>EL[k].n).join(' / '):'');};
+const balanceCareerPanel=careerPanel;careerPanel=function(cls){const base=baseOf(cls),note=base==='thief'?'ลอบสังหาร: โจมตีกายภาพใส่นักเวทย์ มือปืน และนักธนูแรงขึ้น 25% แต่ใส่กลาดิเอเตอร์และดรูอิดเบาลง 60%':base==='gladiator'?'ตั้งรับสวนกลับ: สะท้อนกายภาพ 15% และมีโอกาสสวน 25% โจมตีโจรมีความแม่นยำขั้นต่ำ 80% แต่รับมือเวทและการยิงของนักธนูได้ยากขึ้น':base==='druid'?'ผิวพงไพร: สะท้อนกายภาพ 15% โจรไม่สามารถคริติคอลใส่ได้ และมีความแม่นยำขั้นต่ำ 80% เวลาโจมตีโจร':base==='mage'||base==='archer'?'เจาะแนวหน้า: โจมตีผู้สืบสายกลาดิเอเตอร์แรงขึ้น 35% นักธนูเจาะเกราะกลาดิเอเตอร์เพิ่ม 30% แต่ต้องระวังการลอบสังหารของโจร':'';return balanceCareerPanel(cls)+(cls==='packlord'?'<p class="sub">PVP: แบ่งพลังนำฝูง ดาเมจผู้ผนึก 75% และรับดาเมจ 125% เพื่อแลกกับความคล่องตัวและอสูรสองตัว</p>':'')+(note?'<p class="sub">'+note+'</p>':'');};
+const balanceGuideView=vGuide;vGuide=function(){return balanceGuideView()+'<section class="card stack"><h3>ธาตุเกราะและการต่อสู้หมู่</h3><p>ผู้ผนึกและ NPC ใช้ธาตุจากเกราะกับมงกุฎรวมกัน ธาตุซ้ำไม่นับเพิ่ม ถ้าไม่ใส่เป็นธาตุปกติ ตรวจจุดอ่อนจากตารางธาตุก่อนเปลี่ยนชุด ธาตุเหล็กมีในอุปกรณ์ขั้นสูง แต่ยังแพ้ไฟ ดิน และต่อสู้</p><p>ดาเมจรวมท่าหมู่เทียบพลังพื้นฐาน: 1 เป้า 75% · 2 เป้า 100% · 3 เป้า 125% · 4 เป้าขึ้นไป 150% แบ่งดาเมจตามจำนวนเป้า ท่าชาร์จชดเชยเวลา 2 เทิร์น ธาตุ เกราะ คริติคอล และความสามารถของแต่ละเป้ายังคงมีผล ใน PVP อสูรโจมตีผู้ผนึกที่ 60% และอสูรหลายตัวแบ่งโบนัสประสานทีม เพื่อให้มีโอกาสตอบโต้ก่อนถูกสังหาร</p></section>';};
 
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
