@@ -11,3 +11,6 @@ game-*.css -text
 
 # Content factories preserve literal source bytes.
 content/*.js -text
+
+# Runtime source units preserve exact pre-refactor bytes.
+runtime/*.js -text

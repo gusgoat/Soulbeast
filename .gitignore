@@ -1,0 +1,3 @@
+
+# Build-only parser dependency
+tools/runtime-build/node_modules/
