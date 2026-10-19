@@ -1,0 +1,377 @@
+{
+  "version": 1,
+  "tables": {
+    "EL": {
+      "group": "elements",
+      "start": 852,
+      "end": 1382,
+      "sha": "a8ed7e61e8b68c70de9332be5c0cbf93be22a9ee5343c611c361a21fda4287b4"
+    },
+    "TC": {
+      "group": "elements",
+      "start": 1394,
+      "end": 2646,
+      "sha": "f5d64da9b80aee2164759222965ed81355de13810c23eb850e4ffa6fd5a77f53"
+    },
+    "STS": {
+      "group": "elements",
+      "start": 2817,
+      "end": 3596,
+      "sha": "76ee3a4919fee4cd57f91b8a4c304f08b7c15dd9e9578885efea85c58f398990"
+    },
+    "IMM": {
+      "group": "elements",
+      "start": 3609,
+      "end": 3717,
+      "sha": "81cfe5e832b45cbb5eda1e5be45b8036ccabf724a11808cab0d9f0da17c4f7ad"
+    },
+    "PAS": {
+      "group": "elements",
+      "start": 3730,
+      "end": 5918,
+      "sha": "2a7f70e2a483b10ade697b74e6d1271161decffdda17b8990d75afadd17b4408"
+    },
+    "SK": {
+      "group": "skills",
+      "start": 6387,
+      "end": 6628,
+      "sha": "037469b141fba131351ba2024e2ed4844ae17e8ff6eb2585183b841f048a1d21"
+    },
+    "ELN": {
+      "group": "skills",
+      "start": 6703,
+      "end": 8295,
+      "sha": "9d1f2280d750a1e8a7858b45b0fbe6747cf01536b9d479bff567d1b9e61e22a4"
+    },
+    "ELST": {
+      "group": "skills",
+      "start": 8403,
+      "end": 8543,
+      "sha": "66bedbf0c6bac0fb4941148e0f02c28eeffb214d414d4a40028cb5860a3eab8b"
+    },
+    "UTIL": {
+      "group": "skills",
+      "start": 8557,
+      "end": 9462,
+      "sha": "527131459015f8054070b8d40c13549f72db4f4fcb46e842f1cd0c584a45cf32"
+    },
+    "FORMS": {
+      "group": "skills",
+      "start": 23445,
+      "end": 24373,
+      "sha": "40ebae793d528c4a57a33bbc1dfffd293564bf8bc59d38197119897c3c6908c8"
+    },
+    "MIST_SIGNATURES": {
+      "group": "skills",
+      "start": 90829,
+      "end": 92255,
+      "sha": "b142d1b7da5de5bb3f1d87c403b9c840d80c42a8e4ccb76f5bbeb1063ea3c5ec"
+    },
+    "CLS": {
+      "group": "classes",
+      "start": 24439,
+      "end": 34759,
+      "sha": "2ceb11c682508a8337ba5156da2ef07abab50e13642ef61e68f94b6de0ff72cc"
+    },
+    "ADDSK": {
+      "group": "classes",
+      "start": 61688,
+      "end": 62061,
+      "sha": "288cc40edc36a7cb84ee79c3ed8e56c343bdc67b8ed5acfaf897e50fdc98fbb8"
+    },
+    "JOB_FOCUS": {
+      "group": "classes",
+      "start": 75613,
+      "end": 75816,
+      "sha": "4be4a0bae052f5a1233141ab45d04af8a2c2bfde5e6f9e00c7fd890c6d8f5d9b"
+    },
+    "CAREER_GUIDE": {
+      "group": "classes",
+      "start": 254939,
+      "end": 263478,
+      "sha": "fdf8bee86f4c5e8889bf578a2f65ddb57ef1f0bc62c029b197e3236fbba6e8ef"
+    },
+    "WT": {
+      "group": "equipment",
+      "start": 34883,
+      "end": 35059,
+      "sha": "f8355ca5f88bd9f3bd06b625b3f9692cab25a844e52cc40f02d6bfef5beddc65"
+    },
+    "WN": {
+      "group": "equipment",
+      "start": 35071,
+      "end": 36742,
+      "sha": "62e01ee278d44f35679c5f44701469e92cd91f252c508da9700eafdef129eef4"
+    },
+    "SLOTS": {
+      "group": "equipment",
+      "start": 37635,
+      "end": 37809,
+      "sha": "3e1aecbad2a995bfe78db1334d357fb8f1790eec483a7d074a83a2bdeea2e670"
+    },
+    "SLOTBASE": {
+      "group": "equipment",
+      "start": 37867,
+      "end": 38067,
+      "sha": "a59c82797cda48c58237f2427a05fdb87bcbf193deb2c1c74f72dac9612f199c"
+    },
+    "TIERS": {
+      "group": "equipment",
+      "start": 38082,
+      "end": 38206,
+      "sha": "7529adcd5557049d6041dad7e1f61f862e60052407b32cad7645fb866598e199"
+    },
+    "SG": {
+      "group": "equipment",
+      "start": 38477,
+      "end": 40848,
+      "sha": "ecaf2e9d18b16a185e087365b398b4c2ae08fdb4676753e8376e8fd29f0eb441"
+    },
+    "LGLV": {
+      "group": "equipment",
+      "start": 65135,
+      "end": 65150,
+      "sha": "4ffd5cbfdf7be7537c68576049dc1477644b28b1e6f8f5a11b061217df7b30a9"
+    },
+    "LGW": {
+      "group": "equipment",
+      "start": 65163,
+      "end": 65550,
+      "sha": "df0b9e9de96d9a95201a9020b70cf094e9dada49e4ab5eeb500025fabc6b088b"
+    },
+    "LGA": {
+      "group": "equipment",
+      "start": 65563,
+      "end": 67298,
+      "sha": "95825ba947c52f17e1f17d63c21fee0eeb1f5c3590a5541c0bcd01d92feec1aa"
+    },
+    "MILE": {
+      "group": "equipment",
+      "start": 69997,
+      "end": 73845,
+      "sha": "f98e66617819882708bb1628f12108bec8881f792408fc5bf32c28abd6682b6d"
+    },
+    "WORLD_WEAPONS": {
+      "group": "equipment",
+      "start": 188290,
+      "end": 188640,
+      "sha": "6fc034a86c72d8e0ee65b348a80aa7cef278f5e31b41126a37accca246f1aed1"
+    },
+    "WORLD_ARMOR": {
+      "group": "equipment",
+      "start": 188947,
+      "end": 189279,
+      "sha": "9b17be1dc0ef39ce6d39e540302fb4090456cafb5f445172e6c3a73847bf9d0f"
+    },
+    "WEAPON_RARITY": {
+      "group": "equipment",
+      "start": 638048,
+      "end": 638230,
+      "sha": "91a6ae6eb4a56fd199a49cb6f5b0682fa9f3f0d5c16adeee31799bb1486faf86"
+    },
+    "CON": {
+      "group": "consumables",
+      "start": 40910,
+      "end": 42633,
+      "sha": "7793f7117f27b5bafecac773e2150a1aa2e220ad396303996095f81d716b270c"
+    },
+    "CURES": {
+      "group": "consumables",
+      "start": 42648,
+      "end": 42693,
+      "sha": "e128e33928152d2f7d9afa06fce0824a24eaa578e40382b2d47388ccfada0120"
+    },
+    "SEALS": {
+      "group": "consumables",
+      "start": 42708,
+      "end": 42749,
+      "sha": "64e3b34217da1b395630bf0c0b3b237669781a6f0306f11eb304dffa0626a30b"
+    },
+    "SP": {
+      "group": "beasts",
+      "start": 42921,
+      "end": 55463,
+      "sha": "cd8d9981d50300ca7837591139be83914a43f7caf8a48eae284669f633f9552e"
+    },
+    "STARTERS": {
+      "group": "beasts",
+      "start": 55481,
+      "end": 55508,
+      "sha": "7dad065d19a2e08ec77b6de2d4047e90622e79099af414366adea2ad709d08ee"
+    },
+    "NEW_BEASTS": {
+      "group": "beasts",
+      "start": 78546,
+      "end": 82134,
+      "sha": "06dc988788149e40952fec71620fc15c1d66297ed1e05dde068abe6c9c294b14"
+    },
+    "MIST_RARE_DEFS": {
+      "group": "beasts",
+      "start": 89256,
+      "end": 90036,
+      "sha": "da6b4df2698ae678a3e6a02c0b90546d70d175aacb1138a1f673ef966e96b7d8"
+    },
+    "MIST_LEGEND_DEFS": {
+      "group": "beasts",
+      "start": 90061,
+      "end": 90805,
+      "sha": "441dfdb3f14138bfe2e9ec818f5b72ff31a89c319ffb4837490f3d39dfb8a7f8"
+    },
+    "BEAST_RARITY_LABELS": {
+      "group": "beasts",
+      "start": 367293,
+      "end": 367373,
+      "sha": "8baa0881b1ea466371f45e1c2886b762e137d3c20d3e29974f68180b8b7b5ce9"
+    },
+    "ZN": {
+      "group": "exploration",
+      "start": 55541,
+      "end": 56803,
+      "sha": "466208ac7adf69e7a03c893035cd22d175f0549f1a1fe8cffa9cf4aaf3ed2a54"
+    },
+    "NPC": {
+      "group": "exploration",
+      "start": 56816,
+      "end": 57705,
+      "sha": "8e1ef348493e400b7f5a8fae0cce358e06e9c2c696824639e9bafb29085d5ae2"
+    },
+    "EV": {
+      "group": "exploration",
+      "start": 211774,
+      "end": 212897,
+      "sha": "3f9038305138762e9eec92520e7a7189259ca9cf4f9be70792b6d0252f9aa23a"
+    },
+    "SAFE": {
+      "group": "exploration",
+      "start": 212911,
+      "end": 212959,
+      "sha": "2cc021124b797219801a28fe71f5feb5866d8de11de3986d62614ebb7594add4"
+    },
+    "TRAPS": {
+      "group": "exploration",
+      "start": 212974,
+      "end": 213396,
+      "sha": "20aa5fea5ba464eacbfbfeb158a01b86e9162b189bed06b566973e70e79ad967"
+    },
+    "CHESTS": {
+      "group": "exploration",
+      "start": 213412,
+      "end": 213929,
+      "sha": "f648121681c5a5fa3e5a008bfe0573c44325eedbc362f5fac85c278e5606d156"
+    },
+    "CHESTW": {
+      "group": "exploration",
+      "start": 213945,
+      "end": 214145,
+      "sha": "860af0077f3b780f119ad5835b776a808a6f17640a71a1316993bbf83897750f"
+    },
+    "BANDITS": {
+      "group": "exploration",
+      "start": 214162,
+      "end": 214285,
+      "sha": "40efc97b71e14391bda0767bab2f5af0222321b058ecfb143fbb7ee54acb754f"
+    },
+    "BANDCLS": {
+      "group": "exploration",
+      "start": 214302,
+      "end": 214461,
+      "sha": "b09e3e8113812a11f3b20ec11a96ae8f54797f9d5c023557653a3a53f3e2ddf2"
+    },
+    "SUF": {
+      "group": "exploration",
+      "start": 217851,
+      "end": 217966,
+      "sha": "56c47a4950aeacf43bcf34aedbccff64c9c4bc652e9be940284f06664194ae57"
+    },
+    "STORY": {
+      "group": "story",
+      "start": 119860,
+      "end": 124115,
+      "sha": "80ca3e54ebeb721bad2ab3e9ec6abeb0315e3ea8ed6bb623e5224e42a0aae550"
+    },
+    "GAME_TRANSLATIONS": {
+      "group": "localization",
+      "start": 381306,
+      "end": 622560,
+      "sha": "77afee8ba8bc664c27269e6b64998ae5ca55e6b8b443804653ca696f303392bb"
+    },
+    "LANGUAGE_NAMES": {
+      "group": "localization",
+      "start": 622627,
+      "end": 622665,
+      "sha": "9b34f96abf0e15f7746288f81b5cd76b54e690c19f3524affe0f44fb48cdcfc9"
+    },
+    "MUSIC_ASSETS": {
+      "group": "presentation",
+      "start": 95127,
+      "end": 95439,
+      "sha": "f93a1551f6ca3bae74770c2491441b8b5255cf95eb8a6f6aba75b58fd1a2e0a6"
+    },
+    "SPECIES_VOICE": {
+      "group": "presentation",
+      "start": 109935,
+      "end": 110694,
+      "sha": "0f29186d10bb402db5962ef13fc476ab8a258d005f976144ebec9a74f7fe8220"
+    },
+    "ART_BEASTS": {
+      "group": "presentation",
+      "start": 119017,
+      "end": 119648,
+      "sha": "3b08bf18d0817cbd5d261e934af5b90c5a3c0c3fdfd8fe2570f7c4e48044dc51"
+    },
+    "ART_HEROES": {
+      "group": "presentation",
+      "start": 119668,
+      "end": 119764,
+      "sha": "10055520aeff36f9393e1be117d79f476a4a554fb48b71c5933ee5fc0540f79d"
+    },
+    "ART_FORMS": {
+      "group": "presentation",
+      "start": 119783,
+      "end": 119845,
+      "sha": "0ac7411b591d33bad5d76f49b7da53730ebfc66665e966e402c545c741737ab5"
+    },
+    "BUILTIN_ART": {
+      "group": "presentation",
+      "start": 124136,
+      "end": 128397,
+      "sha": "24f0de7fe8b318cf32bf67a411c82042107428995950ac4e7a196ec301238761"
+    },
+    "TOWN_ART": {
+      "group": "presentation",
+      "start": 254703,
+      "end": 254917,
+      "sha": "92ef047f2c1c1b47ab47015923f73260b3ae4c20390bc8d6fd373935f2c89146"
+    },
+    "ELEMENT_SHAPES": {
+      "group": "presentation",
+      "start": 330250,
+      "end": 331681,
+      "sha": "3f5bcdcae54e5a22befce6476b064f32a387feec4817d660cb17b6a1fdba80d0"
+    },
+    "CINEMA_ART": {
+      "group": "presentation",
+      "start": 336930,
+      "end": 338533,
+      "sha": "41184711127fe73adf81473405af5d7106c038848aebf3201d4dc7d4cf551da9"
+    },
+    "SIGNATURE_ART": {
+      "group": "presentation",
+      "start": 370799,
+      "end": 380430,
+      "sha": "057167224729a305fc1ed6ab648c47b77d4f343163341f6b742f6424664b8675"
+    },
+    "WEAPON_ART": {
+      "group": "presentation",
+      "start": 627983,
+      "end": 638026,
+      "sha": "0dd2fe6b1040ad2b24c60b8db9fb4abd42b628133ccdfedc08011b8310f3d983"
+    },
+    "ELEMENT_PICTURES": {
+      "group": "presentation",
+      "start": 671204,
+      "end": 671825,
+      "sha": "9b55400628d1575a2a0bac7e3d55539f99f1c69c1182884f538e0be50d689c81"
+    }
+  }
+}

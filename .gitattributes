@@ -8,3 +8,6 @@ index.html -text
 refactor-staging.html -text
 game-*.js -text
 game-*.css -text
+
+# Content factories preserve literal source bytes.
+content/*.js -text
