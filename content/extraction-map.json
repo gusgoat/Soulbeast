@@ -372,6 +372,97 @@
       "start": 671204,
       "end": 671825,
       "sha": "9b55400628d1575a2a0bac7e3d55539f99f1c69c1182884f538e0be50d689c81"
+    },
+    "SK_additions_1": {
+      "group": "skills",
+      "start": 9923,
+      "end": 23372,
+      "sha": "ffa045add5b246c0dd88317c20425d63fa428dbb6b6af6595d81e5e07316949d",
+      "addition": true
+    },
+    "SK_additions_2": {
+      "group": "skills",
+      "start": 59207,
+      "end": 61672,
+      "sha": "24af2f6724f75a12186ef048361a76545dedbc71ab3503f0d30c016468eebc1b",
+      "addition": true
+    },
+    "SP_additions_1": {
+      "group": "beasts",
+      "start": 62316,
+      "end": 64906,
+      "sha": "fc5e20c1739d41972c8a99f1c4ef85feebbec7bdba5454f546e0982afd2b5bfd",
+      "addition": true
+    },
+    "SK_additions_3": {
+      "group": "skills",
+      "start": 76211,
+      "end": 77264,
+      "sha": "15f19ff3c3933ce67f4922e16a59335afc00a89eef7546dcb492c9e699fb9b3d",
+      "addition": true
+    },
+    "MUSIC_ASSETS_additions_1": {
+      "group": "presentation",
+      "start": 101916,
+      "end": 106950,
+      "sha": "83bc3a28c3055ac9b8b636bc43e8974ca6a3f501930912659bc3ddf0872edd5d",
+      "addition": true
+    },
+    "MUSIC_ASSETS_additions_2": {
+      "group": "presentation",
+      "start": 107063,
+      "end": 108941,
+      "sha": "66404a40e5155ef45be8cd977cb6bbafe5de8fac1cda542fb3c8f4291ef027e3",
+      "addition": true
+    },
+    "BUILTIN_ART_additions_1": {
+      "group": "presentation",
+      "start": 134382,
+      "end": 137770,
+      "sha": "fa3c754e341c474359c487b3b7f07c2ef04a1b2db76ac3fc8845f747b32d869c",
+      "addition": true
+    },
+    "BUILTIN_ART_additions_2": {
+      "group": "presentation",
+      "start": 148795,
+      "end": 154498,
+      "sha": "d54df5cf57222e7ddf29465a6098544c0310bf2fc007e1d35eb56b9565ac67a7",
+      "addition": true
+    },
+    "SK_additions_4": {
+      "group": "skills",
+      "start": 189545,
+      "end": 189872,
+      "sha": "7c20572c29329d853830025b2ca5a6a7275d88756abc2950489a109af75bd859",
+      "addition": true
+    },
+    "SP_demonlord_1": {
+      "group": "beasts",
+      "start": 68250,
+      "end": 68476,
+      "sha": "7eddcd1ca431880aaae29689849f24742f52877de5b5a44261fe2f2b47e4bb74",
+      "addition": true
+    },
+    "SK_s_demon_1": {
+      "group": "skills",
+      "start": 68490,
+      "end": 68573,
+      "sha": "78267631ea68478964e48f156e6cd1ec04c13c11df79b45c069c754eb789cb07",
+      "addition": true
+    },
+    "SK_boss_legend_call_1": {
+      "group": "skills",
+      "start": 694630,
+      "end": 694698,
+      "sha": "add388e42393da0fb1f4ff6a016e05b22203a702a63ba6ce3d2f10e59792b597",
+      "addition": true
+    },
+    "EV_cleanse_1": {
+      "group": "exploration",
+      "start": 776090,
+      "end": 776185,
+      "sha": "da81f10f600985299a6c4152f87f49ace7a3b04c49f5a1adad10fc2ed6a486ce",
+      "addition": true
     }
   }
 }
