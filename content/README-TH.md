@@ -20,3 +20,5 @@
 สูตรสร้างอาวุธ/สกิลตามระดับและกติกาสมดุลร่วมclient/serverยังอยู่ที่เดิมในรอบนี้ ไม่ได้แปลงตารางสุดท้ายเป็นsnapshot และไม่ได้ย้ายกติกาเซิร์ฟเวอร์หรือแก้เซฟ
 
 ก่อนเผยแพร่: node work/test-refactor-phase3.cjs และ node work/run-refactor-regressions.cjs outputs/refactor-phase3 แล้วตรวจstaging การทดสอบความเท่ากันกับbaselineเป็นหลักฐานของRefactorครั้งนี้ ถ้าจะเปลี่ยนเนื้อหาจริงในภายหลังต้องทบทวนexpected snapshotอย่างตั้งใจ อย่าปิดการตรวจเพื่อให้ข้อมูลที่เปลี่ยนผ่านโดยไม่มีการตรวจ
+
+หลังระยะ 5: tools/client-build.cjs อ่าน content/*.js โดยตรง ตรวจ factory ครบตาม extraction-map.json โดยไม่ต้องอ่าน literal จาก HTML เก่า ขั้นตอน extract เดิมใช้ตรวจประวัติ migration เท่านั้น คู่มือปัจจุบันอยู่ DEVELOPMENT-TH.md

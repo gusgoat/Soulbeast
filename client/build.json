@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "contentGroups": [
+    "elements",
+    "skills",
+    "classes",
+    "equipment",
+    "consumables",
+    "beasts",
+    "exploration",
+    "story",
+    "localization",
+    "presentation"
+  ]
+}

@@ -1,0 +1,21 @@
+name: Canonical client checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pinned build parser
+        run: npm ci --prefix tools/runtime-build --ignore-scripts --no-audit --no-fund
+      - name: Verify canonical source and reference output
+        run: npm test
+      - name: Build both environments
+        run: npm run build

@@ -1,0 +1,8 @@
+{
+  "name": "soulbeast-client",
+  "private": true,
+  "scripts": {
+    "build": "node tools/client-build.cjs --out build",
+    "test": "node tools/client-build.test.cjs"
+  }
+}

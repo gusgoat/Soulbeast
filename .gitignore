@@ -1,3 +1,6 @@
 
 # Build-only parser dependency
 tools/runtime-build/node_modules/
+
+# Standalone client build output
+build/
