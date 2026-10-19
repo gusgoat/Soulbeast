@@ -18,3 +18,5 @@ runtime/*.js -text
 # Canonical client shell and styles must preserve published bytes
 client/*.html -text
 client/*.css -text
+
+forest-ai-pool*.html -text
