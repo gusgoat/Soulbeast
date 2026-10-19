@@ -2,3 +2,9 @@
 admin.html -text
 admin.js -text
 admin.css -text
+
+# Preserve extracted game bytes and content-hash filenames.
+index.html -text
+refactor-staging.html -text
+game-*.js -text
+game-*.css -text
