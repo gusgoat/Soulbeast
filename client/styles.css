@@ -473,3 +473,7 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 @media(prefers-reduced-motion:reduce){.secret-arrival-image,.secret-portal i{animation:none}.secret-portal i{display:none}}@media(max-width:360px){.secret-choice-grid{gap:6px}.secret-choice figcaption{font-size:13px}.secret-choice-detail{font-size:12px;padding:7px}.secret-portal{min-height:270px}}
 
 .secret-map-mini{display:flex;gap:5px;justify-content:center;align-items:center;color:#bac9d2;font-size:12px;min-width:0;white-space:normal}.secret-map-mini .secret-silhouette{width:18px;height:24px;flex-shrink:0}
+
+/* Keep the secret discovery label small and inside the forest button footer. */
+.forest-gallery .forest-portrait .forest-name{padding-bottom:36px;min-height:84px}
+.forest-portrait .secret-map-mini{position:absolute;inset:auto 9px 8px auto;display:block;max-width:calc(100% - 18px);margin:0;font-size:10px;font-weight:400;line-height:1.35;text-align:right;white-space:normal;overflow-wrap:anywhere;color:#c8d2db;text-shadow:none;pointer-events:none}
