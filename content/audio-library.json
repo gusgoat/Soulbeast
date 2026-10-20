@@ -508,5 +508,125 @@
     "duration": 31.346938,
     "decodeOK": true,
     "group": "bgBattleMusic"
+  },
+  {
+    "id": "upload_db080662d0be",
+    "title": "เสียงกดดัน กลัว",
+    "asset": "assets/audio/20261020/db080662d0be653c321002a2.mp3",
+    "sha256": "db080662d0be653c321002a25ef1a2ede10a8c8f7d0ce2ff7ddf17c3b195bbbc",
+    "bytes": 3074304,
+    "duration": 96.072,
+    "decodeOK": true,
+    "group": "bgPressureMusic"
+  },
+  {
+    "id": "upload_b6de92cbbf3d",
+    "title": "เสียงบรรยากาศทะเลทราย",
+    "asset": "assets/audio/20261020/b6de92cbbf3d7e274a7df2c1.mp3",
+    "sha256": "b6de92cbbf3d7e274a7df2c17c717a04e055c4bc96623ac0f60a28e76d76d1ca",
+    "bytes": 2778635,
+    "duration": 115.721429,
+    "decodeOK": true,
+    "group": "bgDesertMusic"
+  },
+  {
+    "id": "upload_f34a2c356dbc",
+    "title": "เสียงบรรยากาศปราศาจจอมมาร",
+    "asset": "assets/audio/20261020/f34a2c356dbca3aed5b2171e.mp3",
+    "sha256": "f34a2c356dbca3aed5b2171e1bdfd2f141e77793d739f6a72ebf7dae09bfd586",
+    "bytes": 2012055,
+    "duration": 62.876719,
+    "decodeOK": true,
+    "group": "bgDemonCastleMusic"
+  },
+  {
+    "id": "upload_d6d1eba3ad02",
+    "title": "เสียงกิล",
+    "asset": "assets/audio/20261020/d6d1eba3ad020dac83b3c06e.mp3",
+    "sha256": "d6d1eba3ad020dac83b3c06e235374b5d142dab881b7ca35db2559b23b085055",
+    "bytes": 497371,
+    "duration": 15.542844,
+    "decodeOK": true,
+    "group": "bgGuildMusic"
+  },
+  {
+    "id": "upload_b19277d276ff",
+    "title": "เสียงบรรยากาศคลื่นน้ำ",
+    "asset": "assets/audio/20261020/b19277d276ff682d9c42f968.mp3",
+    "sha256": "b19277d276ff682d9c42f968d94a53ecb04ee86efca237ca29a1a99f1e695c41",
+    "bytes": 381600,
+    "duration": 19.08,
+    "decodeOK": true,
+    "group": "bgWavesMusic"
+  },
+  {
+    "id": "upload_575f7581ee84",
+    "title": "เสียงบรรยากาศป่าลึกลับ",
+    "asset": "assets/audio/20261020/575f7581ee845faaa338fc07.mp3",
+    "sha256": "575f7581ee845faaa338fc07a5bc99cbad9c797ba6ae5394536b63e96834bc6e",
+    "bytes": 1229568,
+    "duration": 38.424,
+    "decodeOK": true,
+    "group": "bgMysticForestMusic"
+  },
+  {
+    "id": "upload_f2ef4b725655",
+    "title": "เสียงบรรยากาศยอดเขามังกรหลับ",
+    "asset": "assets/audio/20261020/f2ef4b725655fce4a277d31f.mp3",
+    "sha256": "f2ef4b725655fce4a277d31f3aa4c23eed894a5537e72676404a719dabb23787",
+    "bytes": 904463,
+    "duration": 28.264469,
+    "decodeOK": true,
+    "group": "bgDragonPeakMusic"
+  },
+  {
+    "id": "upload_b7dd7f5297a8",
+    "title": "เสียงบรรยากาศสวรรค์",
+    "asset": "assets/audio/20261020/b7dd7f5297a8d4dd9cb8c9dc.mp3",
+    "sha256": "b7dd7f5297a8d4dd9cb8c9dc04aeca4a502d87de9b5b0eff93c2ab01ad54e9aa",
+    "bytes": 769044,
+    "duration": 24.032625,
+    "decodeOK": true,
+    "group": "bgHeavenAmbientMusic"
+  },
+  {
+    "id": "upload_8c35f0ad34b7",
+    "title": "เสียงบรรยากาศหุบเขาหมอกเซียน",
+    "asset": "assets/audio/20261020/8c35f0ad34b7ec2f4b180d7e.mp3",
+    "sha256": "8c35f0ad34b7ec2f4b180d7e11a920dad8a98a1a0d13a82913d619acb649577c",
+    "bytes": 847872,
+    "duration": 26.496,
+    "decodeOK": true,
+    "group": "bgMistValleyMusic"
+  },
+  {
+    "id": "upload_3a6e30249ec4",
+    "title": "ดนตรีเศร้าแสดงความเสียใจ",
+    "asset": "assets/audio/20261020/3a6e30249ec45093ab637c1a.mp3",
+    "sha256": "3a6e30249ec45093ab637c1ad1f305563e1367a1ea14bc806632f4cc8698cae3",
+    "bytes": 901955,
+    "duration": 28.186094,
+    "decodeOK": true,
+    "group": "bgSadMusic"
+  },
+  {
+    "id": "upload_3cd84beba88a",
+    "title": "ดนตรีพจญภัยแฟนตาซี",
+    "asset": "assets/audio/20261020/3cd84beba88a12405f414334.mp3",
+    "sha256": "3cd84beba88a12405f414334584902f2fae6776fbc48e1723986c5bcdb8a3725",
+    "bytes": 1880816,
+    "duration": 58.7755,
+    "decodeOK": true,
+    "group": "bgAdventureMusic"
+  },
+  {
+    "id": "upload_8a9202270cb1",
+    "title": "ป่าลึกลับ ต้นไม้โลก",
+    "asset": "assets/audio/20261020/8a9202270cb18ed47f7fbd21.mp3",
+    "sha256": "8a9202270cb18ed47f7fbd21271518b77fb15e8d7db51cf99f490c97f9b76d62",
+    "bytes": 578880,
+    "duration": 28.944,
+    "decodeOK": true,
+    "group": "bgWorldTreeMusic"
   }
 ]
