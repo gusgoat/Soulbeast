@@ -22,3 +22,5 @@ client/*.css -text
 forest-ai-pool*.html -text
 
 audio-*.html -text
+
+secret*.html -text
