@@ -132,6 +132,11 @@
       "file": "uploadedAudio.js",
       "description": "Uploaded audio, scene music and one-shot effects",
       "units": 1
+    },
+    "secrets": {
+      "file": "secrets.js",
+      "description": "Secret locations, decisions, rewards and PvE consequences",
+      "units": 1
     }
   },
   "order": [
@@ -1213,6 +1218,7 @@
     "1075-isBossDoorScene",
     "1078-beastBudget",
     "1079-uploadedAudio",
+    "1080-secretLocations",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9099,6 +9105,14 @@
         "uploadedMusicScene"
       ],
       "type": "AudioPresentation"
+    },
+    "1080-secretLocations": {
+      "module": "secrets",
+      "names": [
+        "SECRET_DATA",
+        "Secret"
+      ],
+      "type": "SecretExploration"
     }
   },
   "trailer": "\r\n\r\n"

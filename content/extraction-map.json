@@ -463,6 +463,11 @@
       "end": 776185,
       "sha": "da81f10f600985299a6c4152f87f49ace7a3b04c49f5a1adad10fc2ed6a486ce",
       "addition": true
+    },
+    "SECRET_LOCATIONS": {
+      "group": "secrets",
+      "added": "2026-10-20",
+      "description": "Secret places, choices and supplemental ending"
     }
   }
 }

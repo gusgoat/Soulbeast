@@ -101,7 +101,7 @@ function pvpSkill(id,inPvp=isBalancedPvp(),mode=null){const sk=SK[id];if(sk&&(mo
 // @soulbeast-end 0278-pvpSkill
 // @soulbeast-unit 0374-vPvp
 
-function vPvp(){return (PVP.room?.status==='active'?'':activityBackdrop('arena','PVP · ประลองกับผู้ผนึกคนอื่น'))+vPvpBase();}
+function vPvp(){return (PVP.room?.status==='active'?'':activityBackdrop('pvp','PVP · ประลองกับผู้ผนึกคนอื่น'))+vPvpBase();}
 // @soulbeast-end 0374-vPvp
 // @soulbeast-unit 0445-stakeApply
 

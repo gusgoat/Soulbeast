@@ -61,3 +61,5 @@ tools/runtime-build/modules.cjsมีbootstrapสำหรับการย้�
 อัปเดตสมดุลอสูร: เพิ่ม beastBalance.js (รวม25โมดูล) เป็นงบพลังรวมตามร่าง/rarity/ป่า ใช้กฎเดียวกับ server ดูรายงาน BEAST-BALANCE-TH.md
 
 อัปเดตเสียง20ตุลาคม2026: runtime/uploadedAudio.js เป็นโมดูลที่26 ข้อมูลเพลง/เอฟเฟกต์51รายการอยู่content/audio-library.json การเพิ่มเสียงต้องคงmaster/music/effects bus,ไม่ใช้combatRNG และทดสอบsceneไม่restartทุกrender ดูAUDIO-LIBRARY-TH.md
+
+Secret locations: secrets.js (1080-secretLocations) runs after combat/UI/audio and before bootstrap; content/secrets.js is a registered factory. It wraps forest boundaries and battle return, without altering damage formulas or online handlers. P.secrets stores decisions/claims; S.zone stores a fixed per-run discovery plan and resumable session. See SECRETS-GUIDE-TH.md for state, replay and offline receipt limits.

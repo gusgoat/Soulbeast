@@ -34,3 +34,6 @@ npm test เทียบผลกับหน้าเกมรุ่นอ้�
 GitHub Actions ชื่อ Canonical client checks ตรวจ npm test และ build live/test บน Linux เมื่อ push หรือเปิด pull request ใช้สิทธิ์อ่าน repository เท่านั้น ไม่ deploy และไม่ใช้ข้อมูลลับหรือบัญชีผู้เล่น
 
 ชุดเสียงผู้เล่น20ตุลาคม2026เพิ่มไฟล์ต้นฉบับ51ไฟล์ ใช้assetBudgetBytesในclient/build.json (ปัจจุบัน50MB) สำหรับการตรวจขนาดแพ็ก เสียงโหลดเมื่อใช้ ไม่ได้โหลดทั้งlibraryเมื่อเปิดเกม รายการไฟล์และการเลือกฉากดูAUDIO-LIBRARY-TH.md
+
+## สถานที่ลับ (20 ตุลาคม 2026)
+เพิ่ม content/secrets.js และ runtime/secrets.js เป็นข้อมูล/ตัวจัดการสถานที่ลับหกแห่งตามพื้นที่หลัก โอกาสต่อการเข้าป่าหนึ่งรอบและพบเฉพาะชั้น5–8 ข้อมูล eventChain, conditions/effects, claims และ replay อยู่แยกจาก core ใช้ชนิดการต่อสู้secretเพื่อไม่ปลดล็อกด่านหรือรับรางวัลบอสหลัก ไม่มี API/SQL change รายละเอียด SECRETS-GUIDE-TH.md ภาพใหม่ assets/ui/secrets ทั้งหกและ staging hub secrets-staging.html ใช้ข้อมูลจำลอง/ปิด API
