@@ -92,7 +92,7 @@ const handlers={
  openchest:()=>{const ev=S.zone.ev;if(!ev||ev.opened)return;const out=openChest(ev.chest);ev.opened=true;ev.got=out;zlog(`เปิด${CHESTS[ev.chest].n} ได้ ${out.join(', ')}`.slice(0,120));save();render()},
  exitzone:()=>{S.zone=null;S.screen='town';save();render();toast('ออกจากป่ากลับสู่นครพันผนึกได้อย่างปลอดภัย')},
  boss:()=>{const base=ZN[S.zone.id-1],z={...base,boss:forestPassed(base)?(S.zone.boss||base.boss):base.boss};zlog(`เผชิญหน้ากับ${z.boss.n}!`);const es=[wildUnit(z.boss.sp,z.boss.lv,0,z.boss.n)];
-  if(z.final){const d=es[0];['hp','patk','matk','pdef','mdef'].forEach(k=>d.st[k]=Math.round(d.st[k]*(k==='hp'?1.4:1.08)));d.hp=d.st.hp;d.skills.push(SP[z.boss.sp].sig);
+  if(z.final){const d=es[0];['hp','patk','matk','pdef','mdef'].forEach(k=>d.st[k]=Math.round(d.st[k]*(k==='hp'?1.4:1.08)));if(z.boss.sp==='demonlord')for(const k of ['patk','matk'])d.st[k]=Math.round(d.st[k]*.85);d.hp=d.st.hp;d.skills.push(SP[z.boss.sp].sig);
    Object.keys(CLS).filter(k=>tierOf(k)===2).sort(()=>Math.random()-.5).slice(0,2).forEach((c,i)=>{const h=humanUnit('แม่ทัพปีศาจ'+CLS[c].n,c,50,i+1);es.push(h)})}
   for(let i=0;i<z.mini;i++){const u=wildUnit(pick(z.sp),z.lv[1]-1,i+1);u.name='สมุน'+u.name;es.push(u)}startBattle(es,'boss',z.id);save();render()},
  vbuy:v=>{const P=S.P,it=CON[v];if(!it||it.rareLoot)return;const pr=Math.round(priceOf(it)*1.25);if(P.gold<pr){toast('เหรียญไม่พอ');return}if(it.lv&&P.lv<it.lv){toast(`ต้องเลเวล ${it.lv}`);return}P.gold-=pr;ExtraAudio.play('buy');P.items[v]=(P.items[v]||0)+1;save();render();toast(`ซื้อ ${it.n} แล้ว`)},
