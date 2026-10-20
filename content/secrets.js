@@ -2,9 +2,17 @@
 Object.assign(SoulbeastContent,{
 SECRET_LOCATIONS:()=>{const data=({
  version:1,
- testDiscovery100:true, // Temporary user-requested test; set false to restore original per-place rates.
+ testDiscovery100:true, // User retained temporary guaranteed discovery; training normal rate is 20%.
+ oncePerCharacter:true,
  ending:{title:'บทลับ · เสียงที่ไม่มีใครเป็นเจ้าของ',text:['หลังหัวใจรัตติกาลแตกสลาย ธาราเทพฟังเรื่องราวจากทั้งหกสถานที่โดยไม่ขัดจังหวะ «ผู้พิทักษ์อาจหลงทางได้ แม้เริ่มต้นด้วยความตั้งใจจะปกป้อง»','ความทรงจำจากรากไม้ ระฆัง ตาชั่ง ประตูมังกร วิหาร และนครใต้ปราสาทค่อย ๆ ต่อกันเป็นภาพเดียว จอมมารเคยกลัวการสูญเสียจนพยายามเก็บทุกชีวิตไว้กับตน ความกลัวนั้นเป็นสิ่งที่หัวใจรัตติกาลหล่อเลี้ยง ไม่ใช่ข้อแก้ตัวให้การช่วงชิงกลายเป็นสิ่งถูกต้อง','คุณคืนสิ่งที่ยืมมาและปลดภาระที่ติดค้าง เสียงของผู้คนและอสูรจึงไม่ถูกแทนด้วยคำพูดของผู้ชนะเพียงคนเดียว ผนึกทั้งหกไม่ได้ตั้งผู้ครองโลกคนใหม่ แต่กลายเป็นคำสัญญาว่าจะรับฟังกัน','ณ นครพันผนึก ไม่มีบัลลังก์ใหม่ถูกสร้างขึ้น ธาราเทพเก็บบันทึกของคุณไว้ข้างผนึกแรก ข้างนอกประตู อสูรคู่หูร้องเรียก การเดินทางครั้งใหม่เริ่มได้แล้ว — คราวนี้พร้อมเสียงที่เคยถูกลืม']},
  locations:[
+ {id:'firstpact',zone:7,name:'ลานสัญญาแรก',thai:'คำทักทายหลังรากไม้',chance:.20,music:'bgMysticForestMusic',speaker:'ผู้เฝ้าลานฝึก',enemy:'mandrake',tutorial:true,optionalEnding:true,once:true,
+ intro:'หลังรากไม้มีลานฝึกเก่า อสูรน้อยซ่อนอยู่ข้างหุ่นผู้เฝ้า มันยอมเปิดทางสองแบบ: วางอาวุธเพื่อสร้างมิตรภาพ หรือประลองอย่างยุติธรรมเพื่อพิสูจน์ฝีมือ',
+ guard:'ผู้เฝ้าลานฝึกใช้เพียงเงาไม้ในการประลอง หากแพ้ยังเลือกผูกมิตรได้ ไม่มีการเสียเงินหรือ EXP จากบททดสอบนี้',
+ choices:[{id:'peace',name:'วางอาวุธ · ผูกมิตรกับอสูร',detail:'ได้รับอสูรทั่วไปที่พัฒนาได้ 3 ร่าง จำนวน 1 ตัว · ร่างแรก Lv 1 · ไม่ต้องสู้',effects:[{type:'trainingPet'}],outcome:'คุณย่อตัวลงและยื่นมือแทนคำสั่ง อสูรน้อยเลือกเดินตามด้วยตัวเอง ผู้เฝ้าลานจดจำว่าคำสัญญาแรกของคุณเริ่มจากการรับฟัง'},
+ {id:'trial',name:'ประลองกับผู้เฝ้าลาน',detail:'ต้องชนะ จึงได้รับอาวุธหลอมหรือหายาก Lv ไม่เกิน 15 จำนวน 1 ชิ้น · ไม่ได้รับอสูร',requireVictory:true,effects:[{type:'trainingWeapon'}],outcome:'ผู้เฝ้าลดไม้ฝึกลงและส่งอาวุธให้ คุณไม่ได้ชิงมันมา แต่ได้รับจากการประลองที่ทั้งสองฝ่ายยินยอม'}],
+ evidence:'ธาราเทพสอนว่าผนึกเริ่มจากความไว้ใจ การรับฟังและการฝึกฝนต่างเป็นก้าวแรกที่ดีได้',repair:'',gold:0}
+ ,
  {id:'yggdrasil',zone:1,name:'Yggdrasil',thai:'รากแห่งคำสัญญา',chance:.03,music:'bgWorldTreeMusic',speaker:'เสียงจากรากไม้',enemy:'mandrake',
  intro:'รากเรืองแสงแหวกใต้ลำธาร ป่าที่เคยส่งเสียงจู่ ๆ กลับเงียบ เหลือเพียงชีพจรต้นไม้ใหญ่ คุณได้ยินเสียงที่ไม่ได้มาจากคำสั่งในผนึก แต่จากอสูรที่เรียกหากันเอง',
  clue:'รอยสลักเขียนว่า «รากรับน้ำ ลำต้นแบ่งปัน ใบคืนลมหายใจ ไม่มีส่วนใดเก็บชีวิตไว้เพียงลำพัง»',question:'จะปลุกต้นไม้ตามลำดับใด?',answers:['ใบ → ราก → ลำต้น','ราก → ลำต้น → ใบ','ลำต้น → ใบ → ราก'],correct:1,
@@ -54,12 +62,13 @@ SECRET_LOCATIONS:()=>{const data=({
  {id:'rescue',name:'จัดทางหนีให้ผู้คนก่อน',detail:'ใช้ MP ทีม 20% · ได้พยานและความช่วยเหลือ HP/MP 20% ที่ทางแยกถัดไปในปราสาท',effects:[{type:'spend',mp:.2},{type:'relation',key:'survivor',amount:1},{type:'pending',id:'city-rescue',zone:6,mode:'heal',hp:.2,mp:.2,text:'ผู้รอดชีวิตจากนครใต้บัลลังก์กลับมาพร้อมเสบียง พวกเขาช่วยทีมฟื้น HP/MP 20% แล้วรับหลักฐานไปเผยแพร่'}],outcome:'คุณไม่เผาห้องที่ยังมีคนอยู่เพื่อให้เรื่องจบเร็วขึ้น หลักฐานออกจากปราสาทพร้อมพยานที่ยังมีเสียงของตนเอง'}],
  evidence:'หัวใจรัตติกาลขยายความกลัวการสูญเสียของจอมมาร ผู้พิทักษ์เก่าจึงเลือกช่วงชิงพลัง แต่ผู้ที่อยู่ใต้บัลลังก์ยังเลือกช่วยกันได้ ความจริงนี้ไม่ได้เปลี่ยนหน้าที่ในการหยุดเขา',repair:'',gold:1000}
  ]
-});const visuals={
+});data.locations.push(data.locations.shift());const visuals={
+ firstpact:{intro:'ลานฝึกเก่าซ่อนอยู่หลังรากไม้ อสูรน้อยรอคำทักทาย',puzzle:'คำสัญญาแรกเลือกได้ด้วยตัวคุณเอง',encounter:'ผูกมิตรโดยไม่สู้ หรือประลองเพื่อรับอาวุธ?',decision:'คำสัญญาแรกของผู้ผนึก'},
  yggdrasil:{intro:'รากเรืองแสงเผยต้นไม้โลกที่กำลังบาดเจ็บ',puzzle:'น้ำเลี้ยงต้องไหลผ่านราก ลำต้น และใบ',encounter:'ผู้เฝ้ารากขวางทาง รอคำตอบจากคุณ',decision:'น้ำเลี้ยงหยดสุดท้าย จะช่วยรากหรือสหาย?'},
  shangrila:{intro:'ถ้วยหยุดกลางอากาศ เมืองวนกลับวันเดิม',puzzle:'ระฆังสามใบซ่อนทางออกจากวงวน',encounter:'เงาความทรงจำเฝ้าประตูหอระฆัง',decision:'ปล่อยเวลาเดิน หรือให้เมืองเตรียมใจอีกหน่อย?'},
  sahara:{intro:'ทรายแหวกเผยนครและคลังใต้ตาชั่งทอง',puzzle:'ตาชั่งชั่งคำสัญญา มิใช่เพียงทอง',encounter:'ผู้เฝ้าคลังตื่นขึ้นต่อหน้าคุณ',decision:'คืนตราให้เมือง หรือยืมสมบัติพร้อมภาระ?'},
  dragongate:{intro:'รอยมือและรอยกรงเล็บเคียงกันเหนือเมฆ',puzzle:'เชื่อมพลังไฟ ลม และเมฆให้ร่วมมือ',encounter:'ผู้คุ้มประตูทดสอบความไว้ใจ',decision:'แบ่งภาระกับสหาย หรือผู้ผนึกรับไว้เอง?'},
  valhalla:{intro:'เสียงฝีเท้าของความทรงจำในวิหารว่างเปล่า',puzzle:'รอยสลักเตือนวันที่การดูแลกลายเป็นครอบครอง',encounter:'เงาวีรชนรอฟังความตั้งใจของคุณ',decision:'ให้ความทรงจำพัก หรือยืมไปช่วยผู้มีชีวิต?'},
  pandemonium:{intro:'ใต้บัลลังก์ยังมีผู้คนที่รอทางรอด',puzzle:'คำสั่ง ผนึกที่ถูกพราก และเสียงพยาน',encounter:'ผู้เฝ้าความทรงจำปิดประตูทางผ่าน',decision:'เผยหลักฐานทันที หรือพาผู้คนหนีก่อน?'}
-};for(const d of data.locations){d.visual=visuals[d.id];d.entryEvent='intro';d.events={intro:{id:'intro',type:'dialogue',next:'puzzle'},puzzle:{id:'puzzle',type:'puzzle',next:'encounter'},encounter:{id:'encounter',type:'encounter',next:'decision'},decision:{id:'decision',type:'decision',next:'finished'},finished:{id:'finished',type:'ending'}};d.discovery={chancePerRun:d.chance,depths:[5,6,7,8]};d.replay={firstReward:'once',choices:'persistent'};for(const c of d.choices)c.conditions=c.conditions||[];}return data;}
+};for(const d of data.locations){d.visual=visuals[d.id];d.entryEvent=d.tutorial?'encounter':'intro';d.events={intro:{id:'intro',type:'dialogue',next:'puzzle'},puzzle:{id:'puzzle',type:'puzzle',next:'encounter'},encounter:{id:'encounter',type:'encounter',next:'decision'},decision:{id:'decision',type:'decision',next:'finished'},finished:{id:'finished',type:'ending'}};d.discovery={chancePerRun:d.chance,depths:[5,6,7,8]};d.replay={firstReward:'once',choices:'persistent'};for(const c of d.choices)c.conditions=c.conditions||[];}return data;}
 });
