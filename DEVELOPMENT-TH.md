@@ -32,3 +32,5 @@ npm test เทียบผลกับหน้าเกมรุ่นอ้�
 ใน workspace เดิมตรวจเพิ่มด้วย node work/run-refactor-regressions.cjs outputs/refactor-phase5 แล้วแพ็กและเผยแพร่ตามขั้นตอนเดิม ห้ามทดสอบธุรกรรมด้วยบัญชีผู้เล่นจริงใน staging
 
 GitHub Actions ชื่อ Canonical client checks ตรวจ npm test และ build live/test บน Linux เมื่อ push หรือเปิด pull request ใช้สิทธิ์อ่าน repository เท่านั้น ไม่ deploy และไม่ใช้ข้อมูลลับหรือบัญชีผู้เล่น
+
+ชุดเสียงผู้เล่น20ตุลาคม2026เพิ่มไฟล์ต้นฉบับ51ไฟล์ ใช้assetBudgetBytesในclient/build.json (ปัจจุบัน50MB) สำหรับการตรวจขนาดแพ็ก เสียงโหลดเมื่อใช้ ไม่ได้โหลดทั้งlibraryเมื่อเปิดเกม รายการไฟล์และการเลือกฉากดูAUDIO-LIBRARY-TH.md

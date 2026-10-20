@@ -127,6 +127,11 @@
       "file": "beastBalance.js",
       "description": "Equal-level beast tier budgets and zone progression",
       "units": 1
+    },
+    "uploadedAudio": {
+      "file": "uploadedAudio.js",
+      "description": "Uploaded audio, scene music and one-shot effects",
+      "units": 1
     }
   },
   "order": [
@@ -1207,6 +1212,7 @@
     "1074-wildUnit",
     "1075-isBossDoorScene",
     "1078-beastBudget",
+    "1079-uploadedAudio",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9085,6 +9091,14 @@
         "calcPet"
       ],
       "type": "SharedBalanceRules"
+    },
+    "1079-uploadedAudio": {
+      "module": "uploadedAudio",
+      "names": [
+        "UploadedAudio",
+        "uploadedMusicScene"
+      ],
+      "type": "AudioPresentation"
     }
   },
   "trailer": "\r\n\r\n"

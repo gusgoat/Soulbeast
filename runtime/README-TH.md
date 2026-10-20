@@ -59,3 +59,5 @@ tools/runtime-build/modules.cjsมีbootstrapสำหรับการย้�
 
 
 อัปเดตสมดุลอสูร: เพิ่ม beastBalance.js (รวม25โมดูล) เป็นงบพลังรวมตามร่าง/rarity/ป่า ใช้กฎเดียวกับ server ดูรายงาน BEAST-BALANCE-TH.md
+
+อัปเดตเสียง20ตุลาคม2026: runtime/uploadedAudio.js เป็นโมดูลที่26 ข้อมูลเพลง/เอฟเฟกต์51รายการอยู่content/audio-library.json การเพิ่มเสียงต้องคงmaster/music/effects bus,ไม่ใช้combatRNG และทดสอบsceneไม่restartทุกrender ดูAUDIO-LIBRARY-TH.md

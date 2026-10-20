@@ -1,0 +1,512 @@
+[
+  {
+    "id": "upload_c2767908a098",
+    "title": "Introฉากตื่นเต้น",
+    "asset": "assets/audio/20261020/c2767908a09854a9a8a493c6.mp3",
+    "sha256": "c2767908a09854a9a8a493c6c1ec2e9b25056f33a073f10fdc75d53ff8213370",
+    "bytes": 315648,
+    "duration": 9.864,
+    "decodeOK": true,
+    "group": "bgBossIntroMusic"
+  },
+  {
+    "id": "upload_dd0b44348182",
+    "title": "Introปลุกใจ",
+    "asset": "assets/audio/20261020/dd0b44348182027f00e7ffd2.mp3",
+    "sha256": "dd0b44348182027f00e7ffd2301f5de9ed0417f63292cd89fedc66329cca67af",
+    "bytes": 504894,
+    "duration": 15.777938,
+    "decodeOK": true,
+    "group": "bgRallyIntroMusic"
+  },
+  {
+    "id": "upload_9677fe5bdb10",
+    "title": "คำสาปน่ากลัวรุนแรง",
+    "asset": "assets/audio/20261020/9677fe5bdb10d9c49354010a.mp3",
+    "sha256": "9677fe5bdb10d9c49354010a247b6450a23a72346274967cd9ca527d11acbe39",
+    "bytes": 96591,
+    "duration": 3.955147,
+    "decodeOK": true,
+    "group": "strongCurseFx"
+  },
+  {
+    "id": "upload_c165d95dadb0",
+    "title": "คำสาปรุนแรงน่ากลัวมาก",
+    "asset": "assets/audio/20261020/c165d95dadb002dc26ce88f5.mp3",
+    "sha256": "c165d95dadb002dc26ce88f5cd18d16728f200010cd91bd5ec6f21da15af3be1",
+    "bytes": 114520,
+    "duration": 3.57875,
+    "decodeOK": true,
+    "group": "strongCurseFx"
+  },
+  {
+    "id": "upload_8de45711bc58",
+    "title": "ดนตรีดราม่าทะเลาะ",
+    "asset": "assets/audio/20261020/8de45711bc58113e5b784c45.mp3",
+    "sha256": "8de45711bc58113e5b784c45e5abf3cb4206b9f6b5dd9a47ce1aee4d53e441ea",
+    "bytes": 1239667,
+    "duration": 38.739594,
+    "decodeOK": true,
+    "group": "bgDramaMusic"
+  },
+  {
+    "id": "upload_ea5165438fef",
+    "title": "ดนตรีน่าสงสัย",
+    "asset": "assets/audio/20261020/ea5165438fefdb302044778b.mp3",
+    "sha256": "ea5165438fefdb302044778b4aef087d902d4354b3ad3e7774c59b5e7bb32dab",
+    "bytes": 666227,
+    "duration": 20.819594,
+    "decodeOK": true,
+    "group": "bgSuspenseMusic"
+  },
+  {
+    "id": "upload_6538f1cf93fe",
+    "title": "ดนตรีประกอบความสำเร็จ",
+    "asset": "assets/audio/20261020/6538f1cf93feddd03906328e.mp3",
+    "sha256": "6538f1cf93feddd03906328e8714898bd31ab1f3853454e94368491c7824916e",
+    "bytes": 940800,
+    "duration": 29.4,
+    "decodeOK": true,
+    "group": "bgSuccessMusic"
+  },
+  {
+    "id": "upload_7a614db3a17f",
+    "title": "ดนตรีระทีกตื่นเต้น",
+    "asset": "assets/audio/20261020/7a614db3a17f8c107b8cdf87.mp3",
+    "sha256": "7a614db3a17f8c107b8cdf878432d55fb4ccf0d47e0e254bb7331aa75a74c04c",
+    "bytes": 604416,
+    "duration": 18.888,
+    "decodeOK": true,
+    "group": "bgBattleMusic"
+  },
+  {
+    "id": "upload_8e33cb7d7bd6",
+    "title": "ดนตรีสถานที่ลึกลับสยองขวัญ",
+    "asset": "assets/audio/20261020/8e33cb7d7bd641f84008c3d6.mp3",
+    "sha256": "8e33cb7d7bd641f84008c3d613f60def81ae74e3b3ad859185534ae844468449",
+    "bytes": 1304868,
+    "duration": 40.777125,
+    "decodeOK": true,
+    "group": "bgHorrorMusic"
+  },
+  {
+    "id": "upload_7a5c276f6f6b",
+    "title": "ดนตรีหลอนๆน่ากลัวๆ",
+    "asset": "assets/audio/20261020/7a5c276f6f6b562b608a663d.mp3",
+    "sha256": "7a5c276f6f6b562b608a663d6f01a41d02615aa68e463f79313e2a1936b791c9",
+    "bytes": 1319424,
+    "duration": 41.232,
+    "decodeOK": true,
+    "group": "bgHorrorMusic"
+  },
+  {
+    "id": "upload_eb0e61e3b278",
+    "title": "ดนตรีอินโทร",
+    "asset": "assets/audio/20261020/eb0e61e3b2780f033a741c54.mp3",
+    "sha256": "eb0e61e3b2780f033a741c548adb4ebce88f1ed9d3f016c860c0394914005964",
+    "bytes": 653568,
+    "duration": 20.424,
+    "decodeOK": true,
+    "group": "bgIntroMusic"
+  },
+  {
+    "id": "upload_d10a4722ba41",
+    "title": "ดนตรีเศร้าๆ",
+    "asset": "assets/audio/20261020/d10a4722ba415641f3afe416.mp3",
+    "sha256": "d10a4722ba415641f3afe4169d1d6b59ae7c865a3cbd634c81b1c628b8d0c5a6",
+    "bytes": 769536,
+    "duration": 24.048,
+    "decodeOK": true,
+    "group": "bgSadMusic"
+  },
+  {
+    "id": "upload_d98d1e57f5f3",
+    "title": "ดนตรีแรงบันดาลใจ",
+    "asset": "assets/audio/20261020/d98d1e57f5f3fd9e7c8ac059.mp3",
+    "sha256": "d98d1e57f5f3fd9e7c8ac059f845662b6ad4bd5214c86ae6231d1b805325b350",
+    "bytes": 652016,
+    "duration": 20.3755,
+    "decodeOK": true,
+    "group": "bgInspireMusic"
+  },
+  {
+    "id": "upload_737ee9690b11",
+    "title": "ดนตรีให้แรงบันดาลใจ",
+    "asset": "assets/audio/20261020/737ee9690b117b734e2b0f46.mp3",
+    "sha256": "737ee9690b117b734e2b0f469d3b48fe9a6a892a7d385e1bc5cf7aabae3470a6",
+    "bytes": 1271040,
+    "duration": 39.72,
+    "decodeOK": true,
+    "group": "bgInspireMusic"
+  },
+  {
+    "id": "upload_4dd045e1aae3",
+    "title": "ปีศาจผู้ชายหัวเราะ",
+    "asset": "assets/audio/20261020/4dd045e1aae32bf2f99f92fc.mp3",
+    "sha256": "4dd045e1aae32bf2f99f92fc07e919f87682e77b22b33701483172bec5f275e6",
+    "bytes": 57600,
+    "duration": 2.88,
+    "decodeOK": true,
+    "group": "demonLaughFx"
+  },
+  {
+    "id": "upload_c8a321eff1e5",
+    "title": "ฟันดาบติดคริ",
+    "asset": "assets/audio/20261020/c8a321eff1e55b56a14cfaf2.mp3",
+    "sha256": "c8a321eff1e55b56a14cfaf2e68db65eb785ccaee60b4ccd0d06936e18027735",
+    "bytes": 60672,
+    "duration": 1.896,
+    "decodeOK": true,
+    "group": "swordCriticalFx"
+  },
+  {
+    "id": "upload_926be488ffc0",
+    "title": "ระเบิดควันหรือระเบิดพลังงาน",
+    "asset": "assets/audio/20261020/926be488ffc0a15b99d7ff93.mp3",
+    "sha256": "926be488ffc0a15b99d7ff9334558a476d2477e0cfc337f58ce531da02d4116c",
+    "bytes": 96768,
+    "duration": 3.024,
+    "decodeOK": true,
+    "group": "smokeFx"
+  },
+  {
+    "id": "upload_8f2e0648a38b",
+    "title": "ระเบิดนิวเครีย",
+    "asset": "assets/audio/20261020/8f2e0648a38b90f99e9695f7.mp3",
+    "sha256": "8f2e0648a38b90f99e9695f743727a3dcd53091d49f2b740f5ca2bb3b7ab2d4f",
+    "bytes": 259134,
+    "duration": 8.097938,
+    "decodeOK": true,
+    "group": "nuclearFx"
+  },
+  {
+    "id": "upload_180188c90df5",
+    "title": "สกิลบทเพลงอาลัย",
+    "asset": "assets/audio/20261020/180188c90df5deff75815575.mp3",
+    "sha256": "180188c90df5deff758155757967b6fafff8afdfee3ae03269d1723a10ccbad3",
+    "bytes": 353636,
+    "duration": 14.656395,
+    "decodeOK": true,
+    "group": "requiemFx"
+  },
+  {
+    "id": "upload_b89dfba391c8",
+    "title": "เสีนงมนดำ คำสาป3",
+    "asset": "assets/audio/20261020/b89dfba391c800ac7910bcac.mp3",
+    "sha256": "b89dfba391c800ac7910bcac7ae7d663e7d88588f50ff213ea74fd05fa040bef",
+    "bytes": 257280,
+    "duration": 8.04,
+    "decodeOK": true,
+    "group": "curseFx"
+  },
+  {
+    "id": "upload_c1acdf3043f5",
+    "title": "เสียงขึ้นลำกล้องปืนreload",
+    "asset": "assets/audio/20261020/c1acdf3043f54f3d828674f0.mp3",
+    "sha256": "c1acdf3043f54f3d828674f071ae23031c7d837e64cfdde3e5beda41f46e3943",
+    "bytes": 48384,
+    "duration": 1.512,
+    "decodeOK": true,
+    "group": "reloadFx"
+  },
+  {
+    "id": "upload_ae40a3e115b2",
+    "title": "เสียงคาถานินจา",
+    "asset": "assets/audio/20261020/ae40a3e115b245cb7f3d1fab.mp3",
+    "sha256": "ae40a3e115b245cb7f3d1fab0be70d2189fffa154754b0650e291c0e719127f4",
+    "bytes": 313440,
+    "duration": 15.672,
+    "decodeOK": true,
+    "group": "ninjaFx"
+  },
+  {
+    "id": "upload_c2ac41c1b294",
+    "title": "เสียงชุบชีวิต",
+    "asset": "assets/audio/20261020/c2ac41c1b294d5b682c83f1f.mp3",
+    "sha256": "c2ac41c1b294d5b682c83f1f6a7cf26a39f71e3951bfe2416d76cfd8671665b9",
+    "bytes": 257280,
+    "duration": 8.04,
+    "decodeOK": true,
+    "group": "reviveFx"
+  },
+  {
+    "id": "upload_fb5e90512be3",
+    "title": "เสียงดาวกระจาย",
+    "asset": "assets/audio/20261020/fb5e90512be30fc56667efff.mp3",
+    "sha256": "fb5e90512be30fc56667efff3130ebd69107afd0c0976ca1c66474091a06e414",
+    "bytes": 30763,
+    "duration": 1.224989,
+    "decodeOK": true,
+    "group": "shurikenFx"
+  },
+  {
+    "id": "upload_adf5e71838e4",
+    "title": "เสียงปืนกล2",
+    "asset": "assets/audio/20261020/adf5e71838e4d7cdb13ed86f.mp3",
+    "sha256": "adf5e71838e4d7cdb13ed86f636ac397496333899371914634548336578364fb",
+    "bytes": 68545,
+    "duration": 2.142031,
+    "decodeOK": true,
+    "group": "gunHeavyFx"
+  },
+  {
+    "id": "upload_cc7742c998a8",
+    "title": "เสียงปืนกลรุนแรง",
+    "asset": "assets/audio/20261020/cc7742c998a83bfc0918e040.mp3",
+    "sha256": "cc7742c998a83bfc0918e0403d52ddc39c29f0386a23825f4dd12fb8c4abddbf",
+    "bytes": 56064,
+    "duration": 1.752,
+    "decodeOK": true,
+    "group": "gunHeavyFx"
+  },
+  {
+    "id": "upload_305c9fa26618",
+    "title": "เสียงปืนติดคริยิงเข้าหัว",
+    "asset": "assets/audio/20261020/305c9fa266181907a585a1d0.mp3",
+    "sha256": "305c9fa266181907a585a1d00e485f1c587d463befa4f759b6cd50276845f111",
+    "bytes": 166347,
+    "duration": 5.198344,
+    "decodeOK": true,
+    "group": "gunCriticalFx"
+  },
+  {
+    "id": "upload_fd13f72aea0a",
+    "title": "เสียงปืนพลาสม่า",
+    "asset": "assets/audio/20261020/fd13f72aea0acde7ea9cbe66.mp3",
+    "sha256": "fd13f72aea0acde7ea9cbe666addac1c6efe38cbdb21f86aa118b952b705b8a7",
+    "bytes": 192261,
+    "duration": 6.008156,
+    "decodeOK": true,
+    "group": "gunPlasmaFx"
+  },
+  {
+    "id": "upload_c7083078bbdc",
+    "title": "เสียงฟันดาบ",
+    "asset": "assets/audio/20261020/c7083078bbdc412d2c3c775c.mp3",
+    "sha256": "c7083078bbdc412d2c3c775cd8254d4fa85fae17b7a4383d994b16e439c0ed62",
+    "bytes": 257280,
+    "duration": 8.04,
+    "decodeOK": true,
+    "group": "swordFx"
+  },
+  {
+    "id": "upload_e026bc6d36a0",
+    "title": "เสียงฟันดาบ2",
+    "asset": "assets/audio/20261020/e026bc6d36a046a89fb65e17.mp3",
+    "sha256": "e026bc6d36a046a89fb65e172209dea98f40173a37f97ace9a55dfc97ed37d9d",
+    "bytes": 39936,
+    "duration": 1.248,
+    "decodeOK": true,
+    "group": "swordFx"
+  },
+  {
+    "id": "upload_bdf4191a942e",
+    "title": "เสียงฟันดาบเวท",
+    "asset": "assets/audio/20261020/bdf4191a942e29789f6c834e.mp3",
+    "sha256": "bdf4191a942e29789f6c834ec542ac1fad938066d2b5c8eab76e223badd55d98",
+    "bytes": 31104,
+    "duration": 0.972,
+    "decodeOK": true,
+    "group": "enchantSwordFx"
+  },
+  {
+    "id": "upload_9101017ee2a1",
+    "title": "เสียงมนดำ คำสาป1",
+    "asset": "assets/audio/20261020/9101017ee2a194b8e9670aaa.mp3",
+    "sha256": "9101017ee2a194b8e9670aaac1bcfca71f71c5a9f54615742aba1d63e5d2f984",
+    "bytes": 257280,
+    "duration": 8.04,
+    "decodeOK": true,
+    "group": "curseFx"
+  },
+  {
+    "id": "upload_a32ed467cc0d",
+    "title": "เสียงมนดำ คำสาป2",
+    "asset": "assets/audio/20261020/a32ed467cc0d1092e89fa43a.mp3",
+    "sha256": "a32ed467cc0d1092e89fa43aa57383518f096cc5402b1cba9b5cc7efe7762e47",
+    "bytes": 66351,
+    "duration": 3.31755,
+    "decodeOK": true,
+    "group": "curseFx"
+  },
+  {
+    "id": "upload_57a48271daad",
+    "title": "เสียงมีดติดคริ",
+    "asset": "assets/audio/20261020/57a48271daad883179d1c527.mp3",
+    "sha256": "57a48271daad883179d1c527917bb2ec7fb036d18e535da16d1096049b7728cd",
+    "bytes": 63529,
+    "duration": 1.985281,
+    "decodeOK": true,
+    "group": "daggerCriticalFx"
+  },
+  {
+    "id": "upload_2dbade1bfa8d",
+    "title": "เสียงยิงmissilไม่รวมเสียงระเบิด",
+    "asset": "assets/audio/20261020/2dbade1bfa8d1cb7d2f4d417.mp3",
+    "sha256": "2dbade1bfa8d1cb7d2f4d41727a47298d07ea2c51f091393083f08be444c4d31",
+    "bytes": 322664,
+    "duration": 10.08325,
+    "decodeOK": true,
+    "group": "missileFx"
+  },
+  {
+    "id": "upload_cee18db7340c",
+    "title": "เสียงยิงปืนนัดเดียว",
+    "asset": "assets/audio/20261020/cee18db7340c285613bace32.mp3",
+    "sha256": "cee18db7340c285613bace321094dbd8c1050c1aaaa912258f3a8d8195be1d2d",
+    "bytes": 161280,
+    "duration": 5.04,
+    "decodeOK": true,
+    "group": "gunSingleFx"
+  },
+  {
+    "id": "upload_37007fdda99a",
+    "title": "เสียงยิงปืนสามนัด",
+    "asset": "assets/audio/20261020/37007fdda99a20e29269faa2.mp3",
+    "sha256": "37007fdda99a20e29269faa2c3cb0a676c681f3d7e723fca320d5f327105c4cc",
+    "bytes": 40960,
+    "duration": 1.28,
+    "decodeOK": true,
+    "group": "gunThreeFx"
+  },
+  {
+    "id": "upload_288457b2f6f6",
+    "title": "เสียงระเบิด",
+    "asset": "assets/audio/20261020/288457b2f6f6adf58654cdc0.mp3",
+    "sha256": "288457b2f6f6adf58654cdc0d13c39f41041a9644cb1be0f77b931b9067369a2",
+    "bytes": 92928,
+    "duration": 2.904,
+    "decodeOK": true,
+    "group": "explosionFx"
+  },
+  {
+    "id": "upload_1f566cb08b23",
+    "title": "เสียงระเบิดรุนแรง",
+    "asset": "assets/audio/20261020/1f566cb08b237682e144163d.mp3",
+    "sha256": "1f566cb08b237682e144163d4687581d4d5930a2b59e8b245c968373f9422846",
+    "bytes": 115356,
+    "duration": 3.604875,
+    "decodeOK": true,
+    "group": "bigExplosionFx"
+  },
+  {
+    "id": "upload_baa2246559fd",
+    "title": "เสียงลับมีด",
+    "asset": "assets/audio/20261020/baa2246559fdc5be4fbc54c4.mp3",
+    "sha256": "baa2246559fdc5be4fbc54c4acf1470eaeb2d7da037a437fd870abbeff783d68",
+    "bytes": 126223,
+    "duration": 3.944469,
+    "decodeOK": true,
+    "group": "sharpenFx"
+  },
+  {
+    "id": "upload_1bd86c22b172",
+    "title": "เสียงสกิลนักกวีharp",
+    "asset": "assets/audio/20261020/1bd86c22b172f0c3d5c2901f.mp3",
+    "sha256": "1bd86c22b172f0c3d5c2901f158108574c8cb4c38cf61ccc95598988e5f4837f",
+    "bytes": 120415,
+    "duration": 4.960204,
+    "decodeOK": true,
+    "group": "bardHarpFx"
+  },
+  {
+    "id": "upload_390249728a44",
+    "title": "เสียงสกิลนักกวีกีต้า",
+    "asset": "assets/audio/20261020/390249728a444098dd455ab7.mp3",
+    "sha256": "390249728a444098dd455ab793797271c024671dc9d5c3dbd93d48c2008d2d7c",
+    "bytes": 128731,
+    "duration": 4.022844,
+    "decodeOK": true,
+    "group": "bardGuitarFx"
+  },
+  {
+    "id": "upload_823ca10d36c3",
+    "title": "เสียงสกิลไม้ตายสวรรค์",
+    "asset": "assets/audio/20261020/823ca10d36c37e7a9b5c6b92.mp3",
+    "sha256": "823ca10d36c37e7a9b5c6b9248c052ab58269578760ac53764c53e93973aaf0d",
+    "bytes": 336875,
+    "duration": 10.527344,
+    "decodeOK": true,
+    "group": "heavenFx"
+  },
+  {
+    "id": "upload_a010539da803",
+    "title": "เสียงสัตว์ลึกลับร้อง",
+    "asset": "assets/audio/20261020/a010539da8037314e0277dbb.mp3",
+    "sha256": "a010539da8037314e0277dbbe7c0adfd2c7318d4ede4814445c4a905ff7425ba",
+    "bytes": 259134,
+    "duration": 8.097938,
+    "decodeOK": true,
+    "group": "mysteryCryFx"
+  },
+  {
+    "id": "upload_ca3311db0e99",
+    "title": "เสียงเฉือนมีดหรือดาบโดนอวัยวะ",
+    "asset": "assets/audio/20261020/ca3311db0e99c8671cf6c0f7.mp3",
+    "sha256": "ca3311db0e99c8671cf6c0f7d427269e802749574203f225a1fa0b09250ef54b",
+    "bytes": 19968,
+    "duration": 0.624,
+    "decodeOK": true,
+    "group": "slashFx"
+  },
+  {
+    "id": "upload_1a2c2eb43346",
+    "title": "แก้เสียงปืนกล",
+    "asset": "assets/audio/20261020/1a2c2eb4334621ab9dafc942.mp3",
+    "sha256": "1a2c2eb4334621ab9dafc942b665b66bdba3d1ca88b9850807f3fc4c818c71a2",
+    "bytes": 41421,
+    "duration": 1.653832,
+    "decodeOK": true,
+    "group": "gunRapidFx"
+  },
+  {
+    "id": "upload_a072720df2b8",
+    "title": "แก้เสียงฟันมีด1ครั้ง",
+    "asset": "assets/audio/20261020/a072720df2b8e9821dbab033.mp3",
+    "sha256": "a072720df2b8e9821dbab0335d4b439072293b4924348fe5022d068bfaf92bf2",
+    "bytes": 13824,
+    "duration": 0.432,
+    "decodeOK": true,
+    "group": "daggerFx"
+  },
+  {
+    "id": "upload_8154d63f83ea",
+    "title": "แก้เสียงแซ่ฟาดให้เป็น 1 ครั้ง",
+    "asset": "assets/audio/20261020/8154d63f83eaed525200825d.mp3",
+    "sha256": "8154d63f83eaed525200825d163239a1f8894f40acbe24380209d54f34df8631",
+    "bytes": 20732,
+    "duration": 0.790975,
+    "decodeOK": true,
+    "group": "whipFx"
+  },
+  {
+    "id": "upload_45baf4a0d480",
+    "title": "แซ่ฟาดติดคริ",
+    "asset": "assets/audio/20261020/45baf4a0d4801c7bf5181fcd.mp3",
+    "sha256": "45baf4a0d4801c7bf5181fcda2dff2ca14be0349a622ef0b3870a5995cbf7044",
+    "bytes": 37616,
+    "duration": 1.1755,
+    "decodeOK": true,
+    "group": "whipCriticalFx"
+  },
+  {
+    "id": "upload_dbc791784f00",
+    "title": "ได้รางวัลพิเศษ",
+    "asset": "assets/audio/20261020/dbc791784f00695bafa7e1c7.mp3",
+    "sha256": "dbc791784f00695bafa7e1c73eb76f5794144f4ae2bdf40c4309f76c678b212d",
+    "bytes": 105325,
+    "duration": 3.291406,
+    "decodeOK": true,
+    "group": "specialRewardFx"
+  },
+  {
+    "id": "upload_90b90549e0e6",
+    "title": "ไวโอริน เร้าใจ",
+    "asset": "assets/audio/20261020/90b90549e0e6d373635a198e.mp3",
+    "sha256": "90b90549e0e6d373635a198e680c3f3203dd9a79873af2304e90c41646f3293b",
+    "bytes": 1003102,
+    "duration": 31.346938,
+    "decodeOK": true,
+    "group": "bgBattleMusic"
+  }
+]

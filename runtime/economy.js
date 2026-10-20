@@ -123,7 +123,7 @@ handlers.gachaRefresh=()=>gachaCall();
 const ReleaseGacha={charging:null,
  start(){this.stop();this.started=Date.now();ExtraAudio.play('charge');this.charging=Music.tracks.a1||null;},
  stop(){if(this.charging){this.charging.audio.pause();this.charging.audio.currentTime=0;}this.charging=null;},
- async finish(rewards){const wait=Math.max(0,1200-(Date.now()-(this.started||Date.now())));if(wait&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)await new Promise(resolve=>setTimeout(resolve,wait));this.stop();const cats=new Set(rewards.map(r=>r.category));ExtraAudio.play(cats.has('legendBeast')||cats.has('legendGear')?'evolution':cats.has('rare')||cats.has('craft')?'win':'quest');}
+ async finish(rewards){const wait=Math.max(0,1200-(Date.now()-(this.started||Date.now())));if(wait&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)await new Promise(resolve=>setTimeout(resolve,wait));this.stop();const cats=new Set(rewards.map(r=>r.category));ExtraAudio.play(cats.has('legendBeast')||cats.has('legendGear')||cats.has('rare')||cats.has('craft')?'specialRewardFx':'quest');}
 };
 // @soulbeast-end 0621-ReleaseGacha
 // @soulbeast-unit 0622-gachaSortedRewards
