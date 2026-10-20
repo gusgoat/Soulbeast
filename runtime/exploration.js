@@ -157,7 +157,7 @@ function chooseFork(i){const z=S.zone,zd=ZN[z.id-1],P=S.P,door=z.fork[i],type=do
   if(r<.45){const raw=expFor(zd.lv[1])*2,x=progressionRewardExp(P,raw),l=gainExp(P,x,true);party().forEach(p=>l.push(...gainExp(p,progressionRewardExp(p,raw),false)));show({type,msg:`เทพประทานพร ได้ EXP ${fmt(x)}${l.length?'<br>'+l.join('<br>'):''}`})}
   else if(r<.75){const id=SEALS[Math.min(4,ZT(z.id))];P.items[id]=(P.items[id]||0)+2;show({type,msg:`บนแท่นบูชามี${CON[id].n} 2 ใบ คุณเก็บมาอย่างนอบน้อม`})}
   else{const s=pStats();P.mp=s.mp;carriedPets().forEach(p=>{if(p.hp>0)p.mp=calcPet(p).mp});show({type,msg:'แสงศักดิ์สิทธิ์โอบล้อม MP ของทุกคนเต็ม'})}}
- if(type==='village')show({type,msg:'ชาวบ้านต้อนรับนักเดินทาง ร้านค้าเปิดให้ซื้อขาย ราคาแพงกว่าในเมืองนิดหน่อย'});
+ if(type==='village')show({type,msg:'ชาวบ้านต้อนรับนักเดินทาง ร้านค้าเปิดให้ซื้อสินค้า ราคาแพงกว่าในเมืองนิดหน่อย'});
  if(type==='hospital')show({type,msg:'หมอยาประจำป่ายินดีรักษาให้ ถ้ามีค่าตอบแทน',healed:false});
  if(type==='stranger'){const r=Math.random();
   if(r<.6)return fight(travelerUnits(zd),'traveler');
@@ -205,7 +205,7 @@ function vZone(){const zs=S.zone,z={...ZN[zs.id-1],boss:zs.boss||ZN[zs.id-1].bos
    if(!ev.opened)contLbl='เดินผ่านไป ไม่เปิด'}
   if(ev.type==='village'){const parts=Object.entries(P.parts).filter(([,n])=>n>0);
    extra=`<div class="lst">${Object.entries(CON).filter(([,c])=>!c.rareLoot).sort(compareShopItems).map(([id,c])=>{const pr=Math.round(priceOf(c)*1.25),lock=c.lv&&P.lv<c.lv;return `<div class="item">${itemIcon(id)}<div class="grow"><b>${c.n}</b><small>${c.d} · มีอยู่ ${P.items[id]||0}${c.lv>1?` · ต้องการ Lv ${c.lv}`:''}</small></div><button class="btn sm ${lock?'':'pri'}" data-a="vbuy" data-v="${id}" ${P.gold<pr||lock?'disabled':''}><span class="num">${fmt(pr)}</span></button></div>`}).join('')}</div>
-   ${parts.length?`<h3>รับซื้อชิ้นส่วน (80% ของราคาในเมือง)</h3><div class="lst">${parts.map(([key,n])=>{const [sp,i]=key.split('|'),pt=SP[sp].parts[+i];return `<div class="item">${itemIcon(key,32)}<div class="grow"><b>${pt[0]} ×${n}</b><small class="num">${fmt(Math.round(partPrice(pt[1])*.8)*n)} เหรียญ</small></div><button class="btn sm" data-a="vsell" data-v="${key}">ขายหมด</button></div>`}).join('')}</div>`:''}`}
+   `;}
   if(ev.type==='hospital')extra=ev.healed?'<p class="sub" style="margin:0">ทุกคนหายดีแล้ว</p>':allFull()?'<button class="btn full" disabled>ทุกคนพลังเต็มอยู่แล้ว</button>':`<button class="btn pri full" data-a="zheal">รักษาทั้งทีม · <span class="num">${fmt(Math.round(healCost()*1.5))}</span> เหรียญ</button>`;
   if(ev.type==='exit')extra=`<button class="btn pri full" data-a="exitzone">กลับเมือง</button>`;
   main=`<div class="card stack">${routePicture(ev.type,false,true)}<div class="row"><span class="door-g">${e.g}</span><div class="grow"><h3>${e.n}</h3></div></div><p style="margin:0">${ev.msg}</p>${extra}</div>
@@ -337,7 +337,7 @@ handlers.villageGear=function(value){const ev=S.zone?.ev;if(ev?.type!=='village'
 const forestZoneView=vZone;
 // @soulbeast-end 0994-forestZoneView
 // @soulbeast-unit 0995-vZone
-vZone=function(){let html=forestZoneView(),ev=S.zone?.ev;if(ev?.type!=='village')return html;const cont='<button class="btn pri full" data-a="cont">เดินป่าต่อ →</button>',gear='<section class="card stack village-gear"><h3>อาวุธหลอม / คราฟต์หายาก · สุ่มขาย 2 ชิ้น</h3><small>ราคาสูงกว่าร้านทั่วไป · ชิ้นละหนึ่งชิ้นต่อการพบหมู่บ้าน</small>'+villageGearStock(ev).map((v,i)=>'<div class="item">'+itemIcon(v.id)+'<div class="grow"><b>'+esc(EQ[v.id].n)+'</b><small>คราฟต์หายาก · Lv '+EQ[v.id].lv+' · '+compareGear(EQ[v.id])+'</small></div><button class="btn sm" data-a="villageGear" data-v="'+i+'" '+(v.sold||S.P.gold<villageGearPrice(v.id)?'disabled':'')+'>'+(v.sold?'ขายแล้ว':fmt(villageGearPrice(v.id))+' เหรียญ')+'</button></div>').join('')+'</section>';return html.replace(/(<div class="card stack">)(<img class="route-banner")/,'$1'+cont+'$2').replace(/(<button class="btn [^"]*full" data-a="cont" style="min-height:50px">)/,gear+'$1');};
+vZone=function(){let html=forestZoneView(),ev=S.zone?.ev;if(ev?.type!=='village')return html;const cont='<button class="btn pri full" data-a="cont">เดินป่าต่อ →</button>',gear='<section class="card stack village-gear"><h3>อาวุธหลอม / คราฟต์หายาก · สุ่มขาย 2 ชิ้น</h3><small>ราคาสูงกว่าร้านทั่วไป · ชิ้นละหนึ่งชิ้นต่อการพบหมู่บ้าน</small>'+villageGearStock(ev).map((v,i)=>'<div class="item">'+itemIcon(v.id)+'<div class="grow"><b>'+esc(EQ[v.id].n)+'</b><small>คราฟต์หายาก · Lv '+EQ[v.id].lv+' · '+compareGear(EQ[v.id])+'</small></div><button class="btn sm" data-a="villageGear" data-v="'+i+'" '+(v.sold||S.P.gold<villageGearPrice(v.id)?'disabled':'')+'>'+(v.sold?'ขายแล้ว':fmt(villageGearPrice(v.id))+' เหรียญ')+'</button></div>').join('')+'</section>';return html.replace(/(<div class="card stack">)(<img class="route-banner")/,'$1'+cont+'$2').replace('<div class="lst">',gear+'<div class="lst">');};
 // @soulbeast-end 0995-vZone
 // @soulbeast-unit 1010-EV-cleanse
 
@@ -352,7 +352,7 @@ ROUTE_ART.cleanse='assets/ui/purification-pool-v1.webp';
 const cleansingChooseFork=chooseFork;
 // @soulbeast-end 1014-cleansingChooseFork
 // @soulbeast-unit 1015-chooseFork
-chooseFork=function(i){const z=S.zone;if(z?.fork?.[i]?.k!=='cleanse')return cleansingChooseFork(i);if(S.battle&&!S.battle.over)return;z.fork=null;z.depth++;const n=cleanseAllAilments();z.ev={type:'cleanse',msg:n?'น้ำศักดิ์สิทธิ์ชำระสถานะผิดปกติให้ผู้ผนึกและอสูรทุกตัว รวมในค่ายแล้ว ฟรี':'ผู้ผนึกและอสูรทุกตัวไม่มีสถานะผิดปกติ น้ำในบ่อเปล่งแสงอย่างสงบ'};zlog('ก้าวที่ '+z.depth+': บ่อชำระล้าง · '+z.ev.msg);save();render();};
+chooseFork=function(i){const z=S.zone;if(z?.fork?.[i]?.k!=='cleanse')return cleansingChooseFork(i);if(S.battle&&!S.battle.over)return;z.fork=null;z.depth++;const n=cleanseAllAilments();z.ev={type:'cleanse',msg:n?'น้ำศักดิ์สิทธิ์ชำระสถานะผิดปกติให้ผู้ผนึกและอสูรทุกตัว รวมในค่ายแล้ว พร้อมฟื้น HP/MP 10% ให้ผู้ที่ยังมีสติ ฟรี':'ผู้ผนึกและอสูรทุกตัวไม่มีสถานะผิดปกติ น้ำในบ่อฟื้น HP/MP 10% ให้ผู้ที่ยังมีสติแล้ว'};zlog('ก้าวที่ '+z.depth+': บ่อชำระล้าง · '+z.ev.msg);save();render();};
 // @soulbeast-end 1015-chooseFork
 // @soulbeast-unit 1073-progressionWildUnit
 

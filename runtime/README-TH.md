@@ -56,3 +56,6 @@ tools/runtime-build/modules.cjsมีbootstrapสำหรับการย้�
 ## อัปเดตระยะ 5
 
 หน้าเกม build จากโมดูลโดยตรงแล้ว ไม่ต้องประกอบ HTML เก่าหรือ client patches ก่อน ดู DEVELOPMENT-TH.md สำหรับ npm test และ npm run build จาก repository อย่างเดียว work/build-supabase.cjs ยังสร้าง API แบบเดิม แต่ส่วน client เรียก tools/client-build.cjs แทน เส้นทาง assemble(input) เดิมเก็บไว้สำหรับตรวจ migration เท่านั้น
+
+
+อัปเดตสมดุลอสูร: เพิ่ม beastBalance.js (รวม25โมดูล) เป็นงบพลังรวมตามร่าง/rarity/ป่า ใช้กฎเดียวกับ server ดูรายงาน BEAST-BALANCE-TH.md

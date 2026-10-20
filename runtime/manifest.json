@@ -122,6 +122,11 @@
       "file": "tower.js",
       "description": "Tower runs, checkpoints and rest choices",
       "units": 37
+    },
+    "beastBalance": {
+      "file": "beastBalance.js",
+      "description": "Equal-level beast tier budgets and zone progression",
+      "units": 1
     }
   },
   "order": [
@@ -1201,6 +1206,7 @@
     "1073-progressionWildUnit",
     "1074-wildUnit",
     "1075-isBossDoorScene",
+    "1078-beastBudget",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9066,6 +9072,19 @@
       "module": "bootstrap",
       "names": [],
       "type": "ExpressionStatement"
+    },
+    "1078-beastBudget": {
+      "module": "beastBalance",
+      "names": [
+        "BEAST_TIER_BUDGET",
+        "beastPowerTier",
+        "beastOriginZone",
+        "beastStatPower",
+        "beastBudget",
+        "beastBudgetPrevious",
+        "calcPet"
+      ],
+      "type": "SharedBalanceRules"
     }
   },
   "trailer": "\r\n\r\n"

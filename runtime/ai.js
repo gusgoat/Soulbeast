@@ -21,7 +21,17 @@ function aiChooseLegacy(u){const b=B(),mates=sideOf(u).filter(x=>x.hp>0),foes=fo
 // @soulbeast-end 0280-aiChooseLegacy
 // @soulbeast-unit 0282-aiChoose
 
-function aiChoose(u){if(u.side!=='enemy')return aiChooseLegacy(u);
+// Shared by local autoplay and the authoritative online battle engine.
+function chooseAutoForm(u){
+ if(u.form||u.hp<=0)return null;
+ const foes=foesOf(u).filter(x=>x.hp>0);if(!foes.length)return null;
+ if(u.hp/u.st.hp<.35&&u.skills.some(id=>SK[id]?.t==='heal'&&!cooldownOf(u,id)&&costOf(u,SK[id])<=u.mp))return null;
+ const forms=u.skills.filter(id=>SK[id]?.t==='form'&&FORMS[SK[id].form]&&!cooldownOf(u,id)&&costOf(u,SK[id])<=u.mp);
+ const score=id=>{const f=FORMS[SK[id].form],m=f.m;let best=0;for(const key of f.sk){const sk=SK[key];if(!sk||!['p','m','h','auto'].includes(sk.t))continue;const ty=sk.t==='auto'?u.atkType:sk.t,pa=u.st.patk*(m.patk||1),ma=u.st.matk*(m.matk||1),atk=ty==='m'?ma:ty==='h'?(pa+ma)/2:pa;best=Math.max(best,...foes.map(t=>atk*(sk.pw||100)/100*typeMult(sk.el,t.types)*(sk.all?Math.min(1.5,foes.length):1)));}return best+(u.st.pdef*(m.pdef||1)+u.st.mdef*(m.mdef||1))*(u.hp/u.st.hp<.5?.6:.15);};
+ return forms.sort((a,b)=>score(b)-score(a))[0]||null;
+}
+
+function aiChoose(u){const form=chooseAutoForm(u);if(form)return [form,foesOf(u).find(x=>x.hp>0),u];if(u.side!=='enemy')return aiChooseLegacy(u);
  const grade=enemyGrade(u),mates=sideOf(u).filter(x=>x.hp>0),dead=sideOf(u).filter(x=>x.hp<=0&&x.kind!=='player'),foes=foesOf(u).filter(x=>x.hp>0);
  if(!foes.length)return ['attack',null];
  const taunt=foes.filter(x=>x.taunt>0),targets=taunt.length?taunt:foes;

@@ -95,5 +95,5 @@ function bagAilmentInfo(o,who){const states=Object.keys(storedAilments(o));if(!s
 // @soulbeast-end 1000-bagAilmentInfo
 // @soulbeast-unit 1013-cleanseAllAilments
 
-function cleanseAllAilments(){let n=0;for(const o of [S.P,...S.P.pets]){if(Object.keys(o.ailments||{}).length)n++;o.ailments={};}return n;}
+function cleanseAllAilments(){let n=0;for(const o of [S.P,...S.P.pets]){if(Object.keys(o.ailments||{}).length)n++;o.ailments={};if(o.hp>0){const st=o===S.P?pStats():calcPet(o);o.hp=Math.min(st.hp,o.hp+Math.round(st.hp*.1));o.mp=Math.min(st.mp,o.mp+Math.round(st.mp*.1));}}return n;}
 // @soulbeast-end 1013-cleanseAllAilments
