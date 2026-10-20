@@ -26,3 +26,6 @@
 
 ## Test and deployment workflow
 Back up exact web/source/API before work. Test six places × two choices, discovery distribution/depth eligibility, save/load, delayed once, duplicate clicks, quota rollback, no main-boss rewards/unlocks from secret fights, ending/atonement and unchanged combat stats/API hash. Then all legacy regression suites, canonical build and isolated browser staging. QA pages secret-*-staging.html use synthetic test saves and disable API before runtime. Staging hub secrets-staging.html. Publish live only after tests and mobile layout checks pass.
+
+## โหมดทดสอบชั่วคราว 100%
+เปิด testDiscovery100 ใน content/secrets.js ตามคำขอผู้ใช้ อัตราเดิมของทั้งหกแห่งยังอยู่ครบ สวิตช์นี้ทำให้ทุกป่าหลักพบทางลับหนึ่งครั้งในชั้น5–8 ต่อการเข้ารอบใหม่ ไม่แก้ผลสุ่มของรอบที่เริ่มไปแล้ว ไม่รีเซ็ตรางวัลหรือคำสัญญา หลังทดสอบตั้ง testDiscovery100:false เพื่อกลับสู่อัตราปกติ
