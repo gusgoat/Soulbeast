@@ -142,6 +142,11 @@
       "file": "specialEvents.js",
       "description": "Repeatable forest short stories and immediate rewards",
       "units": 1
+    },
+    "demonlordBalance": {
+      "file": "demonlordBalance.js",
+      "description": "Final demonlord encounter, bounded generals and summoned helper strength",
+      "units": 1
     }
   },
   "order": [
@@ -1225,6 +1230,7 @@
     "1079-uploadedAudio",
     "1080-secretLocations",
     "1081-specialEvents",
+    "1082-demonlordBalance",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -3705,7 +3711,7 @@
     "0339-v-----------Save": {
       "module": "persistence",
       "names": [
-        "và¸£à¸°à¸šà¸šà¸­à¸­à¸™à¹„à¸¥à¸™à¹ŒSave"
+        "v\u00c3\u00a0\u00c2\u00b8\u00c2\u00a3\u00c3\u00a0\u00c2\u00b8\u00c2\u00b0\u00c3\u00a0\u00c2\u00b8\u00c5\u00a1\u00c3\u00a0\u00c2\u00b8\u00c5\u00a1\u00c3\u00a0\u00c2\u00b8\u00c2\u00ad\u00c3\u00a0\u00c2\u00b8\u00c2\u00ad\u00c3\u00a0\u00c2\u00b8\u00e2\u201e\u00a2\u00c3\u00a0\u00c2\u00b9\u00e2\u20ac\u017e\u00c3\u00a0\u00c2\u00b8\u00c2\u00a5\u00c3\u00a0\u00c2\u00b8\u00e2\u201e\u00a2\u00c3\u00a0\u00c2\u00b9\u00c5\u2019Save"
       ],
       "type": "FunctionDeclaration"
     },
@@ -9126,6 +9132,14 @@
         "ForestSpecial"
       ],
       "type": "RepeatableForestEvents"
+    },
+    "1082-demonlordBalance": {
+      "module": "demonlordBalance",
+      "names": [
+        "DEMONLORD_BALANCE",
+        "prepareDemonEncounter"
+      ],
+      "type": "FinalBossEncounterBalance"
     }
   },
   "trailer": "\r\n\r\n"
