@@ -628,5 +628,95 @@
     "duration": 28.944,
     "decodeOK": true,
     "group": "bgWorldTreeMusic"
+  },
+  {
+    "id": "upload_41ac1161c8b2",
+    "title": "เสียงห้องบอสจอมมาร",
+    "asset": "assets/audio/20261020/41ac1161c8b26f5ceabbed1e.mp3",
+    "sha256": "41ac1161c8b26f5ceabbed1e3ee2016cacc60abfddfcbc7be64af1476392135b",
+    "bytes": 1089201,
+    "duration": 34.037531,
+    "decodeOK": true,
+    "group": "bgDemonBossRoomMusic"
+  },
+  {
+    "id": "upload_ef2b03ffd168",
+    "title": "เสียบรรยากาศผี",
+    "asset": "assets/audio/20261020/ef2b03ffd1681e0a7530f3ab.mp3",
+    "sha256": "ef2b03ffd1681e0a7530f3ab85a3d2bdba2d17c7aa757f3bc9c511d2cd4badce",
+    "bytes": 1064960,
+    "duration": 33.28,
+    "decodeOK": true,
+    "group": "bgGhostAmbientMusic"
+  },
+  {
+    "id": "upload_8f3321d5c6fa",
+    "title": "เดนตรีประตูห้องบอสเขามังกร",
+    "asset": "assets/audio/20261020/8f3321d5c6fa9c923baca49a.mp3",
+    "sha256": "8f3321d5c6fa9c923baca49ad05054070435d91f098eb275e3a721871af7c476",
+    "bytes": 1150560,
+    "duration": 57.528,
+    "decodeOK": true,
+    "group": "bgDragonBossDoorMusic"
+  },
+  {
+    "id": "upload_394f1ddfb257",
+    "title": "เสียงดนตรีพื้นหลังหลักของเกม",
+    "asset": "assets/audio/20261020/394f1ddfb2570de3ddd2287b.mp3",
+    "sha256": "394f1ddfb2570de3ddd2287b3a08b061a0f111398d3789dca98cd64dbb310c73",
+    "bytes": 1196199,
+    "duration": 37.381219,
+    "decodeOK": true,
+    "group": "bgMainThemeMusic"
+  },
+  {
+    "id": "upload_76e4f429449a",
+    "title": "ดนตรีระหว่างไขปริศนา",
+    "asset": "assets/audio/20261020/76e4f429449a697ad4f62e22.mp3",
+    "sha256": "76e4f429449a697ad4f62e22488881a1734ba1948ea2832b85320ab9f8164c72",
+    "bytes": 1603200,
+    "duration": 80.16,
+    "decodeOK": true,
+    "group": "bgPuzzleMusic"
+  },
+  {
+    "id": "upload_edbfc5290c65",
+    "title": "เสียงประตูห้องบอสทะเลทราย",
+    "asset": "assets/audio/20261020/edbfc5290c656eb652e5b876.mp3",
+    "sha256": "edbfc5290c656eb652e5b8768496669c16d0c63bafdcc424d98b9f7631675e46",
+    "bytes": 481489,
+    "duration": 15.046531,
+    "decodeOK": true,
+    "group": "bgDesertBossDoorMusic"
+  },
+  {
+    "id": "upload_ca13cc0ffe40",
+    "title": "เสียงดนตรีฉากน่าวิตกกังวล",
+    "asset": "assets/audio/20261020/ca13cc0ffe4074e5b00b42e2.mp3",
+    "sha256": "ca13cc0ffe4074e5b00b42e24fa0d0a2f7646be38e013815c66c2662cc3c986d",
+    "bytes": 666240,
+    "duration": 33.312,
+    "decodeOK": true,
+    "group": "bgAnxietyMusic"
+  },
+  {
+    "id": "upload_0ec632380285",
+    "title": "เสียงห้องบอส",
+    "asset": "assets/audio/20261020/0ec63238028507b2de14e0af.mp3",
+    "sha256": "0ec63238028507b2de14e0afad7915e79a6ebdf03c5f6838a8642b244f231ff3",
+    "bytes": 604369,
+    "duration": 18.886531,
+    "decodeOK": true,
+    "group": "bgBossRoomMusic"
+  },
+  {
+    "id": "upload_0e86c1cf8adc",
+    "title": "เสียงห้องบอสหุบเขาเซียน",
+    "asset": "assets/audio/20261020/0e86c1cf8adcec8f15b9849e.mp3",
+    "sha256": "0e86c1cf8adcec8f15b9849e551b6a05174bbfe77f74a2e77aa67f8567464e70",
+    "bytes": 955680,
+    "duration": 47.784,
+    "decodeOK": true,
+    "group": "bgMistBossRoomMusic"
   }
 ]
