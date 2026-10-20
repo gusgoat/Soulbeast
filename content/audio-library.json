@@ -442,10 +442,10 @@
   {
     "id": "upload_ca3311db0e99",
     "title": "เสียงเฉือนมีดหรือดาบโดนอวัยวะ",
-    "asset": "assets/audio/20261020/ca3311db0e99c8671cf6c0f7.mp3",
-    "sha256": "ca3311db0e99c8671cf6c0f7d427269e802749574203f225a1fa0b09250ef54b",
-    "bytes": 19968,
-    "duration": 0.624,
+    "asset": "assets/audio/20261020/19695e55920aeeccbcaabb29.mp3",
+    "sha256": "19695e55920aeeccbcaabb29a1bf9866b99625a349efc83dbd385ea61f3bb2cf",
+    "bytes": 12581,
+    "duration": 0.465215,
     "decodeOK": true,
     "group": "slashFx"
   },
@@ -462,10 +462,10 @@
   {
     "id": "upload_a072720df2b8",
     "title": "แก้เสียงฟันมีด1ครั้ง",
-    "asset": "assets/audio/20261020/a072720df2b8e9821dbab033.mp3",
-    "sha256": "a072720df2b8e9821dbab0335d4b439072293b4924348fe5022d068bfaf92bf2",
-    "bytes": 13824,
-    "duration": 0.432,
+    "asset": "assets/audio/20261020/bcc6365ab6895c517776f18a.mp3",
+    "sha256": "bcc6365ab6895c517776f18addc439a3855338b2022269967a8907b223bb2c73",
+    "bytes": 7566,
+    "duration": 0.259184,
     "decodeOK": true,
     "group": "daggerFx"
   },
