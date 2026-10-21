@@ -168,7 +168,7 @@ vRoster=function(tabs){let html=playRosterBase(tabs);if(S.ui.packFilter==='pendi
 // @soulbeast-end 0817-vRoster
 // @soulbeast-unit 1001-bagRecoveryActions
 
-function bagRecoveryActions(o,who,st){if(o.hp<=0||o.hp>=st.hp&&o.mp>=st.mp)return '';const items=Object.entries(CON).filter(([,it])=>!it.rev&&(it.hp&&o.hp<st.hp||it.mp&&o.mp<st.mp));return '<section class="bag-recovery" aria-label="ยาฟื้น HP และ MP"><b>ใช้ยากับตัวนี้</b><div class="row wrap bag-cure-actions">'+items.map(([id,it])=>'<button class="btn sm" data-a="use" data-v="'+id+':'+who+'" '+(!(S.P.items[id]>0)||statsLocked()||towerActive()?'disabled':'')+'>'+esc(it.n)+' · '+[it.hp?'HP +'+it.hp:'',it.mp?'MP +'+it.mp:''].filter(Boolean).join(' / ')+' · มี '+fmt(S.P.items[id]||0)+'</button>').join('')+'</div></section>';}
+function bagRecoveryActions(o,who,st){if(o.hp<=0||o.hp>=st.hp&&o.mp>=st.mp)return '';const items=Object.entries(CON).filter(([,it])=>!it.rev&&(it.hp&&o.hp<st.hp||it.mp&&o.mp<st.mp));return '<section class="bag-recovery" aria-label="ยาฟื้น HP และ MP"><b>ใช้ยากับตัวนี้</b><div class="row wrap bag-cure-actions">'+items.map(([id,it])=>'<button class="btn sm" data-a="use" data-v="'+id+':'+who+'" '+(!(S.P.items[id]>0)||statsLocked()||towerActive()?'disabled':'')+'><span class="bag-dose-icon" aria-hidden="true">'+itemIcon(id,24)+'</span><span>'+esc(it.n)+' · '+[it.hp?'HP +'+it.hp:'',it.mp?'MP +'+it.mp:''].filter(Boolean).join(' / ')+' · มี '+fmt(S.P.items[id]||0)+'</span></button>').join('')+'</div></section>';}
 // @soulbeast-end 1001-bagRecoveryActions
 // @soulbeast-unit 1002-bagVitals
 
