@@ -43,7 +43,7 @@
 if(SB_ENV!=='test')throw Error('QA requires test environment');
 save=()=>{};ForestRiddle.persist=()=>{};gsSave=async()=>{};lbSubmit=async()=>{};Music.sync=()=>{};
 const qaSel=document.getElementById('qaEvent');qaSel.innerHTML=FOREST_RIDDLES.map(d=>'<option value="'+d.id+'">'+ZN[d.zone-1].n+' · '+d.name+'</option>').join('');
-function qaBase(){handlers.newgame();migrate();S.P.name='ทดสอบปริศนา';S.P.cls='mage';S.P.lv=30;S.P.zoneMax=6;S.P.gold=1000;S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.ui.introSeen=true;S.ui.autoTeam=false;S.ui.autoPet=false;S.screen='zone';}
+function qaBase(){const input=document.createElement('input');input.id='nm';input.value='ทดสอบปริศนา';input.hidden=true;document.body.appendChild(input);handlers.newgame();input.remove();migrate();S.P.name='ทดสอบปริศนา';S.P.cls='mage';S.P.lv=30;S.P.zoneMax=6;S.P.gold=1000;S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.ui.introSeen=true;S.ui.autoTeam=false;S.ui.autoPet=false;S.screen='zone';}
 document.getElementById('qaLoad').onclick=()=>{qaBase();const d=FOREST_RIDDLES.find(x=>x.id===qaSel.value);S.zone={id:d.zone,depth:4,log:[],riddleRun:{[d.group]:{id:d.id,offered:true,used:false}}};ForestRiddle.enter(d.group);};
 function qaFate(low){qaBase();S.P.hp=Math.floor(pStats().hp*(low?.4:.8));S.zone={id:6,depth:4,log:[]};FalseBoss.enter();}
 document.getElementById('qaLow').onclick=()=>qaFate(true);document.getElementById('qaHigh').onclick=()=>qaFate(false);document.getElementById('qaMirror').onclick=()=>{qaBase();S.P.lv=10;S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.zone={id:1,depth:5,log:[],riddleSession:{id:'moon-reflections',token:'qa-mirror',answered:true,choice:'0',phase:'resolved',results:[]}};ForestRiddle.startMirror();render();};
