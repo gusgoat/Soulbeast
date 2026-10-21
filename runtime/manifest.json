@@ -162,6 +162,11 @@
       "file": "classRefresh.js",
       "description": "Follow-up class balance",
       "units": 1
+    },
+    "forestRiddles": {
+      "file": "forestRiddles.js",
+      "description": "Single-answer forest riddles, hazards and the optional false boss trial",
+      "units": 1
     }
   },
   "order": [
@@ -1249,6 +1254,7 @@
     "1083-autoSummon",
     "1084-classTen",
     "1085-classRefresh",
+    "1086-forestRiddles",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9185,6 +9191,15 @@
         "classRefreshStealthCrit"
       ],
       "type": "ClassBalanceRefresh"
+    },
+    "1086-forestRiddles": {
+      "module": "forestRiddles",
+      "names": [
+        "FOREST_RIDDLES",
+        "ForestRiddle",
+        "FalseBoss"
+      ],
+      "type": "ForestRiddleEvents"
     }
   },
   "trailer": "\r\n\r\n"

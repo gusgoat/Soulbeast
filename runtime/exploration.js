@@ -62,7 +62,7 @@ const BANDITS=SoulbeastContent.BANDITS();
 
 function newFork(){const z=S.zone,zd=ZN[z.id-1];z.ev=null;if(z.depth>=ZDEPTH){z.fork=null;return}
  const VH=['village','hospital'],clash=(a,k)=>k===a||(VH.includes(a)&&VH.includes(k));
- const keys=Object.keys(EV).filter(k=>k!=='beast'&&k!=='secret'&&k!=='specialEvent'&&(k!=='exit'||(z.depth>=3&&z.depth<ZDEPTH-1))&&!(zd.train&&['bandit','stranger'].includes(k)));
+ const keys=Object.keys(EV).filter(k=>k!=='beast'&&k!=='secret'&&k!=='specialEvent'&&k!=='riddleReward'&&k!=='riddleHazard'&&(k!=='exit'||(z.depth>=3&&z.depth<ZDEPTH-1))&&!(zd.train&&['bandit','stranger'].includes(k)));
  const w=ks=>wsel(Object.fromEntries(ks.map(k=>[k,EV[k].w])));let a,c;
  if(z.depth===ZDEPTH-1){a=pick(['spring','revival','cleanse','hospital','village']);c=Math.random()<.5?'beast':w(keys.filter(k=>!clash(a,k)&&k!=='exit'))}
  else{a=Math.random()<.5?'beast':w(keys);c=w(keys.filter(k=>!clash(a,k)))}
