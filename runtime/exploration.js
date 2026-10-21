@@ -210,7 +210,7 @@ function vZone(){const zs=S.zone,z={...ZN[zs.id-1],boss:zs.boss||ZN[zs.id-1].bos
   if(ev.type==='exit')extra=`<button class="btn pri full" data-a="exitzone">กลับเมือง</button>`;
   main=`<div class="card stack">${routePicture(ev.type,false,true)}<div class="row"><span class="door-g">${e.g}</span><div class="grow"><h3>${e.n}</h3></div></div><p style="margin:0">${ev.msg}</p>${extra}</div>
   <button class="btn ${ev.type==='chest'&&!ev.opened?'':'pri'} full" data-a="cont" style="min-height:50px">${contLbl}</button>`}
- else if(!zs.fork){main=`<div class="card stack" style="border-color:var(--bad)"><img class="boss-gate-art" src="assets/ui/boss-gates/gate-${z.id}.webp" alt="ประตูห้องบอส ${z.n}" width="480" height="320"><div class="row"><span class="door-g" style="color:var(--bad)">王</span><div class="grow"><h3>รังของ${z.boss.n}</h3><div class="sub">บอส Lv ${z.boss.lv} · ${tChips(SP[z.boss.sp].t)}${z.mini?` · มีสมุน ${z.mini} ตัว`:''} · หนีไม่ได้</div><small class="sub">ออร่าบอส: HP เพิ่มจากฐานบอส 15% · โจมตี +20% · ป้องกัน/MP +15% · เร็ว +10% · ผนึกแล้วออร่าหาย</small></div></div>
+ else if(!zs.fork){main=`<div class="card stack" style="border-color:var(--bad)"><img class="boss-gate-art" src="assets/ui/boss-gates/gate-${z.id}.webp" alt="ประตูห้องบอส ${z.n}" width="480" height="320"><div class="row"><span class="door-g" style="color:var(--bad)">王</span><div class="grow"><h3>รังของ${z.boss.n}</h3><div class="sub">บอส Lv ${z.boss.lv} · ${tChips(SP[z.boss.sp].t)}${z.mini?` · มีสมุน ${z.mini} ตัว`:''} · หนีไม่ได้</div><small class="sub">ออร่าบอส: HP เพิ่มจากฐานบอส 15% · โจมตี +50% · ป้องกัน +50% · MP +15% · เร็ว +10% · ผนึกแล้วออร่าหาย</small></div></div>
   <p class="sub" style="margin:0">ทางสิ้นสุดตรงนี้ ชนะบอสเพื่อกลับเมืองและปลดล็อกพื้นที่ถัดไป ถ้าต้องการใช้ยา เปิดกระเป๋าก่อนได้</p>
   <div class="row"><button class="btn" data-a="go" data-v="bag">กระเป๋า</button><button class="btn danger grow" data-a="boss">เข้าสู้บอส</button></div></div>`}
  else main=`<p class="sub" style="margin:0">ทางแยกข้างหน้า เลือกทางที่จะเดินต่อ</p><div class="grid2">${zs.fork.map((d,i)=>{const e=d.h?{g:'?',n:'ทางมืด',d:'มืดจนมองไม่เห็นว่ามีอะไรรออยู่'}:EV[d.k];return `<button class="door ${d.h?'hid':''}" data-a="fork" data-v="${i}">${routePicture(d.k,d.h)}<span class="sub">ทาง${i?'ขวา':'ซ้าย'}</span><span class="door-g">${e.g}</span><b>${e.n}</b><small>${e.d}</small></button>`}).join('')}</div>`;
@@ -361,7 +361,16 @@ const progressionWildUnit=wildUnit;
 // @soulbeast-end 1073-progressionWildUnit
 // @soulbeast-unit 1074-wildUnit
 
-wildUnit=function(sp,lv,i,boss){const u=progressionWildUnit(sp,lv,i,boss);if(!boss)return u;u.st.hp=Math.round(u.st.hp*1.15);u.st.mp=Math.round(u.st.mp*1.15);for(const k of ['patk','matk'])u.st[k]=Math.round(u.st[k]*1.2/1.15);u.st.spd=Math.round(u.st.spd*1.1);u.hp=u.st.hp;u.mp=u.st.mp;u.bossAura=true;return u;};
+function applyBossAura(u){
+ if(!u||u.bossAura)return u;
+ // Promote a secret guardian through the same boss baseline, preserving its encounter kind/name.
+ if(!u.boss){u.st.hp=Math.round(u.st.hp*2);for(const k of ['patk','matk','pdef','mdef'])u.st[k]=Math.round(u.st[k]*1.15);u.boss=true;u.r*=2.5;}
+ u.st.hp=Math.round(u.st.hp*1.15);u.st.mp=Math.round(u.st.mp*1.15);
+ for(const k of ['patk','matk'])u.st[k]=Math.round(u.st[k]*1.5/1.15);
+ for(const k of ['pdef','mdef'])u.st[k]=Math.round(u.st[k]*1.5/1.15);
+ u.st.spd=Math.round(u.st.spd*1.1);u.hp=u.st.hp;u.mp=u.st.mp;u.bossAura=true;u.bossAuraVersion=6;return u;
+}
+wildUnit=function(sp,lv,i,boss){const u=progressionWildUnit(sp,lv,i,boss);return boss?applyBossAura(u):u;};
 // @soulbeast-end 1074-wildUnit
 // @soulbeast-unit 1075-isBossDoorScene
 

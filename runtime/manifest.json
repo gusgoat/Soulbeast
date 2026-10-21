@@ -147,6 +147,21 @@
       "file": "demonlordBalance.js",
       "description": "Final demonlord encounter, bounded generals and summoned helper strength",
       "units": 1
+    },
+    "autoSummon": {
+      "file": "autoSummon.js",
+      "description": "Shared class summon autoplay",
+      "units": 1
+    },
+    "classTen": {
+      "file": "classTen.js",
+      "description": "Lv10 class combat abilities",
+      "units": 1
+    },
+    "classRefresh": {
+      "file": "classRefresh.js",
+      "description": "Follow-up class balance",
+      "units": 1
     }
   },
   "order": [
@@ -1231,6 +1246,9 @@
     "1080-secretLocations",
     "1081-specialEvents",
     "1082-demonlordBalance",
+    "1083-autoSummon",
+    "1084-classTen",
+    "1085-classRefresh",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -3711,7 +3729,7 @@
     "0339-v-----------Save": {
       "module": "persistence",
       "names": [
-        "v\u00c3\u00a0\u00c2\u00b8\u00c2\u00a3\u00c3\u00a0\u00c2\u00b8\u00c2\u00b0\u00c3\u00a0\u00c2\u00b8\u00c5\u00a1\u00c3\u00a0\u00c2\u00b8\u00c5\u00a1\u00c3\u00a0\u00c2\u00b8\u00c2\u00ad\u00c3\u00a0\u00c2\u00b8\u00c2\u00ad\u00c3\u00a0\u00c2\u00b8\u00e2\u201e\u00a2\u00c3\u00a0\u00c2\u00b9\u00e2\u20ac\u017e\u00c3\u00a0\u00c2\u00b8\u00c2\u00a5\u00c3\u00a0\u00c2\u00b8\u00e2\u201e\u00a2\u00c3\u00a0\u00c2\u00b9\u00c5\u2019Save"
+        "vÃ Â¸Â£Ã Â¸Â°Ã Â¸Å¡Ã Â¸Å¡Ã Â¸Â­Ã Â¸Â­Ã Â¸â„¢Ã Â¹â€žÃ Â¸Â¥Ã Â¸â„¢Ã Â¹Å’Save"
       ],
       "type": "FunctionDeclaration"
     },
@@ -9076,7 +9094,8 @@
     "1074-wildUnit": {
       "module": "exploration",
       "names": [
-        "wildUnit"
+        "wildUnit",
+        "applyBossAura"
       ],
       "type": "ExpressionStatement"
     },
@@ -9140,6 +9159,32 @@
         "prepareDemonEncounter"
       ],
       "type": "FinalBossEncounterBalance"
+    },
+    "1083-autoSummon": {
+      "module": "autoSummon",
+      "names": [
+        "chooseAutoSummon",
+        "autoSummonActPrevious",
+        "autoSummonChoosePrevious"
+      ],
+      "type": "ClassSummonAutoplay"
+    },
+    "1084-classTen": {
+      "module": "classTen",
+      "names": [
+        "class10Invisible",
+        "class10OpeningOrder",
+        "class10BlockHit"
+      ],
+      "type": "ClassTenAbilities"
+    },
+    "1085-classRefresh": {
+      "module": "classRefresh",
+      "names": [
+        "takeFreeForm",
+        "classRefreshStealthCrit"
+      ],
+      "type": "ClassBalanceRefresh"
     }
   },
   "trailer": "\r\n\r\n"

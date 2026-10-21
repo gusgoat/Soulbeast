@@ -248,8 +248,8 @@ showEvolutionNotice=function(){try{return progressionEvolutionNotice();}catch(er
 // @soulbeast-end 0909-showEvolutionNotice
 // @soulbeast-unit 1047-classCombatFactor
 
-function classCombatFactor(u,t,sk){const type=sk.t==='auto'?u.atkType:sk.t;let f=1;if(isBalancedPvp()&&u.kind==='pet'){const n=Math.max(1,sideOf(u).filter(x=>x.kind==='pet'&&x.owner===u.owner&&x.hp>0).length);const hero=sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner),growth=hero?.cls&&baseOf(hero.cls)==='summoner'?.35:.15;f*=(1+growth*(n-1))/n;if(t.kind==='player')f*=.6;}if(u.cls&&baseOf(u.cls)==='thief'&&['p','h'].includes(type)){if(t.cls){const victim=baseOf(t.cls);if(['mage','gunner','archer'].includes(victim))f*=1.25;else if(['gladiator','druid'].includes(victim))f*=.4;}}
-if(u.cls&&t.cls&&baseOf(t.cls)==='gladiator'&&['mage','archer'].includes(baseOf(u.cls)))f*=1.35;
+function classCombatFactor(u,t,sk){const type=sk.t==='auto'?u.atkType:sk.t;let f=1;if(isBalancedPvp()&&u.kind==='pet'){const n=Math.max(1,sideOf(u).filter(x=>x.kind==='pet'&&x.owner===u.owner&&x.hp>0).length);const hero=sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner),growth=hero?.cls&&baseOf(hero.cls)==='summoner'?.35:.15;f*=(1+growth*(n-1))/n;if(t.kind==='player')f*=.6;}if(u.cls&&baseOf(u.cls)==='thief'&&['p','h'].includes(type)){if(t.cls){const victim=baseOf(t.cls);if(['mage','gunner','archer'].includes(victim))f*=isBalancedPvp()?1.15:1.25;else if(['gladiator','druid'].includes(victim))f*=isBalancedPvp()?.7:.4;}}
+if(u.cls&&t.cls&&baseOf(t.cls)==='gladiator'&&['mage','archer'].includes(baseOf(u.cls)))f*=isBalancedPvp()?1.2:1.35;
 if(isBalancedPvp()){if(u.cls==='packlord')f*=.75;if(t.cls==='packlord')f*=1.25;}
 if(isBalancedPvp()&&u.cls&&baseOf(u.cls)==='mage'&&type==='m')f*=1.15;
 if(u.cls==='gunsaint'&&type==='p')f*=.95;if(hasPas(u,'arcaneMastery')&&type==='m')f*=1.15;return f;}
@@ -259,7 +259,7 @@ if(u.cls==='gunsaint'&&type==='p')f*=.95;if(hasPas(u,'arcaneMastery')&&type==='m
 const balanceCareerPanel=careerPanel;
 // @soulbeast-end 1068-balanceCareerPanel
 // @soulbeast-unit 1069-careerPanel
-careerPanel=function(cls){const base=baseOf(cls),note=base==='thief'?'ลอบสังหาร: โจมตีกายภาพใส่นักเวทย์ มือปืน และนักธนูแรงขึ้น 25% แต่ใส่กลาดิเอเตอร์และดรูอิดเบาลง 60%':base==='gladiator'?'ตั้งรับสวนกลับ: สะท้อนกายภาพ 15% และมีโอกาสสวน 25% โจมตีโจรมีความแม่นยำขั้นต่ำ 80% แต่รับมือเวทและการยิงของนักธนูได้ยากขึ้น':base==='druid'?'ผิวพงไพร: สะท้อนกายภาพ 15% โจรไม่สามารถคริติคอลใส่ได้ และมีความแม่นยำขั้นต่ำ 80% เวลาโจมตีโจร':base==='mage'||base==='archer'?'เจาะแนวหน้า: โจมตีผู้สืบสายกลาดิเอเตอร์แรงขึ้น 35% นักธนูเจาะเกราะกลาดิเอเตอร์เพิ่ม 30% แต่ต้องระวังการลอบสังหารของโจร':'';return balanceCareerPanel(cls)+(cls==='packlord'?'<p class="sub">PVP: แบ่งพลังนำฝูง ดาเมจผู้ผนึก 75% และรับดาเมจ 125% เพื่อแลกกับความคล่องตัวและอสูรสองตัว</p>':'')+(note?'<p class="sub">'+note+'</p>':'');};
+careerPanel=function(cls){const base=baseOf(cls),note=base==='thief'?'ลอบสังหาร: โจมตีกายภาพใส่นักเวทย์ มือปืน และนักธนูแรงขึ้น 25% แต่ใส่กลาดิเอเตอร์และดรูอิดเบาลง 60% (PVP: แรงขึ้น 15% และเบาลง 30% ตามลำดับ)':base==='gladiator'?'ตั้งรับสวนกลับ: สะท้อนกายภาพ 15% และมีโอกาสสวน 25% โจมตีโจรมีความแม่นยำขั้นต่ำ 80% แต่รับมือเวทและการยิงของนักธนูได้ยากขึ้น':base==='druid'?'ผิวพงไพร: สะท้อนกายภาพ 15% โจรไม่สามารถคริติคอลใส่ได้ และมีความแม่นยำขั้นต่ำ 80% เวลาโจมตีโจร':base==='mage'||base==='archer'?'เจาะแนวหน้า: โจมตีผู้สืบสายกลาดิเอเตอร์แรงขึ้น 35% (PVP 20%) นักธนูเจาะเกราะกลาดิเอเตอร์เพิ่ม 30% แต่ต้องระวังการลอบสังหารของโจร':'';return balanceCareerPanel(cls)+(cls==='packlord'?'<p class="sub">PVP: แบ่งพลังนำฝูง ดาเมจผู้ผนึก 75% และรับดาเมจ 125% เพื่อแลกกับความคล่องตัวและอสูรสองตัว</p>':'')+(note?'<p class="sub">'+note+'</p>':'');};
 // @soulbeast-end 1069-careerPanel
 // @soulbeast-unit 1072-progressionRewardExp
 

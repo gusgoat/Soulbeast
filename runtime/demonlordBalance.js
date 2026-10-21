@@ -9,4 +9,16 @@ const demonBalanceSummonPrevious=bossSummonLegends;
 bossSummonLegends=function(u,count){const out=demonBalanceSummonPrevious(u,count),b=B();if(out&&u.demonBalanceVersion&&u.sp==='demonlord'&&!u.immortalWorld&&b?.kind==='boss'&&Number(b.meta)===6){for(const pet of b.enemies.filter(x=>x.bossHelper&&x.summonedBy===u.id&&!x.demonBalanceVersion))scaleDemonEncounterUnit(pet,DEMONLORD_BALANCE.helper);}return out;};
 const demonBalanceZonePrevious=vZone;
 vZone=function(){const html=demonBalanceZonePrevious(),z=S.zone&&ZN[S.zone.id-1],boss=z&&(forestPassed(z)?S.zone.boss||z.boss:z.boss);if(!isBossDoorScene()||z?.id!==6||boss?.sp!=='demonlord')return html;return html.replace(/ออร่าบอส:[^<]*/,'ศึกสุดท้าย: แม่ทัพสุ่ม 2 คนเน้นท่าโจมตี · จอมมารใช้ทุกสกิลและเรียกอสูรตำนาน Lv 40 ได้ 1 ตัว · ผนึกจอมมารไม่ได้');};
+// Encounter-specific strength on top of the existing aura. Never mutate species or pets.
+const STAGE_BOSS_STRENGTH={1:{sp:'tanuki',factor:2.3},2:{sp:'kitsune',factor:2},3:{sp:'sphinx',factor:2},5:{factor:7}};
+function prepareStageBossStrength(enemies,kind,meta){
+ const rule=STAGE_BOSS_STRENGTH[Number(meta)];if(kind!=='boss'||!rule)return false;
+ const u=enemies.find(x=>x.boss&&x.side==='enemy'&&!x.immortalWorld&&!x.bossHelper&&!x.temporary&&(!rule.sp||x.sp===rule.sp));
+ if(!u||u.stageBossStrengthVersion)return false;
+ u.st={...u.st};for(const key of ['hp','patk','matk','pdef','mdef'])u.st[key]=Math.max(1,Math.round(u.st[key]*rule.factor));
+ u.hp=u.st.hp;u.stageBossStrengthVersion=1;u.stageBossStrengthFactor=rule.factor;return true;
+}
+const stageBossStrengthStart=startBattle;startBattle=function(enemies,kind,meta,...args){prepareStageBossStrength(enemies,kind,meta);return stageBossStrengthStart(enemies,kind,meta,...args);};
+const stageBossStrengthZone=vZone;vZone=function(){const html=stageBossStrengthZone(),z=S.zone&&ZN[S.zone.id-1],rule=z&&STAGE_BOSS_STRENGTH[z.id],boss=z&&(forestPassed(z)?S.zone.boss||z.boss:z.boss);if(!isBossDoorScene()||!rule||rule.sp&&boss?.sp!==rule.sp)return html;return html.replace('· ผนึกแล้วออร่าหาย</small>','· ผนึกแล้วออร่าหาย</small><small class="sub">พลังเฉพาะบอส: HP / โจมตี / ป้องกัน +'+Math.round((rule.factor-1)*100)+'% เพิ่มจากออร่า</small>');};
+
 // @soulbeast-end 1082-demonlordBalance

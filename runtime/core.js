@@ -218,12 +218,12 @@ const uById=id=>allU().find(u=>u.id===id);
 // @soulbeast-unit 0251-newRound
 
 function newRound(){const b=B();b.round++;const sp=u=>eff(u,'spd')*(b.round===1&&hasPas(u,'firstblood')?2:1);
- const ord=allU().filter(u=>u.hp>0).map(u=>[u,sp(u)*(0.97+Math.random()*.06)]).sort((x,y)=>y[1]-x[1]);b.queue=[];
+ const ord=allU().filter(u=>u.hp>0).map(u=>[u,sp(u)*(0.97+Math.random()*.06)]).sort((x,y)=>class10OpeningOrder(x[0],y[0],b)||y[1]-x[1]);b.queue=[];
  ord.forEach(([u])=>{b.queue.push(u.id);const opp=foesOf(u).filter(x=>x.hp>0);if(opp.length&&sp(u)>=2*Math.max(...opp.map(sp)))b.queue.push(u.id+'*')});advance()}
 // @soulbeast-end 0251-newRound
 // @soulbeast-unit 0253-releaseCharge
 
-function releaseCharge(u){const b=B();if(!b||b.over)return;const c=u.charging;u.charging=null;const t=c.tid&&uById(c.tid);blog(`${u.name} ปลดปล่อยพลัง!`);act(u,c.id,t&&t.hp>0?t:null,null,true);if(checkEnd()){render();return}battleLater(advance,650);render()}
+function releaseCharge(u){const b=B();if(!b||b.over)return;const c=u.charging;u.charging=null;u.pendingStealthChargeCrit=!!c.stealthCrit;const t=c.tid&&uById(c.tid);blog(`${u.name} ปลดปล่อยพลัง!`);act(u,c.id,t&&t.hp>0?t:null,null,true);if(checkEnd()){render();return}battleLater(advance,650);render()}
 // @soulbeast-end 0253-releaseCharge
 // @soulbeast-unit 0254-checkEnd
 
@@ -379,7 +379,7 @@ const LOCAL_REPLAYS={};
 // @soulbeast-end 0500-LOCAL_REPLAYS
 // @soulbeast-unit 0501-localReplay
 
-function localReplay(mode,room){if(!room?.replay?.frames?.length||room.status!=='finished')return;const key=mode+':'+room.id;if(LOCAL_REPLAYS[key])return;LOCAL_REPLAYS[key]=true;const state=mode==='camp'?CAMP:mode==='pvp'?PVP:WORLD,final=JSON.parse(JSON.stringify(room)),frames=room.replay.frames,battle=JSON.parse(JSON.stringify(room.replay.initial));let i=0;state.room={...room,status:'active',battle,replaying:true};function tick(){if(state.room?.id!==room.id)return;const prior=JSON.parse(JSON.stringify(state.room)),f=frames[i++];if(!f){state.room=final;render();return}for(const u of f.spawns||[])if(![...battle.allies,...battle.enemies].some(x=>x.id===u.id))(u.side==='ally'?battle.allies:battle.enemies).push(JSON.parse(JSON.stringify(u)));if(f.enemyIds)battle.enemies=battle.enemies.filter(u=>f.enemyIds.includes(u.id));for(const [id,hp,mp,status,taunt] of f.units){const u=[...battle.allies,...battle.enemies].find(u=>u.id===id);if(u)Object.assign(u,{hp,mp,status,taunt});}Object.assign(battle,{cur:f.cur,round:f.round,turns:f.turns,bossTurns:f.bossTurns,damageTotal:f.damageTotal,damageBy:f.damageBy,effects:f.effects,log:f.log});if(S.screen===(mode==='camp'?'camp':mode==='pvp'?'pvp':'world')){render();onlineSkillEffects(prior,state.room,mode);}setTimeout(tick,850);}tick();}
+function localReplay(mode,room){if(!room?.replay?.frames?.length||room.status!=='finished')return;const key=mode+':'+room.id;if(LOCAL_REPLAYS[key])return;LOCAL_REPLAYS[key]=true;const state=mode==='camp'?CAMP:mode==='pvp'?PVP:WORLD,final=JSON.parse(JSON.stringify(room)),frames=room.replay.frames,battle=JSON.parse(JSON.stringify(room.replay.initial));let i=0;state.room={...room,status:'active',battle,replaying:true};function tick(){if(state.room?.id!==room.id)return;const prior=JSON.parse(JSON.stringify(state.room)),f=frames[i++];if(!f){state.room=final;render();return}applyClass10Replay(battle,f);for(const u of f.spawns||[])if(![...battle.allies,...battle.enemies].some(x=>x.id===u.id))(u.side==='ally'?battle.allies:battle.enemies).push(JSON.parse(JSON.stringify(u)));if(f.enemyIds)battle.enemies=battle.enemies.filter(u=>f.enemyIds.includes(u.id));for(const [id,hp,mp,status,taunt] of f.units){const u=[...battle.allies,...battle.enemies].find(u=>u.id===id);if(u)Object.assign(u,{hp,mp,status,taunt});}Object.assign(battle,{cur:f.cur,round:f.round,turns:f.turns,bossTurns:f.bossTurns,damageTotal:f.damageTotal,damageBy:f.damageBy,effects:f.effects,log:f.log});if(S.screen===(mode==='camp'?'camp':mode==='pvp'?'pvp':'world')){render();onlineSkillEffects(prior,state.room,mode);}setTimeout(tick,850);}tick();}
 // @soulbeast-end 0501-localReplay
 // @soulbeast-unit 0514-BEAST_RARITY_LABELS
 

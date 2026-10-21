@@ -64,7 +64,7 @@ function aiChoose(u){const form=chooseAutoForm(u);if(form)return [form,foesOf(u)
 // @soulbeast-unit 0284-aiAct
 
 function aiAct(){const b=B();if(!b||b.over)return;const u=uById(b.cur);if(!u||u.hp<=0){advance();return}
- if(u.side==='ally'&&!teamAutoUnit(u)){b.menu='main';render();return}const [id,t,a]=aiChoose(u);if(!act(u,id,t,a))act(u,'attack',t);if(checkEnd()){render();return}battleLater(advance,600);render()}
+ if(u.side==='ally'&&!teamAutoUnit(u)){b.menu='main';render();return}const [id,t,a]=aiChoose(u);if(!act(u,id,t,a))act(u,'attack',t);if(checkEnd()){render();return}if(takeFreeForm(u)){battleLater(aiAct,150);render();return}battleLater(advance,600);render()}
 // @soulbeast-end 0284-aiAct
 // @soulbeast-unit 0426-teamAutoAllowed
 
@@ -113,7 +113,7 @@ teamAutoUnit=function(u){return forestAutoLocked()&&u?.side==='ally'?false:fores
 function combatSkillScore(u,id,target,targets=foesOf(u).filter(x=>x.hp>0)){
  const sk=pvpSkill(id);if(!sk||!['p','m','h','auto'].includes(sk.t)||!targets.length)return 0;
  const type=sk.t==='auto'?u.atkType:sk.t,atk=type==='h'?(eff(u,'patk')+eff(u,'matk'))/2:eff(u,type==='m'?'matk':'patk'),list=sk.all?targets:sk.rt?targets:[target||targets[0]];
- let score=0;for(const t of list){if(type===t.immune&&type!=='h')continue;const m=typeMult(effectiveElement(u,sk),t.types)*(sk.el==='ground'&&hasPas(t,'levitate')?0:1);if(!m)continue;let def=type==='h'?(eff(t,'pdef')+eff(t,'mdef'))/2:eff(t,type==='m'?'mdef':'pdef');if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0)+frontlinePierce(u,t));const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1,crit=hasPas(t,'nocrit')||rogueCritBlocked(u,t)?0:Math.min(isBalancedPvp()?65:100,eff(u,'crit')+(sk.cb||0))/100;let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*(sk.all?areaDamageScale(sk,targets.length):1)*(sk.hits||1)*(u.charge||1)*(1+crit*((hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5)-1))*classCombatFactor(u,t,sk)*pvpDamageFactor(u,t);if(type==='h'&&t.immune)d*=.5;if(hasPas(t,'thick')&&['fire','ice'].includes(sk.el))d*=.5;if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;d*=sk.acc>=100?1:hitChance(u,t,sk)/100;score+=d;}
+ let score=0;for(const t of list){if(type===t.immune&&type!=='h')continue;const m=typeMult(effectiveElement(u,sk),t.types)*(sk.el==='ground'&&hasPas(t,'levitate')?0:1);if(!m)continue;let def=type==='h'?(eff(t,'pdef')+eff(t,'mdef'))/2:eff(t,type==='m'?'mdef':'pdef');if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0)+frontlinePierce(u,t));const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1,crit=classRefreshStealthCrit(u)?1:hasPas(t,'nocrit')||rogueCritBlocked(u,t)?0:Math.min(isBalancedPvp()?65:100,eff(u,'crit')+(sk.cb||0))/100;let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*(sk.all?areaDamageScale(sk,targets.length):1)*(sk.hits||1)*(u.charge||1)*(1+crit*((hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5)-1))*classCombatFactor(u,t,sk)*pvpDamageFactor(u,t);if(type==='h'&&t.immune)d*=.5;if(hasPas(t,'thick')&&['fire','ice'].includes(sk.el))d*=.5;if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;d*=sk.acc>=100?1:hitChance(u,t,sk)/100;score+=d;}
  return score/(sk.ct?2:1)/(sk.rt?targets.length:1);
 }
 // @soulbeast-end 1060-combatSkillScore

@@ -6,14 +6,14 @@ function endUnitTurn(u){if(!u||u.hp<=0)return;for(const d of (u.dots||[])){const
 // @soulbeast-end 0099-endUnitTurn
 // @soulbeast-unit 0100-beginUnitTurn
 
-function beginUnitTurn(u){u.cooldowns=u.cooldowns||{};for(const k in u.cooldowns)u.cooldowns[k]=Math.max(0,u.cooldowns[k]-1);if(u.enchantTurns>0&&!--u.enchantTurns)delete u.enchant;if(u.immuneTurns>0&&!--u.immuneTurns)delete u.immune;if(u.summonLife!=null&&!--u.summonLife){u.hp=0;blog(u.name+' หมดเวลาอัญเชิญ');return true}return false}
+function beginUnitTurn(u){u.freeFormUsed=false;u.freeFormPending=false;u.cooldowns=u.cooldowns||{};for(const k in u.cooldowns)u.cooldowns[k]=Math.max(0,u.cooldowns[k]-1);if(u.enchantTurns>0&&!--u.enchantTurns)delete u.enchant;if(u.immuneTurns>0&&!--u.immuneTurns)delete u.immune;if(u.summonLife!=null&&!--u.summonLife){u.hp=0;blog(u.name+' หมดเวลาอัญเชิญ');return true}return false}
 // @soulbeast-end 0100-beginUnitTurn
 // @soulbeast-unit 0102-addTemporary
 
 function addTemporary(u,sk){const list=sideOf(u);if(list.filter(x=>x.temporary&&x.hp>0).length>=2)return false;let n;
- if(sk.summon==='clone'){n=JSON.parse(JSON.stringify(u));n.st=Object.fromEntries(Object.entries(u.st).map(([k,v])=>[k,Math.max(1,Math.round(v*.5))]));n.hp=n.st.hp;n.mp=n.st.mp;n.skills=n.skills.slice();n.name='ร่างแยก '+u.name;}
+ if(sk.summon==='clone'){n=JSON.parse(JSON.stringify(u));n.st=Object.fromEntries(Object.entries(u.st).map(([k,v])=>[k,Math.max(k==='hp'?1:0,Math.round(v*(k==='hp'?.5:.8)))]));n.hp=n.st.hp;n.mp=n.st.mp;n.skills=n.skills.slice();n.name='ร่างแยก '+u.name;n.shadowOwner=u.id;}
  else if(sk.summon==='golem'){n=wildUnit('bastion_golem',u.lv,0);n.name='โกเลมอัญเชิญ';n.taunt=3;n.skills=['attack','guard_taunt'];}
- else{const P=u.kind==='player'||u.owner!=null?S.P:u;if(!Number.isFinite(P.gold))P.gold=u.lv*30;const cost=Math.floor(Math.max(0,P.gold)*.10);if(cost<1)return false;P.gold-=cost;const jobs=Object.keys(CLS).filter(c=>baseOf(c)!=='merchant'&&tierOf(c)<=Math.max(0,tierOf(u.cls)-1));const lv=Math.max(1,Math.floor(u.lv*.75));const eligible=jobs.filter(c=>tierOf(c)===0||lv>=(tierOf(c)===1?25:40));n=humanUnit('ทหารรับจ้าง',pick(eligible),lv,0);n.skills=n.skills.filter(id=>!SK[id].summon);}
+ else{const P=u.kind==='player'||u.owner!=null?S.P:u;if(!Number.isFinite(P.gold))P.gold=u.lv*30;const cost=Math.floor(Math.max(0,P.gold)*.10);if(cost<1)return false;P.gold-=cost;const jobs=Object.keys(CLS).filter(c=>baseOf(c)!=='merchant'&&tierOf(c)<=Math.max(0,tierOf(u.cls)-1));const lv=Math.max(1,Math.floor(u.lv*.85));const eligible=jobs.filter(c=>tierOf(c)===0||lv>=(tierOf(c)===1?25:40));n=humanUnit('ทหารรับจ้าง',pick(eligible),lv,0);n.skills=n.skills.filter(id=>!SK[id].summon);}
  n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;list.push(n);B().queue.push(n.id);return true;
 }
 // @soulbeast-end 0102-addTemporary
@@ -156,12 +156,12 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
   blog(`${u.name} ใช้ ${sk.n}${sk.tg==='team'?' ให้ทั้งทีม':list[0]!==u?` ให้ ${list[0].name}`:''}`);return true}
  let side=foesOf(u);
  if(u.status.charm&&Math.random()<.45){side=mates;tgt=pick(mates.filter(x=>x.hp>0));blog(`${u.name} ถูกมนต์สะกด หันไปโจมตี ${tgt.name}!`)}
- const alive=side.filter(x=>x.hp>0);if(!alive.length)return true;
+ const alive=side.filter(x=>x.hp>0&&(sk.all||!class10Invisible(x)));if(!alive.length)return true;
  if(!tgt||tgt.hp<=0||!side.includes(tgt))tgt=alive[0];
  blog(`${u.name} ใช้ ${sk.n}${sk.all?'':sk.rt?'':` ใส่ ${tgt.name}`}`);
  if(sk.all&&['p','m','h'].includes(sk.t))vfx('flash',null,{el:sk.el});
  if(sk.all)alive.forEach(t=>u.hp>0&&hitOne(u,sk,t,areaDamageScale(sk,alive.length),alive.length));
- else{for(let i=0;i<(sk.hits||1);i++){const al=side.filter(x=>x.hp>0);if(!al.length||u.hp<=0)break;const t=sk.rt?pick(al):tgt.hp>0?tgt:al[0];hitOne(u,sk,t,1)}
+ else{for(let i=0;i<(sk.hits||1);i++){const al=side.filter(x=>x.hp>0&&!class10Invisible(x));if(!al.length||u.hp<=0)break;const t=sk.rt?pick(al):tgt.hp>0?tgt:al[0];hitOne(u,sk,t,1)}
   if(hasPas(u,'multihit')&&['p','m','h','auto'].includes(sk.t)&&Math.random()<.3&&tgt.hp>0){blog(`${u.name} โจมตีซ้ำด้วยเศียรอื่น!`);hitOne(u,sk,tgt,.5)}}
  if(sk.self&&u.hp>0)hurt(u,Math.round(u.st.hp*sk.self));
  const dmgSk=['p','m','h','auto'].includes(sk.t);if(dmgSk&&u.charge)u.charge=0;
@@ -176,11 +176,11 @@ function turnStart(u){if(beginUnitTurn(u))return true;const skip=turnStartBase(u
 // @soulbeast-unit 0264-act
 
 function act(u,id,tgt,atgt,free){const sk=pvpSkill(id);if(!sk)return false;if(!free&&cooldownOf(u,id)>0){blog(sk.n+' กำลังคูลดาวน์');return false}if(!free&&costOf(u,sk)>u.mp)return false;
- if(!sk.all&&!sk.rt&&['p','m','h','auto','status','debuff'].includes(sk.t)){const forced=foesOf(u).find(x=>x.hp>0&&x.taunt>0);if(forced)tgt=forced}
+ if(!sk.all&&!sk.rt&&['p','m','h','auto','status','debuff'].includes(sk.t)){const forced=foesOf(u).find(x=>x.hp>0&&x.taunt>0&&!class10Invisible(x));if(forced)tgt=forced}
  let ok;const outer=!B().acting;B().acting=(B().acting||0)+1;
  try{if(sk.summon){ok=addTemporary(u,sk);if(ok){u.mp-=costOf(u,sk);blog(u.name+' ใช้ '+sk.n);Sound.fx('charge');vfx('buff',u.id)}}else{ok=actBase(u,id,tgt,atgt,free);if(ok&&sk.immune){u.immune=sk.immune;u.immuneTurns=2}if(ok&&sk.enchant){u.enchant=sk.enchant;u.enchantTurns=4}}}
  finally{B().acting--}
- if(ok&&!free&&sk.cd){u.cooldowns=u.cooldowns||{};u.cooldowns[id]=sk.cd===1?2:sk.cd}if(ok&&outer)endUnitTurn(u);return ok}
+ if(ok&&!free&&sk.cd){u.cooldowns=u.cooldowns||{};u.cooldowns[id]=sk.cd===1?2:sk.cd}if(ok&&outer&&!u.freeFormPending)endUnitTurn(u);return ok}
 // @soulbeast-end 0264-act
 // @soulbeast-unit 0279-hitOne
 
@@ -191,8 +191,8 @@ function hitOne(u,sk,t,scale,areaCount=0){
  if(m===0){blog(`ไม่มีผลต่อ ${t.name}`);fxAdd(t,'×0','muted');ExtraAudio.play('miss');vfx('miss',t.id);return}
  if(!sk.acc||sk.acc<100)if(Math.random()*100>hitChance(u,t,sk)){blog(`${t.name} หลบได้`);fxAdd(t,'พลาด','muted');ExtraAudio.play('miss');vfx('miss',t.id);return}
  const tx=hasPas(u,'toxin')?1.5:1;
- if(!dmgT){vfx('debuff',t.id,{el:sk.el,c:sk.el?null:'#a07ad8'});addBuffs(t,{bf:sk.bf,tn:sk.tn});if(sk.bf)fxAdd(t,'↓','bad');if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*tx);return}
- const type=sk.t==='auto'?u.atkType:sk.t;if((type==='p'&&t.immune==='p')||(type==='m'&&t.immune==='m')){blog(t.name+' ป้องกันสมบูรณ์');vfx('buff',t.id);return}if(type==='h'&&t.immune)scale*=.5;let atk,def;
+ if(!dmgT){if(class10BlockHit(u,sk,t,false))return;vfx('debuff',t.id,{el:sk.el,c:sk.el?null:'#a07ad8'});addBuffs(t,{bf:sk.bf,tn:sk.tn});if(sk.bf)fxAdd(t,'↓','bad');if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*tx);return}
+ const type=sk.t==='auto'?u.atkType:sk.t;if((type==='p'&&t.immune==='p')||(type==='m'&&t.immune==='m')){blog(t.name+' ป้องกันสมบูรณ์');vfx('buff',t.id);return}if(class10BlockHit(u,sk,t,true))return;if(type==='h'&&t.immune)scale*=.5;let atk,def;
  if(type==='h'){atk=(eff(u,'patk')+eff(u,'matk'))/2;def=(eff(t,'pdef')+eff(t,'mdef'))/2}else{atk=eff(u,type==='p'?'patk':'matk');def=eff(t,type==='p'?'pdef':'mdef')}
  if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0)+frontlinePierce(u,t));
  const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1;
@@ -200,8 +200,8 @@ function hitOne(u,sk,t,scale,areaCount=0){
  d*=pvpDamageFactor(u,t)*classCombatFactor(u,t,sk);
  if(hasPas(t,'thick')&&(sk.el==='fire'||sk.el==='ice'))d*=.5;
  if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;
- const crit=!hasPas(t,'nocrit')&&!rogueCritBlocked(u,t)&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0));if(crit)d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5; if(crit)ExtraAudio.skill(VSKID.get(sk),u,true);
- d=Math.max(1,Math.round(d));
+ const crit=classRefreshStealthCrit(u)||(!hasPas(t,'nocrit')&&!rogueCritBlocked(u,t)&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0)));if(crit)d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5; if(crit)ExtraAudio.skill(VSKID.get(sk),u,true);
+ d*=hasPas(t,'counter50')?.5:hasPas(t,'reflect50')?.8:1;d=Math.max(1,Math.round(d));if(classDefenseAbsorb(u,sk,t,d))return;
  if(hasPas(t,'sturdy')&&t.hp===t.st.hp&&d>=t.hp&&t.hp>1){d=t.hp-1;blog(`${t.name} อึดทนไว้ได้!`)}
  blog(`→ ${t.name} ${d} ดาเมจ${crit?' คริติคอล!':''}${m>1?' ได้ผลดีมาก':m<1?' ไม่ค่อยได้ผล':''}`);
  vfx('hit',t.id,{skill:VSKID.get(sk)||sk._pvpId,el:sk.el,phys:type!=='m',crit});
@@ -210,7 +210,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
  if(hasPas(u,'manadrain'))u.mp=Math.min(u.st.mp,u.mp+Math.round(d*.08));
  if(sk.steal)steal(u,t);
  if(sk.gold&&u.kind==='player'){const g=u.lv*8;S.P.gold+=g;ExtraAudio.play('coin');blog(`ได้ ${g} เหรียญ`)}
- if((type==='p'||type==='h')&&u.hp>0){const tf=hasPas(t,'thorns2')?.4:hasPas(t,'thorns')?.15:0;if(tf){const r=Math.max(1,Math.round(d*tf));blog(`${u.name} โดนสะท้อน ${r}`);if(isWorldBattle()&&u.immortalWorld)B().wbDamageOwner=t.owner;hurt(u,r)}
+ reflectShieldDamage(u,t,d);if((type==='p'||type==='h')&&u.hp>0){const tf=(hasPas(t,'counter50')||hasPas(t,'reflect50'))?0:hasPas(t,'thorns2')?.4:hasPas(t,'thorns')?.25:0;if(tf){const r=Math.max(1,Math.round(d*tf));blog(`${u.name} โดนสะท้อน ${r}`);if(isWorldBattle()&&u.immortalWorld)B().wbDamageOwner=t.owner;hurt(u,r)}
   if(hasPas(t,'flameBody')&&Math.random()<.25)applyStatus(u,'burn',1);if(hasPas(t,'staticbody')&&Math.random()<.25)applyStatus(u,'para',1);
   const pt=hasPas(u,'poisonTouch2')?.5:hasPas(u,'poisonTouch')?.25:0;if(pt)applyStatus(t,'poison',pt*tx);
   if(t.hp>0&&u.hp>0&&hasPas(t,'counter')&&!t._ctr&&Math.random()<.25){t._ctr=1;blog(`${t.name} สวนกลับ!`);hitOne(t,SK.attack,u,1);t._ctr=0}}

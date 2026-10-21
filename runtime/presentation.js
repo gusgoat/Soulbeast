@@ -101,7 +101,7 @@ const tChips=ts=>(ts||[]).map(elChip).join('');
 // @soulbeast-end 0206-tChips
 // @soulbeast-unit 0207-pasChip
 
-const pasChip=k=>k&&PAS[k]?`<span class="chip pas" title="${esc(PAS[k].d)}">${PAS[k].n}</span>`:'';
+const pasChip=k=>k&&PAS[k]?`<span class="chip pas" title="${esc(PAS[k].d)}">${classAbilityImage(k,26)}${PAS[k].n}</span>`:'';
 // @soulbeast-end 0207-pasChip
 // @soulbeast-unit 0208-bar
 
