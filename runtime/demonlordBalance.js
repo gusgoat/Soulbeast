@@ -10,7 +10,7 @@ bossSummonLegends=function(u,count){const out=demonBalanceSummonPrevious(u,count
 const demonBalanceZonePrevious=vZone;
 vZone=function(){const html=demonBalanceZonePrevious(),z=S.zone&&ZN[S.zone.id-1],boss=z&&(forestPassed(z)?S.zone.boss||z.boss:z.boss);if(!isBossDoorScene()||z?.id!==6||boss?.sp!=='demonlord')return html;return html.replace(/ออร่าบอส:[^<]*/,'ศึกสุดท้าย: แม่ทัพสุ่ม 2 คนเน้นท่าโจมตี · จอมมารใช้ทุกสกิลและเรียกอสูรตำนาน Lv 40 ได้ 1 ตัว · ผนึกจอมมารไม่ได้');};
 // Encounter-specific strength on top of the existing aura. Never mutate species or pets.
-const STAGE_BOSS_STRENGTH={1:{sp:'tanuki',factor:2.3},2:{sp:'kitsune',factor:2},3:{sp:'sphinx',factor:2},4:{sp:'dragon',factor:1.25,hpOnly:true},5:{factor:7}};
+const STAGE_BOSS_STRENGTH={1:{sp:'tanuki',factor:1.5},2:{sp:'kitsune',factor:1.5},3:{sp:'sphinx',factor:1.5},4:{sp:'dragon',factor:1.25,hpOnly:true},5:{factor:1.5}};
 function prepareStageBossStrength(enemies,kind,meta){
  const rule=STAGE_BOSS_STRENGTH[Number(meta)];if(kind!=='boss'||!rule)return false;
  const u=enemies.find(x=>x.boss&&x.side==='enemy'&&!x.immortalWorld&&!x.bossHelper&&!x.temporary&&(!rule.sp||x.sp===rule.sp));
