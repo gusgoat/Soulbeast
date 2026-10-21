@@ -42,7 +42,7 @@ function toast(t){if(/ไม่พอ|ไม่ได้|ไม่สำเร�
 // @soulbeast-end 0346-toast
 // @soulbeast-unit 0347-go
 
-function go(s){if(WORLD?.room?.status==='active'&&!['world','town','hero','team','bag','settings'].includes(s)){toast('จบบอสโลกหรือถอนตัวก่อนเริ่มโหมดอื่น');return;}if(s==='world'){S.screen='world';render();wbCall(WORLD.roomId?'wb_poll':'wb_status');return;}if(S.zone&&['town','shop','hospital','arena','forge','leader','pvp','camp','world'].includes(s)){toast('ออกจากป่าไม่ได้ จนกว่าจะชนะบอส เจอทางออก หรือพ่ายแพ้');return}if(S.zone&&s==='wild')s='zone';
+function go(s){if(WORLD?.room?.status==='active'&&!['world','town','hero','team','bag','settings'].includes(s)){toast('จบบอสโลกหรือถอนตัวก่อนเริ่มโหมดอื่น');return;}if(s==='world'){S.screen='world';render();wbCall(WORLD.roomId?'wb_poll':'wb_status');return;}if(S.zone&&['town','shop','hospital','arena','forge','leader','pvp','camp','world'].includes(s)){toast('ออกจากป่าไม่ได้ จนกว่าจะชนะบอส เจอทางออก หรือพ่ายแพ้');return}if(s==='wild'){if(S.battle)s='battle';else if(S.zone)s='zone';else S.ui.forestChoice=null;}
  S.screen=s;clearTimeout(PVP.timer);if(s==='pvp'){if(PVP.code&&S.P&&PVP.code!==ensureCode()){PVP.room=null;PVP.token='';PVP.restore='';PVP.pending=null;pvpSessionSave()}if(PVP.token)pvpSchedule()}S.ui.petView=null;save();render();if(s==='leader')lbLoad();document.querySelector('main')?.scrollTo(0,0)}
 // @soulbeast-end 0347-go
 // @soulbeast-unit 0352-handlers
