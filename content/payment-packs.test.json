@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "enabled": false,
+  "stripeMode": "test",
+  "currency": "thb",
+  "promotionLimit": { "scope": "account", "perPack": 1, "consumeOn": "paid-and-credited" },
+  "packs": [
+    { "id": "first-10", "name": "โปรโมชั่น 10 คูปอง", "coupons": 10, "amountSatang": 3500, "promotion": true, "priceId": "price_1UTNTuLvVJpWGseb8Uo9Disb" },
+    { "id": "first-50", "name": "โปรโมชั่น 50 คูปอง", "coupons": 50, "amountSatang": 15000, "promotion": true, "priceId": "price_1UTNVhLvVJpWGseb2vaamhgf" },
+    { "id": "first-100", "name": "โปรโมชั่น 100 คูปอง", "coupons": 100, "amountSatang": 27500, "promotion": true, "priceId": "price_1UTNWFLvVJpWGsebXGRX2mw1" },
+    { "id": "normal-5", "name": "ปกติ 5 คูปอง", "coupons": 5, "amountSatang": 3500, "promotion": false, "priceId": "price_1UTNYPLvVJpWGsebyZKEaJgD" },
+    { "id": "normal-10", "name": "ปกติ 10 คูปอง", "coupons": 10, "amountSatang": 7000, "promotion": false, "priceId": "price_1UTNZ3LvVJpWGsebWyUQYdDP" },
+    { "id": "normal-50", "name": "ปกติ 50 คูปอง", "coupons": 50, "amountSatang": 30000, "promotion": false, "priceId": "price_1UTNZbLvVJpWGsebPWrdX9XD" },
+    { "id": "normal-100", "name": "ปกติ 100 คูปอง", "coupons": 100, "amountSatang": 55000, "promotion": false, "priceId": "price_1UTNaELvVJpWGseb9LUHfhn2" },
+    { "id": "normal-200", "name": "ปกติ 200 คูปอง", "coupons": 200, "amountSatang": 100000, "promotion": false, "priceId": "price_1UTNhlLvVJpWGsebVjxahAAy" }
+  ]
+}
