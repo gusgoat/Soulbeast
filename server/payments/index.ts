@@ -24,7 +24,7 @@ async function userOf(req,db){
 }
 async function command(db,action,account,data={}){
  const r=await db.rpc('sb_shop_test_command',{p_action:action,p_account:account,p_data:data});
- if(r.error){const code=['verified_account_required','character_already_linked','character_not_linked','unknown_pack','request_changed','order_not_found','order_rate_limit'].find(c=>String(r.error.message).includes(c));throw new PaymentError(code||'shop_database_unavailable',code?409:503);}return r.data;
+ if(r.error){const code=['verified_account_required','character_already_linked','character_not_linked','unknown_pack','request_changed','order_not_found','order_rate_limit','promotion_unavailable'].find(c=>String(r.error.message).includes(c));throw new PaymentError(code||'shop_database_unavailable',code?409:503);}return r.data;
 }
 async function sessionFor(order){return stripe('checkout/sessions/'+encodeURIComponent(order.session_id)+'?expand%5B%5D=line_items');}
 async function settle(db,order,s){
