@@ -74,14 +74,35 @@ Object.assign(BUILTIN_ART,SoulbeastContent.BUILTIN_ART_additions_2());
 // @soulbeast-end 0196-BUILTIN_ART-Object
 // @soulbeast-unit 0197-atlasFace
 
-function atlasFace(key,form=0){if(SP[key]?.mistNew)return mistPortrait(key);
+// Missing gender means legacy artwork; never infer/migrate an existing character's gender.
+const FEMALE_CLASS_ART=new Set(['archer','bard','dirge','mage','enchanter','biochem','druid','grove','archdruid','summoner']);
+function classPortraitSource(cls,gender){
+ if(!CLS[cls])return '';
+ const original=BUILTIN_ART['cls:'+cls]||BUILTIN_ART['cls:'+baseOf(cls)];
+ if(!['male','female'].includes(gender))return original;
+ return gender===(FEMALE_CLASS_ART.has(cls)?'female':'male')?original:'assets/portraits/'+cls+'-'+gender+'.webp';
+}
+function portraitGender(key,opts={}){
+ if(opts.legacy)return undefined;
+ if(['male','female'].includes(opts.gender))return opts.gender;
+ if(key?.startsWith('npc:'))return undefined;
+ return S.screen==='start'?(S.ui.gender==='female'?'female':'male'):S.P?.gender;
+}
+function atlasFace(key,form=0,opts={}){if(SP[key]?.mistNew)return mistPortrait(key);
  let artKey=key;
  if(key==='player'||key?.startsWith('cls:')||key?.startsWith('npc:')){const cls=key==='player'?(S.P?.cls||S.ui.cls||'swordsman'):key.slice(4);artKey=BUILTIN_ART['cls:'+cls]?'cls:'+cls:'cls:'+baseOf(cls)}
- const src=BUILTIN_ART[form>0?key+':'+form:artKey]||BUILTIN_ART[artKey];return src?`<img class="atlas-face" src="${src}" alt="">`:''}
+ const isClass=key==='player'||key?.startsWith('cls:')||key?.startsWith('npc:');const cls=key==='player'?(S.P?.cls||S.ui.cls||'swordsman'):key?.slice(4);
+ const src=isClass?classPortraitSource(cls,portraitGender(key,opts)):(BUILTIN_ART[form>0?key+':'+form:artKey]||BUILTIN_ART[artKey]);return src?`<img class="atlas-face" src="${src}" alt="">`:''}
 // @soulbeast-end 0197-atlasFace
 // @soulbeast-unit 0204-portrait
 
 
+function unitPortrait(u,size,opts={}){
+ const person=u.kind==='player'||u.img==='player';
+ if(!person||u.form)return portrait(u.img||u.sp,size,{form:u.evo||0});
+ const gender=opts.own?S.P?.gender:u.gender,valid=['male','female'].includes(gender);
+ return portrait(opts.own?'player':'cls:'+u.cls,size,{gender,legacy:!valid});
+}
 function portrait(key,size,opts={}){
  let em='?',ec='#d9b35b',img=IMG[key+':'+(opts.form||0)]||IMG[key];
  if(key==='player'){em=CLS[baseOf(S.P.cls)].em}
@@ -89,7 +110,7 @@ function portrait(key,size,opts={}){
  else if(key&&key.startsWith('form:')){const f=FORMS[key.slice(5)];em=f.em;ec=EL[f.t[0]].c;img=null}
  else if(key&&key.startsWith('cls:')){em=CLS[baseOf(key.slice(4))].em}
  else if(SP[key]){em=SP[key].em;ec=EL[SP[key].t[0]].c}
- return `<div class="pt ${opts.unk?'unk':''}" style="--s:${size}px;--ec:${ec}">${img?`<img src="${img}" alt="">`:(atlasFace(key,opts.form||0)||em)}</div>`}
+ return `<div class="pt ${opts.unk?'unk':''}" style="--s:${size}px;--ec:${ec}">${img?`<img src="${img}" alt="">`:(atlasFace(key,opts.form||0,opts)||em)}</div>`}
 // @soulbeast-end 0204-portrait
 // @soulbeast-unit 0205-elChip
 

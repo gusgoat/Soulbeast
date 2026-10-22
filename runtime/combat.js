@@ -31,7 +31,7 @@ function unit(o){return {buffs:[],status:{},pas:[],stab:[],types:[],taunt:0,...o
 // @soulbeast-unit 0236-playerUnit
 
 function playerUnit(){const P=S.P,s=pStats(),w=EQ[P.eq.weapon];
- return unit({id:'P',side:'ally',kind:'player',name:P.name,lv:P.lv,st:s,hp:Math.min(P.hp,s.hp),mp:Math.min(P.mp,s.mp),skills:humanSkills(P.cls,P.lv,P.eq),pas:humanPas(P.cls,P.eq),stab:w&&w.el?[w.el]:[],atkType:w?w.t:'p',img:'player',cls:P.cls})}
+ return unit({id:'P',side:'ally',kind:'player',name:P.name,lv:P.lv,st:s,hp:Math.min(P.hp,s.hp),mp:Math.min(P.mp,s.mp),skills:humanSkills(P.cls,P.lv,P.eq),pas:humanPas(P.cls,P.eq),stab:w&&w.el?[w.el]:[],atkType:w?w.t:'p',img:'player',cls:P.cls,gender:P.gender})}
 // @soulbeast-end 0236-playerUnit
 // @soulbeast-unit 0237-petUnit
 

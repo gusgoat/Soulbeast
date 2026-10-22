@@ -41,7 +41,7 @@ async function pvpConnect(mode){if(PVP.busy||!S.P)return;if(S.zone||S.battle){to
 // @soulbeast-end 0193-pvpConnect
 // @soulbeast-unit 0194-pvpCard
 
-function pvpCard(u,own,me){const chosen=own?PVP.friend===u.id:PVP.target===u.id;return `<button class="ucard ${own?'ally':'foe'} ${chosen?(own?'at':'tg'):''} ${u.hp<=0?'down':''}" data-u="${u.id}" data-a="${own?'pvpFriend':'pvpTarget'}" data-v="${u.id}" ${!own&&u.hp<=0?'disabled':''}>${portrait(u.kind==='player'?(u.form?u.img:u.owner===me?'player':'cls:'+u.cls):u.img,46,{form:u.evo||0})}<div class="grow"><span class="nm" ${u.kind==='player'?'data-user-content':''}>${esc(u.name)}</span><span class="sub num">Lv ${u.lv}${u.hp<=0?' · หมดสติ':''}</span>${bar(u.hp,u.st.hp)}<span class="meta num">HP ${u.hp}/${u.st.hp} · MP ${u.mp}/${u.st.mp}</span><span class="meta">${Object.keys(u.status).map(k=>STS[k]?STS[k].n:'').filter(Boolean).join(' · ')}</span></div></button>`}
+function pvpCard(u,own,me){const chosen=own?PVP.friend===u.id:PVP.target===u.id;return `<button class="ucard ${own?'ally':'foe'} ${chosen?(own?'at':'tg'):''} ${u.hp<=0?'down':''}" data-u="${u.id}" data-a="${own?'pvpFriend':'pvpTarget'}" data-v="${u.id}" ${!own&&u.hp<=0?'disabled':''}>${unitPortrait(u,46,{own:u.owner===me})}<div class="grow"><span class="nm" ${u.kind==='player'?'data-user-content':''}>${esc(u.name)}</span><span class="sub num">Lv ${u.lv}${u.hp<=0?' · หมดสติ':''}</span>${bar(u.hp,u.st.hp)}<span class="meta num">HP ${u.hp}/${u.st.hp} · MP ${u.mp}/${u.st.mp}</span><span class="meta">${Object.keys(u.status).map(k=>STS[k]?STS[k].n:'').filter(Boolean).join(' · ')}</span></div></button>`}
 // @soulbeast-end 0194-pvpCard
 // @soulbeast-unit 0195-vPvpBase
 

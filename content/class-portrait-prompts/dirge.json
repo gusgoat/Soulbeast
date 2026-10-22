@@ -1,0 +1,14 @@
+{
+  "id": "dirge",
+  "name": "นักดนตรีมรณะ",
+  "description": "บทเพลงแห่งความตายโจมตีหมู่",
+  "parent": "bard",
+  "tier": 2,
+  "art": "assets/media/d30258fecea6925f37dc1a1b.webp",
+  "originalGender": "female",
+  "newGender": "male",
+  "prompt": "Use case: stylized-concept. Create one playable MAN counterpart portrait for Soulbeast class dirge (นักดนตรีมรณะ), บทเพลงแห่งความตายโจมตีหมู่. The supplied reference depicts the existing FEMALE class design. Make a clearly masculine adult male face and build version of the same profession. Preserve class identity: recognizable clothing colors, armor ornamentation, signature props and magic motifs, rank, hairstyle theme and background atmosphere; adapt clothing into practical fully clothed adventurer attire. Match the detailed painterly Asian fantasy RPG illustration style of the reference.  Square 1:1 character portrait. Head and upper torso prominent and centered, show enough signature prop to identify class, entire head/hair within safe central 80% for a circular avatar crop. One primary adult character only; spirit/beast motifs behind summoner classes are allowed as in reference. Tasteful heroic expression, detailed face, no lettering, no UI, no frames, no collage. This is a new gender counterpart asset, not a replacement for the original.",
+  "mode": "built-in image_gen",
+  "generatedSource": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-81a94fc1-e77b-4019-86cb-2e9e4eb86ed1.png",
+  "target": "assets/portraits/dirge-male.webp"
+}

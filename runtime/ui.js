@@ -49,6 +49,7 @@ function go(s){if(WORLD?.room?.status==='active'&&!['world','town','hero','team'
 // @soulbeast-unit 0352-handlers
 
 const handlers={
+ genderpick:v=>{if(S.screen!=='start'||!['male','female'].includes(v))return;S.ui.gender=v;render()},
  trapNoticeClose:()=>{delete S.ui.trapNotice;save();render()},
  pvpCreate:()=>pvpConnect('create'),pvpJoin:()=>pvpConnect('join'),pvpResume:()=>pvpConnect('resume'),pvpReady:()=>pvpRequest({action:'pvp_ready',wagerRev:PVP.room?.wagers?.rev||0}),pvpPoll:()=>pvpRequest({action:'pvp_poll'}),
  pvpTarget:id=>{PVP.target=id;render()},pvpFriend:id=>{PVP.friend=id;render()},
@@ -67,8 +68,8 @@ const handlers={
  clspick:v=>{S.ui.cls=v;render()},starterpick:v=>{const n=clsSum(S.ui.cls||'swordsman');let a=starterSel().filter(k=>k!==v);if(a.length===starterSel().length){a.push(v);if(a.length>n)a.shift()}if(!a.length)a=[v];S.ui.starters=a;render()},
  craft:v=>{const P=S.P,c=CRAFT[v];if(!canCraft(v)){toast('วัตถุดิบหรือเงินไม่พอ');return}c.mats.forEach(([k,n])=>{P.parts[k]-=n;if(!P.parts[k])delete P.parts[k]});P.gold-=c.gold;ExtraAudio.play('forge');const id=craftId(v);P.owned.push(id);save();render();toast(`หลอม ${EQ[id].n} สำเร็จ!`)},
  forgetab:v=>{S.ui.forge=+v;render()},
- newgame:()=>{const name=(document.getElementById('nm').value||'').trim()||'ผู้ผนึก',cls=S.ui.cls||'swordsman',sts=starterSel();
-  S={ver:6,screen:'town',ui:{},zone:null,battle:null,P:{name:name.slice(0,20),cls,lv:3,exp:0,gold:150,pts:{},free:10,eq:{weapon:`wp_${CLS[cls].w}0`},owned:[],items:{pot:5,seal1:5,eth:2,antidote:1,calm:1},parts:{},pets:[],party:[],legend:{},zoneMax:1,arena:{},seen:{},caught:{},uid:1}};
+ newgame:()=>{const name=(document.getElementById('nm').value||'').trim()||'ผู้ผนึก',cls=S.ui.cls||'swordsman',gender=S.ui.gender==='female'?'female':'male',sts=starterSel();
+  S={ver:6,screen:'town',ui:{},zone:null,battle:null,P:{name:name.slice(0,20),cls,gender,lv:3,exp:0,gold:150,pts:{},free:10,eq:{weapon:`wp_${CLS[cls].w}0`},owned:[],items:{pot:5,seal1:5,eth:2,antidote:1,calm:1},parts:{},pets:[],party:[],legend:{},zoneMax:1,arena:{},seen:{},caught:{},uid:1}};
   const s=pStats();S.P.hp=s.hp;S.P.mp=s.mp;sts.forEach(st=>{const p=mkPet(st,3);S.P.pets.push(p);S.P.party.push(p.uid);S.P.seen[st]=1;S.P.caught[st]=1});save();render();toast(`${sts.map(k=>SP[k].n).join(' และ ')} เข้ามาอยู่ในผนึกของคุณ`)},
  shoptab:v=>{if(v==='wpall'){S.ui.allw=!S.ui.allw;v='wp'}S.ui.shop=v;render()},tier:v=>{S.ui.tier=+v;render()},teamtab:v=>{S.ui.team=v;S.ui.petView=null;render()},herotab:v=>{S.ui.hero=v;render()},
  buy:v=>{const P=S.P,it=EQ[v]||CON[v];if(!it||it.rareLoot||it.worldLegend)return;const pr=priceOf(it);if(P.gold<pr){toast('เหรียญไม่พอ');return}if(it.lv&&P.lv<it.lv&&!EQ[v]){toast(`ต้องเลเวล ${it.lv}`);return}
@@ -149,7 +150,7 @@ function townTile(action,value,art,title,description,tag='',opt={}){return `<but
 // @soulbeast-end 0364-townTile
 // @soulbeast-unit 0365-townNavArt
 
-function townNavArt(key){const p=party()[0],src=key==='town'?BUILTIN_SCENES[1]:key==='wild'?latestForestArt():key==='hero'?(IMG.player||BUILTIN_ART['cls:'+S.P.cls]||BUILTIN_ART['cls:'+baseOf(S.P.cls)]):key==='team'?(BUILTIN_ART[p?.sp]||BUILTIN_ART.kappa):(ITEM_ART.chest||ITEM_ART.pot);return `<img class="town-nav-art" src="${src}" alt="" decoding="async">`;}
+function townNavArt(key){const p=party()[0],src=key==='town'?BUILTIN_SCENES[1]:key==='wild'?latestForestArt():key==='hero'?(IMG.player||classPortraitSource(S.P.cls,S.P.gender)):key==='team'?(BUILTIN_ART[p?.sp]||BUILTIN_ART.kappa):(ITEM_ART.chest||ITEM_ART.pot);return `<img class="town-nav-art" src="${src}" alt="" decoding="async">`;}
 // @soulbeast-end 0365-townNavArt
 // @soulbeast-unit 0367-vTown
 
@@ -181,10 +182,10 @@ function vArena(){return activityBackdrop('arena','หอคอยประล�
 // @soulbeast-unit 0375-vStart
 
 
-function vStart(){const cl=S.ui.cls||'swordsman',sel=starterSel(),c=CLS[cl];return `<div class="stack">
+function vStart(){const cl=S.ui.cls||'swordsman',gender=S.ui.gender==='female'?'female':'male',sel=starterSel(),c=CLS[cl];return `<div class="stack">
  ${sceneArt(0,'ตำนานผนึกอสูร')}<p class="sub" style="margin:0">ห้าดินแดน หนึ่งปราสาท และคำสาบานที่ผูกคุณกับอสูรคู่หู</p>${storyCard(0)}<button class="btn seal" data-a="story">อ่านบันทึกแห่งพันผนึก</button>
- <div class="card stack"><h3>ชื่อผู้ผนึก</h3><input type="text" id="nm" maxlength="20" placeholder="เช่น ภูผา" value=""></div>
- <div class="card stack"><h3>เลือกอาชีพที่เหมาะกับคุณ</h3><p class="sub">อ่านข้อดีและข้อควรระวัง แล้วแตะอาชีพที่ต้องการ · ทุกสายมีแนวทางเล่นต่างกัน</p><div class="grid3 class-selection-grid">${BASES.map(k=>`<button class="pick ${cl===k?'on':''}" data-a="clspick" data-v="${k}">${portrait('cls:'+k,58)}<b>${CLS[k].n}</b><small>${WT[CLS[k].w].n}</small><span>${careerLines(k)}</span></button>`).join('')}</div>
+ <div class="card stack"><h3>ชื่อผู้ผนึก</h3><input type="text" id="nm" maxlength="20" placeholder="เช่น ภูผา" value=""><div class="creation-identity">${portrait('cls:'+cl,88,{gender})}<div class="grow"><h3>เลือกเพศ</h3><div class="creation-genders" role="group" aria-label="เลือกเพศตัวละคร">${[['male','ชาย'],['female','หญิง']].map(([id,label])=>`<button type="button" class="btn ${gender===id?'gold':''}" data-a="genderpick" data-v="${id}" aria-pressed="${gender===id}">${label}</button>`).join('')}</div><small class="sub">เพศมีผลเฉพาะภาพตัวละคร</small></div></div></div>
+ <div class="card stack"><h3>เลือกอาชีพที่เหมาะกับคุณ</h3><p class="sub">อ่านข้อดีและข้อควรระวัง แล้วแตะอาชีพที่ต้องการ · ทุกสายมีแนวทางเล่นต่างกัน</p><div class="grid3 class-selection-grid">${BASES.map(k=>`<button class="pick ${cl===k?'on':''}" data-a="clspick" data-v="${k}">${portrait('cls:'+k,58,{gender})}<b>${CLS[k].n}</b><small>${WT[CLS[k].w].n}</small><span>${careerLines(k)}</span></button>`).join('')}</div>
   <div class="card" style="background:var(--panel2)"><b>${c.n}</b> <span class="sub">· ${c.d}</span><div class="lines" style="margin:6px 0 0;font-size:13px">${careerPanel(cl)}
   <div class="sub">เลื่อนขั้น Lv 25: ${childrenOf(cl).map(x=>CLS[x].n).join(' / ')} · Lv 40: ${childrenOf(cl).flatMap(childrenOf).map(x=>CLS[x].n).join(' / ')}</div></div></div></div>
  <div class="card stack"><h3>${clsSum(cl)>1?'อสูรคู่หูเริ่มต้น เลือกได้ 2 ตัว':'อสูรคู่หูตัวแรก'}</h3><div class="grid3">${STARTERS.map(k=>`<button class="pick ${sel.includes(k)?'on':''}" data-a="starterpick" data-v="${k}">${portrait(k,48)}<b>${SP[k].n}</b><small>${SP[k].o}</small><span class="row wrap" style="gap:3px;justify-content:center">${tChips(SP[k].t)}</span></button>`).join('')}</div></div>

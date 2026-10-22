@@ -1,0 +1,14 @@
+{
+  "id": "sbsummon",
+  "name": "ดาบเวทย์อัญเชิญ",
+  "description": "นำอสูรออกสู้ได้ 2 ตัว ผสานพลังกับอสูร",
+  "parent": "spellblade",
+  "tier": 2,
+  "art": "assets/media/30aec114193fda971b2cd95b.webp",
+  "originalGender": "male",
+  "newGender": "female",
+  "prompt": "Use case: stylized-concept. Make a FEMALE counterpart portrait for the Soulbeast fantasy RPG class sbsummon (ดาบเวทย์อัญเชิญ), นำอสูรออกสู้ได้ 2 ตัว ผสานพลังกับอสูร. The supplied image is the existing MALE class design reference. Create one adult woman of this same profession, with a clearly feminine face; preserve the recognizable outfit palette, armor ornamentation, class weapon, magical motifs, rank and background atmosphere of the reference, adapted tastefully into practical fully clothed female adventurer attire. Match the existing detailed painterly Asian fantasy RPG illustration style. One character only; square 1:1 portrait; head and shoulders prominently centered, show enough weapon to recognize the profession; keep entire head/hair safely inside frame with breathing room for circular avatar crop. High detail face, heroic expression. No text, no UI, no collage, no frame. This is a new playable female counterpart, do not replace the male reference.",
+  "mode": "built-in image_gen",
+  "generatedSource": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-d584c22d-eedf-44b1-b054-33dc95b6e2e5.png",
+  "target": "assets/portraits/sbsummon-female.webp"
+}

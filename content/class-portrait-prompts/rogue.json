@@ -1,0 +1,14 @@
+{
+  "id": "rogue",
+  "name": "อันธพาล",
+  "description": "ปล้นกลางศึก เล่นสกปรก",
+  "parent": "thief",
+  "tier": 1,
+  "art": "assets/media/879b9541ee4b21b165f0cda2.webp",
+  "originalGender": "male",
+  "newGender": "female",
+  "prompt": "Use case: stylized-concept. Create one playable WOMAN counterpart portrait for Soulbeast class rogue (อันธพาล), ปล้นกลางศึก เล่นสกปรก. The supplied reference depicts the existing MALE class design. Make a clearly feminine adult female face and build version of the same profession. Preserve class identity: recognizable clothing colors, armor ornamentation, signature props and magic motifs, rank, hairstyle theme and background atmosphere; adapt clothing into practical fully clothed adventurer attire. Match the detailed painterly Asian fantasy RPG illustration style of the reference.  Square 1:1 character portrait. Head and upper torso prominent and centered, show enough signature prop to identify class, entire head/hair within safe central 80% for a circular avatar crop. One primary adult character only; spirit/beast motifs behind summoner classes are allowed as in reference. Tasteful heroic expression, detailed face, no lettering, no UI, no frames, no collage. This is a new gender counterpart asset, not a replacement for the original.",
+  "mode": "built-in image_gen",
+  "generatedSource": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-3b08494c-1743-47a3-9cf0-53e04c481c9c.png",
+  "target": "assets/portraits/rogue-female.webp"
+}

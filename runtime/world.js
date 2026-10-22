@@ -61,7 +61,7 @@ function worldPetSelection(){return [...document.querySelectorAll('input[name="w
 // @soulbeast-end 0484-worldPetSelection
 // @soulbeast-unit 0485-worldCard
 
-function worldCard(u,me){const mine=u.owner===me,selected=WORLD.friend===u.id;return `<button data-u="${u.id}" class="ucard ally ${selected?'at':''} ${u.hp<=0?'down':''}" data-a="wbFriend" data-v="${u.id}">${portrait(u.img==='player'?'cls:'+u.cls:u.img,44,{form:u.evo||0})}<div class="grow"><b ${u.kind==='player'?'data-user-content':''}>${esc(u.name)}</b><small class="sub">${mine?'ของคุณ':'ของเพื่อน'} · Lv ${u.lv}</small>${bar(u.hp,u.st.hp)}<small>HP ${fmt(u.hp)}/${fmt(u.st.hp)} · MP ${fmt(u.mp)}/${fmt(u.st.mp)}</small>${bar(u.mp,u.st.mp,'mp')}</div></button>`;}
+function worldCard(u,me){const mine=u.owner===me,selected=WORLD.friend===u.id;return `<button data-u="${u.id}" class="ucard ally ${selected?'at':''} ${u.hp<=0?'down':''}" data-a="wbFriend" data-v="${u.id}">${unitPortrait(u,44,{own:mine&&u.kind==='player'})}<div class="grow"><b ${u.kind==='player'?'data-user-content':''}>${esc(u.name)}</b><small class="sub">${mine?'ของคุณ':'ของเพื่อน'} · Lv ${u.lv}</small>${bar(u.hp,u.st.hp)}<small>HP ${fmt(u.hp)}/${fmt(u.st.hp)} · MP ${fmt(u.mp)}/${fmt(u.st.mp)}</small>${bar(u.mp,u.st.mp,'mp')}</div></button>`;}
 // @soulbeast-end 0485-worldCard
 // @soulbeast-unit 0486-vWorld
 

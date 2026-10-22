@@ -1,0 +1,14 @@
+{
+  "id": "kensei",
+  "name": "เคนเซย์",
+  "description": "ปรมาจารย์ดาบ ฟันรัว 5 ครั้ง คริติคอลแรง ×2",
+  "parent": "samurai",
+  "tier": 2,
+  "art": "assets/media/f99140d5d7bc1dbd1ad53d79.webp",
+  "originalGender": "male",
+  "newGender": "female",
+  "prompt": "Use case: stylized-concept. Make a FEMALE counterpart portrait for the Soulbeast fantasy RPG class kensei (เคนเซย์), ปรมาจารย์ดาบ ฟันรัว 5 ครั้ง คริติคอลแรง ×2. The supplied image is the existing MALE class design reference. Create one adult woman of this same profession, with a clearly feminine face; preserve the recognizable outfit palette, armor ornamentation, class weapon, magical motifs, rank and background atmosphere of the reference, adapted tastefully into practical fully clothed female adventurer attire. Match the existing detailed painterly Asian fantasy RPG illustration style. One character only; square 1:1 portrait; head and shoulders prominently centered, show enough weapon to recognize the profession; keep entire head/hair safely inside frame with breathing room for circular avatar crop. High detail face, heroic expression. No text, no UI, no collage, no frame. This is a new playable female counterpart, do not replace the male reference.",
+  "mode": "built-in image_gen",
+  "generatedSource": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-ee9dfa29-e4fc-4f24-adba-23110d0fd573.png",
+  "target": "assets/portraits/kensei-female.webp"
+}

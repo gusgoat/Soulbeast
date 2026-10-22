@@ -1,0 +1,14 @@
+{
+  "id": "mastersmith",
+  "name": "ช่างเทพตีอาวุธ",
+  "description": "ค้อนเทพทุบทำลายเป้าหมายเดียว",
+  "parent": "blacksmith",
+  "tier": 2,
+  "art": "assets/media/f38f8d39cb09f8497d868308.webp",
+  "originalGender": "male",
+  "newGender": "female",
+  "prompt": "Use case: stylized-concept. Create one playable WOMAN counterpart portrait for Soulbeast class mastersmith (ช่างเทพตีอาวุธ), ค้อนเทพทุบทำลายเป้าหมายเดียว. The supplied reference depicts the existing MALE class design. Make a clearly feminine adult female face and build version of the same profession. Preserve class identity: recognizable clothing colors, armor ornamentation, signature props and magic motifs, rank, hairstyle theme and background atmosphere; adapt clothing into practical fully clothed adventurer attire. Match the detailed painterly Asian fantasy RPG illustration style of the reference.  Square 1:1 character portrait. Head and upper torso prominent and centered, show enough signature prop to identify class, entire head/hair within safe central 80% for a circular avatar crop. One primary adult character only; spirit/beast motifs behind summoner classes are allowed as in reference. Tasteful heroic expression, detailed face, no lettering, no UI, no frames, no collage. This is a new gender counterpart asset, not a replacement for the original.",
+  "mode": "built-in image_gen",
+  "generatedSource": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-841cea01-8b41-401a-9ef7-9638edb94e08.png",
+  "target": "assets/portraits/mastersmith-female.webp"
+}

@@ -527,3 +527,6 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 
 /* Trap event illustrations: pause offline combat until acknowledged. */
 .trap-notice{z-index:10050}.trap-notice .card{max-width:480px;max-height:calc(100dvh - 32px);overflow:auto;padding:14px;gap:12px}.trap-notice img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain;border-radius:12px}.trap-notice h2,.trap-notice p{margin:0}.trap-notice h2{font-size:1.4rem}.trap-notice p{line-height:1.5}
+
+/* Character creation: gender changes portraits only. */
+.creation-identity{display:flex;align-items:center;gap:18px;min-width:0}.creation-identity .grow{min-width:0}.creation-genders{display:flex;gap:8px;margin:10px 0}.creation-genders .btn{flex:1;min-width:64px}.creation-identity h3{margin:0}

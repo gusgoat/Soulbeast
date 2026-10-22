@@ -1,0 +1,14 @@
+{
+  "id": "spiritlord",
+  "name": "เจ้าแห่งภูติ",
+  "description": "พายุภูติโจมตีหมู่",
+  "parent": "soullink",
+  "tier": 2,
+  "art": "assets/media/6b8a5d54fe77812738c115b4.webp",
+  "originalGender": "male",
+  "newGender": "female",
+  "prompt": "Use case: stylized-concept. Create one playable WOMAN counterpart portrait for Soulbeast class spiritlord (เจ้าแห่งภูติ), พายุภูติโจมตีหมู่. The supplied reference depicts the existing MALE class design. Make a clearly feminine adult female face and build version of the same profession. Preserve class identity: recognizable clothing colors, armor ornamentation, signature props and magic motifs, rank, hairstyle theme and background atmosphere; adapt clothing into practical fully clothed adventurer attire. Match the detailed painterly Asian fantasy RPG illustration style of the reference.  Square 1:1 character portrait. Head and upper torso prominent and centered, show enough signature prop to identify class, entire head/hair within safe central 80% for a circular avatar crop. One primary adult character only; spirit/beast motifs behind summoner classes are allowed as in reference. Tasteful heroic expression, detailed face, no lettering, no UI, no frames, no collage. This is a new gender counterpart asset, not a replacement for the original.",
+  "mode": "built-in image_gen",
+  "generatedSource": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-4e7c001b-157d-43c7-82b1-e12ddd09c2b3.png",
+  "target": "assets/portraits/spiritlord-female.webp"
+}

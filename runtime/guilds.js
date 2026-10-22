@@ -62,7 +62,7 @@ ${guildRewardView(d)}${guildRankingCard(d)}<details class="card stack"><summary>
 // @soulbeast-end 0782-vGuild
 // @soulbeast-unit 0783-guildWarCards
 
-function guildWarCards(units){return '<div class="row wrap">'+units.map(u=>'<div class="card grow">'+portrait(u.img||u.sp,46,{form:u.evo||0})+'<b>'+esc(u.name)+'</b>'+bar(u.hp,u.st.hp)+'<small>HP '+u.hp+'/'+u.st.hp+'</small></div>').join('')+'</div>';}
+function guildWarCards(units){return '<div class="row wrap">'+units.map(u=>'<div class="card grow">'+unitPortrait(u,46)+'<b>'+esc(u.name)+'</b>'+bar(u.hp,u.st.hp)+'<small>HP '+u.hp+'/'+u.st.hp+'</small></div>').join('')+'</div>';}
 // @soulbeast-end 0783-guildWarCards
 // @soulbeast-unit 0784-vGuildWar
 

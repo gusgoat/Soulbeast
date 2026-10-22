@@ -1,0 +1,14 @@
+{
+  "id": "warlord",
+  "name": "ราชันย์สนามรบ",
+  "description": "ขวานแยกปฐพีถล่มศัตรูทั้งหมด",
+  "parent": "berserker",
+  "tier": 2,
+  "art": "assets/media/85e0774684eaa2a3d2f085d5.webp",
+  "originalGender": "male",
+  "newGender": "female",
+  "prompt": "Use case: stylized-concept. Create one playable WOMAN counterpart portrait for Soulbeast class warlord (ราชันย์สนามรบ), ขวานแยกปฐพีถล่มศัตรูทั้งหมด. The supplied reference depicts the existing MALE class design. Make a clearly feminine adult female face and build version of the same profession. Preserve class identity: recognizable clothing colors, armor ornamentation, signature props and magic motifs, rank, hairstyle theme and background atmosphere; adapt clothing into practical fully clothed adventurer attire. Match the detailed painterly Asian fantasy RPG illustration style of the reference.  Square 1:1 character portrait. Head and upper torso prominent and centered, show enough signature prop to identify class, entire head/hair within safe central 80% for a circular avatar crop. One primary adult character only; spirit/beast motifs behind summoner classes are allowed as in reference. Tasteful heroic expression, detailed face, no lettering, no UI, no frames, no collage. This is a new gender counterpart asset, not a replacement for the original.",
+  "mode": "built-in image_gen",
+  "generatedSource": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-9362ada3-916b-458e-a3e6-6bd0dcf0d312.png",
+  "target": "assets/portraits/warlord-female.webp"
+}
