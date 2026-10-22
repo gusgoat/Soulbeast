@@ -7,7 +7,7 @@ const Tutorial={
  init(){S.P.tutorial={v:1,enabled:true,done:{},active:'stats',firstBoss:false,raidClaimed:false};},
  store(){save();},
  set(id){const t=this.state();if(t&&t.active!==id){t.active=id;this.store();}},
- finish(key,next=null){const t=this.state();if(!t)return;t.done[key]=true;t.active=next;this.store();},
+ finish(key,next=null){const t=this.state();if(!t)return;t.done[key]=true;t.active=next;if(t.reviewBasic&&['stats','forest','training','fork'].includes(key)&&!['stats','forest','training','fork'].includes(next))delete t.reviewBasic;this.store();},
  online(){return PVP.room?.status==='active'||WORLD.room?.status==='active'||CAMP.room?.status==='active'||GUILD_UI.warRoom?.replaying;},
  forestBattle(){return !!S.zone&&!!S.battle&&!S.battle.over&&!S.battle.towerRun&&!this.online()&&['wild','boss','bandit','traveler','secret','taleTrial'].includes(S.battle.kind);},
  hold(){return this.enabled()&&this.forestBattle()&&['battleIntro','elements','captureIntro'].includes(this.state().active);},
@@ -15,9 +15,17 @@ const Tutorial={
  free(){return (S.P.free||0)+S.P.pets.reduce((n,p)=>n+(p.free||0),0);},
  ready(){return this.enabled()&&!S.ui.cinema&&!S.ui.confirm&&!this.online()&&!S.zone?.secretSession&&!S.zone?.riddleSession&&!S.zone?.specialSession&&!WorldTales.session();},
  update(){
-  if(!this.enabled())return;const t=this.state(),a=t.active,b=S.battle;
+  if(!this.enabled())return;const t=this.state(),b=S.battle;
+  // Old saves can lack lesson flags even after real forest play. Entering from
+  // the city shortcut must count too; do not require the nav hint's exact path.
+  if(!t.reviewBasic){
+   const entered=!!S.zone||[1,2,3,4,5,6,7].includes(Number(S.P.lastForestId))||Object.values(S.P.forestClears||{}).some(n=>Number(n)>0)||t.done.training||t.done.fork||t.done.battle||t.firstBoss;
+   if(entered){let changed=!t.done.forest||!t.done.training;t.done.forest=true;t.done.training=true;if(['forest','training'].includes(t.active)){t.active=S.zone&&S.zone.depth===0&&!t.done.fork?'fork':null;changed=true;}if(changed)this.store();}
+   if(['stats','forest','training','fork'].includes(t.active)&&t.done[t.active]){t.active=null;this.store();}
+  }
+  const a=t.active;
   // Repair saves affected by the old auto-allocation observer restarting this lesson.
-  if(t.active==='forest'&&t.done.forest){t.active=null;this.store();}
+  if(t.active==='forest'&&t.done.forest&&!t.reviewBasic){t.active=null;this.store();}
   if(a==='stats'&&this.free()===0)this.finish('stats',t.done.forest?null:'forest');
   if(t.active==='forest'&&S.screen==='wild')this.finish('forest','training');
   if(t.active==='training'&&S.zone){this.finish('training','fork');}
@@ -138,7 +146,7 @@ const tutorialSettings=vSettings;vSettings=function(){const t=Tutorial.state();r
 Object.assign(handlers,{
  tutorialNext:()=>Tutorial.next(),tutorialSkip:()=>Tutorial.skip(),
  tutorialToggle:()=>{const t=Tutorial.state();if(!t)Tutorial.init();else t.enabled=!t.enabled;Tutorial.release();save();render();},
- tutorialReview:()=>{if(!Tutorial.state())Tutorial.init();const t=Tutorial.state();t.enabled=true;t.active=Tutorial.free()?'stats':'forest';S.screen='town';save();render();},
+ tutorialReview:()=>{if(!Tutorial.state())Tutorial.init();const t=Tutorial.state();t.enabled=true;t.reviewBasic=true;for(const k of ['stats','forest','training','fork'])delete t.done[k];t.active=Tutorial.free()?'stats':'forest';S.screen='town';save();render();},
  tutorialDefenseSave:()=>Tutorial.defenseSave(),tutorialRaidStrike:()=>Tutorial.strike(),
  tutorialRaidDone:()=>{if(!Tutorial.state()?.raidClaimed)return;Tutorial.finish('raid');S.screen='town';save();render();gsSave(false);},
  tutorialRaidLater:()=>{const t=Tutorial.state();if(!t||!['raidDefense','raidPractice'].includes(t.active)||(!t.raidError&&carriedPets().length))return;t.active=null;t.enabled=false;S.screen='town';save();render();}
