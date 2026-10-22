@@ -731,7 +731,7 @@
   "tools/build-event-art-preview.cjs": "80dfa0c205e69edcd0f3e6b71ec609290674cf15fa42b9e36a8680e2c1845ae3",
   "game-app.026541a2edd0c878.js": "026541a2edd0c8786dd246b0aec69d419b59187ab9485aed6dc774c510bc3614",
   "game-app.e23b2ef39bd9d0ef.js": "e23b2ef39bd9d0ef7d2b67865f7fab93ac1a01586e13f96c61bbb87123030047",
-  "package.json": "a0ce663c31183f1386bbbbdfef6e7cfd06a69c4794b1d5f31317d458a5b507d7",
+  "package.json": "a190f79871fa81f6a492479ee639afa99d823f7c2ea3cdc3c1044d1e8b7e6e00",
   "runtime/combat.js": "6f1a074419502d1ea39b640781e41875b4ea99f4ea40d63a7427f77f18f52599",
   "runtime/tutorial.js": "dd357b1f2598bd37e8a0583b9b1549db46f6f1b7f186e6e21e859867535dd634",
   "runtime/ui.js": "86dec1385aa5a9c7bbff53cc641dbb7cd5a29ba2c3cd66d25f24a62b587cccba",
@@ -929,9 +929,9 @@
   "runtime/webIntro.js": "ef6357453434864be96342a72f06ad746b3875394ede61885796d1562c8ca069",
   "tools/build-intro-preview.cjs": "9532a03899f25d6e3c5de740cb1af6bf9a80d174b54bad2d1c49b5f93760ec8a",
   "tools/test-web-intro.cjs": "7e3d515e46b73cffdfd7791baca8dba627113ba3d8b8da9e258743a82cafe92d",
-  "PAYMENTS-SETUP-TH.md": "a8b8c4e2ce2ce942ffbdb550b79d565ad973474b7d6c921fa38ac2736b201823",
+  "PAYMENTS-SETUP-TH.md": "b4c23f9363712c725844037b19b83293c2557b75ae0af7a9dbc654df8f76f11d",
   "client/topup-test.css": "f9d8db108d2ef9679fb750c8a1bd18f90abba07acd48f42b473f375270657b94",
-  "client/topup-test.js": "3ae179b71f903f8ec85db3b4c73a1f1d89cf53f72f68c1d7430db924eef21f37",
+  "client/topup-test.js": "34c983aa63ffd347c554ec6618a91632b645400f6fd2d6e75a62a2d7d930d019",
   "content/payment-packs.test.json": "59686683ab387d7a9c30ad78d8c23a5d5917cbe2bc3f8c1f594c0e9051bf329f",
   "server/payments/001-sandbox.sql": "cf8c5449dbba1046f66aac8d1a49bbed04d92751649789d6d701224e0bcad848",
   "server/payments/002-transaction-tests.sql": "55e6fc87235dcb15e85ee9eb80990bb2cf07e882e2abbca8c38a762c23972e4a",
@@ -944,5 +944,11 @@
   "tools/test-payment-catalog.cjs": "50ac94bff44fef04792640e8d68dbf6c670926bc9698e9f4c1807a1decab44d3",
   "tools/test-payment-rules.cjs": "f16218e29895e3eb23deaf263d3db2bba41905693e68be79e0d917cb07187d85",
   "tools/test-payment-service.cjs": "5e67e6d2d20510797d48d8075f2ef588d84cb3f8e6a61a4cf9079afbbf5e695f",
-  "topup-test.html": "9f76224e5ff058effef224d50e09db6d286934ed0b78d7a6cc441fc80ea91f9d"
+  "topup-test.html": "ae27402d6fe3e833fa21504f421ba909c2d9ecaba95779155d8756a3da2b097d",
+  "client/topup-auth-preview.js": "3ff1f090ec3e1001fbd886c80eb9ed0185f0d117a484310ba2a0046d6c0c8329",
+  "client/topup-email.mjs": "05dd7bf3a99bf9cfe1d940cc737dcf450c11b24ab69de65beb6ae645e0b45c1b",
+  "client/topup-session.mjs": "a0815372b8ef874320ea1e57bc1663a822a7fc8f1899defbc16dd03a88967892",
+  "tools/build-shop-auth-preview.cjs": "db27a68d27056a61f6806ffb3fdea3fb2a3c810a65b858a7b090cad1040e8a4d",
+  "tools/test-shop-auth.cjs": "0274ab3f93de9af4502fa904d5c5213a6df6f32ed831bca8ad67c143048f9298",
+  "topup-auth-preview.html": "31f9220b5189c38cd64ac322d181c57be0eff7d70f2c8454ecb4adf5ef26e180"
 }

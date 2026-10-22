@@ -20,7 +20,7 @@
 - เครดิตและการใช้สิทธิ์โปรโมชั่นอยู่ใน transaction เดียว มี advisory lock ต่อบัญชีและ unique constraints ต่อโปรโมชั่นที่ยังไม่หมดอายุ, session และ payment intent
 - ยกเลิก/หมดอายุคืนสิทธิ์ได้เฉพาะเมื่อ Stripe ยืนยัน session expired ไม่เชื่อ cancel URL; หากสร้าง session แล้วตอบกลับขาดหายใช้ idempotency key เดิมเพื่อกู้รายการ หยุดกู้โดยอัตโนมัติเมื่อเกิน 23 ชั่วโมงเพื่อไม่ให้เกิดรายการซ้ำหลัง Stripe หมดอายุ idempotency key
 - `topup-test.html` + `client/topup-test.*`: แสดงแพ็ก 8 รายการ เข้าบัญชีด้วย magic link, เลือก/ผูกหลายตัวละคร, ประวัติ, กลับไปจ่ายรายการเดิม, ตรวจผล/ยกเลิก และยอดคูปองจำลองแยกตามตัวละคร
-- ลิงก์เข้าบัญชีกลับได้เฉพาะ URL `https://gusgoat.github.io/Soulbeast/topup-test.html` ที่เพิ่มใน allowlist ไม่เปลี่ยน Site URL ของ admin เดิม โทเคนอยู่ sessionStorage เฉพาะร้านและถูกลบจาก URL ทันที ไม่เข้าเซฟเกม
+- ลิงก์เข้าบัญชีกลับได้เฉพาะ URL `https://gusgoat.github.io/Soulbeast/topup-test.html` ที่เพิ่มใน allowlist ไม่เปลี่ยน Site URL ของ admin เดิม โทเคนใช้ localStorage คีย์เฉพาะร้านเพื่อคงบัญชีข้ามแท็บในเบราว์เซอร์เดียวกันและถูกลบจาก URL ทันที ไม่เข้าเซฟเกม มีการย้ายจาก sessionStorage รุ่นแรก ต่ออายุอัตโนมัติแบบ single-flight/Web Locks และไม่ล้างบัญชีจาก timeout, 429 หรือ 5xx การออกจากร้านใช้ scope=local ไม่ออกจากบัญชี admin หรืออุปกรณ์อื่น
 - Stripe destination `we_1UTO98LvVJpWGsebGADyzkTR` รับ checkout.session.completed, checkout.session.async_payment_succeeded และ checkout.session.expired แบบ Snapshot ใน Sandbox ปลายทาง `/functions/v1/soulbeast-payments-test/webhook`
 - ตั้ง STRIPE_TEST_SECRET_KEY และ STRIPE_TEST_WEBHOOK_SECRET ใน Supabase Secrets เท่านั้น ไม่มีคีย์ลับใน repository หรือไฟล์สำรอง
 - เฉพาะฟังก์ชัน `soulbeast-payments-test` ใช้ Verify JWT with legacy secret = OFF เพื่อรับ Stripe ที่ไม่มี JWT ด่าน private actions ตรวจ Supabase Auth JWT ด้วย `getUser` เอง และ `/webhook` ตรวจ Stripe HMAC; ฟังก์ชันเกมเดิมไม่เปลี่ยน การเรียก webhook ไม่มี Authorization และไม่มีลายเซ็นทดสอบแล้วตอบ 400 `invalid_signature` ส่วนอ่านบัญชีโดยไม่ login ตอบ 401
@@ -32,6 +32,8 @@
 - `npm test` ผ่านทั้งเกมเดิมและชุดทดสอบ payment catalog/rules/Edge handler แบบ mock ตรวจ spoofed amount/price/account, unsigned/tampered/replayed webhook, key/live mode, login/verified-email gate
 - HTTP จริง: catalog ตอบครบ 8 แพ็ก, การอ่านบัญชีโดยไม่ login ตอบ 401 การรับ webhook ที่ไม่มีลายเซ็นถูกปฏิเสธ
 - ยังไม่ยืนยันการส่งอีเมลถึงผู้เล่นทั่วไปหรือการชำระครบวงจรกับบัญชีผู้ใช้จริง ต้องทดสอบต่อก่อนเปิดใช้คูปองจริง กรณีอีเมลส่งไม่ได้ต้องตั้งผู้ให้บริการอีเมล SMTP ของเจ้าของเกม ไม่ปิดการยืนยันอีเมลเพื่อแก้ปัญหา
+- หลังผู้ใช้รายงาน `email rate limit exceeded` และเคยเข้าได้แล้วหลุด: เพิ่มข้อความไทย หน่วงการส่งซ้ำอย่างน้อย 60 วินาทีและเคารพ Retry-After ปุ่มหน่วงไม่ใช่การรีเซ็ตโควตา Supabase ระบบเริ่มต้นปัจจุบันมีโควตารวม 2 ฉบับต่อชั่วโมงและจำกัดผู้รับเป็นสมาชิกทีม ตาม https://supabase.com/docs/guides/auth/auth-smtp
+- `tools/test-shop-auth.cjs` ตรวจ email gate/ข้อความไทย/ย้าย session/คงบัญชีหลัง reload และแท็บใหม่/refresh ซ้ำ/refresh token rotation สองแท็บ/เน็ตสะดุดไม่ logout/เพิกถอนจริงจึง logout และไม่แก้ key เกมหรือ admin; `topup-auth-preview.html` เป็น fixture UI ที่บล็อก API ทั้งหมด ไม่ส่งอีเมล ไม่รับเงินและไม่อ่านบัญชีจริง
 
 ## งานเชื่อมที่ต้องทำก่อนเปิดใช้
 
