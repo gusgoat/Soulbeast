@@ -26,5 +26,5 @@ const fs=require('fs'),assert=require('assert/strict');
 
  console.log('PASS '+file+': first-visit/skip/end/revisit/replay, muted autoplay fallback, Escape, media error, stale event guards, unchanged story/save, active-game bypass');
 }
-const mp4=fs.readFileSync('assets/video/soulbeast-intro-v1.mp4'),atoms=[];for(let p=0;p+8<=mp4.length;){let n=mp4.readUInt32BE(p);atoms.push(mp4.toString('ascii',p+4,p+8));if(n===1)n=Number(mp4.readBigUInt64BE(p+8));if(n<8)break;p+=n;}assert(atoms.indexOf('moov')>=0&&atoms.indexOf('moov')<atoms.indexOf('mdat'),'MP4 must stream before full download');assert(mp4.length<40*1024*1024);assert(fs.statSync('assets/video/soulbeast-intro-v1.webp').size>1000);console.log('PASS MP4 faststart, web-sized video and poster');
+const mp4=fs.readFileSync('assets/video/soulbeast-intro-v2.mp4'),atoms=[];for(let p=0;p+8<=mp4.length;){let n=mp4.readUInt32BE(p);atoms.push(mp4.toString('ascii',p+4,p+8));if(n===1)n=Number(mp4.readBigUInt64BE(p+8));if(n<8)break;p+=n;}assert(atoms.indexOf('moov')>=0&&atoms.indexOf('moov')<atoms.indexOf('mdat'),'MP4 must stream before full download');assert(mp4.length<40*1024*1024);assert(fs.statSync('assets/video/soulbeast-intro-v2.webp').size>1000);console.log('PASS MP4 faststart, web-sized video and poster');
 })().catch(e=>{console.error(e);process.exitCode=1;});

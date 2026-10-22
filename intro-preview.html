@@ -4,7 +4,7 @@
 const introPreviewStore=window.localStorage,introPreviewKey='qa_sealbeast_web_intro_v1';
 if(new URLSearchParams(location.search).get('reset')==='1')introPreviewStore.removeItem(introPreviewKey);
 Object.defineProperty(window,'localStorage',{value:{getItem:k=>k==='sealbeast_web_intro_v1'?introPreviewStore.getItem(introPreviewKey):null,setItem:(k,v)=>{if(k==='sealbeast_web_intro_v1')introPreviewStore.setItem(introPreviewKey,v);},removeItem:k=>{if(k==='sealbeast_web_intro_v1')introPreviewStore.removeItem(introPreviewKey);}}});window.fetch=()=>Promise.reject(Error('Isolated intro preview: accounts and saves disabled'));
-</script><style>.intro-qa{position:fixed;top:76px;left:12px;right:12px;z-index:12000;background:#162636e8;color:#fff;padding:7px;font-size:12px}.intro-qa a{color:#ffda81}.intro-qa button{font:inherit}</style>
+</script><style>.intro-qa{position:fixed;bottom:12px;left:12px;right:12px;z-index:12000;background:#162636e8;color:#fff;padding:7px;font-size:12px}.intro-qa a{color:#ffda81}.intro-qa button{font:inherit}</style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#10121b">
@@ -21,7 +21,7 @@ Object.defineProperty(window,'localStorage',{value:{getItem:k=>k==='sealbeast_we
 <title>ตำนานผนึกอสูร</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
-<link rel="stylesheet" href="./game-styles.a10f9a8f255fe35c.css">
+<link rel="stylesheet" href="./game-styles.daf52bec8dbc21ba.css">
 
 <div id="app"></div>
 <div id="vfx" aria-hidden="true"></div>
@@ -42,10 +42,11 @@ Object.defineProperty(window,'localStorage',{value:{getItem:k=>k==='sealbeast_we
 <script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
 <script src="./game-data-secrets.0f9eceacb2511a0a.js"></script>
 <script src="./game-data-narrative.47d61b2cfc64f9d8.js"></script>
-<script src="./game-app.cb6ad6b848ebab24.js"></script>
+<script src="./game-app.52aa8887fd56003c.js"></script>
 
 <script>
-const introQa=document.createElement('aside');introQa.className='intro-qa';introQa.innerHTML='<small>ทดสอบอินโทร · แยกจากเซฟจริง</small> <a href="?reset=1">ครั้งแรก</a> · <a href="?return=1">เข้าซ้ำ</a> · <button type="button" id="introQaReplay">ดูซ้ำ</button>';document.body.appendChild(introQa);document.getElementById('introQaReplay').addEventListener('click',()=>WEB_INTRO.open(()=>render(),true));
+const introQa=document.createElement('aside');introQa.className='intro-qa';introQa.innerHTML='<small>ทดสอบอินโทร · แยกจากเซฟจริง</small> <a href="?reset=1">ครั้งแรก</a> · <a href="?return=1">เข้าซ้ำ</a> · <button type="button" id="introQaReplay">ดูซ้ำ</button> · <button type="button" id="introQaSub">ตรวจซับ 30 วินาที</button>';document.body.appendChild(introQa);document.getElementById('introQaReplay').addEventListener('click',()=>WEB_INTRO.open(()=>render(),true));
+document.getElementById('introQaSub').addEventListener('click',()=>{if(WEB_INTRO.video){WEB_INTRO.video.pause();WEB_INTRO.video.currentTime=30;}});
 if(new URLSearchParams(location.search).get('fail')==='1'&&WEB_INTRO.video){WEB_INTRO.video.src='assets/video/qa-missing.mp4';WEB_INTRO.video.load();}
 </script></body>
 </html>

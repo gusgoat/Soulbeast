@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['mobile/**', 'runtime/accounts.js', 'client/play*', 'server/payments/play*', 'server/payments/google-play*', 'server/payments/003*', 'tools/test-play*', 'tools/build-play.cjs', 'tools/play-tests/**', 'client/account*', 'client/billing*', 'content/billing-channels.json', 'tools/build-mobile.cjs', '.github/workflows/android-internal.yml']
+    paths: ['assets/video/**', 'runtime/webIntro.js', 'client/styles.css', 'content/web-intro-media.json', 'mobile/**', 'runtime/accounts.js', 'client/play*', 'server/payments/play*', 'server/payments/google-play*', 'server/payments/003*', 'tools/test-play*', 'tools/build-play.cjs', 'tools/play-tests/**', 'client/account*', 'client/billing*', 'content/billing-channels.json', 'tools/build-mobile.cjs', '.github/workflows/android-internal.yml']
 permissions:
   contents: read
 concurrency:
