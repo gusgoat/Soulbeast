@@ -1,0 +1,18 @@
+{
+  "sourceShare": "https://quickshare.samsungcloud.com/cW9T6PkekuMd",
+  "sourceFilename": "lv_0_20261022175718.mp4",
+  "originalBytes": 104519388,
+  "originalSHA256": "224a0162b4c2b1ef49b1ddf5fc3082c5d02b7ed924ee8a71c15b01fbfefcdd06",
+  "durationSeconds": 84.466667,
+  "web": {
+    "path": "assets/video/soulbeast-intro-v1.mp4",
+    "bytes": 27018833,
+    "SHA256": "e67722fad1d4a026ab06e9c9f73fd491641c5119e5574d19c703bf54bf8e39f7",
+    "width": 1280,
+    "height": 720,
+    "videoCodec": "H.264",
+    "audioCodec": "AAC",
+    "faststart": true
+  },
+  "poster": "assets/video/soulbeast-intro-v1.webp"
+}

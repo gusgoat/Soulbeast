@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="th">
+<head><script>
+const introPreviewStore=window.localStorage,introPreviewKey='qa_sealbeast_web_intro_v1';
+if(new URLSearchParams(location.search).get('reset')==='1')introPreviewStore.removeItem(introPreviewKey);
+Object.defineProperty(window,'localStorage',{value:{getItem:k=>k==='sealbeast_web_intro_v1'?introPreviewStore.getItem(introPreviewKey):null,setItem:(k,v)=>{if(k==='sealbeast_web_intro_v1')introPreviewStore.setItem(introPreviewKey,v);},removeItem:k=>{if(k==='sealbeast_web_intro_v1')introPreviewStore.removeItem(introPreviewKey);}}});window.fetch=()=>Promise.reject(Error('Isolated intro preview: accounts and saves disabled'));
+</script><style>.intro-qa{position:fixed;top:76px;left:12px;right:12px;z-index:12000;background:#162636e8;color:#fff;padding:7px;font-size:12px}.intro-qa a{color:#ffda81}.intro-qa button{font:inherit}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10121b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ผนึกอสูร">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
+<!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
+<script>window.SHEET_URL = 'https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api';</script>
+<link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
+</head>
+<body style="margin:0;height:100%">
+<title>ตำนานผนึกอสูร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
+<link rel="stylesheet" href="./game-styles.a10f9a8f255fe35c.css">
+
+<div id="app"></div>
+<div id="vfx" aria-hidden="true"></div>
+<div id="travelFx" aria-hidden="true"></div>
+<input type="file" id="imgIn" accept="image/*" hidden>
+<input type="file" id="saveFile" accept=".txt,text/plain" hidden>
+
+<script src="./game-data-registry.5350fd57c39d09dd.js"></script>
+<script src="./game-data-elements.56e4b6216b088c57.js"></script>
+<script src="./game-data-skills.13d58a9f1b529077.js"></script>
+<script src="./game-data-classes.b20030dab4164ae7.js"></script>
+<script src="./game-data-equipment.b5da02154a81ac71.js"></script>
+<script src="./game-data-consumables.bf9df0fd5ed788c5.js"></script>
+<script src="./game-data-beasts.2a514a7212675550.js"></script>
+<script src="./game-data-exploration.6cfcf82495a0e5a0.js"></script>
+<script src="./game-data-story.b4ecd56118a196f0.js"></script>
+<script src="./game-data-localization.e4a49cb7cb33b036.js"></script>
+<script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
+<script src="./game-data-secrets.0f9eceacb2511a0a.js"></script>
+<script src="./game-data-narrative.47d61b2cfc64f9d8.js"></script>
+<script src="./game-app.cb6ad6b848ebab24.js"></script>
+
+<script>
+const introQa=document.createElement('aside');introQa.className='intro-qa';introQa.innerHTML='<small>ทดสอบอินโทร · แยกจากเซฟจริง</small> <a href="?reset=1">ครั้งแรก</a> · <a href="?return=1">เข้าซ้ำ</a> · <button type="button" id="introQaReplay">ดูซ้ำ</button>';document.body.appendChild(introQa);document.getElementById('introQaReplay').addEventListener('click',()=>WEB_INTRO.open(()=>render(),true));
+if(new URLSearchParams(location.search).get('fail')==='1'&&WEB_INTRO.video){WEB_INTRO.video.src='assets/video/qa-missing.mp4';WEB_INTRO.video.load();}
+</script></body>
+</html>

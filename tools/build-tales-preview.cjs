@@ -16,5 +16,5 @@ else{S.zone.taleSession={mode:'offer',id:'moon-0',token:'preview',result:[]};}re
 </script>`;
 const guard='<script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Isolated QA preview: network disabled"));</script>';
 const banner='<div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#b88b30;color:#111;text-align:center;font-size:12px">หน้าทดสอบเรื่องเล่า · ไม่บันทึกเซฟและไม่เชื่อมต่อบัญชีจริง</div>';
-fs.writeFileSync('world-tales-preview.html',b.files['staging-index.html'].replace('<head>','<head>'+guard).replace('<body>','<body>'+banner).replace('</body>',setup+'</body>'));
+fs.writeFileSync('world-tales-preview.html',b.files['staging-index.html'].replace('<html lang="th">','<html lang="th" data-skip-web-intro>').replace('<head>','<head>'+guard).replace('<body>','<body>'+banner).replace('</body>',setup+'</body>'));
 console.log('Built isolated quest/rumor/choice/ending preview');

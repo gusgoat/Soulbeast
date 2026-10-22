@@ -182,6 +182,11 @@
       "file": "tutorial.js",
       "description": "First-encounter visual onboarding and isolated practice camp",
       "units": 1
+    },
+    "webIntro": {
+      "file": "webIntro.js",
+      "description": "First-visit website video, skip, replay and media fallback",
+      "units": 1
     }
   },
   "order": [
@@ -1273,6 +1278,7 @@
     "1087-worldTales",
     "1088-talesConsequences",
     "1089-tutorial",
+    "1090-webIntro",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9241,6 +9247,13 @@
         "Tutorial"
       ],
       "type": "FirstEncounterTutorial"
+    },
+    "1090-webIntro": {
+      "module": "webIntro",
+      "names": [
+        "WEB_INTRO"
+      ],
+      "type": "WebsiteIntroVideo"
     }
   },
   "trailer": "\r\n\r\n"

@@ -12,5 +12,5 @@ if(kind==='events'){const d={id:WorldTales.zoneKey(z)};for(let i=0;i<3;i++)cards
 if(kind==='riddles'){for(const id of ['training-thorns','dragon-echo','castle-mirrors','false-boss-lightning'])for(let i=0;i<4;i++)cards+=card(id+' / '+i,ForestRiddle.panel(id,i,'Panel '+i));}
 render=()=>{document.getElementById('app').innerHTML='<main style="padding:16px;max-width:1000px;margin:auto"><h1>Event art QA</h1><p>Isolated preview · no saves or network</p><nav>'+[7,1,2,3,4,5,6].map(n=>'<a style="margin:8px" href="?zone='+n+'&kind='+kind+'">Zone '+n+'</a>').join('')+'</nav><nav>'+['tales','secrets','events','riddles'].map(k=>'<a style="margin:8px" href="?zone='+z+'&kind='+k+'">'+k+'</a>').join('')+'</nav><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">'+cards+'</div></main>';};render();
 </script>`;
-fs.writeFileSync('event-art-preview.html',b.files['staging-index.html'].replace('<head>','<head>'+guard).replace('</body>',setup+'</body>'));
+fs.writeFileSync('event-art-preview.html',b.files['staging-index.html'].replace('<html lang="th">','<html lang="th" data-skip-web-intro>').replace('<head>','<head>'+guard).replace('</body>',setup+'</body>'));
 console.log('Built isolated event art gallery');
