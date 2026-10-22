@@ -172,6 +172,11 @@
       "file": "worldTales.js",
       "description": "Villager quests, rumors and story consequences",
       "units": 1
+    },
+    "talesConsequences": {
+      "file": "talesConsequences.js",
+      "description": "Consequences, reconciliation and mixed endings",
+      "units": 1
     }
   },
   "order": [
@@ -1261,6 +1266,7 @@
     "1085-classRefresh",
     "1086-forestRiddles",
     "1087-worldTales",
+    "1088-talesConsequences",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -3741,7 +3747,7 @@
     "0339-v-----------Save": {
       "module": "persistence",
       "names": [
-        "vÃƒÂ Ã‚Â¸Ã‚Â£ÃƒÂ Ã‚Â¸Ã‚Â°ÃƒÂ Ã‚Â¸Ã…Â¡ÃƒÂ Ã‚Â¸Ã…Â¡ÃƒÂ Ã‚Â¸Ã‚Â­ÃƒÂ Ã‚Â¸Ã‚Â­ÃƒÂ Ã‚Â¸Ã¢â€žÂ¢ÃƒÂ Ã‚Â¹Ã¢â‚¬Å¾ÃƒÂ Ã‚Â¸Ã‚Â¥ÃƒÂ Ã‚Â¸Ã¢â€žÂ¢ÃƒÂ Ã‚Â¹Ã…â€™Save"
+        "vÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â£ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â°ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â­ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â­ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¹ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â¥ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¸ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã‚Â Ãƒâ€šÃ‚Â¹Ãƒâ€¦Ã¢â‚¬â„¢Save"
       ],
       "type": "FunctionDeclaration"
     },
@@ -9214,6 +9220,14 @@
         "WorldTales"
       ],
       "type": "WorldTalesSystem"
+    },
+    "1088-talesConsequences": {
+      "module": "talesConsequences",
+      "names": [
+        "TALE_EFFECT_KINDS",
+        "TALE_RUNTIME"
+      ],
+      "type": "TalesConsequences"
     }
   },
   "trailer": "\r\n\r\n"

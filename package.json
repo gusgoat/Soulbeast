@@ -3,6 +3,6 @@
   "private": true,
   "scripts": {
     "build": "node tools/client-build.cjs --out build",
-    "test": "node tools/client-build.test.cjs && node tools/client-build.cjs --out build && node tools/test-world-tales.cjs && node tools/test-tales-scheduling.cjs && node tools/test-secret-penalty-hazards.cjs && node tools/test-boss-20-50.cjs"
+    "test": "node tools/client-build.test.cjs && node tools/client-build.cjs --out build && node tools/test-world-tales.cjs && node tools/test-tales-scheduling.cjs && node tools/test-tales-consequences.cjs && node tools/test-secret-penalty-hazards.cjs && node tools/test-boss-20-50.cjs"
   }
 }

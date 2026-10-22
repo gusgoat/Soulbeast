@@ -3,6 +3,7 @@ const setup=`<script>
 handlers.newgame();S.ui={introSeen:true};S.P.name='ผู้ทดสอบเรื่องเล่า';S.P.lv=30;S.P.gold=5000;S.P.items.pot=10;S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.zone={id:1,depth:3,log:[]};S.screen='zone';WorldTales.run();
 const demo=new URLSearchParams(location.search).get('demo');
 if(demo==='ending'){WorldTales.record('secret:1',1,'Yggdrasil',0,'น้ำกลับถึงหมู่บ้าน แต่รังอสูรบางส่วนถูกทิ้งร้าง');WorldTales.record('quest:moon-3',1,'เส้นแบ่งบนแผนที่',1,'ชาวบ้านสร้างสะพานอ้อมรังอสูรเพื่อใช้เส้นทางร่วมกัน');S.P.cleared=1;S.ui.taleBook=true;S.screen='story';}
+else if(demo==='followup'){WorldTales.record('secret:1',1,'Yggdrasil',0,'น้ำถึงหมู่บ้าน');WorldTales.state().aftermaths['secret:1'].heard=2;WorldTales.state().serial++;WorldTales.startAfter('secret:1',false);}
 else if(demo==='rumor'){S.zone.taleSession={mode:'rumor',token:'preview',text:TALES_DATA.chatter[0],result:[]};}
 else if(demo==='special'){S.zone={id:4,depth:5,log:[]};WorldTales.run();S.zone.taleSession={mode:'special',id:'encounter-4',token:'preview',result:[]};}
 else if(demo==='fork'){S.zone.fork=[{k:'villager',h:false},{k:'mist',h:true}];}

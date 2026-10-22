@@ -288,7 +288,7 @@ let PENDING=null;
 // @soulbeast-end 0342-PENDING
 // @soulbeast-unit 0348-healCost
 
-const healCost=()=>5+S.P.lv*4;
+const healCost=()=>Math.max(1,Math.round((5+S.P.lv*4)*WorldTales.hospitalFactor()));
 // @soulbeast-end 0348-healCost
 // @soulbeast-unit 0356-ExpressionStatement
 

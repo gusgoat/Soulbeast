@@ -498,3 +498,6 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 .tale-choices>.full,.tale-choices>small{grid-column:1/-1}
 .cinema>.tale-panel{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(100%,70vh);height:auto;border:0;border-radius:0}
 @media(max-width:380px){.tale-choice{font-size:13px}.tale-choices{gap:6px}}
+
+.tale-extra{display:block;margin:0;width:100%;aspect-ratio:1;background-image:url(assets/ui/tales/followups-v1.webp);background-size:300% 700%;background-position:var(--tx) var(--ty);border-radius:12px;border:1px solid #a7925f66}
+#worldTales>.tale-extra{max-width:360px;margin-inline:auto}.cinema>.tale-extra{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(100%,70vh);height:auto}

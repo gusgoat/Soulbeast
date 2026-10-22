@@ -73,7 +73,7 @@ function humanStats(cls,lv,pts,eq){const s={};K.forEach((k,i)=>s[k]=(PB[i]+PG[i]
 // @soulbeast-end 0132-humanStats
 // @soulbeast-unit 0135-pStats
 
-const pStats=()=>worldPowerStats(S.P,humanStats(S.P.cls,S.P.lv,S.P.pts,S.P.eq));
+const pStats=()=>WorldTales.adjustStats(worldPowerStats(S.P,humanStats(S.P.cls,S.P.lv,S.P.pts,S.P.eq)));
 // @soulbeast-end 0135-pStats
 // @soulbeast-unit 0153-gainExp
 

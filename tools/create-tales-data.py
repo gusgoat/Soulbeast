@@ -77,6 +77,8 @@ data=dict(version=1,quests=quests,special=special,secrets=secrets,zones={str(z):
 'พ่อค้าจำลูกค้าจากรอยซ่อมเสื้อคลุม เขาบอกว่าคนที่ผ่านป่ามาหลายครั้งมักมีเรื่องเล่าตรงตะเข็บมากกว่าในถุงเงิน',
 'นักดนตรีเก็บเพลงจากทุกหมู่บ้าน แต่ตั้งใจเว้นห้องเพลงไว้หนึ่งจังหวะ เผื่อเจ้าของเสียงที่ยังไม่กลับมา',
 'หมอยาบอกว่าบาดแผลที่หายช้าที่สุดไม่จำเป็นต้องใหญ่ที่สุด เขาจึงถามคนไข้เสมอว่ากำลังจะกลับไปหาใคร'])
+from tales_detail import enrich
+data=enrich(data)
 Path('content/narrative.js').write_text("'use strict';\nObject.assign(SoulbeastContent,{WORLD_TALES:()=> ("+json.dumps(data,ensure_ascii=False,separators=(',',':'))+")});\n",encoding='utf-8')
 config=json.loads(Path('client/build.json').read_text());
 if 'narrative' not in config['contentGroups']:config['contentGroups'].append('narrative')

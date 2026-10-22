@@ -120,8 +120,8 @@ const handlers={
  cloudload:()=>{if(!S.P){cloudLoad();return}S.ui.confirm={msg:'โหลดเซฟจากคลาวด์? ความคืบหน้าในเครื่องนี้ที่ยังไม่ได้บันทึกขึ้นคลาวด์จะถูกแทนที่',act:'docloudload'};render()},
  docloudload:()=>{S.ui.confirm=null;cloudLoad()},
  use:v=>{const [id,who]=v.split(':'),P=S.P,it=CON[id];if(!(P.items[id]>0))return;
-  if(who==='P'){const s=pStats();if(it.hp)P.hp=Math.min(s.hp,P.hp+it.hp);if(it.mp)P.mp=Math.min(s.mp,P.mp+it.mp)}
-  else{const p=petBy(+who);if(!p)return;if(!S.P.carried?.includes(p.uid)){toast('อสูรตัวนี้พักที่ค่าย นำติดตัวก่อนใช้ยา');return}const s=calcPet(p);if(it.rev){if(p.hp>0){toast('อสูรตัวนี้ยังไม่หมดสติ');return}Sound.fx('revive');p.hp=Math.round(s.hp*it.rev)}else{if(p.hp<=0){toast('ต้องใช้ธูปเรียกวิญญาณก่อน');return}if(it.hp)p.hp=Math.min(s.hp,p.hp+it.hp);if(it.mp)p.mp=Math.min(s.mp,p.mp+it.mp)}}
+  if(who==='P'){const s=pStats();if(it.hp)P.hp=Math.min(s.hp,P.hp+taleRecoveryAmount(it,'hp'));if(it.mp)P.mp=Math.min(s.mp,P.mp+taleRecoveryAmount(it,'mp'))}
+  else{const p=petBy(+who);if(!p)return;if(!S.P.carried?.includes(p.uid)){toast('อสูรตัวนี้พักที่ค่าย นำติดตัวก่อนใช้ยา');return}const s=calcPet(p);if(it.rev){if(p.hp>0){toast('อสูรตัวนี้ยังไม่หมดสติ');return}Sound.fx('revive');p.hp=Math.round(s.hp*it.rev)}else{if(p.hp<=0){toast('ต้องใช้ธูปเรียกวิญญาณก่อน');return}if(it.hp)p.hp=Math.min(s.hp,p.hp+taleRecoveryAmount(it,'hp'));if(it.mp)p.mp=Math.min(s.mp,p.mp+taleRecoveryAmount(it,'mp'))}}
   P.items[id]--;ExtraAudio.play(it.cure?'heal':'drink');save();render();toast(`ใช้ ${it.n} แล้ว`)},
  img:v=>{pendingImg=v;const el=document.getElementById('imgIn');el.value='';el.click()},
  delimg:v=>{delete IMG[v];saveImg();render()},

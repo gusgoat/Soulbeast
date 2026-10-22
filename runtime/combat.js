@@ -100,7 +100,7 @@ const hitChance=(u,t,sk)=>clamp(eff(u,'acc')-eff(t,'eva')+15+((sk&&sk.acc)||0),m
 // @soulbeast-end 0249-hitChance
 // @soulbeast-unit 0252-costOf
 
-const costOf=(u,sk)=>sk.mp?Math.round(sk.mp*(hasPas(u,'mpsave')?.7:1)):0;
+const costOf=(u,sk)=>sk.mp?Math.round(sk.mp*(hasPas(u,'mpsave')?.7:1)*WorldTales.skillFactor(u)):0;
 // @soulbeast-end 0252-costOf
 // @soulbeast-unit 0255-hurt
 
@@ -300,7 +300,7 @@ function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
   if(it.rev){if(tgt.hp>0||tgt.kind==='player'){toast('เลือกอสูรที่หมดสติก่อน (แตะการ์ดฝ่ายเรา)');return}Sound.fx('revive');tgt.hp=Math.round(tgt.st.hp*it.rev);tgt.status=retainedBattleAilments(tgt);blog(`${tgt.name} ฟื้นคืนสติ`)}
   else if(tgt.hp<=0){toast('เป้าหมายหมดสติ ใช้ธูปเรียกวิญญาณก่อน');return}
   else if(it.cure){const has=it.cure.filter(x=>tgt.status[x]);if(!has.length){toast(`${tgt.name} ไม่มีสถานะที่ยานี้รักษาได้`);return}has.forEach(x=>delete tgt.status[x]);blog(`ใช้ ${it.n} กับ ${tgt.name} หายจาก${has.map(x=>STS[x].n).join(' ')}`);fxAdd(tgt,'หาย','good')}
-  else{if(it.hp)heal(tgt,it.hp);if(it.mp){tgt.mp=Math.min(tgt.st.mp,tgt.mp+it.mp);fxAdd(tgt,'+'+it.mp+' MP','mp')}blog(`ใช้ ${it.n} กับ ${tgt.name}`)}
+  else{if(it.hp)heal(tgt,taleRecoveryAmount(it,'hp'));if(it.mp){tgt.mp=Math.min(tgt.st.mp,tgt.mp+taleRecoveryAmount(it,'mp'));fxAdd(tgt,'+'+it.mp+' MP','mp')}blog(`ใช้ ${it.n} กับ ${tgt.name}`)}
   ExtraAudio.play(it.cure?'heal':'drink');vfx('heal',tgt.id);S.P.items[a]--;after();return}
  if(k==='seal'){const it=CON[a],t=curTarget();if(!(S.P.items[a]>0)||!t)return;if(!sealable(t)){toast('ผนึกเป้าหมายนี้ไม่ได้');return}if(S.P.pets.length>=MAXPETS){toast('ผนึกเต็มแล้ว ปล่อยอสูรบางตัวก่อน');return}
   S.P.items[a]--;ExtraAudio.play('seal');vfx('buff',t.id,{c:'#6dcfc1'});const ch=sealChance(t,it.seal);blog(`คุณขว้าง${it.n}ใส่ ${t.name}...`);
