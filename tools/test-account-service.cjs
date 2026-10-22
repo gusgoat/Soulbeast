@@ -27,5 +27,13 @@ const call=(body,auth=true)=>ctx.handler.fetch(new Request('https://example.inva
  r=await call({action:'load',code});v=await r.json();assert(v.ok,JSON.stringify(v));const p=JSON.parse(v.data).P;assert.equal(p.gold,150);assert.equal(p.lv,3);assert.equal(p.gender,'female');assert.equal(p.pets[0].sp,'wisp');assert.equal(p.cpin,undefined);
  account='22222222-2222-4222-8222-222222222222';r=await call({action:'load',code});assert.equal(r.status,403);assert.equal((await r.json()).error,'character_not_owned');
  r=await call({action:'account_list'});assert.equal((await r.json()).characters.length,0);
+ const templates=vm.runInContext('accountTemplates',ctx);let combinations=0;
+ for(const t of Object.values(templates)){
+  account=crypto.randomUUID();const request_id=crypto.randomUUID();r=await call({action:'account_create',request_id,data:t});v=await r.json();assert(v.ok,JSON.stringify(v));
+  r=await call({action:'load',code:v.character.code});v=await r.json();const p=JSON.parse(v.data).P;
+  assert.equal(p.cls,t.P.cls);assert.equal(p.lv,3);assert.deepEqual(p.pets.map(x=>x.sp),JSON.parse(JSON.stringify(t.P.pets.map(x=>x.sp))));assert.equal(p.tutorial.v,1);assert.equal(p.tutorial.active,'stats');combinations++;
+ }
+ assert(combinations>=27);
+ console.log('PASS all '+combinations+' base-class/starter combinations preserve first-time tutorial and canonical starting inventory');
  console.log('PASS exact account handler: verified-user gate, actual engine save/load, canonical level/gold/starter, idempotent creation, no browser PIN and cross-account denial (mock database/auth)');
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -24,3 +24,6 @@ forest-ai-pool*.html -text
 audio-*.html -text
 
 secret*.html -text
+
+# Account beta shells are generated from the same byte-preserved game shell.
+accounts*.html -text

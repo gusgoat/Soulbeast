@@ -45,5 +45,7 @@ const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
  const ownerKey=[...store.keys()].find(k=>k.includes(':owner-a:'));assert(ownerKey);assert.equal(store.get('sealbeast_save_v1'),'legacy untouched');
  g.run("ACCOUNT_GAME.user={id:'owner-b'};save();");assert([...store.keys()].some(k=>k.includes(':owner-b:')));assert.equal(store.get(ownerKey),store.get([...store.keys()].find(k=>k.includes(':owner-b:'))));
  g.run("ACCOUNT_GAME.user=null;ACCOUNT_GAME.mode='login';render();");assert(g.app.innerHTML.includes('accountForm'));assert(!g.app.innerHTML.includes('data-a="newgame"'),'Cannot create before login');
+ g.run("ACCOUNT_GAME.user={id:'owner-a'};ACCOUNT_GAME.code='CHECKTEST2345';ACCOUNT_GAME.client={game:async()=>{ACCOUNT_GAME.user={id:'owner-b'};return {ok:true};}};");
+ assert.equal((await g.run("sheetRequest({body:JSON.stringify({action:'save'})})")).error,'account_changed','A late response cannot update a different account');
  console.log('PASS accounts: verified auth, cross-account/environment ownership, server PIN injection, canonical creation, idempotent retries, recovery after interrupted creation, password non-persistence, callback validation and account-scoped local saves (mock services)');
 })().catch(e=>{console.error(e);process.exitCode=1;});

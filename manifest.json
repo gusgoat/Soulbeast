@@ -951,12 +951,12 @@
   "tools/build-shop-auth-preview.cjs": "db27a68d27056a61f6806ffb3fdea3fb2a3c810a65b858a7b090cad1040e8a4d",
   "tools/test-shop-auth.cjs": "0274ab3f93de9af4502fa904d5c5213a6df6f32ed831bca8ad67c143048f9298",
   "topup-auth-preview.html": "31f9220b5189c38cd64ac322d181c57be0eff7d70f2c8454ecb4adf5ef26e180",
-  "ACCOUNTS-SETUP-TH.md": "2d41e6c06cad26f6cb9fa49b6cbfea5d984dab5f636dc22d2c5d7eaa3d014be2",
-  "accounts-staging.html": "4ec8e6e456ec25e3c5b9f03c1b466d6aa4dcc6b0a873c2340fc866492ca59c98",
-  "accounts-preview.html": "e6157b8c0079aee72021d0fdc42b022369201f73ebd0d0a1de123e29ab30a627",
+  "ACCOUNTS-SETUP-TH.md": "4693eec2056673e0c69b8514002daeb35d7542e9895bd7a5ad82de4c744cee05",
+  "accounts-staging.html": "ca7632cac05b160072fd2cef7e682a2a40bcf4a654e69343b530baa34ccdde2a",
+  "accounts-preview.html": "db4fc3dcfe8ef9070ccf0cc4337fdcbef9957cba7a8c6a620a0851fca0c77d76",
   "client/account-client.mjs": "0810eee341fa8929dfe21ec4be138a49c28a03dc249e08ae16870605a87d638e",
   "client/accounts-preview.js": "27cd4fda55f8664f561e7b6482991cf1ba08857c1bb0230b4ab8c1ac5a114034",
-  "runtime/accounts.js": "b94ea5898633df5c164445eac58439f4b4ce76b79ee0f656b66743860dc94bc4",
+  "runtime/accounts.js": "62efcf4b1b18a67e9eb8952c34d64de8193d7491f6b9e0520fba6c12492144b1",
   "server/accounts/engine.ts": "d25504a4dd120b078af76b1b69cbf0e9ebc538dbd17d964673b9d2959dc05d52",
   "server/accounts/gateway.mjs": "4e95eaf1c10a1e9ffcfd761b96190a694251a592e2140d812b80d140b7acb0f3",
   "server/accounts/token-owner.mjs": "07cfd500c6b0d2b588208ee49909ad91ea7ccfcb666adb97ffd7c601a1da7786",
@@ -964,7 +964,8 @@
   "server/accounts/002-transaction-tests.sql": "f06f5cdf60db50b31d361464d2b11a43efcaf040c38b4f3da3bfd0149552dd96",
   "tools/build-accounts.cjs": "4f90ba243fa41aa12462f8b4a4d9016dcc2b68121530cba2bd3db57f3b22df55",
   "tools/prepare-account-stage.cjs": "b58dbbefcc97d7779e811a46b151cdc854252c8a4bc125128198818728b0f737",
-  "tools/test-accounts.cjs": "9dd99c601e1a4913926646682bf1577c84fab1de3731d958e5a4dd5c73f5c795",
-  "tools/test-account-service.cjs": "9ad2ca81ff7354446a5af4d049dd25bc5aa09be838bf2a69bcedf6336fa45b69",
-  "game-app.fcebac3e42d291ce.js": "fcebac3e42d291cef0ec910d4d4f195cb73183d5aa93d4dda09a21feca054f5d"
+  "tools/test-accounts.cjs": "d9b97c04abb887f3c8dbf40cd5b9b5f7734d3a88b758be632ed5763355150106",
+  "tools/test-account-service.cjs": "9d273f24982ed76eea9992f06709db5cdc0e025d9026062abb9b8e0d3b064aec",
+  "game-app.fcebac3e42d291ce.js": "fcebac3e42d291cef0ec910d4d4f195cb73183d5aa93d4dda09a21feca054f5d",
+  "game-app.813880632f76de0e.js": "813880632f76de0e47ba06555a528212647e6233a3e2d3895827b9430dd04027"
 }
