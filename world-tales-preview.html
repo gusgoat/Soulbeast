@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="th">
+<head><script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Read-only QA preview: network disabled"));</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10121b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ผนึกอสูร">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
+<!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
+<script>window.SHEET_URL = 'https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api';</script>
+<link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
+</head>
+<body style="margin:0;height:100%">
+<title>ตำนานผนึกอสูร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
+<link rel="stylesheet" href="./game-styles.ccc250198707a307.css">
+
+<div id="app"></div>
+<div id="vfx" aria-hidden="true"></div>
+<div id="travelFx" aria-hidden="true"></div>
+<input type="file" id="imgIn" accept="image/*" hidden>
+<input type="file" id="saveFile" accept=".txt,text/plain" hidden>
+
+<script src="./game-data-registry.5350fd57c39d09dd.js"></script>
+<script src="./game-data-elements.56e4b6216b088c57.js"></script>
+<script src="./game-data-skills.13d58a9f1b529077.js"></script>
+<script src="./game-data-classes.b20030dab4164ae7.js"></script>
+<script src="./game-data-equipment.b5da02154a81ac71.js"></script>
+<script src="./game-data-consumables.bf9df0fd5ed788c5.js"></script>
+<script src="./game-data-beasts.2a514a7212675550.js"></script>
+<script src="./game-data-exploration.6cfcf82495a0e5a0.js"></script>
+<script src="./game-data-story.b4ecd56118a196f0.js"></script>
+<script src="./game-data-localization.e4a49cb7cb33b036.js"></script>
+<script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
+<script src="./game-data-secrets.68b0c03a62a9d443.js"></script>
+<script src="./game-data-narrative.4b5a47306902faf1.js"></script>
+<script src="./game-app.35921e46437b4992.js"></script>
+
+<script>handlers.newgame();S.ui={introSeen:true};S.P.name='ผู้ทดสอบเรื่องเล่า';S.P.lv=30;S.P.gold=5000;S.P.items.pot=10;S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.zone={id:1,depth:3,log:[]};S.screen='zone';WorldTales.run();const demo=new URLSearchParams(location.search).get('demo');if(demo==='ending'){WorldTales.record('secret:1',1,'Yggdrasil',0,'น้ำกลับถึงหมู่บ้าน แต่รังอสูรบางส่วนถูกทิ้งร้าง');WorldTales.record('quest:moon-3',1,'เส้นแบ่งบนแผนที่',1,'ชาวบ้านสร้างสะพานอ้อมรังอสูรเพื่อใช้เส้นทางร่วมกัน');S.P.cleared=1;S.ui.taleBook=true;S.screen='story';}else if(demo==='rumor'){S.zone.taleSession={mode:'rumor',token:'preview',text:TALES_DATA.chatter[0],result:[]};}else if(demo==='special'){S.zone={id:4,depth:5,log:[]};WorldTales.run();S.zone.taleSession={mode:'special',id:'encounter-4',token:'preview',result:[]};}else{S.zone.taleSession={mode:'offer',id:'moon-0',token:'preview',result:[]};}render();</script></body>
+</html>
