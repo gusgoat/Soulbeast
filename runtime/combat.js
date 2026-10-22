@@ -290,7 +290,7 @@ function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
  if(k==='done'){const res=b.over.res,kind=b.kind;S.battle=null;
   if(res==='lose'){S.zone=null;S.screen='hospital'}
   else if(kind==='npc')S.screen='arena';
-  else if(kind==='boss'&&res==='win'){S.zone=null;S.screen='town';toast('ชนะบอสแล้ว! กลับสู่นครพันผนึกอย่างผู้ชนะ')}
+  else if(kind==='boss'&&res==='win'){S.zone=null;S.screen=forestReturnScreen();toast(S.screen==='hospital'?'ชนะบอสแล้ว! HP ต่ำกว่า 80% พามาที่โรงพยาบาลในเมือง':'ชนะบอสแล้ว! กลับสู่นครพันผนึกอย่างผู้ชนะ')}
   else{S.screen='zone';if(S.zone){if(S.zone.after){S.zone.ev=S.zone.after;S.zone.after=null;S.zone.fork=null}else newFork()}}
   save();render();return}
  if(b.menu==='wait'||b.menu==='end')return;const u=uById(b.cur);if(!u)return;

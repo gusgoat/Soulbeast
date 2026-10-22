@@ -21,6 +21,7 @@ const Tutorial={
   if(t.active==='training'&&S.zone){this.finish('training','fork');}
   if(t.active==='fork'&&S.zone?.depth>0)this.finish('fork');
   if(t.active==='hospital'&&S.screen==='hospital')this.set('heal');
+  if(S.screen==='hospital'&&!S.zone&&!b&&!t.active&&t.firstBoss&&!t.done.hospital)this.set('heal');
   if(t.active==='shop'&&S.screen==='shop')this.set('buy');
   if(t.active==='forge'&&S.screen==='forge')this.set('craft');
   if(t.active==='equip'&&S.screen==='hero'&&S.ui.hero==='gear')this.set('wear');
