@@ -497,6 +497,11 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 .tale-choice strong,.tale-choice small{overflow-wrap:anywhere;line-height:1.45}
 .tale-choices>.full,.tale-choices>small{grid-column:1/-1}
 .cinema>.tale-panel{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(100%,70vh);height:auto;border:0;border-radius:0}
+/* Atlas panels use reviewed pixel bounds, including nonuniform rows. Keep the
+   source ratio in route buttons, choice cards and full scenes alike. */
+.tale-panel,.secret-panel,.secret-choice .secret-panel,.special-panel,.special-choice .special-panel,.special-route .special-panel,.riddle-panel,.riddle-choice .riddle-panel{aspect-ratio:var(--crop-ratio);background-size:var(--crop-size);background-position:var(--crop-position);background-repeat:no-repeat}
+#worldTales>.tale-panel{max-width:min(100%,var(--crop-width,360px))}
+.cinema>.tale-panel{width:min(100%,70vh,var(--crop-width,360px))}
 @media(max-width:380px){.tale-choice{font-size:13px}.tale-choices{gap:6px}}
 
 .tale-extra{display:block;margin:0;width:100%;aspect-ratio:var(--extra-ratio,1);background-image:url(assets/ui/tales/followups-v1.webp);background-size:var(--sx,300%) var(--sy,700%);background-position:var(--tx) var(--ty);border-radius:12px;border:1px solid #a7925f66}

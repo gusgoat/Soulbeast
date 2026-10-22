@@ -1,0 +1,11 @@
+{
+  "mode": "built-in imagegen",
+  "asset": "assets/ui/tales/roadside-villagers-v2.webp",
+  "size": [
+    1536,
+    1024
+  ],
+  "prompt": "Create ONE single full-frame landscape 3:2 illustration for Soulbeast fantasy RPG roadside villager encounter button. Premium hand-painted realistic fantasy game art matching the attached reference's lighting, medieval costumes and navy/gold cloaked black-haired young adult male adventurer. This is NOT a sprite sheet or collage. Scene: two ordinary adult travelers resting beside an enchanted woodland crossroads, a kind older woman carrying a small herb basket and a weathered male traveler with walking staff and satchel, greeting the approaching navy/gold cloaked sealer seen three-quarter from behind at the right. Travelers are the main subject, large clear expressive faces and hands, chest-up to waist-up framing, whole heads well inside frame with generous safe margins. Inviting but mysterious blue-green woodland, warm lantern by a mossy signpost, subtle distant path. Visually communicate an encounter and conversation, no combat, no specific reward or outcome. Crisp intricate readable detail suitable for both 200px button and 700px hero. Single coherent composition, no borders, no panels, no text, no symbols, no words, no UI, no cropped heads. Use reference solely for art style; do not reproduce its grid or separate scenes.",
+  "reference": "assets/ui/tales/moon-v1.webp",
+  "processing": "WebP encoding only; no resizing or sharpening."
+}
