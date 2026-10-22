@@ -8,7 +8,7 @@ const CRAFT={},CSL=['weapon','armor','gloves','boots','belt','bracelet','ring','
 // @soulbeast-end 0074-CRAFT-CSL
 // @soulbeast-unit 0129-priceOf
 
-const priceOf=it=>Math.round(it.price*(isMerchant()?.85:1));
+const priceOf=it=>Math.round(it.price*(isMerchant()?.85:1)*(typeof WorldTales!=='undefined'&&S.zone?1+WorldTales.modifier('price'):1));
 // @soulbeast-end 0129-priceOf
 // @soulbeast-unit 0130-partPrice
 

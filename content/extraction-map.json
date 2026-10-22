@@ -468,6 +468,10 @@
       "group": "secrets",
       "added": "2026-10-20",
       "description": "Secret places, choices and supplemental ending"
+    },
+    "WORLD_TALES": {
+      "group": "narrative",
+      "description": "Data-driven villagers, quests, rumors and consequences"
     }
   }
 }

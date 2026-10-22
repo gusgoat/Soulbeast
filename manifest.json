@@ -17,7 +17,7 @@
   "game-data-skills.13d58a9f1b529077.js": "13d58a9f1b52907725a9adc9f1004f57c78e897bdd652cf1b669ada7b9da3c77",
   "game-data-story.b4ecd56118a196f0.js": "b4ecd56118a196f0914e221aa3a3518e5a5d46787277ecff8999b7185ef2d1f6",
   "game-styles.cf59cbf8025c2120.css": "cf59cbf8025c2120df31b610209391bf61d3263fa889ddeb2f049dd66fde8ba6",
-  "index.html": "2f1d36f19d3ae19020508270d68fb3d616740306e3c6cbf794b24e342de994c5",
+  "index.html": "d4809196c2e5eec2d590d8420512d030700e84850f4fb42836290e3df0ac28e3",
   "README-TH.txt": "87b9c5473305940e3247cdd512d5e930fb62ed013d676103ad0c4f6fe6432abf",
   "assets/beasts/mist-beasts.webp": "1838ae23e77aba33cac206314e50d0f38c3fb74bb347d83fb1d5bbe202410d03",
   "assets/media/00d6dd41329e230760ded92f.webp": "00d6dd41329e230760ded92f38cf05107d16a63c50c4518944c07cd14be77ef2",
@@ -679,5 +679,18 @@
   "assets/ui/status/spd-down.webp": "ff9696b003a5a51165e484a48075bae3a84c311b00e90a0c9d85d3fa5a34b454",
   "assets/ui/status/spd-up.webp": "771c9522d3c5e25f57398a158e3b3b3ee2e09f0bfc14cb4631696451722f474d",
   "assets/ui/status/special-atlas-v1.webp": "f443f48e44db94ca3a5486519d8f6cc0c86a6edbd3ac946a07dcd456761bd641",
-  "assets/ui/status/static.webp": "1378eba55a283c3d40e996cf2a925c4d736193bf7bf7f77f5e5292a111c0e611"
+  "assets/ui/status/static.webp": "1378eba55a283c3d40e996cf2a925c4d736193bf7bf7f77f5e5292a111c0e611",
+  "game-styles.ccc250198707a307.css": "ccc250198707a30710116db28e74c838f4381e233e256edf5f9e9774fddbdc00",
+  "game-data-narrative.4b5a47306902faf1.js": "4b5a47306902faf19ce50df3e94a5343766523c07079f5ba8bbfcb919db8de93",
+  "game-app.884c7c9f21fcc7a1.js": "884c7c9f21fcc7a155c937e557dd14ff559e772e18e64d98502c9479e03f6beb",
+  "game-app.c2d7cdec7f133947.js": "c2d7cdec7f133947f7a0527059b752dcad8f183ab5903e3f2dcba777c9e16f90",
+  "refactor-staging.html": "7588dcd9c029ac6d233d6f5b20cde4041c3ecdae780a75f27191c229a4f2df55",
+  "world-tales-preview.html": "33de99ec304489ccb2398b67adf37756c7901c0fa2c6a930888c4f5e3bdb1d1d",
+  "assets/ui/tales/castle-v1.webp": "4b36aba06be1678702e627171d57d8cf0ba62edd20135300ae5abe6b841c400c",
+  "assets/ui/tales/desert-v1.webp": "987264fc462f52ca1548cbc0022b80469ff897d0f5dd88d9a7146c192f59c601",
+  "assets/ui/tales/dragon-v1.webp": "bcfe1d70db8b65414d8259aff737a1570e4bb6c8b70dd2c8688af70361b4ce9a",
+  "assets/ui/tales/heaven-v1.webp": "5f1c32fd1025d94c2940fcca290e41aca4d800d60ea7a55d9c151fab003556da",
+  "assets/ui/tales/mist-v1.webp": "800fdd354652ee095453e9e14f61edfaae918253be2599a8c4715e9b2ddcce7b",
+  "assets/ui/tales/moon-v1.webp": "6a4641b056bf26a7f2a6be77748480ad03ed824c0b79df10f5d2580697e0a539",
+  "assets/ui/tales/training-v1.webp": "bded5cc234e11c770db56999c89124bb5fb95950b4bc74b1c18fa87133549d07"
 }

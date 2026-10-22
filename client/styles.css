@@ -488,3 +488,13 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 @media(prefers-reduced-motion:reduce){.god-chosen>.riddle-panel{animation:none}}
 
 .bag-cure-actions .btn{display:inline-flex;align-items:center;gap:6px;text-align:left;max-width:100%}.bag-dose-icon{display:inline-flex;flex:0 0 24px;width:24px;height:24px;align-items:center;justify-content:center}.bag-cure-actions .btn>span:last-child{min-width:0;overflow-wrap:anywhere}
+
+/* Illustrated roadside quests: scene and action tiles share a 3 x 6 atlas. */
+.tale-panel{margin:0;display:block;width:100%;aspect-ratio:var(--tale-ratio,1);background-image:var(--tale-art);background-size:300% 600%;background-position:var(--tx) var(--ty);background-repeat:no-repeat;border-radius:12px;overflow:hidden;border:1px solid #a7925f66}
+#worldTales>.tale-panel{max-width:360px;justify-self:center;margin-inline:auto}
+.tale-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tale-choice{display:flex!important;flex-direction:column;align-items:stretch;gap:8px;padding:8px!important;white-space:normal;min-width:0;text-align:center}
+.tale-choice strong,.tale-choice small{overflow-wrap:anywhere;line-height:1.45}
+.tale-choices>.full,.tale-choices>small{grid-column:1/-1}
+.cinema>.tale-panel{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(100%,70vh);height:auto;border:0;border-radius:0}
+@media(max-width:380px){.tale-choice{font-size:13px}.tale-choices{gap:6px}}

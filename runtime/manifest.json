@@ -167,6 +167,11 @@
       "file": "forestRiddles.js",
       "description": "Single-answer forest riddles, hazards and the optional false boss trial",
       "units": 1
+    },
+    "worldTales": {
+      "file": "worldTales.js",
+      "description": "Villager quests, rumors and story consequences",
+      "units": 1
     }
   },
   "order": [
@@ -1255,6 +1260,7 @@
     "1084-classTen",
     "1085-classRefresh",
     "1086-forestRiddles",
+    "1087-worldTales",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -3735,7 +3741,7 @@
     "0339-v-----------Save": {
       "module": "persistence",
       "names": [
-        "vÃ Â¸Â£Ã Â¸Â°Ã Â¸Å¡Ã Â¸Å¡Ã Â¸Â­Ã Â¸Â­Ã Â¸â„¢Ã Â¹â€žÃ Â¸Â¥Ã Â¸â„¢Ã Â¹Å’Save"
+        "vÃƒÂ Ã‚Â¸Ã‚Â£ÃƒÂ Ã‚Â¸Ã‚Â°ÃƒÂ Ã‚Â¸Ã…Â¡ÃƒÂ Ã‚Â¸Ã…Â¡ÃƒÂ Ã‚Â¸Ã‚Â­ÃƒÂ Ã‚Â¸Ã‚Â­ÃƒÂ Ã‚Â¸Ã¢â€žÂ¢ÃƒÂ Ã‚Â¹Ã¢â‚¬Å¾ÃƒÂ Ã‚Â¸Ã‚Â¥ÃƒÂ Ã‚Â¸Ã¢â€žÂ¢ÃƒÂ Ã‚Â¹Ã…â€™Save"
       ],
       "type": "FunctionDeclaration"
     },
@@ -9200,6 +9206,14 @@
         "FalseBoss"
       ],
       "type": "ForestRiddleEvents"
+    },
+    "1087-worldTales": {
+      "module": "worldTales",
+      "names": [
+        "TALES_DATA",
+        "WorldTales"
+      ],
+      "type": "WorldTalesSystem"
     }
   },
   "trailer": "\r\n\r\n"

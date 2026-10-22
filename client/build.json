@@ -11,7 +11,8 @@
     "story",
     "localization",
     "presentation",
-    "secrets"
+    "secrets",
+    "narrative"
   ],
   "assetBudgetBytes": 75000000
 }
