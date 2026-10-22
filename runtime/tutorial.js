@@ -31,7 +31,7 @@ const Tutorial={
   if(t.active==='guildwar'&&S.screen==='guildwar')this.set('warTeam');
   if(b?.towerRun&&['tower','towerEnter'].includes(t.active))this.finish('tower');
   if(this.forestBattle()&&t.done.battle&&!t.done.captureIntro&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(sealable)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)&&!t.active)this.set('captureIntro');
-  if(this.forestBattle()&&t.done.captureIntro&&!t.done.capture&&t.active==null&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(e=>sealable(e)&&e.hp/e.st.hp<=.4)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)){const index=b.enemies.findIndex(e=>sealable(e)&&e.hp/e.st.hp<=.4);b.target=index;this.set('capture');}
+  if(this.forestBattle()&&t.done.captureIntro&&!t.done.capture&&t.active==null&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(e=>sealable(e)&&e.hp/e.st.hp<=.5)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)){const index=b.enemies.findIndex(e=>sealable(e)&&e.hp/e.st.hp<=.5);b.target=index;this.set('capture');}
   if(S.screen!=='town'||S.zone||b||t.active||S.ui.cinema)return;
   const d=t.done,lv=S.P.lv;
   if(t.firstBoss&&!d.hospital)return this.set('hospital');
@@ -99,7 +99,7 @@ const Tutorial={
   this.update();this.store();this.mount();
  },
  illustration(kind){
-  if(kind==='elements')return '<div class="tutorial-element-demo">'+elementIcon('fire')+'<b>→</b>'+elementIcon('grass')+'<strong>×'+typeMult('fire',['grass'])+'</strong><span>โจมตีธาตุที่แพ้ทาง</span>'+elementIcon('grass')+'<b>→</b>'+elementIcon('fire')+'<strong>×'+typeMult('grass',['fire'])+'</strong></div>';
+  if(kind==='elements')return '<div class="tutorial-element-demo">'+elementIcon('fire')+'<b>→</b>'+elementIcon('grass')+'<strong>×'+typeMult('fire',['grass'])+'</strong><span class="tutorial-element-caption">โจมตีธาตุที่แพ้ทาง</span>'+elementIcon('grass')+'<b>→</b>'+elementIcon('fire')+'<strong>×'+typeMult('grass',['fire'])+'</strong></div>';
   const art={forest:TOWN_ART.wild||BUILTIN_SCENES[8],tower:TOWN_ART.arena,raid:TOWN_ART.camp,guild:'assets/ui/guild-menu.webp',world:'assets/media/1620b9ca7d9052245fe7d7a1.webp',heal:TOWN_ART.hospital,shop:TOWN_ART.shop,forge:TOWN_ART.shop};
   if(kind==='battle'||kind==='seal')return '<div class="tutorial-duel">'+portrait('player',50)+'<span class="tutorial-motion-arrow">➜</span>'+portrait(S.battle?.enemies.find(e=>e.hp>0)?.img||'tanuki',50)+'<span class="tutorial-mini-command">'+(kind==='seal'?itemIcon('seal1',30)+' ผนึก':'✦ สกิล')+'</span></div>';
   return art[kind]?'<img class="tutorial-scene" src="'+art[kind]+'" alt="" loading="lazy">':'<div class="tutorial-symbols">'+({stats:'✦ ➜ ↑',fork:'↖　↗',equip:'⚔ ➜ ◈',promotion:'✦ ➜ ✧'}[kind]||'✦ ➜ ✧')+'</div>';

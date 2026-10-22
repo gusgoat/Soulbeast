@@ -16,6 +16,8 @@ const assert=require('assert/strict');
  r('Tutorial.next()');assert.equal(r('Tutorial.state().active'),'skills');assert(!r('Tutorial.hold()'));
  r("Tutorial.state().active='captureIntro';Tutorial.pending=null;B().cur='P';B().menu='main';var releaseCalls=0,normalBattleLater=battleLater;battleLater=()=>releaseCalls++;Tutorial.next();battleLater=normalBattleLater;");assert.equal(r('releaseCalls'),0,'Closing a manual-turn hint cannot add a second continuation');
  r('S.battle=null;S.zone=null;S=JSON.parse(JSON.stringify(S));S.screen="town";Tutorial.update()');assert(r('Tutorial.state().done.battle'));assert(r('Tutorial.state().done.elements'));
+ fresh();r("Tutorial.state().done={stats:true,battle:true,skills:true,captureIntro:true};Tutorial.state().active=null;S.zone={id:7,depth:2,log:[]};startBattle([wildUnit(ZN[6].sp[0],3,0)],'wild',7);B().cur='P';B().menu='main';B().enemies[0].hp=Math.floor(B().enemies[0].st.hp*.45);Tutorial.update();");assert.equal(r('Tutorial.state().active'),'capture');
+ r("handlers.bt('menu:seal');var sealsBefore=S.P.items.seal1,normalRandom=Math.random;Math.random=()=>.999;handlers.bt('seal:seal1');Math.random=normalRandom;");assert.equal(r('S.P.items.seal1'),r('sealsBefore-1'));assert(r('Tutorial.state().done.capture'),'A real sealing attempt completes the lesson, without changing success probability');
  // A legacy character is left alone; online combat is excluded even for an enrolled one.
  r('delete S.P.tutorial;Tutorial.update()');assert.equal(r('Tutorial.state()'),null);
  fresh();r("PVP.room={status:'active'};S.zone={id:7,depth:1,log:[]};startBattle([wildUnit(ZN[6].sp[0],3,0)],'wild',7);");assert(!r('Tutorial.hold()'));r('PVP.room=null');
