@@ -34,7 +34,7 @@ function bind(){
  $('target')?.addEventListener('change',e=>{target=e.target.value;request=null;render();});
  $('linkForm')?.addEventListener('submit',e=>{e.preventDefault();const code=$('saveCode').value.trim().toUpperCase(),pin=$('savePin').value,game_env=$('saveEnv').value;$('savePin').value='';run(async()=>{await api('link',{code,pin,game_env});await sync();target=game_env+'|'+code;notice('ผูกตัวละครแล้ว ข้อมูลเซฟและคูปองจริงยังเหมือนเดิม');});});
  $('refreshAll')?.addEventListener('click',()=>run(async()=>{await sync();notice('ตรวจรายการล่าสุดแล้ว');}));
- document.querySelectorAll('[data-pack]').forEach(b=>b.addEventListener('click',()=>{request??=crypto.randomUUID();run(()=>checkout(b.dataset.pack,request));}));
+ document.querySelectorAll('[data-pack]').forEach(b=>b.addEventListener('click',()=>{if(!request||request.pack!==b.dataset.pack||request.target!==target)request={id:crypto.randomUUID(),pack:b.dataset.pack,target};const pending=request;run(()=>checkout(pending.pack,pending.id,pending.target));}));
  document.querySelectorAll('[data-refresh]').forEach(b=>b.addEventListener('click',()=>run(async()=>{await api('refresh',{order_id:b.dataset.refresh});await sync();notice('ตรวจผลจาก Stripe แล้ว');})));
  document.querySelectorAll('[data-resume],[data-recover]').forEach(b=>b.addEventListener('click',()=>run(async()=>{const o=state.orders.find(o=>o.id===(b.dataset.resume||b.dataset.recover));await checkout(o.pack_id,o.request_id,o.game_env+'|'+o.code);})));
  document.querySelectorAll('[data-expire]').forEach(b=>b.addEventListener('click',()=>run(async()=>{await api('expire',{order_id:b.dataset.expire});await sync();notice('ตรวจการยกเลิกแล้ว หากกำลังจ่ายอยู่ต้องรอ Stripe ยืนยันผล');})));

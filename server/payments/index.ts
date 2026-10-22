@@ -55,7 +55,9 @@ const serve=withSupabase({auth:'none'},async(req,ctx)=>{
    await verifySignature(body,req.headers.get('stripe-signature'),Deno.env.get('STRIPE_TEST_WEBHOOK_SECRET'));
    const event=JSON.parse(body);demand(event.livemode===false,'live_mode_forbidden');
    if(['checkout.session.completed','checkout.session.async_payment_succeeded','checkout.session.expired'].includes(event.type)){
-    const s=event.data?.object;demand(s?.object==='checkout.session'&&s.livemode===false&&s.metadata?.account_id&&s.metadata?.order_id,'bad_event');
+    const s=event.data?.object;demand(s?.object==='checkout.session'&&s.livemode===false,'bad_event');
+    if(!s.metadata?.account_id&&!s.metadata?.order_id)return reply({ok:true,ignored:true});
+    demand(s.metadata?.account_id&&s.metadata?.order_id,'bad_event');
     const order=await command(ctx.supabaseAdmin,'get',s.metadata.account_id,{order_id:s.metadata.order_id});
     demand(order.session_id===s.id,'session_not_bound',409);await settle(ctx.supabaseAdmin,order,await sessionFor(order));
    }

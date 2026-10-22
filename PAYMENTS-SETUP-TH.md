@@ -23,6 +23,7 @@
 - ลิงก์เข้าบัญชีกลับได้เฉพาะ URL `https://gusgoat.github.io/Soulbeast/topup-test.html` ที่เพิ่มใน allowlist ไม่เปลี่ยน Site URL ของ admin เดิม โทเคนอยู่ sessionStorage เฉพาะร้านและถูกลบจาก URL ทันที ไม่เข้าเซฟเกม
 - Stripe destination `we_1UTO98LvVJpWGsebGADyzkTR` รับ checkout.session.completed, checkout.session.async_payment_succeeded และ checkout.session.expired แบบ Snapshot ใน Sandbox ปลายทาง `/functions/v1/soulbeast-payments-test/webhook`
 - ตั้ง STRIPE_TEST_SECRET_KEY และ STRIPE_TEST_WEBHOOK_SECRET ใน Supabase Secrets เท่านั้น ไม่มีคีย์ลับใน repository หรือไฟล์สำรอง
+- เฉพาะฟังก์ชัน `soulbeast-payments-test` ใช้ Verify JWT with legacy secret = OFF เพื่อรับ Stripe ที่ไม่มี JWT ด่าน private actions ตรวจ Supabase Auth JWT ด้วย `getUser` เอง และ `/webhook` ตรวจ Stripe HMAC; ฟังก์ชันเกมเดิมไม่เปลี่ยน การเรียก webhook ไม่มี Authorization และไม่มีลายเซ็นทดสอบแล้วตอบ 400 `invalid_signature` ส่วนอ่านบัญชีโดยไม่ login ตอบ 401
 
 ## หลักฐานทดสอบปัจจุบัน
 

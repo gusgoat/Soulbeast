@@ -11,7 +11,9 @@ const db={auth:{getUser:async()=>({data:{user:authenticated?{id:account,email:'q
   if(args.p_action==='credit')order={...order,status:'credited'};
   if(args.p_action==='status')return {data:{characters:[],orders:order?[order]:[],balances:[]}};
   return {data:order};
- }throw Error('Unexpected RPC');
+ }if(name==='sb_engine_snapshot')return {data:{auth_locked:false,tables:{Saves:[[],['SHOPQATEST001',crypto.createHash('sha256').update('SHOPQATEST001:1234').digest('hex'),'QA owner']]}}};
+ if(name==='sb_engine_auth_failure')return {data:{}};
+ throw Error('Unexpected RPC');
 }};
 const stripeFetch=async(url,options)=>{fetches.push({url,options});if(url.includes('/prices/')){const p=catalog.packs.find(p=>url.includes(p.priceId));return Response.json({id:p.priceId,livemode:false,active:true,type:'one_time',recurring:null,currency:'thb',billing_scheme:'per_unit',unit_amount:p.amountSatang,product:{active:true}});}
  if(url.endsWith('/checkout/sessions'))return Response.json({id:'cs_test_fixture',livemode:false,url:'https://checkout.stripe.com/c/pay/cs_test_fixture'});
@@ -24,6 +26,8 @@ async function call(body,headers={},path='') {return ctx.handler.fetch(new Reque
  let r=await call({action:'catalog'});assert.equal(r.status,200);assert.equal((await r.json()).packs.length,8);assert.equal(fetches.length,8);assert.equal(commands.length,0);
  r=await call({action:'checkout',pack_id:'first-10',request_id:requestId});assert.equal(r.status,401);assert.equal(commands.length,0);
  const headers={Authorization:'Bearer a.b.c'};verified=false;r=await call({action:'status'},headers);assert.equal(r.status,401);verified=true;
+ r=await call({action:'link',code:'SHOPQATEST001',pin:'9999',game_env:'test'},headers);assert.equal(r.status,403);assert(!commands.some(c=>c.args.p_action==='link'));
+ r=await call({action:'link',code:'SHOPQATEST001',pin:'1234',game_env:'test'},headers);assert.equal(r.status,200);assert(commands.some(c=>c.args.p_action==='link'&&c.args.p_account===account));commands=[];
  hook='';r=await call({action:'checkout'},headers);assert.equal(r.status,503);assert.equal(commands.length,0);hook='whsec_fixture';
  r=await call({action:'checkout',pack_id:'first-10',request_id:requestId,code:'SHOPQATEST001',game_env:'test',price_id:'evil',amount:1,coupons:999999},headers);assert.equal(r.status,200);assert.equal((await r.json()).order.status,'open');
  const stripeCall=fetches.find(x=>x.url.endsWith('/checkout/sessions'));assert.equal(stripeCall.options.headers['Idempotency-Key'],'soulbeast-test-'+order.id);assert.equal(stripeCall.options.body.get('line_items[0][price]'),catalog.packs[0].priceId);assert.equal(stripeCall.options.body.get('metadata[account_id]'),account);
@@ -32,6 +36,7 @@ async function call(body,headers={},path='') {return ctx.handler.fetch(new Reque
  const timestamp=Math.floor(Date.now()/1000),body=JSON.stringify({livemode:false,type:'checkout.session.completed',data:{object:{object:'checkout.session',id:order.session_id,livemode:false,metadata:{order_id:order.id,account_id:account}}}}),signature=crypto.createHmac('sha256',hook).update(timestamp+'.'+body).digest('hex');
  r=await call(body,{'Stripe-Signature':`t=${timestamp},v1=${signature}`},'/webhook');assert.equal(r.status,200);
  r=await call(body,{},'/webhook');assert.equal(r.status,400);r=await call(body+' ',{'Stripe-Signature':`t=${timestamp},v1=${signature}`},'/webhook');assert.equal(r.status,400);
+ const other=JSON.stringify({livemode:false,type:'checkout.session.completed',data:{object:{object:'checkout.session',livemode:false,metadata:{}}}}),otherSig=crypto.createHmac('sha256',hook).update(timestamp+'.'+other).digest('hex');r=await call(other,{'Stripe-Signature':`t=${timestamp},v1=${otherSig}`},'/webhook');assert.equal(r.status,200);assert.equal((await r.json()).ignored,true);
  secret='sk_live_forbidden';r=await call({action:'catalog'});assert.equal(r.status,503);
  console.log('PASS exact Edge handler: unauthenticated/unverified denied, fixed server prices, idempotency key, refresh and signed webhook fulfillment, unsigned/tampered/live rejected (mock services)');
 })().catch(e=>{console.error(e);process.exitCode=1;});
