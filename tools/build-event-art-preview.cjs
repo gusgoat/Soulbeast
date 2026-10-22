@@ -2,7 +2,8 @@
 const fs=require('fs'),b=require('./client-build.cjs').build(null,{write:false});
 const guard='<script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Isolated art QA"));</script>';
 const setup=`<script>
-const nm=document.createElement('input');nm.id='nm';nm.value='Art QA';nm.hidden=true;document.body.appendChild(nm);handlers.newgame();nm.remove();delete S.P.tutorial;
+// Panel builders need zone metadata only: do not create a character/tutorial.
+Tutorial.clear();
 const params=new URLSearchParams(location.search),z=Number(params.get('zone'))||7,kind=params.get('kind')||'tales';S.zone={id:z,depth:3,log:[]};
 let cards='';const card=(label,art)=>'<article><p>'+label+'</p>'+art+'</article>';
 if(kind==='tales')for(let r=0;r<6;r++)for(let c=0;c<3;c++)cards+=card('Row '+r+' / '+c,WorldTales.panel(z,r,c,'Story '+r+'/'+c));
