@@ -7,6 +7,14 @@
     "androidScheme": "https",
     "cleartext": false
   },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "native",
+      "initialViewportFitValueHint": "contain",
+      "style": "DARK",
+      "hidden": false
+    }
+  },
   "android": {
     "allowMixedContent": false,
     "webContentsDebuggingEnabled": false,

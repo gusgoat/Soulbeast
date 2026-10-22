@@ -2,7 +2,7 @@
 
 ## สถานะปัจจุบัน
 
-- เจ้าของยืนยัน Package ID `com.soulbeastgame.app` แล้ว แอปชื่อ Soulbeast รุ่น 0.2.0-internal / versionCode 2 ใช้ environment `test`
+- เจ้าของยืนยัน Package ID `com.soulbeastgame.app` แล้ว แอปชื่อ Soulbeast รุ่น 0.2.1-internal / versionCode 3 ใช้ environment `test`
 - บัญชีอีเมลเข้าได้แล้วตามผลทดสอบของเจ้าของเกม
 - มี native Billing 9.1.0, หน้าร้าน Android, สร้าง order จากเซิร์ฟเวอร์, ตรวจ purchase กับ Google, ผูก account/order/product/package และแจกยอดใน Coupons ของเกมทดสอบ
 - ธุรกรรมเพิ่ม Coupons ใช้ engine revision CAS และบันทึก grant ledger ใน SQL transaction เดียวกัน จึงไม่ใช่แก้เซฟ client และไม่ผ่าน CouponCredits ที่จำกัดจำนวนต่อแถว

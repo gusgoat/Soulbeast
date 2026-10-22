@@ -1,6 +1,9 @@
 const fs=require('fs'),assert=require('assert/strict'),path=require('path');
 const config=require('../mobile/capacitor.config.json'),out='mobile/www',html=fs.readFileSync(out+'/index.html','utf8');
 assert.equal(config.appId,'com.soulbeastgame.app');assert.equal(config.server.cleartext,false);assert(!config.server.url,'Never point the shell at a mutable remote website');assert.equal(config.android.allowMixedContent,false);
+assert.equal(config.plugins.SystemBars.insetsHandling,'native');assert.equal(config.plugins.SystemBars.initialViewportFitValueHint,'contain');assert.equal(config.plugins.SystemBars.style,'DARK');assert.equal(config.plugins.SystemBars.hidden,false);
+assert(html.includes('viewport-fit=contain'));assert(!html.includes('viewport-fit=cover'),'Native WebView must not pass through behind Android system bars on recent WebView versions');
+assert(fs.readFileSync('mobile/android/app/src/main/res/values/styles.xml','utf8').includes('name="android:windowBackground">#09131e'));
 assert(html.includes('window.SOULBEAST_ACCOUNTS=true'));assert(html.includes('soulbeast-accounts'));assert(html.includes('native-entry.js'));assert(!html.includes('accounts-preview.js'));assert(!html.includes('topup-test'));
 const app=[...html.matchAll(/src="\.\/(game-app\.[^"]+)"/g)][0]?.[1];assert(app);const code=fs.readFileSync(path.join(out,app),'utf8');assert(code.includes("const SB_ENV='test';"));assert(code.includes('save_conflict'));assert(code.includes('ACCOUNT_GAME'));
 for(const p of ['admin.html','admin.js','topup-test.html','topup-test.js','server','private','client/accounts-preview.js'])assert(!fs.existsSync(path.join(out,p)),'Forbidden packaged file '+p);

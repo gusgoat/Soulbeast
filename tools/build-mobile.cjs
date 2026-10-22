@@ -10,7 +10,9 @@ const clientFiles=['account-client.mjs','account.css','topup-session.mjs','topup
 fs.mkdirSync(path.join(out,'client'),{recursive:true});for(const f of clientFiles)fs.copyFileSync(path.join(root,'client',f),path.join(out,'client',f));
 fs.mkdirSync(path.join(out,'content'),{recursive:true});fs.copyFileSync(path.join(root,'content/billing-channels.json'),path.join(out,'content/billing-channels.json'));
 fs.cpSync(path.join(root,'assets'),path.join(out,'assets'),{recursive:true});
-let mobileHtml=html.replace('<title>ตำนานผนึกอสูร</title>','<title>Soulbeast Test</title>').replace('<div id="app"></div>','<script src="./native-entry.js"></script><div id="app"></div>');
+// Contain the entire WebView, including fixed buttons/dialogs, inside Android system-bar/cutout insets.
+// SystemBars native mode otherwise passes through edge-to-edge on WebView >= 140 when viewport-fit=cover.
+let mobileHtml=html.replace('viewport-fit=cover','viewport-fit=contain').replace('<title>ตำนานผนึกอสูร</title>','<title>Soulbeast</title>').replace('<div id="app"></div>','<script src="./native-entry.js"></script><div id="app"></div>');
 fs.writeFileSync(path.join(out,'index.html'),mobileHtml);
 const esbuild=require(path.join(root,'mobile/node_modules/esbuild'));
 esbuild.buildSync({entryPoints:[path.join(root,'mobile/native-entry.mjs')],outfile:path.join(out,'native-entry.js'),bundle:true,format:'iife',platform:'browser',target:['chrome107'],minify:true});

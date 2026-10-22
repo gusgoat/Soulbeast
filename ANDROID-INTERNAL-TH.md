@@ -15,12 +15,16 @@
 
 ## ข้อมูลรุ่น
 
-- ชื่อ: Soulbeast Test
+- ชื่อ: Soulbeast
 - Package ID ปัจจุบันที่เจ้าของอนุมัติ: `com.soulbeastgame.app` (APK รุ่นเก่าใช้ `io.github.gusgoat.soulbeast.internal`)
 - Android 7+ (minSdk 24), targetSdk/compileSdk 36
 - Capacitor 8.5.3, App plugin 8.1.2, Node 24, JDK 21
 - มี APK debug สำหรับติดตั้งทดสอบ และ AAB release ที่ยังต้องลงนามด้วย upload key ส่วนตัวก่อนส่ง Play Console ดู `GOOGLE-PLAY-SETUP-TH.md`
 - คีย์ debug ของ CI อาจเปลี่ยนระหว่าง build จึงยังไม่รับประกันการติดตั้งทับ APK รุ่นก่อน ก่อนใช้ทดสอบต่อเนื่องควรตั้งคีย์ลงนามทดสอบส่วนตัวใน Secrets ห้าม commit keystore หรือรหัสผ่าน
+
+## พื้นที่ปลอดภัยของหน้าจอ Android (0.2.1-internal / versionCode 3)
+
+ใช้ SystemBars native insets และ viewport-fit=contain เฉพาะไฟล์ในแอป ให้ WebView รวมปุ่ม fixed และหน้าต่างต่าง ๆ อยู่พ้นแถบนาฬิกา/ปุ่มนำทาง/รอยบาก ขอบแถบระบบสีเข้มและไอคอนสีสว่าง ไม่มีการเพิ่ม padding ซ้ำใน CSS หน้าเว็บ ต้องตรวจจริงทั้งโหมด 3 ปุ่มและ gesture, แนวนอน, หน้าต่อสู้/ปุ่มไปต่อ/เมนูล่าง/คีย์บอร์ดบนเครื่องทดสอบอีกครั้ง
 
 ## Build
 
