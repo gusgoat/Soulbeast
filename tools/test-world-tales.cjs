@@ -6,6 +6,9 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  assert.equal(r('TALES_DATA.quests.length'),28);assert.equal(r('TALES_DATA.special.length'),7);
  for(const d of JSON.parse(r('JSON.stringify(TALES_DATA.quests)')))for(let branch=0;branch<d.actions.length;branch++){
   reset(d.zone);g.ctx.def=d;r("S.zone.taleSession={id:def.id,mode:'offer',token:'offer',result:[]};WorldTales.accept('offer');");assert.equal(r('WorldTales.state().quests[def.id].status'),'active');
+  assert(!r('WorldTales.eligible().some(d=>d.id===def.id)'),'Active quest cannot be offered again');
+  r("WorldTales.state().quests[def.id].guardMarker='keep-progress';var acceptedQuest=JSON.stringify(WorldTales.state().quests[def.id]);S=JSON.parse(JSON.stringify(S));S.zone.taleSession={id:def.id,mode:'offer',token:'duplicate',result:[]};WorldTales.accept('duplicate');");
+  assert.equal(r('JSON.stringify(WorldTales.state().quests[def.id])'),r('acceptedQuest'),'Duplicate acceptance after reload cannot reset quest progress');
   const targets=d.kind==='short'?[d.zone]:d.targets;
   for(let n=0;n<targets.length;n++){
    if(d.kind!=='short')r(`S.zone={id:${targets[n]},depth:2,log:[]};WorldTales.run();`);else r("delete S.zone.taleSession;S.zone.ev=null;");

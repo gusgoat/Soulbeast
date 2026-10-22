@@ -16,7 +16,9 @@ const Tutorial={
  ready(){return this.enabled()&&!S.ui.cinema&&!S.ui.confirm&&!this.online()&&!S.zone?.secretSession&&!S.zone?.riddleSession&&!S.zone?.specialSession&&!WorldTales.session();},
  update(){
   if(!this.enabled())return;const t=this.state(),a=t.active,b=S.battle;
-  if(a==='stats'&&this.free()===0)this.finish('stats','forest');
+  // Repair saves affected by the old auto-allocation observer restarting this lesson.
+  if(t.active==='forest'&&t.done.forest){t.active=null;this.store();}
+  if(a==='stats'&&this.free()===0)this.finish('stats',t.done.forest?null:'forest');
   if(t.active==='forest'&&S.screen==='wild')this.finish('forest','training');
   if(t.active==='training'&&S.zone){this.finish('training','fork');}
   if(t.active==='fork'&&S.zone?.depth>0)this.finish('fork');
@@ -87,7 +89,7 @@ const Tutorial={
  skip(){const t=this.state(),d=this.definition();if(!t||d?.strict)return;const map={stats:'stats',forest:'forest',training:'training',fork:'fork',skills:'skills',capture:'capture',hospital:'hospital',heal:'hospital',shop:'shop',buy:'shop',forge:'forge',craft:'forge',equip:'equip',wear:'equip',tower:'tower',towerEnter:'tower',raid:'raid',guild:'guild',guildSearch:'guild',promotion:'promotion',promote:'promotion',world:'world',worldTeam:'world',guildwar:'guildwar',warTeam:'guildwar'};if(['battleIntro','elements','captureIntro'].includes(t.active))return this.next();this.finish(map[t.active]||t.active);this.release();render();},
  observe(a,v,before){
   const t=this.state();if(!t)return;const b=S.battle;
-  if(a==='autoStatsAll'&&this.free()<before.free)this.finish('stats','forest');
+  if(a==='autoStatsAll'&&before.active==='stats'&&!t.done.stats&&this.free()<before.free)this.finish('stats',t.done.forest?null:'forest');
   if(a==='fork'&&before.active==='fork'&&S.zone?.depth>before.depth)this.finish('fork');
   if(a==='bt'&&String(v).startsWith('sk:')&&before.active==='skills'&&b?.menu==='wait')this.finish('skills');
   if(a==='bt'&&String(v).startsWith('seal:')&&before.items>Object.values(S.P.items).reduce((n,v)=>n+v,0)){this.finish('capture');}

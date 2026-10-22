@@ -16,6 +16,15 @@ const assert=require('assert/strict');
  r('Tutorial.next()');assert.equal(r('Tutorial.state().active'),'skills');assert(!r('Tutorial.hold()'));
  r("Tutorial.state().active='captureIntro';Tutorial.pending=null;B().cur='P';B().menu='main';var releaseCalls=0,normalBattleLater=battleLater;battleLater=()=>releaseCalls++;Tutorial.next();battleLater=normalBattleLater;");assert.equal(r('releaseCalls'),0,'Closing a manual-turn hint cannot add a second continuation');
  r('S.battle=null;S.zone=null;S=JSON.parse(JSON.stringify(S));S.screen="town";Tutorial.update()');assert(r('Tutorial.state().done.battle'));assert(r('Tutorial.state().done.elements'));
+ // Allocating newly earned points must not restart the first-forest lesson or
+ // replace another pending milestone. The old bug persisted active=forest.
+ fresh();r("Tutorial.state().done={stats:true,forest:true,training:true,fork:true};Tutorial.state().active=null;S.P.lv=4;S.P.free=5;S.P.pets.forEach(p=>p.free=0);handlers.autoStatsAll();");
+ assert.equal(r('Tutorial.state().active'),null);assert(r('Tutorial.state().done.forest'));
+ r("S.P.lv=5;S.P.free=5;Tutorial.state().active='shop';handlers.autoStatsAll();");assert.equal(r('Tutorial.state().active'),'shop');
+ r("S=JSON.parse(JSON.stringify(S));Tutorial.state().active='forest';Tutorial.update();");assert.equal(r('Tutorial.state().active'),null,'Repair a completed forest lesson left active in an existing save');
+ fresh();r("handlers.autoStatsAll();handlers.go('wild');handlers.forestPick('7');handlers.dozone('7');S.ui.cinema=null;S.zone.depth=1;Tutorial.update();S.zone=null;S.screen='town';S.P.lv=4;S.P.free=5;handlers.autoStatsAll();");assert.equal(r('Tutorial.state().active'),null,'Real first-forest flow remains completed after leveling and reallocating');
+ fresh();r("Tutorial.state().active='tower';Tutorial.state().done.stats=true;S.P.lv=8;S.P.free=5;handlers.autoStatsAll();");assert.equal(r('Tutorial.state().active'),'tower','Uncompleted forest lesson cannot replace an unrelated milestone');
+ fresh();r("Tutorial.state().done.stats=true;Tutorial.state().active=null;S.P.lv=4;S.P.free=5;handlers.autoStatsAll();");assert.equal(r('Tutorial.state().active'),null,'Stats lesson already acknowledged cannot restart the forest prompt');
  fresh();r("Tutorial.state().done={stats:true,battle:true,skills:true,captureIntro:true};Tutorial.state().active=null;S.zone={id:7,depth:2,log:[]};startBattle([wildUnit(ZN[6].sp[0],3,0)],'wild',7);B().cur='P';B().menu='main';B().enemies[0].hp=Math.floor(B().enemies[0].st.hp*.45);Tutorial.update();");assert.equal(r('Tutorial.state().active'),'capture');
  r("handlers.bt('menu:seal');var sealsBefore=S.P.items.seal1,normalRandom=Math.random;Math.random=()=>.999;handlers.bt('seal:seal1');Math.random=normalRandom;");assert.equal(r('S.P.items.seal1'),r('sealsBefore-1'));assert(r('Tutorial.state().done.capture'),'A real sealing attempt completes the lesson, without changing success probability');
  // A legacy character is left alone; online combat is excluded even for an enrolled one.
