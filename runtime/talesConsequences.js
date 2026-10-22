@@ -91,5 +91,7 @@ const detailedSecretCanEnd=Secret.canEnding;
 Secret.canEnding=function(){const s=WorldTales.state(),old=Secret.state();if(old.endingSeen)return true;const secrets=SECRET_DATA.locations.filter(d=>old.locations[d.id]?.completed).length,longs=Object.values(s.quests).filter(q=>q.kind==='long'&&q.status==='completed').length,repaired=new Set(Object.values(s.aftermaths).filter(a=>a.repaired).map(a=>a.zone)).size,legacy=!Object.keys(s.consequences).some(k=>k.startsWith('secret:'));return legacy&&talesSecretEnding.call(this)||S.P.cleared>0&&secrets>=3&&longs>=2&&repaired>=2;};
 const detailSecretBook=Secret.book;Secret.book=function(){return detailSecretBook.call(this).replace('จบเรื่องหลัก · ค้นพบเรื่องราวครบหกแห่ง · คืนคำสัญญาที่ติดค้าง','จบเรื่องหลัก · มีหลักฐานจากสถานที่ลับอย่างน้อย 3 แห่ง · จบเควสยาว 2 เรื่อง · กลับไปช่วยแก้ผลกระทบอย่างน้อย 2 พื้นที่ ไม่จำกัดว่าต้องเลือกทางใด');};
 
+const detailSecretImage=Secret.imageButton;
+Secret.imageButton=function(d,index,label,act,value,detail=''){if(act==='secretChoose'){const i=d.choices.findIndex(c=>c.id===value.split('|')[1]),spec=TALES_DATA.secrets.find(s=>s.zone===d.zone);if(spec?.actions[i])detail=WorldTales.costText(spec.actions[i].effects);}return detailSecretImage.call(this,d,index,label,act,value,detail);};
 const detailSave=save;save=function(){if(S.P&&!S.zone)S.P.mp=Math.min(S.P.mp,pStats().mp);return detailSave();};
 // @soulbeast-end 1088-talesConsequences
