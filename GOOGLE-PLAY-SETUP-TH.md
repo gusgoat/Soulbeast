@@ -25,6 +25,14 @@
 9. ติดตั้ง `build/play/003-play-test.sql` และ Edge Function `soulbeast-play-test` จาก `build/play/index.ts` ก่อนติดตั้งจริงต้องตรวจ signature/ผลคืนค่าของ `sb_engine_commit` กับฐานข้อมูลปัจจุบัน และสำรองให้เรียบร้อย ฟังก์ชันใช้ `auth.getUser` ตรวจ verified account เองทุกครั้ง
 10. หลังพร้อมค่อยตั้ง server `SB_PLAY_TEST_ENABLED=true`, client `purchasesEnabled=true`, native `BILLING_ENABLED=true` แล้ว build signed AAB รุ่นใหม่ โดยเพิ่ม versionCode ทุกครั้ง การทดสอบแรกต้องแสดงวิธีจ่ายแบบ Test card จาก Google เท่านั้น
 
+หากมี JDK 21 แล้ว สามารถลงนามไฟล์ AAB ที่สร้างไว้โดยไม่ build ใหม่ได้ด้วย `tools/sign-play-aab.ps1` ซึ่งเจ้าของต้องรันและกรอกรหัสผ่านเอง ตัวอย่างจากโฟลเดอร์ site:
+
+```powershell
+.\tools\sign-play-aab.ps1 -AabPath '..\outputs\Soulbeast-play-unsigned.aab' -KeystorePath '..\private\soulbeast-upload.p12' -JdkBin 'พาธ JDK 21\bin' -CreateKey
+```
+
+ใช้ `-CreateKey` เฉพาะครั้งแรก ครั้งต่อไปใช้คีย์เดิมโดยไม่ใส่ switch นี้ สคริปต์ไม่ติดตั้ง JDK ให้และไม่ส่งคีย์ไป GitHub; ยังไม่ได้รันสร้างคีย์แทนเจ้าของ
+
 ## สินค้า
 
 | Product ID | คูปอง | ราคาอ้างอิง THB | สิทธิ์ |

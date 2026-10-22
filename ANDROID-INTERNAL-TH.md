@@ -16,10 +16,10 @@
 ## ข้อมูลรุ่น
 
 - ชื่อ: Soulbeast Test
-- Package ID สำหรับทดสอบ: `io.github.gusgoat.soulbeast.internal`
+- Package ID ปัจจุบันที่เจ้าของอนุมัติ: `com.soulbeastgame.app` (APK รุ่นเก่าใช้ `io.github.gusgoat.soulbeast.internal`)
 - Android 7+ (minSdk 24), targetSdk/compileSdk 36
 - Capacitor 8.5.3, App plugin 8.1.2, Node 24, JDK 21
-- APK debug สำหรับติดตั้งทดสอบ ไม่ใช่ AAB ที่ลงนามพร้อมส่ง Play Store
+- มี APK debug สำหรับติดตั้งทดสอบ และ AAB release ที่ยังต้องลงนามด้วย upload key ส่วนตัวก่อนส่ง Play Console ดู `GOOGLE-PLAY-SETUP-TH.md`
 - คีย์ debug ของ CI อาจเปลี่ยนระหว่าง build จึงยังไม่รับประกันการติดตั้งทับ APK รุ่นก่อน ก่อนใช้ทดสอบต่อเนื่องควรตั้งคีย์ลงนามทดสอบส่วนตัวใน Secrets ห้าม commit keystore หรือรหัสผ่าน
 
 ## Build

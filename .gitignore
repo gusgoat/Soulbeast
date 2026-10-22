@@ -17,5 +17,7 @@ mobile/android/app/src/main/assets/capacitor.plugins.json
 mobile/android/capacitor-cordova-android-plugins/
 *.keystore
 *.jks
+*.p12
+*.pfx
 mobile/.tools/
 tools/play-tests/node_modules/
