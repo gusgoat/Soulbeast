@@ -17,7 +17,7 @@
   "game-data-skills.13d58a9f1b529077.js": "13d58a9f1b52907725a9adc9f1004f57c78e897bdd652cf1b669ada7b9da3c77",
   "game-data-story.b4ecd56118a196f0.js": "b4ecd56118a196f0914e221aa3a3518e5a5d46787277ecff8999b7185ef2d1f6",
   "game-styles.cf59cbf8025c2120.css": "cf59cbf8025c2120df31b610209391bf61d3263fa889ddeb2f049dd66fde8ba6",
-  "index.html": "db7ddbd74058ca5b0969b6f1a5e17206d2eea056a2c9c6175057bb8b2b44bda3",
+  "index.html": "9ea51d380ef9d209dbd9d07da4396f95f2823ad0aaf22b80facf8e36578cb37e",
   "README-TH.txt": "87b9c5473305940e3247cdd512d5e930fb62ed013d676103ad0c4f6fe6432abf",
   "assets/beasts/mist-beasts.webp": "1838ae23e77aba33cac206314e50d0f38c3fb74bb347d83fb1d5bbe202410d03",
   "assets/media/00d6dd41329e230760ded92f.webp": "00d6dd41329e230760ded92f38cf05107d16a63c50c4518944c07cd14be77ef2",
@@ -684,8 +684,8 @@
   "game-data-narrative.4b5a47306902faf1.js": "4b5a47306902faf19ce50df3e94a5343766523c07079f5ba8bbfcb919db8de93",
   "game-app.884c7c9f21fcc7a1.js": "884c7c9f21fcc7a155c937e557dd14ff559e772e18e64d98502c9479e03f6beb",
   "game-app.c2d7cdec7f133947.js": "c2d7cdec7f133947f7a0527059b752dcad8f183ab5903e3f2dcba777c9e16f90",
-  "refactor-staging.html": "705d5511635b1e9a929cf488499b571ebae8bec4111e8e6be28b86ced831d57c",
-  "world-tales-preview.html": "006e0c6cc09bf2a83797354c0cf86d4e78fa8110705412b99d7a699bc8c18f48",
+  "refactor-staging.html": "1bc1608cc987a5c7edbbec2a94d839134c94eb1bab05c10fb3543283d942a159",
+  "world-tales-preview.html": "9fa9449ce29d8b946ad5f6b173f4e9aab33ab710e225b337f90da6c2f9f52ba7",
   "assets/ui/tales/castle-v1.webp": "4b36aba06be1678702e627171d57d8cf0ba62edd20135300ae5abe6b841c400c",
   "assets/ui/tales/desert-v1.webp": "987264fc462f52ca1548cbc0022b80469ff897d0f5dd88d9a7146c192f59c601",
   "assets/ui/tales/dragon-v1.webp": "bcfe1d70db8b65414d8259aff737a1570e4bb6c8b70dd2c8688af70361b4ce9a",
@@ -697,7 +697,7 @@
   "game-data-narrative.0aa5ca606eea6ddd.js": "0aa5ca606eea6ddd5ae2809e677d36548ecb58fc25716ea284b33483c59038cb",
   "game-app.aa2a9e924860e52f.js": "aa2a9e924860e52f9d143a31534c4966ab790a3ccf82db09bc1689158bed5228",
   "game-app.8a3eddd184faec17.js": "8a3eddd184faec170ed9995975ec07730b0403210f574ae03f58c19f3e8da5a0",
-  "client-files.json": "699e577f8b9b42ea4fbb11cdc64645e250458132bfa164d8b0f54a180c5d2562",
+  "client-files.json": "668814de2e6eec2ca7919830f841225f5d5353929a17fed3433b6b30cf36aaee",
   "assets/ui/tales/followups-v1.webp": "3aa46a3bb46d62283ea392af9091f8bb97b337f4e6d1a2586c392e4b137e5ce1",
   "game-styles.da8b5de35c0fb1d0.css": "da8b5de35c0fb1d07c1bbc8170c16bd69eb08ce228356a847a0a7ba11ffc05c5",
   "game-app.c68ec9c500d2a10d.js": "c68ec9c500d2a10d71ac85fe83c31fa5b36ff4111954dee9e98289fab6a28e2e",
@@ -705,5 +705,7 @@
   "game-data-secrets.8ae8f51310076981.js": "8ae8f51310076981b32c31ec331204d4b229fad11e9538fc7e70b09daa4b01a1",
   "game-data-narrative.2f61e41ccb64f851.js": "2f61e41ccb64f8511e8058f91ea283c64dbacda70ecb36b5e844f44994025ba5",
   "game-app.a3e959fad94041b7.js": "a3e959fad94041b71a8ef9b4a7fef99e1e7a7d5434b60e98ccfb5144857a3fe4",
-  "game-app.7909987edc6bf3a5.js": "7909987edc6bf3a5f89553ae62e8dcf7ce84877b42cb854fcbdefcb206944dc6"
+  "game-app.7909987edc6bf3a5.js": "7909987edc6bf3a5f89553ae62e8dcf7ce84877b42cb854fcbdefcb206944dc6",
+  "game-app.daf924846ac54e37.js": "daf924846ac54e379cdaa226a9389cb474c458f2b15df373a6e278d351453921",
+  "game-app.211aa4484bce0a05.js": "211aa4484bce0a058b862651bf5d9a796b8f603402a7c991c824d05d111102d0"
 }
