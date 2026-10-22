@@ -10,7 +10,7 @@ const result=build(null,{write:false,readFile:file=>file===path.join(root,'runti
 const app=result.assets.staging.find(x=>x.startsWith('game-app.'));
 fs.writeFileSync(path.join(root,app),result.files[app]);
 let html=result.files['staging-index.html'];
-html=html.replace('<div id="app"></div>','<style>.account-page{max-width:600px;margin:8vh auto;padding:18px}.account-logo{width:260px;max-width:90%;margin:auto}.account-page input{display:block;width:100%;margin-top:8px}.account-page form{gap:16px}.account-error{color:#ffb5af;border:1px solid #bf6262;padding:12px;border-radius:12px}</style><div id="app"></div><script>window.SOULBEAST_ACCOUNTS=true;window.SHEET_URL="https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-accounts";</script>');
+html=html.replace('<div id="app"></div>','<link rel="stylesheet" href="./client/account.css"><div id="app"></div><script>window.SOULBEAST_ACCOUNTS=true;window.SHEET_URL="https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-accounts";</script>');
 fs.writeFileSync(path.join(root,'accounts-staging.html'),html);
 fs.writeFileSync(path.join(root,'accounts-preview.html'),html.replace('<div id="app"></div>','<div id="app"></div><script src="./client/accounts-preview.js"></script>'));
 console.log('Prepared separate account staging entry '+app+'; production unchanged');

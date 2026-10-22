@@ -1,0 +1,26 @@
+.account-page {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 18px;
+  box-sizing: border-box;
+}
+.account-logo { display: block; width: 260px; max-width: 90%; margin: 0 auto; }
+.account-page label { display: block; }
+.account-page input {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid #536a79;
+  border-radius: 10px;
+  background: #0c1b28;
+  color: var(--fg);
+  font: inherit;
+  box-sizing: border-box;
+}
+.account-page input:focus-visible { outline: 2px solid #efd394; outline-offset: 2px; }
+.account-page form { gap: 16px; }
+.account-error { color: #ffb5af; border: 1px solid #bf6262; padding: 12px; border-radius: 12px; }
+@media (max-width: 560px) { .account-page { padding: 24px 10px; } }
