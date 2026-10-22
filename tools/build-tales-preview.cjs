@@ -7,7 +7,7 @@ if(demo==='ending'){WorldTales.record('secret:1',1,'Yggdrasil',0,'น้ำก�
 else if(demo==='followup'){WorldTales.record('secret:1',1,'Yggdrasil',0,'น้ำถึงหมู่บ้าน');WorldTales.state().aftermaths['secret:1'].heard=2;WorldTales.state().serial++;WorldTales.startAfter('secret:1',false);}
 else if(demo==='rumor'){S.zone.taleSession={mode:'rumor',token:'preview',text:TALES_DATA.chatter[0],result:[]};}
 else if(demo==='decision'){S.zone.taleSession={mode:'question',id:'moon-0',token:'preview',result:[]};WorldTales.state().quests['moon-0']={id:'moon-0',kind:'short',status:'active'};}
-else if(demo==='puzzle'){const d=SECRET_DATA.locations.find(d=>d.zone===1);S.zone.secretSession={id:d.id,event:'puzzle',revision:0,puzzleAttempts:0};Secret.record(d.id);}
+else if(demo==='puzzle'){const d=SECRET_DATA.locations.find(d=>d.zone===1);S.zone.secretSession={id:d.id,event:'puzzle',revision:0,puzzleAttempts:0};S.zone.ev={type:'secret',msg:''};Secret.record(d.id);}
 else if(demo==='special'){S.zone={id:4,depth:5,log:[]};WorldTales.run();S.zone.taleSession={mode:'special',id:'encounter-4',token:'preview',result:[]};}
 else if(demo==='fork'){S.zone.fork=[{k:'villager',h:false},{k:'mist',h:true}];}
 else{S.zone.taleSession={mode:'offer',id:'moon-0',token:'preview',result:[]};}render();

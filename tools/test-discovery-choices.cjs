@@ -13,5 +13,6 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  setup(1);r("WorldTales.record('secret:1',1,'Yggdrasil',0,'น้ำถึงหมู่บ้าน');WorldTales.state().serial++;WorldTales.startAfter('secret:1',false);");hidden(r('WorldTales.view()'));
  setup(1);r("S.zone.taleSession={id:'moon-0',mode:'question',token:'paid',result:[]};WorldTales.state().quests['moon-0']={id:'moon-0',kind:'short',status:'active'};var mpBefore=S.P.mp;WorldTales.choose('paid',1);");assert(r('S.P.mp<mpBefore'));assert(r('WorldTales.session().result.some(t=>t.includes("ใช้ MP"))'),'Actual payment still reported after choice');
  setup(1);r("S.zone.taleSession={id:'encounter-1',mode:'special',token:'confirm',result:[]};WorldTales.request('confirm',0);");hidden(r('S.ui.confirm.msg'));assert(r('S.ui.confirm.msg.includes(WorldTales.choiceData().actions[0].label)'));
+ setup(1);r("var sd=SECRET_DATA.locations.find(d=>d.zone===1);S.zone.secretSession={id:sd.id,event:'puzzle',revision:0};Secret.record(sd.id);handlers.secretLeave(Secret.token());");assert.equal(r('S.ui.confirm.msg'),'ออกจากสถานที่ลับหรือไม่?');
  console.log('PASS '+file+': all secret/quest/event/riddle previews hide outcomes; actual costs and post-choice results preserved');
 }
