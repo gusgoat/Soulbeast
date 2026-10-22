@@ -4,10 +4,12 @@ const SECRET_DATA=SoulbeastContent.SECRET_LOCATIONS();
 const Secret={
  // Reviewed sheet boundaries exclude gutters and preserve each panel's proportions.
  artCrops:{"training":{"size":[887,1774],"x":[0,295,592,887],"y":[0,272,554,835,1117,1397,1774]},"moon":{"size":[887,1774],"x":[0,296,594,887],"y":[0,293,587,882,1177,1455,1774]},"mist":{"size":[887,1774],"x":[0,296,592,887],"y":[0,283,546,828,1107,1397,1774]},"desert":{"size":[887,1774],"x":[0,295,592,887],"y":[0,295,592,887,1182,1479,1774]},"dragon":{"size":[887,1774],"x":[0,295,591,887],"y":[0,278,558,855,1138,1433,1774]},"heaven":{"size":[887,1774],"x":[0,295,593,887],"y":[0,295,590,887,1183,1479,1774]},"castle":{"size":[1024,1536],"x":[0,318,660,1024],"y":[0,244,478,713,949,1193,1536]}},
+ riddleRows:{'castle-banquet':[0,194,384,563,768],'desert-hourglass':[0,194,368,541,768],'desert-scales':[0,215,398,579,768],'dragon-avalanche':[0,205,387,567,768],'dragon-echo':[0,220,416,598,768],'dragon-elements':[0,204,384,566,768],'dragon-nest':[0,216,400,581,768],'false-boss-chase':[0,192,383,550,768],'heaven-oath':[0,211,392,569,768],'heaven-soulwind':[0,220,381,553,768],'heaven-stars':[0,210,388,566,768],'mist-bridge':[0,216,388,558,768],'mist-incense':[0,205,386,568,768],'moon-leaf-scale':[0,258,418,572,768],'training-bells':[0,198,380,568,768],'training-footprints':[0,192,360,566,768],'training-poison':[0,194,384,560,768]},
  artStyle(path,row,col,columns=1,rows=1){
   const key=path.startsWith('assets/ui/tales/')?path.split('/').pop().replace('-v1.webp',''):null,d=this.artCrops[key];
   const [W,H]=d?.size||(path.includes('/secrets/')?[1536,1024]:path.includes('/riddles/')?[512,768]:[768,1080]);
-  const xs=d?.x||Array.from({length:columns+1},(_,i)=>W*i/columns),ys=d?.y||Array.from({length:rows+1},(_,i)=>H*i/rows);
+  const id=path.split('/').pop().replace('-v1.webp','');
+  const xs=d?.x||Array.from({length:columns+1},(_,i)=>W*i/columns),ys=d?.y||(path.includes('/riddles/')?this.riddleRows[id]:path==='assets/ui/events/desert-v1.webp'?[0,360,695,1080]:null)||Array.from({length:rows+1},(_,i)=>H*i/rows);
   const inset=d?5:2,x=xs[col]+inset,y=ys[row]+inset,w=xs[col+1]-xs[col]-2*inset,h=ys[row+1]-ys[row]-2*inset;
   return '--crop-size:'+W/w*100+'% '+H/h*100+'%;--crop-position:'+x/(W-w)*100+'% '+y/(H-h)*100+'%;--crop-ratio:'+w/h+';--crop-width:'+w+'px';
  },
