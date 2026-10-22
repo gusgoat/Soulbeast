@@ -4,7 +4,8 @@ const BASE='https://zycmmtvubzyxduxqpuzl.supabase.co',KEY='sb_publishable_-m9RbN
 export const accountError=e=>emailErrorText(e.code,e.message,e.status)||({invalid_credentials:'อีเมลหรือรหัสผ่านไม่ถูกต้อง',email_not_confirmed:'กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ',login_required:'กรุณาเข้าสู่ระบบอีกครั้ง',verified_account_required:'กรุณายืนยันอีเมลก่อนเริ่มเล่น',character_not_owned:'บัญชีนี้ไม่มีตัวละครที่เลือก',character_limit:'สร้างตัวละครครบ 10 ตัวแล้ว',account_service_unavailable:'ระบบบัญชีขัดข้องชั่วคราว กรุณาลองอีกครั้ง',account_database_unavailable:'ระบบบัญชียังไม่พร้อม กรุณาลองภายหลัง',weak_password:'รหัสผ่านไม่ผ่านเกณฑ์ความปลอดภัย',same_password:'กรุณาเลือกรหัสผ่านใหม่',otp_expired:'ลิงก์หมดอายุหรือถูกใช้แล้ว กรุณาขอลิงก์ใหม่'})[e.code||e.message]||'เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง';
 export class AccountClient{
  constructor({storage,legacy,fetcher=fetch,lock=fn=>fn(),redirect='https://gusgoat.github.io/Soulbeast/accounts-staging.html',onChange=()=>{}}={}){
-  this.fetcher=fetcher;this.redirect=redirect;this.onChange=onChange;this.user=null;this.recovery=false;this.gate=new EmailSendGate(legacy);
+  // Native browser fetch rejects an AccountClient receiver (Illegal invocation).
+  this.fetcher=(...args)=>fetcher(...args);this.redirect=redirect;this.onChange=onChange;this.user=null;this.recovery=false;this.gate=new EmailSendGate(legacy);
   this.sessions=new ShopSession({storage,legacy,lock,refresh:refresh_token=>this.request('/auth/v1/token?grant_type=refresh_token',{refresh_token})});
  }
  async request(path,body,token,method='POST'){
