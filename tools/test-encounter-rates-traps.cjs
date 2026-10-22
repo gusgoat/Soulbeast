@@ -17,6 +17,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
   assert.equal(r('S.ui.trapNotice.message'),r('notice'));
   assert.equal(r('S.P.hp'),r(`Math.max(1,maxHP-Math.round(maxHP*TRAPS[${i}].p))`));
   assert.equal(r('S.P.mp'),r(`TRAPS[${i}].mp?Math.max(0,maxMP-Math.round(maxMP*TRAPS[${i}].mp)):maxMP`));
+  assert(r(`party().every((p,j)=>p.hp===Math.max(1,petBefore[j].hp-Math.round(calcPet(p).hp*TRAPS[${i}].p))&&p.mp===(TRAPS[${i}].mp?Math.max(0,petBefore[j].mp-Math.round(calcPet(p).mp*TRAPS[${i}].mp)):petBefore[j].mp))`));
   const ids=['quicksand','leeches','fire-wall','spike-pit','rockfall','living-vines'];
   assert(fs.statSync('assets/ui/traps/'+ids[i]+'.webp').size>10000);
   r('S=JSON.parse(JSON.stringify(S));var damagedHP=S.P.hp,damagedMP=S.P.mp;handlers.trapNoticeClose();handlers.trapNoticeClose();');
