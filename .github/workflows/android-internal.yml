@@ -1,0 +1,50 @@
+name: Android internal APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['mobile/**', 'runtime/accounts.js', 'client/account*', 'client/billing*', 'content/billing-channels.json', 'tools/build-mobile.cjs', '.github/workflows/android-internal.yml']
+permissions:
+  contents: read
+concurrency:
+  group: soulbeast-android-internal
+  cancel-in-progress: true
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '24' }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21' }
+      - name: Install pinned dependencies
+        run: |
+          npm ci --prefix tools/runtime-build --ignore-scripts --no-audit --no-fund
+          npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
+      - name: Verify account and billing boundaries
+        run: |
+          npm run test:accounts
+          node tools/test-platform-billing.cjs
+      - name: Build packaged web game and sync Android
+        run: |
+          node tools/build-mobile.cjs
+          cd mobile
+          npx --no-install cap sync android
+      - name: Verify mobile package
+        run: node tools/test-mobile.cjs
+      - name: Build internal APK with runner's installed Android SDK
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:assembleDebug :app:lintDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: soulbeast-android-internal-${{ github.sha }}
+          path: |
+            mobile/android/app/build/outputs/apk/debug/app-debug.apk
+            build/mobile-manifest.json
+            mobile/android/app/build/reports/lint-results-debug.html
+          retention-days: 14
+          if-no-files-found: error

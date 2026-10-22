@@ -12,7 +12,7 @@ for(const cls of classes){const n=g.run(`clsSum(${JSON.stringify(cls)})`);const 
 const templateCode=`const accountTemplates=${JSON.stringify(templates)};function accountNewCharacter(p){const key=p.cls+'|'+(Array.isArray(p.starters)?p.starters.slice().sort().join(','):'');const t=accountTemplates[key];if(!t)throw Error('bad_new_character');const d=structuredClone(t);d.P.name=p.name;d.P.gender=p.gender;return d;}`;
 const gateway=['gateway.mjs','token-owner.mjs'].map(f=>fs.readFileSync(path.join(root,'server/accounts',f),'utf8').replace(/^export /gm,'')).join('\n');
 const endpoint=`
-const accountCors={'Access-Control-Allow-Origin':'https://gusgoat.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-soulbeast-environment','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store'};
+const accountCors={'Access-Control-Allow-Origin':'https://gusgoat.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-soulbeast-environment','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store','Vary':'Origin'};
 const accountReply=(value,status=200)=>Response.json(value,{status,headers:accountCors});
 const accountHandler=withSupabase({auth:'none'},async(req,ctx)=>{
  if(req.method!=='POST')return accountReply({ok:false,error:'method_not_allowed'},405);
@@ -25,11 +25,11 @@ const accountHandler=withSupabase({auth:'none'},async(req,ctx)=>{
  const text=await req.text();if(new TextEncoder().encode(text).length>600000)return accountReply({ok:false,error:'too_big'},413);
  const body=JSON.parse(text),env=req.headers.get('x-soulbeast-environment')||'test';
  const command=async(action,account,environment,packet)=>{const r=await ctx.supabaseAdmin.rpc('sb_player_account_command',{p_action:action,p_account:account,p_env:environment,p_data:packet});if(r.error)throw Error(['character_not_owned','request_payload_changed','character_limit'].find(x=>r.error.message?.includes(x))||'account_database_unavailable');return r.data;};
- const execute=createGameService({rpc:(name,args)=>ctx.supabaseAdmin.rpc(name,args),engineFactory:accountEngineFactory(createEngine,sbHash)});
+ const execute=(packet,environment)=>createGameService({rpc:(name,args)=>ctx.supabaseAdmin.rpc(name,args),engineFactory:accountEngineFactory(createEngine,sbHash,{request:packet})})(packet,environment);
  return accountReply(await accountGateway({command,execute,hash:sbHash,makeCharacter:accountNewCharacter})(user,body,env));
  }catch(e){const known=['character_not_owned','request_payload_changed','character_limit','bad_request_id','bad_new_character','character_create_retry','account_action_not_supported','verified_account_required','bad_data'];const error=known.includes(e.message)?e.message:'account_service_unavailable';return accountReply({ok:false,error},error==='character_not_owned'?403:known.includes(error)?400:503);}
 });
-export default {async fetch(req){if(req.method==='OPTIONS')return new Response(null,{status:204,headers:accountCors});return accountHandler(req);}};
+export default {async fetch(req){const response=req.method==='OPTIONS'?new Response(null,{status:204,headers:accountCors}):await accountHandler(req);const headers=new Headers(response.headers);if(req.headers.get('origin')==='https://localhost')headers.set('Access-Control-Allow-Origin','https://localhost');return new Response(response.body,{status:response.status,headers});}};
 `;
 fs.writeFileSync(path.join(out,'index.ts'),core+'\n'+templateCode+'\n'+gateway+'\n'+endpoint);
 fs.copyFileSync(path.join(root,'server/accounts/001-accounts.sql'),path.join(out,'001-accounts.sql'));

@@ -1,0 +1,19 @@
+{
+  "name": "soulbeast-android-internal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare:web": "node ../tools/build-mobile.cjs",
+    "sync": "cap sync android",
+    "open": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.3",
+    "esbuild": "0.28.2"
+  }
+}

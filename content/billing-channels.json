@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "mode": "internal",
+  "web": { "provider": "stripe", "environment": "sandbox", "checkoutPath": "topup-test.html" },
+  "android": {
+    "provider": "google_play",
+    "purchasesEnabled": false,
+    "packageName": "io.github.gusgoat.soulbeast.internal",
+    "products": {
+      "first-10": "soulbeast_first_10",
+      "first-50": "soulbeast_first_50",
+      "first-100": "soulbeast_first_100",
+      "normal-5": "soulbeast_normal_5",
+      "normal-10": "soulbeast_normal_10",
+      "normal-50": "soulbeast_normal_50",
+      "normal-100": "soulbeast_normal_100",
+      "normal-200": "soulbeast_normal_200"
+    }
+  }
+}

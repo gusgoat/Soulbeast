@@ -1,0 +1,7 @@
+{
+  "appId": "io.github.gusgoat.soulbeast.internal",
+  "appName": "Soulbeast Test",
+  "webDir": "www",
+  "server": { "hostname": "localhost", "androidScheme": "https", "cleartext": false },
+  "android": { "allowMixedContent": false, "webContentsDebuggingEnabled": false, "backgroundColor": "#09131e" }
+}

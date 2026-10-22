@@ -26,17 +26,18 @@ const ACCOUNT_GAME=(()=>{
  };
  async function task(fn){if(state.busy)return;state.busy=true;state.error='';ui();try{await fn();}catch(e){state.error=state.errorText?.(e)||'เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง';if(e.message==='email_wait')state.error='กรุณารอสักครู่ก่อนส่งอีเมลอีกครั้ง';}finally{state.busy=false;if(!ui())render();}}
  async function list(){state.user=await state.client.identity();if(!state.user.email_confirmed_at)throw Error('verified_account_required');const r=await state.client.game('account_list',{},SB_ENV);state.characters=r.characters;state.mode='list';}
- async function select(code){if(!state.characters.some(c=>c.code===code))throw Error('character_not_owned');state.code=code;let data;
+ async function select(code,remoteOnly=false){if(!state.characters.some(c=>c.code===code))throw Error('character_not_owned');state.code=code;let data;
   try{data=JSON.parse(localStorage.getItem(key())||'null');}catch{}
   const r=await state.client.game('load',{code},SB_ENV);
-  if(data?.P?.code!==code||(!data.battle&&Number(r.at)>Number(data.P.gsAt||0))){data=JSON.parse(r.data);data.P.gsAt=r.at;}
+  if(remoteOnly||data?.P?.code!==code||(!data.battle&&Number(r.at)>Number(data.P.gsAt||0))){data=JSON.parse(r.data);data.P.gsAt=r.at;}
+  state.saveConflict=false;state.pendingSave=null;
   delete data.P.cpin;state.mode='playing';IMG={};GS.lastJson='';GS.lastAt=0;sbMarkReady(code);state.boot({S:data});save();
  }
  async function action(a){state.error='';state.message='';if(['login','signup','forgot'].includes(a)){state.mode=a;ui();return;}
   if(a==='create'){state.mode='create';state.code='';S=blank();IMG={};render();return;}
   if(a==='logout'){await task(async()=>{await state.client.logout();state.user=null;state.mode='login';S=blank();state.code='';});return;}
  }
- const originalRender=render;render=function(...a){if(ui())return;return originalRender(...a);};
+ const originalRender=render;render=function(...a){if(ui())return;const out=originalRender(...a);if(state.saveConflict)document.querySelector('main')?.insertAdjacentHTML?.('afterbegin','<aside class="card" role="alert">พบเซฟใหม่จากอีกเครื่อง ระบบหยุดบันทึกเพื่อป้องกันข้อมูลถูกทับ <button class="btn" data-a="go" data-v="settings">ตรวจเซฟในตั้งค่า</button></aside>');return out;};
  // Every local save belongs to an authenticated account and a server-authorized character.
  save=function(){if(state.mode==='playing'&&state.user&&S.P?.code===state.code)try{localStorage.setItem(key(),JSON.stringify(S));}catch{};};
  load=function(){S=state.initial||blank();IMG={};if(state.user&&state.code)try{IMG=JSON.parse(localStorage.getItem(key()+':images')||'{}');}catch{}};
@@ -50,12 +51,36 @@ const ACCOUNT_GAME=(()=>{
   }catch(e){state.mode='create';state.error=state.errorText(e);toast(state.error);}finally{state.busy=false;render();}};
  // No legacy save import, PIN-based load, or destructive reset in the new account flow.
  vBackup=()=>'';vCloud=()=>'';cloudInit=()=>{CLOUD.st='off';};
- vระบบออนไลน์Save=start=>start?'':'<div class="card stack"><h3>บันทึกในบัญชีอีเมล</h3><p>บันทึกออนไลน์อัตโนมัติเมื่อกลับเมือง</p><button class="btn" data-a="gssave">บันทึกตอนนี้</button></div>';
+ vระบบออนไลน์Save=start=>start?'':'<div class="card stack"><h3>บันทึกในบัญชีอีเมล</h3><p>บันทึกออนไลน์อัตโนมัติเมื่อกลับเมือง</p><small>'+(S.P?.gsAt?'บันทึกล่าสุด '+esc(new Date(S.P.gsAt).toLocaleString('th-TH')):'กำลังรอบันทึกออนไลน์')+'</small>'+(state.saveConflict?'<p role="alert">มีเซฟใหม่จากอีกเครื่อง ระบบหยุดบันทึกเพื่อป้องกันข้อมูลถูกทับ</p><button class="btn" data-a="dlsave">ดาวน์โหลดสำเนาในเครื่อง</button><button class="btn" data-a="accountReload">โหลดเซฟใหม่จากเซิร์ฟเวอร์</button>':'<button class="btn" data-a="gssave">บันทึกตอนนี้</button>')+'</div>';
  handlers.gsload=()=>{};handlers.doloadcode=()=>{};handlers.reset=()=>handlers.accountCharacters();
  handlers.accountCharacters=()=>{if(S.battle||S.zone){toast('กลับเมืองและจบการต่อสู้ก่อนสลับตัวละคร');return;}task(async()=>{await gsSave(true);state.mode='list';await list();});};
  handlers.accountLogout=()=>{if(S.battle||S.zone){toast('กลับเมืองและจบการต่อสู้ก่อนออกจากบัญชี');return;}task(async()=>{await gsSave(true);await state.client.logout();state.user=null;state.mode='login';S=blank();state.code='';});};
- const settings=vSettings;vSettings=()=>'<div class="card stack"><b>'+esc(state.user?.email||'')+'</b><button class="btn" data-a="accountCharacters">ตัวละครของฉัน</button><button class="btn" data-a="accountLogout">ออกจากบัญชี</button></div>'+settings().replace(foldCard('สำรอง / นำเข้าเซฟ',''),'').replace('<button class="btn danger" data-a="reset">เริ่มเกมใหม่</button>','<button class="btn" data-a="accountCharacters">เลือก / สร้างตัวละคร</button>');
- sheetRequest=async options=>{const p=JSON.parse(options?.body||'{}');if(!state.user) return {ok:false,error:'login_required'};const owner=state.user.id,selected=state.code;p._sbRequest??=p.request||crypto.randomUUID();p.code=selected;if(['wb_create','wb_join'].includes(p.action))p._preSave=gsData();try{const r=await state.client.game(p.action,p,SB_ENV);if(state.user?.id!==owner||state.code!==selected)return {ok:false,error:'account_changed'};if(p._preSave&&r.savedAt&&S.P?.code===p.code){applyAccount(r.account);S.P.gsAt=r.savedAt;GS.lastAt=Date.now();GS.lastJson=gsData();if(r.coupons!=null)GACHA.coupons=r.coupons;}return r;}catch(e){return {ok:false,error:e.code||e.message};}};
+ handlers.accountReload=()=>{S.ui.confirm={msg:'โหลดเซฟใหม่จากเซิร์ฟเวอร์? ระบบจะเก็บสำเนาความคืบหน้าในเครื่องนี้ไว้ก่อน',act:'accountReloadConfirm'};render();};
+ handlers.accountReloadConfirm=()=>task(async()=>{S.ui.confirm=null;localStorage.setItem(key()+':before-conflict-load',JSON.stringify(S));await select(state.code,true);});
+ handlers.accountOpenShop=async()=>{try{const {createBilling}=await import('./client/billing-client.mjs'),config=await (await fetch('./content/billing-channels.json')).json();const billing=createBilling({platform:window.SOULBEAST_PLATFORM||'web',config,native:window.SB_NATIVE?.billing,openWeb:path=>location.assign(path)});const result=await billing.open();if(result?.enabled===false)toast('ร้าน Google Play ยังไม่เปิดชำระเงินในรุ่นทดสอบนี้');}catch{toast('ร้านคูปองยังไม่พร้อม กรุณาลองภายหลัง');}};
+ window.SB_ACCOUNT_PAUSE=()=>{if(state.mode==='playing'){save();if(!S.battle)gsSave(false);}};
+ window.SB_ACCOUNT_BACK=()=>{if(state.mode==='create'){handlers.accountCharacters();return true;}if(state.mode==='playing'&&!S.zone&&!S.battle&&S.screen!=='town'){go('town');return true;}return false;};
+ const settings=vSettings;vSettings=()=>'<div class="card stack"><b>'+esc(state.user?.email||'')+'</b><button class="btn" data-a="accountCharacters">ตัวละครของฉัน</button><button class="btn" data-a="accountOpenShop">'+(window.SOULBEAST_PLATFORM==='android'?'ร้านคูปอง · Google Play':'ร้านคูปอง · ทดสอบ')+'</button><button class="btn" data-a="accountLogout">ออกจากบัญชี</button></div>'+settings().replace(foldCard('สำรอง / นำเข้าเซฟ',''),'').replace('<button class="btn danger" data-a="reset">เริ่มเกมใหม่</button>','<button class="btn" data-a="accountCharacters">เลือก / สร้างตัวละคร</button>');
+ sheetRequest=async options=>{
+  const p=JSON.parse(options?.body||'{}');if(!state.user)return {ok:false,error:'login_required'};
+  const owner=state.user.id,selected=state.code;p._sbRequest??=p.request||crypto.randomUUID();p.code=selected;
+  if(['wb_create','wb_join'].includes(p.action))p._preSave=gsData();
+  if(p.action==='save'||p._preSave)p.expectedSaveAt=Number(S.P?.gsAt||0);
+  if(p.action==='save'){
+   const fingerprint=JSON.stringify([p.code,p.data,p.expectedSaveAt]);
+   if(state.pendingSave?.fingerprint!==fingerprint)state.pendingSave={fingerprint,id:crypto.randomUUID()};
+   p._sbRequest=state.pendingSave.id;
+  }
+  try{
+   const r=await state.client.game(p.action,p,SB_ENV);if(state.user?.id!==owner||state.code!==selected)return {ok:false,error:'account_changed'};
+   if(r.error==='save_conflict'){state.saveConflict=true;toast('พบเซฟใหม่จากอีกเครื่อง กรุณาเปิดตั้งค่าเพื่อเลือกโหลดเซฟ');}
+   if(r.ok&&r.accountSaveAt&&S.P?.code===selected)S.P.gsAt=r.accountSaveAt;
+   if(r.ok&&p.action==='save')state.pendingSave=null;
+   if(p._preSave&&r.savedAt&&S.P?.code===p.code){applyAccount(r.account);S.P.gsAt=r.accountSaveAt||r.savedAt;GS.lastAt=Date.now();GS.lastJson=gsData();if(r.coupons!=null)GACHA.coupons=r.coupons;}
+   return r;
+  }catch(e){if(e.code==='save_conflict')state.saveConflict=true;return {ok:false,error:e.code||e.message};}
+ };
+ const previousSheetError=sheetError;sheetError=r=>r?.error==='save_conflict'?'พบเซฟใหม่จากอีกเครื่อง กรุณาเปิดตั้งค่าและโหลดเซฟใหม่ก่อน':previousSheetError(r);
  const originalBoot=boot;boot=()=>{S=blank();state.busy=true;ui();(async()=>{try{const m=await import('./client/account-client.mjs');state.errorText=m.accountError;state.client=m.connectAccounts(()=>{if(!state.busy)task(async()=>{if(state.client.sessions.read()){const user=await state.client.identity();if(user.id===state.user?.id)return;S=blank();state.code='';state.user=null;await list();}else{S=blank();state.code='';state.user=null;state.mode='login';}});});
     const hash=location.hash; if(hash){history.replaceState(null,'',location.pathname+location.search);await state.client.acceptCallback(hash);}
     if(state.client.sessions.read()){if(state.client.recovery){state.user=await state.client.identity();state.mode='recovery';}else await list();}

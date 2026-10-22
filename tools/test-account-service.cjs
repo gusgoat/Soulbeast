@@ -15,7 +15,7 @@ const db={auth:{getUser:async()=>({data:{user:authenticated?{id:account,email:'q
  throw Error('Unexpected RPC '+name);
 }};
 const source=fs.readFileSync('build/accounts/index.ts','utf8').replace(/^import .*\r?\n/gm,'').replace('export default {','this.handler={');
-const ctx=vm.createContext({console,Response,Request,TextEncoder,TextDecoder,Uint8Array,Date,structuredClone,crypto:crypto.webcrypto,btoa,atob,sha256:v=>crypto.createHash('sha256').update(v).digest(),withSupabase:(_,f)=>req=>f(req,{supabaseAdmin:db})});vm.runInContext(source,ctx);
+const ctx=vm.createContext({console,Headers,Response,Request,TextEncoder,TextDecoder,Uint8Array,Date,structuredClone,crypto:crypto.webcrypto,btoa,atob,sha256:v=>crypto.createHash('sha256').update(v).digest(),withSupabase:(_,f)=>req=>f(req,{supabaseAdmin:db})});vm.runInContext(source,ctx);
 const call=(body,auth=true)=>ctx.handler.fetch(new Request('https://example.invalid/accounts',{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:'Bearer fixture-user-jwt'}:{})},body:JSON.stringify(body)}));
 (async()=>{
  let r=await call({action:'account_list'},false);assert.equal(r.status,401);assert.equal(rows.length,0);
@@ -25,6 +25,13 @@ const call=(body,auth=true)=>ctx.handler.fetch(new Request('https://example.inva
  r=await call({action:'account_create',request_id,data});let v=await r.json();assert.equal(r.status,200,JSON.stringify(v));assert(v.ok,JSON.stringify(v));const code=v.character.code;assert(!JSON.stringify(v).includes('engine_pin'));
  const saves=tables.Saves.length;r=await call({action:'account_create',request_id,data});assert.equal((await r.json()).character.code,code);assert.equal(tables.Saves.length,saves);
  r=await call({action:'load',code});v=await r.json();assert(v.ok,JSON.stringify(v));const p=JSON.parse(v.data).P;assert.equal(p.gold,150);assert.equal(p.lv,3);assert.equal(p.gender,'female');assert.equal(p.pets[0].sp,'wisp');assert.equal(p.cpin,undefined);
+ const oldAt=v.at,updated=JSON.parse(v.data);updated.P.gold=155;
+ const saveRequest={action:'save',code,data:JSON.stringify(updated),name:updated.P.name,lv:updated.P.lv,expectedSaveAt:oldAt,_sbRequest:crypto.randomUUID()};
+ r=await call(saveRequest);v=await r.json();assert(v.ok,JSON.stringify(v));assert(v.accountSaveAt>oldAt);const freshAt=v.accountSaveAt;
+ r=await call(saveRequest);v=await r.json();assert(v.ok);assert.equal(v.accountSaveAt,freshAt,'Lost-response retry returns the committed receipt');
+ r=await call({...saveRequest,_sbRequest:crypto.randomUUID()});v=await r.json();assert.equal(v.error,'save_conflict','A stale device must never overwrite a newer save');
+ r=await call({...saveRequest,expectedSaveAt:undefined,_sbRequest:crypto.randomUUID()});v=await r.json();assert.equal(v.error,'save_conflict','Version omission is not a bypass');
+ r=await call({action:'load',code});v=await r.json();assert.equal(JSON.parse(v.data).P.gold,155);assert.equal(v.accountSaveAt,freshAt);
  account='22222222-2222-4222-8222-222222222222';r=await call({action:'load',code});assert.equal(r.status,403);assert.equal((await r.json()).error,'character_not_owned');
  r=await call({action:'account_list'});assert.equal((await r.json()).characters.length,0);
  const templates=vm.runInContext('accountTemplates',ctx);let combinations=0;

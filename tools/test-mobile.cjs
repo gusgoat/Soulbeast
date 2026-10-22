@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert/strict'),path=require('path');
+const config=require('../mobile/capacitor.config.json'),out='mobile/www',html=fs.readFileSync(out+'/index.html','utf8');
+assert.equal(config.appId,'io.github.gusgoat.soulbeast.internal');assert.equal(config.server.cleartext,false);assert(!config.server.url,'Never point the shell at a mutable remote website');assert.equal(config.android.allowMixedContent,false);
+assert(html.includes('window.SOULBEAST_ACCOUNTS=true'));assert(html.includes('soulbeast-accounts'));assert(html.includes('native-entry.js'));assert(!html.includes('accounts-preview.js'));assert(!html.includes('topup-test'));
+const app=[...html.matchAll(/src="\.\/(game-app\.[^"]+)"/g)][0]?.[1];assert(app);const code=fs.readFileSync(path.join(out,app),'utf8');assert(code.includes("const SB_ENV='test';"));assert(code.includes('save_conflict'));assert(code.includes('ACCOUNT_GAME'));
+for(const p of ['admin.html','admin.js','topup-test.html','topup-test.js','server','private','client/accounts-preview.js'])assert(!fs.existsSync(path.join(out,p)),'Forbidden packaged file '+p);
+const gradle=fs.readFileSync('mobile/android/app/build.gradle','utf8');assert(gradle.includes('"BILLING_ENABLED", "false"'));assert(gradle.includes('billing:9.1.0'));
+const manifest=fs.readFileSync('mobile/android/app/src/main/AndroidManifest.xml','utf8');assert(manifest.includes('android:allowBackup="false"'));assert(manifest.includes('android:usesCleartextTraffic="false"'));
+for(const asset of ['assets/ui/soulbeast-logo.webp','client/account-client.mjs','client/billing-client.mjs','content/billing-channels.json'])assert(fs.existsSync(path.join(out,asset)));
+console.log('PASS Android package: test-only accounts, local assets, native shell, HTTPS, no remote server URL, no admin/Stripe/QA files and two purchase gates');
