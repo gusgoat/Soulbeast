@@ -29,6 +29,7 @@ const assert=require('assert/strict');
  assert.equal(milestone(26,{tower:true,raid:true,guild:true}),'promotion');
  assert.equal(milestone(26,{tower:true,raid:true,guild:true,promotion:true}),'world');
  assert.equal(milestone(30,{tower:true,raid:true,guild:true,promotion:true,world:true}),'guildwar');
+ fresh();r("S.P.lv=11;Tutorial.state().active=null;Tutorial.state().done={stats:true,tower:true};CAMP.room={status:'active'};Tutorial.update();");assert.equal(r('Tutorial.state().active'),null);r("Tutorial.state().active='raid';");assert(!r('Tutorial.openRaid()'),'An existing online raid must finish before practice can open');r('CAMP.room=null');
  fresh();r('Tutorial.state().active=null;Tutorial.state().done.stats=true;S.P.lv=30;S.zone={id:1,depth:2,log:[]};S.screen="zone";Tutorial.update()');assert.equal(r('Tutorial.state().active'),null,'No milestone interrupts forest travel');
  fresh();r("Tutorial.state().done.battle=true;Tutorial.state().active=null;S.zone={id:7,depth:10,log:[]};startBattle([wildUnit(ZN[6].boss.sp||ZN[6].sp[0],3,0)],'boss',7);B().enemies.forEach(e=>e.hp=0);endBattle('win');");assert(r('Tutorial.state().firstBoss'));
  r('S.battle=null;S.zone=null;S.ui={};S.screen="town";Tutorial.state().active=null;Tutorial.update()');assert.equal(r('Tutorial.state().active'),'hospital');
