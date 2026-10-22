@@ -4,7 +4,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  const reset=(zone=1)=>r(`handlers.newgame();S.ui={};S.P.lv=60;S.P.zoneMax=7;S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.P.gold=100000;S.P.items.pot=20;S.zone={id:${zone},depth:3,log:[],fork:[{k:'beast',h:false},{k:'mist',h:true}]};S.screen='zone';WorldTales.run();`);
  for(const z of [7,1,2,3,4,5,6])for(const branch of [0,1])for(const method of ['fund','volunteer']){
   reset(z);r(`WorldTales.record('secret:${z}',${z},'คำสัญญา',${branch},'เหตุการณ์เดิม');WorldTales.effects({seal:-.20},${z},'secret:${z}','ผลเดิม');var original=JSON.stringify(WorldTales.state().consequences);var hint1=WorldTales.rumor();WorldTales.state().serial++;var hint2=WorldTales.rumor();WorldTales.startAfter('secret:${z}',false);`);
-  assert(r('hint1!==hint2'));assert.equal(r('WorldTales.session().mode'),'aftermath');assert(r('WorldTales.view().includes("การช่วยครั้งนี้ไม่ลบอดีต")'));
+  assert(r('hint1!==hint2'));assert.equal(r('WorldTales.session().mode'),'aftermath');assert(!r('WorldTales.view().includes("ค่าแรงและวัสดุ")'));
   const token=r('WorldTales.token()');g.ctx.testToken=token;r(`WorldTales.helpAfter(testToken,'${method}');`);if(r("S.battle?.kind==='taleTrial'"))r("B().enemies.forEach(e=>e.hp=0);endBattle('win');battleAction('done');");assert(r(`WorldTales.state().aftermaths['secret:${z}'].repaired`));assert.equal(r('JSON.stringify(WorldTales.state().consequences)'),r('original'));assert.equal(r('WorldTales.modifier("seal")'),0);const gold=r('S.P.gold');r(`WorldTales.helpAfter(testToken,'fund')`);assert.equal(r('S.P.gold'),gold);
  }
  reset(4);r("WorldTales.record('special:encounter-4',4,'ไข่มังกร',1,'ไข่ถูกพาไป');WorldTales.effects({seal:-.25,element:'dragon',repairBound:true},4,'special:encounter-4','ฝูงมังกรระแวง');WorldTales.state().visits[4]+=20;");assert.equal(r('WorldTales.modifier("seal",["dragon"])'),-.25,'repair-bound does not silently expire');
@@ -21,7 +21,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  reset(1);r("WorldTales.state().quests['moon-3']={id:'moon-3',kind:'long',status:'active',targets:[1],progress:0};S.zone.taleSession={id:'moon-3',mode:'question',token:'defer',result:[]};handlers.taleDefer('defer');");assert.equal(r('WorldTales.session().mode'),'result');assert.equal(r('WorldTales.follow()'),null);r("WorldTales.state().serial++;delete S.zone.taleSession;");assert.equal(r('WorldTales.follow().id'),'moon-3');
  // Global trust follows the player across forests, then expires at the stated run count.
  reset(4);r("WorldTales.effects({seal:.15,element:'dragon',globalForest:true,duration:3},4,'global','trust');S.zone.id=1;");assert.equal(r('WorldTales.modifier("seal",["dragon"])'),.15);r('WorldTales.state().serial+=3;');assert.equal(r('WorldTales.modifier("seal",["dragon"])'),0);
- // Secret choice cards must show the current potion cost before committing.
- reset(4);r("var sd=SECRET_DATA.locations.find(d=>d.zone===4);var card=Secret.imageButton(sd,1,sd.choices[0].name,'secretChoose','test|'+sd.choices[0].id);");assert(r('card.includes(CON.pot.n)'));
+ // Secret choice cards hide the potion cost before committing.
+ reset(4);r("var sd=SECRET_DATA.locations.find(d=>d.zone===4);var card=Secret.imageButton(sd,1,sd.choices[0].name,'secretChoose','test|'+sd.choices[0].id);");assert(!r('card.includes(CON.pot.n)'));
  console.log('PASS '+file+':all aftermath resolutions,staged rumors,immutable history,repair-bound distrust,third-choice prerequisites,selected gear costs,real potion/MP/hospital effects,28 mixed endings,deferred decisions,global expiry,secret costs');
 }

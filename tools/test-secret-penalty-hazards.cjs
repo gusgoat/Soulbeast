@@ -3,7 +3,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
 const g=require('./game-context.cjs')(file),r=g.run;
 r('render=()=>{};Sound.fx=()=>{};');
 const setup=()=>r("handlers.newgame();S.ui={};S.screen='zone';var d=SECRET_DATA.locations.find(x=>!x.tutorial);S.zone={id:d.zone,depth:5,log:[],secretSession:{id:d.id,event:'puzzle',revision:0,puzzleAttempts:0}};Secret.record(d.id);S.P.hp=pStats().hp;var beforeGold=S.P.gold,beforeExp=S.P.exp;");
-setup();assert(r('Secret.view().includes("50% ของ HP เต็ม")'));r('var oldToken=Secret.token();Secret.puzzle(oldToken,(d.correct+1)%d.answers.length);');assert.equal(r('S.P.hp'),r('pStats().hp-Math.ceil(pStats().hp*.5)'));assert.equal(r('Secret.session().puzzleAttempts'),1);
+setup();assert(!r('Secret.view().includes("50% ของ HP เต็ม")'));r('var oldToken=Secret.token();Secret.puzzle(oldToken,(d.correct+1)%d.answers.length);');assert.equal(r('S.P.hp'),r('pStats().hp-Math.ceil(pStats().hp*.5)'));assert.equal(r('Secret.session().puzzleAttempts'),1);
 const hp=r('S.P.hp');r('Secret.puzzle(oldToken,(d.correct+1)%d.answers.length)');assert.equal(r('S.P.hp'),hp,'stale answer cannot deal damage twice');
 r('Secret.puzzle(Secret.token(),(d.correct+1)%d.answers.length)');assert.equal(r('S.screen'),'hospital');assert.equal(r('S.zone'),null);assert.equal(r('Secret.canDiscover(d)'),true);assert.equal(r('S.P.gold'),r('beforeGold'));assert.equal(r('S.P.exp'),r('beforeExp'));assert(r('vHospital().includes("สถานที่นี้ยังมีโอกาสค้นพบใหม่ได้")'));
 r('S=JSON.parse(JSON.stringify(S));');assert(r('Secret.canDiscover(d)'),'retry eligibility survives reload');
@@ -14,5 +14,5 @@ r("handlers.newgame();S.ui={};S.screen='zone';var hazard=FOREST_RIDDLES.find(x=>
 g.ctx.door=door;r('S.zone.fork=[door];chooseFork(0)');assert.equal(r('!!ForestRiddle.session()'),door.h||door.k==='mist');if(door.h||door.k==='mist'){assert(r('S.zone.riddleRun.hazard.used'));const depth=r('S.zone.depth');r('chooseFork(0)');assert.equal(r('S.zone.depth'),depth);}
 }
 r("handlers.newgame();S.ui={};S.screen='zone';S.zone={id:1,depth:4,log:[]};newFork();");assert(!r('S.zone.fork.some(x=>x.k==="riddleHazard")'),'hazards never shown as normal routes');
-console.log('PASS '+file+': warning, maxHP damage, death/hospital/retry/reload, correct answer, duplicate guard, dark/mist forced hazard and no visible hazard routes');
+console.log('PASS '+file+': hidden warning, unchanged maxHP damage, death/hospital/retry/reload, correct answer, duplicate guard, dark/mist forced hazard and no visible hazard routes');
 }
