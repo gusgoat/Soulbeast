@@ -19,7 +19,7 @@ const ACCOUNT_GAME=(()=>{
    await task(async()=>{if(reset){await state.client.resetPassword(password);state.mode='list';state.message='ตั้งรหัสผ่านใหม่แล้ว';await list();}
     else if(forgot){await state.client.recover(email);state.message='หากอีเมลนี้มีบัญชี ระบบจะส่งลิงก์ตั้งรหัสผ่านใหม่ให้ กรุณาตรวจจดหมายขยะด้วย';}
     else if(signup){await state.client.signup(email,password);state.mode='login';state.message='ตรวจอีเมลเพื่อยืนยันบัญชี แล้วเข้าสู่ระบบด้วยรหัสผ่านที่ตั้งไว้';}
-    else{await state.client.login(email,password);await list();}});
+    else{await state.client.login(email,password);state.message='';await list();}});
   });
   root().querySelectorAll('[data-account]').forEach(b=>b.addEventListener('click',()=>action(b.dataset.account)));
   root().querySelectorAll('[data-account-code]').forEach(b=>b.addEventListener('click',()=>task(()=>select(b.dataset.accountCode))));return true;
@@ -43,6 +43,7 @@ const ACCOUNT_GAME=(()=>{
  saveImg=function(){if(state.user&&state.code)try{localStorage.setItem(key()+':images',JSON.stringify(IMG));}catch{toast('พื้นที่เก็บรูปเต็ม');}};
  const originalCreate=handlers.newgame;
  const originalStart=vStart;vStart=()=>'<div class="card row"><button class="btn" data-a="accountCharacters">กลับหน้าตัวละคร</button><small>'+esc(state.user?.email||'')+'</small></div>'+(state.error?'<p role="alert">'+esc(state.error)+'</p>':'')+originalStart();
+ const originalCinema=cinemaView;cinemaView=intro=>{const html=originalCinema(intro);return intro?html.replace(/<button class="btn full" data-a="introLoad">[^<]*<\/button>/,''):html;};
  handlers.newgame=async()=>{if(state.mode!=='create'||state.busy)return;state.busy=true;state.error='';
   try{if(!state.draft){originalCreate();state.draft=JSON.parse(gsData());state.request=crypto.randomUUID();}state.mode='creating';ui();
    const r=await state.client.game('account_create',{data:state.draft,request_id:state.request},SB_ENV);state.code=r.character.code;if(!state.characters.some(c=>c.code===state.code))state.characters.push(r.character);const loaded=await state.client.game('load',{code:state.code},SB_ENV);S=JSON.parse(loaded.data);S.P.gsAt=loaded.at;delete S.P.cpin;state.draft=null;state.request=null;state.mode='playing';sbMarkReady(state.code);state.boot({S});save();render();
@@ -53,7 +54,7 @@ const ACCOUNT_GAME=(()=>{
  handlers.gsload=()=>{};handlers.doloadcode=()=>{};handlers.reset=()=>handlers.accountCharacters();
  handlers.accountCharacters=()=>{if(S.battle||S.zone){toast('กลับเมืองและจบการต่อสู้ก่อนสลับตัวละคร');return;}task(async()=>{await gsSave(true);state.mode='list';await list();});};
  handlers.accountLogout=()=>{if(S.battle||S.zone){toast('กลับเมืองและจบการต่อสู้ก่อนออกจากบัญชี');return;}task(async()=>{await gsSave(true);await state.client.logout();state.user=null;state.mode='login';S=blank();state.code='';});};
- const settings=vSettings;vSettings=()=>'<div class="card stack"><b>'+esc(state.user?.email||'')+'</b><button class="btn" data-a="accountCharacters">ตัวละครของฉัน</button><button class="btn" data-a="accountLogout">ออกจากบัญชี</button></div>'+settings();
+ const settings=vSettings;vSettings=()=>'<div class="card stack"><b>'+esc(state.user?.email||'')+'</b><button class="btn" data-a="accountCharacters">ตัวละครของฉัน</button><button class="btn" data-a="accountLogout">ออกจากบัญชี</button></div>'+settings().replace(foldCard('สำรอง / นำเข้าเซฟ',''),'').replace('<button class="btn danger" data-a="reset">เริ่มเกมใหม่</button>','<button class="btn" data-a="accountCharacters">เลือก / สร้างตัวละคร</button>');
  sheetRequest=async options=>{const p=JSON.parse(options?.body||'{}');if(!state.user) return {ok:false,error:'login_required'};const owner=state.user.id,selected=state.code;p._sbRequest??=p.request||crypto.randomUUID();p.code=selected;if(['wb_create','wb_join'].includes(p.action))p._preSave=gsData();try{const r=await state.client.game(p.action,p,SB_ENV);if(state.user?.id!==owner||state.code!==selected)return {ok:false,error:'account_changed'};if(p._preSave&&r.savedAt&&S.P?.code===p.code){applyAccount(r.account);S.P.gsAt=r.savedAt;GS.lastAt=Date.now();GS.lastJson=gsData();if(r.coupons!=null)GACHA.coupons=r.coupons;}return r;}catch(e){return {ok:false,error:e.code||e.message};}};
  const originalBoot=boot;boot=()=>{S=blank();state.busy=true;ui();(async()=>{try{const m=await import('./client/account-client.mjs');state.errorText=m.accountError;state.client=m.connectAccounts(()=>{if(!state.busy)task(async()=>{if(state.client.sessions.read()){const user=await state.client.identity();if(user.id===state.user?.id)return;S=blank();state.code='';state.user=null;await list();}else{S=blank();state.code='';state.user=null;state.mode='login';}});});
     const hash=location.hash; if(hash){history.replaceState(null,'',location.pathname+location.search);await state.client.acceptCallback(hash);}

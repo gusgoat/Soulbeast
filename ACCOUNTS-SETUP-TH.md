@@ -17,7 +17,7 @@
 1. จดโดเมนที่ต้องการใช้ ชื่อยังไม่ได้กำหนดหรือซื้อให้ สามารถโฮสต์เกมที่ GitHub Pages ต่อได้ ไม่ต้องย้ายเว็บเกม
 2. สมัคร Resend และเพิ่ม sending subdomain เช่น `auth.<โดเมนของคุณ>`
 3. เพิ่ม DNS ตามค่าที่ Resend แสดง แล้วรอสถานะ Verified อย่าคัดลอกค่าตัวอย่างจากที่อื่น
-4. Supabase → Authentication → Email → SMTP ตั้ง Sender name `Soulbeast`, Sender email จากโดเมนที่ยืนยันแล้ว, SMTP host/port/user/password ตามหน้า Resend ปัจจุบัน คีย์ใส่ในช่องลับที่ Supabase เท่านั้น
+4. Supabase → Authentication → Email → SMTP ตั้ง Sender name `Soulbeast`, Sender email จากโดเมนที่ยืนยันแล้ว, Host `smtp.resend.com`, Port `465`, Username `resend`, Password เป็น API key ของ Resend คีย์ใส่ในช่องลับที่ Supabase เท่านั้น ไม่ใส่ในแชตหรือไฟล์เกม
 5. เพิ่ม exact Redirect URL `https://gusgoat.github.io/Soulbeast/accounts-staging.html` ใน Authentication → URL Configuration รักษา URL ของ admin และร้านเดิมไว้
 6. ทดสอบอีเมลยืนยันและกู้รหัสผ่านด้วยบัญชีทดสอบใหม่ ผู้ใช้กรอกรหัสผ่านและยืนยันเอง ไม่ส่งรหัสผ่าน/ลิงก์ยืนยันให้ผู้ดูแล
 7. หลังผ่านทั้งหมด ค่อยเปิดหน้าเกมหลักและเปลี่ยน redirect ไป URL production ที่ตั้งใจใช้ พร้อมทดสอบซ้ำ
@@ -48,4 +48,4 @@
 
 ไฟล์ติดตั้งอยู่ `build/accounts/001-accounts.sql` และ `build/accounts/index.ts` ห้ามเปิด JWT gateway แบบรับเฉพาะ legacy signing secret หากโครงการใช้ signing keys ใหม่ ต้องใช้การตรวจ `getUser` ใน handler ที่เตรียมไว้ และตรวจ unsigned request ถูกปฏิเสธหลัง deploy
 
-ก่อนเปิดจริงยังต้องทดสอบการส่งอีเมลและเข้าสู่ระบบจริงครบวงจร การผ่าน mock ไม่ยืนยันการส่งอีเมลหรือธุรกรรม Stripe จริง
+ตรวจหน้าที่เผยแพร่ด้วย browser แล้ว: สมัครจำลอง/ล็อกอิน/เพศและอาชีพ/สร้างตัวละคร/บทสอนเล่น/บันทึกก่อนเลือกรายชื่อ/ออกจากบัญชี ผ่าน ไม่มี console error ก่อนเปิดจริงยังต้องทดสอบการส่งอีเมลและเข้าสู่ระบบจริงครบวงจร การผ่าน mock ไม่ยืนยันการส่งอีเมลหรือธุรกรรม Stripe จริง
