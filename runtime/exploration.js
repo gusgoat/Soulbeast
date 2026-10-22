@@ -78,7 +78,8 @@ function zlog(t){const zl=S.zone.log;zl.push(t);if(zl.length>12)zl.shift()}
 function trap(){const t=pick(TRAPS),P=S.P,s=pStats();
  P.hp=Math.max(1,P.hp-Math.round(s.hp*t.p));if(t.mp)P.mp=Math.max(0,P.mp-Math.round(s.mp*t.mp));
  party().forEach(p=>{if(p.hp>0){const q=calcPet(p);p.hp=Math.max(1,p.hp-Math.round(q.hp*t.p));if(t.mp)p.mp=Math.max(0,p.mp-Math.round(q.mp*t.mp))}});
- return `กับดัก${t.n}! ${t.d} ทั้งทีมเสีย HP ${Math.round(t.p*100)}%${t.mp?` และ MP ${Math.round(t.mp*100)}%`:''}`}
+ const message=`กับดัก${t.n}! ${t.d} ทั้งทีมเสีย HP ${Math.round(t.p*100)}%${t.mp?` และ MP ${Math.round(t.mp*100)}%`:''}`;
+ S.ui.trapNotice={index:TRAPS.indexOf(t),title:'กับดัก'+t.n,message};return message}
 // @soulbeast-end 0304-trap
 // @soulbeast-unit 0305-ZT
 

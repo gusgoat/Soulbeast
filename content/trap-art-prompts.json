@@ -1,0 +1,35 @@
+{
+  "mode": "built-in image_gen",
+  "assets": [
+    {
+      "id": "quicksand",
+      "path": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-0048a7f7-3244-4c7e-b644-10f3a9f2937b.png",
+      "prompt": "Use case: illustration-story. Create one standalone landscape fantasy RPG event illustration for Soulbeast. An adventurer and small fantasy beast companion caught waist-deep in swirling quicksand on an ancient forest trail, reaching a root to pull themselves free, clear sinking ground hazard. Painterly detailed Asian fantasy game art, cinematic readable composition at mobile size, teal shadow and warm gold rim light, expressive startled but heroic traveler in blue cloak with leather armor, small wolf-like magical companion. Single coherent scene, landscape 3:2. Important hazard centered with generous margins, no split panels, no lettering, no UI, no watermark. This is an explanatory trap event image, not a battle victory."
+    },
+    {
+      "id": "leeches",
+      "path": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-df27f7ab-7742-4f74-a90f-07aff983b191.png",
+      "prompt": "Use case: illustration-story. Create one standalone landscape fantasy RPG event illustration for Soulbeast. An adventurer and small fantasy beast companion wading through a shallow murky jungle pool, clusters of dark leeches visibly clinging to boots and clothing, magical blue energy being drained into the water, no gore. Painterly detailed Asian fantasy game art, cinematic readable composition at mobile size, teal shadow and warm gold rim light, expressive startled but heroic traveler in blue cloak with leather armor, small wolf-like magical companion. Single coherent scene, landscape 3:2. Important hazard centered with generous margins, no split panels, no lettering, no UI, no watermark. This is an explanatory trap event image, not a battle victory."
+    },
+    {
+      "id": "fire-wall",
+      "path": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-cc7c5e47-43b3-45f2-ae93-78c2d825e932.png",
+      "prompt": "Use case: illustration-story. Create one standalone landscape fantasy RPG event illustration for Soulbeast. An adventurer shielding a small fantasy beast companion as a sudden tall wall of magical flames erupts across an ancient wilderness trail, clear hazardous wall of fire. Painterly detailed Asian fantasy game art, cinematic readable composition at mobile size, teal shadow and warm gold rim light, expressive startled but heroic traveler in blue cloak with leather armor, small wolf-like magical companion. Single coherent scene, landscape 3:2. Important hazard centered with generous margins, no split panels, no lettering, no UI, no watermark. This is an explanatory trap event image, not a battle victory."
+    },
+    {
+      "id": "spike-pit",
+      "path": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-33573bf0-5f6c-47f4-bb9e-259eb1bb7e7c.png",
+      "prompt": "Use case: illustration-story. Create one standalone landscape fantasy RPG event illustration for Soulbeast. An adventurer and small fantasy beast companion stumbling at the edge of a collapsing concealed pit, sharp purple poison-tipped wooden spikes clearly visible inside, no blood or impalement. Painterly detailed Asian fantasy game art, cinematic readable composition at mobile size, teal shadow and warm gold rim light, expressive startled but heroic traveler in blue cloak with leather armor, small wolf-like magical companion. Single coherent scene, landscape 3:2. Important hazard centered with generous margins, no split panels, no lettering, no UI, no watermark. This is an explanatory trap event image, not a battle victory."
+    },
+    {
+      "id": "rockfall",
+      "path": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-941578f7-5682-40ae-9d25-bbdcd59f388d.png",
+      "prompt": "Use case: illustration-story. Create one standalone landscape fantasy RPG event illustration for Soulbeast. An adventurer pulling a small fantasy beast companion aside as huge boulders tumble down a rocky woodland slope, dramatic dust and falling stones, clear rockfall hazard. Painterly detailed Asian fantasy game art, cinematic readable composition at mobile size, teal shadow and warm gold rim light, expressive startled but heroic traveler in blue cloak with leather armor, small wolf-like magical companion. Single coherent scene, landscape 3:2. Important hazard centered with generous margins, no split panels, no lettering, no UI, no watermark. This is an explanatory trap event image, not a battle victory."
+    },
+    {
+      "id": "living-vines",
+      "path": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-ba47f210-44c0-44d3-bd6e-837a44447057.png",
+      "prompt": "Use case: illustration-story. Create one standalone landscape fantasy RPG event illustration for Soulbeast. An adventurer and small fantasy beast companion struggling as animated thorny vines coil around arms and torso near an ancient forest ruin, green magical tendrils draining their energy, no gore. Painterly detailed Asian fantasy game art, cinematic readable composition at mobile size, teal shadow and warm gold rim light, expressive startled but heroic traveler in blue cloak with leather armor, small wolf-like magical companion. Single coherent scene, landscape 3:2. Important hazard centered with generous margins, no split panels, no lettering, no UI, no watermark. This is an explanatory trap event image, not a battle victory."
+    }
+  ]
+}

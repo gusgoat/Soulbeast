@@ -13,7 +13,7 @@ const Tutorial={
  hold(){return this.enabled()&&this.forestBattle()&&['battleIntro','elements','captureIntro'].includes(this.state().active);},
  release(){const p=this.pending;this.pending=null;if(p&&p.battle===S.battle&&!S.battle.over){battleLater(p.fn,100);return;}const b=S.battle;if(!b||b.over||!this.forestBattle())return;if(!b.cur)battleLater(advance,100);},
  free(){return (S.P.free||0)+S.P.pets.reduce((n,p)=>n+(p.free||0),0);},
- ready(){return this.enabled()&&!S.ui.cinema&&!S.ui.confirm&&!this.online()&&!S.zone?.secretSession&&!S.zone?.riddleSession&&!S.zone?.specialSession&&!WorldTales.session();},
+ ready(){return this.enabled()&&!S.ui.trapNotice&&!S.ui.cinema&&!S.ui.confirm&&!this.online()&&!S.zone?.secretSession&&!S.zone?.riddleSession&&!S.zone?.specialSession&&!WorldTales.session();},
  update(){
   if(!this.enabled())return;const t=this.state(),b=S.battle;
   // Old saves can lack lesson flags even after real forest play. Entering from

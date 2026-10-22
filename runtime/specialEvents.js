@@ -3,7 +3,7 @@
 const ForestSpecial={
  busy:false,
  data(){return SECRET_DATA.repeatableEvents.find(d=>d.zone===S.zone?.id);},
- plan(z){if(z.specialRun)return z.specialRun;const found=Math.random()<.15;return z.specialRun={depth:found?5+Math.floor(Math.random()*4):null,offered:false,used:false};},
+ plan(z){if(z.specialRun)return z.specialRun;const found=Math.random()<.10;return z.specialRun={depth:found?5+Math.floor(Math.random()*4):null,offered:false,used:false};},
  session(){return S.zone?.specialSession;},
  valid(token){return !!this.session()&&this.session().token===token&&S.screen==='zone'&&!S.battle&&!S.zone.secretSession&&!S.zone.warpGate;},
  persist(){towerCheckpoint();localStorage.setItem(SAVE,JSON.stringify(S));},

@@ -7,7 +7,7 @@ const WorldTales={
  state(){const root=Secret.state();return root.tales||(root.tales={version:1,serial:0,visits:{},quests:{},effects:[],consequences:{},rumors:[],heard:{},shortClaims:{},ending:null});},
  data(id){return TALES_DATA.quests.find(d=>d.id===id);},
  zoneKey(id){return TALES_DATA.zones[id]||'training';},
- run(){const z=S.zone;if(!z)return null;if(!z.taleRun){const s=this.state();s.serial++;s.visits[z.id]=(s.visits[z.id]||0)+1;for(const r of Object.values(s.quests))if(r.kind==='short'&&r.status==='active'&&r.run!==s.serial)r.status='expired';z.taleRun={serial:s.serial,specialDepth:Math.random()<.15?5+Math.floor(Math.random()*4):null,specialUsed:false};}return z.taleRun;},
+ run(){const z=S.zone;if(!z)return null;if(!z.taleRun){const s=this.state();s.serial++;s.visits[z.id]=(s.visits[z.id]||0)+1;for(const r of Object.values(s.quests))if(r.kind==='short'&&r.status==='active'&&r.run!==s.serial)r.status='expired';z.taleRun={serial:s.serial,specialDepth:Math.random()<.10?5+Math.floor(Math.random()*4):null,specialUsed:false};}return z.taleRun;},
  session(){return S.zone?.taleSession;},
  token(){return this.session()?.token;},
  valid(token){return !!this.session()&&token===this.token()&&S.screen==='zone'&&!S.battle;},
@@ -68,7 +68,7 @@ EV.villager={n:'ชาวบ้านข้างทาง',g:'♧',d:'คนเ
 EV.taleFollow={n:'รอยนัดหมายของผู้เดินทาง',g:'♧',d:'ติดตามเรื่องที่รับปากไว้',w:0};
 EV.taleEvent={n:'ร่องรอยเรื่องราว',g:'♧',d:'พบผู้คนและอสูรที่กำลังตัดสินใจ',w:0};
 const talesNewFork=newFork;
-newFork=function(...args){if(WorldTales.block())return;const out=talesNewFork(...args),z=S.zone;if(!z||!z.fork)return out;const run=WorldTales.run();if(z.secretSession||z.specialSession||z.riddleSession||z.warpGate)return out;const slots=z.fork.map((d,i)=>!d.h&&!['secret','specialEvent','riddleReward','riddleHazard'].includes(d.k)?i:-1).filter(i=>i>=0);if(!slots.length)return out;const follow=WorldTales.follow(),special=TALES_DATA.special.find(d=>d.zone===z.id),done=special&&WorldTales.state().consequences['special:'+special.id];const k=follow?'taleFollow':!done&&!run.specialUsed&&run.specialDepth!=null&&z.depth+1>=run.specialDepth&&z.depth+1<=8?'taleEvent':Math.random()<.18?'villager':null;if(k)z.fork[pick(slots)]={k,h:false};return out;};
+newFork=function(...args){if(WorldTales.block())return;const out=talesNewFork(...args),z=S.zone;if(!z||!z.fork)return out;const run=WorldTales.run();if(z.secretSession||z.specialSession||z.riddleSession||z.warpGate)return out;const slots=z.fork.map((d,i)=>!d.h&&!['secret','specialEvent','riddleReward','riddleHazard'].includes(d.k)?i:-1).filter(i=>i>=0);if(!slots.length)return out;const follow=WorldTales.follow(),special=TALES_DATA.special.find(d=>d.zone===z.id),done=special&&WorldTales.state().consequences['special:'+special.id];const k=follow?'taleFollow':!done&&!run.specialUsed&&run.specialDepth!=null&&z.depth+1>=run.specialDepth&&z.depth+1<=8?'taleEvent':Math.random()<.15?'villager':null;if(k)z.fork[pick(slots)]={k,h:false};return out;};
 const talesChooseFork=chooseFork;
 chooseFork=function(i){if(WorldTales.block())return;const k=S.zone?.fork?.[Number(i)]?.k;if(['villager','taleFollow','taleEvent'].includes(k))return WorldTales.encounter(k==='taleFollow'?'follow':k==='taleEvent'?'special':'villager');return talesChooseFork(i);};
 const talesRoute=routePicture;

@@ -524,3 +524,6 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 @keyframes tutorialGlow{50%{outline-color:#ffd465;box-shadow:0 0 0 6px #ffd46533,0 0 28px #ffd465cc}}
 @keyframes tutorialArrow{to{filter:drop-shadow(0 0 7px #ffbb54);opacity:.65}}
 @media(prefers-reduced-motion:reduce){.tutorial-target,.tutorial-pointer{animation:none}}
+
+/* Trap event illustrations: pause offline combat until acknowledged. */
+.trap-notice{z-index:10050}.trap-notice .card{max-width:480px;max-height:calc(100dvh - 32px);overflow:auto;padding:14px;gap:12px}.trap-notice img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain;border-radius:12px}.trap-notice h2,.trap-notice p{margin:0}.trap-notice h2{font-size:1.4rem}.trap-notice p{line-height:1.5}

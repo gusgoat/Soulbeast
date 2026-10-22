@@ -231,7 +231,7 @@ function checkEnd(){const b=B();if(b.over)return true;if(b.allies[0].hp<=0){endB
 // @soulbeast-end 0254-checkEnd
 // @soulbeast-unit 0258-advance
 
-function advance(){const b=B();if(!b||b.over)return;b.fx=[];if(checkEnd()){render();return}
+function advance(){const b=B();if(!b||b.over)return;if(S.ui.trapNotice){battleLater(advance,150);return}b.fx=[];if(checkEnd()){render();return}
  while(b.queue.length){const q=b.queue.shift(),extra=q.endsWith('*'),u=uById(q.replace('*',''));if(!u||u.hp<=0)continue;
   if(!extra&&turnStart(u)){if(checkEnd()){render();return}continue}
   if(extra&&(u.status.freeze||u.status.sleep))continue;

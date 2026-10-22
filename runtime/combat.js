@@ -222,7 +222,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
 // @soulbeast-end 0279-hitOne
 // @soulbeast-unit 0283-battleLater
 
-function battleLater(fn,ms){const battle=S.battle;const run=()=>{if(S.battle!==battle||!battle)return;if(S.ui.confirm?.act==='dosurrender'){setTimeout(run,150);return}fn()};setTimeout(run,ms)}
+function battleLater(fn,ms){const battle=S.battle;const run=()=>{if(S.battle!==battle||!battle)return;if(S.ui.trapNotice||S.ui.confirm?.act==='dosurrender'){setTimeout(run,150);return}fn()};setTimeout(run,ms)}
 // @soulbeast-end 0283-battleLater
 // @soulbeast-unit 0285-after
 
