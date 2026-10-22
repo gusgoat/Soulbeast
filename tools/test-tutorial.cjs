@@ -11,9 +11,10 @@ const assert=require('assert/strict');
  r("var firstDepth=S.zone.depth;handlers.fork('1')");assert(r('Tutorial.state().done.fork'));assert(r('S.zone.depth>firstDepth'));
  // Intro pauses the offline battle and releases it once both visual pages are acknowledged.
  fresh();r("Tutorial.state().done.stats=true;S.zone={id:7,depth:1,log:[]};startBattle([wildUnit(ZN[6].sp[0],3,0)],'wild',7);");
- assert.equal(r('Tutorial.state().active'),'battleIntro');assert(r('Tutorial.pending&&Tutorial.hold()'));const hp=r('S.P.hp');
+ assert.equal(r('Tutorial.state().active'),'battleIntro');assert(r('Tutorial.pending&&Tutorial.hold()'));assert(r('vBattle().length>0'),'Battle view renders before the first actor is assigned');const hp=r('S.P.hp');
  r('Tutorial.next()');assert.equal(r('Tutorial.state().active'),'elements');assert.equal(r('S.P.hp'),hp);
  r('Tutorial.next()');assert.equal(r('Tutorial.state().active'),'skills');assert(!r('Tutorial.hold()'));
+ r("Tutorial.state().active='captureIntro';Tutorial.pending=null;B().cur='P';B().menu='main';var releaseCalls=0,normalBattleLater=battleLater;battleLater=()=>releaseCalls++;Tutorial.next();battleLater=normalBattleLater;");assert.equal(r('releaseCalls'),0,'Closing a manual-turn hint cannot add a second continuation');
  r('S.battle=null;S.zone=null;S=JSON.parse(JSON.stringify(S));S.screen="town";Tutorial.update()');assert(r('Tutorial.state().done.battle'));assert(r('Tutorial.state().done.elements'));
  // A legacy character is left alone; online combat is excluded even for an enrolled one.
  r('delete S.P.tutorial;Tutorial.update()');assert.equal(r('Tutorial.state()'),null);

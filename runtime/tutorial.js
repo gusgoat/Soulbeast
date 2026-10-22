@@ -11,7 +11,7 @@ const Tutorial={
  online(){return PVP.room?.status==='active'||WORLD.room?.status==='active'||CAMP.room?.status==='active'||GUILD_UI.warRoom?.replaying;},
  forestBattle(){return !!S.zone&&!!S.battle&&!S.battle.over&&!S.battle.towerRun&&!this.online()&&['wild','boss','bandit','traveler','secret','taleTrial'].includes(S.battle.kind);},
  hold(){return this.enabled()&&this.forestBattle()&&['battleIntro','elements','captureIntro'].includes(this.state().active);},
- release(){const p=this.pending;this.pending=null;if(p&&p.battle===S.battle&&!S.battle.over){battleLater(p.fn,100);return;}const b=S.battle;if(!b||b.over||!this.forestBattle())return;if(!b.cur)battleLater(advance,100);else if(b.menu==='wait')battleLater(uById(b.cur)?.side==='enemy'?aiAct:advance,100);},
+ release(){const p=this.pending;this.pending=null;if(p&&p.battle===S.battle&&!S.battle.over){battleLater(p.fn,100);return;}const b=S.battle;if(!b||b.over||!this.forestBattle())return;if(!b.cur)battleLater(advance,100);},
  free(){return (S.P.free||0)+S.P.pets.reduce((n,p)=>n+(p.free||0),0);},
  ready(){return this.enabled()&&!S.ui.cinema&&!S.ui.confirm&&!this.online()&&!S.zone?.secretSession&&!S.zone?.riddleSession&&!S.zone?.specialSession&&!WorldTales.session();},
  update(){
@@ -30,7 +30,7 @@ const Tutorial={
   if(t.active==='world'&&S.screen==='world')this.set('worldTeam');
   if(t.active==='guildwar'&&S.screen==='guildwar')this.set('warTeam');
   if(b?.towerRun&&['tower','towerEnter'].includes(t.active))this.finish('tower');
-  if(this.forestBattle()&&t.done.battle&&!t.done.captureIntro&&b.enemies.some(sealable)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)&&!t.active)this.set('captureIntro');
+  if(this.forestBattle()&&t.done.battle&&!t.done.captureIntro&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(sealable)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)&&!t.active)this.set('captureIntro');
   if(this.forestBattle()&&t.done.captureIntro&&!t.done.capture&&t.active==null&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(e=>sealable(e)&&e.hp/e.st.hp<=.4)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)){const index=b.enemies.findIndex(e=>sealable(e)&&e.hp/e.st.hp<=.4);b.target=index;this.set('capture');}
   if(S.screen!=='town'||S.zone||b||t.active||S.ui.cinema)return;
   const d=t.done,lv=S.P.lv;
