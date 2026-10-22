@@ -76,6 +76,7 @@ public class SoulbeastBillingPlugin extends Plugin implements PurchasesUpdatedLi
 
     private JSObject purchaseView(Purchase p) {
         JSObject r = new JSObject(); r.put("purchaseToken", p.getPurchaseToken()); r.put("productIds", new JSArray(p.getProducts()));
+        if (p.getAccountIdentifiers()!=null) r.put("orderId", p.getAccountIdentifiers().getObfuscatedProfileId());
         r.put("state", p.getPurchaseState()==Purchase.PurchaseState.PURCHASED ? "purchased" : "pending"); return r;
     }
     @Override public void onPurchasesUpdated(BillingResult result, List<Purchase> purchases) {

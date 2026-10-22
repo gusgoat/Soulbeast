@@ -18,3 +18,4 @@ mobile/android/capacitor-cordova-android-plugins/
 *.keystore
 *.jks
 mobile/.tools/
+tools/play-tests/node_modules/

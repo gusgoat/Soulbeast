@@ -1,11 +1,15 @@
 {
   "version": 1,
   "mode": "internal",
-  "web": { "provider": "stripe", "environment": "sandbox", "checkoutPath": "topup-test.html" },
+  "web": {
+    "provider": "stripe",
+    "environment": "sandbox",
+    "checkoutPath": "topup-test.html"
+  },
   "android": {
     "provider": "google_play",
     "purchasesEnabled": false,
-    "packageName": "io.github.gusgoat.soulbeast.internal",
+    "packageName": "com.soulbeastgame.app",
     "products": {
       "first-10": "soulbeast_first_10",
       "first-50": "soulbeast_first_50",

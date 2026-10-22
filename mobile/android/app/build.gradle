@@ -4,11 +4,11 @@ android {
     namespace = "io.github.gusgoat.soulbeast.internal"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "io.github.gusgoat.soulbeast.internal"
+        applicationId "com.soulbeastgame.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.2.0-internal"
         buildConfigField "boolean", "BILLING_ENABLED", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
@@ -17,8 +17,20 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        upload {
+            if (System.getenv('SB_UPLOAD_STORE_FILE')) {
+                storeFile file(System.getenv('SB_UPLOAD_STORE_FILE'))
+                storePassword System.getenv('SB_UPLOAD_STORE_PASSWORD')
+                keyAlias System.getenv('SB_UPLOAD_KEY_ALIAS')
+                keyPassword System.getenv('SB_UPLOAD_KEY_PASSWORD')
+            }
+        }
+    }
     buildTypes {
         release {
+            if (System.getenv('SB_UPLOAD_STORE_FILE')) signingConfig signingConfigs.upload
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

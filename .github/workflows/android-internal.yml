@@ -1,9 +1,9 @@
-name: Android internal APK
+name: Android internal APK and AAB
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['mobile/**', 'runtime/accounts.js', 'client/account*', 'client/billing*', 'content/billing-channels.json', 'tools/build-mobile.cjs', '.github/workflows/android-internal.yml']
+    paths: ['mobile/**', 'runtime/accounts.js', 'client/play*', 'server/payments/play*', 'server/payments/google-play*', 'server/payments/003*', 'tools/test-play*', 'tools/build-play.cjs', 'tools/play-tests/**', 'client/account*', 'client/billing*', 'content/billing-channels.json', 'tools/build-mobile.cjs', '.github/workflows/android-internal.yml']
 permissions:
   contents: read
 concurrency:
@@ -23,10 +23,12 @@ jobs:
         run: |
           npm ci --prefix tools/runtime-build --ignore-scripts --no-audit --no-fund
           npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
+          npm ci --prefix tools/play-tests --ignore-scripts --no-audit --no-fund
       - name: Verify account and billing boundaries
         run: |
           npm run test:accounts
           node tools/test-platform-billing.cjs
+          npm run test:play
       - name: Build packaged web game and sync Android
         run: |
           node tools/build-mobile.cjs
@@ -38,13 +40,19 @@ jobs:
         working-directory: mobile/android
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon :app:assembleDebug :app:lintDebug
+          ./gradlew --no-daemon :app:assembleDebug :app:bundleRelease :app:lintRelease
+      - name: Mark unsigned bundle and verify package
+        run: |
+          echo "Bundle built without an upload key. NOT ready for Play upload until signed." > build/AAB-SIGNING-REQUIRED.txt
+          unzip -l mobile/android/app/build/outputs/bundle/release/app-release.aab | head -20 || true
       - uses: actions/upload-artifact@v4
         with:
           name: soulbeast-android-internal-${{ github.sha }}
           path: |
             mobile/android/app/build/outputs/apk/debug/app-debug.apk
             build/mobile-manifest.json
-            mobile/android/app/build/reports/lint-results-debug.html
+            build/AAB-SIGNING-REQUIRED.txt
+            mobile/android/app/build/reports/lint-results-release.html
+            mobile/android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 14
           if-no-files-found: error
