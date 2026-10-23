@@ -71,7 +71,7 @@ const BattleEffects={
  impact(L,e,to,p){
   if(e.k==='heal')p={...p,color:'#a8f4bc',accent:'#fff5c7'};
   const x=to.x,y=to.y,theme=e.k==='heal'?(SK[p.id]?.rev||SK[p.id]?.revAll?'phoenix':'heal'):e.k==='buff'&&!['buff','heal','form','summon','rest','revert'].includes(SK[p.id]?.t)?'ward':p.theme;
-  if(!p.legend&&p.signature)spellBurst(L,e,x,y);
+  if(!p.legend&&!['attack','rest'].includes(p.id))spellBurst(L,e,x,y);
   const main={slash:'cut',volley:'target',fang:'fang',ward:'shield',heal:'halo',phoenix:'wing',vines:'vine',thunder:'bolt',tide:'wave',meteor:'comet',curse:'eye',eclipse:'eclipse',music:'note',coin:'coin',fury:'shock',venom:'soul',transform:'wing',blast:'flame',nova:'seal'}[theme]||'seal';
   this.spawn(L,main,x,y,p);this.spawn(L,'shock',x,y,p,{'--size':p.signature?'125px':'75px','--wait':'60ms'});
   const count=window.innerWidth<620?3:5;for(let i=0;i<count;i++){const a=(p.seed%360+i*360/count)*Math.PI/180;this.spawn(L,main,x+Math.cos(a)*18,y+Math.sin(a)*18,p,{'--size':(p.signature?58:38)+'px','--wait':i*55+'ms','--theta':i*72+p.seed%60+'deg','--dx':Math.cos(a)*55+'px','--dy':Math.sin(a)*40+'px'});}
@@ -88,7 +88,7 @@ const BattleEffects={
    if(e.group!==lastGroup){if(lastGroup>=0)time+=740;lastGroup=e.group;}
    const at=time;this.later(()=>{
     if(S.screen!==screen)return;const to=this.anchor(e.id),from=this.anchor(e.source),p=this.profile(e.skill||'attack',this.actor(e.source||e.id));if(!to)return;
-    if(e.k==='cast'||e.k==='charge'){vSpawn(L,'vx-cast',null,p.color,e.n||SK[e.skill]?.n);this.spawn(L,'seal',to.x,to.y,p,{'--size':'62px'});if(['support','field'].includes(p.mode))this.impact(L,e,to,p);return;}
+    if(e.k==='cast'||e.k==='charge'){vSpawn(L,'vx-cast',null,p.color,e.n||SK[e.skill]?.n);spellBurst(L,{...e,k:'cast'},to.x,to.y);this.spawn(L,'seal',to.x,to.y,p,{'--size':'62px'});if(['support','field'].includes(p.mode))this.impact(L,e,to,p);return;}
     if(!['hit','miss','heal','buff','debuff'].includes(e.k))return;
     const key=e.group+':'+e.source+':'+e.id+':'+e.skill,index=seen.get(key)||0,repeat=index>0;seen.set(key,index+1);
     this.currentSource=e.source;this.currentTarget=e.id;let arrival=0;
