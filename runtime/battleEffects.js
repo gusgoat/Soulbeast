@@ -40,7 +40,7 @@ const BattleEffects={
    e.group=group;if(e.k==='hit')lastHit=e;return e;
   });
  },
- battle(){return S.screen==='world'?WORLD.room?.battle:S.screen==='pvp'?PVP.room?.battle:S.screen==='camp'?CAMP.room?.battle:S.battle;},
+ battle(){return compactRoom()?.battle||S.battle;},
  actor(id){const b=this.battle();return b&&[...(b.allies||[]),...(b.enemies||[])].find(u=>u.id===id)||{};},
  anchor(id){
   if(id==null)return null;
