@@ -207,6 +207,11 @@
       "file": "battleEffects.js",
       "description": "Deterministic source-to-target skill choreography",
       "units": 1
+    },
+    "solarBeasts": {
+      "file": "solarBeasts.js",
+      "description": "Solar Legendary rarity, eight gacha-exclusive beasts and 48 signature skills",
+      "units": 1
     }
   },
   "order": [
@@ -1303,6 +1308,7 @@
     "1092-unitFrames",
     "1093-accountManagement",
     "1094-battleEffects",
+    "1095-solarBeasts",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9306,6 +9312,13 @@
         "BattleEffects"
       ],
       "type": "BattleSkillChoreography"
+    },
+    "1095-solarBeasts": {
+      "module": "solarBeasts",
+      "names": [
+        "SolarBeasts"
+      ],
+      "type": "SolarBeasts"
     }
   },
   "trailer": "\r\n\r\n"

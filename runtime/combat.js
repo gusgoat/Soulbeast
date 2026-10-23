@@ -238,7 +238,7 @@ const curAlly=()=>B().allies[B().atarget]||B().allies[0];
 // @soulbeast-end 0287-curAlly
 // @soulbeast-unit 0288-sealable
 
-const sealable=e=>!e?.bossHelper&&!(SP[e?.sp]?.legendary&&!mistLegendsUnlocked())&&e&&e.hp>0&&B()?.kind!=='pvp'&&B()?.kind!=='raid'&&!(e.sp&&SP[e.sp].noseal)&&(e.kind==='beast'||(e.kind==='npcpet'&&B()&&['bandit','traveler','npc'].includes(B().kind)&&!B().enemies.some(x=>x.kind==='human'&&x.hp>0)));
+const sealable=e=>!SP[e?.sp]?.solar&&!e?.bossHelper&&!(SP[e?.sp]?.legendary&&!mistLegendsUnlocked())&&e&&e.hp>0&&B()?.kind!=='pvp'&&B()?.kind!=='raid'&&!(e.sp&&SP[e.sp].noseal)&&(e.kind==='beast'||(e.kind==='npcpet'&&B()&&['bandit','traveler','npc'].includes(B().kind)&&!B().enemies.some(x=>x.kind==='human'&&x.hp>0)));
 // @soulbeast-end 0288-sealable
 // @soulbeast-unit 0289-sealChance
 
@@ -362,7 +362,7 @@ const balanceStealable=banditStealablePets;
 // @soulbeast-end 0744-balanceStealable
 // @soulbeast-unit 0745-banditStealablePets
 
-banditStealablePets=function(P=S.P,b=B()){return balanceStealable(P,b).filter(p=>!SP[p.sp]?.legendary);};
+banditStealablePets=function(P=S.P,b=B()){return balanceStealable(P,b).filter(p=>!SP[p.sp]?.legendary&&!SP[p.sp]?.solar);};
 // @soulbeast-end 0745-banditStealablePets
 // @soulbeast-unit 0755-balanceSealable
 

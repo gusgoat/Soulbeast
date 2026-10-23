@@ -41,13 +41,25 @@ const call=(body,auth=true)=>ctx.handler.fetch(new Request('https://example.inva
  const coupon=tables.Coupons.find(r=>r[0]===code);coupon[2]=100;coupon[3]=99;coupon[4]=9;coupon[5]=99;
  tables.GachaTransactions.push(['history-pity-fixture',code,JSON.stringify({revision:0,count:99,totalDraws:99,gachaPityVersion:2,legendPity:99,rewards:[]}),'done']);
  vm.runInContext('Math.random=()=>.4',ctx);
- const draw={action:'gacha_draw',code,count:1,gachaRulesVersion:2,request:crypto.randomUUID(),_sbRequest:crypto.randomUUID()};
+ const draw={action:'gacha_draw',code,count:1,gachaRulesVersion:3,request:crypto.randomUUID(),_sbRequest:crypto.randomUUID()};
  v=await (await call(draw)).json();assert(v.ok,JSON.stringify(v));assert.equal(v.rewards.length,1);assert.equal(v.rewards[0].category,'eclipseGear');assert.equal(v.legendPity,0);assert.equal(v.rarePity,0);assert.equal(v.totalDraws,100);const afterCoupons=v.coupons;
  const retry=await (await call(draw)).json();assert.deepEqual(retry.rewards,v.rewards);assert.equal(retry.coupons,afterCoupons,'Retry cannot spend a second coupon');
  v=await (await call({...draw,request:crypto.randomUUID(),_sbRequest:crypto.randomUUID(),gachaRulesVersion:1})).json();assert.equal(v.error,'gacha update required');
+ // Solar guarantees use the real handler, transaction ledger and account save, including overlaps.
+ const seedSolar=(solarPity,legendPity,total)=>{const c=tables.Coupons.find(r=>r[0]===code);c[2]=100;c[3]=total;c[4]=0;tables.GachaTransactions.push([crypto.randomUUID(),code,JSON.stringify({revision:c[9],count:0,totalDraws:total,gachaPityVersion:3,solarPity,legendPity,rewards:[]}),'done']);};
+ seedSolar(299,99,299);vm.runInContext('Math.random=()=>.4',ctx);
+ const overlap={...draw,request:crypto.randomUUID(),_sbRequest:crypto.randomUUID()};
+ v=await (await call(overlap)).json();assert(v.ok,JSON.stringify(v));assert.equal(v.rewards.length,2);assert.deepEqual(v.rewards.map(r=>r.category),['eclipseGear','solarBeast']);assert(v.rewards[1].guaranteedSolar);assert.equal(v.solarPity,0);assert.equal(v.legendPity,0);assert.equal(v.coupons,99);
+ const solarUid=v.rewards[1].pet.uid,overlapRewards=v.rewards,overlapCoupons=v.coupons;
+ const overlapRetry=await (await call({...overlap,_sbRequest:crypto.randomUUID()})).json();assert(overlapRetry.ok);assert.deepEqual(overlapRetry.rewards,overlapRewards);assert.equal(overlapRetry.coupons,overlapCoupons);
+ let solarLoad=await (await call({action:'load',code})).json();assert.equal(JSON.parse(solarLoad.data).P.pets.filter(p=>p.uid===solarUid).length,1);
+ seedSolar(123,0,400);vm.runInContext('Math.random=()=>.9925',ctx);
+ v=await (await call({...draw,request:crypto.randomUUID(),_sbRequest:crypto.randomUUID()})).json();assert(v.ok,JSON.stringify(v));assert.equal(v.rewards.length,1);assert.equal(v.rewards[0].category,'solarBeast');assert.equal(v.solarPity,0);assert.equal(v.legendPity,1,'Solar does not erase the separate 100-pull guarantee');
+ seedSolar(295,0,500);vm.runInContext('Math.random=()=>.4',ctx);
+ v=await (await call({...draw,count:10,request:crypto.randomUUID(),_sbRequest:crypto.randomUUID()})).json();assert(v.ok,JSON.stringify(v));assert.equal(v.rewards.length,11);assert.equal(v.rewards.filter(r=>r.category==='solarBeast').length,1);assert.equal(v.solarPity,5);assert.equal(v.coupons,90);assert.equal(new Set(v.rewards.filter(r=>r.pet).map(r=>r.pet.uid)).size,11);
  load=await (await call({action:'load',code})).json();
  const state=JSON.parse(load.data);state.P.cleared++;delete state.P.rewardRulesVersion;
  v=await (await call({action:'save',code,data:JSON.stringify(state),expectedSaveAt:load.accountSaveAt||load.at,_sbRequest:crypto.randomUUID()})).json();assert.equal(v.error,'game update required');
- console.log('PASS exact account service: all five Demon Lord outcomes, 100-pull shared guarantee, one reward, counter reset, coupon/reward replay, stale receipt and old-client gates');
+ console.log('PASS exact account service: Demon Lord outcomes, 100/300 overlapping guarantees, natural Solar reset, 10-pull crossing, unique pets, coupon/reward replay, stale receipt and old-client gates');
 })().catch(e=>{console.error(e);process.exitCode=1;});
 

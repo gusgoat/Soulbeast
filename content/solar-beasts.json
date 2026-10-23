@@ -1,0 +1,1143 @@
+{
+  "version": 1,
+  "rarity": [
+    "ตำนานสุริยัน",
+    "Solar Legendary",
+    "日耀传说"
+  ],
+  "normalSkillLevels": [
+    1,
+    5,
+    11,
+    18,
+    25
+  ],
+  "signatureLevel": 35,
+  "beasts": [
+    {
+      "id": "solar_pentadrake",
+      "names": [
+        "เพนทาไพโรส มังกรห้าเศียรสุริยัน",
+        "Pentapyros, Five-Headed Solar Dragon",
+        "彭塔皮洛斯·五首日耀龙"
+      ],
+      "types": [
+        "fire",
+        "dragon"
+      ],
+      "ref": "tempest_lynx",
+      "pas": "multihit",
+      "lore": [
+        "ห้าเศียรของเพนทาไพโรสเฝ้ามองคนละขอบฟ้า ก่อนเปล่งเพลิงรวมกันเป็นดวงอาทิตย์ดวงใหม่ ทุกลมหายใจของมันทำให้เกล็ดเก่าหลอมเป็นทองคำ และทุกคำรามทำให้ดวงดาวสะเทือน",
+        "Its five heads watch separate horizons before their flames converge into a newborn sun. Each breath melts old scales into gold, and each roar trembles among the stars.",
+        "五首各自凝视天际，吐息交汇时便诞生新的太阳。每次呼吸都将旧鳞熔为黄金，每声咆哮都令星辰震颤。"
+      ],
+      "theme": [
+        "fivefold-sun",
+        "flame",
+        "fang"
+      ],
+      "visual": "five-headed obsidian ruby fire dragon with golden solar horns",
+      "skills": [
+        {
+          "id": "solar_pentadrake_s1",
+          "names": [
+            "เขี้ยวเพลิงอรุณ",
+            "Dawnfire Fang",
+            "曙炎龙牙"
+          ],
+          "definition": {
+            "n": "เขี้ยวเพลิงอรุณ",
+            "t": "p",
+            "el": "fire",
+            "pw": 115,
+            "mp": 10,
+            "cd": 1,
+            "st": {
+              "burn": 0.2
+            }
+          },
+          "visual": "one ruby dragon fang slashing in a crescent of sunrise fire"
+        },
+        {
+          "id": "solar_pentadrake_s2",
+          "names": [
+            "ลมหายใจมังกรสุริยัน",
+            "Solar Dragon Breath",
+            "日耀龙息"
+          ],
+          "definition": {
+            "n": "ลมหายใจมังกรสุริยัน",
+            "t": "m",
+            "el": "dragon",
+            "pw": 145,
+            "mp": 16,
+            "cd": 2
+          },
+          "visual": "a golden dragon maw projecting a focused white-gold beam through swirling orange embers"
+        },
+        {
+          "id": "solar_pentadrake_s3",
+          "names": [
+            "ปีกกวาดเถ้าดารา",
+            "Starash Wing Sweep",
+            "星烬翼扫"
+          ],
+          "definition": {
+            "n": "ปีกกวาดเถ้าดารา",
+            "t": "p",
+            "el": "dragon",
+            "pw": 105,
+            "mp": 18,
+            "cd": 2,
+            "all": 1
+          },
+          "visual": "one huge obsidian dragon wing sweeping a circular trail of red-hot stardust"
+        },
+        {
+          "id": "solar_pentadrake_s4",
+          "names": [
+            "เกล็ดเพลิงอมตะ",
+            "Deathless Flame Scales",
+            "不灭炎鳞"
+          ],
+          "definition": {
+            "n": "เกล็ดเพลิงอมตะ",
+            "t": "buff",
+            "mp": 16,
+            "cd": 3,
+            "tg": "self",
+            "bf": {
+              "pdef": 0.3,
+              "mdef": 0.3
+            },
+            "tn": 3
+          },
+          "visual": "overlapping ruby dragon scales rising into an impenetrable golden fire shield"
+        },
+        {
+          "id": "solar_pentadrake_s5",
+          "names": [
+            "อัคคีห้าเศียร",
+            "Fivefold Inferno",
+            "五首炼狱"
+          ],
+          "definition": {
+            "n": "อัคคีห้าเศียร",
+            "t": "h",
+            "el": "fire",
+            "pw": 46,
+            "mp": 24,
+            "cd": 3,
+            "hits": 5
+          },
+          "visual": "five distinct fire-dragon heads breathing five converging fiery bolts"
+        },
+        {
+          "id": "solar_pentadrake_s6",
+          "names": [
+            "มหาสุริยันล้างพิภพ",
+            "Worldcleansing Sun",
+            "焚界大日"
+          ],
+          "definition": {
+            "n": "มหาสุริยันล้างพิภพ",
+            "t": "m",
+            "el": "fire",
+            "pw": 280,
+            "mp": 34,
+            "cd": 5,
+            "all": 1,
+            "st": {
+              "burn": 0.25
+            }
+          },
+          "visual": "five magnificent dragon heads surrounding a newborn incandescent sun that erupts across a dark world"
+        }
+      ]
+    },
+    {
+      "id": "solar_mortivar",
+      "names": [
+        "มอร์ทิวาร์ จอมเวทอันเดดนิรันดร์",
+        "Mortivar, Eternal Undead Archwizard",
+        "莫提瓦尔·永恒亡灵巫王"
+      ],
+      "types": [
+        "dark",
+        "poison"
+      ],
+      "ref": "prism_owl",
+      "pas": "mpsave",
+      "lore": [
+        "มอร์ทิวาร์ซ่อนวิญญาณไว้ในผลึกพิษที่ลอยเหนือฝ่ามือ บทเวทของมันไม่ได้ดังออกมาจากปาก แต่กระซิบจากเงาของผู้ที่จ้องมอง มันยอมรับพันธสัญญาเพียงกับผู้ที่ไม่หวั่นไหวต่อความตาย",
+        "Mortivar keeps its soul in a venom crystal above its palm. Its spells whisper from the observer’s shadow rather than its mouth. It accepts a pact only with those who face death without flinching.",
+        "莫提瓦尔将灵魂藏在掌上的毒晶中。咒语并非从口中传出，而是从注视者的影子里低语。唯有直面死亡而不退缩者，才能缔结契约。"
+      ],
+      "theme": [
+        "lich-phylactery",
+        "soul",
+        "web"
+      ],
+      "visual": "regal skeletal undead archwizard with green poison phylactery",
+      "skills": [
+        {
+          "id": "solar_mortivar_s1",
+          "names": [
+            "ศรวิญญาณทมิฬ",
+            "Umbral Soulbolt",
+            "幽魂暗矢"
+          ],
+          "definition": {
+            "n": "ศรวิญญาณทมิฬ",
+            "t": "m",
+            "el": "dark",
+            "pw": 120,
+            "mp": 10,
+            "cd": 1
+          },
+          "visual": "a skeletal wizard hand launching one black-violet soul arrow wrapped in emerald fire"
+        },
+        {
+          "id": "solar_mortivar_s2",
+          "names": [
+            "ลำแสงพิษสุญญตา",
+            "Voidvenom Ray",
+            "虚毒射线"
+          ],
+          "definition": {
+            "n": "ลำแสงพิษสุญญตา",
+            "t": "m",
+            "el": "poison",
+            "pw": 130,
+            "mp": 16,
+            "cd": 2,
+            "st": {
+              "poison": 0.6
+            }
+          },
+          "visual": "an ornate lich staff firing a narrow venom-green beam through violet fog"
+        },
+        {
+          "id": "solar_mortivar_s3",
+          "names": [
+            "หมอกสุสานนิรันดร์",
+            "Eternal Crypt Miasma",
+            "永墓瘴气"
+          ],
+          "definition": {
+            "n": "หมอกสุสานนิรันดร์",
+            "t": "m",
+            "el": "poison",
+            "pw": 95,
+            "mp": 20,
+            "cd": 3,
+            "all": 1,
+            "st": {
+              "poison": 0.35
+            }
+          },
+          "visual": "a crystal phylactery above an open ancient sarcophagus releasing a ring of green miasma"
+        },
+        {
+          "id": "solar_mortivar_s4",
+          "names": [
+            "สัญญาวิญญาณดำ",
+            "Black Soul Covenant",
+            "黑魂契约"
+          ],
+          "definition": {
+            "n": "สัญญาวิญญาณดำ",
+            "t": "buff",
+            "mp": 16,
+            "cd": 3,
+            "tg": "self",
+            "bf": {
+              "matk": 0.35,
+              "mdef": 0.25
+            },
+            "tn": 3
+          },
+          "visual": "an emerald phylactery binding a spectral soul into a black crystal crown"
+        },
+        {
+          "id": "solar_mortivar_s5",
+          "names": [
+            "พิษกัดกินดวงดาว",
+            "Star-Eating Venom",
+            "蚀星剧毒"
+          ],
+          "definition": {
+            "n": "พิษกัดกินดวงดาว",
+            "t": "m",
+            "el": "poison",
+            "pw": 185,
+            "mp": 23,
+            "cd": 3,
+            "pi": 0.2,
+            "st": {
+              "poison": 0.4
+            }
+          },
+          "visual": "one violet star pierced by emerald venom tendrils and crystalline poison needles"
+        },
+        {
+          "id": "solar_mortivar_s6",
+          "names": [
+            "ราชโองการโลกไร้ชีพ",
+            "Edict of the Lifeless World",
+            "无生界敕令"
+          ],
+          "definition": {
+            "n": "ราชโองการโลกไร้ชีพ",
+            "t": "m",
+            "el": "dark",
+            "pw": 270,
+            "mp": 34,
+            "cd": 5,
+            "all": 1,
+            "pi": 0.15
+          },
+          "visual": "a crowned undead archwizard opening a vast violet death eclipse above a spectral emerald crypt"
+        }
+      ]
+    },
+    {
+      "id": "solar_aureolith",
+      "names": [
+        "ออรีโอลิธ ปราการศักดิ์สิทธิ์",
+        "Aureolith, Sacred Bastion",
+        "奥瑞欧利斯·神圣磐垒"
+      ],
+      "types": [
+        "electric",
+        "rock"
+      ],
+      "ref": "obsidian_scarab",
+      "pas": "guardian",
+      "lore": [
+        "ออรีโอลิธถูกแกะสลักจากศิลาก้อนแรกของวิหารฟ้า ภายในอกคือสายฟ้าที่ไม่เคยดับ เมื่อสหายถูกคุกคาม มันจะก้าวไปข้างหน้าและเคาะกำปั้นกับเกราะ เสียงนั้นคือคำท้าที่ไม่มีศัตรูใดมองข้ามได้",
+        "Carved from the sky temple’s first stone, Aureolith carries an undying thunderbolt within its chest. When companions are threatened, it steps forward and strikes its armor: a challenge no enemy can ignore.",
+        "奥瑞欧利斯由天殿的第一块圣石雕成，胸中藏着永不熄灭的雷霆。伙伴遭受威胁时，它便迈步向前，以拳叩甲，发出敌人无法忽视的挑战。"
+      ],
+      "theme": [
+        "sacred-bastion",
+        "shield",
+        "bolt"
+      ],
+      "visual": "enormous white granite golem with golden armor and lightning heart",
+      "skills": [
+        {
+          "id": "solar_aureolith_s1",
+          "names": [
+            "หมัดศิลาศักดิ์สิทธิ์",
+            "Sacred Stone Fist",
+            "圣石重拳"
+          ],
+          "definition": {
+            "n": "หมัดศิลาศักดิ์สิทธิ์",
+            "t": "p",
+            "el": "rock",
+            "pw": 115,
+            "mp": 10,
+            "cd": 1
+          },
+          "visual": "one gigantic white granite fist with gold inlay smashing a stone floor into radiant shards"
+        },
+        {
+          "id": "solar_aureolith_s2",
+          "names": [
+            "คำท้าปราการฟ้า",
+            "Heavenly Bastion Challenge",
+            "天垒挑衅"
+          ],
+          "definition": {
+            "n": "คำท้าปราการฟ้า",
+            "t": "buff",
+            "mp": 16,
+            "cd": 3,
+            "tg": "self",
+            "bf": {
+              "pdef": 0.45,
+              "mdef": 0.45
+            },
+            "taunt": 3,
+            "tn": 3
+          },
+          "visual": "a sacred granite golem striking its lightning chest while hostile red arrows curve toward its enormous shield arms"
+        },
+        {
+          "id": "solar_aureolith_s3",
+          "names": [
+            "สายฟ้าผนึกศัตรู",
+            "Thunderbinding Bolt",
+            "缚敌雷霆"
+          ],
+          "definition": {
+            "n": "สายฟ้าผนึกศัตรู",
+            "t": "m",
+            "el": "electric",
+            "pw": 135,
+            "mp": 16,
+            "cd": 2,
+            "st": {
+              "para": 0.3
+            }
+          },
+          "visual": "one blue-white lightning chain fired from a golden golem heart toward a dark target silhouette"
+        },
+        {
+          "id": "solar_aureolith_s4",
+          "names": [
+            "กำแพงหินอวยพร",
+            "Blessed Rampart",
+            "祝福岩壁"
+          ],
+          "definition": {
+            "n": "กำแพงหินอวยพร",
+            "t": "buff",
+            "mp": 22,
+            "cd": 4,
+            "tg": "team",
+            "bf": {
+              "pdef": 0.3,
+              "mdef": 0.3
+            },
+            "tn": 3
+          },
+          "visual": "three interlocking marble shields rising before a line of tiny allied silhouettes in golden light"
+        },
+        {
+          "id": "solar_aureolith_s5",
+          "names": [
+            "หัวใจหินนิรันดร์",
+            "Everstone Heart",
+            "永石之心"
+          ],
+          "definition": {
+            "n": "หัวใจหินนิรันดร์",
+            "t": "heal",
+            "pw": 38,
+            "mp": 20,
+            "cd": 3,
+            "tg": "self",
+            "cure": 1
+          },
+          "visual": "a cracked white stone heart mending itself around a brilliant amber lightning crystal"
+        },
+        {
+          "id": "solar_aureolith_s6",
+          "names": [
+            "มหาวิหารสายฟ้า",
+            "Cathedral of Thunder",
+            "雷霆圣殿"
+          ],
+          "definition": {
+            "n": "มหาวิหารสายฟ้า",
+            "t": "buff",
+            "mp": 32,
+            "cd": 5,
+            "tg": "team",
+            "bf": {
+              "pdef": 0.45,
+              "mdef": 0.45
+            },
+            "tn": 3
+          },
+          "visual": "a colossal sacred golem unfolding a golden lightning cathedral dome over protected allies"
+        }
+      ]
+    },
+    {
+      "id": "solar_heliotheon",
+      "names": [
+        "เฮลิโอธีออน เทพจักรพรรดิเหล็กกล้า",
+        "Heliotheon, God of Solar Steel",
+        "赫利欧西昂·日钢神皇"
+      ],
+      "types": [
+        "fairy",
+        "steel"
+      ],
+      "ref": "jade_moon_hare",
+      "pas": "pierce",
+      "lore": [
+        "เกราะของเฮลิโอธีออนหลอมจากโลหะที่อาบแสงอาทิตย์เป็นพันปี มันไม่เรียกร้องคำสรรเสริญ มีเพียงคำสาบานว่าจะยืนหยัดปกป้องผู้ที่อ่อนแอกว่า หอกของมันจึงส่องสว่างที่สุดเมื่อถูกยกขึ้นเพื่อสหาย",
+        "Its armor was forged from metal steeped in a thousand years of sunlight. Heliotheon asks for no worship, only a vow to protect the vulnerable. Its spear shines brightest when raised for a companion.",
+        "千年日光淬炼的金属铸成了它的神甲。赫利欧西昂不索求赞颂，只要求守护弱者的誓言。为同伴举起长枪时，枪锋才最为耀眼。"
+      ],
+      "theme": [
+        "solar-deity",
+        "halo",
+        "wing"
+      ],
+      "visual": "noble silver armored celestial god with metallic wings and golden spear",
+      "skills": [
+        {
+          "id": "solar_heliotheon_s1",
+          "names": [
+            "หอกเหล็กสุริยัน",
+            "Solarsteel Spear",
+            "日钢圣枪"
+          ],
+          "definition": {
+            "n": "หอกเหล็กสุริยัน",
+            "t": "p",
+            "el": "steel",
+            "pw": 125,
+            "mp": 11,
+            "cd": 1,
+            "pi": 0.1
+          },
+          "visual": "an exquisitely forged silver and gold spear thrusting through a shattered black shield"
+        },
+        {
+          "id": "solar_heliotheon_s2",
+          "names": [
+            "แสงพิพากษาเทพ",
+            "Divine Verdict",
+            "神裁之光"
+          ],
+          "definition": {
+            "n": "แสงพิพากษาเทพ",
+            "t": "m",
+            "el": "fairy",
+            "pw": 145,
+            "mp": 16,
+            "cd": 2
+          },
+          "visual": "a majestic steel-winged deity releasing one precise golden judgment ray from its palm"
+        },
+        {
+          "id": "solar_heliotheon_s3",
+          "names": [
+            "บัญชากองทัพฟ้า",
+            "Heavenhost Decree",
+            "天军号令"
+          ],
+          "definition": {
+            "n": "บัญชากองทัพฟ้า",
+            "t": "buff",
+            "mp": 22,
+            "cd": 4,
+            "tg": "team",
+            "bf": {
+              "patk": 0.25,
+              "matk": 0.25
+            },
+            "tn": 3
+          },
+          "visual": "a raised golden spear with radiant metallic wings blessing a row of allied crests"
+        },
+        {
+          "id": "solar_heliotheon_s4",
+          "names": [
+            "คมดาราพิพากษา",
+            "Starforged Judgment Edge",
+            "星铸裁锋"
+          ],
+          "definition": {
+            "n": "คมดาราพิพากษา",
+            "t": "p",
+            "el": "steel",
+            "pw": 185,
+            "mp": 22,
+            "cd": 3,
+            "pi": 0.2
+          },
+          "visual": "a brilliant silver blade descending from a solar halo and cleaving dark steel armor"
+        },
+        {
+          "id": "solar_heliotheon_s5",
+          "names": [
+            "พรจักรพรรดิอรุณ",
+            "Dawn Emperor Blessing",
+            "曙皇赐福"
+          ],
+          "definition": {
+            "n": "พรจักรพรรดิอรุณ",
+            "t": "heal",
+            "pw": 32,
+            "mp": 24,
+            "cd": 3,
+            "tg": "team",
+            "cure": 1
+          },
+          "visual": "armored divine hands opening a warm golden healing sun above several white feathers"
+        },
+        {
+          "id": "solar_heliotheon_s6",
+          "names": [
+            "บัลลังก์สุริยันนิรันดร์",
+            "Throne of the Eternal Sun",
+            "永日神座"
+          ],
+          "definition": {
+            "n": "บัลลังก์สุริยันนิรันดร์",
+            "t": "m",
+            "el": "fairy",
+            "pw": 270,
+            "mp": 34,
+            "cd": 5,
+            "all": 1,
+            "pi": 0.15
+          },
+          "visual": "a radiant steel-winged god above an immense golden solar throne sending a glorious wave of judgment"
+        }
+      ]
+    },
+    {
+      "id": "solar_ferroth",
+      "names": [
+        "เฟอร์รอธ จักรพรรดิปีศาจเหล็กทมิฬ",
+        "Ferroth, Blacksteel Demon Emperor",
+        "费洛斯·黑钢魔皇"
+      ],
+      "types": [
+        "dark",
+        "steel"
+      ],
+      "ref": "ember_jackal",
+      "pas": "lifesteal",
+      "lore": [
+        "เฟอร์รอธครองบัลลังก์ที่ไม่มีวันเย็นลง โซ่เหล็กบนปีกแต่ละเส้นคือคำสาบานที่มันพิชิตมา พันธสัญญากับผู้ผนึกไม่ได้ทำให้มันเชื่องลง แต่ทำให้ดาบทมิฬของมันเลือกฟันเพื่อใครบางคนเป็นครั้งแรก",
+        "Ferroth rules a throne that never cools. Each chain upon its wings marks a conquered oath. A pact does not tame it; it gives its black blade someone to fight for, for the first time.",
+        "费洛斯的王座永不冷却，翼上的每条锁链都代表被征服的誓言。契约并未驯服它，却让那柄黑刃第一次有了为之而战的人。"
+      ],
+      "theme": [
+        "blacksteel-emperor",
+        "chain",
+        "cut"
+      ],
+      "visual": "obsidian steel armored demon emperor with crimson seams and bladed wings",
+      "skills": [
+        {
+          "id": "solar_ferroth_s1",
+          "names": [
+            "คมเหล็กอเวจี",
+            "Blacksteel Ruinblade",
+            "黑钢狱刃"
+          ],
+          "definition": {
+            "n": "คมเหล็กอเวจี",
+            "t": "p",
+            "el": "steel",
+            "pw": 125,
+            "mp": 11,
+            "cd": 1,
+            "pi": 0.1
+          },
+          "visual": "a huge obsidian execution blade slashing diagonally through crimson sparks"
+        },
+        {
+          "id": "solar_ferroth_s2",
+          "names": [
+            "กระสุนรัตติกาล",
+            "Nightfall Orb",
+            "夜陨魔弹"
+          ],
+          "definition": {
+            "n": "กระสุนรัตติกาล",
+            "t": "m",
+            "el": "dark",
+            "pw": 145,
+            "mp": 16,
+            "cd": 2
+          },
+          "visual": "a black armored demonic gauntlet hurling one dense violet orb with a ruby corona"
+        },
+        {
+          "id": "solar_ferroth_s3",
+          "names": [
+            "เกราะจักรพรรดิปีศาจ",
+            "Demon Emperor Armor",
+            "魔皇战甲"
+          ],
+          "definition": {
+            "n": "เกราะจักรพรรดิปีศาจ",
+            "t": "buff",
+            "mp": 18,
+            "cd": 3,
+            "tg": "self",
+            "bf": {
+              "patk": 0.3,
+              "pdef": 0.3
+            },
+            "tn": 3
+          },
+          "visual": "black steel demonic armor locking into place around a pulsing crimson core"
+        },
+        {
+          "id": "solar_ferroth_s4",
+          "names": [
+            "ปีกดาบตัดพันธสัญญา",
+            "Oathsevering Blade Wings",
+            "断誓刃翼"
+          ],
+          "definition": {
+            "n": "ปีกดาบตัดพันธสัญญา",
+            "t": "p",
+            "el": "steel",
+            "pw": 115,
+            "mp": 22,
+            "cd": 3,
+            "all": 1
+          },
+          "visual": "two enormous bladed iron demon wings sweeping a shower of razor-edged crimson crescents"
+        },
+        {
+          "id": "solar_ferroth_s5",
+          "names": [
+            "โซ่อเวจีผ่าดวงดาว",
+            "Starbreaking Abyss Chains",
+            "裂星狱链"
+          ],
+          "definition": {
+            "n": "โซ่อเวจีผ่าดวงดาว",
+            "t": "m",
+            "el": "dark",
+            "pw": 190,
+            "mp": 23,
+            "cd": 3,
+            "pi": 0.2
+          },
+          "visual": "black chains with ruby barbs erupting around a brilliant star and crushing its shell"
+        },
+        {
+          "id": "solar_ferroth_s6",
+          "names": [
+            "สิ้นแสงใต้บัลลังก์ดำ",
+            "Last Light Beneath the Black Throne",
+            "黑座终光"
+          ],
+          "definition": {
+            "n": "สิ้นแสงใต้บัลลังก์ดำ",
+            "t": "h",
+            "el": "dark",
+            "pw": 280,
+            "mp": 34,
+            "cd": 5,
+            "all": 1
+          },
+          "visual": "a blacksteel demon emperor raising a huge blade before a crimson eclipse and a shattered infernal throne"
+        }
+      ]
+    },
+    {
+      "id": "solar_cryostag",
+      "names": [
+        "คริโอสเทล กวางมงกุฎเหมันต์",
+        "Cryostel, Wintercrown Stag",
+        "克里欧斯特·冬冠圣鹿"
+      ],
+      "types": [
+        "grass",
+        "ice"
+      ],
+      "ref": "bloom_jade_mare",
+      "pas": "healer",
+      "lore": [
+        "เมื่อคริโอสเทลก้มศีรษะ ดอกไม้บนเขาน้ำแข็งจะผลิบานแม้ในฤดูหนาวที่สุด รอยกีบของมันทำให้รากไม้จำเส้นทางกลับบ้านได้ และลมหายใจสีเงินปลุกชีวิตที่เกือบดับให้ลุกขึ้นอีกครั้ง",
+        "Flowers upon its ice antlers bloom in the deepest winter. Its hoofprints teach roots the way home, and its silver breath stirs lives on the brink of fading.",
+        "最深的寒冬里，它的冰晶鹿角上仍会绽放鲜花。蹄印让树根记起归途，银色吐息则唤醒即将熄灭的生命。"
+      ],
+      "theme": [
+        "wintercrown",
+        "vine",
+        "halo"
+      ],
+      "visual": "emerald sacred deer with vast crystalline flowering antlers",
+      "skills": [
+        {
+          "id": "solar_cryostag_s1",
+          "names": [
+            "หนามบุปผาหิมะ",
+            "Snowblossom Thorns",
+            "雪花荆棘"
+          ],
+          "definition": {
+            "n": "หนามบุปผาหิมะ",
+            "t": "m",
+            "el": "grass",
+            "pw": 115,
+            "mp": 10,
+            "cd": 1
+          },
+          "visual": "a silver vine flowering with ice roses launching sharp emerald thorns"
+        },
+        {
+          "id": "solar_cryostag_s2",
+          "names": [
+            "หอกเขาเหมันต์",
+            "Winterantler Lance",
+            "冬角冰枪"
+          ],
+          "definition": {
+            "n": "หอกเขาเหมันต์",
+            "t": "m",
+            "el": "ice",
+            "pw": 140,
+            "mp": 16,
+            "cd": 2,
+            "st": {
+              "freeze": 0.25
+            }
+          },
+          "visual": "an exquisite branching crystalline deer antler shaping a single long sapphire ice lance"
+        },
+        {
+          "id": "solar_cryostag_s3",
+          "names": [
+            "ลมหายใจสวนหิมะ",
+            "Snowgarden Breath",
+            "雪庭之息"
+          ],
+          "definition": {
+            "n": "ลมหายใจสวนหิมะ",
+            "t": "heal",
+            "pw": 30,
+            "mp": 22,
+            "cd": 3,
+            "tg": "team"
+          },
+          "visual": "a noble emerald stag breathing silver mist over blooming snow-covered healing flowers"
+        },
+        {
+          "id": "solar_cryostag_s4",
+          "names": [
+            "ม่านรากไม้เยือกแข็ง",
+            "Frozen Root Veil",
+            "冻根帷幕"
+          ],
+          "definition": {
+            "n": "ม่านรากไม้เยือกแข็ง",
+            "t": "buff",
+            "mp": 22,
+            "cd": 4,
+            "tg": "team",
+            "bf": {
+              "pdef": 0.25,
+              "mdef": 0.25,
+              "spd": 0.15
+            },
+            "tn": 3
+          },
+          "visual": "living silver tree roots weaving a protective frost canopy around luminous green orbs"
+        },
+        {
+          "id": "solar_cryostag_s5",
+          "names": [
+            "รอยกีบผ่าธารน้ำแข็ง",
+            "Glaciercleaving Hoof",
+            "裂川冰蹄"
+          ],
+          "definition": {
+            "n": "รอยกีบผ่าธารน้ำแข็ง",
+            "t": "p",
+            "el": "ice",
+            "pw": 185,
+            "mp": 22,
+            "cd": 3
+          },
+          "visual": "a luminous deer hoof striking blue ice and creating a great fan of crystalline shards"
+        },
+        {
+          "id": "solar_cryostag_s6",
+          "names": [
+            "มงกุฎคืนชีพเหมันต์",
+            "Wintercrown Rebirth",
+            "冬冠复苏"
+          ],
+          "definition": {
+            "n": "มงกุฎคืนชีพเหมันต์",
+            "t": "heal",
+            "pw": 45,
+            "mp": 36,
+            "cd": 5,
+            "tg": "team",
+            "revAll": 1,
+            "cure": 1
+          },
+          "visual": "vast flowering crystalline antlers lifting a silver-green dawn as three fallen soul lights rise into renewed life"
+        }
+      ]
+    },
+    {
+      "id": "solar_raijaku",
+      "names": [
+        "ไรจาคุ ราชันมยุราวายุ",
+        "Raijaku, Thunderwind Peacock",
+        "雷雀·风雷孔雀王"
+      ],
+      "types": [
+        "electric",
+        "flying"
+      ],
+      "ref": "prism_owl",
+      "pas": "swift",
+      "lore": [
+        "ไรจาคุรำแพนหางครั้งหนึ่ง เมฆทั้งฟ้าจะเรียงตัวตามลายขน ดวงตาอัญมณีบนแพนหางเก็บสายฟ้าไว้จนกว่าจะถึงจังหวะที่สมบูรณ์แบบ จากนั้นเสียงปีกเพียงครั้งเดียวจะเปลี่ยนความเงียบเป็นพายุ",
+        "When Raijaku spreads its tail, clouds align with the patterns of its feathers. Jeweled eyes hold lightning until the perfect moment, then a single wingbeat turns silence into a storm.",
+        "雷雀展开尾屏时，云层也随羽纹排列。宝石眼斑将雷霆封存到完美的一刻，再以一次振翼，让寂静化为风暴。"
+      ],
+      "theme": [
+        "thunder-peacock",
+        "wing",
+        "bolt"
+      ],
+      "visual": "cobalt peacock with magnificent spread lightning-jeweled tail fan",
+      "skills": [
+        {
+          "id": "solar_raijaku_s1",
+          "names": [
+            "ขนศรอสนี",
+            "Thunderfeather Dart",
+            "雷羽飞矢"
+          ],
+          "definition": {
+            "n": "ขนศรอสนี",
+            "t": "m",
+            "el": "electric",
+            "pw": 120,
+            "mp": 10,
+            "cd": 1
+          },
+          "visual": "one jeweled cobalt peacock feather flying as a sharp blue-white lightning dart"
+        },
+        {
+          "id": "solar_raijaku_s2",
+          "names": [
+            "ปีกพายุราชัน",
+            "Sovereign Gale Wings",
+            "王者风翼"
+          ],
+          "definition": {
+            "n": "ปีกพายุราชัน",
+            "t": "p",
+            "el": "flying",
+            "pw": 105,
+            "mp": 18,
+            "cd": 2,
+            "all": 1
+          },
+          "visual": "two graceful peacock wings sweeping emerald and turquoise wind crescents across the scene"
+        },
+        {
+          "id": "solar_raijaku_s3",
+          "names": [
+            "ระบำแพนหางฟ้า",
+            "Skyfan Dance",
+            "天屏之舞"
+          ],
+          "definition": {
+            "n": "ระบำแพนหางฟ้า",
+            "t": "buff",
+            "mp": 16,
+            "cd": 3,
+            "tg": "self",
+            "bf": {
+              "spd": 0.4,
+              "eva": 0.2
+            },
+            "tn": 3
+          },
+          "visual": "a magnificent spread peacock tail surrounded by swift spiral wind rings and sparkling feather eyes"
+        },
+        {
+          "id": "solar_raijaku_s4",
+          "names": [
+            "อัสนีตาคู่มยุรา",
+            "Twin-Eye Thunderstrike",
+            "孔雀双瞳雷"
+          ],
+          "definition": {
+            "n": "อัสนีตาคู่มยุรา",
+            "t": "m",
+            "el": "electric",
+            "pw": 78,
+            "mp": 22,
+            "cd": 3,
+            "hits": 2,
+            "st": {
+              "para": 0.2
+            }
+          },
+          "visual": "two glowing peacock feather eyes releasing exactly two forked lightning strikes"
+        },
+        {
+          "id": "solar_raijaku_s5",
+          "names": [
+            "วายุฉีกนภา",
+            "Sky-Rending Wind",
+            "裂穹神风"
+          ],
+          "definition": {
+            "n": "วายุฉีกนภา",
+            "t": "m",
+            "el": "flying",
+            "pw": 190,
+            "mp": 22,
+            "cd": 3,
+            "pi": 0.2
+          },
+          "visual": "a long iridescent peacock feather cutting a sharp turquoise vortex through storm clouds"
+        },
+        {
+          "id": "solar_raijaku_s6",
+          "names": [
+            "มหารำแพนอสนีสวรรค์",
+            "Heavenly Thunderfan",
+            "天雷万羽屏"
+          ],
+          "definition": {
+            "n": "มหารำแพนอสนีสวรรค์",
+            "t": "m",
+            "el": "electric",
+            "pw": 265,
+            "mp": 34,
+            "cd": 5,
+            "all": 1,
+            "st": {
+              "para": 0.2
+            }
+          },
+          "visual": "a regal peacock spreading a vast electric sapphire tail fan as a spectacular crown of lightning arcs outward"
+        }
+      ]
+    },
+    {
+      "id": "solar_thalassyr",
+      "names": [
+        "ธาลัสซีร์ นาคราชมหาสมุทร",
+        "Thalassyr, Sovereign of the Endless Sea",
+        "塔拉希尔·无尽海龙王"
+      ],
+      "types": [
+        "water",
+        "dragon"
+      ],
+      "ref": "aurora_whale",
+      "pas": "thick",
+      "lore": [
+        "ลำตัวยาวของธาลัสซีร์ขดเป็นวงรอบกระแสน้ำลึก เกล็ดแต่ละแผ่นสะท้อนแสงจากท้องฟ้าที่ทะเลไม่เคยเห็น ตำนานกล่าวว่าคลื่นจะจำเสียงของผู้ที่ได้รับการยอมรับจากมัน และพากลับฝั่งเสมอ",
+        "Thalassyr coils its endless body around deep currents. Each scale reflects a sky the abyss has never seen. Waves remember the voices of those it accepts, and always guide them to shore.",
+        "塔拉希尔盘绕深海洋流，鳞片映出深渊从未见过的天空。传说海浪会记住得到它认可之人的声音，并始终将其引回岸边。"
+      ],
+      "theme": [
+        "ocean-sovereign",
+        "wave",
+        "vine"
+      ],
+      "visual": "long sapphire snake-bodied ocean dragon with pearl fins and whiskered antlered head",
+      "skills": [
+        {
+          "id": "solar_thalassyr_s1",
+          "names": [
+            "เขี้ยวคลื่นสมุทร",
+            "Oceanwave Fang",
+            "沧浪龙牙"
+          ],
+          "definition": {
+            "n": "เขี้ยวคลื่นสมุทร",
+            "t": "p",
+            "el": "water",
+            "pw": 120,
+            "mp": 10,
+            "cd": 1
+          },
+          "visual": "one sapphire serpent dragon fang striking through a spiraling turquoise wave"
+        },
+        {
+          "id": "solar_thalassyr_s2",
+          "names": [
+            "ลำแสงมังกรวารี",
+            "Aquadragon Beam",
+            "水龙光束"
+          ],
+          "definition": {
+            "n": "ลำแสงมังกรวารี",
+            "t": "m",
+            "el": "dragon",
+            "pw": 145,
+            "mp": 16,
+            "cd": 2
+          },
+          "visual": "a whiskered ocean dragon head firing one straight pearl-blue beam beneath swirling water"
+        },
+        {
+          "id": "solar_thalassyr_s3",
+          "names": [
+            "กระแสน้ำชำระวิญญาณ",
+            "Soulcleansing Current",
+            "净魂水流"
+          ],
+          "definition": {
+            "n": "กระแสน้ำชำระวิญญาณ",
+            "t": "heal",
+            "pw": 28,
+            "mp": 22,
+            "cd": 3,
+            "tg": "team",
+            "cure": 1
+          },
+          "visual": "clear pearl water spiraling around several warm soul lights and washing away dark violet smoke"
+        },
+        {
+          "id": "solar_thalassyr_s4",
+          "names": [
+            "วงคลื่นนาคราช",
+            "Serpent King Tidal Ring",
+            "龙王潮环"
+          ],
+          "definition": {
+            "n": "วงคลื่นนาคราช",
+            "t": "m",
+            "el": "water",
+            "pw": 110,
+            "mp": 20,
+            "cd": 3,
+            "all": 1
+          },
+          "visual": "a long sapphire serpent dragon coiled inside a towering circular tidal wave"
+        },
+        {
+          "id": "solar_thalassyr_s5",
+          "names": [
+            "เกล็ดมังกรแหวกบาดาล",
+            "Abysscleaving Dragonscale",
+            "破渊龙鳞"
+          ],
+          "definition": {
+            "n": "เกล็ดมังกรแหวกบาดาล",
+            "t": "m",
+            "el": "dragon",
+            "pw": 190,
+            "mp": 23,
+            "cd": 3,
+            "pi": 0.2
+          },
+          "visual": "one gigantic iridescent dragon scale cutting the deep sea into two brilliant blue walls"
+        },
+        {
+          "id": "solar_thalassyr_s6",
+          "names": [
+            "มหาสมุทรโอบดวงดาว",
+            "Star-Embracing Ocean",
+            "拥星之海"
+          ],
+          "definition": {
+            "n": "มหาสมุทรโอบดวงดาว",
+            "t": "m",
+            "el": "water",
+            "pw": 275,
+            "mp": 34,
+            "cd": 5,
+            "all": 1
+          },
+          "visual": "an immense long ocean serpent dragon coiling around a luminous star above a spectacular rising spiral ocean"
+        }
+      ]
+    }
+  ]
+}
+

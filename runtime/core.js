@@ -154,7 +154,7 @@ function humanPas(cls,eq){const a=[...clsPas(cls)];for(const sl in eq){const it=
 // @soulbeast-end 0134-humanPas
 // @soulbeast-unit 0139-sigLearned
 
-const sigLearned=p=>{const s=SP[p.sp];if(!s.sig)return false;return s.rare?p.lv>=SIGLV:s.ev?(p.form||0)>=s.ev.length:false};
+const sigLearned=p=>{const s=SP[p.sp];if(!s.sig)return false;return s.rare?p.lv>=(s.signatureLevel||SIGLV):s.ev?(p.form||0)>=s.ev.length:false};
 // @soulbeast-end 0139-sigLearned
 // @soulbeast-unit 0146-mistBaseCalcPet
 

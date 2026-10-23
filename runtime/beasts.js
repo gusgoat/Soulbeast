@@ -24,7 +24,7 @@ function calcPet(p,wild=1){const sp=SP[p.sp],fm=FM[p.form||0],s={};
 // @soulbeast-unit 0148-petSkills
 
 
-function petSkills(p){const s=SP[p.sp],a=['attack',...s.sk.filter((_,i)=>p.lv>=SKLV[i])];if(sigLearned(p))a.push(s.sig);return a}
+function petSkills(p){const s=SP[p.sp],a=['attack',...s.sk.filter((_,i)=>p.lv>=(s.skillLevels||SKLV)[i])];if(sigLearned(p))a.push(s.sig);return a}
 // @soulbeast-end 0148-petSkills
 // @soulbeast-unit 0414-markFormSeen
 
@@ -54,7 +54,7 @@ const mistLegendsUnlocked=(P=S.P)=>!!P&&Number(P.cleared)>0;
 // @soulbeast-end 0512-mistLegendsUnlocked
 // @soulbeast-unit 0513-beastRarity
 
-const beastRarity=q=>q.legendary?'legendary':q.rare?'rare':'normal';
+const beastRarity=q=>q.solar?'solar':q.legendary?'legendary':q.rare?'rare':'normal';
 // @soulbeast-end 0513-beastRarity
 // @soulbeast-unit 0515-mistRarePool
 
@@ -62,5 +62,5 @@ function mistRarePool(zd){return [...zd.rare,...MIST_RARE_DEFS.filter(x=>x[4]===
 // @soulbeast-end 0515-mistRarePool
 // @soulbeast-unit 0518-mistLocations
 
-function mistLocations(k){const q=SP[k];if(q.legendary)return ['ม่านหมอกในป่าหลักทุกแห่ง · หลังชนะบอสจอมมารเท่านั้น · Lv 40–60 · 0.3% ต่อการเข้าม่านหมอกหนึ่งครั้ง'];if(q.mistNew){const z=ZN.find(z=>z.id===q.mistZone);return [z.n+' · ม่านหมอกเท่านั้น · Lv '+z.lv[1]+'–'+(z.lv[1]+2)];}return beastLocations(k);}
+function mistLocations(k){const q=SP[k];if(q.solar)return ['กาชาปองเท่านั้น · โอกาสพื้นฐาน 0.1% · การันตีภายใน 300 ครั้ง'];if(q.legendary)return ['ม่านหมอกในป่าหลักทุกแห่ง · หลังชนะบอสจอมมารเท่านั้น · Lv 40–60 · 0.3% ต่อการเข้าม่านหมอกหนึ่งครั้ง'];if(q.mistNew){const z=ZN.find(z=>z.id===q.mistZone);return [z.n+' · ม่านหมอกเท่านั้น · Lv '+z.lv[1]+'–'+(z.lv[1]+2)];}return beastLocations(k);}
 // @soulbeast-end 0518-mistLocations

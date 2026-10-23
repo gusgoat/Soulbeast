@@ -1,0 +1,1350 @@
+{
+  "version": 1,
+  "generator": "built-in image_gen.imagegen",
+  "assets": [
+    {
+      "id": "solar_pentadrake",
+      "kind": "beast",
+      "name": "เพนทาไพโรส มังกรห้าเศียรสุริยัน",
+      "path": "assets/beasts/solar/solar_pentadrake.webp",
+      "source": "private/solar-generated/solar_pentadrake.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "2024cb4c547df0a91639b48fbbdbaf78bcd6caf1da62dc698a40320e50211f70",
+      "sourceSha256": "2e8dc435cd81caaf77a52274741d75f1b8764a81de45f250958611f34fea4b4e",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_mortivar",
+      "kind": "beast",
+      "name": "มอร์ทิวาร์ จอมเวทอันเดดนิรันดร์",
+      "path": "assets/beasts/solar/solar_mortivar.webp",
+      "source": "private/solar-generated/solar_mortivar.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "242051032b84f30b08666aedd5bd19a1911592a0f4098ab2451d5ac8551209a6",
+      "sourceSha256": "a7b6b20b67dbce5656c43cc3c98196e1147be85148adb0f6c94e02cc780ede2b",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_aureolith",
+      "kind": "beast",
+      "name": "ออรีโอลิธ ปราการศักดิ์สิทธิ์",
+      "path": "assets/beasts/solar/solar_aureolith.webp",
+      "source": "private/solar-generated/solar_aureolith.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "24994085d9b454afc3775f68094e272d4559a8222789a1ab22795686f3741457",
+      "sourceSha256": "50197ff0043c70182181560719de45e4b71486893c26d4c6c8bf27c4bfc95870",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_heliotheon",
+      "kind": "beast",
+      "name": "เฮลิโอธีออน เทพจักรพรรดิเหล็กกล้า",
+      "path": "assets/beasts/solar/solar_heliotheon.webp",
+      "source": "private/solar-generated/solar_heliotheon.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "5c72bae78b239260b0a6f6d7bf428fc4c34b50f08840e3ca1a1da75af33b1668",
+      "sourceSha256": "80baae995e5ab1c56d7dca55772b4cc89aee21251aa78dfafe41f92eb4514b21",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_ferroth",
+      "kind": "beast",
+      "name": "เฟอร์รอธ จักรพรรดิปีศาจเหล็กทมิฬ",
+      "path": "assets/beasts/solar/solar_ferroth.webp",
+      "source": "private/solar-generated/solar_ferroth.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "44b519adbd564be9a538487908c6e8dabd3097fdce97578cbbc6628b0587c464",
+      "sourceSha256": "7e4b01bd240fef8a8103ab107e4756e9c9a43a0bf1090bc96e46afe867747e12",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_cryostag",
+      "kind": "beast",
+      "name": "คริโอสเทล กวางมงกุฎเหมันต์",
+      "path": "assets/beasts/solar/solar_cryostag.webp",
+      "source": "private/solar-generated/solar_cryostag.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "ed5d7bd2bbc6dcda7b5a90c96e9409b2f9000cc0e8a5c278182b3029d1d6fe6b",
+      "sourceSha256": "ba67606d1ea719a3467e06dc84900fd7977cfeccdd3dfb07720e9e54ccf7d246",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_raijaku",
+      "kind": "beast",
+      "name": "ไรจาคุ ราชันมยุราวายุ",
+      "path": "assets/beasts/solar/solar_raijaku.webp",
+      "source": "private/solar-generated/solar_raijaku.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "d797098123150798060981f7d1edeb40e4667ae3941d495fbe23e858c6f9e6bd",
+      "sourceSha256": "9e1efe34599c121a4798f13350c5b797563c91812da63b143956cec1787fa764",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_thalassyr",
+      "kind": "beast",
+      "name": "ธาลัสซีร์ นาคราชมหาสมุทร",
+      "path": "assets/beasts/solar/solar_thalassyr.webp",
+      "source": "private/solar-generated/solar_thalassyr.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "ab273e415f54c28d87f9a2cf07a55e2993651799d359d8a07b090944d59c1d1c",
+      "sourceSha256": "b5e702398bbd1eca4d18d4c1292a75668faf9ddaac0613890e1cb70edc1fb503",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_pentadrake_s1",
+      "kind": "skill",
+      "name": "เขี้ยวเพลิงอรุณ",
+      "path": "assets/skills/painted-v2/solar_pentadrake_s1.webp",
+      "source": "private/solar-generated/solar_pentadrake_s1.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "b2edd49b01a6ad5bc5fe27aeac939b2ba3403fcb72186105bd53c07acccda8df",
+      "sourceSha256": "df909dff8020bcfcface881e35fdf09c0e65123f21b657f0ebf709b7d26dc6ab",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_pentadrake_s2",
+      "kind": "skill",
+      "name": "ลมหายใจมังกรสุริยัน",
+      "path": "assets/skills/painted-v2/solar_pentadrake_s2.webp",
+      "source": "private/solar-generated/solar_pentadrake_s2.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "d60926076bd99976b9b5d908b89661976287f3587bbacefa31e0ef9fb8b73f81",
+      "sourceSha256": "ae5b6597cfa88763532b16b270933efc80163fd5476e195ae63649171f7d601c",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_pentadrake_s4",
+      "kind": "skill",
+      "name": "เกล็ดเพลิงอมตะ",
+      "path": "assets/skills/painted-v2/solar_pentadrake_s4.webp",
+      "source": "private/solar-generated/solar_pentadrake_s4.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "0f68d3af805a8bd531d74c981461d7d19e6e1c918c2ac223081e555a9d5f69f4",
+      "sourceSha256": "4353cd241b2269204383284bcf3ac0d9c53f2eb1301339b5e282ed83c3968e25",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_pentadrake_s3",
+      "kind": "skill",
+      "name": "ปีกกวาดเถ้าดารา",
+      "path": "assets/skills/painted-v2/solar_pentadrake_s3.webp",
+      "source": "private/solar-generated/solar_pentadrake_s3.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "14b0f63277adc7c3a6b6c488ec275a69cf449be6aecea514d1bf9434c8d80e0c",
+      "sourceSha256": "be47825100701fca0c24a0a793d17d12d71e0b0c0b9caaac94ef6f6cd3874ae1",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_pentadrake_s6",
+      "kind": "skill",
+      "name": "มหาสุริยันล้างพิภพ",
+      "path": "assets/skills/painted-v2/solar_pentadrake_s6.webp",
+      "source": "private/solar-generated/solar_pentadrake_s6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "3b0afb0d99ee19c5139556870b8d7e2464569503b072fa98204d127f1caf2f41",
+      "sourceSha256": "aa8c461cee1234b577689de4845a293ec7a58010f20f67e78ceb25ee8bce5cbd",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_pentadrake_s5",
+      "kind": "skill",
+      "name": "อัคคีห้าเศียร",
+      "path": "assets/skills/painted-v2/solar_pentadrake_s5.webp",
+      "source": "private/solar-generated/solar_pentadrake_s5.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "277571d091f01c7d2b0929e91340f2e838e2b45476fb3c652767b43b7ec636d8",
+      "sourceSha256": "8f1d221da04ec92a4da97750eefa5efc90eca4905f7d4d6efeb1861badaa8305",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_aureolith_s1",
+      "kind": "skill",
+      "name": "หมัดศิลาศักดิ์สิทธิ์",
+      "path": "assets/skills/painted-v2/solar_aureolith_s1.webp",
+      "source": "private/solar-generated/solar_aureolith_s1.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "fab42cc8da258b9877924553eb924f0099590a38e03e6174c0691b99310b760a",
+      "sourceSha256": "ee91bcd60fa54cd0c2dba384fdcd5774ff8ce0369a1b966fcdd0e7d28f3db539",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_mortivar_s1",
+      "kind": "skill",
+      "name": "ศรวิญญาณทมิฬ",
+      "path": "assets/skills/painted-v2/solar_mortivar_s1.webp",
+      "source": "private/solar-generated/solar_mortivar_s1.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "2b812e450dd86d484f21630acab06edcde9a569e29bd635aeb53e3a5545a8c90",
+      "sourceSha256": "72d28834179d56bf8776212e022514e0a98760bf61371741b977cc26ae10792a",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_aureolith_s2",
+      "kind": "skill",
+      "name": "คำท้าปราการฟ้า",
+      "path": "assets/skills/painted-v2/solar_aureolith_s2.webp",
+      "source": "private/solar-generated/solar_aureolith_s2.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "593d6928914731c438ecfe215fa57d2f7d79133f63e9e6c94df56489532eb69a",
+      "sourceSha256": "01cf48ce7dec12b4ed0b34d98c2c34d839cd291ef6f8e6e687652da3fb6dd351",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_aureolith_s4",
+      "kind": "skill",
+      "name": "กำแพงหินอวยพร",
+      "path": "assets/skills/painted-v2/solar_aureolith_s4.webp",
+      "source": "private/solar-generated/solar_aureolith_s4.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "f85a464e7b0e670db401f5363f0a894a155c3470a3e7d3509bd1c7113584d6f2",
+      "sourceSha256": "1154d5bcbc383d3e5f169197ee37b8e12dcbcfd43ae969717e2a265c512afacb",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_mortivar_s2",
+      "kind": "skill",
+      "name": "ลำแสงพิษสุญญตา",
+      "path": "assets/skills/painted-v2/solar_mortivar_s2.webp",
+      "source": "private/solar-generated/solar_mortivar_s2.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "5dd5dc3f53993019f0b088f87e867eb469fa09b4a867a6801f0b96fc26955e5e",
+      "sourceSha256": "f8eb758efb2e48e8586e96a67ffb2f039b1c8cafd3e4eae4bbfa063a90fe8c61",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_aureolith_s3",
+      "kind": "skill",
+      "name": "สายฟ้าผนึกศัตรู",
+      "path": "assets/skills/painted-v2/solar_aureolith_s3.webp",
+      "source": "private/solar-generated/solar_aureolith_s3.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "f70cd627458903709de35c072af1460327c479cc42a7b6a49d0f853b1891c2e9",
+      "sourceSha256": "56499d0ea57b194e88dd83cb7ea988c9277309adf25addf91de1510dafad1ed4",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_aureolith_s5",
+      "kind": "skill",
+      "name": "หัวใจหินนิรันดร์",
+      "path": "assets/skills/painted-v2/solar_aureolith_s5.webp",
+      "source": "private/solar-generated/solar_aureolith_s5.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "992598c93c72969cb72150503063eddab7cc8c4d3e6d0a8805f17f4a1544925e",
+      "sourceSha256": "e272ae1daaa45f702829bd96f2a7d309aba8ed8a00a741c1df56e34c35059dba",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_mortivar_s3",
+      "kind": "skill",
+      "name": "หมอกสุสานนิรันดร์",
+      "path": "assets/skills/painted-v2/solar_mortivar_s3.webp",
+      "source": "private/solar-generated/solar_mortivar_s3.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "06e847f0df673f61fc9d2f2f08eeddbe61c098053635fe3f66737e7c6aae528a",
+      "sourceSha256": "8eac41260b14125fdd07c537d44217ac65c58784b8ee2d5784880b03b39393fd",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_mortivar_s4",
+      "kind": "skill",
+      "name": "สัญญาวิญญาณดำ",
+      "path": "assets/skills/painted-v2/solar_mortivar_s4.webp",
+      "source": "private/solar-generated/solar_mortivar_s4.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "147dee219cb67515b534107884d21b2890b156620afb28fdd9bd8bc3ce59dfd0",
+      "sourceSha256": "42fe64d7f4c1675347be5dca69e159e76887c12e408f679703e293c460a58370",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_aureolith_s6",
+      "kind": "skill",
+      "name": "มหาวิหารสายฟ้า",
+      "path": "assets/skills/painted-v2/solar_aureolith_s6.webp",
+      "source": "private/solar-generated/solar_aureolith_s6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "4ee57c0f19a28dd207577c53a734b8c89d9a74dba380a22376aee02e57f4564a",
+      "sourceSha256": "3d341f1abba11d9f38e7954f6ddd20e1f735bf5f684c7e62211897aa9ef57893",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_mortivar_s5",
+      "kind": "skill",
+      "name": "พิษกัดกินดวงดาว",
+      "path": "assets/skills/painted-v2/solar_mortivar_s5.webp",
+      "source": "private/solar-generated/solar_mortivar_s5.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "98fb5b039a1b31af39ca9445954468d62a16efb21de08c85d156f43e69a7bc63",
+      "sourceSha256": "24ed0f69476e8665bd0a990bd69fcc3bb8acf0797684ab2a7f4f1cb88a6ff581",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_heliotheon_s1",
+      "kind": "skill",
+      "name": "หอกเหล็กสุริยัน",
+      "path": "assets/skills/painted-v2/solar_heliotheon_s1.webp",
+      "source": "private/solar-generated/solar_heliotheon_s1.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "a6e4ec8edc3168f37e921e8ad1a5c5caa696ce6268a6aa76425e22ac1b12447d",
+      "sourceSha256": "4cf5e98bf68bd84ad99e82146370bcde507d8f9f5e37363e5d0681f80841a4a7",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_mortivar_s6",
+      "kind": "skill",
+      "name": "ราชโองการโลกไร้ชีพ",
+      "path": "assets/skills/painted-v2/solar_mortivar_s6.webp",
+      "source": "private/solar-generated/solar_mortivar_s6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "7ed9ac3da6ffb67d4fc9cea141f92452f670c89d30b35e2391e26d59c160ddce",
+      "sourceSha256": "1007389f82cf960ba388657c141adfdd5229b44853d3bba18dd229d694eff6a3",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_heliotheon_s2",
+      "kind": "skill",
+      "name": "แสงพิพากษาเทพ",
+      "path": "assets/skills/painted-v2/solar_heliotheon_s2.webp",
+      "source": "private/solar-generated/solar_heliotheon_s2.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "baf31a41d691d9b1c2b4b2dccdd0ddeed0391fdf8327b1addd3f19e9602af164",
+      "sourceSha256": "4ca86d9e084a26ce36f6a92f54b8bdb07a17888942741a564c950b40c31b2629",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_ferroth_s3",
+      "kind": "skill",
+      "name": "เกราะจักรพรรดิปีศาจ",
+      "path": "assets/skills/painted-v2/solar_ferroth_s3.webp",
+      "source": "private/solar-generated/solar_ferroth_s3.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "b380096611113e769cace4b4700762c05d933bff897414abd01b48d3decf66e8",
+      "sourceSha256": "06f0ef9dd715ce588d8c22f2193f33fef74391c4c92546c57833e85e1695560f",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_heliotheon_s3",
+      "kind": "skill",
+      "name": "บัญชากองทัพฟ้า",
+      "path": "assets/skills/painted-v2/solar_heliotheon_s3.webp",
+      "source": "private/solar-generated/solar_heliotheon_s3.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "103de003f229874ca7d7d387ebf3dc331cdfe163e12eab9f863a82c53788b8ad",
+      "sourceSha256": "2f9cb811ceab241bc0e26fafd754df10805e95d51ee94f32d8ca4b24b8f8b747",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_ferroth_s5",
+      "kind": "skill",
+      "name": "โซ่อเวจีผ่าดวงดาว",
+      "path": "assets/skills/painted-v2/solar_ferroth_s5.webp",
+      "source": "private/solar-generated/solar_ferroth_s5.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "63ef6f736e8d6060072807c9f68ef068d448651cc93c38ea8eb2d90684ab9e94",
+      "sourceSha256": "706ba171e8c5410509fa7d63e0cd6043419c7e7ab35867c59bf710b198db021d",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_ferroth_s4",
+      "kind": "skill",
+      "name": "ปีกดาบตัดพันธสัญญา",
+      "path": "assets/skills/painted-v2/solar_ferroth_s4.webp",
+      "source": "private/solar-generated/solar_ferroth_s4.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "1ca6606afaede04f1127c7952230846a17cd8f7465b5de1678749f9c0542248e",
+      "sourceSha256": "a667c6ad653b2518e969bfc4aff775b136fda259193917be764e90c0a05664b4",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_heliotheon_s4",
+      "kind": "skill",
+      "name": "คมดาราพิพากษา",
+      "path": "assets/skills/painted-v2/solar_heliotheon_s4.webp",
+      "source": "private/solar-generated/solar_heliotheon_s4.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "af7abac0a9e3362807de3fd4855dbe27f66ea208c4cad95f5dce1a7efb94e59b",
+      "sourceSha256": "2d89a4c43ed19915be0ff2af9b700cc4fa48d002198f00d0afb807aafe4aa368",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_ferroth_s6",
+      "kind": "skill",
+      "name": "สิ้นแสงใต้บัลลังก์ดำ",
+      "path": "assets/skills/painted-v2/solar_ferroth_s6.webp",
+      "source": "private/solar-generated/solar_ferroth_s6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "1ac7d07b168612e54f33e428fafcba3a85d8589759bcdf51d7feb11b82f27f37",
+      "sourceSha256": "e50c4e2a02358a8123a120b669d267b6c534551c136beb7a6f429df8056ab9da",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_cryostag_s4",
+      "kind": "skill",
+      "name": "ม่านรากไม้เยือกแข็ง",
+      "path": "assets/skills/painted-v2/solar_cryostag_s4.webp",
+      "source": "private/solar-generated/solar_cryostag_s4.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "322c60d65472165d2678d9f887660206295a3577c8618a4703f11a6fbfaecf97",
+      "sourceSha256": "c8ea5800f718408b465444262897536cc1264c6188f6f730b4fb606da22ef479",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_heliotheon_s5",
+      "kind": "skill",
+      "name": "พรจักรพรรดิอรุณ",
+      "path": "assets/skills/painted-v2/solar_heliotheon_s5.webp",
+      "source": "private/solar-generated/solar_heliotheon_s5.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "92c2a5be9f6e43454d7fe953421971c0c22623413f67822d6483e208327f6339",
+      "sourceSha256": "2dd81d96042a4bea7b46463d0937789cd140f06fe4cf88f1a701b29c6b0e7a7e",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_cryostag_s3",
+      "kind": "skill",
+      "name": "ลมหายใจสวนหิมะ",
+      "path": "assets/skills/painted-v2/solar_cryostag_s3.webp",
+      "source": "private/solar-generated/solar_cryostag_s3.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "5874d58d41d4b8f307c24c0818192d4e4182609f1a6e2a47064dd15d9f01b9f4",
+      "sourceSha256": "8953bf468c097c4d8c3c1625761128ad0ef06c3552fa4ec2d6f7cf7c8313139a",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_cryostag_s1",
+      "kind": "skill",
+      "name": "หนามบุปผาหิมะ",
+      "path": "assets/skills/painted-v2/solar_cryostag_s1.webp",
+      "source": "private/solar-generated/solar_cryostag_s1.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "87acbc0df5594a9660167cb19600663271e85786c49ce3ff3a02f9418cb8832f",
+      "sourceSha256": "9f90f8cbf538cb7f7c27465b532d676d2b4f7d9794bc5d2d37d7cb28f57a3aaf",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_heliotheon_s6",
+      "kind": "skill",
+      "name": "บัลลังก์สุริยันนิรันดร์",
+      "path": "assets/skills/painted-v2/solar_heliotheon_s6.webp",
+      "source": "private/solar-generated/solar_heliotheon_s6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "da60f79bd751124f1ef089311d79a74e58a62e7df705278b5071f661f863f43f",
+      "sourceSha256": "968a0b7a6ee8da640eff84a95337666abe4cea2d3e0ffe6fa3b5f5d652b471d5",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_cryostag_s5",
+      "kind": "skill",
+      "name": "รอยกีบผ่าธารน้ำแข็ง",
+      "path": "assets/skills/painted-v2/solar_cryostag_s5.webp",
+      "source": "private/solar-generated/solar_cryostag_s5.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "d7491aa2b339f5fd61eb291603000c93e1bbf23abf354807c1c012c0facbf219",
+      "sourceSha256": "6557fe66a0276be474659171326bef783a9d14fd36336bbb71bc27059a160120",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_cryostag_s2",
+      "kind": "skill",
+      "name": "หอกเขาเหมันต์",
+      "path": "assets/skills/painted-v2/solar_cryostag_s2.webp",
+      "source": "private/solar-generated/solar_cryostag_s2.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "de04e28bd7d40c112cde606f543e9de5c1f252f97c20e432e27f1931b156eb35",
+      "sourceSha256": "ae658d4cc53b295fea186275983be54c4e903c1acc77da5e2dccec49d288644f",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_raijaku_s2",
+      "kind": "skill",
+      "name": "ปีกพายุราชัน",
+      "path": "assets/skills/painted-v2/solar_raijaku_s2.webp",
+      "source": "private/solar-generated/solar_raijaku_s2.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "70e991ba51f3a9463f82259387a611612b3d13e9cf65f4f371075182a0f384bb",
+      "sourceSha256": "580727d22005216f6967b21aef94dddf9d30b77880267244354bd12aa22c201e",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_cryostag_s6",
+      "kind": "skill",
+      "name": "มงกุฎคืนชีพเหมันต์",
+      "path": "assets/skills/painted-v2/solar_cryostag_s6.webp",
+      "source": "private/solar-generated/solar_cryostag_s6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "417c5a7e602fcb22323d906d4c15412ebe0f3401f776b82d7b650da7f6a2e563",
+      "sourceSha256": "30ade9ba1e113acf1fac801548445de81d9bcb4fe751b091cfa1bb3eedd8caee",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_raijaku_s3",
+      "kind": "skill",
+      "name": "ระบำแพนหางฟ้า",
+      "path": "assets/skills/painted-v2/solar_raijaku_s3.webp",
+      "source": "private/solar-generated/solar_raijaku_s3.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "48f83177abe129ebf8e074bf8cf406dfc97356c55dc45e1197207fcdafb18083",
+      "sourceSha256": "9c8656efb60fbdcf675ec27f9f2a3b91f3bcb5da9d65b723b7d7fa1f1167de9c",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_ferroth_s1",
+      "kind": "skill",
+      "name": "คมเหล็กอเวจี",
+      "path": "assets/skills/painted-v2/solar_ferroth_s1.webp",
+      "source": "private/solar-generated/solar_ferroth_s1.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "0c7cbc2c3d50cdc484256690184a1f2e93d00deddb6133995dc54865175dac3b",
+      "sourceSha256": "df1666a0420bbeca35cf547421db285e184e86ffcab21e27098b2ce556f2d286",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_raijaku_s4",
+      "kind": "skill",
+      "name": "อัสนีตาคู่มยุรา",
+      "path": "assets/skills/painted-v2/solar_raijaku_s4.webp",
+      "source": "private/solar-generated/solar_raijaku_s4.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "3b23ccb518648c793ee1a80af90f836c21b2983232b648ef216b555ac860ad7b",
+      "sourceSha256": "787668ae887d9e9c3e29b9385c52b0b214bfe8d03db7571d9edddb608ae3e318",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_raijaku_s1",
+      "kind": "skill",
+      "name": "ขนศรอสนี",
+      "path": "assets/skills/painted-v2/solar_raijaku_s1.webp",
+      "source": "private/solar-generated/solar_raijaku_s1.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "c4f9a429d3fe6d5b04369bd401b331b57ed3a6d05875b1dddc7fdbfce8729539",
+      "sourceSha256": "de92d040245418aec4a49427dc7020c6ca34dd53e48d61f80c9a80a10d246c2c",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_ferroth_s2",
+      "kind": "skill",
+      "name": "กระสุนรัตติกาล",
+      "path": "assets/skills/painted-v2/solar_ferroth_s2.webp",
+      "source": "private/solar-generated/solar_ferroth_s2.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "33573a6a92ad3b8d7b058f661a1e4900eb70618bc63831d4caabc047e9b450cb",
+      "sourceSha256": "4a3183d146bbec2bdb32ff4beed2e354e6536ebba2ae3c1a5038aaf4286e5df3",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_thalassyr_s4",
+      "kind": "skill",
+      "name": "วงคลื่นนาคราช",
+      "path": "assets/skills/painted-v2/solar_thalassyr_s4.webp",
+      "source": "private/solar-generated/solar_thalassyr_s4.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "eaaabc19f414e1ebdf54e25fc11c3900ea4bc9a7461f36caa2d78e400a206ac0",
+      "sourceSha256": "40ec8c40fe976edec415e9893daf161f786e50f84528d26021c78aab5f6c35c2",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_raijaku_s5",
+      "kind": "skill",
+      "name": "วายุฉีกนภา",
+      "path": "assets/skills/painted-v2/solar_raijaku_s5.webp",
+      "source": "private/solar-generated/solar_raijaku_s5.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "c5de2e5e4ba7003d7ef70ea645610638f7851239d558e9ff35e076e9de345f43",
+      "sourceSha256": "bd1fd1015820fdd68be4096a803805f46c790dc2d9aa03adce594b96c47f24e5",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_thalassyr_s5",
+      "kind": "skill",
+      "name": "เกล็ดมังกรแหวกบาดาล",
+      "path": "assets/skills/painted-v2/solar_thalassyr_s5.webp",
+      "source": "private/solar-generated/solar_thalassyr_s5.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "c0063f18f71c58cf12c3100577afaf08063f05e09f2a91c5100f5d27a62e0c00",
+      "sourceSha256": "0fbdc22c3af4a77cef8042563f471c7da0accb223c53596eac5d8819ddb4a0a7",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_raijaku_s6",
+      "kind": "skill",
+      "name": "มหารำแพนอสนีสวรรค์",
+      "path": "assets/skills/painted-v2/solar_raijaku_s6.webp",
+      "source": "private/solar-generated/solar_raijaku_s6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "92fc86544f7ddaa95f575bd37fcaeb20881ef67d85a077050ff49e43de2b6d2d",
+      "sourceSha256": "5b73896f64fecb8bdd7edf8f902fe32cc583c87f4e3544546ae99c25a48ac77e",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_thalassyr_s6",
+      "kind": "skill",
+      "name": "มหาสมุทรโอบดวงดาว",
+      "path": "assets/skills/painted-v2/solar_thalassyr_s6.webp",
+      "source": "private/solar-generated/solar_thalassyr_s6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "b89dabc2aaf2182439139402f94dd3909458c7a87572cb1c494e4e357ff90482",
+      "sourceSha256": "e69c811393ed7be3623f816398392edf5d0f6cdd543036d148c24a2f2a028394",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_thalassyr_s1",
+      "kind": "skill",
+      "name": "เขี้ยวคลื่นสมุทร",
+      "path": "assets/skills/painted-v2/solar_thalassyr_s1.webp",
+      "source": "private/solar-generated/solar_thalassyr_s1.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "fe5b7edbefbb9c5069e352e5f48cf00b304ef124b4a00e7af2bfb744a5919f0b",
+      "sourceSha256": "6fb18a14bdc9891a6d435fb0ca11073b3727ba9dcce4730965728cc4620ae0c6",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_thalassyr_s2",
+      "kind": "skill",
+      "name": "ลำแสงมังกรวารี",
+      "path": "assets/skills/painted-v2/solar_thalassyr_s2.webp",
+      "source": "private/solar-generated/solar_thalassyr_s2.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "07ef847a02e03c8ef989d0c663de654803a27b915f1f2b5be64f6297f9bdf669",
+      "sourceSha256": "fe1f206a2927053097916e1842a970bf9ae800d760e8fa95a0f4e2fa9dc3681e",
+      "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "solar_thalassyr_s3",
+      "kind": "skill",
+      "name": "กระแสน้ำชำระวิญญาณ",
+      "path": "assets/skills/painted-v2/solar_thalassyr_s3.webp",
+      "source": "private/solar-generated/solar_thalassyr_s3.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "4019a161cecc0b03aabe829572720ab9513aef5d57010ee1799d5c2c66a8296c",
+      "sourceSha256": "6cb23750ba904024be93c4673334631f7ac165241e42973843960496ec82b613",
+      "sourceGroup": "solar-legends-v1"
+    }
+  ]
+}

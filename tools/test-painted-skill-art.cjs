@@ -2,9 +2,10 @@ const fs=require('fs'),assert=require('assert/strict'),crypto=require('crypto');
 const art=JSON.parse(fs.readFileSync('content/individual-skill-art.json','utf8'));
 const crops=JSON.parse(fs.readFileSync('content/skill-art-painted-v2/crops.json','utf8'));
 const jobs=JSON.parse(fs.readFileSync('content/skill-art-painted-v2/jobs.json','utf8'));
-assert.equal(art.version,2);assert.equal(art.skills.length,(504+require('../content/eclipse-expansion.json').skills.length));assert.equal(crops.skills.length,384);assert.equal(jobs.jobs.length,24);
+const skillTotal=504+require('../content/eclipse-expansion.json').skills.length+require('../content/solar-beasts.json').beasts.reduce((n,b)=>n+b.skills.length,0);
+assert.equal(art.version,2);assert.equal(art.skills.length,skillTotal);assert.equal(crops.skills.length,384);assert.equal(jobs.jobs.length,24);
 assert.equal(jobs.generator,'built-in image_gen.imagegen');
-assert.equal(new Set(art.skills.map(a=>a.id)).size,(504+require('../content/eclipse-expansion.json').skills.length));
+assert.equal(new Set(art.skills.map(a=>a.id)).size,skillTotal);
 for(const a of art.skills){
  assert(a.path.startsWith('assets/skills/painted-v2/')&&a.path.endsWith('.webp'),a.id);
  const file=fs.readFileSync(a.path);assert.equal(file.toString('ascii',0,4),'RIFF');assert.equal(file.toString('ascii',8,12),'WEBP');

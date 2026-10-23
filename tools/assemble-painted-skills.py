@@ -29,7 +29,7 @@ for a in retained:
 if len(crops)!=384:raise RuntimeError(f'All 384 replacement skill crops are required; only {len(crops)} are ready.')
 assert len(records)==504 and len(set(a['id'] for a in records))==504
 expansion=json.loads((ROOT/'content/individual-skill-art.json').read_text(encoding='utf-8'))
-records += [a for a in expansion['skills'] if a.get('sourceGroup')=='eclipse-expansion-v2']
+records += [a for a in expansion['skills'] if a.get('sourceGroup') in ['eclipse-expansion-v2','solar-legends-v1']]
 for record in records:
     if record['id']=='enchant_flying':record['name']='ประทับดาบธาตุลม'
 manifest={'version':2,'method':'Built-in image_gen painted artwork; each individual image cropped to measured source-cell bounds. All rendering uses contain, without CSS sprite offsets or cover cropping.','prompts':'content/skill-art-painted-v2/jobs.json','cropProof':'content/skill-art-painted-v2/crops.json','skills':records}

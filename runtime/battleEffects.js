@@ -24,7 +24,7 @@ const BattleEffects={
   else if(id==='class10_parry'||sk.immune)theme='ward';
   else if(support&&!['music','coin','vines'].includes(theme))theme='ward';
   if(id==='normal_m1')theme='music';
-  const species=Object.keys(this.legends).find(k=>id==='mist_sig_'+k)||actor.sp,legend=this.legends[species];
+  const species=Object.keys(this.legends).find(k=>id==='mist_sig_'+k||id.startsWith(k+'_s'))||actor.sp,legend=this.legends[species];
   return {id,mode,theme,projectile:family||({fire:'flame',ice:'ice',water:'wave',electric:'bolt',grass:'leaf',rock:'rock',ground:'rock',ghost:'soul',dark:'soul',poison:'venom'}[sk.el])||'orb',color:palette[2],accent:palette[3],seed,variant:seed%7,hits:Math.min(5,Math.max(1,sk.hits||1)),area:!!sk.all,signature:!!SIGNATURE_ART[id]||!!legend,legend:legend?{id:legend[0],shapes:legend.slice(1),species}:null};
  },
  // Old online/replay packets carry cast origins; new local packets carry exact source IDs.

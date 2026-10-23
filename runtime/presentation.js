@@ -88,7 +88,7 @@ function portraitGender(key,opts={}){
  if(key?.startsWith('npc:'))return undefined;
  return S.screen==='start'?(S.ui.gender==='female'?'female':'male'):S.P?.gender;
 }
-function atlasFace(key,form=0,opts={}){if(SP[key]?.mistNew)return mistPortrait(key);
+function atlasFace(key,form=0,opts={}){if(SP[key]?.mistNew||SP[key]?.solar)return mistPortrait(key);
  let artKey=key;
  if(key==='player'||key?.startsWith('cls:')||key?.startsWith('npc:')){const cls=key==='player'?(S.P?.cls||S.ui.cls||'swordsman'):key.slice(4);artKey=BUILTIN_ART['cls:'+cls]?'cls:'+cls:'cls:'+baseOf(cls)}
  const isClass=key==='player'||key?.startsWith('cls:')||key?.startsWith('npc:');const cls=key==='player'?(S.P?.cls||S.ui.cls||'swordsman'):key?.slice(4);
@@ -403,7 +403,7 @@ function releaseArtButton(screen,image,title,sub){return `<button class="release
 
 
 /* Visual update only; the server remains authoritative for coupons and draw receipts. */
-function beastFrameKind(key){const sp=SP[key];return !sp?'':sp.legendary?'legend':sp.rare?'rare':(sp.ev?.length||0)>=2?'three':sp.ev?.length===1?'two':'one';}
+function beastFrameKind(key){const sp=SP[key];return !sp?'':sp.solar?'solar':sp.legendary?'legend':sp.rare?'rare':(sp.ev?.length||0)>=2?'three':sp.ev?.length===1?'two':'one';}
 // @soulbeast-end 0640-beastFrameKind
 // @soulbeast-unit 0642-ornatePortrait
 

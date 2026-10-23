@@ -508,7 +508,7 @@
       ],
       [
         "beast",
-        2000
+        1990
       ],
       [
         "gear",
@@ -533,6 +533,10 @@
       [
         "legendBeast",
         30
+      ],
+      [
+        "solarBeast",
+        10
       ],
       [
         "eternal",

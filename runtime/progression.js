@@ -84,7 +84,7 @@ function gainExp(o,amt,isP){const lines=[];o.exp+=amt;
   const after=isP?pStats():calcPet(o);o.hp+=after.hp-before.hp;o.mp+=after.mp-before.mp;
   lines.push(`${isP?o.name:petName(o)} เลเวลอัปเป็น Lv ${o.lv}!`);
   if(isP){clsSkillsAt(o.cls,o.lv).forEach(id=>lines.push(`เรียนรู้สกิล ${SK[id].n}`));if(canPromote(o)&&(o.lv===25||o.lv===40))lines.push('★ เลื่อนอาชีพได้แล้ว! ไปที่หน้าตัวละคร')}
-  else{const i=SKLV.indexOf(o.lv);if(i>0&&SP[o.sp].sk[i])lines.push(`${petName(o)} เรียนรู้ ${SK[SP[o.sp].sk[i]].n}`);if(SP[o.sp].rare&&o.lv===SIGLV)lines.push(`${petName(o)} เรียนรู้สกิลเฉพาะตัว ${SK[SP[o.sp].sig].n}`)}}
+  else{const i=(SP[o.sp].skillLevels||SKLV).indexOf(o.lv);if(i>0&&SP[o.sp].sk[i])lines.push(`${petName(o)} เรียนรู้ ${SK[SP[o.sp].sk[i]].n}`);if(SP[o.sp].rare&&o.lv===(SP[o.sp].signatureLevel||SIGLV))lines.push(`${petName(o)} เรียนรู้สกิลเฉพาะตัว ${SK[SP[o.sp].sig].n}`)}}
  if(o.lv>=MAXLV)o.exp=0;
  return lines}
 // @soulbeast-end 0153-gainExp
