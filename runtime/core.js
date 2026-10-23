@@ -327,7 +327,7 @@ function applyAccount(a){if(!a||!S.P)return;const P=S.P;P.gold+=(Number(a.delta)
 // @soulbeast-end 0398-applyAccount
 // @soulbeast-unit 0402-profilePanel
 
-function profilePanel(){const P=S.P;return `<div class="card stack"><h3>โปรไฟล์ผู้ผนึก</h3>${P.profile?`<img src="${esc(P.profile)}" alt="รูปโปรไฟล์" width="64" height="64" style="border-radius:50%">`:''}<button class="btn" data-a="img" data-v="profile">ใส่รูปโปรไฟล์สำหรับอันดับ</button><label>ชื่อใหม่ <input id="renameName" maxlength="20" value="${esc(P.name)}"></label><button class="btn" data-a="renameCharacter">เปลี่ยนชื่อ (สัปดาห์ละ 1 ครั้ง)</button><small>${P.renameAt?'เปลี่ยนชื่อครั้งถัดไป '+new Date(P.renameAt+7*86400000).toLocaleString(gameLocale()):''}</small></div>`}
+function profilePanel(){const P=S.P;return `<div class="card stack"><h3>โปรไฟล์ผู้ผนึก</h3><label>ชื่อใหม่ <input id="renameName" maxlength="20" value="${esc(P.name)}"></label><button class="btn" data-a="renameCharacter">เปลี่ยนชื่อ (สัปดาห์ละ 1 ครั้ง)</button><small>${P.renameAt?'เปลี่ยนชื่อครั้งถัดไป '+new Date(P.renameAt+7*86400000).toLocaleString(gameLocale()):''}</small></div>`}
 // @soulbeast-end 0402-profilePanel
 // @soulbeast-unit 0408-packLocked
 

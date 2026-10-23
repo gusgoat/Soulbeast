@@ -1,0 +1,82 @@
+{
+  "source": "https://quickshare.samsungcloud.com/nM6bZQFARbn1",
+  "files": [
+    {
+      "id": "update23_bow_multi",
+      "title": "สกิลธนูยิ่งหลายนัด.mp3",
+      "asset": "assets/audio/20261023/bow_multi.mp3",
+      "sha256": "edd022d088846ac305cd85df3f301e17a1f1b39d1ec258d97bf0f5c09017dc5b",
+      "bytes": 18432,
+      "duration": 0.576,
+      "decodeOK": true,
+      "group": "bowMultiFx",
+      "mode": "replace"
+    },
+    {
+      "id": "update23_bow_critical",
+      "title": "เสียงธนูติดคลิติคัล.mp3",
+      "asset": "assets/audio/20261023/bow_critical.mp3",
+      "sha256": "e6e9a97e5b3b6ac76c839ee5a5c556c6c45f5d3fd7d4c4f0eda54144a4da26d7",
+      "bytes": 21504,
+      "duration": 0.672,
+      "decodeOK": true,
+      "group": "bowCriticalFx",
+      "mode": "replace"
+    },
+    {
+      "id": "update23_bow_heavy",
+      "title": "สกิลธนูนัดเดี่ยวแต่แรง.mp3",
+      "asset": "assets/audio/20261023/bow_heavy.mp3",
+      "sha256": "7270f40fc03cb64870f6905db36eeee2209c1eff1de8ca9bf2e7ff0aca21f9fb",
+      "bytes": 20736,
+      "duration": 0.648,
+      "decodeOK": true,
+      "group": "bowHeavyFx",
+      "mode": "replace"
+    },
+    {
+      "id": "update23_demon_threat",
+      "title": "เสียงปีศาจ หรือจอมมาร ขู่ no more running.mp3",
+      "asset": "assets/audio/20261023/demon_threat.mp3",
+      "sha256": "637bfbfe36660a93c31b5af702ee1a08240ff6eaf7928f68554d85cfd45ed8bf",
+      "bytes": 69381,
+      "duration": 2.168156,
+      "decodeOK": true,
+      "group": "demonThreatFx",
+      "mode": "append"
+    },
+    {
+      "id": "update23_demon_roar",
+      "title": "เสียงคำรามปีศาจ.mp3",
+      "asset": "assets/audio/20261023/demon_roar.mp3",
+      "sha256": "81e41186d43e51e21b2ac86f39c102003dddf90f53c598472d591309006de1f1",
+      "bytes": 76068,
+      "duration": 2.377125,
+      "decodeOK": true,
+      "group": "demonRoarFx",
+      "mode": "append"
+    },
+    {
+      "id": "update23_demon_laugh",
+      "title": "เสียงปีศาจหัวเราะ จอมมาหัวเราะ.mp3",
+      "asset": "assets/audio/20261023/demon_laugh.mp3",
+      "sha256": "40767e3347752283168e219dc17f23286c93199bb07c4a1490f46f8a7642242a",
+      "bytes": 106997,
+      "duration": 3.343656,
+      "decodeOK": true,
+      "group": "demonLaughFx",
+      "mode": "append"
+    },
+    {
+      "id": "update23_mermaid",
+      "title": "แก้เสียงนางเงือก.mp3",
+      "asset": "assets/audio/20261023/mermaid.mp3",
+      "sha256": "225c198460ca75a510fd8ab3e9fb7754e4177e8512dec0c92888e16a6140d6d7",
+      "bytes": 145492,
+      "duration": 5.983107,
+      "decodeOK": true,
+      "group": "voice_mermaid",
+      "mode": "replace"
+    }
+  ]
+}

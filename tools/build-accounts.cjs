@@ -24,13 +24,14 @@ const accountHandler=withSupabase({auth:'none'},async(req,ctx)=>{
  try{
  const text=await req.text();if(new TextEncoder().encode(text).length>600000)return accountReply({ok:false,error:'too_big'},413);
  const body=JSON.parse(text),env=req.headers.get('x-soulbeast-environment')||'test';
- const command=async(action,account,environment,packet)=>{const r=await ctx.supabaseAdmin.rpc('sb_player_account_command',{p_action:action,p_account:account,p_env:environment,p_data:packet});if(r.error)throw Error(['character_not_owned','request_payload_changed','character_limit'].find(x=>r.error.message?.includes(x))||'account_database_unavailable');return r.data;};
+ const command=async(action,account,environment,packet)=>{const r=await ctx.supabaseAdmin.rpc('sb_player_account_command',{p_action:action,p_account:account,p_env:environment,p_data:packet});if(r.error)throw Error(['character_not_owned','request_payload_changed','character_limit','character_deleted'].find(x=>r.error.message?.includes(x))||'account_database_unavailable');return r.data;};
  const execute=(packet,environment)=>createGameService({rpc:(name,args)=>ctx.supabaseAdmin.rpc(name,args),engineFactory:accountEngineFactory(createEngine,sbHash,{request:packet})})(packet,environment);
  return accountReply(await accountGateway({command,execute,hash:sbHash,makeCharacter:accountNewCharacter})(user,body,env));
- }catch(e){const known=['character_not_owned','request_payload_changed','character_limit','bad_request_id','bad_new_character','character_create_retry','account_action_not_supported','verified_account_required','bad_data'];const error=known.includes(e.message)?e.message:'account_service_unavailable';return accountReply({ok:false,error},error==='character_not_owned'?403:known.includes(error)?400:503);}
+ }catch(e){const known=['character_not_owned','request_payload_changed','character_limit','bad_request_id','bad_new_character','character_create_retry','account_action_not_supported','verified_account_required','bad_data','character_deleted','delete_confirmation_required','finish other battle'];const error=known.includes(e.message)?e.message:'account_service_unavailable';return accountReply({ok:false,error},error==='character_not_owned'?403:known.includes(error)?400:503);}
 });
 export default {async fetch(req){const response=req.method==='OPTIONS'?new Response(null,{status:204,headers:accountCors}):await accountHandler(req);const headers=new Headers(response.headers);if(req.headers.get('origin')==='https://localhost')headers.set('Access-Control-Allow-Origin','https://localhost');return new Response(response.body,{status:response.status,headers});}};
 `;
 fs.writeFileSync(path.join(out,'index.ts'),core+'\n'+templateCode+'\n'+gateway+'\n'+endpoint);
 fs.copyFileSync(path.join(root,'server/accounts/001-accounts.sql'),path.join(out,'001-accounts.sql'));
+fs.copyFileSync(path.join(root,'server/accounts/002-character-management.sql'),path.join(out,'002-character-management.sql'));
 console.log('Built account gateway with unchanged engine SHA256 '+crypto.createHash('sha256').update(core).digest('hex'));

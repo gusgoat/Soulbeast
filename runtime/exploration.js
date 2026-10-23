@@ -191,9 +191,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeo
 // @soulbeast-end 0355-document-addEventListener
 // @soulbeast-unit 0357-document-getElementById
 
-document.getElementById('imgIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f||!pendingImg)return;const key=pendingImg;const rd=new FileReader();
- rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),z=key==='profile'?80:256;c.width=c.height=z;const g=c.getContext('2d'),m=Math.min(im.width,im.height);
-  g.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,z,z);let u=c.toDataURL('image/webp',.85);if(!u.startsWith('data:image/webp'))u=c.toDataURL('image/png');if(key==='profile'){S.P.profile=u;save()}else{IMG[key]=u;saveImg()}render();toast('ใส่รูปแล้ว')};im.src=rd.result};rd.readAsDataURL(f)});
+// Custom image importing has been removed. Official game artwork is used everywhere.
 // @soulbeast-end 0357-document-getElementById
 // @soulbeast-unit 0380-vZone
 

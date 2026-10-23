@@ -27,7 +27,7 @@ PAS.class10_stealth.d='ไม่เป็นเป้าท่าเดี่ย
 const classRefreshAfter=after;after=function(){const b=B(),u=b&&uById(b.cur);if(takeFreeForm(u)){b.menu='main';render();if(teamAutoUnit(u)){b.menu='wait';battleLater(aiAct,150);}return;}return classRefreshAfter();};
 const classRefreshDesc=skillDesc;skillDesc=function(id){const s=SK[id];return classRefreshDesc(id)+(s?.t==='form'?' · สายดรูอิดแปลงร่างไม่เสียเทิร์น (ยังใช้ MP)':'')+(id==='shadow_clone'?' · HP 50% และค่าสถานะอื่น 80% ของร่างจริง':'');};
 // Follow-up balance: one-battle archer veil, healing parry, reflect AI, free hire.
-SK.class10_parry.cd=3;
+SK.class10_parry.cd=2;
 PAS.class10_parry.d='ป้องกันท่าโจมตี 1 ท่า รวมทุกฮิต และฟื้น HP เท่าดาเมจที่ป้องกันได้ ไม่เกิน HP สูงสุด อยู่ 3 เทิร์น คูลดาวน์ 3 เทิร์น';
 PAS.class10_stealth.d='Lv10: ล่องหนแบบพาสซีฟ ป้องกันท่าโจมตีเดี่ยว 1 ท่าต่อการต่อสู้ ไม่กันท่าหมู่ ไม่เพิ่มคริติคอล';
 CLS.archer.sk=CLS.archer.sk.filter(([,id])=>id!=='class10_stealth');
@@ -122,3 +122,4 @@ const classAbilityBasePicture=skillPicture;skillPicture=function(u,sk,id){const 
 const classAbilityCareerPanel=careerPanel;careerPanel=function(cls){const ids=[...new Set(chain(cls).flatMap(c=>[...(CLS[c].pas||[]),...(CLS[c].sk||[]).map(x=>x[1])]))].filter(id=>CLASS_ABILITY_ART[id]);return classAbilityCareerPanel(cls)+(ids.length?'<details class="class-ability-guide"><summary>สกิลและความสามารถเฉพาะอาชีพ</summary>'+ids.map(id=>SK[id]?skillRow(id,true):'<div class="row">'+classAbilityImage(id,44)+'<div class="grow"><b>'+esc(PAS[id].n)+'</b><div class="sub">'+esc(PAS[id].d)+'</div></div></div>').join('')+'</details>':'');};
 
 // @soulbeast-end 1085-classRefresh
+

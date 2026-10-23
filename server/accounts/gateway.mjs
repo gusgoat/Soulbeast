@@ -3,6 +3,7 @@ export function accountGateway({command,execute,hash,makeCharacter,uuid=()=>cryp
  const safe=c=>({code:c.code,name:c.name,cls:c.class_id,lv:c.level,status:c.status});
  const fail=message=>{throw Error(message);};
  const materialize=async(c,env,user)=>{
+  if(c.status==='deleted')fail('character_deleted');
   if(c.status==='active')return c;
   const data=structuredClone(c.draft);data.P.code=c.code;delete data.P.cpin;
   const r=await execute({action:'save',code:c.code,pin:c.engine_pin,data:JSON.stringify(data),name:data.P.name,lv:3,_sbRequest:c.request_id},env);
@@ -14,8 +15,9 @@ export function accountGateway({command,execute,hash,makeCharacter,uuid=()=>cryp
   if(!['test','live'].includes(env)||!body||typeof body!=='object'||Array.isArray(body))fail('bad_data');
   if(body.action==='account_list'){
    const chars=await command('list',user.id,env,{}),out=[];
-   for(const c of chars)out.push(safe(await materialize(c,env,user)));
-   return {ok:true,email:user.email,characters:out};
+   for(const c of chars.filter(c=>c.status!=='deleted'))out.push(safe(await materialize(c,env,user)));
+   const capacity=await command('capacity',user.id,env,{});
+   return {ok:true,email:user.email,characters:out,characterLimit:5,slotsUsed:capacity.used};
   }
   if(body.action==='account_create'){
    if(!/^[a-f0-9-]{36}$/i.test(body.request_id||''))fail('bad_request_id');
@@ -35,6 +37,14 @@ export function accountGateway({command,execute,hash,makeCharacter,uuid=()=>cryp
   const code=String(body.code||'').toUpperCase();
   if(!/^[A-Z0-9]{16}$/.test(code))fail('character_not_owned');
   const c=await command('get',user.id,env,{code});
+  if(body.action==='account_delete'){
+   if(body.confirm!==true)fail('delete_confirmation_required');
+   if(c.status==='deleted')return {ok:true,code,deleted:true};
+   const check=await execute({action:'account_retire_check',code,pin:c.engine_pin,_sbRequest:uuid()},env);
+   if(!check.ok)fail(check.error||'finish other battle');
+   await command('delete',user.id,env,{code});return {ok:true,code,deleted:true};
+  }
+  if(c.status==='deleted')fail('character_deleted');
   if(c.status!=='active')fail('character_not_ready');
   if(body.newPin!=null||body.action==='delete')fail('account_action_not_supported');
   return execute({...body,code,pin:c.engine_pin},env);

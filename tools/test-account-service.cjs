@@ -4,9 +4,11 @@ let authenticated=true,verified=true,account='11111111-1111-4111-8111-1111111111
 const db={auth:{getUser:async()=>({data:{user:authenticated?{id:account,email:'qa@example.invalid',email_confirmed_at:verified?'2026-10-22':null}:null},error:!authenticated})},rpc:async(name,args)=>{
  if(name==='sb_player_account_command'){
   const {p_action:a,p_account:id,p_env:env,p_data:d}=args;
-  if(a==='list')return {data:rows.filter(c=>c.account_id===id&&c.env===env)};
+  if(a==='capacity')return {data:{used:rows.filter(c=>c.account_id===id&&c.status!=='deleted').length,limit:5}};
+  if(a==='list')return {data:rows.filter(c=>c.account_id===id&&c.env===env&&c.status!=='deleted')};
   if(a==='reserve'){let c=rows.find(c=>c.account_id===id&&c.env===env&&c.request_id===d.request_id);if(c){if(c.digest!==d.digest)return {error:{message:'request_payload_changed'}};return {data:c};}c={...d,account_id:id,env,name:d.draft.P.name,class_id:d.draft.P.cls,level:3,status:'creating'};rows.push(c);return {data:c};}
   const c=rows.find(c=>c.account_id===id&&c.env===env&&c.code===d.code);if(!c)return {error:{message:'character_not_owned'}};
+  if(a==='delete'){c.status='deleted';return {data:{ok:true,deleted:true}};}
   if(a==='activate'){c.status='active';c.draft=null;}return {data:c};
  }
  if(name==='sb_engine_snapshot')return {data:{mode:args.p_env,revision,tables:structuredClone(tables),receipt:receipts.get(args.p_request)}};
@@ -32,6 +34,10 @@ const call=(body,auth=true)=>ctx.handler.fetch(new Request('https://example.inva
  r=await call({...saveRequest,_sbRequest:crypto.randomUUID()});v=await r.json();assert.equal(v.error,'save_conflict','A stale device must never overwrite a newer save');
  r=await call({...saveRequest,expectedSaveAt:undefined,_sbRequest:crypto.randomUUID()});v=await r.json();assert.equal(v.error,'save_conflict','Version omission is not a bypass');
  r=await call({action:'load',code});v=await r.json();assert.equal(JSON.parse(v.data).P.gold,155);assert.equal(v.accountSaveAt,freshAt);
+ v=await (await call({action:'account_delete',code})).json();assert.equal(v.error,'delete_confirmation_required');
+ v=await (await call({action:'account_delete',code,confirm:true})).json();assert(v.ok,JSON.stringify(v));assert(v.deleted);
+ v=await (await call({action:'load',code})).json();assert.equal(v.error,'character_deleted');
+ v=await (await call({action:'account_delete',code,confirm:true})).json();assert(v.ok,'Retirement retry remains safe');
  account='22222222-2222-4222-8222-222222222222';r=await call({action:'load',code});assert.equal(r.status,403);assert.equal((await r.json()).error,'character_not_owned');
  r=await call({action:'account_list'});assert.equal((await r.json()).characters.length,0);
  const templates=vm.runInContext('accountTemplates',ctx);let combinations=0;

@@ -1013,10 +1013,10 @@ for(const [el,info] of Object.entries(EL)){
  if(!SK[el+'_p2'])SK[el+'_p2']={n:'พิฆาต'+info.n,t:'p',el,pw:185,mp:10,cd:1};
  if(!SK[el+'_m1'])SK[el+'_m1']={n:'เวท'+info.n,t:'m',el,pw:115,mp:5};
  if(!SK[el+'_m2'])SK[el+'_m2']={n:'มหาเวท'+info.n,t:'m',el,pw:190,mp:11,cd:1};
- if(['fire','electric','ground','water','flying'].includes(el))SK['enchant_'+el]={n:'ประทับดาบธาตุ'+info.n,t:'buff',tg:'self',enchant:el,tn:3,mp:7,cd:1};
+ if(['fire','water','flying'].includes(el))SK['enchant_'+el]={n:'ประทับดาบธาตุ'+info.n,t:'buff',tg:'self',enchant:el,tn:3,mp:7,cd:1};
 }
 CLS.gladiator.sk.push([10,'guard_physical'],[14,'guard_magic']);
-CLS.swordsman.sk.push(...['fire','electric','ground','water','flying'].map(el=>[8,'enchant_'+el]));
+CLS.swordsman.sk.push(...['fire','water','flying'].map(el=>[8,'enchant_'+el]));
 CLS.archer.sk.push([18,'bow_true']);CLS.gunner.sk.push([18,'gun_true']);
 CLS.mage.sk.push([4,'water_m1'],[7,'ground_m1'],[9,'flying_m1'],[20,'firestorm_dot'],[22,'whirlpool_dot']);
 CLS.merchant.sk.push([10,'hire_merc']);CLS.thief.sk.push([10,'shadow_clone']);CLS.summoner.sk.push([10,'summon_golem']);
@@ -1345,7 +1345,7 @@ function pvpDispatch_(d){try{
  return pvpView_(r,seat)
  }catch(e){return {ok:false,error:e.message||String(e),pvpVersion:1}}}
 
-function profileImage_(v){const s=String(v||'');return s.length<=16000&&/^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(s)?s:''}
+function profileImage_(v){return ''}
 function saveGame_(d){try{campFlush_();const old=JSON.parse(loadGameBase_(d).getContent());if(!old.ok&&old.error!=='notfound')return json_(old);const parsed=JSON.parse(d.data||'{}');if(!parsed.P)return json_({ok:false,error:'bad data'});const code=code_(d.code),c=campState_(code);if(old.ok&&!c.name){c.name=JSON.parse(old.data).P.name;campWrite_(c)}campAdjust_(parsed.P,c);worldApply(parsed.P,wbAccount_(code));stakeApply(parsed.P,stakeEvents_(code));carryNormalize_(parsed.P);parsed.P.profile=profileImage_(parsed.P.profile);const result=JSON.parse(saveGameBase_({...d,data:JSON.stringify(parsed),name:parsed.P.name}).getContent());return json_({...result,account:campAccount_(code)})}catch(e){return json_({ok:false,error:e.message||String(e)})}}
 function loadGame_(d){const result=JSON.parse(loadGameBase_(d).getContent());if(!result.ok)return json_(result);campFlush_();const data=JSON.parse(result.data);campAdjust_(data.P,campState_(code_(d.code)));worldApply(data.P,wbAccount_(code_(d.code)));stakeApply(data.P,stakeEvents_(code_(d.code)));carryNormalize_(data.P);return json_({...result,data:JSON.stringify(data),account:campAccount_(code_(d.code))})}
 /* Asynchronous camps: server runs every command; client never submits a victory. */
@@ -1616,8 +1616,8 @@ function guildOnline_(code){const a=guildRead_('o:'+code),p=communityProfiles_()
 function guildPulse_(code){const previous=guildRead_('o:'+code);if(!previous||Date.now()-previous.at>=60000)guildWrite_('o:'+code,{at:Date.now()});}
 function guildV1Credit_(code,id,points){if(!Number.isSafeInteger(points)||points<=0||guildRead_('e:'+id))return;guildTick_();const m=guildMember_(code);m.total+=points;const g=m.guildId&&guildRead_('g:'+m.guildId);let guildPoints=0;if(g&&!g.deleted&&g.members.includes(code)&&guildOnline_(code)){g.score+=points;m.monthPoints+=points;guildPoints=points;guildWrite_('g:'+g.id,g);}guildWrite_('m:'+code,m);guildWrite_('e:'+id,{id,code,points,guildPoints,guildId:guildPoints?g.id:'',at:Date.now()});}
 function guildName_(name){name=String(name||'').trim().normalize('NFKC');if(name.length<2||name.length>24||/[<>\x00-\x1f]/.test(name))pvpFail_('guild bad name');if(guildRows_('g:').some(g=>g.name.toLocaleLowerCase()===name.toLocaleLowerCase()))pvpFail_('guild name exists');return name;}
-function guildAvatar_(avatar){if(!avatar)return '';if(typeof avatar!=='string'||avatar.length>32000||!/^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(avatar))pvpFail_('guild bad image');return avatar;}
-function guildV1View_(code){const me=guildMember_(code),g=me.guildId&&guildRead_('g:'+me.guildId),profiles=communityProfiles_(),names=c=>profiles.find(p=>p.code===c);const publicGuild=g=>({id:g.id,name:g.name,avatar:g.avatar,score:g.score,count:g.members.length,leader:names(g.leader)?.name||'หัวหน้ากิล',createdAt:g.createdAt});return {ok:true,guildVersion:1,rules:GUILD_RULES,activity:me.total,monthPoints:me.monthPoints,month:guildMonth_(),guild:g&&!g.deleted?{...publicGuild(g),isLeader:g.leader===code,canRename:g.renameMonth!==guildMonth_(),canSetImage:g.leader===code&&!g.avatar,members:g.members.map(c=>{const p=names(c),m=guildMember_(c);return {id:guildPublicId_(c),name:p?.name||'ผู้เล่น',lv:p?.lv||1,cls:p?.cls||'',avatar:p?.avatar||'',leader:g.leader===c,me:c===code,online:guildOnline_(c),points:m.monthPoints};})}:null,leaderboard:guildRank_().slice(0,100).map((g,i)=>({...publicGuild(g),rank:i+1})),rewards:guildRows_('r:').filter(r=>r.code===code).map(({code,...r})=>r),previous:guildRows_('s:').slice(-1)[0]||null,coupons:communityCoupon_(code).coupons,account:campAccount_(code)};}
+function guildAvatar_(avatar){if(avatar)pvpFail_('image upload disabled');return '';}
+function guildV1View_(code){const me=guildMember_(code),g=me.guildId&&guildRead_('g:'+me.guildId),profiles=communityProfiles_(),names=c=>profiles.find(p=>p.code===c);const publicGuild=g=>({id:g.id,name:g.name,avatar:'',score:g.score,count:g.members.length,leader:names(g.leader)?.name||'หัวหน้ากิล',createdAt:g.createdAt});return {ok:true,guildVersion:1,rules:GUILD_RULES,activity:me.total,monthPoints:me.monthPoints,month:guildMonth_(),guild:g&&!g.deleted?{...publicGuild(g),isLeader:g.leader===code,canRename:g.renameMonth!==guildMonth_(),canSetImage:g.leader===code&&!g.avatar,members:g.members.map(c=>{const p=names(c),m=guildMember_(c);return {id:guildPublicId_(c),name:p?.name||'ผู้เล่น',lv:p?.lv||1,cls:p?.cls||'',avatar:p?.avatar||'',leader:g.leader===c,me:c===code,online:guildOnline_(c),points:m.monthPoints};})}:null,leaderboard:guildRank_().slice(0,100).map((g,i)=>({...publicGuild(g),rank:i+1})),rewards:guildRows_('r:').filter(r=>r.code===code).map(({code,...r})=>r),previous:guildRows_('s:').slice(-1)[0]||null,coupons:communityCoupon_(code).coupons,account:campAccount_(code)};}
 function guildV1Dispatch_(d){const auth=pvpSaveAuth_(d),code=auth.code;communityAllowed_(code);guildTick_();guildPulse_(code);const m=guildMember_(code),g=m.guildId&&guildRead_('g:'+m.guildId);const leader=()=>{if(!g||g.deleted||g.leader!==code)pvpFail_('guild leader required');};const target=()=>g.members.find(c=>guildPublicId_(c)===d.target);
 if(d.action==='guild_create'){if(g&&!g.deleted)pvpFail_('guild already member');const name=guildName_(d.name),avatar=guildAvatar_(d.avatar);communityFlush_(code);const c=communitySyncCredits_(code);if(c.coupons<GUILD_RULES.createCost)pvpFail_('not enough coupons');c.coupons-=GUILD_RULES.createCost;communityWriteCoupon_(c);const id=pvpId_();guildWrite_('g:'+id,{id,name,avatar,leader:code,members:[code],score:0,createdAt:Date.now(),renameMonth:guildMonth_(),deleted:false});m.guildId=id;m.joinedAt=Date.now();m.monthPoints=0;guildWrite_('m:'+code,m);}
 else if(d.action==='guild_join'){if(g&&!g.deleted)pvpFail_('guild already member');const dest=guildRead_('g:'+String(d.guildId||''));if(!dest||dest.deleted)pvpFail_('guild not found');if(dest.members.length>=GUILD_RULES.maxMembers)pvpFail_('guild full');dest.members.push(code);m.guildId=dest.id;m.joinedAt=Date.now();m.monthPoints=0;guildWrite_('g:'+dest.id,dest);guildWrite_('m:'+code,m);}
@@ -1823,7 +1823,7 @@ PAS.class10_barrier={n:'บาเรียเวทย์ · Lv10',d:'เริ�
 PAS.class10_range={n:'ทิ้งระยะห่าง · Lv10',d:'ได้ลำดับแรกในรอบเปิดการต่อสู้ หากเจอสายมือปืนด้วยกันวัดความเร็ว'};
 PAS.class10_parry={n:'ตั้งสมาธิปัดป้อง',d:'ป้องกันท่าโจมตี 1 ท่า รวมทุกฮิต แล้วสมาธิหาย ระยะเวลา 3 เทิร์น'};
 PAS.class10_stealth={n:'ล่องหน',d:'ไม่เป็นเป้าท่าเดี่ยว 3 เทิร์น โดนท่าหมู่ได้ หายเมื่อเริ่มโจมตี ใช้บัฟและยาได้'};
-SK.class10_parry={n:'ตั้งสมาธิปัดป้อง',t:'buff',tg:'self',pas:'class10_parry',tn:3,mp:8,cd:5};
+SK.class10_parry={n:'ตั้งสมาธิปัดป้อง',t:'buff',tg:'self',pas:'class10_parry',tn:3,mp:8,cd:2};
 SK.class10_stealth={n:'ล่องหน',t:'buff',tg:'self',pas:'class10_stealth',tn:3,mp:10,cd:5};
 CLS.swordsman.sk.push([10,'class10_parry']);CLS.archer.sk.push([10,'class10_stealth']);
 CLS.mage.pas.push('class10_barrier');CLS.gunner.pas.push('class10_range');
@@ -1918,7 +1918,7 @@ PAS.class10_stealth.d='ไม่เป็นเป้าท่าเดี่ย
 const classRefreshWorld=wbAuto_;wbAuto_=function(u){const id=chooseAutoForm(u);return id?{id,friend:u.id}:classRefreshWorld(u);};
 
 // Follow-up balance: one-battle archer veil, healing parry, reflect AI, free hire.
-SK.class10_parry.cd=3;
+SK.class10_parry.cd=2;
 PAS.class10_parry.d='ป้องกันท่าโจมตี 1 ท่า รวมทุกฮิต และฟื้น HP เท่าดาเมจที่ป้องกันได้ ไม่เกิน HP สูงสุด อยู่ 3 เทิร์น คูลดาวน์ 3 เทิร์น';
 PAS.class10_stealth.d='Lv10: ล่องหนแบบพาสซีฟ ป้องกันท่าโจมตีเดี่ยว 1 ท่าต่อการต่อสู้ ไม่กันท่าหมู่ ไม่เพิ่มคริติคอล';
 CLS.archer.sk=CLS.archer.sk.filter(([,id])=>id!=='class10_stealth');
@@ -2007,7 +2007,7 @@ function installForestRiddleCraft(){
 installForestRiddleCraft();
 const forestRiddleGachaPools=gachaPools;gachaPools=function(){const p=forestRiddleGachaPools();for(const k of ['gear','craft','legendGear'])if(p[k])p[k]=p[k].filter(id=>!EQ[id]?.eventCraft);return p;};
 
-return {dispatch(packet){return JSON.parse((packet===null?doGet():doPost({postData:{contents:JSON.stringify(packet)}})).getContent());}};
+return {dispatch(packet){if(packet?.action==='account_retire_check'){try{const auth=pvpSaveAuth_(packet);if(pvpFindActive_(auth.code)||wbExisting_(auth.code))return {ok:false,error:'finish other battle'};return {ok:true};}catch(e){return {ok:false,error:e.message||String(e)};}}return JSON.parse((packet===null?doGet():doPost({postData:{contents:JSON.stringify(packet)}})).getContent());}};
 }
 
 const SB_TABLES=['Leaderboard','Saves','PVPRooms','PVPCommands','Camps','CampTransfers','WorldRooms','WorldEntries','WorldRewards','PvpWagers','Coupons','PlayerDirectory','CouponCredits','GachaTransactions','Friends','FriendChallenges','GuildState'];
@@ -2067,4 +2067,5 @@ function createGameService({rpc,hash=sbHash,utilities=createUtilities(s=>sha256(
   return {ok:false,error:'busy'};
  };
 }
+
 

@@ -281,7 +281,7 @@ for(const [el,info] of Object.entries(EL)){
  if(!SK[el+'_p2'])SK[el+'_p2']={n:'พิฆาต'+info.n,t:'p',el,pw:185,mp:10,cd:1};
  if(!SK[el+'_m1'])SK[el+'_m1']={n:'เวท'+info.n,t:'m',el,pw:115,mp:5};
  if(!SK[el+'_m2'])SK[el+'_m2']={n:'มหาเวท'+info.n,t:'m',el,pw:190,mp:11,cd:1};
- if(['fire','electric','ground','water','flying'].includes(el))SK['enchant_'+el]={n:'ประทับดาบธาตุ'+info.n,t:'buff',tg:'self',enchant:el,tn:3,mp:7,cd:1};
+ if(['fire','water','flying'].includes(el))SK['enchant_'+el]={n:'ประทับดาบธาตุ'+info.n,t:'buff',tg:'self',enchant:el,tn:3,mp:7,cd:1};
 }
 // @soulbeast-end 0082-ForOfStatement
 // @soulbeast-unit 0083-CLS-gladiator
@@ -290,7 +290,7 @@ CLS.gladiator.sk.push([10,'guard_physical'],[14,'guard_magic']);
 // @soulbeast-end 0083-CLS-gladiator
 // @soulbeast-unit 0084-CLS-swordsman
 
-CLS.swordsman.sk.push(...['fire','electric','ground','water','flying'].map(el=>[8,'enchant_'+el]));
+CLS.swordsman.sk.push(...['fire','water','flying'].map(el=>[8,'enchant_'+el]));
 // @soulbeast-end 0084-CLS-swordsman
 // @soulbeast-unit 0085-CLS-archer
 

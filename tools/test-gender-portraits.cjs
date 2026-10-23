@@ -36,8 +36,8 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
   r(`S.P.cls='${j.parent}';S.P.gender='${gender}';S.P.lv=60;handlers.dopromote('${j.id}');`);
   assert.equal(r('S.P.cls'),j.id);assert.equal(r('S.P.gender'),gender);
  }
- r("IMG.player='data:image/png;base64,TEST_CUSTOM';S.P.gender='female';");assert(r("portrait('player',64)").includes('TEST_CUSTOM'));r('delete IMG.player;');
+ r("IMG.player='data:image/png;base64,TEST_CUSTOM';S.P.gender='female';");assert(!r("portrait('player',64)").includes('TEST_CUSTOM'),'Custom portraits are disabled');r('delete IMG.player;');
  r("S.screen='start';S.ui={gender:'female',introSeen:true};");assert(r('vStart()').includes('data-a="genderpick"'));assert(r('vStart()').includes('aria-pressed="true"'));
  r("S.screen='town';var priorGender=S.P.gender;handlers.genderpick('male');");assert.equal(r('S.P.gender'),r('priorGender'));
- console.log('PASS '+file+': 126 class/gender portraits, 18 creation choices, save reload, all promotion edges, legacy/custom art, no stat changes');
+ console.log('PASS '+file+': 126 class/gender portraits, 18 creation choices, save reload, all promotion edges, legacy official art, blocked custom art, no stat changes');
 }

@@ -5,7 +5,7 @@ PAS.class10_barrier={n:'บาเรียเวทย์ · Lv10',d:'เริ�
 PAS.class10_range={n:'ทิ้งระยะห่าง · Lv10',d:'ได้ลำดับแรกในรอบเปิดการต่อสู้ หากเจอสายมือปืนด้วยกันวัดความเร็ว'};
 PAS.class10_parry={n:'ตั้งสมาธิปัดป้อง',d:'ป้องกันท่าโจมตี 1 ท่า รวมทุกฮิต แล้วสมาธิหาย ระยะเวลา 3 เทิร์น'};
 PAS.class10_stealth={n:'ล่องหน',d:'ไม่เป็นเป้าท่าเดี่ยว 3 เทิร์น โดนท่าหมู่ได้ หายเมื่อเริ่มโจมตี ใช้บัฟและยาได้'};
-SK.class10_parry={n:'ตั้งสมาธิปัดป้อง',t:'buff',tg:'self',pas:'class10_parry',tn:3,mp:8,cd:5};
+SK.class10_parry={n:'ตั้งสมาธิปัดป้อง',t:'buff',tg:'self',pas:'class10_parry',tn:3,mp:8,cd:2};
 SK.class10_stealth={n:'ล่องหน',t:'buff',tg:'self',pas:'class10_stealth',tn:3,mp:10,cd:5};
 CLS.swordsman.sk.push([10,'class10_parry']);CLS.archer.sk.push([10,'class10_stealth']);
 CLS.mage.pas.push('class10_barrier');CLS.gunner.pas.push('class10_range');

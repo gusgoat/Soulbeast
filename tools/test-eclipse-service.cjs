@@ -4,7 +4,8 @@ let authenticated=true,verified=true,account='11111111-1111-4111-8111-1111111111
 const db={auth:{getUser:async()=>({data:{user:authenticated?{id:account,email:'qa@example.invalid',email_confirmed_at:verified?'2026-10-22':null}:null},error:!authenticated})},rpc:async(name,args)=>{
  if(name==='sb_player_account_command'){
   const {p_action:a,p_account:id,p_env:env,p_data:d}=args;
-  if(a==='list')return {data:rows.filter(c=>c.account_id===id&&c.env===env)};
+  if(a==='capacity')return {data:{used:rows.filter(c=>c.account_id===id&&c.status!=='deleted').length,limit:5}};
+  if(a==='list')return {data:rows.filter(c=>c.account_id===id&&c.env===env&&c.status!=='deleted')};
   if(a==='reserve'){let c=rows.find(c=>c.account_id===id&&c.env===env&&c.request_id===d.request_id);if(c){if(c.digest!==d.digest)return {error:{message:'request_payload_changed'}};return {data:c};}c={...d,account_id:id,env,name:d.draft.P.name,class_id:d.draft.P.cls,level:3,status:'creating'};rows.push(c);return {data:c};}
   const c=rows.find(c=>c.account_id===id&&c.env===env&&c.code===d.code);if(!c)return {error:{message:'character_not_owned'}};
   if(a==='activate'){c.status='active';c.draft=null;}return {data:c};

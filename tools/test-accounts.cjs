@@ -12,7 +12,8 @@ const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
  const rows=[],saves=new Map(),calls=[],u={id:'account-a',email:'a@example.invalid',email_confirmed_at:'2026-10-22'},other={...u,id:'account-b'};
  let failActivate=false;
  const command=async(action,id,env,d)=>{
-  calls.push({action,id,env});if(action==='list')return rows.filter(c=>c.account_id===id&&c.env===env);
+  calls.push({action,id,env});if(action==='capacity')return {used:rows.filter(c=>c.account_id===id&&c.status!=='deleted').length,limit:5};
+  if(action==='list')return rows.filter(c=>c.account_id===id&&c.env===env);
   if(action==='reserve'){let c=rows.find(c=>c.account_id===id&&c.env===env&&c.request_id===d.request_id);if(c){if(c.digest!==d.digest)throw Error('request_payload_changed');return c;}c={...d,account_id:id,env,status:'creating',name:d.draft.P.name,class_id:d.draft.P.cls,level:3};rows.push(c);return c;}
   const c=rows.find(c=>c.account_id===id&&c.env===env&&c.code===d.code);if(!c)throw Error('character_not_owned');
   if(action==='activate'){if(failActivate){failActivate=false;throw Error('temporary network');}c.status='active';c.draft=null;}return c;

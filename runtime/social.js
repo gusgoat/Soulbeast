@@ -19,7 +19,7 @@ const LBTAB={score:{n:'คะแนนสะสม',v:r=>fmt(r.score||0)+' ค�
 // @soulbeast-unit 0325-lbEntry
 
 function lbEntry(){const P=S.P,zm=clamp(P.zoneMax,1,6),seen=Object.keys(P.seen).filter(k=>SP[k]&&!SP[k].noseal).length;
- return {score:S.P.score||0,profile:S.P.profile||'',gender:P.gender,id:pid(),name:String(P.name).slice(0,20),cls:P.cls,clsName:CLS[P.cls].n,lv:P.lv,exp:P.exp,zone:zm,zoneName:ZN[zm-1].n,seen,caught:Object.keys(P.caught).filter(k=>SP[k]).length,legend:Object.keys(P.legend||{}).length,clear:P.cleared||0}}
+ return {score:S.P.score||0,profile:'',gender:P.gender,id:pid(),name:String(P.name).slice(0,20),cls:P.cls,clsName:CLS[P.cls].n,lv:P.lv,exp:P.exp,zone:zm,zoneName:ZN[zm-1].n,seen,caught:Object.keys(P.caught).filter(k=>SP[k]).length,legend:Object.keys(P.legend||{}).length,clear:P.cleared||0}}
 // @soulbeast-end 0325-lbEntry
 // @soulbeast-unit 0327-lbPost
 
@@ -50,7 +50,7 @@ function vLeader(){const tab=S.ui.lb||'score',T=LBTAB[tab];
  return `<div class="stack">${head}<p class="sub" style="margin:0">20 อันดับแรกและอันดับของคุณ · บันทึกลง เซิร์ฟเวอร์ออนไลน์ อัตโนมัติเมื่อกลับเข้าเมือง (ไม่เกินนาทีละครั้ง)</p>
  <div class="tabs">${Object.entries(LBTAB).map(([k,t])=>`<button class="${tab===k?'on':''}" data-a="lbtab" data-v="${k}">${t.n}</button>`).join('')}</div>
  ${LB.err?`<p class="sub" style="margin:0;color:var(--bad)">${LB.err}</p>`:''}
- ${LB.rows===null||LB.busy&&!rows.length?'<p class="sub">กำลังโหลดอันดับ...</p>':rows.length?`<div class="lst">${rows.map((r,i)=>`<div class="item lbrow ${r.pid===me?'me':''}"><span class="lbn num">${r.displayRank<=3?['🥇','🥈','🥉'][r.displayRank-1]:r.displayRank}</span>${r.profile?`<img src="${esc(r.profile)}" alt="รูปโปรไฟล์" width="38" height="38" style="border-radius:50%">`:portrait('cls:'+(CLS[r.cls]?r.cls:'swordsman'),34,{gender:r.gender,legacy:!['male','female'].includes(r.gender)})}<div class="grow"><b>${esc(r.name||'ผู้ผนึก')}${r.pid===me?' <span class="badge">คุณ</span>':''}</b><small>${esc(r.clsName||'')} · Lv ${r.level} · ค้นพบ ${r.seen} · จับ ${r.caught}${r.clears?' · 🏆':''}</small></div><b class="num" style="color:var(--gold);text-align:right">${esc(T.v(r))}</b></div>`).join('')}</div>`:'<p class="sub">ยังไม่มีใครอยู่ในกระดาน</p>'}
+ ${LB.rows===null||LB.busy&&!rows.length?'<p class="sub">กำลังโหลดอันดับ...</p>':rows.length?`<div class="lst">${rows.map((r,i)=>`<div class="item lbrow ${r.pid===me?'me':''}"><span class="lbn num">${r.displayRank<=3?['🥇','🥈','🥉'][r.displayRank-1]:r.displayRank}</span>${portrait('cls:'+(CLS[r.cls]?r.cls:'swordsman'),34,{gender:r.gender,legacy:!['male','female'].includes(r.gender)})}<div class="grow"><b>${esc(r.name||'ผู้ผนึก')}${r.pid===me?' <span class="badge">คุณ</span>':''}</b><small>${esc(r.clsName||'')} · Lv ${r.level} · ค้นพบ ${r.seen} · จับ ${r.caught}${r.clears?' · 🏆':''}</small></div><b class="num" style="color:var(--gold);text-align:right">${esc(T.v(r))}</b></div>`).join('')}</div>`:'<p class="sub">ยังไม่มีใครอยู่ในกระดาน</p>'}
  <div class="row wrap" style="gap:8px"><button class="btn sm" data-a="lbload" ${LB.busy?'disabled':''}>${LB.busy?'กำลังโหลด...':'รีเฟรช'}</button>${S.P.lbOff?'<button class="btn sm pri" data-a="lbtoggle">แสดงชื่อของฉันในกระดาน</button>':'<button class="btn sm" data-a="lbtoggle">ซ่อนชื่อของฉันจากกระดาน</button>'}</div></div>`}
 // @soulbeast-end 0330-vLeader
 // @soulbeast-unit 0570-COMMUNITY
@@ -88,7 +88,7 @@ function communityApplyData(data){if(!data)return;const raw=JSON.parse(data),pin
 // @soulbeast-end 0578-communityApplyData
 // @soulbeast-unit 0589-communityAvatar
 
-function communityAvatar(p,size=48){return p.avatar?`<img class="friend-avatar" width="${size}" height="${size}" src="${esc(p.avatar)}" alt="">`:portrait('cls:'+p.cls,size,{gender:p.gender,legacy:!['male','female'].includes(p.gender)});}
+function communityAvatar(p,size=48){return portrait('cls:'+p.cls,size,{gender:p.gender,legacy:!['male','female'].includes(p.gender)});}
 // @soulbeast-end 0589-communityAvatar
 // @soulbeast-unit 0590-communityFriendCard
 

@@ -14,7 +14,9 @@ jobs:
         with:
           node-version: '24'
       - name: Install pinned build parser
-        run: npm ci --prefix tools/runtime-build --ignore-scripts --no-audit --no-fund
+        run: |
+          npm ci --prefix tools/runtime-build --ignore-scripts --no-audit --no-fund
+          npm ci --prefix tools/play-tests --ignore-scripts --no-audit --no-fund
       - name: Verify canonical source and reference output
         run: npm test
       - name: Verify email-account beta and exact gateway

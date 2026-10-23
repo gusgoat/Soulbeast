@@ -197,6 +197,11 @@
       "file": "unitFrames.js",
       "description": "Profession, element and boss card border ornamentation",
       "units": 1
+    },
+    "accountManagement": {
+      "file": "accountManagement.js",
+      "description": "Character navigation, official artwork policy and creator credits",
+      "units": 1
     }
   },
   "order": [
@@ -1291,6 +1296,7 @@
     "1090-webIntro",
     "1091-battleScenery",
     "1092-unitFrames",
+    "1093-accountManagement",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9280,6 +9286,13 @@
         "UnitFrames"
       ],
       "type": "UnitCardFrames"
+    },
+    "1093-accountManagement": {
+      "module": "accountManagement",
+      "names": [
+        "AccountManagement"
+      ],
+      "type": "AccountManagement"
     }
   },
   "trailer": "\r\n\r\n"

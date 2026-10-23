@@ -3,10 +3,10 @@ const g=require('./game-context.cjs')('build/staging-index.html');
 const run=g.run;
 const art=JSON.parse(fs.readFileSync('content/individual-skill-art.json','utf8')).skills;
 const skills=JSON.parse(run('JSON.stringify(SK)'));
-assert.deepEqual(Object.keys(skills).filter(k=>k.startsWith('enchant_')).sort(),['electric','fire','flying','ground','water'].map(e=>'enchant_'+e).sort());
+assert.deepEqual(Object.keys(skills).filter(k=>k.startsWith('enchant_')).sort(),['fire','flying','water'].map(e=>'enchant_'+e).sort());
 for(const id of Object.keys(skills))assert(art.some(a=>a.id===id),'Missing artwork '+id);
 const hashes=new Set(),locations=new Set();
-for(const a of art){
+for(const a of art.filter(a=>skills[a.id])){
  const location=a.path||a.kind+':'+a.index;assert(!locations.has(location),'Reused skill art '+a.id);locations.add(location);
  if(a.path){const buf=fs.readFileSync(a.path),hash=crypto.createHash('sha256').update(buf).digest('hex');assert.equal(hash,a.sha256);assert(!hashes.has(hash),'Identical image '+a.id);hashes.add(hash);}
  const html=run(`skillPicture(null,SK[${JSON.stringify(a.id)}],${JSON.stringify(a.id)})`);
@@ -41,4 +41,4 @@ run(`Sound.fx=()=>{};ExtraAudio.play=()=>{};ExtraAudio.skill=()=>{};Math.random=
  var testSkill={n:'ไฟทดสอบ',t:'m',el:'fire',pw:100,acc:100};
  hitOne(attacker,testSkill,victim,1);var ordinary=100000-victim.hp;victim.hp=100000;attacker.enchant='electric';hitOne(attacker,testSkill,victim,1);var infused=100000-victim.hp;`);
 assert(run('ordinary>0'));assert(Math.abs(run('infused-ordinary*2'))<=1,'Magic damage must include infused electricity');
-console.log('PASS distinct artwork for all '+Object.keys(skills).length+' skills + defend; five enchantments; physical/magic/hybrid damage, duplicate/neutral elements, immunities, levitate, badges and server parity.');
+console.log('PASS distinct artwork for all '+Object.keys(skills).length+' skills + defend; three sword enchantments; physical/magic/hybrid damage, duplicate/neutral elements, immunities, levitate, badges and server parity.');

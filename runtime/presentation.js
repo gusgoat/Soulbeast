@@ -104,7 +104,7 @@ function unitPortrait(u,size,opts={}){
  return portrait(opts.own?'player':'cls:'+u.cls,size,{gender,legacy:!valid});
 }
 function portrait(key,size,opts={}){
- let em='?',ec='#d9b35b',img=IMG[key+':'+(opts.form||0)]||IMG[key];
+ let em='?',ec='#d9b35b',img=null;
  if(key==='player'){em=CLS[baseOf(S.P.cls)].em}
  else if(key&&key.startsWith('npc:')){em=CLS[baseOf(key.slice(4))].em;ec='#b8a27a'}
  else if(key&&key.startsWith('form:')){const f=FORMS[key.slice(5)];em=f.em;ec=EL[f.t[0]].c;img=null}
