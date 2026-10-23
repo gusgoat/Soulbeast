@@ -17,7 +17,7 @@
 <title>ตำนานผนึกอสูร</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
-<link rel="stylesheet" href="./game-styles.93f7701b25db36d9.css">
+<link rel="stylesheet" href="./game-styles.e6286cb011a5e0ed.css">
 
 <div id="app"></div>
 <div id="vfx" aria-hidden="true"></div>
@@ -37,7 +37,7 @@
 <script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
 <script src="./game-data-secrets.0f9eceacb2511a0a.js"></script>
 <script src="./game-data-narrative.47d61b2cfc64f9d8.js"></script>
-<script src="./game-app.8bf99d371ee49cba.js"></script>
+<script src="./game-app.b479e31a740ba4e2.js"></script>
 
 <script>Tutorial.clear();Sound.fx=()=>{};S={"ver":6,"screen":"town","ui":{},"zone":null,"battle":null,"P":{"name":"ทดสอบ","cls":"swordsman","gender":"male","lv":3,"exp":0,"gold":150,"pts":{},"free":10,"eq":{"weapon":"wp_sword0"},"owned":[],"items":{"pot":5,"seal1":5,"eth":2,"antidote":1,"calm":1},"parts":{},"pets":[{"uid":1,"sp":"mandrake","lv":3,"form":0,"exp":0,"pts":{},"free":6,"hp":64,"mp":32}],"party":[1],"legend":{},"zoneMax":1,"arena":{},"seen":{"mandrake":1},"caught":{"mandrake":1},"uid":2,"hp":83,"mp":25,"carried":[1],"packVersion":1,"seenForms":{"mandrake":[0]},"discoveryVersion":1,"code":"CHECKTEST2345"}};delete S.P.tutorial;S.P.cleared=1;GACHA.coupons=10;GACHA.rarePity=0;GACHA.legendPity=0;GACHA.totalDraws=0;const newBeasts=["legend2_aegis_dragon","legend2_tricephalos","legend2_aurorion","legend2_abyssarch","legend2_selestia","legend2_aerelion","legend2_myriapod","legend2_yggwarden"],newGear=["ec2_armor","ec2_gloves","ec2_boots","ec2_belt","ec2_bracelet","ec2_ring","ec2_necklace","ec2_crown"];const lang=new URLSearchParams(location.search).get('lang');if(['en','zh-CN'].includes(lang))GAME_LANGUAGE=lang;render=function(){document.getElementById('app').innerHTML='<main class="eclipse-preview stack"><h1 translate="no">Soulbeast · Eclipse</h1>'+languagePanel()+'<section class="preview-grid">'+newBeasts.map(id=>'<article class="card stack"><img class="preview-beast" src="'+SP[id].art+'"><h3>'+esc(SP[id].n)+'</h3><div>'+tChips(SP[id].t)+'</div><p>'+PAS[SP[id].pas].d+'</p>'+SP[id].sk.filter(k=>["aegis_challenge","mist_sig_legend2_aegis_dragon","tricephal_breath","mist_sig_legend2_tricephalos","aurora_spear","mist_sig_legend2_aurorion","abyss_rend","mist_sig_legend2_abyssarch","selestia_blessing","mist_sig_legend2_selestia","aerelion_rune","mist_sig_legend2_aerelion","myriapod_venom","mist_sig_legend2_myriapod","ygg_rootguard","mist_sig_legend2_yggwarden"].includes(k)).map(k=>skillRow(k)).join('')+skillRow(SP[id].sig)+'</article>').join('')+'</section><section class="preview-grid">'+newGear.map(id=>'<article class="card row">'+itemIcon(id,100)+'<div><h3>'+EQ[id].n+'</h3><p>'+statLine(EQ[id].st)+'</p><p>'+PAS[EQ[id].pas].d+'</p></div></article>').join('')+'</section>'+vGacha()+'</main>';applyGameLanguage(document.getElementById('app'));};render();document.addEventListener('click',e=>{if(e.target.closest('[data-a]')){e.preventDefault();e.stopImmediatePropagation();}},true);</script></body>
 </html>

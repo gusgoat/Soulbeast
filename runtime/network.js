@@ -2,7 +2,7 @@
 // Build-time module: shared legacy scope; execution order is in manifest.json.
 // @soulbeast-unit 0233-onlineSkillEffects
 
-function onlineSkillEffects(before,after,screen){if(!before||!after||S.screen!==screen||!after.battle)return;if(after.rev<=before.rev&&(after.battle.turns||0)<=(before.battle?.turns||0))return;const fx=after.battle.effects||[];if(!fx.length)return;VQ.push(...fx.slice(-64));(window.requestAnimationFrame||setTimeout)(flushVfx);}
+function onlineSkillEffects(before,after,screen){if(!before||!after||S.screen!==screen||!after.battle)return;if(after.rev<=before.rev&&(after.battle.turns||0)<=(before.battle?.turns||0))return;const fx=after.battle.effects||[];if(!fx.length)return;VQ.push(...BattleEffects.enrich(fx.slice(-64),before.battle?.cur));(window.requestAnimationFrame||setTimeout)(flushVfx);}
 // @soulbeast-end 0233-onlineSkillEffects
 // @soulbeast-unit 0326-sheetRequest
 

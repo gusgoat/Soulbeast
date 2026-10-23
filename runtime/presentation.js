@@ -131,7 +131,7 @@ const bar=(v,m,cls='')=>`<div class="bar ${cls} ${!cls&&v/m<.3?'low':''}"><i sty
 // @soulbeast-unit 0217-VQ-vfx
 
 /* ---- skill visual effects (queued during battle logic, played after each render) ---- */
-const VQ=[],vfx=(k,id,o={})=>{if(S.battle)VQ.push({k,id,...o})};
+const VQ=[],VFX_CONTEXT=[],vfx=(k,id,o={})=>{if(S.battle)VQ.push({k,id,...VFX_CONTEXT.at(-1),...o})};
 // @soulbeast-end 0217-VQ-vfx
 // @soulbeast-unit 0219-SIGNATURE_VFX
 

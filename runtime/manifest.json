@@ -202,6 +202,11 @@
       "file": "accountManagement.js",
       "description": "Character navigation, official artwork policy and creator credits",
       "units": 1
+    },
+    "battleEffects": {
+      "file": "battleEffects.js",
+      "description": "Deterministic source-to-target skill choreography",
+      "units": 1
     }
   },
   "order": [
@@ -1297,6 +1302,7 @@
     "1091-battleScenery",
     "1092-unitFrames",
     "1093-accountManagement",
+    "1094-battleEffects",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9293,6 +9299,13 @@
         "AccountManagement"
       ],
       "type": "AccountManagement"
+    },
+    "1094-battleEffects": {
+      "module": "battleEffects",
+      "names": [
+        "BattleEffects"
+      ],
+      "type": "BattleSkillChoreography"
     }
   },
   "trailer": "\r\n\r\n"

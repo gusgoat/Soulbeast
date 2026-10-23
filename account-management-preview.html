@@ -159,6 +159,7 @@ nav.bottom button.lock{opacity:.35}
 .order .grow{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .lgn{color:var(--gold);font-weight:600}
 #vfx{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+.battle-fx-owned{pointer-events:none!important}.battle-projectile{width:22px;height:16px;border-radius:70% 35% 35% 70%;background:radial-gradient(ellipse at 75% 50%,#fff 0 12%,var(--a) 20%,var(--c) 55%,transparent 75%);filter:drop-shadow(0 0 7px var(--c));box-shadow:-12px 0 15px var(--c)}.projectile-arrow{width:42px;height:12px;border-radius:0;clip-path:polygon(0 25%,70% 30%,70% 0,100% 50%,70% 100%,70% 70%,0 75%);background:linear-gradient(90deg,transparent,var(--c),#fff)}.projectile-bullet{width:30px;height:7px;background:linear-gradient(90deg,transparent,var(--c),#fff);box-shadow:-16px 0 12px var(--c)}.projectile-shuriken{width:28px;height:28px;border-radius:0;clip-path:polygon(50% 0,63% 37%,100% 50%,63% 63%,50% 100%,37% 63%,0 50%,37% 37%);background:linear-gradient(45deg,var(--c),#fff,var(--c))}.projectile-flask{width:18px;height:26px;border:2px solid var(--a);border-radius:25% 25% 45% 45%;background:linear-gradient(transparent 25%,var(--c) 30%,var(--a))}.battle-skill-beam{height:10px;width:var(--distance);transform-origin:0 50%;background:linear-gradient(transparent,var(--c),#fff,var(--c),transparent);filter:drop-shadow(0 0 6px var(--c));border-radius:50%;opacity:.85}.battle-portrait-flight{border-radius:50%;z-index:3;filter:drop-shadow(0 0 7px var(--c));box-shadow:0 0 0 2px var(--a),0 0 20px var(--c);background:#102031}.battle-portrait-flight>.pt,.battle-portrait-flight>.battle-face{width:100%;height:100%;margin:0}.battle-skill-emblem{width:62px;height:62px;opacity:.75;animation:battle-emblem .85s ease-out both;filter:drop-shadow(0 0 7px var(--c));z-index:1}.battle-skill-emblem .skill-picture{width:100%;height:100%;min-width:0;border-radius:50%;mask-image:radial-gradient(circle,#000 35%,transparent 72%)}@keyframes battle-emblem{0%{opacity:0;transform:translate(-50%,-50%) scale(.35)}30%{opacity:.8;transform:translate(-50%,-65%) scale(1)}100%{opacity:0;transform:translate(-50%,-90%) scale(1.2)}}
 .vx{position:absolute;left:0;top:0;transform:translate(-50%,-50%);will-change:transform,opacity}
 .vx-burst{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle,#fff 0,var(--c) 28%,color-mix(in srgb,var(--c) 40%,transparent) 48%,transparent 70%);animation:vburst .55s ease-out forwards}
 @keyframes vburst{0%{transform:translate(-50%,-50%) scale(.2);opacity:1}100%{transform:translate(-50%,-50%) scale(1.7);opacity:0}}
@@ -1958,7 +1959,7 @@ function itemExtra(it){return `${it.pas?' · '+PAS[it.pas].n:''}${it.ws?' · ส
 /* ================= BATTLE ENGINE ================= */
 const B=()=>S.battle;
 /* ---- skill visual effects (queued during battle logic, played after each render) ---- */
-const VQ=[],vfx=(k,id,o={})=>{if(S.battle)VQ.push({k,id,...o})};
+const VQ=[],VFX_CONTEXT=[],vfx=(k,id,o={})=>{if(S.battle)VQ.push({k,id,...VFX_CONTEXT.at(-1),...o})};
 const VSKID=new Map(Object.entries(SK).map(([id,sk])=>[sk,id]));
 const SIGNATURE_VFX={
  s_demon:['eclipse','✦','#b783ff'],s_phoenix:['phoenix','✧','#ffb347'],s_garuda:['wing','羽','#ffd976'],s_naga:['water','≈','#5fe4d5'],s_dragon:['dragon','龍','#fa9850'],s_nidhogg:['eclipse','✦','#9875dd'],
@@ -2046,7 +2047,7 @@ function spellBurst(L,e,x,y){if(!e.skill||['attack','rest'].includes(e.skill))re
  const n=Math.round((8+tier*5)*(mobile?.6:1));for(let i=0;i<n;i++){const a=i*2.399963,r=size*(.38+(i%5)*.085);spawn('sp-spark',x,y,kind==='glacier'&&i%3===0?'✧':null,{'--dx':Math.cos(a)*r+'px','--dy':Math.sin(a)*r*.8+'px','--wait':(i%4)*35+'ms','--angle':i*47+'deg'});}
 }
 function spellScene(L,e){if(skillIntensity(e.skill)!==3)return;const [kind,,c]=spellLook(e.skill);vSpawn(L,'sp-scene',null,c,null,{'--life-ms':1800,'--dur':'1800ms'});if((SK[e.skill]||{}).t==='m')vSpawn(L,'sp-skyseal',[window.innerWidth*.5,Math.min(window.innerHeight*.35,240)],c,'✧',{'--size':Math.min(window.innerWidth*.72,380)+'px','--life-ms':1900,'--dur':'1900ms'});}
-function onlineSkillEffects(before,after,screen){if(!before||!after||S.screen!==screen||!after.battle)return;if(after.rev<=before.rev&&(after.battle.turns||0)<=(before.battle?.turns||0))return;const fx=after.battle.effects||[];if(!fx.length)return;VQ.push(...fx.slice(-64));(window.requestAnimationFrame||setTimeout)(flushVfx);}
+function onlineSkillEffects(before,after,screen){if(!before||!after||S.screen!==screen||!after.battle)return;if(after.rev<=before.rev&&(after.battle.turns||0)<=(before.battle?.turns||0))return;const fx=after.battle.effects||[];if(!fx.length)return;VQ.push(...BattleEffects.enrich(fx.slice(-64),before.battle?.cur));(window.requestAnimationFrame||setTimeout)(flushVfx);}
 function flushVfx(){if(!VQ.length)return;const q=VQ.splice(0).slice(-64),L=document.getElementById('vfx'),app=document.getElementById('app');if(!L||!app||!app.querySelector)return;
  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;if(reduced){q.filter(e=>e.k==='cast').slice(0,1).forEach(e=>vSpawn(L,'vx-cast',null,e.c||'#d9b35b',e.n));return;}
  const screen=S.screen,seen=new Set(),cinema=new Set();let delay=0,activeSkill=null;for(const item of q){const e={...item};if(e.k==='cast')activeSkill=e.skill;if(e.k==='charge'&&!e.skill){const b=S.screen==='world'?WORLD.room?.battle:S.screen==='pvp'?PVP.room?.battle:S.screen==='camp'?CAMP.room?.battle:S.battle;e.skill=b&&[...b.allies,...b.enemies].find(u=>u.id===e.id)?.charging?.id;}if(!e.skill&&['heal','buff','charge','debuff'].includes(e.k))e.skill=activeSkill;
@@ -3125,7 +3126,7 @@ function bestiaryKeys(filter=S.ui.dexRarity||'all'){return Object.keys(SP).filte
 fullBestiary=function(tabs){
  const P=S.P,filter=Object.hasOwn(BEAST_RARITY_LABELS,S.ui.dexRarity)?S.ui.dexRarity:'all',ks=bestiaryKeys(filter),all=Object.keys(SP);
  const controls=`<div class="rarity-filters" role="group" aria-label="กรองประเภทอสูร">${Object.entries(BEAST_RARITY_LABELS).map(([v,n])=>`<button class="btn sm ${filter===v?'pri':''}" data-a="dexRarity" data-v="${v}" aria-pressed="${filter===v}">${n}<span class="num">${v==='all'?all.length:bestiaryKeys(v).length}</span></button>`).join('')}</div>`;
- return `<div class="stack"><h2>สมุดอสูร · ${ks.length}/${all.length} ตัว</h2>${tabs}${controls}<p class="sub">ดูข้อมูลได้ทุกตัว ประวัติพบและจับยังนับจากการเล่นจริง · อสูรม่านหมอกมีร่างเดียวและสกิลเฉพาะตัว<br>อสูรในตำนาน: ค่าสถานะ +20% จากอสูรหายากคู่เทียบที่เลเวลและแต้มเท่ากัน</p>${!mistLegendsUnlocked(P)&&(filter==='all'||filter==='legendary')?'<div class="card legend-locked">✦ อสูรในตำนานยังไม่ปรากฏในโลก ต้องชนะบอสจอมมารก่อนจึงจะพบและผนึกได้ในม่านหมอก</div>':''}<div class="dex">${ks.map(k=>{const q=SP[k],locked=q.legendary&&!mistLegendsUnlocked(P)&&!Object.values(P.gachaLegendPets||{}).includes(k),loc=mistLocations(k);return `<article class="card stack rarity-${beastRarity(q)}"><b>${esc(q.n)}</b>${dexForms(k)}<div>${tChips(q.t)} <span class="chip">${q.noseal?'บอสพิเศษ · ผนึกไม่ได้':BEAST_RARITY_LABELS[beastRarity(q)]}</span>${q.mistNew?' <span class="chip">ร่างเดียว</span>':''}</div><small>${esc(q.o||'')} · ${esc(PAS[q.pas]?.n||'')}</small>${q.legendary?`<small class="legend-note">ค่าสถานะ +20% เทียบ ${esc(SP[q.rarePair].n)} · สกิลตำนานเฉพาะตัว</small>`:''}<small>คะแนนต่อเลเวล: ${q.rare?20:8} · เมื่อเป็นบอส: 30</small><small>พบที่: ${loc.map(esc).join('<br>')}</small><small>${locked?'ยังไม่ปลดล็อก':P.caught[k]?'จับแล้ว':P.seen[k]?'เคยพบ':'ยังไม่เคยพบ'}</small><details><summary>สกิล${q.sig?'และสกิลเฉพาะตัว':''}</summary>${q.sk.map(id=>skillRow(id)).join('')}${q.sig?skillRow(q.sig,true,'เฉพาะตัว · Lv '+SIGLV):''}</details></article>`}).join('')}</div></div>`;
+ return `<div class="stack"><h2>สมุดอสูร · ${ks.length}/${all.length} ตัว</h2>${tabs}${controls}<p class="sub">ดูข้อมูลได้ทุกตัว ประวัติพบและจับยังนับจากการเล่นจริง · อสูรม่านหมอกมีร่างเดียวและสกิลเฉพาะตัว</p>${!mistLegendsUnlocked(P)&&(filter==='all'||filter==='legendary')?'<div class="card legend-locked">✦ อสูรในตำนานยังไม่ปรากฏในโลก ต้องชนะบอสจอมมารก่อนจึงจะพบและผนึกได้ในม่านหมอก</div>':''}<div class="dex">${ks.map(k=>{const q=SP[k],locked=q.legendary&&!mistLegendsUnlocked(P)&&!Object.values(P.gachaLegendPets||{}).includes(k),loc=mistLocations(k);return `<article class="card stack rarity-${beastRarity(q)}"><b>${esc(q.n)}</b>${dexForms(k)}<div>${tChips(q.t)} <span class="chip">${q.noseal?'บอสพิเศษ · ผนึกไม่ได้':BEAST_RARITY_LABELS[beastRarity(q)]}</span>${q.mistNew?' <span class="chip">ร่างเดียว</span>':''}</div><small>${esc(q.o||'')} · ${esc(PAS[q.pas]?.n||'')}</small>${q.legendary?`<small class="legend-note">สกิลตำนานเฉพาะตัว</small>`:''}<small>คะแนนต่อเลเวล: ${q.rare?20:8} · เมื่อเป็นบอส: 30</small><small>พบที่: ${loc.map(esc).join('<br>')}</small><small>${locked?'ยังไม่ปลดล็อก':P.caught[k]?'จับแล้ว':P.seen[k]?'เคยพบ':'ยังไม่เคยพบ'}</small><details><summary>สกิล${q.sig?'และสกิลเฉพาะตัว':''}</summary>${q.sk.map(id=>skillRow(id)).join('')}${q.sig?skillRow(q.sig,true,'เฉพาะตัว · Lv '+SIGLV):''}</details></article>`}).join('')}</div></div>`;
 };
 handlers.dexRarity=v=>{if(!Object.hasOwn(BEAST_RARITY_LABELS,v))return;S.ui.dexRarity=v;render();};
 
@@ -4973,7 +4974,110 @@ vSettings=function(){return accountManagementSettings().replace('<button class="
 handlers.img=()=>{};handlers.delimg=()=>{};saveImg=()=>{};
 handlers.reset=()=>{save();location.assign('./accounts-staging.html?create=1');};
 handlers.doreset=handlers.reset;
-handlers.accountCharacters=()=>{save();location.assign('./accounts-staging.html');};
+handlers.accountCharacters=()=>{save();location.assign('./accounts-staging.html');};const BattleEffects={
+ epoch:0,live:new Set(),timers:new Set(),observer:null,
+ legends:{
+  primordial_ouroboros:['ouroboros','eclipse','orbit'],dawn_valkyrie:['valkyrie','wing','halo'],astral_dragon:['astral-dragon','wing','comet'],cosmic_tortoise:['cosmic-bastion','shield','seal'],solar_sovereign:['solar-crown','eclipse','flame'],infinite_sea_serpent:['sea-serpent','wave','vine'],void_phoenix:['void-phoenix','wing','soul'],eclipse_wolf:['eclipse-wolf','fang','eclipse'],
+  legend2_aegis_dragon:['aegis-dragon','shield','wing'],legend2_tricephalos:['three-headed','fang','flame'],legend2_aurorion:['aurora-dragon','wing','bolt'],legend2_abyssarch:['abyss-sovereign','chain','eclipse'],legend2_selestia:['eclipse-goddess','wing','halo'],legend2_aerelion:['elven-archmage','seal','orbit'],legend2_myriapod:['world-centipede','fang','vine'],legend2_yggwarden:['world-tree','vine','halo']
+ },
+ profile(id,actor={}){
+  const sk=SK[id]||{},look=skillLook(id),palette=spellLook(id),seed=Array.from(id||'attack').reduce((v,c)=>(v*31+c.charCodeAt(0))%65521,0);
+  const support=['buff','heal','rest','revert','form','summon'].includes(sk.t)||sk.summon;
+  let family=/^(?:ar_|ra_|sn_|wd_|ws_bow|ms_archer|bow_)/.test(id)?'arrow':/^(?:gn_|mk_|gs_|bh_|mc_cannon|cn_|dm_|ws_gun|ms_gunner|gun_)/.test(id)?'bullet':/shuriken/.test(id)?'shuriken':/^(?:at_|al_acid|me_potion|me_coinbomb|ms_merchant50)/.test(id)?'flask':null;
+  if(id==='attack'&&actor.cls&&CLS[actor.cls])family={archer:'arrow',gunner:'bullet'}[baseOf(actor.cls)]||family;
+  let mode=support?'support':family?'projectile':['p','h'].includes(sk.t)?'melee':['m','status','debuff'].includes(sk.t)?'projectile':'support';
+  if(id==='attack')mode=actor.atkType==='m'||['archer','gunner'].includes(actor.cls&&CLS[actor.cls]?baseOf(actor.cls):'')?'projectile':'melee';
+  if(/breath|beam|lance|ne_soul|wk_curse|sm_bind|en_mind|ga_transmute|steel_m2|normal_m2|grass_m2/.test(id)&&!support)mode='beam';
+  if(/(?:quake|meteor|blizzard|firestorm|thunderstorm|tempest|f_roots|dr_thorn|gv_storm|_aoe)$/.test(id)&&!['p','h'].includes(sk.t))mode='field';
+  let theme=SIGNATURE_THEME_BY_ID[id]||({arrow:'volley',bullet:'volley',shadow:'slash',blade:'slash',claw:'fang',shield:'ward',roots:'vines',music:'music',coins:'coin'}[look[0]])||({water:'tide',ice:'meteor',electric:'thunder',fire:'blast',grass:'vines',ground:'meteor',rock:'meteor',dragon:'nova',ghost:'curse',dark:'eclipse',fairy:'heal',poison:'venom'}[sk.el])||'nova';
+  if(sk.t==='heal'||sk.t==='rest')theme=sk.rev||sk.revAll?'phoenix':'heal';
+  else if(sk.t==='form'||sk.t==='revert')theme='transform';
+  else if(sk.summon||sk.t==='summon')theme='summon';
+  else if(sk.taunt)theme='fury';
+  else if(sk.enchant)theme='slash';
+  else if(id==='class10_parry'||sk.immune)theme='ward';
+  else if(support&&!['music','coin','vines'].includes(theme))theme='ward';
+  if(id==='normal_m1')theme='music';
+  const species=Object.keys(this.legends).find(k=>id==='mist_sig_'+k)||actor.sp,legend=this.legends[species];
+  return {id,mode,theme,projectile:family||'orb',color:palette[2],accent:palette[3],seed,variant:seed%7,hits:Math.min(5,Math.max(1,sk.hits||1)),area:!!sk.all,signature:!!SIGNATURE_ART[id]||!!legend,legend:legend?{id:legend[0],shapes:legend.slice(1),species}:null};
+ },
+ // Old online/replay packets carry cast origins; new local packets carry exact source IDs.
+ enrich(events,fallback){
+  let source=fallback,skill=null,lastHit=null,group=0;
+  return events.map(raw=>{const e={...raw};if(e.k==='cast'||e.k==='charge'){source=e.source||e.id;skill=e.skill||skill;group++;}
+   if(!e.source&&['hit','miss','heal','buff','debuff'].includes(e.k)){
+    if(e.skill==='attack'&&lastHit?.source===e.id)e.source=lastHit.id;
+    else e.source=source;
+   }
+   if(!e.skill&&['hit','miss','heal','buff','debuff','charge'].includes(e.k))e.skill=skill||'attack';
+   if(e.k==='hit'&&lastHit?.group===group&&lastHit.source!==e.source)group++;
+   e.group=group;if(e.k==='hit')lastHit=e;return e;
+  });
+ },
+ battle(){return S.screen==='world'?WORLD.room?.battle:S.screen==='pvp'?PVP.room?.battle:S.screen==='camp'?CAMP.room?.battle:S.battle;},
+ actor(id){const b=this.battle();return b&&[...(b.allies||[]),...(b.enemies||[])].find(u=>u.id===id)||{};},
+ anchor(id){
+  if(id==null)return null;
+  const app=document.getElementById('app'),safe=String(id).replace(/[^\w-]/g,''),card=app?.querySelector('[data-u="'+safe+'"]');
+  const face=card?.matches?.('.pt')?card:card?.querySelector('.pt')||card?.querySelector('.battle-face')||card;
+  const r=face?.getBoundingClientRect();if(!r||r.width<=0||r.height<=0)return null;
+  return {node:face,x:r.left+r.width/2,y:r.top+r.height/2,size:Math.min(72,Math.max(28,Math.min(r.width,r.height)))};
+ },
+ later(fn,ms,epoch=this.epoch){const id=setTimeout(()=>{this.timers.delete(id);if(epoch===this.epoch)fn();},ms);this.timers.add(id);return id;},
+ clear(){this.epoch++;for(const t of this.timers)clearTimeout(t);this.timers.clear();for(const f of [...this.live])f();this.live.clear();document.getElementById('vfx')?.querySelectorAll('.battle-fx-owned').forEach(n=>n.remove());},
+ watch(){if(this.observer||typeof MutationObserver==='undefined')return;this.observer=new MutationObserver(()=>{if(this.screen!==S.screen){this.clear();return;}for(const f of [...this.live])if(f.stale?.())f();});this.observer.observe(document.getElementById('app'),{childList:true,subtree:true});},
+ spawn(L,shape,x,y,p,vars={}){const n=vSpawn(L,'battle-fx-owned sig-fx sig-'+shape,[x,y],p.color,null,{'--a':p.accent,'--size':Math.min(window.innerWidth<620?112:170,92+(p.signature?35:0))+'px','--theta':p.seed%180+'deg','--dx':'0px','--dy':'-25px','--duration':'720ms','--life-ms':820,'--wait':'0ms',...vars});if(n){n.dataset.skill=p.id;n.dataset.theme=p.theme;n.setAttribute('aria-hidden','true');}return n;},
+ travel(L,from,to,p,melee=false){
+  if(!from||!to)return 0;if(Math.hypot(to.x-from.x,to.y-from.y)<4)return 0;
+  const dx=to.x-from.x,dy=to.y-from.y,duration=melee?680:p.mode==='beam'?350:400;
+  const node=document.createElement('div');node.className='vx battle-fx-owned '+(melee?'battle-portrait-flight':p.mode==='beam'?'battle-skill-beam':'battle-projectile projectile-'+p.projectile);node.dataset.skill=p.id;node.dataset.source=this.currentSource||'';node.dataset.target=this.currentTarget||'';node.setAttribute('aria-hidden','true');
+  Object.assign(node.style,{left:from.x+'px',top:from.y+'px'});node.style.setProperty('--c',p.color);node.style.setProperty('--a',p.accent);node.style.setProperty('--angle',Math.atan2(dy,dx)*180/Math.PI+'deg');node.style.setProperty('--distance',Math.hypot(dx,dy)+'px');
+  const previous=from.node.style.opacity;
+  if(melee){node.style.width=from.size+'px';node.style.height=from.size+'px';const copy=from.node.cloneNode(true);for(const el of [copy,...copy.querySelectorAll('*')]){el.removeAttribute('id');el.removeAttribute('data-u');el.removeAttribute('data-a');el.removeAttribute('data-v');el.removeAttribute('tabindex');}node.appendChild(copy);from.node.style.opacity='.15';}
+  L.appendChild(node);const screen=S.screen;let done=false,animation;
+  const cleanup=()=>{if(done)return;done=true;animation?.cancel();if(melee)from.node.style.opacity=previous;node.remove();this.live.delete(cleanup);};cleanup.stale=()=>S.screen!==screen||!from.node.isConnected||!to.node.isConnected;this.live.add(cleanup);
+  const transform=(x,y,scale=1)=>'translate(calc(-50% + '+x+'px),calc(-50% + '+y+'px)) scale('+scale+')';
+  const frames=melee?[{transform:transform(0,0),opacity:1,offset:0},{transform:transform(-dx*.06,-dy*.06,1.08),offset:.13},{transform:transform(dx,dy,1.14),offset:.48},{transform:transform(dx,dy,1.08),offset:.58},{transform:transform(0,0),opacity:1,offset:1}]:p.mode==='beam'?[{opacity:0,transform:'translateY(-50%) rotate(var(--angle)) scaleX(0)'},{opacity:1,transform:'translateY(-50%) rotate(var(--angle)) scaleX(1)',offset:.35},{opacity:0,transform:'translateY(-50%) rotate(var(--angle)) scaleX(1)'}]:[{transform:transform(0,0)+' rotate(var(--angle))',opacity:0},{opacity:1,offset:.12},{transform:transform(dx,dy)+' rotate(var(--angle))',opacity:1,offset:.92},{transform:transform(dx,dy)+' rotate(var(--angle))',opacity:0}];
+  if(node.animate){animation=node.animate(frames,{duration,easing:melee?'cubic-bezier(.3,0,.3,1)':'linear',fill:'both'});animation.onfinish=cleanup;}
+  else{node.style.transform=transform(dx,dy);}
+  this.later(cleanup,duration+100);return melee?Math.round(duration*.48):p.mode==='beam'?110:Math.round(duration*.92);
+ },
+ impact(L,e,to,p){
+  const x=to.x,y=to.y,theme=e.k==='buff'&&!['buff','heal','form','summon','rest','revert'].includes(SK[p.id]?.t)?'ward':p.theme;
+  if(!p.legend&&p.signature)spellBurst(L,e,x,y);
+  const main={slash:'cut',volley:'target',fang:'fang',ward:'shield',heal:'halo',phoenix:'wing',vines:'vine',thunder:'bolt',tide:'wave',meteor:'comet',curse:'eye',eclipse:'eclipse',music:'note',coin:'coin',fury:'shock',venom:'soul',transform:'wing',blast:'flame',nova:'seal'}[theme]||'seal';
+  this.spawn(L,main,x,y,p);this.spawn(L,'shock',x,y,p,{'--size':p.signature?'125px':'75px','--wait':'60ms'});
+  const count=window.innerWidth<620?3:5;for(let i=0;i<count;i++){const a=(p.seed%360+i*360/count)*Math.PI/180;this.spawn(L,main,x+Math.cos(a)*18,y+Math.sin(a)*18,p,{'--size':(p.signature?58:38)+'px','--wait':i*55+'ms','--theta':i*72+p.seed%60+'deg','--dx':Math.cos(a)*55+'px','--dy':Math.sin(a)*40+'px'});}
+  if(p.legend){for(const [i,shape]of p.legend.shapes.entries())this.spawn(L,shape,x+(i?20:-20),y,p,{'--size':'145px','--wait':i*120+'ms'});if(p.legend.id==='three-headed')for(let i=0;i<3;i++)this.spawn(L,'fang',x+(i-1)*35,y-22,{...p,color:['#ff9867','#98eaff','#ffe18a'][i]},{'--wait':i*100+'ms'});}
+  if(theme==='summon'||theme==='transform'){this.spawn(L,'orbit',x,y,p,{'--size':'130px'});this.spawn(L,'wing',x,y,p,{'--size':'120px'});}
+  if(p.signature){const emblem=vSpawn(L,'battle-fx-owned battle-skill-emblem',[x,y-20],p.color,null,{'--life-ms':850});if(emblem){emblem.innerHTML=skillPicture(this.actor(e.source),SK[p.id]||{},p.id);emblem.setAttribute('aria-hidden','true');emblem.dataset.signature=p.legend?.id||p.id;}}
+ },
+ flush(){
+  if(!VQ.length)return;const events=this.enrich(VQ.splice(0).slice(-64)),L=document.getElementById('vfx');if(!L)return;
+  this.clear();this.screen=S.screen;this.watch();const epoch=this.epoch,screen=S.screen,reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){const e=events.find(e=>e.k==='cast');if(e)vSpawn(L,'vx-cast',null,e.c||'#d9b35b',e.n);return;}
+  const seen=new Map(),moved=new Set();let time=0,lastGroup=-1;
+  for(const e of events){
+   if(e.group!==lastGroup){if(lastGroup>=0)time+=740;lastGroup=e.group;}
+   const at=time;this.later(()=>{
+    if(S.screen!==screen)return;const to=this.anchor(e.id),from=this.anchor(e.source),p=this.profile(e.skill||'attack',this.actor(e.source||e.id));if(!to)return;
+    if(e.k==='cast'||e.k==='charge'){vSpawn(L,'vx-cast',null,p.color,e.n||SK[e.skill]?.n);this.spawn(L,'seal',to.x,to.y,p,{'--size':'62px'});if(['support','field'].includes(p.mode))this.impact(L,e,to,p);return;}
+    if(!['hit','miss','heal','buff','debuff'].includes(e.k))return;
+    const key=e.group+':'+e.source+':'+e.id+':'+e.skill,index=seen.get(key)||0,repeat=index>0;seen.set(key,index+1);
+    this.currentSource=e.source;this.currentTarget=e.id;let arrival=0;
+    if(!repeat&&from&&e.source!==e.id){if(p.mode==='melee'){const move=e.group+':'+e.source;if(!moved.has(move)){moved.add(move);arrival=this.travel(L,from,to,p,true);}}else if(['projectile','beam'].includes(p.mode))arrival=this.travel(L,from,to,p);else if(e.k==='heal'||e.k==='buff')arrival=this.travel(L,from,to,{...p,mode:'projectile',projectile:'orb'});}
+    if(!repeat&&p.mode==='melee'&&from&&e.source!==e.id&&!arrival)arrival=330;
+    if(repeat)arrival=380+Math.min(index,5)*65;
+    this.later(()=>{if(S.screen!==screen||!to.node.isConnected)return;if(e.k==='miss'){this.spawn(L,'target',to.x,to.y,{...p,color:'#9a97ab'});return;}if(!repeat)this.impact(L,e,to,p);else this.spawn(L,'cut',to.x,to.y,p,{'--size':'45px'});},arrival,epoch);
+   },at,epoch);
+   if(e.k==='cast')time+=180;
+  }
+ }
+};
+const battleEffectsAct=act,battleEffectsHit=hitOne;
+act=function(u,id,...args){VFX_CONTEXT.push({source:u.id,skill:id});try{const ok=battleEffectsAct(u,id,...args);if(ok&&id==='rest')vfx('buff',u.id,{skill:id});return ok;}finally{VFX_CONTEXT.pop();}};
+hitOne=function(u,sk,t,...args){VFX_CONTEXT.push({source:u.id,skill:VSKID.get(sk)||sk._pvpId||VFX_CONTEXT.at(-1)?.skill||'attack'});try{return battleEffectsHit(u,sk,t,...args);}finally{VFX_CONTEXT.pop();}};
+flushVfx=function(){BattleEffects.flush();};
 
 // New email accounts. Enabled only on the separate account staging shell until SMTP is ready.
 // @soulbeast-unit 1091-playerAccounts
