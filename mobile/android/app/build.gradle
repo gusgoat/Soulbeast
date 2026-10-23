@@ -7,8 +7,8 @@ android {
         applicationId "com.soulbeastgame.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
-        versionName "0.2.8-internal"
+        versionCode 11
+        versionName "0.2.9-internal"
         buildConfigField "boolean", "BILLING_ENABLED", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

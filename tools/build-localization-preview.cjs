@@ -1,0 +1,12 @@
+// Isolated localization QA: real catalogs, skill descriptions and story data; no accounts or saves.
+const fs=require('fs'),b=require('./client-build.cjs').build(null,{write:false});
+const fixture=require('./game-context.cjs')('build/staging-index.html').run('JSON.stringify(S)');
+const guard='<script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Isolated localization QA"));</script>';
+const setup=`<script>
+Tutorial.clear();Sound.fx=()=>{};Sound.cry=()=>{};S=${fixture};delete S.P.tutorial;S.P.name='ผู้ผนึกแสงจันทร์';const requestedLanguage=new URLSearchParams(location.search).get('lang');if(['en','zh-CN'].includes(requestedLanguage))GAME_LANGUAGE=requestedLanguage;
+render=function(){document.getElementById('app').innerHTML='<main class="language-preview stack"><h1 translate="no">Soulbeast · Language Preview</h1>'+languagePanel()+'<h2>สกิลและความสามารถเฉพาะอาชีพ</h2>'+['class10_parry','enchant_flying','boss_legend_call'].map(id=>'<section class="card row">'+skillPicture(playerUnit(),SK[id],id)+'<div class="grow"><h3>'+esc(SK[id].n)+'</h3><p>'+skillDesc(id)+'</p></div></section>').join('')+'<section class="card"><h3>'+PAS.class10_parry.n+'</h3><p>'+PAS.class10_parry.d+'</p></section><section class="card"><h2>'+SECRET_DATA.locations[0].thai+'</h2><p>'+SECRET_DATA.locations[0].intro+'</p><p>'+SECRET_DATA.locations[0].clue+'</p></section><section class="card"><h2>'+TALES_DATA.quests[0].title+'</h2><p>'+TALES_DATA.quests[0].intro+'</p>'+TALES_DATA.quests[0].actions.map(a=>'<p>• '+a.label+'</p>').join('')+'</section></main>';applyGameLanguage(document.getElementById('app'));};render();
+document.addEventListener('click',e=>{if(e.target.closest('[data-a]')){e.preventDefault();e.stopImmediatePropagation();}},true);
+</script>`;
+const style='<style>#app{height:auto;min-height:100dvh;max-width:880px}.language-preview{overflow:visible;padding:20px 14px 40px}.language-preview h1{font-size:20px}.language-preview p{line-height:1.65}.language-preview .card{min-width:0}.language-preview .grow{min-width:0;overflow-wrap:anywhere}.language-preview h3{white-space:normal}</style>';
+fs.writeFileSync('localization-preview.html',b.files['staging-index.html'].replace('<html lang="th">','<html lang="th" data-skip-web-intro>').replace('<head>','<head>'+guard+style).replace('</body>',setup+'</body>'));
+console.log('Built isolated language preview');

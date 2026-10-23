@@ -3,6 +3,7 @@
  const store=()=>{const m=new Map();return {getItem:k=>m.get(k)||null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)};};
  Object.defineProperty(window,'localStorage',{value:store()});Object.defineProperty(window,'sessionStorage',{value:store()});
  localStorage.setItem('soulbeast_web_intro_v1','seen');localStorage.setItem('sealbeast_web_intro_v1','seen');
+ const previewLanguage=new URLSearchParams(location.search).get('lang');if(['en','zh-CN'].includes(previewLanguage))localStorage.setItem('soulbeast_supabase_test_language_v1',previewLanguage);
  const original=window.fetch.bind(window),user={id:'qa-account',email:'qa@example.invalid',email_confirmed_at:'2026-10-22'};
  let character=null,save=null;
  window.fetch=async(url,o={})=>{

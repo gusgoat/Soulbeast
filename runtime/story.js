@@ -85,7 +85,7 @@ let GAME_LANGUAGE='th';
 // @soulbeast-end 0528-GAME_LANGUAGE
 // @soulbeast-unit 0530-LANGUAGE_KEYS
 
-const LANGUAGE_KEYS=Object.keys(GAME_TRANSLATIONS.en).sort((a,b)=>b.length-a.length);
+const LANGUAGE_KEYS=[...new Set(Object.values(GAME_TRANSLATIONS).flatMap(dict=>Object.keys(dict)))].sort((a,b)=>b.length-a.length);
 // @soulbeast-end 0530-LANGUAGE_KEYS
 // @soulbeast-unit 0531-LANGUAGE_PATTERN
 
@@ -111,7 +111,7 @@ function languagePlayerNames(){
 function translateGameText(value,lang=GAME_LANGUAGE,protectNames=true){
  const text=String(value??'');if(lang==='th'||!GAME_TRANSLATIONS[lang]||!/[ก-๙]/.test(text))return text;
  const held=[];let source=text;
- if(protectNames)for(const name of languagePlayerNames())if(source.includes(name)&&source.trim()!==name){const token='\uE000'+held.length+'\uE001';held.push(name);source=source.split(name).join(token);}
+ if(protectNames)for(const name of languagePlayerNames())if(source.includes(name)){const token='\uE000'+held.length+'\uE001';held.push(name);source=source.split(name).join(token);}
  const key=lang+'\n'+source;let out=LANGUAGE_TEXT_CACHE.get(key);
  if(out===undefined){
   out=source.replace(LANGUAGE_PATTERN,s=>lang==='en'?' '+(GAME_TRANSLATIONS[lang][s]||s)+' ':GAME_TRANSLATIONS[lang][s]||s);
