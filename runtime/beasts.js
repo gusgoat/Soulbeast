@@ -62,5 +62,5 @@ function mistRarePool(zd){return [...zd.rare,...MIST_RARE_DEFS.filter(x=>x[4]===
 // @soulbeast-end 0515-mistRarePool
 // @soulbeast-unit 0518-mistLocations
 
-function mistLocations(k){const q=SP[k];if(q.legendary)return ['ม่านหมอกในป่าหลักทุกแห่ง · หลังชนะบอสจอมมารเท่านั้น · Lv 45–52'];if(q.mistNew){const z=ZN.find(z=>z.id===q.mistZone);return [z.n+' · ม่านหมอกเท่านั้น · Lv '+z.lv[1]+'–'+(z.lv[1]+2)];}return beastLocations(k);}
+function mistLocations(k){const q=SP[k];if(q.legendary)return ['ม่านหมอกในป่าหลักทุกแห่ง · หลังชนะบอสจอมมารเท่านั้น · Lv 40–60 · 0.3% ต่อการเข้าม่านหมอกหนึ่งครั้ง'];if(q.mistNew){const z=ZN.find(z=>z.id===q.mistZone);return [z.n+' · ม่านหมอกเท่านั้น · Lv '+z.lv[1]+'–'+(z.lv[1]+2)];}return beastLocations(k);}
 // @soulbeast-end 0518-mistLocations

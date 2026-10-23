@@ -364,8 +364,8 @@ MIST_RARE_DEFS.forEach(([key,n,t,ref,zone,pas,part,o])=>{
 // @soulbeast-end 0144-MIST_RARE_DEFS-forEach
 // @soulbeast-unit 0145-MIST_LEGEND_DEFS-forEach
 
-MIST_LEGEND_DEFS.forEach(([key,n,t,ref,pas,part])=>{
- SP[key]={n,o:'ตำนานหลังจอมมาร',t,em:'✦',r:7.2,rare:1,legendary:1,mistNew:1,rarePair:ref,b:SP[ref].b.slice(),sk:[t[0]+'_p2',t[1]+'_m2',t[0]+'_st',t[0]+'_aoe'],pas,sig:'mist_sig_'+key,parts:[['แก่นตำนาน'+part,1500],['เศษผนึก'+part,1900]]};
+MIST_LEGEND_DEFS.forEach(([key,n,t,ref,pas,part,extra])=>{
+ SP[key]={n,o:'ตำนานหลังจอมมาร',t,em:'✦',r:7.2,rare:1,legendary:1,mistNew:1,rarePair:ref,b:SP[ref].b.slice(),sk:[t[0]+'_p2',t[1]+'_m2',t[0]+'_st',t[0]+'_aoe'],pas,sig:'mist_sig_'+key,parts:[['แก่นตำนาน'+part,1500],['เศษผนึก'+part,1900]],...extra};
  SK['mist_sig_'+key]=MIST_SIGNATURES[key];
 });
 // @soulbeast-end 0145-MIST_LEGEND_DEFS-forEach
@@ -378,7 +378,7 @@ for(const [wt,n,el,pas] of WORLD_WEAPONS){const id='wl_'+wt;WORLD_LEGENDS.push(i
 // @soulbeast-end 0267-ForOfStatement
 // @soulbeast-unit 0269-ForOfStatement
 
-for(const [slot,n,pas] of WORLD_ARMOR){const id='wl_'+slot;WORLD_LEGENDS.push(id);EQ[id]={n,slot,lv:50,price:100000,st:Object.fromEntries(Object.entries(EQ[slot+'_4'].st).map(([k,v])=>[k,Math.round(v*1.4)])),pas,tier:6,legend:1,worldLegend:1};}
+for(const [slot,n,pas,extraId] of WORLD_ARMOR){const id=extraId||'wl_'+slot;WORLD_LEGENDS.push(id);EQ[id]={n,slot,lv:50,price:100000,st:Object.fromEntries(Object.entries(EQ[slot+'_4'].st).map(([k,v])=>[k,extraId?Math.ceil(Math.max(v,...Object.values(EQ).filter(e=>e.slot===slot&&e.legend&&!e.worldLegend).map(e=>e.st[k]||0))*1.2):Math.round(v*1.4)])),pas,tier:6,legend:1,worldLegend:1,...(extraId?{art:'assets/equipment/eclipse-v2/'+id+'.webp'}:{})};}
 // @soulbeast-end 0269-ForOfStatement
 // @soulbeast-unit 0270-SK-Object
 

@@ -1,0 +1,591 @@
+{
+  "gear": [
+    {
+      "id": "ec2_armor",
+      "slot": "armor",
+      "th": "เกราะมหาจักรพรรดิคราส",
+      "en": "Eclipse Sovereign Cuirass",
+      "zh": "日蚀帝君战甲",
+      "pas": "guardian",
+      "visual": "a single complete imposing obsidian and antique-gold breastplate, layered wing-like pauldrons, a radiant black-sun eclipse gemstone at sternum"
+    },
+    {
+      "id": "ec2_gloves",
+      "slot": "gloves",
+      "th": "ถุงมือบัญญัติดารา",
+      "en": "Star-Decree Gauntlets",
+      "zh": "星律裁决护手",
+      "pas": "pierce",
+      "visual": "one matching PAIR of articulated armored gauntlets, black star-metal plated fingers and bright gold celestial engravings, violet energy between the knuckles"
+    },
+    {
+      "id": "ec2_boots",
+      "slot": "boots",
+      "th": "รองเท้าย่างก้าวสุญญตา",
+      "en": "Voidstrider Greaves",
+      "zh": "虚空行者战靴",
+      "pas": "swift",
+      "visual": "one matching PAIR of tall black and gold plated armored boots with sculpted wing-shaped heels and orbital violet stars around the ankles"
+    },
+    {
+      "id": "ec2_belt",
+      "slot": "belt",
+      "th": "เข็มขัดชีพจรเอกภพ",
+      "en": "Cosmic Lifepulse Belt",
+      "zh": "寰宇命脉腰带",
+      "pas": "regen",
+      "visual": "a single thick complete curved black leather and gold armored belt, central luminous eclipse medallion, embedded emerald star gems, visible side straps"
+    },
+    {
+      "id": "ec2_bracelet",
+      "slot": "bracelet",
+      "th": "กำไลคุมวงโคจร",
+      "en": "Orbitbinder Bracer",
+      "zh": "御轨星环护腕",
+      "pas": "mpsave",
+      "visual": "one massive ornate black-gold wrist bracer with nested floating metallic orbit rings and a luminous amethyst star core, clearly a bracelet not a crown"
+    },
+    {
+      "id": "ec2_ring",
+      "slot": "ring",
+      "th": "แหวนปฐมบทนิรันดร์",
+      "en": "Ring of the Eternal Genesis",
+      "zh": "永恒创世之戒",
+      "pas": "keen",
+      "visual": "one exquisite wide signet ring of black platinum with antler-like gold prongs holding an impossible brilliant violet-black eclipse gemstone, fine readable ring band"
+    },
+    {
+      "id": "ec2_necklace",
+      "slot": "necklace",
+      "th": "สร้อยบัลลังก์สุริยคราส",
+      "en": "Eclipse Throne Pendant",
+      "zh": "日蚀王座项链",
+      "pas": "healer",
+      "visual": "one elaborate necklace with a complete finely wrought black-gold chain and a grand symmetrical eclipsed-sun pendant encasing a radiant blue-white celestial core"
+    },
+    {
+      "id": "ec2_crown",
+      "slot": "crown",
+      "th": "มงกุฎเหนือเทพดารา",
+      "en": "Star-Deity Sovereign Crown",
+      "zh": "凌神星帝王冠",
+      "pas": "laststand",
+      "visual": "one majestic complete regal black-gold crown, seven sculpted towering celestial spires circling a radiant eclipse halo, central violet diamond, rich silver filigree"
+    }
+  ],
+  "beasts": [
+    {
+      "id": "legend2_aegis_dragon",
+      "th": "อาเอจิส มังกรปราการดารา",
+      "en": "Aegis, Astral Bulwark Dragon",
+      "zh": "埃吉斯·星垒巨龙",
+      "types": [
+        "dragon",
+        "steel"
+      ],
+      "ref": "obsidian_scarab",
+      "pas": "guardian",
+      "part": "อาเอจิส",
+      "visual": "tank dragon, massive six-horned silver-black dragon with overlapping star-forged plate scales, protective wings curved into an impenetrable fortress shield, sapphire eclipse core on chest, seated resolute on a shattered celestial rampart"
+    },
+    {
+      "id": "legend2_tricephalos",
+      "th": "ไตรเซฟาลอส มังกรสามเศียร",
+      "en": "Tricephalos, Three-Headed Cataclysm",
+      "zh": "特里刻法洛斯·三首灾龙",
+      "types": [
+        "dragon",
+        "fire"
+      ],
+      "ref": "tempest_lynx",
+      "pas": "multihit",
+      "part": "ไตรเซฟาลอส",
+      "visual": "one colossal dragon with EXACTLY THREE distinct heads and three clearly separated necks attached to one single body, central obsidian head with violet eyes, left crimson flame head, right white-hot gold head, grand wings, no extra heads, apocalyptic volcanic cosmic setting"
+    },
+    {
+      "id": "legend2_aurorion",
+      "th": "ออโรริออน มังกรแสงเหนือ",
+      "en": "Aurorion, Aurora Dragon",
+      "zh": "奥罗里昂·极光巨龙",
+      "types": [
+        "dragon",
+        "ice"
+      ],
+      "ref": "aurora_whale",
+      "pas": "thick",
+      "part": "ออโรริออน",
+      "visual": "majestic serpentine ice dragon with a single antlered head, flowing translucent aurora ribbon wings and crystalline frost armor, a crown of floating ice shards, polar stars and green-violet northern lights"
+    },
+    {
+      "id": "legend2_abyssarch",
+      "th": "แอสโมราธ จอมปีศาจสุญญตา",
+      "en": "Asmorath, Void Archdemon",
+      "zh": "阿斯莫拉斯·虚空魔君",
+      "types": [
+        "dark",
+        "fire"
+      ],
+      "ref": "ember_jackal",
+      "pas": "lifesteal",
+      "part": "แอสโมราธ",
+      "visual": "terrifying regal adult archdemon, towering muscular horned silhouette in ornate dark armor, six scorched featherless black wings fanned behind, abyssal purple fire halo, imposing face and huge clawed hands, dignified menace, no gore"
+    },
+    {
+      "id": "legend2_selestia",
+      "th": "เซเลสเทีย เทพีมหาสุริยคราส",
+      "en": "Selestia, Eclipse Goddess",
+      "zh": "塞蕾斯蒂娅·日蚀女神",
+      "types": [
+        "fairy",
+        "psychic"
+      ],
+      "ref": "jade_moon_hare",
+      "pas": "healer",
+      "part": "เซเลสเทีย",
+      "visual": "magnificent adult celestial goddess, flowing platinum hair, luminous obsidian-gold crown shaped like an eclipsed sun, elegant fully clothed ivory and black astral robes with ornate gold breastplate, floating radiant orbiting rings, benevolent commanding face, majestic cosmic cathedral"
+    },
+    {
+      "id": "legend2_aerelion",
+      "th": "แอเรลิออน จอมเวทเอลฟ์ปีกดารา",
+      "en": "Aerelion, Starwing Elven Archmage",
+      "zh": "艾瑞利昂·星翼精灵大法师",
+      "types": [
+        "psychic",
+        "flying"
+      ],
+      "ref": "prism_owl",
+      "pas": "mpsave",
+      "part": "แอเรลิออน",
+      "visual": "adult male high-elf archmage with clearly pointed ears and two vast iridescent feathered wings, long silver hair, intricately embroidered midnight-blue robes, holding an elaborate crystal staff and an open levitating grimoire, luminous astronomical magic rings, floating arcane observatory"
+    },
+    {
+      "id": "legend2_myriapod",
+      "th": "มหาตะขาบโยมินกันต์",
+      "en": "Yomingant, World-Eater Centipede",
+      "zh": "约明甘特·噬世巨蜈蚣",
+      "types": [
+        "poison",
+        "ground"
+      ],
+      "ref": "dusk_panther",
+      "pas": "toxin",
+      "part": "โยมินกันต์",
+      "visual": "colossal giant CENTIPEDE coiling around fractured stone pillars, clearly recognizable elongated many-segmented armored body with many paired jointed legs, enormous plated insect head with two curved venom mandibles and luminous emerald eyes, gold-black chitin with violet poison fissures, no human torso, no dragon wings"
+    },
+    {
+      "id": "legend2_yggwarden",
+      "th": "อิกดราซิล ผู้พิทักษ์รากจักรวาล",
+      "en": "Yggwarden, Cosmic Root Guardian",
+      "zh": "伊格沃登·宇宙根须守护者",
+      "types": [
+        "grass",
+        "rock"
+      ],
+      "ref": "bloom_jade_mare",
+      "pas": "sturdy",
+      "part": "อิกดราซิล",
+      "visual": "immense ancient living tree guardian with broad stone-bark armored shoulders, antler-like luminous world-tree branches, emerald stellar core embedded in chest, thick root fists planted defensively, silver leaves like constellations, magnificent sacred forest beneath a celestial eclipse"
+    }
+  ],
+  "skills": [
+    {
+      "beast": "legend2_aegis_dragon",
+      "id": "aegis_challenge",
+      "th": "คำรามท้าดารา",
+      "en": "Starwarden Challenge",
+      "zh": "星卫挑衅",
+      "visual": "a single armored silver dragon roaring outward, expanding concentric sapphire shockwave rings drawing scarlet hostile arrows inward toward a gigantic protective dragon shield",
+      "definition": {
+        "n": "คำรามท้าดารา",
+        "t": "buff",
+        "tg": "self",
+        "bf": {
+          "pdef": 0.4,
+          "mdef": 0.4
+        },
+        "taunt": 3,
+        "tn": 3,
+        "mp": 14,
+        "cd": 3
+      }
+    },
+    {
+      "beast": "legend2_aegis_dragon",
+      "id": "mist_sig_legend2_aegis_dragon",
+      "th": "ปราการจักรวาล",
+      "en": "Cosmic Bastion",
+      "zh": "宇宙堡垒",
+      "visual": "a colossal silver dragon spreading armored wings into an impenetrable curved sapphire forcefield dome while golden meteors shatter against its surface",
+      "definition": {
+        "n": "ปราการจักรวาล",
+        "t": "buff",
+        "tg": "team",
+        "bf": {
+          "pdef": 0.35,
+          "mdef": 0.35
+        },
+        "tn": 3,
+        "mp": 22,
+        "cd": 4
+      }
+    },
+    {
+      "beast": "legend2_tricephalos",
+      "id": "tricephal_breath",
+      "th": "ลมหายใจสามมหาภัย",
+      "en": "Threefold Cataclysm Breath",
+      "zh": "三重灾厄吐息",
+      "visual": "THREE distinct dragon heads sharing one body, firing three converging streams of crimson flame violet arcane energy and golden lightning into one fierce impact, read clearly at tiny size",
+      "definition": {
+        "n": "ลมหายใจสามมหาภัย",
+        "t": "h",
+        "el": "dragon",
+        "pw": 70,
+        "hits": 3,
+        "mp": 20,
+        "cd": 2
+      }
+    },
+    {
+      "beast": "legend2_tricephalos",
+      "id": "mist_sig_legend2_tricephalos",
+      "th": "พิพากษาสามเศียร",
+      "en": "Three-Headed Judgment",
+      "zh": "三首终焉审判",
+      "visual": "three enormous distinct dragon heads looming symmetrically around one blazing eclipse orb, releasing a triangular apocalyptic blast through shattered black rock",
+      "definition": {
+        "n": "พิพากษาสามเศียร",
+        "t": "m",
+        "el": "fire",
+        "pw": 250,
+        "all": 1,
+        "mp": 27,
+        "cd": 4
+      }
+    },
+    {
+      "beast": "legend2_aurorion",
+      "id": "aurora_spear",
+      "th": "หอกน้ำแข็งออโรรา",
+      "en": "Aurora Ice Spear",
+      "zh": "极光冰矛",
+      "visual": "a luminous ice dragon forming one giant sharp crystalline spear out of frozen aurora light, glacial shards spiraling around the diagonal spear",
+      "definition": {
+        "n": "หอกน้ำแข็งออโรรา",
+        "t": "m",
+        "el": "ice",
+        "pw": 170,
+        "st": {
+          "freeze": 0.25
+        },
+        "mp": 15,
+        "cd": 2
+      }
+    },
+    {
+      "beast": "legend2_aurorion",
+      "id": "mist_sig_legend2_aurorion",
+      "th": "เหมันต์เหนือดวงดาว",
+      "en": "Winter Beyond the Stars",
+      "zh": "星外永冬",
+      "visual": "an elegant ice dragon flying around a frozen star, magnificent green-violet aurora cyclone and glittering frost engulfing the scene",
+      "definition": {
+        "n": "เหมันต์เหนือดวงดาว",
+        "t": "m",
+        "el": "dragon",
+        "pw": 250,
+        "all": 1,
+        "st": {
+          "freeze": 0.2
+        },
+        "mp": 27,
+        "cd": 4
+      }
+    },
+    {
+      "beast": "legend2_abyssarch",
+      "id": "abyss_rend",
+      "th": "กรงเล็บฉีกสุญญตา",
+      "en": "Void-Rending Claw",
+      "zh": "裂虚魔爪",
+      "visual": "one enormous black demonic armored claw slashing three luminous violet tears through space, flowing red-purple life energy returning to the hand",
+      "definition": {
+        "n": "กรงเล็บฉีกสุญญตา",
+        "t": "p",
+        "el": "dark",
+        "pw": 180,
+        "ls": 0.3,
+        "mp": 17,
+        "cd": 2
+      }
+    },
+    {
+      "beast": "legend2_abyssarch",
+      "id": "mist_sig_legend2_abyssarch",
+      "th": "ราชโองการอเวจี",
+      "en": "Abyssal Sovereign Edict",
+      "zh": "深渊君王敕令",
+      "visual": "a horned archdemon casting a huge black-sun sigil above a molten purple abyss, dark wing silhouette framing a downward column of hellfire",
+      "definition": {
+        "n": "ราชโองการอเวจี",
+        "t": "m",
+        "el": "fire",
+        "pw": 280,
+        "all": 1,
+        "mp": 29,
+        "cd": 4
+      }
+    },
+    {
+      "beast": "legend2_selestia",
+      "id": "selestia_blessing",
+      "th": "พรเทพีมหาคราส",
+      "en": "Goddess Eclipse Blessing",
+      "zh": "日蚀女神祝福",
+      "visual": "the elegant gloved hands of a celestial goddess releasing a brilliant pearl-white and gold healing orb, gentle luminous feathers circling a sacred eclipsed sun",
+      "definition": {
+        "n": "พรเทพีมหาคราส",
+        "t": "heal",
+        "tg": "team",
+        "pw": 30,
+        "cure": 1,
+        "mp": 20,
+        "cd": 3
+      }
+    },
+    {
+      "beast": "legend2_selestia",
+      "id": "mist_sig_legend2_selestia",
+      "th": "รุ่งอรุณคืนวิญญาณ",
+      "en": "Soul-Restoring Dawn",
+      "zh": "复魂曙光",
+      "visual": "a majestic fully clothed celestial goddess with an eclipse crown opening a radiant ivory-gold dawn halo, ascending luminous souls like feathers, powerful protective resurrection magic",
+      "definition": {
+        "n": "รุ่งอรุณคืนวิญญาณ",
+        "t": "heal",
+        "tg": "team",
+        "pw": 45,
+        "revAll": 1,
+        "cure": 1,
+        "mp": 34,
+        "cd": 5
+      }
+    },
+    {
+      "beast": "legend2_aerelion",
+      "id": "aerelion_rune",
+      "th": "อัขระปีกดารา",
+      "en": "Starwing Rune",
+      "zh": "星翼符阵",
+      "visual": "a winged silver-haired elf mage drawing a brilliant sapphire-violet circular arcane sigil with a jeweled staff, two iridescent feathered wings framing the luminous spell",
+      "definition": {
+        "n": "อัขระปีกดารา",
+        "t": "buff",
+        "tg": "self",
+        "bf": {
+          "matk": 0.4,
+          "spd": 0.2
+        },
+        "tn": 3,
+        "mp": 16,
+        "cd": 3
+      }
+    },
+    {
+      "beast": "legend2_aerelion",
+      "id": "mist_sig_legend2_aerelion",
+      "th": "มหาเวทสลายวงโคจร",
+      "en": "Orbit-Shattering Grandspell",
+      "zh": "碎轨大魔法",
+      "visual": "a grand open levitating grimoire beneath an immense orbital magic circle, a winged elf mage conducting a focused meteor shower of sapphire star fragments",
+      "definition": {
+        "n": "มหาเวทสลายวงโคจร",
+        "t": "m",
+        "el": "psychic",
+        "pw": 260,
+        "all": 1,
+        "pi": 0.2,
+        "mp": 28,
+        "cd": 4
+      }
+    },
+    {
+      "beast": "legend2_myriapod",
+      "id": "myriapod_venom",
+      "th": "เขี้ยวพิษกลืนโลก",
+      "en": "World-Eater Venomfang",
+      "zh": "噬世毒牙",
+      "visual": "a giant centipede head with two sharply defined gold-black mandibles injecting an emerald venom stream into cracked obsidian, purple poison droplets and luminous corrosive mist",
+      "definition": {
+        "n": "เขี้ยวพิษกลืนโลก",
+        "t": "p",
+        "el": "poison",
+        "pw": 85,
+        "hits": 2,
+        "st": {
+          "poison": 0.6
+        },
+        "mp": 18,
+        "cd": 2
+      }
+    },
+    {
+      "beast": "legend2_myriapod",
+      "id": "mist_sig_legend2_myriapod",
+      "th": "พันขาแยกพิภพ",
+      "en": "Thousand-Leg Earthbreaker",
+      "zh": "千足裂地",
+      "visual": "a gigantic clearly segmented armored centipede bursting out of the earth in a great circular wave, many paired jointed legs, emerald toxic fissures and flying stone fragments",
+      "definition": {
+        "n": "พันขาแยกพิภพ",
+        "t": "h",
+        "el": "ground",
+        "pw": 250,
+        "all": 1,
+        "st": {
+          "poison": 0.35
+        },
+        "mp": 27,
+        "cd": 4
+      }
+    },
+    {
+      "beast": "legend2_yggwarden",
+      "id": "ygg_rootguard",
+      "th": "รากไม้พิทักษ์ดารา",
+      "en": "Starroot Guard",
+      "zh": "星根守护",
+      "visual": "huge luminous emerald world-tree roots weaving into an intricate protective shield around a glowing celestial core, stone-bark texture silver leaves and warm golden sap",
+      "definition": {
+        "n": "รากไม้พิทักษ์ดารา",
+        "t": "buff",
+        "tg": "self",
+        "bf": {
+          "pdef": 0.45,
+          "mdef": 0.35
+        },
+        "taunt": 3,
+        "tn": 3,
+        "mp": 13,
+        "cd": 3
+      }
+    },
+    {
+      "beast": "legend2_yggwarden",
+      "id": "mist_sig_legend2_yggwarden",
+      "th": "คำสัตย์แห่งต้นไม้โลก",
+      "en": "World Tree Covenant",
+      "zh": "世界树誓约",
+      "visual": "a colossal stone-bark guardian raising root arms beneath a vast luminous silver-leaf world tree, an emerald-gold protective pulse spreading across the forest floor",
+      "definition": {
+        "n": "คำสัตย์แห่งต้นไม้โลก",
+        "t": "heal",
+        "tg": "team",
+        "pw": 35,
+        "cure": 1,
+        "bf": {
+          "pdef": 0.2,
+          "mdef": 0.2
+        },
+        "tn": 3,
+        "mp": 28,
+        "cd": 4
+      }
+    }
+  ],
+  "version": 1,
+  "generator": "built-in image_gen.imagegen",
+  "release": "eclipse-expansion-v2",
+  "balance": {
+    "gachaRates": [
+      [
+        "item",
+        2000
+      ],
+      [
+        "premium",
+        1000
+      ],
+      [
+        "beast",
+        2000
+      ],
+      [
+        "gear",
+        2000
+      ],
+      [
+        "craft",
+        1500
+      ],
+      [
+        "legendGear",
+        950
+      ],
+      [
+        "eclipseGear",
+        50
+      ],
+      [
+        "rare",
+        400
+      ],
+      [
+        "legendBeast",
+        30
+      ],
+      [
+        "eternal",
+        70
+      ]
+    ],
+    "legendMistRate": 0.003,
+    "legendMistLevels": [
+      40,
+      60
+    ],
+    "eclipseLegendChestRate": 0.01,
+    "sharedGuarantee": 100,
+    "sharedGuaranteeEquipmentRatio": 0.5,
+    "demonRewards": [
+      [
+        "seal",
+        0.3
+      ],
+      [
+        "legendGear",
+        0.12
+      ],
+      [
+        "coupon",
+        0.1
+      ],
+      [
+        "rare",
+        0.13
+      ],
+      [
+        "growth",
+        0.35
+      ]
+    ],
+    "worldLegendThresholds": [
+      [
+        500,
+        0.005
+      ],
+      [
+        1000,
+        0.01
+      ],
+      [
+        2000,
+        0.05
+      ],
+      [
+        4000,
+        0.1
+      ]
+    ]
+  }
+}

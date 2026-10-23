@@ -1,0 +1,741 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "id": "ec2_armor",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_armor.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ec2_armor.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "f84414914fcd4c2c36e1cd715583f22d56c1c59c207b081ac4b1da1951e01162",
+      "sourceSha256": "5c6a99f9975f8388f3b0e5fda6940aa4602172eddc119ad6fa956d6daff7efb3"
+    },
+    {
+      "id": "ec2_gloves",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_gloves.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ec2_gloves.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "2a9db269e593758fb655b3c68db4528d16a82e64d91aed3f7ad14eccffe435cb",
+      "sourceSha256": "bc7d4884fa41216412e23ec56fc1fd97d3f04593a8a0e9455260a630376bbdfa"
+    },
+    {
+      "id": "ec2_boots",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_boots.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ec2_boots.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "d11d59416364c6886cd1dc03fad892f034b8a68f5d415ad26da1a031b92cc2c1",
+      "sourceSha256": "a2e506826f5ca84696a92cfba9019bcc8865644eb84a20b73cdc0733c24af1dc"
+    },
+    {
+      "id": "ec2_belt",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_belt.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ec2_belt.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "3ebc3b8c5be3f398b6198d2c3e305a5d369978f91ce36cd5cadd11f5e2fa140d",
+      "sourceSha256": "b60b8b61fd7c4643c162b31ea380cd2f348b37c00c920a0a15842fd585544dc2"
+    },
+    {
+      "id": "ec2_bracelet",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_bracelet.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ec2_bracelet.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "10384e9d50617ffacaed79bfcdf5f2a5ccc40e6d7a3852bb718e74aaf44f75cc",
+      "sourceSha256": "9dfc4bc14597386912f37c25374a7f30db677a23dd1f65d78d038371ec57743a"
+    },
+    {
+      "id": "ec2_ring",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_ring.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ec2_ring.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "fb0a5eb9937e2175f63e83e93f3d6223322d4cb5dace133a923a0abdf3d6d626",
+      "sourceSha256": "6599f1fefb7f1fc1ba98c1b3ff6be53ad1cec62595803cb91efc1332939984d3"
+    },
+    {
+      "id": "ec2_necklace",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_necklace.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ec2_necklace.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "2295700cbc07bc68e52b25d3d15df98d8bbca4fa746c1903c4bf5c2b16058ea8",
+      "sourceSha256": "f07d8d172cb2483ca8017ca9e3210a7c4507544b2c1d8e3f4966675626e86c4d"
+    },
+    {
+      "id": "ec2_crown",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_crown.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ec2_crown.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "04ce91a7304a4407f83680d1a4b2aeb59501445862115a3055480e31ce268d6f",
+      "sourceSha256": "a27de5c550c44314f960c31d1fc91fb1188c7380d2773ca4d8527220ff10669f"
+    },
+    {
+      "id": "legend2_aegis_dragon",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_aegis_dragon.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/legend2_aegis_dragon.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "250f310c6cea93ffe67bd1c5d69d14794098265bf52526c61db89217ae296b3f",
+      "sourceSha256": "5c5d6a1fa7bfaf4b646a1f2152274baca70533e04b9de133c0847b0065dc1d1e"
+    },
+    {
+      "id": "legend2_tricephalos",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_tricephalos.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/legend2_tricephalos.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "0953f19f8a2b564190b81984119ac2c01df245cf2a0bb1bc95922ffa5dbe985f",
+      "sourceSha256": "dc76a1e5cf5997357aae05b450274d5eca7b082be09439acdbc052892ecbddfd"
+    },
+    {
+      "id": "legend2_aurorion",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_aurorion.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/legend2_aurorion.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "2449513ba283a8300186571b879adb6f876fbc2672c9e17be7440b325d6f24fc",
+      "sourceSha256": "522bccb1cb26ed717968cf6c66d578b728ffa92fcede5228ca6907b4016ec67f"
+    },
+    {
+      "id": "legend2_abyssarch",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_abyssarch.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/legend2_abyssarch.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "8232034e3bdbb02b0dadaa426ccbbb1fdce949080664ddd85059df65985b161d",
+      "sourceSha256": "ca2200690023eb6be60db368037e63052d5589ec22501c635552ebdb5652fcc7"
+    },
+    {
+      "id": "legend2_selestia",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_selestia.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/legend2_selestia.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "1e223bca80106d223dce1105faf930eb183d56cda13be8f70d19eaf553de3c96",
+      "sourceSha256": "9867bc6999782d58f705f9a28807986c7d6da3e43263e828ee5d0a19603e3fe5"
+    },
+    {
+      "id": "legend2_aerelion",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_aerelion.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/legend2_aerelion.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "fecbb2670299835b022b1d9ea7a9af2821c5ac7a546b1882ff15301c327a0dfc",
+      "sourceSha256": "136676ea6ab530fc495642ea5de58e5baa003a4921d23f33fc125b7472d68239"
+    },
+    {
+      "id": "legend2_myriapod",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_myriapod.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/legend2_myriapod.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "871ff3829b7358c05466458ac3535c1739a3107579683ee088481fa340577eaf",
+      "sourceSha256": "6e29241ba596b2d8ee71d2f558c3aa7a3436d19b6aff947488fc11e6fd5ee479"
+    },
+    {
+      "id": "legend2_yggwarden",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_yggwarden.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/legend2_yggwarden.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        512,
+        512
+      ],
+      "sha256": "2dfa6775158c4df4f1a8c48620fb55b31f703d28368a6bba209846b58321a9f1",
+      "sourceSha256": "1b54ab8d814b4a7f53777e86b8b8709d8599f081f5a94c71252160a4a14fdf20"
+    },
+    {
+      "id": "aegis_challenge",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/aegis_challenge.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/aegis_challenge.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "6208562ca0905652f3248b28ae15deaeacfabeef4f89e4191e0c90e810b816e4",
+      "sourceSha256": "eb1ce85d6091124a48bac7d0017ac0e1654a2e58c2dd8e9072ec3aedb3e709ba"
+    },
+    {
+      "id": "mist_sig_legend2_aegis_dragon",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_aegis_dragon.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/mist_sig_legend2_aegis_dragon.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "86dca8226f8502fc5fcf78875b4c61b469a08bd4a362b5522fe0ed3c488d57ce",
+      "sourceSha256": "0cb5e833766d6ca106a276c64ecc2330de8bda5f465dbed72a7249aebf627537"
+    },
+    {
+      "id": "tricephal_breath",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/tricephal_breath.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/tricephal_breath.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "189c23425c66b8b81d1cb5070345254df3ed55f429c131696badb16b837c4b1d",
+      "sourceSha256": "ce2c9ea3ce09366cce3e97cd69d21521a98cc0d5fce97480e16df6e3ba7d4b58"
+    },
+    {
+      "id": "mist_sig_legend2_tricephalos",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_tricephalos.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/mist_sig_legend2_tricephalos.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "d407015c6e73728f1d862e4f4943d7afb2aed257a517c6f49f17bde68c4d77a2",
+      "sourceSha256": "5bd41930d9a9ac5f5d6c05d383aebb8f4e4ee30cfed4708f8fdbadce1ac6d51a"
+    },
+    {
+      "id": "aurora_spear",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/aurora_spear.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/aurora_spear.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "419bc8d4b4b0b38b12fd5f2a538ce31954b792644c90190d4ef0e6cbfc07e7d4",
+      "sourceSha256": "e5fa153a900f12518d5d013aed5776d8d36f468c76d2daff25bca302590a6892"
+    },
+    {
+      "id": "mist_sig_legend2_aurorion",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_aurorion.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/mist_sig_legend2_aurorion.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "2b6d602906d827540b1c7f689382c14cb9bfdcab4a611e11fc145533e9a69fdd",
+      "sourceSha256": "b05e0f119e47d22e17b8bf16745d3ebe4741cf054bea54af22e963c820da0636"
+    },
+    {
+      "id": "abyss_rend",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/abyss_rend.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/abyss_rend.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "d210c6e8dbc32c210d06939ca56315aa1283780242311f0bf425647343778144",
+      "sourceSha256": "6a048167f69139b1c057f32468ae16191bac06960973533388e93d9a45b94e3e"
+    },
+    {
+      "id": "mist_sig_legend2_abyssarch",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_abyssarch.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/mist_sig_legend2_abyssarch.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "18793514ce1f730533ec45cb4450389b2c58ebd7bbbaadc00af1a3fb2999cba0",
+      "sourceSha256": "add00c011a20fac01df8157f93838426dd005ddfcbf552e09982c0fea138f8f2"
+    },
+    {
+      "id": "selestia_blessing",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/selestia_blessing.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/selestia_blessing.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "1a733dfb9a71f3a3a7e2c8f6bcc0bd4f803d9110fb30ae13ef47ba1090d62d07",
+      "sourceSha256": "1afbad4d7837965ea9cfe447e27f387e5e162264277c3d03a66eb42811e2b515"
+    },
+    {
+      "id": "mist_sig_legend2_selestia",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_selestia.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/mist_sig_legend2_selestia.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "c5314ba62769dc24db4234a946c2919c0875059f56107675b259a3e32cb80f90",
+      "sourceSha256": "da146a23ceac00ee715d687ff2f82ca4316bfba87e06370db50c7739b6653562"
+    },
+    {
+      "id": "aerelion_rune",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/aerelion_rune.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/aerelion_rune.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "0992dc471f7831358bed7f6b201d2bed1dfd502cb5eef1396fadedf47f939524",
+      "sourceSha256": "f8a95b6e06fa71d00f4c14fca782d30282ece86f1253266c4e09c12920505c86"
+    },
+    {
+      "id": "mist_sig_legend2_aerelion",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_aerelion.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/mist_sig_legend2_aerelion.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "e7111567cd5707c942fe4cfa4402aa28546a3de2d0e4648cc996bb4ed40719b4",
+      "sourceSha256": "b554cfe20fa901470c9852322a399f13da45e610a64070134660f0911339df67"
+    },
+    {
+      "id": "myriapod_venom",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/myriapod_venom.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/myriapod_venom.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "6c1aedb2296c352e9c500c105d43e10786ea5984f528d0a8a084dcc2530b43a8",
+      "sourceSha256": "46e7208ab6f82df479dd3486cea4bd4d6732df1efe67c1ab899505b0eaa12dc6"
+    },
+    {
+      "id": "mist_sig_legend2_myriapod",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_myriapod.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/mist_sig_legend2_myriapod.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "39bd07b834259689cf52538fc83aff700bdbd43ad2248bd72d06cfc1c17eb8af",
+      "sourceSha256": "66e65ccdb150d2831f0062949484baa10484f03a3a1e8b795dc2c02750b304d9"
+    },
+    {
+      "id": "ygg_rootguard",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/ygg_rootguard.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/ygg_rootguard.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "57c86a7d29a33820d33738b12809099f5d5afcc2a63ec32935428e830a40f28b",
+      "sourceSha256": "50183eec9777fcd845e0d04eb289556fc411361c3f6b62c899ae0dddfba351fa"
+    },
+    {
+      "id": "mist_sig_legend2_yggwarden",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_yggwarden.webp",
+      "generator": "built-in image_gen.imagegen",
+      "source": "private/eclipse-expansion-v2/mist_sig_legend2_yggwarden.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ],
+      "sha256": "aaf193125914f218da5cb8495573d5756bf8390779aad53e44cb04be64492c98",
+      "sourceSha256": "5c50e8d90a5529270da06d58ff8ab2dbdb7258712e25fc1caa6a9c5b01b41b4a"
+    }
+  ]
+}

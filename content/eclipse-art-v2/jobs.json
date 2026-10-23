@@ -1,0 +1,197 @@
+{
+  "generator": "built-in image_gen.imagegen",
+  "jobs": [
+    {
+      "id": "ec2_armor",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_armor.webp",
+      "prompt": "Use case: stylized-concept. Create ONE square premium dark-fantasy RPG inventory equipment icon for Soulbeast: ECLIPSE SOVEREIGN CUIRASS, a single imposing complete black obsidian and antique gold breastplate with layered wing-like pauldrons, a radiant black-sun eclipse gemstone in the sternum, intricate silver celestial filigree, thin violet aurora energy. Visually superior to ordinary legendary gear: majestic, exquisitely crafted, tactile metal, realistic painterly AAA fantasy game concept art, rich chiaroscuro. Three-quarter front view, breastplate entirely within the central 80% of the square, no head/body/character, no weapons, no other items. Readable strong silhouette at 64 pixels. Dark midnight-blue softly vignetted backdrop. No border, no frame, no letters, no labels, no watermark. One item only, not a grid or contact sheet. This will be saved as eclipse_v2_armor.webp."
+    },
+    {
+      "id": "ec2_gloves",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_gloves.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. INVENTORY EQUIPMENT ICON, no character or mannequin, no weapons: one matching PAIR of articulated armored gauntlets, black star-metal plated fingers and bright gold celestial engravings, violet energy between the knuckles. Visibly more intricate and imposing than ordinary legendary equipment."
+    },
+    {
+      "id": "ec2_boots",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_boots.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. INVENTORY EQUIPMENT ICON, no character or mannequin, no weapons: one matching PAIR of tall black and gold plated armored boots with sculpted wing-shaped heels and orbital violet stars around the ankles. Visibly more intricate and imposing than ordinary legendary equipment."
+    },
+    {
+      "id": "ec2_belt",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_belt.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. INVENTORY EQUIPMENT ICON, no character or mannequin, no weapons: a single thick complete curved black leather and gold armored belt, central luminous eclipse medallion, embedded emerald star gems, visible side straps. Visibly more intricate and imposing than ordinary legendary equipment."
+    },
+    {
+      "id": "ec2_bracelet",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_bracelet.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. INVENTORY EQUIPMENT ICON, no character or mannequin, no weapons: one massive ornate black-gold wrist bracer with nested floating metallic orbit rings and a luminous amethyst star core, clearly a bracelet not a crown. Visibly more intricate and imposing than ordinary legendary equipment."
+    },
+    {
+      "id": "ec2_ring",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_ring.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. INVENTORY EQUIPMENT ICON, no character or mannequin, no weapons: one exquisite wide signet ring of black platinum with antler-like gold prongs holding an impossible brilliant violet-black eclipse gemstone, fine readable ring band. Visibly more intricate and imposing than ordinary legendary equipment."
+    },
+    {
+      "id": "ec2_necklace",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_necklace.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. INVENTORY EQUIPMENT ICON, no character or mannequin, no weapons: one elaborate necklace with a complete finely wrought black-gold chain and a grand symmetrical eclipsed-sun pendant encasing a radiant blue-white celestial core. Visibly more intricate and imposing than ordinary legendary equipment."
+    },
+    {
+      "id": "ec2_crown",
+      "kind": "equipment",
+      "path": "assets/equipment/eclipse-v2/ec2_crown.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. INVENTORY EQUIPMENT ICON, no character or mannequin, no weapons: one majestic complete regal black-gold crown, seven sculpted towering celestial spires circling a radiant eclipse halo, central violet diamond, rich silver filigree. Visibly more intricate and imposing than ordinary legendary equipment."
+    },
+    {
+      "id": "legend2_aegis_dragon",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_aegis_dragon.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE LEGENDARY BEAST PORTRAIT: tank dragon, massive six-horned silver-black dragon with overlapping star-forged plate scales, protective wings curved into an impenetrable fortress shield, sapphire eclipse core on chest, seated resolute on a shattered celestial rampart. Three-quarter heroic view, magnificent face and silhouette fill the composition, distinctly grander than a rare creature, retain identity at small circular portrait size."
+    },
+    {
+      "id": "legend2_tricephalos",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_tricephalos.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE LEGENDARY BEAST PORTRAIT: one colossal dragon with EXACTLY THREE distinct heads and three clearly separated necks attached to one single body, central obsidian head with violet eyes, left crimson flame head, right white-hot gold head, grand wings, no extra heads, apocalyptic volcanic cosmic setting. Three-quarter heroic view, magnificent face and silhouette fill the composition, distinctly grander than a rare creature, retain identity at small circular portrait size."
+    },
+    {
+      "id": "legend2_aurorion",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_aurorion.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE LEGENDARY BEAST PORTRAIT: majestic serpentine ice dragon with a single antlered head, flowing translucent aurora ribbon wings and crystalline frost armor, a crown of floating ice shards, polar stars and green-violet northern lights. Three-quarter heroic view, magnificent face and silhouette fill the composition, distinctly grander than a rare creature, retain identity at small circular portrait size."
+    },
+    {
+      "id": "legend2_abyssarch",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_abyssarch.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE LEGENDARY BEAST PORTRAIT: terrifying regal adult archdemon, towering muscular horned silhouette in ornate dark armor, six scorched featherless black wings fanned behind, abyssal purple fire halo, imposing face and huge clawed hands, dignified menace, no gore. Three-quarter heroic view, magnificent face and silhouette fill the composition, distinctly grander than a rare creature, retain identity at small circular portrait size."
+    },
+    {
+      "id": "legend2_selestia",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_selestia.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE LEGENDARY BEAST PORTRAIT: magnificent adult celestial goddess, flowing platinum hair, luminous obsidian-gold crown shaped like an eclipsed sun, elegant fully clothed ivory and black astral robes with ornate gold breastplate, floating radiant orbiting rings, benevolent commanding face, majestic cosmic cathedral. Three-quarter heroic view, magnificent face and silhouette fill the composition, distinctly grander than a rare creature, retain identity at small circular portrait size."
+    },
+    {
+      "id": "legend2_aerelion",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_aerelion.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE LEGENDARY BEAST PORTRAIT: adult male high-elf archmage with clearly pointed ears and two vast iridescent feathered wings, long silver hair, intricately embroidered midnight-blue robes, holding an elaborate crystal staff and an open levitating grimoire, luminous astronomical magic rings, floating arcane observatory. Three-quarter heroic view, magnificent face and silhouette fill the composition, distinctly grander than a rare creature, retain identity at small circular portrait size."
+    },
+    {
+      "id": "legend2_myriapod",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_myriapod.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE LEGENDARY BEAST PORTRAIT: colossal giant CENTIPEDE coiling around fractured stone pillars, clearly recognizable elongated many-segmented armored body with many paired jointed legs, enormous plated insect head with two curved venom mandibles and luminous emerald eyes, gold-black chitin with violet poison fissures, no human torso, no dragon wings. Three-quarter heroic view, magnificent face and silhouette fill the composition, distinctly grander than a rare creature, retain identity at small circular portrait size."
+    },
+    {
+      "id": "legend2_yggwarden",
+      "kind": "beast",
+      "path": "assets/beasts/eclipse-v2/legend2_yggwarden.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE LEGENDARY BEAST PORTRAIT: immense ancient living tree guardian with broad stone-bark armored shoulders, antler-like luminous world-tree branches, emerald stellar core embedded in chest, thick root fists planted defensively, silver leaves like constellations, magnificent sacred forest beneath a celestial eclipse. Three-quarter heroic view, magnificent face and silhouette fill the composition, distinctly grander than a rare creature, retain identity at small circular portrait size."
+    },
+    {
+      "id": "aegis_challenge",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/aegis_challenge.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a single armored silver dragon roaring outward, expanding concentric sapphire shockwave rings drawing scarlet hostile arrows inward toward a gigantic protective dragon shield. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "mist_sig_legend2_aegis_dragon",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_aegis_dragon.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a colossal silver dragon spreading armored wings into an impenetrable curved sapphire forcefield dome while golden meteors shatter against its surface. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "tricephal_breath",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/tricephal_breath.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: THREE distinct dragon heads sharing one body, firing three converging streams of crimson flame violet arcane energy and golden lightning into one fierce impact, read clearly at tiny size. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "mist_sig_legend2_tricephalos",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_tricephalos.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: three enormous distinct dragon heads looming symmetrically around one blazing eclipse orb, releasing a triangular apocalyptic blast through shattered black rock. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "aurora_spear",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/aurora_spear.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a luminous ice dragon forming one giant sharp crystalline spear out of frozen aurora light, glacial shards spiraling around the diagonal spear. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "mist_sig_legend2_aurorion",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_aurorion.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: an elegant ice dragon flying around a frozen star, magnificent green-violet aurora cyclone and glittering frost engulfing the scene. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "abyss_rend",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/abyss_rend.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: one enormous black demonic armored claw slashing three luminous violet tears through space, flowing red-purple life energy returning to the hand. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "mist_sig_legend2_abyssarch",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_abyssarch.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a horned archdemon casting a huge black-sun sigil above a molten purple abyss, dark wing silhouette framing a downward column of hellfire. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "selestia_blessing",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/selestia_blessing.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: the elegant gloved hands of a celestial goddess releasing a brilliant pearl-white and gold healing orb, gentle luminous feathers circling a sacred eclipsed sun. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "mist_sig_legend2_selestia",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_selestia.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a majestic fully clothed celestial goddess with an eclipse crown opening a radiant ivory-gold dawn halo, ascending luminous souls like feathers, powerful protective resurrection magic. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "aerelion_rune",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/aerelion_rune.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a winged silver-haired elf mage drawing a brilliant sapphire-violet circular arcane sigil with a jeweled staff, two iridescent feathered wings framing the luminous spell. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "mist_sig_legend2_aerelion",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_aerelion.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a grand open levitating grimoire beneath an immense orbital magic circle, a winged elf mage conducting a focused meteor shower of sapphire star fragments. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "myriapod_venom",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/myriapod_venom.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a giant centipede head with two sharply defined gold-black mandibles injecting an emerald venom stream into cracked obsidian, purple poison droplets and luminous corrosive mist. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "mist_sig_legend2_myriapod",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_myriapod.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a gigantic clearly segmented armored centipede bursting out of the earth in a great circular wave, many paired jointed legs, emerald toxic fissures and flying stone fragments. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "ygg_rootguard",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/ygg_rootguard.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: huge luminous emerald world-tree roots weaving into an intricate protective shield around a glowing celestial core, stone-bark texture silver leaves and warm golden sap. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    },
+    {
+      "id": "mist_sig_legend2_yggwarden",
+      "kind": "skill",
+      "path": "assets/skills/painted-v2/mist_sig_legend2_yggwarden.webp",
+      "prompt": "Square 1:1, masterpiece dark-fantasy AAA RPG painted concept art for Soulbeast, realistic tactile detailed rendering, magnificent premium legendary quality, dramatic volumetric light, refined anatomy, readable strong silhouette at 64 pixels. Deep midnight vignette. Rich jewel tones and antique gold. Full subject or spell effect must fit inside the central 80% with clear margins; do not crop any head, horn, wing, foot, chain or important effect. No UI, no frame, no text, no glyph letters, no watermark, no multiple panels or contact sheet. ONE single finished standalone illustration. ONE DYNAMIC SKILL ICON: a colossal stone-bark guardian raising root arms beneath a vast luminous silver-leaf world tree, an emerald-gold protective pulse spreading across the forest floor. Prioritize the spell action and clear impact over background scenery. Visually distinct from other skill icons."
+    }
+  ]
+}

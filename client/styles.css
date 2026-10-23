@@ -597,3 +597,6 @@ html[lang="en"] .acts .btn:has(.skill-painted)>.skill-elements{grid-column:1;gri
 .skill-painted>.skill-raster{inset:1px;background-image:var(--skill-image);background-size:contain;background-position:center;background-repeat:no-repeat;border-radius:11px}
 .skill-painted:has(>.skill-raster)>.skill-rank{display:none}
 .acts .btn:has(.skill-painted):enabled:hover .skill-raster{transform:none}
+
+/* Complete generated illustrations: preserve all artwork inside the existing icon space. */
+.eclipse-equipment-art{display:inline-flex;position:relative;flex-shrink:0;align-items:center;justify-content:center;border-radius:10px;overflow:hidden;background:#0a1320}.eclipse-equipment-art img{display:block;width:100%;height:100%;object-fit:contain}.eclipse-equipment-art small{position:absolute;right:1px;bottom:0;color:#edd180;text-shadow:0 0 3px #000}.legendary-beast-portrait{display:block;width:100%;height:100%;object-fit:contain}

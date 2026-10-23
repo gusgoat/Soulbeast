@@ -89,13 +89,13 @@ const ZT=id=>ZN[id-1].train?0:id-1;
 
 function openChest(c){Sound.fx('chest');const z=ZN[S.zone.id-1],P=S.P,out=[],tier=ZT(z.id),add=(id,n=1)=>{P.items[id]=(P.items[id]||0)+n;out.push(`${CON[id].n}${n>1?' ×'+n:''}`)};
  const chestType=c;
- const gold=g=>{P.gold+=g;out.push(`${fmt(g)} เหรียญ`)},gear=id=>{P.owned.push(id);out.push((EQ[id].legend?'✦ ':'')+EQ[id].n+(EQ[id].pas?` (${PAS[EQ[id].pas].n})`:''))},lg=ch=>{if(Math.random()<ch){const id=legendDrop(z.id);if(id)gear(id)}};
+ const gold=g=>{P.gold+=g;out.push(`${fmt(g)} เหรียญ`)},gear=id=>{P.owned.push(id);if(EQ[id].legend){P.legend=P.legend||{};P.legend[id]=1;}out.push((EQ[id].legend?'✦ ':'')+EQ[id].n+(EQ[id].pas?` (${PAS[EQ[id].pas].n})`:''))},lg=ch=>{if(Math.random()<ch){const id=legendDrop(z.id);if(id)gear(id)}};
  const base=R(6,14)*z.lv[0]+R(5,20),pot=['pot','pot','pot2','pot2','pot3','pot3'][tier];
  if(c==='wood'){gold(base);add(pot,R(1,2));if(Math.random()<.4)add(tier>=3?'eth2':'eth')}
  if(c==='jade'){for(let i=0;i<3;i++)add(pick(CURES));add(pot);if(Math.random()<.35)add('allcure')}
  if(c==='azure'){add(SEALS[Math.min(4,tier)],R(2,3));if(Math.random()<.3&&tier<4)add(SEALS[tier+1])}
  if(c==='amethyst'){gear(gearDrop(tier+(Math.random()<.2?1:0),Math.random()<.35));if(Math.random()<.15)gear(`wp_${clsWeapon(P.cls)}${Math.min(5,tier+2)}`)}
- if(c==='legend'){const id=legendDrop(z.id);if(id){gear(id);gold(base*2)}else{out.push('ของในตำนานของแผนที่นี้ถูกพบครบแล้ว');c='gold'}}
+ if(c==='legend'){const id=mistLegendsUnlocked(P)&&(S.zone.ev?.eclipseRoll??(Math.random()<.01))?pick(WORLD_LEGENDS):legendDrop(z.id);if(id){gear(id);gold(base*2)}else{out.push('ของในตำนานของแผนที่นี้ถูกพบครบแล้ว');c='gold'}}
  if(c==='gold'){lg(.12);gold(base*4);gear(gearDrop(tier+1,Math.random()<.6));add(SEALS[Math.min(4,tier+1)]);add(pot,2);add('allcure')}
  if(c==='blood'){lg(.18);out.push(trap().split('!')[0]+'จากคำสาป');gold(base*3);gear(gearDrop(tier+1,true));gear(gearDrop(tier,false));add(SEALS[Math.min(4,tier+1)],2);add('rev')}
  if(Math.random()<({wood:.01,jade:.02,azure:.02,amethyst:.03,gold:.06,legend:.08,blood:.08}[chestType]||0))add('revivePotion');

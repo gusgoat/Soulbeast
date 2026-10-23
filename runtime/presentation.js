@@ -335,6 +335,7 @@ skillElementIcon=function(u,sk,id){return skillPicture(u,sk,id)+skillElementOnly
 // @soulbeast-unit 0517-mistPortrait
 
 function mistPortrait(key){
+ if(SP[key]?.art)return '<img class="legendary-beast-portrait" src="'+esc(SP[key].art)+'" alt="'+esc(SP[key].n)+'" loading="lazy">';
  const i=[...MIST_RARE_DEFS,...MIST_LEGEND_DEFS].findIndex(x=>x[0]===key);if(i<0)return '';
  return `<span class="mist-beast-art" role="img" aria-label="${esc(SP[key].n)}" style="--beast-x:${i%4*100/3}%;--beast-y:${Math.floor(i/4)*100/3}%"></span>`;
 }
@@ -370,6 +371,7 @@ const weaponBaseItemIcon=itemIcon;
 // @soulbeast-unit 0555-itemIcon
 
 itemIcon=function(id,size=44){
+ if(EQ[id]?.art)return '<span class="item-art eclipse-equipment-art" role="img" aria-label="'+esc(EQ[id].n)+'" style="--item-size:'+Math.max(28,Number(size)||44)+'px"><img src="'+esc(EQ[id].art)+'" alt="" loading="lazy"><small aria-hidden="true">✹</small></span>';
  const art=WEAPON_ART[id];if(!art)return weaponBaseItemIcon(id,size);
  const lang=typeof GAME_LANGUAGE==='undefined'?'th':GAME_LANGUAGE,label=WEAPON_RARITY[art.rarity][lang]||WEAPON_RARITY[art.rarity].th;
  const name=typeof translateGameText==='function'?translateGameText(EQ[id].n,lang,false).trim():EQ[id].n;

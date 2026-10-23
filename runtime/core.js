@@ -398,9 +398,9 @@ const BEAST_RARITY_LABELS=SoulbeastContent.BEAST_RARITY_LABELS();
 
 function mistEncounter(zd,roll,P=S.P){
  let sp;
- if(!zd.train&&mistLegendsUnlocked(P)&&roll<.33*.10)sp=pick(MIST_LEGEND_DEFS.map(x=>x[0]));
+ if(!zd.train&&mistLegendsUnlocked(P)&&roll<.003)sp=pick(MIST_LEGEND_DEFS.map(x=>x[0]));
  else if(roll<.33)sp=pick(mistRarePool(zd));else return null;
- const legendary=!!SP[sp].legendary,lv=legendary?clamp(Math.max(45,zd.lv[1]+R(0,2)),1,MAXLV):zd.lv[1]+R(0,2),e=wildUnit(sp,lv,0);
+ const legendary=!!SP[sp].legendary,lv=legendary?R(40,60):zd.lv[1]+R(0,2),e=wildUnit(sp,lv,0);
  e.rare=true;e.legendary=legendary;e.name=(legendary?'✦ ':'★ ')+e.name;return e;
 }
 // @soulbeast-end 0516-mistEncounter
@@ -492,7 +492,9 @@ petSkills=function(p){const skills=demonPetSkillsBase(p);if(p.sp==='demonlord')f
 const eclipseRewardCardBase=gachaRewardCard;
 // @soulbeast-end 0808-eclipseRewardCardBase
 // @soulbeast-unit 0809-gachaRewardCard
-gachaRewardCard=function(r){const html=eclipseRewardCardBase(r);return r.guaranteedEclipse?html.replace('</article>','<small class="good">'+ct('รางวัลการันตีอาวุธ 50 ครั้ง','50-pull weapon guarantee','50抽武器保底')+'</small></article>'):html;};
+gachaRewardCard=function(r){return eclipseRewardCardBase(r);};
+const eclipseEndBattle=endBattle;
+endBattle=function(...args){const before=Number(S.P?.cleared||0),out=eclipseEndBattle(...args);if(Number(S.P?.cleared||0)>before)setTimeout(()=>claimDemonVictory(),100);return out;};
 // @soulbeast-end 0809-gachaRewardCard
 // @soulbeast-unit 0836-playAutoAct
 

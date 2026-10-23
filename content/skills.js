@@ -57,24 +57,7 @@ FORMS:()=>({
  gdragon:{n:'ร่างมังกรพงไพร',em:'🐲',t:['dragon','grass'],m:{patk:1.6,matk:1.6,pdef:1.4,mdef:1.4,spd:1.1},sk:['f_dragonbreath','dragon_p2','f_dragonroar']},
  moon:{n:'ร่างวิญญาณจันทรา',em:'🌙',t:['fairy','psychic'],m:{matk:1.8,mdef:1.5,eva:1.3},sk:['f_moonbeam','f_moonbless','psychic_m2']},
 }),
-MIST_SIGNATURES:()=>({
- jade_moon_hare:{n:'พรจันทร์หยก',t:'heal',pw:35,tg:'team',cure:1,mp:18,cd:3},
- tempest_lynx:{n:'อัสนีไล่ล่า',t:'m',pw:165,el:'electric',all:1,st:{para:.15},mp:20,cd:3},
- bloom_jade_mare:{n:'สวนบุปผาพิทักษ์',t:'buff',tg:'team',bf:{pdef:.3,mdef:.3},tn:3,mp:16,cd:3},
- obsidian_scarab:{n:'เขี้ยวศิลาเจาะเกราะ',t:'p',pw:190,el:'rock',pi:.35,mp:16,cd:2},
- aurora_whale:{n:'ธารแสงเหนือ',t:'heal',pw:35,tg:'team',cure:1,mp:20,cd:3},
- ember_jackal:{n:'เขี้ยวเถ้ากินวิญญาณ',t:'p',pw:180,el:'fire',ls:.2,st:{burn:.35},mp:18,cd:2},
- prism_owl:{n:'เนตรปริซึมลวงจิต',t:'m',pw:185,el:'psychic',st:{confuse:.4},mp:18,cd:2},
- dusk_panther:{n:'ตะปบเงาสามภพ',t:'p',pw:70,hits:3,el:'dark',cb:15,mp:20,cd:3},
- primordial_ouroboros:{n:'วงแหวนกลืนกาล',t:'h',pw:260,el:'dark',all:1,pi:.4,mp:32,cd:4},
- dawn_valkyrie:{n:'รุ่งอรุณคืนชีพ',t:'heal',pw:45,tg:'team',revAll:1,cure:1,mp:32,cd:5},
- astral_dragon:{n:'มหาฝนดาวมังกร',t:'m',pw:240,el:'dragon',all:1,st:{confuse:.2},mp:30,cd:4},
- cosmic_tortoise:{n:'ปราการจักรวาล',t:'buff',tg:'team',bf:{pdef:.55,mdef:.55},tn:3,mp:28,cd:4},
- solar_sovereign:{n:'สุริยพิพากษา',t:'m',pw:270,el:'fire',all:1,st:{burn:.5},mp:34,cd:4},
- infinite_sea_serpent:{n:'คลื่นเยือกแข็งอนันต์',t:'p',pw:100,hits:3,el:'water',st:{freeze:.25},mp:32,cd:4},
- void_phoenix:{n:'พายุวิญญาณสูญ',t:'m',pw:250,el:'ghost',all:1,ls:.25,mp:32,cd:4},
- eclipse_wolf:{n:'เขี้ยวคราสดับตะวัน',t:'p',pw:280,el:'dark',pi:.5,ls:.3,mp:30,cd:3}
-}),
+MIST_SIGNATURES:()=>({"jade_moon_hare":{"n":"พรจันทร์หยก","t":"heal","pw":35,"tg":"team","cure":1,"mp":18,"cd":3},"tempest_lynx":{"n":"อัสนีไล่ล่า","t":"m","pw":165,"el":"electric","all":1,"st":{"para":0.15},"mp":20,"cd":3},"bloom_jade_mare":{"n":"สวนบุปผาพิทักษ์","t":"buff","tg":"team","bf":{"pdef":0.3,"mdef":0.3},"tn":3,"mp":16,"cd":3},"obsidian_scarab":{"n":"เขี้ยวศิลาเจาะเกราะ","t":"p","pw":190,"el":"rock","pi":0.35,"mp":16,"cd":2},"aurora_whale":{"n":"ธารแสงเหนือ","t":"heal","pw":35,"tg":"team","cure":1,"mp":20,"cd":3},"ember_jackal":{"n":"เขี้ยวเถ้ากินวิญญาณ","t":"p","pw":180,"el":"fire","ls":0.2,"st":{"burn":0.35},"mp":18,"cd":2},"prism_owl":{"n":"เนตรปริซึมลวงจิต","t":"m","pw":185,"el":"psychic","st":{"confuse":0.4},"mp":18,"cd":2},"dusk_panther":{"n":"ตะปบเงาสามภพ","t":"p","pw":70,"hits":3,"el":"dark","cb":15,"mp":20,"cd":3},"primordial_ouroboros":{"n":"วงแหวนกลืนกาล","t":"h","pw":260,"el":"dark","all":1,"pi":0.4,"mp":32,"cd":4},"dawn_valkyrie":{"n":"รุ่งอรุณคืนชีพ","t":"heal","pw":45,"tg":"team","revAll":1,"cure":1,"mp":32,"cd":5},"astral_dragon":{"n":"มหาฝนดาวมังกร","t":"m","pw":240,"el":"dragon","all":1,"st":{"confuse":0.2},"mp":30,"cd":4},"cosmic_tortoise":{"n":"ปราการจักรวาล","t":"buff","tg":"team","bf":{"pdef":0.55,"mdef":0.55},"tn":3,"mp":28,"cd":4},"solar_sovereign":{"n":"สุริยพิพากษา","t":"m","pw":270,"el":"fire","all":1,"st":{"burn":0.5},"mp":34,"cd":4},"infinite_sea_serpent":{"n":"คลื่นเยือกแข็งอนันต์","t":"p","pw":100,"hits":3,"el":"water","st":{"freeze":0.25},"mp":32,"cd":4},"void_phoenix":{"n":"พายุวิญญาณสูญ","t":"m","pw":250,"el":"ghost","all":1,"ls":0.25,"mp":32,"cd":4},"eclipse_wolf":{"n":"เขี้ยวคราสดับตะวัน","t":"p","pw":280,"el":"dark","pi":0.5,"ls":0.3,"mp":30,"cd":3},"legend2_aegis_dragon":{"n":"ปราการจักรวาล","t":"buff","tg":"team","bf":{"pdef":0.35,"mdef":0.35},"tn":3,"mp":22,"cd":4},"legend2_tricephalos":{"n":"พิพากษาสามเศียร","t":"m","el":"fire","pw":250,"all":1,"mp":27,"cd":4},"legend2_aurorion":{"n":"เหมันต์เหนือดวงดาว","t":"m","el":"dragon","pw":250,"all":1,"st":{"freeze":0.2},"mp":27,"cd":4},"legend2_abyssarch":{"n":"ราชโองการอเวจี","t":"m","el":"fire","pw":280,"all":1,"mp":29,"cd":4},"legend2_selestia":{"n":"รุ่งอรุณคืนวิญญาณ","t":"heal","tg":"team","pw":45,"revAll":1,"cure":1,"mp":34,"cd":5},"legend2_aerelion":{"n":"มหาเวทสลายวงโคจร","t":"m","el":"psychic","pw":260,"all":1,"pi":0.2,"mp":28,"cd":4},"legend2_myriapod":{"n":"พันขาแยกพิภพ","t":"h","el":"ground","pw":250,"all":1,"st":{"poison":0.35},"mp":27,"cd":4},"legend2_yggwarden":{"n":"คำสัตย์แห่งต้นไม้โลก","t":"heal","tg":"team","pw":35,"cure":1,"bf":{"pdef":0.2,"mdef":0.2},"tn":3,"mp":28,"cd":4}}),
 SK_additions_1:()=>({
 /* ---- swordsman line ---- */
 sw_bash:{n:'ฟันกระแทก',t:'p',pw:150,el:'normal',mp:3,st:{para:.12}},
@@ -310,7 +293,7 @@ SK_additions_3:()=>({
  shadow_clone:{n:'แยกร่างเงา',t:'summon',summon:'clone',mp:16,cd:3,life:3},
  summon_golem:{n:'อัญเชิญโกเลมพิทักษ์',t:'summon',summon:'golem',mp:18,cd:5,life:3}
 }),
-SK_additions_4:()=>({wb_guard:{n:'ตั้งรับ',t:'buff',tg:'self',bf:{pdef:.5,mdef:.5},tn:1,mp:0},wb_claw:{n:'กรงเล็บสุริยคราส',t:'p',pw:240,el:'dark',mp:0},wb_flame:{n:'เปลวเพลิงดับดารา',t:'m',pw:240,el:'fire',mp:0},wb_lance:{n:'หอกห้วงอเวจี',t:'h',pw:240,el:'dragon',mp:0},wb_storm:{n:'มหาพายุอเวจี',t:'m',pw:170,el:'dark',all:1,areaScale:.65,mp:0}}),
+SK_additions_4:()=>({"wb_guard":{"n":"ตั้งรับ","t":"buff","tg":"self","bf":{"pdef":0.5,"mdef":0.5},"tn":1,"mp":0},"wb_claw":{"n":"กรงเล็บสุริยคราส","t":"p","pw":240,"el":"dark","mp":0},"wb_flame":{"n":"เปลวเพลิงดับดารา","t":"m","pw":240,"el":"fire","mp":0},"wb_lance":{"n":"หอกห้วงอเวจี","t":"h","pw":240,"el":"dragon","mp":0},"wb_storm":{"n":"มหาพายุอเวจี","t":"m","pw":170,"el":"dark","all":1,"areaScale":0.65,"mp":0},"aegis_challenge":{"n":"คำรามท้าดารา","t":"buff","tg":"self","bf":{"pdef":0.4,"mdef":0.4},"taunt":3,"tn":3,"mp":14,"cd":3},"tricephal_breath":{"n":"ลมหายใจสามมหาภัย","t":"h","el":"dragon","pw":70,"hits":3,"mp":20,"cd":2},"aurora_spear":{"n":"หอกน้ำแข็งออโรรา","t":"m","el":"ice","pw":170,"st":{"freeze":0.25},"mp":15,"cd":2},"abyss_rend":{"n":"กรงเล็บฉีกสุญญตา","t":"p","el":"dark","pw":180,"ls":0.3,"mp":17,"cd":2},"selestia_blessing":{"n":"พรเทพีมหาคราส","t":"heal","tg":"team","pw":30,"cure":1,"mp":20,"cd":3},"aerelion_rune":{"n":"อัขระปีกดารา","t":"buff","tg":"self","bf":{"matk":0.4,"spd":0.2},"tn":3,"mp":16,"cd":3},"myriapod_venom":{"n":"เขี้ยวพิษกลืนโลก","t":"p","el":"poison","pw":85,"hits":2,"st":{"poison":0.6},"mp":18,"cd":2},"ygg_rootguard":{"n":"รากไม้พิทักษ์ดารา","t":"buff","tg":"self","bf":{"pdef":0.45,"mdef":0.35},"taunt":3,"tn":3,"mp":13,"cd":3}}),
 SK_s_demon_1:()=>({n:'วันพิพากษาแห่งจอมมาร',t:'m',pw:200,el:'dark',all:1,mp:24,st:{burn:.3,charm:.2}}),
 SK_boss_legend_call_1:()=>({n:'พันธสัญญาอสูรตำนาน',t:'summon',mp:0,summon:'legendary',life:999})
 });

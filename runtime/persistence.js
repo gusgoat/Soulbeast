@@ -59,7 +59,7 @@ async function gsSave(manual,newPin){if(!SHEET_URL||!S.P||S.battle||GS.busy||S.u
  GS.busy=1;GS.lastAt=Date.now();if(manual)render();
  try{const body={action:'save',code:ensureCode(),pin:P.cpin||'',data,name:P.name,clsName:CLS[P.cls].n,lv:P.lv};if(newPin!=null)body.newPin=newPin;
   const r=await lbPost(body);
-  if(r&&r.ok){applyAccount(r.account);GS.lastJson=gsData();P.gsAt=r.at;if(newPin!=null){P.cpin=newPin;const el=document.getElementById('gsnewpin');if(el)el.value=''}save();if(manual)toast(newPin!=null?(newPin?'ตั้ง PIN แล้ว':'ลบ PIN แล้ว'):'บันทึกลง เซิร์ฟเวอร์ออนไลน์ แล้ว')}
+  if(r&&r.ok){applyAccount(r.account);applyDemonRewardReceipts(r);GS.lastJson=gsData();P.gsAt=r.at;if(newPin!=null){P.cpin=newPin;const el=document.getElementById('gsnewpin');if(el)el.value=''}save();if(manual)toast(newPin!=null?(newPin?'ตั้ง PIN แล้ว':'ลบ PIN แล้ว'):'บันทึกลง เซิร์ฟเวอร์ออนไลน์ แล้ว')}
   else if(manual)toast(sheetError(r))}
  catch(e){if(manual)toast('บันทึกไม่สำเร็จ ตรวจการเชื่อมต่ออินเทอร์เน็ต')}
  GS.busy=0;render()}

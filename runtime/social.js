@@ -61,7 +61,7 @@ const COMMUNITY={busy:false,error:'',friends:[],online:[],incoming:null,serverTi
 // @soulbeast-unit 0574-communityError
 
 function communityError(message){const errors={
- 'not enough coupons':['คูปองไม่พอ','Not enough coupons','兑换券不足'],'friends full':['เพื่อนเต็ม30คนแล้ว','Friend limit reached (30)','好友已满（30人）'],
+ 'game update required':['กรุณาอัปเดตเกมก่อนรับรางวัลใหม่','Please update the game before receiving new rewards','请先更新游戏以领取新奖励'],'gacha update required':['กรุณาอัปเดตเกมก่อนสุ่มกาชา','Please update the game before drawing','请先更新游戏再抽奖'],'not enough coupons':['คูปองไม่พอ','Not enough coupons','兑换券不足'],'friends full':['เพื่อนเต็ม30คนแล้ว','Friend limit reached (30)','好友已满（30人）'],
  'friend offline':['เพื่อนออฟไลน์แล้ว','Your friend is offline','好友已离线'],'challenge expired':['คำท้าหมดอายุแล้ว','Challenge expired','挑战已过期'],
  'challenge cooldown':['รอ30วินาทีก่อนท้าครั้งถัดไป','Wait 30 seconds before another challenge','请等待30秒再发起挑战'],'challenge pending':['มีคำท้าที่รอคำตอบอยู่','A challenge is already pending','已有待回复的挑战'],
  'account banned':['บัญชีถูกระงับ กรุณาติดต่อผู้ดูแล','Account suspended. Contact the administrator.','账号已停用，请联系管理员'],
@@ -80,7 +80,7 @@ function communityBattleBusy(){return !!(S.zone||S.battle&&!S.battle.over||['wai
 // @soulbeast-end 0576-communityBattleBusy
 // @soulbeast-unit 0577-communitySave
 
-async function communitySave(){if(S.battle&&!S.battle.over||GS.busy)throw Error('finish other battle');const r=await lbPost({action:'save',...communityAuth(),data:gsData(),name:S.P.name,clsName:CLS[S.P.cls].n,lv:S.P.lv});if(!r.ok)throw Error(r.error);applyAccount(r.account);S.P.gsAt=r.at;GS.lastAt=Date.now();GS.lastJson=gsData();if(r.coupons!=null)GACHA.coupons=r.coupons;return r;}
+async function communitySave(){if(S.battle&&!S.battle.over||GS.busy)throw Error('finish other battle');const r=await lbPost({action:'save',...communityAuth(),data:gsData(),name:S.P.name,clsName:CLS[S.P.cls].n,lv:S.P.lv});if(!r.ok)throw Error(r.error);applyAccount(r.account);applyDemonRewardReceipts(r);S.P.gsAt=r.at;GS.lastAt=Date.now();GS.lastJson=gsData();if(r.coupons!=null)GACHA.coupons=r.coupons;return r;}
 // @soulbeast-end 0577-communitySave
 // @soulbeast-unit 0578-communityApplyData
 

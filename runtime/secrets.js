@@ -118,7 +118,7 @@ const SecretWarp={
 const secretVisualForkPrevious=chooseFork;
 chooseFork=function(i){const d=S.zone?.fork?.[Number(i)];if(d?.h&&SecretWarp.eligible()&&Math.random()<.10){S.zone.depth++;return SecretWarp.trigger('dark');}return secretVisualForkPrevious(i);};
 const secretVisualChestPrevious=handlers.openchest;
-handlers.openchest=function(...args){const e=S.zone?.ev;if(e?.type==='chest'&&!e.opened&&SecretWarp.riskyChests.includes(e.chest)&&SecretWarp.eligible()&&!e.warpChecked){e.warpChecked=true;if(Math.random()<.10){e.opened=true;return SecretWarp.trigger('chest:'+e.chest);}}return secretVisualChestPrevious(...args);};
+handlers.openchest=function(...args){const e=S.zone?.ev;if(e?.type==='chest'&&!e.opened&&e.chest==='legend'&&mistLegendsUnlocked(S.P)&&e.eclipseRoll==null){e.eclipseRoll=Math.random()<.01;save();}if(e?.type==='chest'&&!e.opened&&!e.eclipseRoll&&SecretWarp.riskyChests.includes(e.chest)&&SecretWarp.eligible()&&!e.warpChecked){e.warpChecked=true;if(Math.random()<.10){e.opened=true;return SecretWarp.trigger('chest:'+e.chest);}}return secretVisualChestPrevious(...args);};
 const secretVisualZonePrevious=vZone;
 vZone=function(){SecretWarp.resume();if(S.zone?.warpGate&&!S.battle)return SecretWarp.gate();return secretVisualZonePrevious();};
 const secretVisualBattlePrevious=battleAction;

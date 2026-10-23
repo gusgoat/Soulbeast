@@ -262,13 +262,13 @@ function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,line
   exp=Math.round(exp);
   if(b.kind==='npc'){const n=NPC[b.meta],first=!P.arena[b.meta];const g=first?n.gold:Math.round(n.gold*.3);gold+=g;P.arena[b.meta]=(P.arena[b.meta]||0)+1;lines.unshift(`เงินรางวัลประลอง ${fmt(g)} เหรียญ${first?' (ชนะครั้งแรก)':''}`)}
   if(b.kind==='traveler')lines.push(...travelerLoot(b.enemies[0]));
-  if(b.kind==='boss'&&b.enemies.some(e=>e.sp==='demonlord')&&Math.random()<.12){const pool=WORLD_LEGENDS.filter(id=>!P.owned.includes(id)&&!Object.values(P.eq).includes(id)),id=pick(pool.length?pool:WORLD_LEGENDS);P.owned.push(id);P.legend=P.legend||{};P.legend[id]=1;lines.push('✦ ตำนานสุริยคราส: '+EQ[id].n);}
+  if(b.kind==='boss'&&b.enemies.some(e=>e.sp==='demonlord')){P.rewardRulesVersion=2;lines.push('รางวัลจอมมารจะยืนยันจากเซิร์ฟเวอร์เมื่อบันทึกออนไลน์');}
   if(b.kind==='boss'&&ZN[b.meta-1].final&&b.enemies.some(e=>e.sp==='demonlord')){if(!P.cleared){gold+=20000;lines.push('🏆 ปราบจอมมารสำเร็จเป็นครั้งแรก! รางวัลพิเศษ 20,000 เหรียญ')}else lines.push('🏆 ปราบจอมมารได้อีกครั้ง!');P.cleared=(P.cleared||0)+1}
   if(b.kind==='boss'){const z=b.meta;if(P.zoneMax<=z&&z<ZN.length){P.zoneMax=z+1;lines.push(`ปลดล็อกพื้นที่ใหม่: ${ZN[z].n}`)}gold+=ZN[z-1].boss.lv*25}
   const lucky=b.allies[0].pas.filter(k=>k==='lucky').length;if(lucky)gold=Math.round(gold*(1+.25*lucky));
   P.gold+=gold;lines.unshift(`ได้ EXP ${fmt(progressionRewardExp(P,exp))} · ${fmt(gold)} เหรียญ`);
   lines.push(...gainExp(P,progressionRewardExp(P,exp),true));b.used.forEach(uid=>{const p=petBy(uid);if(p)lines.push(...gainExp(p,progressionRewardExp(p,exp),false))});
-  if(b.kind==='boss'&&S.zone&&ZN[S.zone.id-1].final){P.items.godSeal=(P.items.godSeal||0)+1;lines.push('ได้รับ ผนึกของพระเจ้า ×1')}Sound.fx('win');b.over={res,title:'ชัยชนะ',lines}}
+  Sound.fx('win');b.over={res,title:'ชัยชนะ',lines}}
  else if(res==='lose'){const band=b.kind==='bandit'||b.kind==='traveler';
   const lost=Math.max(0,Math.floor(P.gold*(band?.25:.1)));P.gold-=lost;const xl=loseExp(P,band?.15:.08);
   P.hp=Math.max(1,Math.round(pStats().hp*.3));
