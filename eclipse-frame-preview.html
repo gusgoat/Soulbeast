@@ -17,7 +17,7 @@
 <title>ตำนานผนึกอสูร</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
-<link rel="stylesheet" href="./game-styles.0e354c3e7d56c347.css">
+<link rel="stylesheet" href="./game-styles.59806653bf87e93c.css">
 
 <div id="app"></div>
 <div id="vfx" aria-hidden="true"></div>
@@ -37,7 +37,7 @@
 <script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
 <script src="./game-data-secrets.b755c3d1bd3b2d7e.js"></script>
 <script src="./game-data-narrative.3437bb33483fc5e0.js"></script>
-<script src="./game-app.12b6821052f8b1a3.js"></script>
+<script src="./game-app.d149bb6f538f3a17.js"></script>
 
 <script>const lang=new URLSearchParams(location.search).get('lang');if(['en','zh-CN'].includes(lang))GAME_LANGUAGE=lang;render=function(){const ids=Object.keys(EQ).filter(id=>EQ[id].worldLegend),regular=Object.keys(WEAPON_ART).find(id=>WEAPON_ART[id].rarity==='legendary');document.getElementById('app').innerHTML='<main class="frame-preview stack"><h1>'+ct('กรอบตำนานสุริยคราส','Eclipse Legendary Frames','日蚀传说边框')+'</h1>'+languagePanel()+'<section class="card stack frame-comparison"><h2>'+ct('โลหะทับทิม · ขอบนูนสามมิติ','Ruby metal · Raised beveled frame','红宝石金属 · 立体浮雕边框')+'</h2><div class="row wrap">'+[64,100,144].map(size=>itemIcon('wl_sword',size)).join('')+'</div><div class="row">'+itemIcon(regular,44)+'<span>'+ct('กรอบตำนานทั่วไป','Ordinary legendary frame','普通传说边框')+'</span></div></section><section class="weapon-book-grid">'+ids.map(id=>{const it=EQ[id];return '<article class="card stack"><div class="row">'+itemIcon(id,80)+'<div class="grow"><h3>'+esc(it.n)+'</h3><span class="weapon-rarity-label weapon-label-eclipse">'+weaponRarityLabel(it)+'</span></div></div><p class="sub">'+statLine(it.st)+'</p></article>';}).join('')+'</section><section class="card stack"><h2>'+ct('ขนาดไอคอนในเกม','In-game icon sizes','游戏图标尺寸')+'</h2><div class="row wrap">'+[28,38,44,52,64,100].map(size=>'<div class="size-sample">'+itemIcon('ec2_armor',size)+'<small>'+size+'px</small></div>').join('')+'</div></section></main>';applyGameLanguage(document.getElementById('app'));};render();</script></body>
 </html>

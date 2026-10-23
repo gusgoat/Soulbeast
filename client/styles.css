@@ -619,3 +619,21 @@ html[lang="en"] .acts .btn:has(.skill-painted)>.skill-elements{grid-column:1;gri
 .rarity-solar,.unit-frame[data-unit-tier="solar"],.gacha-result:has(.frame-solar){border-color:#c63855!important;box-shadow:inset 0 1px 0 #f6a3ae55,inset 0 -2px 2px #490a21,0 3px 8px #0006}
 .rarity-solar,.gacha-result:has(.frame-solar){background:radial-gradient(ellipse at top,#661d3844,transparent 65%),linear-gradient(140deg,#251424,#101d2c)}
 .solar-rarity-label,.frame-key-solar{color:#ff91a7!important}.unit-frame[data-unit-tier="solar"]{--unit-tint:#eb516b!important}
+
+/* Eclipse legendary skills: authored silhouettes and source-to-target trails. */
+[class*="sig-eclipse-"]{animation-name:eclipse-crest;opacity:.82;filter:drop-shadow(0 0 8px var(--c)) drop-shadow(0 0 2px var(--a))}
+.eclipse-flight:not(.battle-skill-beam){width:36px;height:34px;border-radius:0;background:linear-gradient(90deg,var(--c),var(--a),#fff);box-shadow:none;filter:drop-shadow(0 0 9px var(--c))}.eclipse-flight.battle-skill-beam{height:15px;background:linear-gradient(0deg,transparent,var(--c),#fff,var(--a),transparent);box-shadow:0 0 18px var(--c)}.eclipse-flight-bastion{border:2px solid var(--a)}
+@keyframes eclipse-crest{0%{transform:translate(-50%,-50%) scale(.18) rotate(-18deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1.05) rotate(0);opacity:.9}65%{opacity:.7}100%{transform:translate(-50%,-55%) scale(1.3) rotate(8deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.eclipse-flight,[class*="sig-eclipse-"]{display:none!important}}
+
+.eclipse-skill-emblem{width:84px;height:84px;box-shadow:0 0 24px var(--c),0 0 48px var(--c);border:2px solid var(--a);border-radius:50%;animation-duration:1s;opacity:.85}
+
+/* Luminous engraved motifs: transparent interiors preserve the character portrait. */
+.sig-eclipse-dragon,.eclipse-flight.eclipse-motif-dragon{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/dragon.svg") center/contain no-repeat}
+.sig-eclipse-lich,.eclipse-flight.eclipse-motif-lich{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/lich.svg") center/contain no-repeat}
+.sig-eclipse-bastion,.eclipse-flight.eclipse-motif-bastion{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/bastion.svg") center/contain no-repeat}
+.sig-eclipse-deity,.eclipse-flight.eclipse-motif-deity{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/deity.svg") center/contain no-repeat}
+.sig-eclipse-demon,.eclipse-flight.eclipse-motif-demon{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/demon.svg") center/contain no-repeat}
+.sig-eclipse-antlers,.eclipse-flight.eclipse-motif-antlers{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/antlers.svg") center/contain no-repeat}
+.sig-eclipse-feather,.eclipse-flight.eclipse-motif-feather{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/feather.svg") center/contain no-repeat}
+.sig-eclipse-serpent,.eclipse-flight.eclipse-motif-serpent{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/serpent.svg") center/contain no-repeat}
