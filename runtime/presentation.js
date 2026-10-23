@@ -324,7 +324,7 @@ function skillPicture(u,sk,id){
  const key=id||VSKID.get(sk);if(!key||!/^[a-zA-Z0-9_-]+$/.test(key))return ''; 
  const color=EL[sk.el||'normal']?.c||'#d9b35b';
  const tier=Math.min(3,1+Math.floor((sk.mp||0)/15));
- return `<span class="skill-picture skill-painted" role="img" aria-label="${esc(sk.n)}" style="--skill-color:${color};--skill-image:url('assets/skills/individual/${key}.svg')"><i class="skill-paint skill-individual" aria-hidden="true"></i><span class="skill-rank" aria-hidden="true">${'◆'.repeat(tier)}</span></span>`;
+ return `<span class="skill-picture skill-painted" role="img" aria-label="${esc(sk.n)}" style="--skill-color:${color};--skill-image:url('assets/skills/painted-v2/${key}.webp')"><i class="skill-paint skill-individual skill-raster" aria-hidden="true"></i><span class="skill-rank" aria-hidden="true">${'◆'.repeat(tier)}</span></span>`;
 }
 // @soulbeast-end 0498-skillPicture
 // @soulbeast-unit 0499-skillElementIcon
@@ -352,10 +352,9 @@ const signatureBasePicture=skillPicture;
 // @soulbeast-unit 0524-skillPicture
 
 skillPicture=function(u,sk,id){
- const art=SIGNATURE_ART[id];if(!art)return signatureBasePicture(u,sk,id);
- const x=art.index%8*100/7,y=Math.floor(art.index/8)*100/7,color=EL[sk?.el||'normal']?.c||'#e6bd65';
- const label=(art.kind==='job'?'ท่าเอกลักษณ์อาชีพ ':'สกิลเฉพาะตัว ')+art.owner;
- return `<span class="skill-picture skill-painted signature-picture" role="img" aria-label="${esc(sk?.n||id)} · ${esc(label)}" title="${esc(label)}" data-signature-owner="${esc(art.key)}" style="--skill-color:${color};--skill-x:${x}%;--skill-y:${y}%;--signature-atlas:url('assets/skills/signatures-${art.kind}.webp')"><i class="skill-paint" aria-hidden="true"></i><span class="skill-rank" aria-hidden="true">✦</span></span>`;
+ const picture=signatureBasePicture(u,sk,id),art=SIGNATURE_ART[id];
+ if(!art)return picture;
+ return picture.replace('skill-painted','skill-painted signature-picture').replace('role="img"','data-signature-owner="'+esc(art.key)+'" role="img"');
 };
 // @soulbeast-end 0524-skillPicture
 // @soulbeast-unit 0552-WEAPON_ART

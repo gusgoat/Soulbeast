@@ -11,6 +11,7 @@ for(const a of art){
  if(a.path){const buf=fs.readFileSync(a.path),hash=crypto.createHash('sha256').update(buf).digest('hex');assert.equal(hash,a.sha256);assert(!hashes.has(hash),'Identical image '+a.id);hashes.add(hash);}
  const html=run(`skillPicture(null,SK[${JSON.stringify(a.id)}],${JSON.stringify(a.id)})`);
  assert(html.includes(a.path||'signatures-'+a.kind+'.webp'),'Wrong image binding '+a.id);
+ assert(html.includes('skill-raster'),'Skill must use a complete painted crop '+a.id);
 }
 run("var enchanted={stab:['normal'],types:['normal'],enchant:'electric'};");
 assert.equal(run("JSON.stringify(effectiveElement(enchanted,SK.sw_magnum))"),'["fire","electric"]');

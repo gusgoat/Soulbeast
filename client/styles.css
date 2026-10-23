@@ -592,3 +592,8 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 .skill-elements .element-icon{width:18px;height:18px;margin:0}
 
 html[lang="en"] .acts .btn:has(.skill-painted)>.skill-elements{grid-column:1;grid-row:2;justify-self:center}
+
+/* Painted icons use individually measured crops. Contain preserves the entire source art. */
+.skill-painted>.skill-raster{inset:1px;background-image:var(--skill-image);background-size:contain;background-position:center;background-repeat:no-repeat;border-radius:11px}
+.skill-painted:has(>.skill-raster)>.skill-rank{display:none}
+.acts .btn:has(.skill-painted):enabled:hover .skill-raster{transform:none}
