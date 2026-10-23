@@ -281,7 +281,7 @@ function elementIcon(e){if(!EL[e])return '';return `<span class="element-icon" s
 // @soulbeast-end 0447-elementIcon
 // @soulbeast-unit 0448-skillElementIcon
 
-function skillElementIcon(u,sk,id){if(!sk)return '';if(id==='attack'||sk===SK.attack)return elementIcon(u?.enchant||(u?.stab||[])[0]||null);return elementIcon(sk.el||(['p','m','h','auto','status','debuff'].includes(sk.t)?'normal':null))}
+function skillElementIcon(u,sk,id){if(!sk)return '';if(!sk.el&&!['p','m','h','auto','status','debuff'].includes(sk.t)&&!sk.enchant)return '';const value=sk.enchant||effectiveElement(u||{},sk);const elements=Array.isArray(value)?value:[value];return '<span class="skill-elements">'+elements.map(elementIcon).join('')+'</span>';}
 // @soulbeast-end 0448-skillElementIcon
 // @soulbeast-unit 0496-SKILL_ART_ATLAS
 
@@ -321,10 +321,10 @@ function skillArtIndex(id,sk=SK[id],u=null){
 function skillPicture(u,sk,id){
  if(!sk&&id!=='defend')return '';
  sk=sk||{n:'ตั้งรับ',t:'buff',mp:0};
- const i=skillArtIndex(id,sk,u),x=(i%8)*100/7,y=Math.floor(i/8)*100/7;
+ const key=id||VSKID.get(sk);if(!key||!/^[a-zA-Z0-9_-]+$/.test(key))return ''; 
  const color=EL[sk.el||'normal']?.c||'#d9b35b';
  const tier=Math.min(3,1+Math.floor((sk.mp||0)/15));
- return `<span class="skill-picture skill-painted" role="img" aria-label="${esc(sk.n)}" style="--skill-color:${color};--skill-x:${x}%;--skill-y:${y}%"><i class="skill-paint" aria-hidden="true"></i><span class="skill-rank" aria-hidden="true">${'◆'.repeat(tier)}</span></span>`;
+ return `<span class="skill-picture skill-painted" role="img" aria-label="${esc(sk.n)}" style="--skill-color:${color};--skill-image:url('assets/skills/individual/${key}.svg')"><i class="skill-paint skill-individual" aria-hidden="true"></i><span class="skill-rank" aria-hidden="true">${'◆'.repeat(tier)}</span></span>`;
 }
 // @soulbeast-end 0498-skillPicture
 // @soulbeast-unit 0499-skillElementIcon

@@ -231,7 +231,7 @@ const TC={
  steel:{fire:.5,water:.5,electric:.5,ice:2,rock:2,steel:.5,fairy:2},
  fairy:{fire:.5,fighting:2,poison:.5,dragon:2,dark:2,steel:.5},
 };
-const typeMult=(el,types)=>!el||!types?1:types.reduce((m,t)=>m*((TC[el]&&TC[el][t])??1),1);
+const typeMult=(el,types)=>Array.isArray(el)?el.reduce((m,e)=>m*typeMult(e,types),1):!el||!types?1:types.reduce((m,t)=>m*((TC[el]&&TC[el][t])??1),1);
 
 /* ================= STATUSES & PASSIVES ================= */
 const STS={
@@ -1013,10 +1013,10 @@ for(const [el,info] of Object.entries(EL)){
  if(!SK[el+'_p2'])SK[el+'_p2']={n:'พิฆาต'+info.n,t:'p',el,pw:185,mp:10,cd:1};
  if(!SK[el+'_m1'])SK[el+'_m1']={n:'เวท'+info.n,t:'m',el,pw:115,mp:5};
  if(!SK[el+'_m2'])SK[el+'_m2']={n:'มหาเวท'+info.n,t:'m',el,pw:190,mp:11,cd:1};
- SK['enchant_'+el]={n:'ประทับดาบธาตุ'+info.n,t:'buff',tg:'self',enchant:el,tn:3,mp:7,cd:1};
+ if(['fire','electric','ground','water','flying'].includes(el))SK['enchant_'+el]={n:'ประทับดาบธาตุ'+info.n,t:'buff',tg:'self',enchant:el,tn:3,mp:7,cd:1};
 }
 CLS.gladiator.sk.push([10,'guard_physical'],[14,'guard_magic']);
-CLS.swordsman.sk.push(...Object.keys(EL).map(el=>[8,'enchant_'+el]));
+CLS.swordsman.sk.push(...['fire','electric','ground','water','flying'].map(el=>[8,'enchant_'+el]));
 CLS.archer.sk.push([18,'bow_true']);CLS.gunner.sk.push([18,'gun_true']);
 CLS.mage.sk.push([4,'water_m1'],[7,'ground_m1'],[9,'flying_m1'],[20,'firestorm_dot'],[22,'whirlpool_dot']);
 CLS.merchant.sk.push([10,'hire_merc']);CLS.thief.sk.push([10,'shadow_clone']);CLS.summoner.sk.push([10,'summon_golem']);
@@ -1044,7 +1044,16 @@ for(const cls of Object.keys(CLS))if(!NPC.some(n=>n.cls===cls)){const tier=CLS[c
 function cooldownOf(u,id){return Math.max(0,(u.cooldowns||{})[id]||0)}
 function endUnitTurn(u){if(!u||u.hp<=0)return;for(const d of (u.dots||[])){const m=typeMult(d.el,u.types);if(m>0)hurt(u,Math.max(1,Math.round(u.st.hp*d.rate*m)));d.turns--;blog(u.name+' ได้รับผล '+d.n)}u.dots=(u.dots||[]).filter(d=>d.turns>0);}
 function beginUnitTurn(u){u.freeFormUsed=false;u.freeFormPending=false;u.cooldowns=u.cooldowns||{};for(const k in u.cooldowns)u.cooldowns[k]=Math.max(0,u.cooldowns[k]-1);if(u.enchantTurns>0&&!--u.enchantTurns)delete u.enchant;if(u.immuneTurns>0&&!--u.immuneTurns)delete u.immune;if(u.summonLife!=null&&!--u.summonLife){u.hp=0;blog(u.name+' หมดเวลาอัญเชิญ');return true}return false}
-function effectiveElement(u,sk){if(sk===SK.attack)return u.enchant||(u.stab||[])[0]||null;return sk.el||'normal'}
+// An enchanted attack keeps its own non-neutral element and adds the sword element.
+// Neutral is replaced; repeated elements never stack. Support skills are unaffected.
+function effectiveElement(u,sk){
+ const base=sk===SK.attack?(u.stab||[])[0]||'normal':sk.el||'normal';
+ if(!u.enchant||!['p','m','h','auto'].includes(sk.t))return base;
+ const elements=[...new Set([base,u.enchant])].filter(el=>el!=='normal');
+ return elements.length>1?elements:elements[0]||base;
+}
+function attackHasElement(u,sk,el){const value=effectiveElement(u,sk);return Array.isArray(value)?value.includes(el):value===el;}
+function attackMultiplier(u,sk,t){return typeMult(effectiveElement(u,sk),t.types)*(attackHasElement(u,sk,'ground')&&hasPas(t,'levitate')?0:1);}
 function addTemporary(u,sk){const list=sideOf(u);if(list.filter(x=>x.temporary&&x.hp>0).length>=2)return false;let n;
  if(sk.summon==='clone'){n=JSON.parse(JSON.stringify(u));n.st=Object.fromEntries(Object.entries(u.st).map(([k,v])=>[k,Math.max(k==='hp'?1:0,Math.round(v*(k==='hp'?.5:.8)))]));n.hp=n.st.hp;n.mp=n.st.mp;n.skills=n.skills.slice();n.name='ร่างแยก '+u.name;n.shadowOwner=u.id;}
  else if(sk.summon==='golem'){n=wildUnit('bastion_golem',u.lv,0);n.name='โกเลมอัญเชิญ';n.taunt=3;n.skills=['attack','guard_taunt'];}
@@ -1197,7 +1206,7 @@ function pvpSkill(id,inPvp=isBalancedPvp(),mode=null){const sk=SK[id];if(sk&&(mo
 
 function hitOne(u,sk,t,scale,areaCount=0){
  const dmgT=['p','m','h','auto'].includes(sk.t);
- const attackEl=effectiveElement(u,sk);const m=typeMult(attackEl,t.types)*(sk.el==='ground'&&hasPas(t,'levitate')?0:1);
+ const attackEl=effectiveElement(u,sk);const m=attackMultiplier(u,sk,t);
  if(m===0){blog(`ไม่มีผลต่อ ${t.name}`);fxAdd(t,'×0','muted');vfx('miss',t.id);return}
  if(!sk.acc||sk.acc<100)if(Math.random()*100>hitChance(u,t,sk)){blog(`${t.name} หลบได้`);fxAdd(t,'พลาด','muted');vfx('miss',t.id);return}
  const tx=hasPas(u,'toxin')?1.5:1;
@@ -1208,7 +1217,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
  const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1;
  let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*scale*(u.charge||1)*(.9+Math.random()*.2);
  d*=pvpDamageFactor(u,t)*classCombatFactor(u,t,sk);
- if(hasPas(t,'thick')&&(sk.el==='fire'||sk.el==='ice'))d*=.5;
+ if(hasPas(t,'thick')&&(attackHasElement(u,sk,'fire')||attackHasElement(u,sk,'ice')))d*=.5;
  if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;
  const crit=classRefreshStealthCrit(u)||(!hasPas(t,'nocrit')&&!rogueCritBlocked(u,t)&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0)));if(crit)d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5;
  d*=hasPas(t,'counter50')?.5:hasPas(t,'reflect50')?.8:1;d=Math.max(1,Math.round(d));if(classDefenseAbsorb(u,sk,t,d))return;
@@ -1226,7 +1235,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
   if(t.hp>0&&u.hp>0&&hasPas(t,'counter')&&!t._ctr&&Math.random()<.25){t._ctr=1;blog(`${t.name} สวนกลับ!`);hitOne(t,SK.attack,u,1);t._ctr=0}}
  if(t.hp<=0)return;
  if(t.status.sleep){delete t.status.sleep;blog(`${t.name} สะดุ้งตื่น!`)}
- if(t.status.freeze&&sk.el==='fire'){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
+ if(t.status.freeze&&attackHasElement(u,sk,'fire')){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
  if(sk.bf)addBuffs(t,{bf:sk.bf,tn:sk.tn});
  if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):scale<1?.7:1)*tx)}
 
@@ -1782,7 +1791,7 @@ SK.sbw_doom.pw=230;SK.sbw_doom.basePower=230;SK.sbw_doom.pi=.3;SK.sbw_doom.mp=20
 function combatSkillScore(u,id,target,targets=foesOf(u).filter(x=>x.hp>0)){
  const sk=pvpSkill(id);if(!sk||!['p','m','h','auto'].includes(sk.t)||!targets.length)return 0;
  const type=sk.t==='auto'?u.atkType:sk.t,atk=type==='h'?(eff(u,'patk')+eff(u,'matk'))/2:eff(u,type==='m'?'matk':'patk'),list=sk.all?targets:sk.rt?targets:[target||targets[0]];
- let score=0;for(const t of list){if(type===t.immune&&type!=='h')continue;const m=typeMult(effectiveElement(u,sk),t.types)*(sk.el==='ground'&&hasPas(t,'levitate')?0:1);if(!m)continue;let def=type==='h'?(eff(t,'pdef')+eff(t,'mdef'))/2:eff(t,type==='m'?'mdef':'pdef');if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0)+frontlinePierce(u,t));const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1,crit=classRefreshStealthCrit(u)?1:hasPas(t,'nocrit')||rogueCritBlocked(u,t)?0:Math.min(isBalancedPvp()?65:100,eff(u,'crit')+(sk.cb||0))/100;let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*(sk.all?areaDamageScale(sk,targets.length):1)*(sk.hits||1)*(u.charge||1)*(1+crit*((hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5)-1))*classCombatFactor(u,t,sk)*pvpDamageFactor(u,t);if(type==='h'&&t.immune)d*=.5;if(hasPas(t,'thick')&&['fire','ice'].includes(sk.el))d*=.5;if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;d*=sk.acc>=100?1:hitChance(u,t,sk)/100;score+=d;}
+ let score=0;for(const t of list){if(type===t.immune&&type!=='h')continue;const m=attackMultiplier(u,sk,t);if(!m)continue;let def=type==='h'?(eff(t,'pdef')+eff(t,'mdef'))/2:eff(t,type==='m'?'mdef':'pdef');if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0)+frontlinePierce(u,t));const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1,crit=classRefreshStealthCrit(u)?1:hasPas(t,'nocrit')||rogueCritBlocked(u,t)?0:Math.min(isBalancedPvp()?65:100,eff(u,'crit')+(sk.cb||0))/100;let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*(sk.all?areaDamageScale(sk,targets.length):1)*(sk.hits||1)*(u.charge||1)*(1+crit*((hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5)-1))*classCombatFactor(u,t,sk)*pvpDamageFactor(u,t);if(type==='h'&&t.immune)d*=.5;if(hasPas(t,'thick')&&(attackHasElement(u,sk,'fire')||attackHasElement(u,sk,'ice')))d*=.5;if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;d*=sk.acc>=100?1:hitChance(u,t,sk)/100;score+=d;}
  return score/(sk.ct?2:1)/(sk.rt?targets.length:1);
 }
 
@@ -1792,7 +1801,7 @@ function chooseAutoForm(u){
  const foes=foesOf(u).filter(x=>x.hp>0);if(!foes.length)return null;
  if(u.hp/u.st.hp<.35&&u.skills.some(id=>SK[id]?.t==='heal'&&!cooldownOf(u,id)&&costOf(u,SK[id])<=u.mp))return null;
  const forms=u.skills.filter(id=>SK[id]?.t==='form'&&FORMS[SK[id].form]&&!cooldownOf(u,id)&&costOf(u,SK[id])<=u.mp);
- const score=id=>{const f=FORMS[SK[id].form],m=f.m;let best=0;for(const key of f.sk){const sk=SK[key];if(!sk||!['p','m','h','auto'].includes(sk.t))continue;const ty=sk.t==='auto'?u.atkType:sk.t,pa=u.st.patk*(m.patk||1),ma=u.st.matk*(m.matk||1),atk=ty==='m'?ma:ty==='h'?(pa+ma)/2:pa;best=Math.max(best,...foes.map(t=>atk*(sk.pw||100)/100*typeMult(sk.el,t.types)*(sk.all?Math.min(1.5,foes.length):1)));}return best+(u.st.pdef*(m.pdef||1)+u.st.mdef*(m.mdef||1))*(u.hp/u.st.hp<.5?.6:.15);};
+ const score=id=>{const f=FORMS[SK[id].form],m=f.m;let best=0;for(const key of f.sk){const sk=SK[key];if(!sk||!['p','m','h','auto'].includes(sk.t))continue;const ty=sk.t==='auto'?u.atkType:sk.t,pa=u.st.patk*(m.patk||1),ma=u.st.matk*(m.matk||1),atk=ty==='m'?ma:ty==='h'?(pa+ma)/2:pa;best=Math.max(best,...foes.map(t=>atk*(sk.pw||100)/100*attackMultiplier(u,sk,t)*(sk.all?Math.min(1.5,foes.length):1)));}return best+(u.st.pdef*(m.pdef||1)+u.st.mdef*(m.mdef||1))*(u.hp/u.st.hp<.5?.6:.15);};
  return forms.sort((a,b)=>score(b)-score(a))[0]||null;
 }
 

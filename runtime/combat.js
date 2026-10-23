@@ -187,7 +187,7 @@ function act(u,id,tgt,atgt,free){const sk=pvpSkill(id);if(!sk)return false;if(!f
 
 function hitOne(u,sk,t,scale,areaCount=0){
  const dmgT=['p','m','h','auto'].includes(sk.t);
- const attackEl=effectiveElement(u,sk);const m=typeMult(attackEl,t.types)*(sk.el==='ground'&&hasPas(t,'levitate')?0:1);
+ const attackEl=effectiveElement(u,sk);const m=attackMultiplier(u,sk,t);
  if(m===0){blog(`ไม่มีผลต่อ ${t.name}`);fxAdd(t,'×0','muted');ExtraAudio.play('miss');vfx('miss',t.id);return}
  if(!sk.acc||sk.acc<100)if(Math.random()*100>hitChance(u,t,sk)){blog(`${t.name} หลบได้`);fxAdd(t,'พลาด','muted');ExtraAudio.play('miss');vfx('miss',t.id);return}
  const tx=hasPas(u,'toxin')?1.5:1;
@@ -198,7 +198,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
  const stab=sk.el&&(hasPas(u,'omni')||u.stab.includes(sk.el)||u.types.includes(sk.el)||u.form&&FORMS[u.form].t.includes(sk.el))?(hasPas(u,'adapt')?1.5:1.25):1;
  let d=1.4*atk*(sk.pw/100)*atk/(atk+def)*m*stab*scale*(u.charge||1)*(.9+Math.random()*.2);
  d*=pvpDamageFactor(u,t)*classCombatFactor(u,t,sk);
- if(hasPas(t,'thick')&&(sk.el==='fire'||sk.el==='ice'))d*=.5;
+ if(hasPas(t,'thick')&&(attackHasElement(u,sk,'fire')||attackHasElement(u,sk,'ice')))d*=.5;
  if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;
  const crit=classRefreshStealthCrit(u)||(!hasPas(t,'nocrit')&&!rogueCritBlocked(u,t)&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0)));if(crit)d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5; if(crit)ExtraAudio.skill(VSKID.get(sk),u,true);
  d*=hasPas(t,'counter50')?.5:hasPas(t,'reflect50')?.8:1;d=Math.max(1,Math.round(d));if(classDefenseAbsorb(u,sk,t,d))return;
@@ -216,7 +216,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
   if(t.hp>0&&u.hp>0&&hasPas(t,'counter')&&!t._ctr&&Math.random()<.25){t._ctr=1;blog(`${t.name} สวนกลับ!`);hitOne(t,SK.attack,u,1);t._ctr=0}}
  if(t.hp<=0)return;
  if(t.status.sleep){delete t.status.sleep;blog(`${t.name} สะดุ้งตื่น!`)}
- if(t.status.freeze&&sk.el==='fire'&&!persistentBattleUnit(t)){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
+ if(t.status.freeze&&attackHasElement(u,sk,'fire')&&!persistentBattleUnit(t)){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
  if(sk.bf)addBuffs(t,{bf:sk.bf,tn:sk.tn});
  if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):scale<1?.7:1)*tx)}
 // @soulbeast-end 0279-hitOne

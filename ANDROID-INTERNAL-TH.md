@@ -86,3 +86,12 @@ cd android
 - https://developer.android.com/google/play/billing/integrate
 - https://support.google.com/googleplay/android-developer/answer/9858738
 - https://support.google.com/googleplay/android-developer/answer/13327111
+
+## ภาพสกิลเฉพาะท่าและธาตุดาบผสม (0.2.6-internal / versionCode 8)
+
+- ครบ 503 สกิล + ตั้งรับ: คงภาพวาดเอกลักษณ์เดิม เพิ่มภาพเวกเตอร์เฉพาะให้ท่าที่เคยใช้ภาพรวม ดูได้ที่ skill-art-preview.html
+- นักดาบเหลือประทับดาบ 5 ธาตุ: ไฟ สายฟ้า ดิน น้ำ บิน
+- ประทับธาตุเพิ่มเข้ากับท่าโจมตีกายภาพ เวท และผสม ธาตุปกติถูกแทนที่ ธาตุซ้ำนับครั้งเดียว; ตัวคูณแพ้/ต้านธาตุคูณกันตามกติกาธาตุของเกม และการไร้ผลของธาตุใดทำให้ท่านั้นไร้ผล
+- ไอคอนแสดงทั้งสองธาตุขณะประทับ และ AI ใช้กติกาเดียวกับดาเมจ; รักษา/บัฟ/สถานะไม่รับธาตุดาบ
+- อัปเดตเฉพาะ engine ของ soulbeast-accounts โดยสำรองซอร์สจริงก่อน และรักษา gateway บัญชีเดิมทุกตัวอักษร
+- ทดสอบ tools/test-individual-skills.cjs รวมถึงดาเมจเวทจริง และชุดทดสอบเกม/บัญชี/Android

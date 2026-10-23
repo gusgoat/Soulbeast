@@ -584,3 +584,11 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 .online-unit-grid[style*="--unit-cols:4"] .unit-frame>.unit-frame-sprig{display:none}
 /* First-visit website video; preserve the entire frame on portrait phones. */
 .web-intro{position:fixed;inset:0;z-index:11000;display:grid;place-items:center;background:#000;color:#f4e9d2;padding:0;isolation:isolate}.web-intro-video{display:block;width:100%;height:100%;max-height:100dvh;object-fit:contain;background:#000}.web-intro-top{position:absolute;top:max(16px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px}.web-intro-top>span{font-size:12px;text-shadow:0 1px 5px #000}.web-intro .btn{min-height:44px;background:#10202ee8;border-color:#d5b567aa;color:#ffe6a8}.web-intro-skip{white-space:nowrap}.web-intro-actions{position:absolute;top:max(72px,calc(env(safe-area-inset-top) + 72px));bottom:auto;left:16px;right:16px;z-index:2;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.web-intro-actions small{font-size:12px;text-shadow:0 1px 5px #000}.web-intro-play[hidden]{display:none}
+
+/* Individual illustrated skill assets; elemental badges also show active sword infusions. */
+.skill-individual{background-image:var(--skill-image);background-size:cover;background-position:center}
+.skill-elements{display:inline-flex;gap:3px;align-items:center;vertical-align:middle}
+.acts .btn:has(.skill-painted)>.skill-elements{grid-column:2;justify-self:start}
+.skill-elements .element-icon{width:18px;height:18px;margin:0}
+
+html[lang="en"] .acts .btn:has(.skill-painted)>.skill-elements{grid-column:1;grid-row:2;justify-self:center}

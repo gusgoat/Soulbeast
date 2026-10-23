@@ -27,7 +27,7 @@ const grow=(k,b)=>({hp:b*.2,mp:b*.12,acc:1.1,eva:.5+b*.03,spd:b*.08,crit:.1})[k]
 // @soulbeast-end 0007-grow
 // @soulbeast-unit 0010-typeMult
 
-const typeMult=(el,types)=>!el||!types?1:types.reduce((m,t)=>m*((TC[el]&&TC[el][t])??1),1);
+const typeMult=(el,types)=>Array.isArray(el)?el.reduce((m,e)=>m*typeMult(e,types),1):!el||!types?1:types.reduce((m,t)=>m*((TC[el]&&TC[el][t])??1),1);
 // @soulbeast-end 0010-typeMult
 // @soulbeast-unit 0039-SEALS
 
@@ -85,7 +85,16 @@ function cooldownOf(u,id){return Math.max(0,(u.cooldowns||{})[id]||0)}
 // @soulbeast-end 0098-cooldownOf
 // @soulbeast-unit 0101-effectiveElement
 
-function effectiveElement(u,sk){if(sk===SK.attack)return u.enchant||(u.stab||[])[0]||null;return sk.el||'normal'}
+// An enchanted attack keeps its own non-neutral element and adds the sword element.
+// Neutral is replaced; repeated elements never stack. Support skills are unaffected.
+function effectiveElement(u,sk){
+ const base=sk===SK.attack?(u.stab||[])[0]||'normal':sk.el||'normal';
+ if(!u.enchant||!['p','m','h','auto'].includes(sk.t))return base;
+ const elements=[...new Set([base,u.enchant])].filter(el=>el!=='normal');
+ return elements.length>1?elements:elements[0]||base;
+}
+function attackHasElement(u,sk,el){const value=effectiveElement(u,sk);return Array.isArray(value)?value.includes(el):value===el;}
+function attackMultiplier(u,sk,t){return typeMult(effectiveElement(u,sk),t.types)*(attackHasElement(u,sk,'ground')&&hasPas(t,'levitate')?0:1);}
 // @soulbeast-end 0101-effectiveElement
 // @soulbeast-unit 0103-scoreValue
 

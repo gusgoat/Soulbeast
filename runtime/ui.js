@@ -14,7 +14,7 @@ function skTag(s){return (s.t==='p'?'กายภาพ · ':s.t==='m'?'เว�
 // @soulbeast-end 0211-skTag
 // @soulbeast-unit 0212-skillDesc
 
-function skillDesc(id){const s=SK[id],a=[];if(s.el)a.push(elementIcon(s.el));if(s.cd)a.push('คูลดาวน์ '+s.cd+' เทิร์น');if(s.trueD)a.push('ทะลุพลังป้องกัน');if(s.immune)a.push('ป้องกัน'+(s.immune==='p'?'กายภาพ':'เวท')+' 100% จนจบเทิร์นถัดไป');if(s.summon)a.push('เรียกผู้ช่วย '+s.life+' เทิร์น'+(s.pctGold?' จ่ายเงิน 10% คลาสก่อนหน้า/เลเวล 85% · ออโต้จ้างไม่เกิน 1 ครั้งต่อการต่อสู้':''));if(s.dot)a.push('จบเทิร์นเสีย HP '+Math.round(s.dot.rate*100)+'% นาน '+s.dot.turns+' เทิร์น');if(s.enchant)a.push('เปลี่ยนธาตุการโจมตีปกติ 3 เทิร์น');
+function skillDesc(id){const s=SK[id],a=[];if(s.el)a.push(elementIcon(s.el));if(s.cd)a.push('คูลดาวน์ '+s.cd+' เทิร์น');if(s.trueD)a.push('ทะลุพลังป้องกัน');if(s.immune)a.push('ป้องกัน'+(s.immune==='p'?'กายภาพ':'เวท')+' 100% จนจบเทิร์นถัดไป');if(s.summon)a.push('เรียกผู้ช่วย '+s.life+' เทิร์น'+(s.pctGold?' จ่ายเงิน 10% คลาสก่อนหน้า/เลเวล 85% · ออโต้จ้างไม่เกิน 1 ครั้งต่อการต่อสู้':''));if(s.dot)a.push('จบเทิร์นเสีย HP '+Math.round(s.dot.rate*100)+'% นาน '+s.dot.turns+' เทิร์น');if(s.enchant)a.push(`เพิ่มธาตุ${EL[s.enchant]?.n||s.enchant} ผสมกับการโจมตีปกติและสกิลโจมตี 3 เทิร์น · ธาตุซ้ำนับครั้งเดียว`);
  if(['p','m','h','auto'].includes(s.t))a.push(`${s.t==='p'?'กายภาพ':s.t==='m'?'เวทย์':s.t==='h'?'ผสม':'ตามอาวุธ'} พลัง ${s.pw}${s.hits?` × ${s.hits} ครั้ง${s.rt?' สุ่มเป้า':''}`:''}`);
  if(s.t==='heal')a.push(`ฟื้น HP ${s.pw}%${s.rev||s.revAll?' ชุบชีวิตได้':''}${s.cure?' ล้างสถานะ':''}`);
  if(s.t==='form')a.push(`เปลี่ยนเป็น${FORMS[s.form].n} ได้สกิลชุดใหม่`);
