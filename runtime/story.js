@@ -115,7 +115,7 @@ function translateGameText(value,lang=GAME_LANGUAGE,protectNames=true){
  const key=lang+'\n'+source;let out=LANGUAGE_TEXT_CACHE.get(key);
  if(out===undefined){
   out=source.replace(LANGUAGE_PATTERN,s=>lang==='en'?' '+(GAME_TRANSLATIONS[lang][s]||s)+' ':GAME_TRANSLATIONS[lang][s]||s);
-  if(lang==='en')out=out.replace(/\s+/g,' ').replace(/\s+([,.!?])/g,'$1');
+  if(lang==='en')out=out.replace(/[^\S\n]+/g,' ').replace(/[ \t]+([,.!?])/g,'$1');
   if(/[ก-๙]/.test(out))LANGUAGE_MISSING.add(source);
   LANGUAGE_TEXT_CACHE.set(key,out);
  }

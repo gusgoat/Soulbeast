@@ -1,0 +1,52 @@
+{
+ "training-2": [
+  ["พี่สาวรับจดหมายที่ชายป่าแสงจันทร์ เธออ่านชื่อผู้ส่งซ้ำแล้วเก็บซองไว้ ก่อนขอให้คุณไปถามผู้ขายสมุนไพรในหมอกถึงงานที่เธอกำลังฝึกทำ", "His sister reads the sender's name twice at the Moonlight Forest's edge. Keeping the envelope, she asks you to visit the mist-valley herbalist and learn about the work she is training for.", "姐姐在月光森林边缘读了两遍寄信人的名字，收好信封，请你去雾谷找草药商，了解她正在学习的工作。"],
+  ["ผู้ขายสมุนไพรเล่าว่าเธอฝึกแยกยาอย่างจริงจังและยังส่งข่าวถึงบ้านเสมอ คุณมีทั้งคำตอบในจดหมายและภาพชีวิตปัจจุบันของเธอแล้ว จึงค่อยเลือกว่าจะนำข่าวกลับอย่างไร", "The herbalist describes her careful training and regular letters home. With both her reply and an account of her present life, you can finally decide how to carry the news back.", "草药商说她认真学习辨药，也一直惦记着家人。如今你既有回信，也了解了她眼下的生活，才真正能够决定怎样带消息回去。"]
+ ],
+ "training-3": [
+  ["ผู้ดูแลในป่าแสงจันทร์สอนให้แยกที่พักเงียบออกจากลานคนเดิน อสูรที่เพิ่งสูญเสียคู่หูอาจต้องใช้เวลานานกว่าจะยอมเข้าใกล้ใคร คุณจดสิ่งนี้ไปพร้อมรายการเสบียง", "A Moonlight Forest keeper advises separating quiet shelters from busy paths. Bereaved partners may need time before approaching anyone. You add this to the supply notes.", "月光森林的照料者建议把安静的住处与人来人往的道路分开。失去伙伴的兽可能很久才愿意亲近别人，你把这一点和补给清单一起记下。"],
+  ["ผู้หนีภัยใกล้ปราสาทเล่าถึงอสูรที่ยังรอเจ้าของ บางตัวอยากกลับป่า บางตัวกลับไม่ได้ บ้านที่คุณช่วยสร้างจึงต้องตอบให้ได้ว่าจะดูแลความต้องการที่ต่างกันอย่างไร", "Refugees near the castle describe beasts still waiting for their keepers. Some want the wild; others cannot return. The shelter must accommodate those different needs.", "城堡附近的避难者说起仍在等待主人的兽。有些想回森林，有些却无法回去。你参与建立的住处，必须容纳这些不同的需要。"]
+ ],
+ "moon-2": [
+  ["ผู้รู้ในหมอกตรวจเปลือกเมล็ดและยืนยันว่ายังไม่แห้งตาย เขาฝากวิธีประคองความชื้นไว้ แล้วให้คุณตามหาน้ำแร่ในทะเลทรายเพื่อทดสอบขั้นต่อไป", "A mist-valley expert finds the seed has not dried out. He explains how to preserve its moisture and sends you to seek desert mineral water for the next step.", "雾谷的知情者检查种壳，确认它还没有干死。他教你维持湿度，并请你前往沙漠寻找矿泉水，进行下一步尝试。"],
+  ["น้ำแร่ทำให้เห็นรอยแตกเล็ก ๆ บนเปลือก คุณห่อเมล็ดกลับอย่างระวัง ตอนนี้คำถามเปลี่ยนจากจะช่วยให้รอดอย่างไร เป็นที่ใดเหมาะให้มันเติบโต", "Mineral water reveals a tiny crack in the husk. You wrap the seed carefully. The question is no longer whether it can survive, but where it should grow.", "矿泉水让种壳上出现了一道细小裂纹。你小心包好种子，眼下的问题已不再是能否救活它，而是该让它在哪里生长。"]
+ ],
+ "moon-3": [
+  ["คนส่งเสบียงในหมอกอธิบายว่าทางอ้อมเพิ่มงานขนของจริง แต่จุดพักที่ดีอาจแบ่งภาระได้ คุณจดระยะทางกับข้อจำกัด แทนการรับคำตอบว่าเส้นสั้นดีที่สุดทันที", "A supply carrier confirms the detour adds work, but good resting places could share the burden. You record distances and limitations rather than assume the shortest route is best.", "雾中的运粮人证实绕路确实增加劳动，但合适的休息点能分担负担。你记下距离与限制，没有立即认定最短的路线最好。"],
+  ["คนเคยซ่อมทางใกล้ปราสาทชี้ว่าการเลือกเส้นทางต้องเผื่องานดูแลหลังสร้าง คุณนำแผนที่ซึ่งมีทั้งบ้านคนและรังอสูรกลับมาวางให้ทุกฝ่ายเห็นพร้อมกัน", "Road workers near the castle warn that building is only the beginning of maintenance. You return with a map marking both human homes and beast nests for everyone to examine.", "城堡附近的修路人提醒，建成只是维护的开始。你带回同时标着人类住处和兽巢的地图，让各方一起查看。"]
+ ],
+ "mist-2": [
+  ["บัญชีในทะเลทรายบันทึกชื่อที่ขาดจากขบวนและจำนวนของที่ไม่ได้ส่ง มันอธิบายความเสียหาย แต่ยังไม่บอกว่าเหตุใดชายคนนั้นจึงหนี คุณต้องฟังคนที่อยู่ด้วยบนยอดเขา", "Desert records list missing caravan members and undelivered goods. They establish the loss, not why he fled. A fellow traveler in the mountains may explain the rest.", "沙漠的账册记着离队者和未送达的货物，能说明损失，却不能说明他为何逃走。山上的同行者也许能补上另一半。"],
+  ["ผู้ร่วมทางบนยอดเขาจำเด็กที่ชายคนนั้นพาออกจากอันตรายได้ เรื่องของเขามีทั้งผู้รอดและผู้สูญเสีย คุณพร้อมกลับไปเล่าสิ่งที่ตรวจสอบได้ โดยไม่ลบส่วนใดเพื่อให้ฟังง่ายขึ้น", "The mountain witness remembers the child he brought to safety. His story includes both rescue and loss. You can now report the verified facts without erasing either part.", "山上的见证者记得他带离险境的孩子。这个故事里既有获救，也有损失。你终于能带着核实过的事实回去，而不为求简单抹掉其中一部分。"]
+ ],
+ "mist-3": [
+  ["เจ้าของความทรงจำในทะเลทรายมีท่าทีไม่เหมือนกัน บางคนเตรียมใจจะรับคืน บางคนยังขอฟังเพียงคำอธิบาย คุณจดความยินยอมแยกจากตัวเรื่องที่ฝากไว้", "In the desert, some owners are ready to reclaim their memories; others only want to hear what they contain. You record consent separately from the stories themselves.", "沙漠中的主人反应各不相同，有人准备取回记忆，有人只愿先听内容。你把他们的意愿与记忆本身分开记录。"],
+  ["บันทึกใกล้ปราสาททำให้เห็นว่าความทรงจำบางส่วนเกี่ยวข้องกับคนหลายคน ผู้รับฝากคนเดียวไม่ควรต้องตัดสินทั้งหมด คุณนำคำขอที่แตกต่างกันกลับไปหารือกับหญิงสาว", "Castle records show that some memories concern many lives. One keeper should not have to decide everything alone. You bring the conflicting requests back to discuss with her.", "城堡附近的记录表明，某些记忆牵涉许多人的生活，不应由一名保管者独自决定。你带着彼此不同的请求回去，与姑娘商量。"]
+ ],
+ "desert-2": [
+  ["ผู้รับบนยอดเขาตรวจตราขนส่งแล้วอธิบายแผนศึกษาตัวอ่อนในหีบ คุณยังไม่ส่งมอบทันที เพราะต้องฟังว่าผู้ดูแลบนสวรรค์มีสถานที่ให้มันอยู่แบบใด", "The mountain recipient checks the shipping mark and explains the research plan. You postpone delivery until hearing what kind of home the heavenly keeper can offer.", "山上的收件人核对运输印记，解释研究箱中幼体的计划。你没有立刻交付，还需要听听天界的照料者能提供怎样的住处。"],
+  ["ผู้ดูแลบนสวรรค์อธิบายวิธีเลี้ยงและถิ่นที่ปลอดภัย ตัวอ่อนตอบสนองเมื่อคุณเปิดช่องอากาศ ตอนนี้คุณได้ฟังทั้งสองฝ่ายและต้องตัดสินใจว่าจะฝากชีวิตในหีบไว้ที่ใด", "The heavenly keeper explains its care and a safe habitat. The creature stirs when you open an air vent. Having heard both parties, you must choose where to entrust it.", "天界的照料者说明饲养方式和安全栖地。你打开通气口时，幼体轻轻动了动。双方的说法都已听过，箱中生命将交给谁，需要你决定。"]
+ ],
+ "desert-3": [
+  ["ขบวนบนยอดเขายืนยันว่าค่าน้ำบางรายการไม่ตรงกับสิ่งที่ได้รับ แต่ยังต้องใช้เสบียงจากพ่อค้ารายเดิม คุณเก็บสำเนาไว้เพื่อเทียบกับบันทึกจากปราสาท", "Mountain caravans confirm that some water charges do not match deliveries, yet still depend on the same supplier. You keep copies to compare with the castle records.", "山上的商队证实，有些水费与实际收到的数量不符，却仍依赖原来的供应商。你留下副本，准备与城堡的记录对照。"],
+  ["บันทึกจากปราสาทช่วยแยกค่าใช้จ่ายจริงออกจากยอดที่เพิ่ม หลักฐานไม่ใช่เพียงคำร้องของครอบครัวใดครอบครัวหนึ่งแล้ว คุณกลับมาพร้อมทางเลือกว่าจะเริ่มตรวจบัญชีอย่างไร", "Castle records separate genuine costs from inflated entries. The case now extends beyond one family's complaint. You return ready to decide how an examination should begin.", "城堡的记录让真实支出与虚增数字分离开来。这已不只是某个家庭的抱怨，你可以带着证据回去，决定如何开始查账。"]
+ ],
+ "dragon-2": [
+  ["ผู้รักษาบนสวรรค์ตรวจความอุ่นของเกล็ดและรอยแผล เขายังไม่กล้าตัดการเชื่อมโยงจนกว่าจะรู้ต้นคำสาป จึงให้คุณตามตราที่เกี่ยวข้องไปยังปราสาท", "The heavenly healer examines the warm scale and the wound. Unwilling to sever an unknown bond, the healer sends you to trace the associated mark at the castle.", "天界医者检查温热的鳞片和伤口，尚不敢贸然切断未知的联系，请你沿着相关印记前往城堡追查。"],
+  ["ตราในปราสาทยืนยันว่าความเชื่อมโยงนี้ไม่ใช่อาการบาดเจ็บธรรมดา คุณนำหลักฐานกลับให้ผู้รักษา เพื่อให้การเลือกช่วยคนหรือมังกรเริ่มจากสิ่งที่รู้ ไม่ใช่ความกลัว", "The castle mark confirms that this is more than an ordinary wound. You return with evidence so that treatment for man or dragon begins with knowledge rather than fear.", "城堡的印记证实这并非普通伤病。你带回证据，让救人或救龙的选择建立在了解之上，而不是恐惧之中。"]
+ ],
+ "dragon-3": [
+  ["ผู้ดูแลบนสวรรค์ยืนยันว่ามีวิธีเคลื่อนย้ายรัง แต่ต้องมีคนช่วยเฝ้าระหว่างเดินทาง คุณจดงานที่ทำได้ ก่อนตามหาหลักฐานเกี่ยวกับนักล่าในปราสาท", "A heavenly keeper explains how a nest can be moved, provided someone guards it during the journey. You note the work required before tracing the hunters at the castle.", "天界的照料者说明巢穴可以迁移，但途中需要人守护。你先记下实际工作，再去城堡追查猎人的线索。"],
+  ["ร่องรอยในปราสาทตรงกับคำสารภาพของผู้เฝ้ารัง การย้ายทำได้แล้ว แต่การขอความร่วมมือจะหลีกเลี่ยงเรื่องอดีตไม่ได้ คุณกลับมาเพื่อวางแผนกับเขาอย่างตรงไปตรงมา", "Castle evidence matches the keeper's confession. Moving the nests is possible, but seeking help means confronting the past. You return to plan with him openly.", "城堡中的痕迹与守巢人的自白一致。迁巢已有办法，但寻求合作就无法避开过去。你回来，准备与他坦诚地商量。"]
+ ],
+ "heaven-2": [["ในปราสาท คุณพบทั้งพยานที่อ่อนแรงและห้องขังที่ยังเปิดไม่ได้ แสงตะเกียงวูบเมื่อแตะกลอน จึงชัดแล้วว่าพลังครั้งเดียวต้องเลือกใช้กับความจำเป็นใด", "At the castle, you find the weakened witness and cells still locked. The lantern flickers against a lock, confirming that its single use must serve one need.", "在城堡里，你找到了虚弱的证人和仍打不开的牢房。灯靠近锁扣时光芒闪动，证实这一次力量必须在不同需要之间作出选择。"]],
+ "heaven-3": [["ผู้ที่เคยรับเวรใกล้ปราสาทเล่าว่าพิธีทำให้หน้าที่มั่นคง แต่ไม่ได้ทำให้คนหายเหนื่อย คุณรวบรวมความเห็นกลับไป เพื่อให้เด็กฝึกตัดสินใจโดยรู้ชีวิตหลังพิธีด้วย", "Former keepers near the castle say ritual secures a duty, but does not remove exhaustion. You return with their accounts so the apprentice can consider life after the ceremony.", "城堡附近曾经值守的人说，仪式能确立职责，却不能让人不再疲倦。你带回他们的经历，让学徒也能考虑仪式之后的生活。"]],
+ "castle-2": [
+  ["ผู้รู้บนสวรรค์ยืนยันส่วนของคำสั่งที่ตนเคยเห็น แต่ไม่รับรองส่วนที่อยู่นอกหน้าที่ คุณจดคำยืนยันเฉพาะส่วนนั้น ก่อนเดินทางไปหาพยานอีกคนในหมอก", "The heavenly witness confirms only the portions of the order personally known to them. You record that limited testimony before seeking a second witness in the mist.", "天界的知情者只确认自己亲眼见过的命令部分，不为职责之外的内容担保。你记下这份有限的证词，再去雾中寻找第二位证人。"],
+  ["พยานในหมอกตรวจส่วนที่เหลือและยืนยันร่องรอยบนเอกสาร เรื่องนี้มีหลักฐานพอให้ตรวจต่อแล้ว แต่การจะเปิดเผยชื่อผู้ส่งยังต้องฟังเจ้าตัวก่อน", "The mist-valley witness verifies the remaining details and marks. There is enough evidence for an inquiry, but disclosing the courier's name remains a separate decision.", "雾谷的证人核实了其余细节与文件痕迹，证据已足以继续调查。但是否公开送信人的姓名，仍是另一个必须认真面对的决定。"]
+ ],
+ "castle-3": [
+  ["ผู้ดูแลบนสวรรค์จำชื่อผู้ถูกขังได้บางคน แต่เตือนว่ารายชื่อไม่บอกเรื่องทั้งหมด คุณขอเพียงข้อเท็จจริงที่ยืนยันได้ แล้วนำไปเทียบกับพยานในหมอก", "A heavenly keeper recognizes some prisoners, but warns that a list never tells the whole story. You collect verifiable facts to compare with a witness in the mist.", "天界的照料者认得部分囚犯，却提醒名单从来不能说明全部。你收集能够核实的事实，准备与雾中的证人对照。"],
+  ["พยานในหมอกช่วยอธิบายบางข้อกล่าวหา ขณะที่ชื่อจำนวนมากยังไม่มีข้อมูล คุณกลับไปหาผู้คุมพร้อมหลักฐานที่มีและข้อจำกัดที่ต้องยอมรับก่อนเริ่มช่วยคน", "The mist witness clarifies some accusations, while many names remain unexplained. You return to the guard with both evidence and an honest account of what is still unknown.", "雾中的证人澄清了部分指控，许多姓名却仍无从解释。你带着已有证据，也带着必须承认的未知，回去与狱卒开始救援。"]
+ ]
+}

@@ -1,0 +1,1006 @@
+{
+  "version": 1,
+  "quests": 28,
+  "specialEvents": 7,
+  "secretLocations": 7,
+  "repeatableEvents": 7,
+  "riddles": 28,
+  "followStages": 26,
+  "edits": [
+    {
+      "path": "quests.training-0.intro",
+      "before": 75,
+      "after": 267
+    },
+    {
+      "path": "quests.training-0.scene",
+      "before": 67,
+      "after": 239
+    },
+    {
+      "path": "quests.training-0.actions.0",
+      "before": 77,
+      "after": 185
+    },
+    {
+      "path": "quests.training-0.actions.1",
+      "before": 75,
+      "after": 183
+    },
+    {
+      "path": "quests.training-0.actions.2",
+      "before": 66,
+      "after": 174
+    },
+    {
+      "path": "quests.training-1.intro",
+      "before": 68,
+      "after": 242
+    },
+    {
+      "path": "quests.training-1.scene",
+      "before": 78,
+      "after": 266
+    },
+    {
+      "path": "quests.training-1.actions.0",
+      "before": 71,
+      "after": 203
+    },
+    {
+      "path": "quests.training-1.actions.1",
+      "before": 50,
+      "after": 182
+    },
+    {
+      "path": "quests.training-1.actions.2",
+      "before": 69,
+      "after": 201
+    },
+    {
+      "path": "quests.training-2.intro",
+      "before": 80,
+      "after": 293
+    },
+    {
+      "path": "quests.training-2.scene",
+      "before": 87,
+      "after": 241
+    },
+    {
+      "path": "quests.training-2.actions.0",
+      "before": 62,
+      "after": 145
+    },
+    {
+      "path": "quests.training-2.actions.1",
+      "before": 77,
+      "after": 160
+    },
+    {
+      "path": "quests.training-3.intro",
+      "before": 70,
+      "after": 270
+    },
+    {
+      "path": "quests.training-3.scene",
+      "before": 83,
+      "after": 263
+    },
+    {
+      "path": "quests.training-3.actions.0",
+      "before": 54,
+      "after": 164
+    },
+    {
+      "path": "quests.training-3.actions.1",
+      "before": 59,
+      "after": 169
+    },
+    {
+      "path": "quests.moon-0.intro",
+      "before": 55,
+      "after": 239
+    },
+    {
+      "path": "quests.moon-0.scene",
+      "before": 47,
+      "after": 196
+    },
+    {
+      "path": "quests.moon-0.actions.0",
+      "before": 69,
+      "after": 171
+    },
+    {
+      "path": "quests.moon-0.actions.1",
+      "before": 72,
+      "after": 174
+    },
+    {
+      "path": "quests.moon-0.actions.2",
+      "before": 63,
+      "after": 165
+    },
+    {
+      "path": "quests.moon-1.intro",
+      "before": 72,
+      "after": 255
+    },
+    {
+      "path": "quests.moon-1.scene",
+      "before": 58,
+      "after": 210
+    },
+    {
+      "path": "quests.moon-1.actions.0",
+      "before": 39,
+      "after": 146
+    },
+    {
+      "path": "quests.moon-1.actions.1",
+      "before": 70,
+      "after": 177
+    },
+    {
+      "path": "quests.moon-1.actions.2",
+      "before": 72,
+      "after": 179
+    },
+    {
+      "path": "quests.moon-2.intro",
+      "before": 62,
+      "after": 261
+    },
+    {
+      "path": "quests.moon-2.scene",
+      "before": 68,
+      "after": 256
+    },
+    {
+      "path": "quests.moon-2.actions.0",
+      "before": 59,
+      "after": 171
+    },
+    {
+      "path": "quests.moon-2.actions.1",
+      "before": 51,
+      "after": 163
+    },
+    {
+      "path": "quests.moon-3.intro",
+      "before": 78,
+      "after": 284
+    },
+    {
+      "path": "quests.moon-3.scene",
+      "before": 60,
+      "after": 211
+    },
+    {
+      "path": "quests.moon-3.actions.0",
+      "before": 53,
+      "after": 153
+    },
+    {
+      "path": "quests.moon-3.actions.1",
+      "before": 64,
+      "after": 164
+    },
+    {
+      "path": "quests.moon-3.actions.2",
+      "before": 69,
+      "after": 169
+    },
+    {
+      "path": "quests.mist-0.intro",
+      "before": 53,
+      "after": 246
+    },
+    {
+      "path": "quests.mist-0.scene",
+      "before": 76,
+      "after": 260
+    },
+    {
+      "path": "quests.mist-0.actions.0",
+      "before": 66,
+      "after": 197
+    },
+    {
+      "path": "quests.mist-0.actions.1",
+      "before": 56,
+      "after": 187
+    },
+    {
+      "path": "quests.mist-0.actions.2",
+      "before": 78,
+      "after": 209
+    },
+    {
+      "path": "quests.mist-1.intro",
+      "before": 62,
+      "after": 236
+    },
+    {
+      "path": "quests.mist-1.scene",
+      "before": 55,
+      "after": 244
+    },
+    {
+      "path": "quests.mist-1.actions.0",
+      "before": 70,
+      "after": 164
+    },
+    {
+      "path": "quests.mist-1.actions.1",
+      "before": 64,
+      "after": 158
+    },
+    {
+      "path": "quests.mist-1.actions.2",
+      "before": 76,
+      "after": 170
+    },
+    {
+      "path": "quests.mist-2.intro",
+      "before": 48,
+      "after": 221
+    },
+    {
+      "path": "quests.mist-2.scene",
+      "before": 75,
+      "after": 263
+    },
+    {
+      "path": "quests.mist-2.actions.0",
+      "before": 50,
+      "after": 151
+    },
+    {
+      "path": "quests.mist-2.actions.1",
+      "before": 56,
+      "after": 157
+    },
+    {
+      "path": "quests.mist-3.intro",
+      "before": 54,
+      "after": 247
+    },
+    {
+      "path": "quests.mist-3.scene",
+      "before": 60,
+      "after": 254
+    },
+    {
+      "path": "quests.mist-3.actions.0",
+      "before": 56,
+      "after": 191
+    },
+    {
+      "path": "quests.mist-3.actions.1",
+      "before": 65,
+      "after": 200
+    },
+    {
+      "path": "quests.mist-3.actions.2",
+      "before": 93,
+      "after": 228
+    },
+    {
+      "path": "quests.desert-0.intro",
+      "before": 53,
+      "after": 223
+    },
+    {
+      "path": "quests.desert-0.scene",
+      "before": 67,
+      "after": 219
+    },
+    {
+      "path": "quests.desert-0.actions.0",
+      "before": 38,
+      "after": 129
+    },
+    {
+      "path": "quests.desert-0.actions.1",
+      "before": 60,
+      "after": 151
+    },
+    {
+      "path": "quests.desert-0.actions.2",
+      "before": 71,
+      "after": 162
+    },
+    {
+      "path": "quests.desert-1.intro",
+      "before": 53,
+      "after": 224
+    },
+    {
+      "path": "quests.desert-1.scene",
+      "before": 72,
+      "after": 241
+    },
+    {
+      "path": "quests.desert-1.actions.0",
+      "before": 55,
+      "after": 162
+    },
+    {
+      "path": "quests.desert-1.actions.1",
+      "before": 56,
+      "after": 163
+    },
+    {
+      "path": "quests.desert-1.actions.2",
+      "before": 90,
+      "after": 197
+    },
+    {
+      "path": "quests.desert-2.intro",
+      "before": 66,
+      "after": 256
+    },
+    {
+      "path": "quests.desert-2.scene",
+      "before": 79,
+      "after": 260
+    },
+    {
+      "path": "quests.desert-2.actions.0",
+      "before": 52,
+      "after": 172
+    },
+    {
+      "path": "quests.desert-2.actions.1",
+      "before": 60,
+      "after": 180
+    },
+    {
+      "path": "quests.desert-3.intro",
+      "before": 61,
+      "after": 242
+    },
+    {
+      "path": "quests.desert-3.scene",
+      "before": 81,
+      "after": 257
+    },
+    {
+      "path": "quests.desert-3.actions.0",
+      "before": 69,
+      "after": 159
+    },
+    {
+      "path": "quests.desert-3.actions.1",
+      "before": 64,
+      "after": 154
+    },
+    {
+      "path": "quests.desert-3.actions.2",
+      "before": 85,
+      "after": 175
+    },
+    {
+      "path": "quests.dragon-0.intro",
+      "before": 59,
+      "after": 244
+    },
+    {
+      "path": "quests.dragon-0.scene",
+      "before": 49,
+      "after": 227
+    },
+    {
+      "path": "quests.dragon-0.actions.0",
+      "before": 60,
+      "after": 182
+    },
+    {
+      "path": "quests.dragon-0.actions.1",
+      "before": 55,
+      "after": 177
+    },
+    {
+      "path": "quests.dragon-0.actions.2",
+      "before": 63,
+      "after": 185
+    },
+    {
+      "path": "quests.dragon-1.intro",
+      "before": 55,
+      "after": 216
+    },
+    {
+      "path": "quests.dragon-1.scene",
+      "before": 64,
+      "after": 235
+    },
+    {
+      "path": "quests.dragon-1.actions.0",
+      "before": 56,
+      "after": 163
+    },
+    {
+      "path": "quests.dragon-1.actions.1",
+      "before": 65,
+      "after": 172
+    },
+    {
+      "path": "quests.dragon-1.actions.2",
+      "before": 80,
+      "after": 187
+    },
+    {
+      "path": "quests.dragon-2.intro",
+      "before": 67,
+      "after": 260
+    },
+    {
+      "path": "quests.dragon-2.scene",
+      "before": 73,
+      "after": 241
+    },
+    {
+      "path": "quests.dragon-2.actions.0",
+      "before": 57,
+      "after": 170
+    },
+    {
+      "path": "quests.dragon-2.actions.1",
+      "before": 56,
+      "after": 169
+    },
+    {
+      "path": "quests.dragon-3.intro",
+      "before": 71,
+      "after": 258
+    },
+    {
+      "path": "quests.dragon-3.scene",
+      "before": 63,
+      "after": 256
+    },
+    {
+      "path": "quests.dragon-3.actions.0",
+      "before": 65,
+      "after": 172
+    },
+    {
+      "path": "quests.dragon-3.actions.1",
+      "before": 61,
+      "after": 168
+    },
+    {
+      "path": "quests.heaven-0.intro",
+      "before": 41,
+      "after": 226
+    },
+    {
+      "path": "quests.heaven-0.scene",
+      "before": 49,
+      "after": 230
+    },
+    {
+      "path": "quests.heaven-0.actions.0",
+      "before": 45,
+      "after": 141
+    },
+    {
+      "path": "quests.heaven-0.actions.1",
+      "before": 63,
+      "after": 159
+    },
+    {
+      "path": "quests.heaven-0.actions.2",
+      "before": 78,
+      "after": 174
+    },
+    {
+      "path": "quests.heaven-1.intro",
+      "before": 65,
+      "after": 223
+    },
+    {
+      "path": "quests.heaven-1.scene",
+      "before": 57,
+      "after": 219
+    },
+    {
+      "path": "quests.heaven-1.actions.0",
+      "before": 58,
+      "after": 181
+    },
+    {
+      "path": "quests.heaven-1.actions.1",
+      "before": 52,
+      "after": 175
+    },
+    {
+      "path": "quests.heaven-1.actions.2",
+      "before": 83,
+      "after": 206
+    },
+    {
+      "path": "quests.heaven-2.intro",
+      "before": 78,
+      "after": 264
+    },
+    {
+      "path": "quests.heaven-2.scene",
+      "before": 63,
+      "after": 242
+    },
+    {
+      "path": "quests.heaven-2.actions.0",
+      "before": 68,
+      "after": 172
+    },
+    {
+      "path": "quests.heaven-2.actions.1",
+      "before": 59,
+      "after": 163
+    },
+    {
+      "path": "quests.heaven-3.intro",
+      "before": 68,
+      "after": 262
+    },
+    {
+      "path": "quests.heaven-3.scene",
+      "before": 66,
+      "after": 221
+    },
+    {
+      "path": "quests.heaven-3.actions.0",
+      "before": 60,
+      "after": 161
+    },
+    {
+      "path": "quests.heaven-3.actions.1",
+      "before": 70,
+      "after": 171
+    },
+    {
+      "path": "quests.castle-0.intro",
+      "before": 50,
+      "after": 225
+    },
+    {
+      "path": "quests.castle-0.scene",
+      "before": 50,
+      "after": 241
+    },
+    {
+      "path": "quests.castle-0.actions.0",
+      "before": 54,
+      "after": 161
+    },
+    {
+      "path": "quests.castle-0.actions.1",
+      "before": 56,
+      "after": 163
+    },
+    {
+      "path": "quests.castle-0.actions.2",
+      "before": 61,
+      "after": 168
+    },
+    {
+      "path": "quests.castle-1.intro",
+      "before": 47,
+      "after": 229
+    },
+    {
+      "path": "quests.castle-1.scene",
+      "before": 71,
+      "after": 244
+    },
+    {
+      "path": "quests.castle-1.actions.0",
+      "before": 65,
+      "after": 179
+    },
+    {
+      "path": "quests.castle-1.actions.1",
+      "before": 58,
+      "after": 172
+    },
+    {
+      "path": "quests.castle-1.actions.2",
+      "before": 86,
+      "after": 200
+    },
+    {
+      "path": "quests.castle-2.intro",
+      "before": 76,
+      "after": 269
+    },
+    {
+      "path": "quests.castle-2.scene",
+      "before": 65,
+      "after": 236
+    },
+    {
+      "path": "quests.castle-2.actions.0",
+      "before": 58,
+      "after": 167
+    },
+    {
+      "path": "quests.castle-2.actions.1",
+      "before": 71,
+      "after": 180
+    },
+    {
+      "path": "quests.castle-3.intro",
+      "before": 62,
+      "after": 247
+    },
+    {
+      "path": "quests.castle-3.scene",
+      "before": 65,
+      "after": 238
+    },
+    {
+      "path": "quests.castle-3.actions.0",
+      "before": 60,
+      "after": 170
+    },
+    {
+      "path": "quests.castle-3.actions.1",
+      "before": 70,
+      "after": 180
+    },
+    {
+      "path": "quests.castle-3.actions.2",
+      "before": 100,
+      "after": 210
+    },
+    {
+      "path": "special.encounter-7.scene",
+      "before": 74,
+      "after": 276
+    },
+    {
+      "path": "special.encounter-7.actions.0",
+      "before": 48,
+      "after": 173
+    },
+    {
+      "path": "special.encounter-7.actions.1",
+      "before": 54,
+      "after": 189
+    },
+    {
+      "path": "special.encounter-1.scene",
+      "before": 66,
+      "after": 274
+    },
+    {
+      "path": "special.encounter-1.actions.0",
+      "before": 41,
+      "after": 166
+    },
+    {
+      "path": "special.encounter-1.actions.1",
+      "before": 49,
+      "after": 170
+    },
+    {
+      "path": "special.encounter-2.scene",
+      "before": 84,
+      "after": 305
+    },
+    {
+      "path": "special.encounter-2.actions.0",
+      "before": 50,
+      "after": 169
+    },
+    {
+      "path": "special.encounter-2.actions.1",
+      "before": 50,
+      "after": 185
+    },
+    {
+      "path": "special.encounter-3.scene",
+      "before": 56,
+      "after": 255
+    },
+    {
+      "path": "special.encounter-4.scene",
+      "before": 71,
+      "after": 276
+    },
+    {
+      "path": "special.encounter-5.scene",
+      "before": 71,
+      "after": 262
+    },
+    {
+      "path": "special.encounter-6.scene",
+      "before": 86,
+      "after": 257
+    },
+    {
+      "path": "locations.yggdrasil.intro",
+      "before": 150,
+      "after": 353
+    },
+    {
+      "path": "locations.yggdrasil.guard",
+      "before": 134,
+      "after": 301
+    },
+    {
+      "path": "secrets.yggdrasil.scene",
+      "before": 81,
+      "after": 271
+    },
+    {
+      "path": "locations.shangrila.intro",
+      "before": 138,
+      "after": 346
+    },
+    {
+      "path": "locations.shangrila.guard",
+      "before": 97,
+      "after": 247
+    },
+    {
+      "path": "secrets.shangrila.scene",
+      "before": 74,
+      "after": 285
+    },
+    {
+      "path": "locations.sahara.intro",
+      "before": 116,
+      "after": 329
+    },
+    {
+      "path": "locations.sahara.guard",
+      "before": 79,
+      "after": 237
+    },
+    {
+      "path": "secrets.sahara.scene",
+      "before": 69,
+      "after": 245
+    },
+    {
+      "path": "locations.dragongate.intro",
+      "before": 121,
+      "after": 311
+    },
+    {
+      "path": "locations.dragongate.guard",
+      "before": 97,
+      "after": 265
+    },
+    {
+      "path": "secrets.dragongate.scene",
+      "before": 76,
+      "after": 253
+    },
+    {
+      "path": "locations.valhalla.intro",
+      "before": 114,
+      "after": 306
+    },
+    {
+      "path": "locations.valhalla.guard",
+      "before": 89,
+      "after": 264
+    },
+    {
+      "path": "secrets.valhalla.scene",
+      "before": 78,
+      "after": 276
+    },
+    {
+      "path": "locations.pandemonium.intro",
+      "before": 169,
+      "after": 370
+    },
+    {
+      "path": "locations.pandemonium.guard",
+      "before": 106,
+      "after": 291
+    },
+    {
+      "path": "secrets.pandemonium.scene",
+      "before": 85,
+      "after": 280
+    },
+    {
+      "path": "locations.firstpact.intro",
+      "before": 142,
+      "after": 327
+    },
+    {
+      "path": "locations.firstpact.guard",
+      "before": 102,
+      "after": 252
+    },
+    {
+      "path": "secrets.firstpact.scene",
+      "before": 68,
+      "after": 206
+    },
+    {
+      "path": "repeatable.training.text",
+      "before": 101,
+      "after": 278
+    },
+    {
+      "path": "repeatable.moon.text",
+      "before": 111,
+      "after": 299
+    },
+    {
+      "path": "repeatable.mist.text",
+      "before": 93,
+      "after": 285
+    },
+    {
+      "path": "repeatable.desert.text",
+      "before": 115,
+      "after": 285
+    },
+    {
+      "path": "repeatable.dragon.text",
+      "before": 98,
+      "after": 269
+    },
+    {
+      "path": "repeatable.heaven.text",
+      "before": 96,
+      "after": 282
+    },
+    {
+      "path": "repeatable.castle.text",
+      "before": 104,
+      "after": 299
+    },
+    {
+      "path": "riddles.training-bells.text",
+      "before": 96,
+      "after": 207
+    },
+    {
+      "path": "riddles.training-footprints.text",
+      "before": 97,
+      "after": 231
+    },
+    {
+      "path": "riddles.training-thorns.text",
+      "before": 79,
+      "after": 201
+    },
+    {
+      "path": "riddles.training-poison.text",
+      "before": 88,
+      "after": 224
+    },
+    {
+      "path": "riddles.moon-reflections.text",
+      "before": 101,
+      "after": 225
+    },
+    {
+      "path": "riddles.moon-leaf-scale.text",
+      "before": 83,
+      "after": 198
+    },
+    {
+      "path": "riddles.moon-wolves.text",
+      "before": 104,
+      "after": 225
+    },
+    {
+      "path": "riddles.moon-moth.text",
+      "before": 88,
+      "after": 211
+    },
+    {
+      "path": "riddles.mist-incense.text",
+      "before": 79,
+      "after": 205
+    },
+    {
+      "path": "riddles.mist-fox.text",
+      "before": 94,
+      "after": 207
+    },
+    {
+      "path": "riddles.mist-bridge.text",
+      "before": 77,
+      "after": 201
+    },
+    {
+      "path": "riddles.mist-souljar.text",
+      "before": 86,
+      "after": 223
+    },
+    {
+      "path": "riddles.desert-hourglass.text",
+      "before": 65,
+      "after": 196
+    },
+    {
+      "path": "riddles.desert-scales.text",
+      "before": 71,
+      "after": 200
+    },
+    {
+      "path": "riddles.desert-storm.text",
+      "before": 96,
+      "after": 226
+    },
+    {
+      "path": "riddles.desert-scarab.text",
+      "before": 77,
+      "after": 206
+    },
+    {
+      "path": "riddles.dragon-echo.text",
+      "before": 89,
+      "after": 213
+    },
+    {
+      "path": "riddles.dragon-elements.text",
+      "before": 71,
+      "after": 201
+    },
+    {
+      "path": "riddles.dragon-avalanche.text",
+      "before": 93,
+      "after": 211
+    },
+    {
+      "path": "riddles.dragon-nest.text",
+      "before": 79,
+      "after": 205
+    },
+    {
+      "path": "riddles.heaven-stars.text",
+      "before": 78,
+      "after": 202
+    },
+    {
+      "path": "riddles.heaven-oath.text",
+      "before": 122,
+      "after": 242
+    },
+    {
+      "path": "riddles.heaven-lightning.text",
+      "before": 83,
+      "after": 191
+    },
+    {
+      "path": "riddles.heaven-soulwind.text",
+      "before": 91,
+      "after": 219
+    },
+    {
+      "path": "riddles.castle-mirrors.text",
+      "before": 89,
+      "after": 219
+    },
+    {
+      "path": "riddles.castle-chains.text",
+      "before": 98,
+      "after": 230
+    },
+    {
+      "path": "riddles.castle-banquet.text",
+      "before": 117,
+      "after": 226
+    },
+    {
+      "path": "riddles.castle-hounds.text",
+      "before": 91,
+      "after": 221
+    }
+  ]
+}

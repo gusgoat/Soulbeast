@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="th" data-skip-web-intro>
+<head><script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Isolated narrative preview"));</script><style>#app{height:auto;min-height:100dvh;max-width:720px}.prose-preview{padding:20px 16px 48px;overflow:visible}.prose-preview h1{font-size:23px}.prose-tabs{flex-wrap:wrap}.prose-preview p{max-width:65ch}.prose-preview .secret-location{overflow:visible}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10121b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ผนึกอสูร">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
+<!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
+<script>window.SHEET_URL = 'https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api';</script>
+<link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
+</head>
+<body style="margin:0;height:100%">
+<title>ตำนานผนึกอสูร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
+<link rel="stylesheet" href="./game-styles.dd150b9c1c3d84b6.css">
+
+<div id="app"></div>
+<div id="vfx" aria-hidden="true"></div>
+<div id="travelFx" aria-hidden="true"></div>
+<input type="file" id="saveFile" accept=".txt,text/plain" hidden>
+
+<script src="./game-data-registry.5350fd57c39d09dd.js"></script>
+<script src="./game-data-elements.2936c00742247389.js"></script>
+<script src="./game-data-skills.cc44041210824676.js"></script>
+<script src="./game-data-classes.b20030dab4164ae7.js"></script>
+<script src="./game-data-equipment.356889102050fed3.js"></script>
+<script src="./game-data-consumables.bf9df0fd5ed788c5.js"></script>
+<script src="./game-data-beasts.c6d0b8a74d4f1896.js"></script>
+<script src="./game-data-exploration.6cfcf82495a0e5a0.js"></script>
+<script src="./game-data-story.b4ecd56118a196f0.js"></script>
+<script src="./game-data-localization.f9f4b313b4678aef.js"></script>
+<script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
+<script src="./game-data-secrets.b755c3d1bd3b2d7e.js"></script>
+<script src="./game-data-narrative.3437bb33483fc5e0.js"></script>
+<script src="./game-app.b94677dbf432f4c0.js"></script>
+
+<script>Tutorial.clear();Sound.fx=()=>{};S={"ver":6,"screen":"town","ui":{},"zone":null,"battle":null,"P":{"name":"ทดสอบ","cls":"swordsman","gender":"male","lv":3,"exp":0,"gold":150,"pts":{},"free":10,"eq":{"weapon":"wp_sword0"},"owned":[],"items":{"pot":5,"seal1":5,"eth":2,"antidote":1,"calm":1},"parts":{},"pets":[{"uid":1,"sp":"mandrake","lv":3,"form":0,"exp":0,"pts":{},"free":6,"hp":64,"mp":32}],"party":[1],"legend":{},"zoneMax":1,"arena":{},"seen":{"mandrake":1},"caught":{"mandrake":1},"uid":2,"hp":83,"mp":25,"carried":[1],"packVersion":1,"seenForms":{"mandrake":[0]},"discoveryVersion":1,"code":"CHECKTEST2345"}};delete S.P.tutorial;S.P.lv=60;S.P.gold=10000;S.screen='zone';const lang=new URLSearchParams(location.search).get('lang');if(['en','zh-CN'].includes(lang))GAME_LANGUAGE=lang;let selected='quest';
+function narrativeDemo(){S.zone={id:7,depth:3,log:[]};S.ui={};if(selected==='quest'){S.zone.taleSession={id:'training-0',mode:'offer',token:'preview',result:[]};return WorldTales.view();}if(selected==='follow'){S.zone.id=1;WorldTales.state().quests['training-2']={id:'training-2',kind:'medium',status:'active',targets:[1,2],progress:0};S.zone.taleSession={id:'training-2',followId:'training-2',mode:'follow',token:'preview',result:[]};return WorldTales.view();}if(selected==='secret'){S.zone.id=2;S.zone.secretSession={id:'shangrila',event:'intro',revision:0};Secret.record('shangrila');return Secret.view();}if(selected==='repeat'){S.zone.specialSession={token:'preview',claimed:false,results:[]};return ForestSpecial.view();}if(selected==='result'){S.zone.specialSession={token:'preview',claimed:true,choice:'friend',results:['ได้รับอสูรคู่หู']};return ForestSpecial.view();}S.zone.riddleSession={id:'training-bells',token:'preview',answered:false,results:[]};return ForestRiddle.view();}
+render=function(){document.getElementById('app').innerHTML='<main class="prose-preview stack"><h1>Soulbeast · Story Preview</h1>'+languagePanel()+'<div class="row prose-tabs">'+[['quest','เควส'],['follow','ตามรอย'],['secret','สถานที่ลับ'],['repeat','เหตุการณ์'],['result','บทสรุป'],['riddle','ปริศนา']].map(([id,label])=>'<button class="btn sm" data-preview="'+id+'">'+label+'</button>').join('')+'</div>'+narrativeDemo()+'</main>';applyGameLanguage(document.getElementById('app'));};render();document.addEventListener('click',e=>{const tab=e.target.closest('[data-preview]');if(tab){selected=tab.dataset.preview;render();return;}if(e.target.closest('[data-a]')&&!e.target.closest('[data-a="language"]')){e.preventDefault();e.stopImmediatePropagation();}},true);</script></body>
+</html>
