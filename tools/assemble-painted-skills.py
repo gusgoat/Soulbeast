@@ -28,6 +28,8 @@ for a in retained:
     records.append({'id':a['id'],'name':a['name'],'source':'retained-painted-crop','originalPath':str(source.relative_to(ROOT)).replace('\\','/'),'cropBox':list(box),'sourceSize':list(image.size),'outputSize':list(picture.size),'path':str(target.relative_to(ROOT)).replace('\\','/'),'sha256':hashlib.sha256(target.read_bytes()).hexdigest(),'sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest()})
 if len(crops)!=384:raise RuntimeError(f'All 384 replacement skill crops are required; only {len(crops)} are ready.')
 assert len(records)==504 and len(set(a['id'] for a in records))==504
+for record in records:
+    if record['id']=='enchant_flying':record['name']='ประทับดาบธาตุลม'
 manifest={'version':2,'method':'Built-in image_gen painted artwork; each individual image cropped to measured source-cell bounds. All rendering uses contain, without CSS sprite offsets or cover cropping.','prompts':'content/skill-art-painted-v2/jobs.json','cropProof':'content/skill-art-painted-v2/crops.json','skills':records}
 (ROOT/'content/individual-skill-art.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 cards=''.join(f'<article><img loading="lazy" decoding="async" src="{a["path"]}" alt="{a["name"]}"><b>{a["name"]}</b><small>{a["id"]}</small></article>' for a in records)

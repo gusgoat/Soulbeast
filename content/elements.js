@@ -1,7 +1,7 @@
 'use strict';
 Object.assign(SoulbeastContent,{
 EL:()=>({normal:{n:'ปกติ',c:'#b3b28a'},fire:{n:'ไฟ',c:'#ee8130'},water:{n:'น้ำ',c:'#6f9cf3'},grass:{n:'พืช',c:'#7ac74c'},electric:{n:'ไฟฟ้า',c:'#f7d02c'},ice:{n:'น้ำแข็ง',c:'#96d9d6'},
- fighting:{n:'ต่อสู้',c:'#e0564e'},poison:{n:'พิษ',c:'#c060be'},ground:{n:'ดิน',c:'#e2bf65'},flying:{n:'บิน',c:'#a98ff3'},psychic:{n:'จิต',c:'#f95587'},bug:{n:'แมลง',c:'#a6b91a'},
+ fighting:{n:'ต่อสู้',c:'#e0564e'},poison:{n:'พิษ',c:'#c060be'},ground:{n:'ดิน',c:'#e2bf65'},flying:{n:'ลม',c:'#a98ff3'},psychic:{n:'จิต',c:'#f95587'},bug:{n:'แมลง',c:'#a6b91a'},
  rock:{n:'หิน',c:'#c4ad4a'},ghost:{n:'ผี',c:'#9a7cc4'},dragon:{n:'มังกร',c:'#8a62ff'},dark:{n:'มืด',c:'#a08470'},steel:{n:'เหล็ก',c:'#b7b7ce'},fairy:{n:'เทพ',c:'#e58fbc'}}),
 TC:()=>({
  normal:{rock:.5,ghost:0,steel:.5},
