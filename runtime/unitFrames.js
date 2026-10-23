@@ -20,7 +20,7 @@ const UnitFrames={
   const t=this.resolve(u);
   return 'data-unit-frame="'+t.key+'" data-unit-secondary="'+t.secondary+'" style="--unit-ornament:url(\'assets/ui/unit-frames/'+t.key+'.svg\');--unit-alt-ornament:url(\'assets/ui/unit-frames/'+t.secondary+'.svg\');--unit-tint:'+t.color+'"';
  },
- decoration(){return ['nw','ne','sw','se'].map(k=>'<span class="unit-frame-corner unit-corner-'+k+'" aria-hidden="true"></span>').join('');},
+ decoration(){return ['nw','ne','sw','se'].map(k=>'<span class="unit-frame-corner unit-corner-'+k+'" aria-hidden="true"></span>').join('')+'<span class="unit-frame-sprig sprig-nw" aria-hidden="true"></span><span class="unit-frame-sprig sprig-se" aria-hidden="true"></span>';},
  decorate(html,u){
   if(/data-unit-frame=/.test(html.slice(0,html.indexOf('>')+1)))return html;
   return html.replace(/<(button|div|article|section)\b[^>]*>/,tag=>{

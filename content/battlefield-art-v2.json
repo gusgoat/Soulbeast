@@ -1,0 +1,104 @@
+{
+  "version": 2,
+  "generator": "Built-in image_gen.imagegen",
+  "usage": "New close-camera battle environments and alpha foliage, independent of location-selection art",
+  "camera": "Inside the environment at eye height, immediate fighting floor, no distant establishing panorama",
+  "assets": [
+    {
+      "key": "training",
+      "path": "assets/ui/battle-scenes/training-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 illustrated JRPG mobile-game battle backdrop for Soulbeast. Create a brand new standalone painted environment, polished detailed fantasy game concept art, grounded believable spatial perspective, no UI. CAMERA IS INSIDE the place at standing eye height (1.4m), facing across a nearby playable fighting area; foreground ground occupies the bottom third, large close environment props at the edges create depth, midground within 5â€“12 meters, no distant landscape or world-map vista. Keep the central area visually calm for character cards; preserve meaningful environment details along edges and across visible floor. No characters, no creatures, no text, no logos, no borders, no captions, no collage. Scene: bright inviting beginner practice clearing just behind a small medieval fantasy town, late-morning golden sunlight through young green broadleaf trees, open packed-earth and short-grass training circle at our feet, a few weathered wooden practice posts and simple wooden fence at the near edges, modest stone steps and rustic arch at the back. Cozy natural green and honey tones, friendly human-scale space. Absolutely no moon, no blue night, no giant glowing mushrooms, no magical ancient forest. Distinct daylight tutorial training ground.",
+      "sha256": "92b48215b33fbefd2b12109098b5ae8754a17120a04fd3d64b5c6f0fe05b8854",
+      "bytes": 436150
+    },
+    {
+      "key": "forest",
+      "path": "assets/ui/battle-scenes/forest-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 illustrated JRPG mobile-game battle backdrop for Soulbeast. Create a brand new standalone painted environment, polished detailed fantasy game concept art, grounded believable spatial perspective, no UI. CAMERA IS INSIDE the place at standing eye height (1.4m), facing across a nearby playable fighting area; foreground ground occupies the bottom third, large close environment props at the edges create depth, midground within 5â€“12 meters, no distant landscape or world-map vista. Keep the central area visually calm for character cards; preserve meaningful environment details along edges and across visible floor. No characters, no creatures, no text, no logos, no borders, no captions, no collage. Scene: standing inside an ancient moonlit woodland fighting glade, huge close rough-barked trees frame the left and right, exposed mossy roots around the clearing edge, damp earth with fallen leaves and small stones in the foreground, silver moonbeams crossing low forest mist from above, deep natural emerald and midnight teal. A nearby trunk and branches rather than a distant scenic view; subtle bioluminescent tiny flora only at far edges. No visible giant moon, no castle, no town, no reuse of any existing forest composition.",
+      "sha256": "29d27632c2e90b9b19bc606a73f2f969d507bc6e26638db3535cdca792ce3186",
+      "bytes": 389620
+    },
+    {
+      "key": "throne",
+      "path": "assets/ui/battle-scenes/throne-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 illustrated JRPG mobile-game battle backdrop for Soulbeast. Create a brand new standalone painted environment, polished detailed fantasy game concept art, grounded believable spatial perspective, no UI. CAMERA IS INSIDE the place at standing eye height (1.4m), facing across a nearby playable fighting area; foreground ground occupies the bottom third, large close environment props at the edges create depth, midground within 5â€“12 meters, no distant landscape or world-map vista. Keep the central area visually calm for character cards; preserve meaningful environment details along edges and across visible floor. No characters, no creatures, no text, no logos, no borders, no captions, no collage. Scene: INSIDE the demon lord's throne chamber, standing on a large worn obsidian-and-slate floor facing a nearby empty imposing black throne on three shallow steps, throne formed from black bone-like ribs, restrained horn and skull details, two massive close gothic pillars at left and right, heavy dark drapes, pale violet fire braziers, subtle crimson runes on floor edges. The throne and dais occupy the midground about 8 meters away, ceiling arches partly visible overhead. Rich dark plum, black steel, restrained ember gold. No exterior castle, no full palace silhouette, no distant city, no ruler or characters.",
+      "sha256": "38fe98728026145f3bb0926ae0b6319359e0381ffeb3b4870ef8b041390a147b",
+      "bytes": 275894
+    },
+    {
+      "key": "mist",
+      "path": "assets/ui/battle-scenes/mist-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 painted fantasy JRPG battle background for the Soulbeast mobile game, polished rich hand-painted concept art with realistic spatial perspective. Brand new composition. CAMERA INSIDE THE LOCATION, standing eye height 1.4 meters facing a nearby fighting area, broad foreground floor occupying bottom third and large close props at both edges, midground within 5â€“12m. Compose for mobile character cards placed over the center, keep central floor quiet, interesting edge detail. No characters, creatures, UI, frame, text, logos, captions, collage or distant landscape panorama. Scene: standing IN a weathered east-Asian shrine courtyard deep in a misty valley. Wet stone paving immediately beneath our feet, close red-brown timber columns and mossy stone lanterns at both sides, low steps and a nearby closed carved shrine doorway behind the fighting court, a hanging bell and wisps of silver fog among close bamboo. Desaturated jade green, soft gray-blue dawn and warm lantern glows. Show the intimate courtyard, not an entire mountain shrine viewed from afar.",
+      "sha256": "750451978c05f608d32c1f534bdab1cb2aafcd5783c401ab4d2d9614a2abab73",
+      "bytes": 305524
+    },
+    {
+      "key": "desert",
+      "path": "assets/ui/battle-scenes/desert-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 painted fantasy JRPG battle background for the Soulbeast mobile game, polished rich hand-painted concept art with realistic spatial perspective. Brand new composition. CAMERA INSIDE THE LOCATION, standing eye height 1.4 meters facing a nearby fighting area, broad foreground floor occupying bottom third and large close props at both edges, midground within 5â€“12m. Compose for mobile character cards placed over the center, keep central floor quiet, interesting edge detail. No characters, creatures, UI, frame, text, logos, captions, collage or distant landscape panorama. Scene: standing INSIDE the roofless inner fighting court of an ancient desert tomb-temple, warm sand drifts over worn sandstone flagstones immediately in foreground, close ochre carved pillars and eroded reliefs on walls at the edges, shallow stairs and a nearby dark inner sanctuary doorway in midground. Shafts of late afternoon sun, warm bronze and muted turquoise inlays. No distant pyramids, no giant sphinx panorama, no exterior temple facade, no whole city.",
+      "sha256": "c731c14a3472cdcb08efce7c1139d71470fac0b870f85fa2674b49349e2cdad9",
+      "bytes": 276502
+    },
+    {
+      "key": "volcano",
+      "path": "assets/ui/battle-scenes/volcano-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 painted fantasy JRPG battle background for the Soulbeast mobile game, polished rich hand-painted concept art with realistic spatial perspective. Brand new composition. CAMERA INSIDE THE LOCATION, standing eye height 1.4 meters facing a nearby fighting area, broad foreground floor occupying bottom third and large close props at both edges, midground within 5â€“12m. Compose for mobile character cards placed over the center, keep central floor quiet, interesting edge detail. No characters, creatures, UI, frame, text, logos, captions, collage or distant landscape panorama. Scene: standing inside a dragon's volcanic basalt chamber, a solid broad blackstone fighting platform under our feet, narrow glowing lava cracks confined to the edges, close jagged basalt columns flanking the space, low broken stone steps and a nearby dark rocky arch in midground. Hot amber light from two side fissures, faint drifting ember haze, deep charcoal and restrained orange red. The camera is inside the cavern looking across the immediate fighting floor, not looking at a distant volcano or a giant dragon.",
+      "sha256": "1d0551affcc3a40f98f585d0167b6bd588ee996710a778993c7b3f57352f48b3",
+      "bytes": 241596
+    },
+    {
+      "key": "ruins",
+      "path": "assets/ui/battle-scenes/ruins-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 painted fantasy JRPG battle background for the Soulbeast mobile game, polished rich hand-painted concept art with realistic spatial perspective. Brand new composition. CAMERA INSIDE THE LOCATION, standing eye height 1.4 meters facing a nearby fighting area, broad foreground floor occupying bottom third and large close props at both edges, midground within 5â€“12m. Compose for mobile character cards placed over the center, keep central floor quiet, interesting edge detail. No characters, creatures, UI, frame, text, logos, captions, collage or distant landscape panorama. Scene: standing WITHIN a shattered celestial temple hall, close pale marble columns broken at their tops, floating tiny stone fragments around the edges, cracked ivory marble and muted gold rune inlays on the large floor directly beneath us, a nearby raised semicircular altar ahead. Small openings between columns reveal soft clouds and violet sky, but the immediate interior floor and pillars dominate. Ethereal pearl, faded gold, cool lilac. No faraway floating-island skyline, no distant castle panorama.",
+      "sha256": "a17cfb70d557f5d89b4b9a486e81e56503094e592abde0f63035afcd615a6587",
+      "bytes": 247506
+    },
+    {
+      "key": "fortress",
+      "path": "assets/ui/battle-scenes/fortress-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 painted high-quality fantasy JRPG mobile-game battle backdrop for Soulbeast. Grounded richly detailed painterly concept art, close human-scale eye-level perspective at 1.4m, camera INSIDE the location, broad nearby fighting floor in the bottom third, framing architectural props close at left and right, central midground no farther than 5â€“12m, calm area for UI character cards but real environment across the whole picture. No people, creatures, characters, UI, borders, text, logos, collage or distant establishing vista. Scene: standing inside an ominous castle's guard chamber, broad slate floor with scuffed joints, close thick dark stone pillars, near weapon racks and chained torch sconces at left and right, a nearby stout iron-bound arched door and shallow worn steps behind the open fighting area, muted red hanging banners. Warm torchlight against cool desaturated iron-gray stone. Show the lived-in interior fighting room, never a whole castle silhouette or exterior palace.",
+      "sha256": "b1e23fb318b1ced56f8727e50510d72dab15e72f07d3e110ec5183e23032ea3a",
+      "bytes": 308318
+    },
+    {
+      "key": "boss",
+      "path": "assets/ui/battle-scenes/boss-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 painted high-quality fantasy JRPG mobile-game battle backdrop for Soulbeast. Grounded richly detailed painterly concept art, close human-scale eye-level perspective at 1.4m, camera INSIDE the location, broad nearby fighting floor in the bottom third, framing architectural props close at left and right, central midground no farther than 5â€“12m, calm area for UI character cards but real environment across the whole picture. No people, creatures, characters, UI, borders, text, logos, collage or distant establishing vista. Scene: an ancient guardian's INNER THRONE SANCTUM, camera inside facing a close imposing empty carved stone throne on a modest raised dais, massive nearby weathered pillars and hanging bronze lanterns frame the room, stone floor at our feet bears faint worn circular seal engravings. Old roots entwine outer wall edges but do not fill the arena. Neutral dark stone, weathered gold, subtle moss jade and candle amber. Clearly an interior boss throne room with immediate floor, no outside gate, no entire temple, no castle exterior.",
+      "sha256": "30d3c3b5773c7ba7a941a32d064b41f8d0792d0cc4a80aa5b0bb3031e85440ec",
+      "bytes": 330606
+    },
+    {
+      "key": "arena",
+      "path": "assets/ui/battle-scenes/arena-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 painted high-quality fantasy JRPG mobile-game battle backdrop for Soulbeast. Grounded richly detailed painterly concept art, close human-scale eye-level perspective at 1.4m, camera INSIDE the location, broad nearby fighting floor in the bottom third, framing architectural props close at left and right, central midground no farther than 5â€“12m, calm area for UI character cards but real environment across the whole picture. No people, creatures, characters, UI, borders, text, logos, collage or distant establishing vista. Scene: standing ON the sandy fighting ring inside a small stone fantasy tournament arena. Scuffed sand and chalk marks immediately underfoot, a close knee-high stone barrier and two stout banner standards at side edges, a near semicircle of empty stepped spectator seats and an arched exit ahead, restrained red and blue banners. Warm late-afternoon light, stone beige, muted cobalt and burgundy. The view is from within the ring, not an aerial shot or distant entire colosseum.",
+      "sha256": "e819b027c94f38d235e18c08e03ee12375e18c97c0aea7789db493e2311a25fa",
+      "bytes": 299014
+    },
+    {
+      "key": "world",
+      "path": "assets/ui/battle-scenes/world-v2.webp",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: square 1:1 painted high-quality fantasy JRPG mobile-game battle backdrop for Soulbeast. Grounded richly detailed painterly concept art, close human-scale eye-level perspective at 1.4m, camera INSIDE the location, broad nearby fighting floor in the bottom third, framing architectural props close at left and right, central midground no farther than 5â€“12m, calm area for UI character cards but real environment across the whole picture. No people, creatures, characters, UI, borders, text, logos, collage or distant establishing vista. Scene: standing INSIDE a monumental eclipsed ritual throne chamber for an immortal world boss, wide close black-marble fighting floor with subdued circular violet-gold seal engravings and cracks, two enormous near rib-like black-stone pillars, a nearby empty black skeletal throne on a broad low dais framed by a huge circular dark portal with an eclipse rim. A few suspended broken chains and dim amber braziers at sides; cosmic violet haze in the high chamber, no outdoor scenery. Immediate battle floor is spacious and calm; throne about 10 meters ahead, not a distant castle or planet landscape.",
+      "sha256": "ccd4327e2145cb519c1dbba2933922bf8f64de477136cf582ecc8a2a0f030358",
+      "bytes": 297698
+    },
+    {
+      "key": "foliage",
+      "path": "assets/ui/battle-scenes/foliage-v2.webp",
+      "transparentBackground": true,
+      "prompt": "Use case: stylized-concept. Asset type: a single small transparent-background fantasy game UI corner ornament. Paint a naturally curling slender vine with a few richly painted emerald and sage leaves and two tiny gold-green buds, with warm highlights and subtle woody texture, in an open narrow L shape: a short horizontal twig along the TOP EDGE and a descending thin vine ONLY along the LEFT EDGE. The lower-right and central 75% of the square must be completely empty transparent space. The vine and leaves should feel hand-painted and organic, not geometric line art, suitable for slightly protruding beyond a small character-card corner. One isolated corner ornament, no rectangle, no enclosing frame, no text, no logos, no character, no scenery, no background. Real alpha transparency.",
+      "sha256": "28c6e2644ba5fec6f340e6d704922568b973cc5de95b5f31042eb1f21c56daf0",
+      "bytes": 48636
+    }
+  ]
+}

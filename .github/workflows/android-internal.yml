@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['assets/ui/unit-frames/**', 'runtime/unitFrames.js', 'runtime/status.js', 'runtime/inventory.js', 'runtime/ui.js', 'assets/ui/battle-frames/**', 'runtime/battleScenery.js', 'runtime/combat.js', 'runtime/network.js', 'runtime/manifest.json', 'assets/video/**', 'runtime/webIntro.js', 'client/styles.css', 'content/web-intro-media.json', 'mobile/**', 'runtime/accounts.js', 'client/play*', 'server/payments/play*', 'server/payments/google-play*', 'server/payments/003*', 'tools/test-play*', 'tools/build-play.cjs', 'tools/play-tests/**', 'client/account*', 'client/billing*', 'content/billing-channels.json', 'tools/build-mobile.cjs', '.github/workflows/android-internal.yml']
+    paths: ['assets/ui/battle-scenes/**', 'content/battlefield-art-v2.json', 'assets/ui/unit-frames/**', 'runtime/unitFrames.js', 'runtime/status.js', 'runtime/inventory.js', 'runtime/ui.js', 'assets/ui/battle-frames/**', 'runtime/battleScenery.js', 'runtime/combat.js', 'runtime/network.js', 'runtime/manifest.json', 'assets/video/**', 'runtime/webIntro.js', 'client/styles.css', 'content/web-intro-media.json', 'mobile/**', 'runtime/accounts.js', 'client/play*', 'server/payments/play*', 'server/payments/google-play*', 'server/payments/003*', 'tools/test-play*', 'tools/build-play.cjs', 'tools/play-tests/**', 'client/account*', 'client/billing*', 'content/billing-channels.json', 'tools/build-mobile.cjs', '.github/workflows/android-internal.yml']
 permissions:
   contents: read
 concurrency:

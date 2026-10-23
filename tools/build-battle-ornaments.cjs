@@ -12,6 +12,7 @@ const motifs={
  throne:{ink:'#dca3bb',dark:'#67415b',path:'M8 94V36L18 26L12 12L26 18L36 8H94M15 77V43L27 31L31 27L43 15H77',detail:'<path d="M17 21L30 27L27 10L40 22L49 12L44 36L27 44L12 49L22 40L10 27L27 30ZM27 36L36 27L39 39Z"/><circle cx="45" cy="15" r="3"/>'},
  world:{ink:'#f4bc92',dark:'#805061',path:'M8 94V48A40 40 0 0 1 48 8H94M15 78V48A33 33 0 0 1 48 15H78',detail:'<circle cx="30" cy="30" r="17"/><circle cx="30" cy="30" r="10"/><path d="M30 5V15M30 45V55M5 30H15M45 30H55M12 12L19 19M41 41L48 48M12 48L19 41M41 19L48 12"/><path d="M36 21A12 12 0 1 0 36 39A15 15 0 0 1 36 21" fill="#f4bc92"/>'}
 };
+motifs.training={...motifs.forest,ink:'#b9d18d',dark:'#395638'};
 fs.mkdirSync('assets/ui/battle-frames',{recursive:true});
 for(const [key,m]of Object.entries(motifs))fs.writeFileSync('assets/ui/battle-frames/'+key+'.svg',`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none"><path d="${m.path}" stroke="#030b14" stroke-width="6" stroke-linejoin="round"/><path d="${m.path}" stroke="${m.ink}" stroke-width="1.5" stroke-linecap="round"/><g stroke="${m.ink}" stroke-width="1.3" fill="${m.dark}" stroke-linejoin="round">${m.detail}</g></svg>\n`);
 console.log('Built '+Object.keys(motifs).length+' lightweight battlefield corner ornaments');
