@@ -44,11 +44,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/heal_self.svg",
       "owner": null,
-      "motif": "cross",
+      "motif": "heart",
       "action": "restore",
       "hits": 1,
       "composition": 3,
-      "sha256": "20612819de49bd5a09ecf6ec0ec452e58491c12f9ea7acaa50a66377d063b8c6"
+      "sha256": "820a882e72cfe2fac13494c8e1297248ae66efc699e5e8a42a9ba7081a38df39"
     },
     {
       "id": "teamheal",
@@ -56,11 +56,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/teamheal.svg",
       "owner": null,
-      "motif": "potion",
+      "motif": "music",
       "action": "restore",
       "hits": 1,
       "composition": 2,
-      "sha256": "3a26d5f8949330cb5facc1992ecf3b7e88f544c5b6c6298c2e3d070a0a59ef25"
+      "sha256": "15096367298b2ad188658d72ee2fa6d4557f3a0efe5248454c8ce527efbebd2a"
     },
     {
       "id": "normal_p1",
@@ -4041,11 +4041,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs1_sword.svg",
       "owner": null,
-      "motif": "sun",
+      "motif": "sword",
       "action": "strike",
       "hits": 1,
       "composition": 3,
-      "sha256": "f5f3d079e961d0bb3bd65723799b0e907b4669518f01d2bc697a5b47c4e9ca01"
+      "sha256": "783deb365d7c1bba09bc1720a9fc152c33800b73151bba37ad5419b63648ba49"
     },
     {
       "id": "lgs1_axe",
@@ -4053,11 +4053,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs1_axe.svg",
       "owner": null,
-      "motif": "sun",
+      "motif": "axe",
       "action": "strike",
       "hits": 1,
       "composition": 0,
-      "sha256": "eb9db60566d8f46d1cad0a178ce82b734364c377158294862ececb2c3a3970f1"
+      "sha256": "d55bb267e0c712afb55a810068dd829553081c6d16ef59b4f5fd82dd93415cef"
     },
     {
       "id": "lgs1_bow",
@@ -4065,11 +4065,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs1_bow.svg",
       "owner": null,
-      "motif": "sun",
+      "motif": "arrow",
       "action": "strike",
       "hits": 1,
       "composition": 3,
-      "sha256": "9bd236cdf99f4f5ff0bd1f21675395c11f0c38141bb60a9fa9eca6d5d3a985ca"
+      "sha256": "7c221c6835cc5928cf0e70b3da6693b41dd22c84816888f39d627fa68dd571e5"
     },
     {
       "id": "lgs1_staff",
@@ -4077,11 +4077,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs1_staff.svg",
       "owner": null,
-      "motif": "sun",
+      "motif": "staff",
       "action": "spell",
       "hits": 1,
       "composition": 0,
-      "sha256": "e703b695064cfd32f3f3550c838e8b64aa6a9349990559545433d7b53d85ba99"
+      "sha256": "1a9efcc914b0a56946aad20bc3044e62bfbbc148e26707892d4c7e8d8fb650bc"
     },
     {
       "id": "lgs1_mace",
@@ -4089,11 +4089,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs1_mace.svg",
       "owner": null,
-      "motif": "sun",
+      "motif": "hammer",
       "action": "strike",
       "hits": 1,
       "composition": 1,
-      "sha256": "a44f56278dcb472d8037253804df40d41e666499dc00d7b9307b2026d2925497"
+      "sha256": "4698966c8dd0a672036165e913efff5434326402a23d7b5ab6421383bf298491"
     },
     {
       "id": "lgs1_gun",
@@ -4101,11 +4101,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs1_gun.svg",
       "owner": null,
-      "motif": "sun",
+      "motif": "gun",
       "action": "strike",
       "hits": 1,
       "composition": 1,
-      "sha256": "36cc2fa0288418f6ec9e6148d7c4de20d52f758c94bb8a9d6d82c9f8374f81f7"
+      "sha256": "176953aa26c4e35483aa86bcf8bc9a6846be9a67004d72b939b367d05a133233"
     },
     {
       "id": "lgs1_dagger",
@@ -4113,11 +4113,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs1_dagger.svg",
       "owner": null,
-      "motif": "sun",
+      "motif": "dagger",
       "action": "strike",
       "hits": 1,
       "composition": 3,
-      "sha256": "cb63c210b489bc07cd10b695a60de987ced2e52e2126d6b73354606b7b882c0d"
+      "sha256": "4ea7b96dd64fe21699ff158bf3ecaa87d30de9bef70965d8dff0a76a4b7a66ef"
     },
     {
       "id": "lgs1_whip",
@@ -4125,11 +4125,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs1_whip.svg",
       "owner": null,
-      "motif": "sun",
+      "motif": "whip",
       "action": "spell",
       "hits": 1,
       "composition": 2,
-      "sha256": "105abe2e36585ea4ee794b1bb1aa04a57070c9e6ef353737bd9a3cffcc3b3448"
+      "sha256": "af468b965f81ec809cb1381a1c6d2a58b453bb1ed2da4f0f63e657cbf99512a1"
     },
     {
       "id": "lgs2_sword",
@@ -4137,11 +4137,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs2_sword.svg",
       "owner": null,
-      "motif": "soul",
+      "motif": "sword",
       "action": "strike",
       "hits": 1,
       "composition": 2,
-      "sha256": "e9a6236012f8b876c58928a97ebff8c66e43ce40eac3617be59948b627b0f7f6"
+      "sha256": "bc73281efae06dd45d57bb6a4d20c109efed345b14c07fa0e6b000cbaf82dc30"
     },
     {
       "id": "lgs2_axe",
@@ -4149,11 +4149,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs2_axe.svg",
       "owner": null,
-      "motif": "soul",
+      "motif": "axe",
       "action": "strike",
       "hits": 1,
       "composition": 1,
-      "sha256": "e96dfde92e25ad39d8665f629c85e3eede498c3ba45befd42c5298e146ad8563"
+      "sha256": "5cff542b15aed8bc6250cfb57afe5ed6b92b6dde153dec1628f71d3b044b06bd"
     },
     {
       "id": "lgs2_bow",
@@ -4161,11 +4161,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs2_bow.svg",
       "owner": null,
-      "motif": "soul",
+      "motif": "arrow",
       "action": "strike",
       "hits": 1,
       "composition": 3,
-      "sha256": "3c4d1ca39b9948e1b6eaabf3c87f1000602e1d5986633907236acd2dda94f1dc"
+      "sha256": "f12247a7d09a743a3947306b40d04aa9d4fb3d6525e31f09ad42350c87121f72"
     },
     {
       "id": "lgs2_staff",
@@ -4173,11 +4173,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs2_staff.svg",
       "owner": null,
-      "motif": "soul",
+      "motif": "staff",
       "action": "spell",
       "hits": 1,
       "composition": 2,
-      "sha256": "a9ba709f3cc6f83c7c8d71da8da9c7e900fc5d651620053b32872d8630515334"
+      "sha256": "3ce5b0be3e6768e3731866610313570355e1c4fc290c7183c555b8f58e27eee7"
     },
     {
       "id": "lgs2_mace",
@@ -4185,11 +4185,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs2_mace.svg",
       "owner": null,
-      "motif": "soul",
+      "motif": "hammer",
       "action": "strike",
       "hits": 1,
       "composition": 2,
-      "sha256": "c585a01913e59c5fbdb19e91e37906777485a362d7282dfb2335485d102be092"
+      "sha256": "305b155f59b3c067f83dff9420ee2c84a33563794db63bbc23580cfca8c8f509"
     },
     {
       "id": "lgs2_gun",
@@ -4197,11 +4197,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs2_gun.svg",
       "owner": null,
-      "motif": "soul",
+      "motif": "gun",
       "action": "strike",
       "hits": 1,
       "composition": 0,
-      "sha256": "b27ceef513f22f451e432cbd505db6339ede8de1a0103c92e9b913203cbbe6f4"
+      "sha256": "1ef44f29247e9915d43e7fae26aa10cf21fc17714d252876949e7ded50d90198"
     },
     {
       "id": "lgs2_dagger",
@@ -4209,11 +4209,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs2_dagger.svg",
       "owner": null,
-      "motif": "soul",
+      "motif": "dagger",
       "action": "strike",
       "hits": 1,
       "composition": 0,
-      "sha256": "426691a01d57bd895e485ac5a0e1a2c5ad8f6110ec9a8c53ee8833d2aa79d257"
+      "sha256": "b3f523a97e5c76035f1689c4ec175c5bf00b1ceae24827aa37c736400ae88f56"
     },
     {
       "id": "lgs2_whip",
@@ -4221,11 +4221,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs2_whip.svg",
       "owner": null,
-      "motif": "soul",
+      "motif": "whip",
       "action": "spell",
       "hits": 1,
       "composition": 2,
-      "sha256": "3f650397599c708a9c83e6d0d3562f579bc878839ea89928f3f1a0228e88970f"
+      "sha256": "80c237b9ae2a310bd033e9aa1c2608145256eaa361cb051f43e5fa0d4dfe8eb2"
     },
     {
       "id": "lgs3_sword",
@@ -4233,11 +4233,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs3_sword.svg",
       "owner": null,
-      "motif": "rock",
+      "motif": "sword",
       "action": "strike",
       "hits": 1,
       "composition": 3,
-      "sha256": "077155388f8532d3f50cdc3dd464752d127314c1204d22b89da03d6f4fed45b9"
+      "sha256": "202f667eafcfbdd22f0334eb4f1ef8a1898b0b0187dfcd16f89d2f7629c68b07"
     },
     {
       "id": "lgs3_axe",
@@ -4245,11 +4245,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs3_axe.svg",
       "owner": null,
-      "motif": "rock",
+      "motif": "axe",
       "action": "strike",
       "hits": 1,
       "composition": 1,
-      "sha256": "e804e8a300f0f8b31894219e51cdd96dd0017e907b51ad5fbca2556a1714242a"
+      "sha256": "29d6ccb545911ef089a5923735d0ddfdc678d5cbefe492b9f90b6b288888c4cc"
     },
     {
       "id": "lgs3_bow",
@@ -4257,11 +4257,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs3_bow.svg",
       "owner": null,
-      "motif": "rock",
+      "motif": "arrow",
       "action": "strike",
       "hits": 1,
       "composition": 1,
-      "sha256": "8ce3c464fda69c65ea7a5db57739280d815f9915ff8b78b6d17dd265a6ba1ab3"
+      "sha256": "90f033ed8c2eafa915205beba11316b4e6e19e6fa100547e57d548478fa031bd"
     },
     {
       "id": "lgs3_staff",
@@ -4269,11 +4269,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs3_staff.svg",
       "owner": null,
-      "motif": "rock",
+      "motif": "staff",
       "action": "spell",
       "hits": 1,
       "composition": 1,
-      "sha256": "8d9b203500aef5893c815acd642c3d58119dcaece47e8e4efcdb0ccada213992"
+      "sha256": "e991047cf54438d12bdb5d3acc42aad52711125a8cbc23cd32d07ac66258fe56"
     },
     {
       "id": "lgs3_mace",
@@ -4281,11 +4281,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs3_mace.svg",
       "owner": null,
-      "motif": "rock",
+      "motif": "hammer",
       "action": "strike",
       "hits": 1,
       "composition": 0,
-      "sha256": "cb64d3932b5cfe04f0d78e713de1776c3c1b611dc3fcb447b109f784b2e65a55"
+      "sha256": "159d303c7dc8d503f795556de185dfc7767e3052c7de14dcb5e2bf95cea5eedc"
     },
     {
       "id": "lgs3_gun",
@@ -4293,11 +4293,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs3_gun.svg",
       "owner": null,
-      "motif": "rock",
+      "motif": "gun",
       "action": "strike",
       "hits": 1,
       "composition": 1,
-      "sha256": "4c0b640f4c748b27a8f63d0e02ef26f296e16a131932e3f767c000d6112a1542"
+      "sha256": "4cafd7f73d71e5c44d7376f415a08cb518a6296b297c18b8aa2934e12829dded"
     },
     {
       "id": "lgs3_dagger",
@@ -4305,11 +4305,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs3_dagger.svg",
       "owner": null,
-      "motif": "rock",
+      "motif": "dagger",
       "action": "strike",
       "hits": 1,
       "composition": 0,
-      "sha256": "7cfa3290e6563bfd4478b7164515726dc81679477951f8e498e05748b582072d"
+      "sha256": "9c6002768fd9af6e3d93736cfd4c6c6f83d2895f1670cf5c9432c97b1a8e5424"
     },
     {
       "id": "lgs3_whip",
@@ -4317,11 +4317,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs3_whip.svg",
       "owner": null,
-      "motif": "rock",
+      "motif": "whip",
       "action": "spell",
       "hits": 1,
       "composition": 0,
-      "sha256": "c566097050e5867ede8f604ebc8d11beef19771b19c0a4b7a740f3176e17bfb2"
+      "sha256": "fddf0a1acbd9e68b8a64c3b4c11c70adb12c60759020b96bf8ef36243e617a60"
     },
     {
       "id": "lgs4_sword",
@@ -4329,11 +4329,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs4_sword.svg",
       "owner": null,
-      "motif": "breath",
+      "motif": "sword",
       "action": "area",
       "hits": 1,
       "composition": 0,
-      "sha256": "e5013ddb94e54906f119b07de1e48d66cda01683d4998aad91a1c5bf5bac2597"
+      "sha256": "081a38b8c4f2e99c5bfd2b50afa135b8ac84ce7f1e135f98bc0e891fb4309118"
     },
     {
       "id": "lgs4_axe",
@@ -4341,11 +4341,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs4_axe.svg",
       "owner": null,
-      "motif": "breath",
+      "motif": "axe",
       "action": "area",
       "hits": 1,
       "composition": 3,
-      "sha256": "ff5bd4e3b03073eb098ac76aea2b028a68b2c20ef226573d9d102e03927569b0"
+      "sha256": "5ff2b66515c7df5739d3db46c04a2dc58ceefe5b203b2479248bf5e4a402457d"
     },
     {
       "id": "lgs4_bow",
@@ -4353,11 +4353,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs4_bow.svg",
       "owner": null,
-      "motif": "breath",
+      "motif": "arrow",
       "action": "area",
       "hits": 1,
       "composition": 2,
-      "sha256": "0f44b262b489cd2f8798ca0c784d728f261a62d1d77397e373704f0d887b1797"
+      "sha256": "efd52603acc4468109a8f2c720a11fd6113be998323ed0b40e7a44615e575d0c"
     },
     {
       "id": "lgs4_staff",
@@ -4365,11 +4365,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs4_staff.svg",
       "owner": null,
-      "motif": "breath",
+      "motif": "staff",
       "action": "area",
       "hits": 1,
       "composition": 1,
-      "sha256": "81fad2268ed2f3af272be6bcdc306f194cb211fed7e71b54d94cdbb3ffcb428f"
+      "sha256": "7768e2135e987d5d3b5aa25ea34a22e9c490f338e82872545a27c73497fa79d8"
     },
     {
       "id": "lgs4_mace",
@@ -4377,11 +4377,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs4_mace.svg",
       "owner": null,
-      "motif": "breath",
+      "motif": "hammer",
       "action": "area",
       "hits": 1,
       "composition": 1,
-      "sha256": "c9e5852f6a1f9606ba61dde36b0f6c3000d24f7fde09b5645885d3b5e8898a1f"
+      "sha256": "ca46dea44a1fa0dea5bc1f77cf63ec731fc988e4d45b4fc865649980c6786957"
     },
     {
       "id": "lgs4_gun",
@@ -4389,11 +4389,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs4_gun.svg",
       "owner": null,
-      "motif": "breath",
+      "motif": "gun",
       "action": "area",
       "hits": 1,
       "composition": 2,
-      "sha256": "a5a8e68daf655c7a79b698a497442a84631ba8c80564a62f8308a243a62bc54e"
+      "sha256": "0232420a811441f9f114a3b21211bf25f9b9097e461119414b2efbeadec3a101"
     },
     {
       "id": "lgs4_dagger",
@@ -4401,11 +4401,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs4_dagger.svg",
       "owner": null,
-      "motif": "breath",
+      "motif": "dagger",
       "action": "area",
       "hits": 1,
       "composition": 1,
-      "sha256": "3ed9f003c2299e8fbe5b3aa5aca1496990426b0c88d7dc106097d924d4baeee4"
+      "sha256": "36733940f41aec36af4c4330e03e809448a9198f65ed9a82992f013762246a4f"
     },
     {
       "id": "lgs4_whip",
@@ -4413,11 +4413,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs4_whip.svg",
       "owner": null,
-      "motif": "breath",
+      "motif": "whip",
       "action": "area",
       "hits": 1,
       "composition": 1,
-      "sha256": "6327fa6b7f1cdafeb58d11acf4db9558af39b85330d9ad1460df9449b2524ffd"
+      "sha256": "cc71a2a7df6ed00e5451bb095107d7c8f6a721e96eefba4c0b6c24ab10296b62"
     },
     {
       "id": "lgs5_sword",
@@ -4425,11 +4425,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs5_sword.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "sword",
       "action": "area",
       "hits": 1,
       "composition": 3,
-      "sha256": "b7fe14c0583da2bd6f6379d8fdf2e77f25c1722ba3b9a42d37726354b318244b"
+      "sha256": "0c41631bed8396ba36d4047d7b6ad5e95b240726965680bd23d8ff229d9b179a"
     },
     {
       "id": "lgs5_axe",
@@ -4437,11 +4437,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs5_axe.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "axe",
       "action": "area",
       "hits": 1,
       "composition": 3,
-      "sha256": "fe335b90aa17e47fe6ffe0cc78173724c14e6227da0f9695c688b1bb54b86e6d"
+      "sha256": "72311f97ac97f853371bbd4c10368a47ccdbf967bfd7805e662d5bc57e041047"
     },
     {
       "id": "lgs5_bow",
@@ -4449,11 +4449,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs5_bow.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "arrow",
       "action": "area",
       "hits": 1,
       "composition": 3,
-      "sha256": "a4a57cdbb5aa6e03a94ca974d8f92d383de8438c134515fce5778e148382bf6d"
+      "sha256": "6cb653bc40404cf7deefa2eb50116a4ae54e939f85201eb4c01170fc058a1dcd"
     },
     {
       "id": "lgs5_staff",
@@ -4461,11 +4461,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs5_staff.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "staff",
       "action": "area",
       "hits": 1,
       "composition": 3,
-      "sha256": "572e30f5b5a41f6fb798b9d300cb896b9962555abdc3617d7c67537597d4925c"
+      "sha256": "f894b6305f7673495449fe0d8a65bf17deee8919172fd40f359c97096c65114c"
     },
     {
       "id": "lgs5_mace",
@@ -4473,11 +4473,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs5_mace.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "hammer",
       "action": "area",
       "hits": 1,
       "composition": 0,
-      "sha256": "6422698df1659d3863ac0fba445c5068a1332e4d587f29cef67c06649c74572a"
+      "sha256": "19174b5752f788b055ffa10861562f444803db14493211cbf328507f8a8f35f9"
     },
     {
       "id": "lgs5_gun",
@@ -4485,11 +4485,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs5_gun.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "gun",
       "action": "area",
       "hits": 1,
       "composition": 0,
-      "sha256": "d414e5be5fb757ba121fc4f2780b75e19e20e206bd6cb0955539a68b08c1b7e3"
+      "sha256": "a2926e159eeb5dc99b4391127706c40a3ea8e800000b98e7918b599a444d9231"
     },
     {
       "id": "lgs5_dagger",
@@ -4497,11 +4497,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs5_dagger.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "dagger",
       "action": "area",
       "hits": 1,
       "composition": 0,
-      "sha256": "6b19ecd63e7d6ee2943524208334a5c2501b40f39902ee98e15535dad05ff360"
+      "sha256": "1b9f1a1ee1fe3ac8e0829f270c738afaa0e45d99fe545bbfd490f23473208df6"
     },
     {
       "id": "lgs5_whip",
@@ -4509,11 +4509,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs5_whip.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "whip",
       "action": "area",
       "hits": 1,
       "composition": 1,
-      "sha256": "94ff85bd2c531f30bd158eecd4a5066ed39e0ce9ec3bb49247b0b40bbefb5b00"
+      "sha256": "7619d0ce9e46c9016442f3cdda2800d63ebbf99fd2eaf67bcebda5a95dbda5cb"
     },
     {
       "id": "s_demon",
@@ -4533,11 +4533,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs6_sword.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "sword",
       "action": "area",
       "hits": 1,
       "composition": 0,
-      "sha256": "0a3b896b9f49be0243b40edbd1c903d9d6e7ba46086f594661321f2541475b23"
+      "sha256": "6da907779e2aa2604d7ca0f45683efaab6f89dbe6cc2754d68a516e871284ce2"
     },
     {
       "id": "lgs6_axe",
@@ -4545,11 +4545,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs6_axe.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "axe",
       "action": "area",
       "hits": 1,
       "composition": 2,
-      "sha256": "176df4946be861f090c7bc19fa1ad57576959cb62cbd355b42a004b701d51e94"
+      "sha256": "9640decebed569b58844f34da714e3fcbfaa53d9c575188829d0ce8665a5ada0"
     },
     {
       "id": "lgs6_bow",
@@ -4557,11 +4557,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs6_bow.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "arrow",
       "action": "area",
       "hits": 1,
       "composition": 3,
-      "sha256": "fa3154804b25e5c0e7a7d1c9aca9f2d2dd2582967adf6a6c65b3c7f3ae33143e"
+      "sha256": "3ce3a12ec2e9ec28fc38d3388d3e1825f6cec5d833f31df6d032835e523f8aca"
     },
     {
       "id": "lgs6_staff",
@@ -4569,11 +4569,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs6_staff.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "staff",
       "action": "area",
       "hits": 1,
       "composition": 1,
-      "sha256": "b77148d786d1188a42c3ae34f6607827e1f8dc8cc802afb4942dc0ea2d8c5966"
+      "sha256": "6086d216fc3126a32051f4e7cba8d6b6e805a58f2ed94bf88a16df9bf928b35f"
     },
     {
       "id": "lgs6_mace",
@@ -4581,11 +4581,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs6_mace.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "hammer",
       "action": "area",
       "hits": 1,
       "composition": 0,
-      "sha256": "0f234595116763675b6d9a5e6bb45d0ec433c66e2a329246663a596e7ec57b42"
+      "sha256": "5a77751b2bc51e66975b58a272436f516e35fadba3ebb3ed8c2a503503d3b47f"
     },
     {
       "id": "lgs6_gun",
@@ -4593,11 +4593,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs6_gun.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "gun",
       "action": "area",
       "hits": 1,
       "composition": 1,
-      "sha256": "c01900d6e382afa7412b0a67e1746f1a1b639db7e14065429f981866f295b5b8"
+      "sha256": "737bca51b8cb43158d64093be7c4dc6b39dbfd81933ccafb848d71262482ac33"
     },
     {
       "id": "lgs6_dagger",
@@ -4605,11 +4605,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs6_dagger.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "dagger",
       "action": "area",
       "hits": 1,
       "composition": 3,
-      "sha256": "a121582e43c1adce50a459f9bcf5b3167c4dbf3cd05c2f316d5fdfede0a6c7d5"
+      "sha256": "2c28b86e643a65c2f78453002655507fd6ab5386f67592321efd958ca6cd4919"
     },
     {
       "id": "lgs6_whip",
@@ -4617,11 +4617,11 @@
       "source": "individual-svg",
       "path": "assets/skills/individual/lgs6_whip.svg",
       "owner": null,
-      "motif": "skull",
+      "motif": "whip",
       "action": "area",
       "hits": 1,
       "composition": 3,
-      "sha256": "644fd354eb169d9214c72d34907ca832e1a824803b7d42ad30f7ce282daa5c1a"
+      "sha256": "3d4f3ce1c16b4160b94d07294322d21e2b08f669c98fc3eec9a2b5bc84cff14b"
     },
     {
       "id": "ms_swordsman10",
