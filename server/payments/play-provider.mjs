@@ -15,6 +15,7 @@ export function googlePlayProvider({credentials,packageName,fetcher=fetch,subtle
  }
  const endpoint=(product,token)=>'https://androidpublisher.googleapis.com/androidpublisher/v3/applications/'+[packageName,'purchases','products',product,'tokens',token].map(encodeURIComponent).join('/');
  return {
+  async authorized(url){if(!url.startsWith('https://androidpublisher.googleapis.com/androidpublisher/v3/applications/'+encodeURIComponent(packageName)+'/'))throw Error('invalid_google_api');const r=await fetcher(url,{headers:{Authorization:'Bearer '+await accessToken()},signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error('google_play_verification_failed');return r.json();},
   async retrieve(product,token){const r=await fetcher(endpoint(product,token),{headers:{Authorization:'Bearer '+await accessToken()},signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error('google_play_verification_failed');return r.json();},
   async consume(product,token){const r=await fetcher(endpoint(product,token)+':consume',{method:'POST',headers:{Authorization:'Bearer '+await accessToken()},signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error('google_play_consume_failed');}
  };

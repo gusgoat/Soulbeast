@@ -7,6 +7,7 @@
     "test:payments": "node tools/test-payment-catalog.cjs && node tools/test-payment-rules.cjs && node tools/test-payment-service.cjs && node tools/test-shop-auth.cjs",
     "test:accounts": "node tools/client-build.cjs --out build && node tools/test-accounts.cjs && node tools/test-account-service.cjs && node tools/test-eclipse-service.cjs && node tools/test-character-management.cjs",
     "test:mobile": "node tools/test-platform-billing.cjs && node tools/build-mobile.cjs && node tools/test-mobile.cjs",
-    "test:play": "node tools/test-play.cjs && node tools/test-play-sql.cjs"
+    "test:play": "node tools/test-play.cjs && node tools/test-play-sql.cjs",
+    "test:production": "node tools/test-production-payments.cjs"
   }
 }

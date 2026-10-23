@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "currency": "thb",
+  "packageName": "com.soulbeastgame.app",
+  "gameEnvironment": "test",
+  "packs": [
+    {"id":"first-10","coupons":10,"amountSatang":3500,"promotion":true,"productId":"soulbeast_first_10","names":["โปรโมชั่น 10 คูปอง","First purchase: 10 coupons","首购10张兑换券"]},
+    {"id":"first-50","coupons":50,"amountSatang":15000,"promotion":true,"productId":"soulbeast_first_50","names":["โปรโมชั่น 50 คูปอง","First purchase: 50 coupons","首购50张兑换券"]},
+    {"id":"first-100","coupons":100,"amountSatang":27500,"promotion":true,"productId":"soulbeast_first_100","names":["โปรโมชั่น 100 คูปอง","First purchase: 100 coupons","首购100张兑换券"]},
+    {"id":"normal-5","coupons":5,"amountSatang":3500,"promotion":false,"productId":"soulbeast_normal_5","names":["5 คูปอง","5 coupons","5张兑换券"]},
+    {"id":"normal-10","coupons":10,"amountSatang":7000,"promotion":false,"productId":"soulbeast_normal_10","names":["10 คูปอง","10 coupons","10张兑换券"]},
+    {"id":"normal-50","coupons":50,"amountSatang":30000,"promotion":false,"productId":"soulbeast_normal_50","names":["50 คูปอง","50 coupons","50张兑换券"]},
+    {"id":"normal-100","coupons":100,"amountSatang":55000,"promotion":false,"productId":"soulbeast_normal_100","names":["100 คูปอง","100 coupons","100张兑换券"]},
+    {"id":"normal-200","coupons":200,"amountSatang":100000,"promotion":false,"productId":"soulbeast_normal_200","names":["200 คูปอง","200 coupons","200张兑换券"]}
+  ]
+}

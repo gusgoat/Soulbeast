@@ -2,11 +2,11 @@ const assert=require('assert/strict'),fs=require('fs');
 (async()=>{
  const {billingChannel,createBilling}=await import('../client/billing-client.mjs'),config=require('../content/billing-channels.json'),packs=require('../content/payment-packs.test.json').packs;
  assert.equal(billingChannel('android'),'google_play');assert.equal(billingChannel('web'),'stripe');assert.throws(()=>billingChannel('ios'));
- assert.equal(config.android.purchasesEnabled,false);assert.deepEqual(Object.keys(config.android.products).sort(),packs.map(p=>p.id).sort());assert.equal(new Set(Object.values(config.android.products)).size,8);
+ assert.equal(config.mode,"production");assert.equal(config.android.purchasesEnabled,true);assert.deepEqual(Object.keys(config.android.products).sort(),packs.map(p=>p.id).sort());assert.equal(new Set(Object.values(config.android.products)).size,8);
  let opened=0,purchases=0,verified=0;
  const native={getCapabilities:async()=>({enabled:false}),purchase:async()=>{purchases++;},getPurchases:async()=>({purchases:[]})};
  const android=createBilling({platform:'android',config,native,openWeb:()=>{opened++;}});assert.equal((await android.open()).enabled,false);assert.equal(opened,0);await assert.rejects(()=>android.purchase('normal-5',{}),/disabled/);assert.equal(purchases,0);
- const web=createBilling({platform:'web',config,openWeb:path=>{assert.equal(path,'topup-test.html');opened++;}});await web.open();assert.equal(opened,1);
+ const web=createBilling({platform:'web',config,openWeb:path=>{assert.equal(path,'topup.html');opened++;}});await web.open();assert.equal(opened,1);
  const active=structuredClone(config);active.android.purchasesEnabled=true;native.getCapabilities=async()=>({enabled:true});native.purchase=async()=>({state:'pending'});
  const pending=createBilling({platform:'android',config:active,native,verifyPurchase:async()=>{verified++;}});await pending.purchase('normal-5',{id:'order',accountHash:'hash'});assert.equal(verified,0,'Pending payment cannot grant credit');
  const {verifyPlayPurchase,retrievePlayPurchase}=await import('../server/payments/google-play-core.mjs');

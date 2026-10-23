@@ -8,7 +8,7 @@ export function createBilling({platform,config,native,openWeb,verifyPurchase}){
  return {
   provider,
   async open(){
-   if(provider==='stripe'){if(config.web.provider!=='stripe'||config.web.environment!=='sandbox')throw Error('web_billing_not_ready');return openWeb(config.web.checkoutPath);}
+   if(provider==='stripe'){if(config.web.provider!=='stripe'||!['sandbox','production'].includes(config.web.environment))throw Error('web_billing_not_ready');if(config.web.checkoutPath!==(config.web.environment==='production'?'topup.html':'topup-test.html'))throw Error('web_billing_not_ready');return openWeb(config.web.checkoutPath);}
    // There is intentionally no fallback to Stripe, a browser link, or an unverified local grant on Android.
    const caps=await native.getCapabilities();
    if(!config.android.purchasesEnabled||!caps.enabled)return {enabled:false,provider,reason:'google_play_not_configured'};

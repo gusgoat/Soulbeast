@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "mode": "internal",
+  "mode": "production",
   "web": {
     "provider": "stripe",
-    "environment": "sandbox",
-    "checkoutPath": "topup-test.html"
+    "environment": "production",
+    "checkoutPath": "topup.html"
   },
   "android": {
     "provider": "google_play",
-    "purchasesEnabled": false,
+    "purchasesEnabled": true,
     "packageName": "com.soulbeastgame.app",
     "products": {
       "first-10": "soulbeast_first_10",
@@ -19,6 +19,7 @@
       "normal-50": "soulbeast_normal_50",
       "normal-100": "soulbeast_normal_100",
       "normal-200": "soulbeast_normal_200"
-    }
+    },
+    "endpoint": "https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-payments"
   }
 }

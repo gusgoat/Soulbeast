@@ -21,5 +21,7 @@ jobs:
         run: npm test
       - name: Verify email-account beta and exact gateway
         run: npm run test:accounts
+      - name: Verify production payment ledger and closed launch gates
+        run: npm run test:production
       - name: Build both environments
         run: npm run build
