@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+ <defs>
+  <linearGradient id="metal" x1="20" y1="0" x2="106" y2="128" gradientUnits="userSpaceOnUse"><stop stop-color="#f8958e"/><stop offset=".15" stop-color="#d52a3f"/><stop offset=".33" stop-color="#65091c"/><stop offset=".48" stop-color="#e63850"/><stop offset=".66" stop-color="#3e0715"/><stop offset=".84" stop-color="#ad1832"/><stop offset="1" stop-color="#300613"/></linearGradient>
+  <linearGradient id="rim" x1="20" y1="10" x2="100" y2="118" gradientUnits="userSpaceOnUse"><stop stop-color="#ffb2a6"/><stop offset=".3" stop-color="#ed495b"/><stop offset=".58" stop-color="#76091f"/><stop offset=".8" stop-color="#e43850"/><stop offset="1" stop-color="#680a22"/></linearGradient>
+  <linearGradient id="ruby" x1="0" y1="0" x2="10" y2="18" gradientUnits="userSpaceOnUse"><stop stop-color="#fff1ec"/><stop offset=".24" stop-color="#ff6e80"/><stop offset=".51" stop-color="#d2093b"/><stop offset="1" stop-color="#430616"/></linearGradient>
+  <g id="corner">
+   <path d="M8 36 5 21 9 9 21 5 36 8 25 12 19 19 12 25Z" fill="#260610" stroke="#390914" stroke-width="3" stroke-linejoin="round"/>
+   <path d="M8 36 5 21 9 9 21 5 36 8 25 12 19 19 12 25Z" fill="url(#metal)" stroke="url(#rim)" stroke-width="1.3" stroke-linejoin="round"/>
+   <path d="M9 27 11 14 23 10M11 14 17 17 14 25M17 17 25 14" stroke="#ffb2b5" stroke-width="1"/>
+   <path d="m12 6 6 6-4 9-8-8Z" fill="#330714" stroke="#ff7c8c" stroke-width="1"/>
+   <path d="m12 8 4 5-3 6-5-6Z" fill="url(#ruby)"/>
+   <path d="m12 8 1 6 3-1M13 14l-5-1" stroke="#ffccd0" stroke-width=".6"/>
+   <path d="m26 8 9 1-6 3-5 7-3 2 4-10Z" fill="url(#metal)"/>
+  </g>
+ </defs>
+ <rect x="9" y="11" width="110" height="110" rx="13" stroke="#09050a" stroke-width="8" opacity=".85"/>
+ <rect x="9" y="9" width="110" height="110" rx="13" stroke="url(#metal)" stroke-width="6"/>
+ <rect x="7" y="7" width="114" height="114" rx="14" stroke="url(#rim)" stroke-width="1.3"/>
+ <rect x="12" y="12" width="104" height="104" rx="9" stroke="#250710" stroke-width="2"/>
+ <path d="M30 10h22m24 0h22M10 30v22m0 24v22M118 30v22m0 24v22M30 118h22m24 0h22" stroke="#ffb1b7" stroke-width=".8"/>
+ <use href="#corner"/><use href="#corner" transform="translate(128 0) rotate(90)"/><use href="#corner" transform="translate(128 128) rotate(180)"/><use href="#corner" transform="translate(0 128) rotate(270)"/>
+ <path d="m49 9 8-3 7-5 7 5 8 3-9 4H58Z" fill="url(#metal)" stroke="url(#rim)" stroke-width="1"/>
+ <path d="m64 3 5 5-5 6-5-6Z" fill="#3d0718" stroke="#ff9bab" stroke-width="1"/>
+ <path d="m64 4 3 4-3 4-3-4Z" fill="url(#ruby)"/><path d="m64 4 0 5 3-1" stroke="#ffe1dd" stroke-width=".6"/>
+ <path d="m56 118 8-5 8 5-8 7Z" fill="url(#metal)" stroke="url(#rim)" stroke-width="1"/><path d="m64 115 3 3-3 4-3-4Z" fill="url(#ruby)"/>
+</svg>

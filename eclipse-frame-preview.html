@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="th" data-skip-web-intro>
+<head><script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Isolated equipment frame preview"));</script><style>#app{height:auto;min-height:100dvh;max-width:1000px}.frame-preview{padding:24px 20px 48px;overflow:visible}.frame-preview h1{font-size:27px}.frame-preview h2{font-size:19px}.frame-preview .card{min-width:0}.frame-preview .grow{min-width:0}.frame-preview .row{gap:16px}.frame-preview h3{font-size:17px;overflow-wrap:anywhere}.frame-preview .weapon-book-grid .card{padding:20px}.frame-preview .sub{margin:8px 0 0;line-height:1.7}.frame-comparison>.row{padding:10px 2px;gap:28px}.size-sample{display:grid;justify-items:center;gap:8px}.frame-preview .weapon-book-grid .item-art{flex-shrink:0}@media(max-width:480px){.frame-preview{padding:16px 12px 36px}.frame-preview h1{font-size:23px}.frame-comparison>.row{gap:12px}.frame-preview .weapon-book-grid .card{padding:16px}}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10121b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ผนึกอสูร">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
+<!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
+<script>window.SHEET_URL = 'https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api';</script>
+<link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
+</head>
+<body style="margin:0;height:100%">
+<title>ตำนานผนึกอสูร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
+<link rel="stylesheet" href="./game-styles.43a4194f2f96341d.css">
+
+<div id="app"></div>
+<div id="vfx" aria-hidden="true"></div>
+<div id="travelFx" aria-hidden="true"></div>
+<input type="file" id="saveFile" accept=".txt,text/plain" hidden>
+
+<script src="./game-data-registry.5350fd57c39d09dd.js"></script>
+<script src="./game-data-elements.2936c00742247389.js"></script>
+<script src="./game-data-skills.cc44041210824676.js"></script>
+<script src="./game-data-classes.b20030dab4164ae7.js"></script>
+<script src="./game-data-equipment.356889102050fed3.js"></script>
+<script src="./game-data-consumables.bf9df0fd5ed788c5.js"></script>
+<script src="./game-data-beasts.c6d0b8a74d4f1896.js"></script>
+<script src="./game-data-exploration.6cfcf82495a0e5a0.js"></script>
+<script src="./game-data-story.b4ecd56118a196f0.js"></script>
+<script src="./game-data-localization.f9f4b313b4678aef.js"></script>
+<script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
+<script src="./game-data-secrets.b755c3d1bd3b2d7e.js"></script>
+<script src="./game-data-narrative.3437bb33483fc5e0.js"></script>
+<script src="./game-app.b55b59b6b163d842.js"></script>
+
+<script>const lang=new URLSearchParams(location.search).get('lang');if(['en','zh-CN'].includes(lang))GAME_LANGUAGE=lang;render=function(){const ids=Object.keys(EQ).filter(id=>EQ[id].worldLegend),regular=Object.keys(WEAPON_ART).find(id=>WEAPON_ART[id].rarity==='legendary');document.getElementById('app').innerHTML='<main class="frame-preview stack"><h1>'+ct('กรอบตำนานสุริยคราส','Eclipse Legendary Frames','日蚀传说边框')+'</h1>'+languagePanel()+'<section class="card stack frame-comparison"><h2>'+ct('โลหะทับทิม · ขอบนูนสามมิติ','Ruby metal · Raised beveled frame','红宝石金属 · 立体浮雕边框')+'</h2><div class="row wrap">'+[64,100,144].map(size=>itemIcon('wl_sword',size)).join('')+'</div><div class="row">'+itemIcon(regular,44)+'<span>'+ct('กรอบตำนานทั่วไป','Ordinary legendary frame','普通传说边框')+'</span></div></section><section class="weapon-book-grid">'+ids.map(id=>{const it=EQ[id];return '<article class="card stack"><div class="row">'+itemIcon(id,80)+'<div class="grow"><h3>'+esc(it.n)+'</h3><span class="weapon-rarity-label weapon-label-eclipse">'+weaponRarityLabel(it)+'</span></div></div><p class="sub">'+statLine(it.st)+'</p></article>';}).join('')+'</section><section class="card stack"><h2>'+ct('ขนาดไอคอนในเกม','In-game icon sizes','游戏图标尺寸')+'</h2><div class="row wrap">'+[28,38,44,52,64,100].map(size=>'<div class="size-sample">'+itemIcon('ec2_armor',size)+'<small>'+size+'px</small></div>').join('')+'</div></section></main>';applyGameLanguage(document.getElementById('app'));};render();</script></body>
+</html>

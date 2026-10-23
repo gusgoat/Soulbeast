@@ -372,11 +372,11 @@ const weaponBaseItemIcon=itemIcon;
 
 itemIcon=function(id,size=44){
  const equipmentArt=EQ[id]?.art||(['armor','crown','necklace','ring','bracelet','belt','boots','gloves','sword','axe','bow','staff','mace','gun','dagger','whip'].some(slot=>id==='wl_'+slot)?'assets/equipment/eclipse-original/'+id+'.webp':null);
- if(equipmentArt)return '<span class="item-art eclipse-equipment-art" role="img" aria-label="'+esc(EQ[id].n)+'" style="--item-size:'+Math.max(28,Number(size)||44)+'px"><img src="'+esc(equipmentArt)+'" alt="" loading="lazy"><small aria-hidden="true">✹</small></span>';
+ if(equipmentArt)return '<span class="item-art eclipse-equipment-art'+(EQ[id]?.worldLegend?' eclipse-frame':'')+'" role="img" aria-label="'+esc(EQ[id].n)+'" style="--item-size:'+Math.max(28,Number(size)||44)+'px"><img src="'+esc(equipmentArt)+'" alt="" loading="lazy"></span>';
  const art=WEAPON_ART[id];if(!art)return weaponBaseItemIcon(id,size);
  const lang=typeof GAME_LANGUAGE==='undefined'?'th':GAME_LANGUAGE,label=WEAPON_RARITY[art.rarity][lang]||WEAPON_RARITY[art.rarity].th;
  const name=typeof translateGameText==='function'?translateGameText(EQ[id].n,lang,false).trim():EQ[id].n;
- return `<span class="item-art weapon-unique weapon-${art.rarity}" role="img" aria-label="${esc(name+' · '+label)}" title="${esc(name+' · '+label)}" data-weapon-art="${esc(id)}" style="--item-size:${Math.max(28,Number(size)||44)}px;--weapon-x:${art.index%8*100/7}%;--weapon-y:${Math.floor(art.index/8)*100/6}%;--weapon-atlas:url('assets/weapons/${art.kind}.webp')"><i class="weapon-paint" aria-hidden="true"></i><small aria-hidden="true">${art.rarity==='crafted'?'◆':art.rarity==='eclipse'?'✹':'✦'}</small></span>`;
+ return `<span class="item-art weapon-unique weapon-${art.rarity}${art.rarity==='eclipse'?' eclipse-frame':''}" role="img" aria-label="${esc(name+' · '+label)}" title="${esc(name+' · '+label)}" data-weapon-art="${esc(id)}" style="--item-size:${Math.max(28,Number(size)||44)}px;--weapon-x:${art.index%8*100/7}%;--weapon-y:${Math.floor(art.index/8)*100/6}%;--weapon-atlas:url('assets/weapons/${art.kind}.webp')"><i class="weapon-paint" aria-hidden="true"></i>${art.rarity==='eclipse'?'':`<small aria-hidden="true">${art.rarity==='crafted'?'◆':'✦'}</small>`}</span>`;
 };
 // @soulbeast-end 0555-itemIcon
 // @soulbeast-unit 0556-weaponRarityLabel
