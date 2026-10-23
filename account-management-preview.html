@@ -3449,7 +3449,7 @@ function applyDemonRewardReceipts(reply){const P=S.P;if(!P)return;for(const rece
 let DEMON_CLAIM_BUSY=false;
 async function claimDemonVictory(){if(DEMON_CLAIM_BUSY||!S.P||!SHEET_URL)return;DEMON_CLAIM_BUSY=true;try{await communitySave();save();render();}catch(e){toast(communityError(e.message));}finally{DEMON_CLAIM_BUSY=false;}}
 
-function wagerClass(a){if(!a)return 'none';if(a.type==='gold')return 'gold';if(a.type==='pet'){const q=SP[a.pet?.sp];return 'pet:'+(q?.legendary?'legendary':q?.rare?'rare':'normal');}if(a.type==='gear'){const q=EQ[a.key];return 'gear:'+(q?.worldLegend?'eclipse':q?.legend?'legendary':q?.craft?'crafted':'normal');}if(a.type==='item'){const q=CON[a.key];return 'item:'+(q?.rareLoot?'rare':q?.price>=1000?'premium':'normal');}return 'invalid';}
+function wagerClass(a){if(!a)return 'none';if(a.type==='gold')return 'gold';if(a.type==='pet'){const q=SP[a.pet?.sp];return 'pet:'+(q?.solar?'solar':q?.legendary?'legendary':q?.rare?'rare':'normal');}if(a.type==='gear'){const q=EQ[a.key];return 'gear:'+(q?.worldLegend?'eclipse':q?.legend?'legendary':q?.craft?'crafted':'normal');}if(a.type==='item'){const q=CON[a.key];return 'item:'+(q?.rareLoot?'rare':q?.price>=1000?'premium':'normal');}return 'invalid';}
 function wagersMatch(a,b){return (!a&&!b)||!!(a&&b&&wagerClass(a)===wagerClass(b));}
 
 SK.boss_legend_call=SoulbeastContent.SK_boss_legend_call_1();

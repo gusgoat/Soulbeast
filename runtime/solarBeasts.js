@@ -7,8 +7,8 @@ const SolarBeasts={
   for(const s of b.skills){SK[s.id]={...s.definition};if(typeof VSKID!=='undefined')VSKID.set(SK[s.id],s.id);}
   if(typeof BattleEffects!=='undefined')BattleEffects.legends[b.id]=b.theme;
  }
- if(typeof BEAST_RARITY_LABELS!=='undefined')BEAST_RARITY_LABELS.solar='อสูรตำนานสุริยัน';
- if(typeof BEAST_FRAME_LABELS!=='undefined')BEAST_FRAME_LABELS.solar=['สุริยัน · กรอบแดงสามมิติ','Solar · Sculpted red frame','日耀 · 立体红框'];
+ if(typeof BEAST_RARITY_LABELS!=='undefined')BEAST_RARITY_LABELS.solar='อสูรตำนานสุริยคราส';
+ if(typeof BEAST_FRAME_LABELS!=='undefined')BEAST_FRAME_LABELS.solar=['สุริยคราส · กรอบแดงสามมิติ','Eclipse · Sculpted red frame','日蚀 · 立体红框'];
  }
 };
 SolarBeasts.install();

@@ -1,9 +1,9 @@
 {
   "version": 1,
   "rarity": [
-    "ตำนานสุริยัน",
-    "Solar Legendary",
-    "日耀传说"
+    "ตำนานสุริยคราส",
+    "Eclipse Legendary",
+    "日蚀传说"
   ],
   "normalSkillLevels": [
     1,
@@ -1140,4 +1140,3 @@
     }
   ]
 }
-
