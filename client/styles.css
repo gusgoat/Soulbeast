@@ -554,5 +554,23 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 @media(max-width:380px),(max-height:650px){.battle-scenery{padding-inline:9px;gap:7px}.battle-scenery-corner{width:48px;height:48px}.battle-scenery-title{padding:0 18px 2px;gap:5px}.battle-scenery-title small{font-size:9px}.online-combat-board.battle-scenery{padding:4px 9px 9px;gap:4px}}
 .battle-vitals.battle-scenery{position:sticky}
 @media(max-width:430px){.battle-scenery .online-unit-grid[style*="--unit-cols:4"] .battle-vital{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:2px}.battle-scenery .online-unit-grid[style*="--unit-cols:4"] .battle-face{width:min(100%,32px);height:100%;max-height:32px;min-height:0;justify-self:center;overflow:hidden}.battle-scenery .online-unit-grid[style*="--unit-cols:4"] .battle-meter small{font-size:8px;white-space:nowrap}}
+/* Identity ornaments live in reserved top/bottom edge channels, outside all card content. */
+.unit-frame{position:relative;isolation:isolate;border-color:var(--unit-tint);box-shadow:inset 0 0 0 2px #030a143d,0 3px 9px #0004}
+.card.unit-frame{padding-top:27px;padding-bottom:27px;background:radial-gradient(ellipse at 100% 0,#6988821a,transparent 65%),linear-gradient(145deg,#1a2a38f5,#101c29f5)}
+.card.stack.unit-frame::after{display:none}
+.unit-frame-corner{position:absolute;display:block;width:84px;height:24px;background:var(--unit-ornament) left top/contain no-repeat;pointer-events:none;user-select:none;z-index:2}
+.unit-corner-nw{left:3px;top:1px}.unit-corner-ne{right:3px;top:1px;transform:scaleX(-1);background-image:var(--unit-alt-ornament)}.unit-corner-sw{left:3px;bottom:1px;transform:scaleY(-1);background-image:var(--unit-alt-ornament)}.unit-corner-se{right:3px;bottom:1px;transform:scale(-1)}
+.battle-vital.unit-frame,.ucard.unit-frame{padding-top:14px;padding-bottom:14px}
+.battle-vital.unit-frame>.unit-frame-corner,.ucard.unit-frame>.unit-frame-corner{width:42px;height:12px}
+.online-unit-grid[style*="--unit-cols:4"] .battle-vital.unit-frame{padding:8px 3px}
+.online-unit-grid[style*="--unit-cols:4"] .battle-vital.unit-frame>.unit-frame-corner{width:21px;height:6px}
+.unit-frame[data-unit-frame="bone"]{border-color:#65717c;background-color:#10151f}
+.unit-frame[data-unit-frame="bone"]>.unit-frame-corner{filter:drop-shadow(0 1px 1px #000)}
+.unit-frame[data-unit-frame="bone"]::before{content:"";position:absolute;inset:2px;pointer-events:none;background:url('assets/ui/unit-frames/bone-rail.svg') left top/6px 48px repeat-y,url('assets/ui/unit-frames/bone-rail.svg') right top/6px 48px repeat-y;border-radius:inherit;z-index:0}
+.battle-vital.unit-frame[data-unit-frame="bone"],.ucard.unit-frame[data-unit-frame="bone"]{padding-inline:9px}
+.online-unit-grid[style*="--unit-cols:4"]{grid-auto-rows:minmax(84px,1fr);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a99362 #0b172b}
+.online-unit-grid[style*="--unit-cols:4"] .unit-frame[data-unit-frame="bone"]::before{display:none}
+.unit-frame.selected,.unit-frame.tg,.unit-frame.at{outline:1px solid #ffe1a0;outline-offset:-1px}.unit-frame.acting,.unit-frame.turn{outline:2px solid #ffe1a0;outline-offset:-1px}
+@media(max-width:380px){.battle-vital.unit-frame,.ucard.unit-frame{padding-inline:4px}.card.unit-frame{padding-inline:16px}.online-unit-grid[style*="--unit-cols:4"] .battle-vital.unit-frame{padding-inline:2px}}
 /* First-visit website video; preserve the entire frame on portrait phones. */
 .web-intro{position:fixed;inset:0;z-index:11000;display:grid;place-items:center;background:#000;color:#f4e9d2;padding:0;isolation:isolate}.web-intro-video{display:block;width:100%;height:100%;max-height:100dvh;object-fit:contain;background:#000}.web-intro-top{position:absolute;top:max(16px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px}.web-intro-top>span{font-size:12px;text-shadow:0 1px 5px #000}.web-intro .btn{min-height:44px;background:#10202ee8;border-color:#d5b567aa;color:#ffe6a8}.web-intro-skip{white-space:nowrap}.web-intro-actions{position:absolute;top:max(72px,calc(env(safe-area-inset-top) + 72px));bottom:auto;left:16px;right:16px;z-index:2;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.web-intro-actions small{font-size:12px;text-shadow:0 1px 5px #000}.web-intro-play[hidden]{display:none}
