@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="th">
+<head><script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Isolated art preview"));</script><style>#app{height:auto;max-width:1200px}.art-preview{padding:24px}.art-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.art-grid article{min-width:0;padding:12px}.equipment-full{width:100%;aspect-ratio:1;object-fit:contain}.art-grid h3{font-size:17px;min-height:50px;overflow-wrap:anywhere}@media(max-width:700px){.art-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.art-preview{padding:12px}}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10121b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ผนึกอสูร">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
+<!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
+<script>window.SHEET_URL = 'https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api';</script>
+<link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
+</head>
+<body style="margin:0;height:100%">
+<title>ตำนานผนึกอสูร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
+<link rel="stylesheet" href="./game-styles.93f7701b25db36d9.css">
+
+<div id="app"></div>
+<div id="vfx" aria-hidden="true"></div>
+<div id="travelFx" aria-hidden="true"></div>
+<input type="file" id="saveFile" accept=".txt,text/plain" hidden>
+
+<script src="./game-data-registry.5350fd57c39d09dd.js"></script>
+<script src="./game-data-elements.2936c00742247389.js"></script>
+<script src="./game-data-skills.cc44041210824676.js"></script>
+<script src="./game-data-classes.b20030dab4164ae7.js"></script>
+<script src="./game-data-equipment.356889102050fed3.js"></script>
+<script src="./game-data-consumables.bf9df0fd5ed788c5.js"></script>
+<script src="./game-data-beasts.c6d0b8a74d4f1896.js"></script>
+<script src="./game-data-exploration.6cfcf82495a0e5a0.js"></script>
+<script src="./game-data-story.b4ecd56118a196f0.js"></script>
+<script src="./game-data-localization.70f6f31e7b4b2cab.js"></script>
+<script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
+<script src="./game-data-secrets.0f9eceacb2511a0a.js"></script>
+<script src="./game-data-narrative.47d61b2cfc64f9d8.js"></script>
+<script src="./game-app.02985d8574fba3b4.js"></script>
+
+<script>const artIds=["wl_armor","wl_crown","wl_necklace","wl_ring","wl_bracelet","wl_belt","wl_boots","wl_gloves","wl_sword","wl_axe","wl_bow","wl_staff","wl_mace","wl_gun","wl_dagger","wl_whip"];render=function(){document.getElementById('app').innerHTML='<main class="art-preview"><h1>ตำนานสุริยคราส · Eclipse</h1><section class="art-grid">'+artIds.map(id=>'<article class="card"><img class="equipment-full" src="assets/equipment/eclipse-original/'+id+'.webp"><h3>'+esc(EQ[id].n)+'</h3><div class="row">'+itemIcon(id,44)+itemIcon(id,64)+'</div></article>').join('')+'</section></main>';};render();</script></body>
+</html>

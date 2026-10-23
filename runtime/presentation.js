@@ -371,7 +371,8 @@ const weaponBaseItemIcon=itemIcon;
 // @soulbeast-unit 0555-itemIcon
 
 itemIcon=function(id,size=44){
- if(EQ[id]?.art)return '<span class="item-art eclipse-equipment-art" role="img" aria-label="'+esc(EQ[id].n)+'" style="--item-size:'+Math.max(28,Number(size)||44)+'px"><img src="'+esc(EQ[id].art)+'" alt="" loading="lazy"><small aria-hidden="true">✹</small></span>';
+ const equipmentArt=EQ[id]?.art||(['armor','crown','necklace','ring','bracelet','belt','boots','gloves','sword','axe','bow','staff','mace','gun','dagger','whip'].some(slot=>id==='wl_'+slot)?'assets/equipment/eclipse-original/'+id+'.webp':null);
+ if(equipmentArt)return '<span class="item-art eclipse-equipment-art" role="img" aria-label="'+esc(EQ[id].n)+'" style="--item-size:'+Math.max(28,Number(size)||44)+'px"><img src="'+esc(equipmentArt)+'" alt="" loading="lazy"><small aria-hidden="true">✹</small></span>';
  const art=WEAPON_ART[id];if(!art)return weaponBaseItemIcon(id,size);
  const lang=typeof GAME_LANGUAGE==='undefined'?'th':GAME_LANGUAGE,label=WEAPON_RARITY[art.rarity][lang]||WEAPON_RARITY[art.rarity].th;
  const name=typeof translateGameText==='function'?translateGameText(EQ[id].n,lang,false).trim():EQ[id].n;

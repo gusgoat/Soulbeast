@@ -1,0 +1,101 @@
+{
+  "generator": "built-in image_gen.imagegen",
+  "jobs": [
+    {
+      "id": "wl_armor",
+      "name": "เกราะจักรพรรดิอเวจี",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Abyssal Emperor Armor: one monumental black plated cuirass, demonic horned pauldrons, layered riblike gold plates and crimson abyss gemstone, deep red embers. Complete empty armor torso, not a person.",
+      "path": "assets/equipment/eclipse-original/wl_armor.webp"
+    },
+    {
+      "id": "wl_crown",
+      "name": "มงกุฎผู้พิชิตนิรันดร์",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Eternal Conqueror Crown: one majestic gold and black crown, seven sweeping celestial spires, violet central diamond, ornate interlocking arches and floating faint eclipse halo. Three-quarter view.",
+      "path": "assets/equipment/eclipse-original/wl_crown.webp"
+    },
+    {
+      "id": "wl_necklace",
+      "name": "สร้อยหัวใจสุริยคราส",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Eclipse Heart Necklace: one complete elegant gold chain in closed oval loop with a large ornate black-sun heart pendant, fiery gold corona and purple crystal heart, tiny black feather filigree. Entire chain visible.",
+      "path": "assets/equipment/eclipse-original/wl_necklace.webp"
+    },
+    {
+      "id": "wl_ring",
+      "name": "แหวนพันธสัญญาโลก",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: World Covenant Ring: ONE thick ornate gold ring, radiant emerald miniature world sphere cradled by two sculpted dragon claws, black enamel star engravings. Macro three-quarter, band opening clearly visible.",
+      "path": "assets/equipment/eclipse-original/wl_ring.webp"
+    },
+    {
+      "id": "wl_bracelet",
+      "name": "กำไลเวทปฐมกาล",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Primordial Magic Bracelet: ONE substantial open circular gold and obsidian cuff bracelet, three faceted violet crystals, elaborate orbiting celestial filigree and pale blue magic arcs. Clearly bracelet not crown.",
+      "path": "assets/equipment/eclipse-original/wl_bracelet.webp"
+    },
+    {
+      "id": "wl_belt",
+      "name": "เข็มขัดแก่นชีวิตอนันต์",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Infinite Lifecore Belt: ONE complete broad curved dark leather armored belt, elaborate golden branching lifetree buckle with blazing emerald core, gold plated side segments, whole straps visible.",
+      "path": "assets/equipment/eclipse-original/wl_belt.webp"
+    },
+    {
+      "id": "wl_boots",
+      "name": "รองเท้าก้าวข้ามดวงดาว",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Starstride Boots: one matching PAIR of magnificent armored boots, black star-metal with gold wing-shaped heels, sapphire constellation inlays and faint blue comet trails. Both complete boots including toes and soles.",
+      "path": "assets/equipment/eclipse-original/wl_boots.webp"
+    },
+    {
+      "id": "wl_gloves",
+      "name": "ถุงมือผู้ท้าทายเทพ",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Godchallenger Gauntlets: one matching PAIR of complete articulated black and gold armored gauntlets, sharp elegant knuckle plates, radiant ruby gems, divine gold lightning wisps. Entire fingers and cuffs visible.",
+      "path": "assets/equipment/eclipse-original/wl_gloves.webp"
+    },
+    {
+      "id": "wl_sword",
+      "name": "ดาบสุริยคราส",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Eclipse Sword: ONE majestic long sword diagonally arranged, full razor black blade edged with gold solar fire, elaborate winged crossguard surrounding dark sun gemstone, sculpted gold pommel. Whole tip and hilt visible.",
+      "path": "assets/equipment/eclipse-original/wl_sword.webp"
+    },
+    {
+      "id": "wl_axe",
+      "name": "ขวานพิพากษาดารา",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Stellar Judgment Axe: ONE grand two-handed double-bladed battle axe diagonally arranged, broad obsidian crescent blades with gold celestial filigree, burning ruby star core, ornate long shaft. Complete handle and both blade edges.",
+      "path": "assets/equipment/eclipse-original/wl_axe.webp"
+    },
+    {
+      "id": "wl_bow",
+      "name": "ธนูฉีกฟ้าราตรี",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Night-Sky Rending Bow: ONE elaborate recurve bow, black and gold dragonwing limbs with sapphire star crystals, taut luminous blue bowstring, faint cosmic wind. Full upper and lower tips visible, no arrow or extra weapon.",
+      "path": "assets/equipment/eclipse-original/wl_bow.webp"
+    },
+    {
+      "id": "wl_staff",
+      "name": "คทาปฐมจักรวาล",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Primordial Cosmos Staff: ONE magnificent long mage staff diagonally placed, twisted gold and black shaft crowned by an exquisite open armillary sphere holding a violet miniature galaxy. Entire staff and ornament visible.",
+      "path": "assets/equipment/eclipse-original/wl_staff.webp"
+    },
+    {
+      "id": "wl_mace",
+      "name": "ค้อนปราการนิรันดร์",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Eternal Bastion Hammer: ONE mighty two-handed warhammer, huge rectangular obsidian hammerhead armored in sculpted gold fortress buttresses, blue star crystal core and ornate shaft. Distinct hammer silhouette, full head and handle.",
+      "path": "assets/equipment/eclipse-original/wl_mace.webp"
+    },
+    {
+      "id": "wl_gun",
+      "name": "ปืนดาวดับสูญ",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Star Extinction Gun: ONE ornate fantasy flintlock long pistol, black star-metal barrel, elaborate gold filigree and polished dark grip, cyan stellar reactor embedded above trigger, cosmic blue muzzle wisps. Clearly firearm, entire muzzle and grip.",
+      "path": "assets/equipment/eclipse-original/wl_gun.webp"
+    },
+    {
+      "id": "wl_dagger",
+      "name": "มีดเขี้ยวอนันต์",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Infinite Fang Dagger: ONE elegantly curved single dagger, obsidian fang blade with silver and gold razor edges, ghostly turquoise crystal in serpentine crossguard, sculpted gold grip. Full blade tip and pommel visible.",
+      "path": "assets/equipment/eclipse-original/wl_dagger.webp"
+    },
+    {
+      "id": "wl_whip",
+      "name": "แส้พันธสัญญาเทพ",
+      "prompt": "Use case: stylized-concept. Create ONE square 1:1 standalone premium Eclipse legendary equipment inventory illustration for Soulbeast. Realistic painterly AAA dark fantasy, spectacular craftsmanship matching the attached STYLE reference only; design a DISTINCT new item described below, not a copy. Tactile obsidian star-metal, exquisitely engraved antique gold and silver, luminous jewel accents, dramatic rim lighting, deep midnight navy mist backdrop. Bold readable silhouette at 64px, sharp fine details at full size. Entire object contained in central 80% with breathing room on every side. No cropped tips/chains/straps, no UI, frame, words, watermark, grid, characters or mannequin. Subject: Divine Covenant Whip: ONE ornate magical whip, sculpted gold handle and flexible luminous rose-gold segmented lash curled in an elegant full spiral, tiny pink divine crystals along lash. Entire long lash including fine tip inside canvas, strong readable silhouette.",
+      "path": "assets/equipment/eclipse-original/wl_whip.webp"
+    }
+  ]
+}

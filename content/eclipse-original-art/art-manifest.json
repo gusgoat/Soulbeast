@@ -1,0 +1,325 @@
+{
+  "generator": "built-in image_gen.imagegen",
+  "assets": [
+    {
+      "id": "wl_armor",
+      "path": "assets/equipment/eclipse-original/wl_armor.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "d145492afaf2f517ebe23a785250b60d923f2c61f067dd78cdd1f046793b912d",
+      "sourceSha256": "15927514e9f6a887445ee75e3f78ee5852aac14c085528d4ccf353f024688597"
+    },
+    {
+      "id": "wl_crown",
+      "path": "assets/equipment/eclipse-original/wl_crown.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "ad699e1247180f6185536f16b9b75ec725e3d2670cbbaf882c70cf2abcb3bb98",
+      "sourceSha256": "bfb648f3bafd3fa4bd014e187dfe39c3d289964d31d55149ea9f1aaedef26cbd"
+    },
+    {
+      "id": "wl_necklace",
+      "path": "assets/equipment/eclipse-original/wl_necklace.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "5e0d2af86cd92b9435cee35704e59d31fb0f984ed27ad9d8bd8f7d83bed40c43",
+      "sourceSha256": "7254d0d6845119188919dd3a863a03c36de1af240d63ec81a8e3e726a69bc159"
+    },
+    {
+      "id": "wl_ring",
+      "path": "assets/equipment/eclipse-original/wl_ring.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "5399e7a8b571878a26d6dbad25391c40973e82bfc4a1954e10c6f52bbe2e5aa9",
+      "sourceSha256": "ddd755d5100ad7c364ada3475f84c25681b77a872db987667fade2a5c65e3244"
+    },
+    {
+      "id": "wl_bracelet",
+      "path": "assets/equipment/eclipse-original/wl_bracelet.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "05a62c99cde83da40914dd986897da068bc8e09dbbc8816b57f8da02dcddefa2",
+      "sourceSha256": "52e561991bbec5d011a86c04d44ee49d344964fe51dfa5b0a89e0188b4b82a88"
+    },
+    {
+      "id": "wl_belt",
+      "path": "assets/equipment/eclipse-original/wl_belt.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "1772f19eed8e5fabca3f049360a09aa3af30e7b2cfc7eda646edf4ecc5692504",
+      "sourceSha256": "9f02108c9ce22ceaf60abe755cc7a482e2636a302241ccde650956e52980d184"
+    },
+    {
+      "id": "wl_boots",
+      "path": "assets/equipment/eclipse-original/wl_boots.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "347f1629dab3a54145a48535688a8aaac4d1c1fa2d8d42f2c89c39dad8b476f9",
+      "sourceSha256": "c15213203f9bd071f21226ead632dd7bc3ba841eb8d6509b8df61f745324e448"
+    },
+    {
+      "id": "wl_gloves",
+      "path": "assets/equipment/eclipse-original/wl_gloves.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "2426e12619a6bebc864ce5bb1e962e7833327d0fc50fe1fbd3766a3bbd9eea9d",
+      "sourceSha256": "b4f96a2b090fd042bcb0695f8c75ea4c8e9cc63e81e4347dfe57adc652944b31"
+    },
+    {
+      "id": "wl_sword",
+      "path": "assets/equipment/eclipse-original/wl_sword.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "e705bb9be1584ffe0ea6c8fee391e58f3c7ed65b7b798bf1f4209e3c9a555adf",
+      "sourceSha256": "358d858841b02f88ac2becfd2963b5d1757a255e00ffb0c128e46f25c4b95e68"
+    },
+    {
+      "id": "wl_axe",
+      "path": "assets/equipment/eclipse-original/wl_axe.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "cc98ac822dd241a28bad9a34a6c2bb198d7a21fb7ebc53041de0b1381e2b57e1",
+      "sourceSha256": "3f294917f6502d7ca909262244baf1644b1b4eed188f5cd905947c119e5f7fa2"
+    },
+    {
+      "id": "wl_bow",
+      "path": "assets/equipment/eclipse-original/wl_bow.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "ca0229da060f1511b6a1feae2838c120364feaabb8eac94be65a1070a44e48ba",
+      "sourceSha256": "7c9b3e6eb779cd348aaae78537f520f8e4406c7d1cc4741555d8504b50b10a62"
+    },
+    {
+      "id": "wl_staff",
+      "path": "assets/equipment/eclipse-original/wl_staff.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "f4afae8e168f80de595529883f4866f637c5e78f53a949f317b7e1b459dbf4c9",
+      "sourceSha256": "01ed69a20697c50c4edd4cfbec8f16b74b049d98e218b8123963aabcaa5ee0fb"
+    },
+    {
+      "id": "wl_mace",
+      "path": "assets/equipment/eclipse-original/wl_mace.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "a1593addefbc4302a23a73468046edc00c2da1c677236d9178395dcb6f0ea633",
+      "sourceSha256": "82178eea193e1dba0d3b5325b845fff9d6618e7fd622edeb2b4afe3b9f66e0c1"
+    },
+    {
+      "id": "wl_gun",
+      "path": "assets/equipment/eclipse-original/wl_gun.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "abbd5952faa751ecc82a2e0657f420935b90a5e8f5278f8589a19d581f9adad0",
+      "sourceSha256": "c6ae814f55e3858fc818a734ce2f5fd2cecaf02cb8b67ec80649c5c86ff05d18"
+    },
+    {
+      "id": "wl_dagger",
+      "path": "assets/equipment/eclipse-original/wl_dagger.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "3f32db8321a7f36d687e31d8b589159ed51c408186ee50e7e648d45b344cc30c",
+      "sourceSha256": "3a8e6129a74052b2e1b0c9a9d7a04d139e4c78f6a760f4e7b463ad491e063d9c"
+    },
+    {
+      "id": "wl_whip",
+      "path": "assets/equipment/eclipse-original/wl_whip.webp",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "outputSize": [
+        384,
+        384
+      ],
+      "sha256": "933ef8119c7d8bbb93a14fd60db3aef01e7827fd51ee22e281d52ffd0137d2fb",
+      "sourceSha256": "0954b3eb6f4af6aab0c526a1f8720707de5121f635a3c16317e36f616498c733"
+    }
+  ]
+}
