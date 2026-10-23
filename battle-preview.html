@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="th" data-skip-web-intro>
+<head><script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Isolated battlefield preview"));</script><style>body{margin:0}#app{height:auto;min-height:100dvh;max-width:1100px}.battle-preview{overflow:visible;padding:24px 16px 40px}.battle-preview header{margin-bottom:24px}.battle-preview h1{color:#efd599;font-size:25px;margin:8px 0}.battle-preview h2{font-size:14px;color:#ddcda7;margin:0 0 14px}.battle-preview header>small{font-size:10px;letter-spacing:.12em}.battle-preview p{font-size:13px;color:#aebdc9}.battle-preview nav{display:flex;gap:6px;flex-wrap:wrap}.battle-preview nav a{color:#b9cbd3;background:#152737;padding:6px 9px;border:1px solid #4a5863;border-radius:6px;font-size:11px;text-decoration:none}.battle-preview nav a[aria-current]{color:#ffe0a0;border-color:#d0ae6a}.battle-preview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:26px}.battle-preview article{min-width:0}.battle-preview .battle-vitals{position:relative;top:auto}.battle-preview .online-combat-board{min-height:330px}.battle-preview .battle-scenery{min-height:320px}.battle-preview .battle-side-units{grid-template-columns:repeat(2,minmax(0,1fr))}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10121b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ผนึกอสูร">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
+<!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
+<script>window.SHEET_URL = 'https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api';</script>
+<link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
+</head>
+<body style="margin:0;height:100%">
+<title>ตำนานผนึกอสูร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Anuphan:wght@400;500;600;700&family=Chakra+Petch:wght@500;600&display=swap">
+<link rel="stylesheet" href="./game-styles.db4349d7997cfeba.css">
+
+<div id="app"></div>
+<div id="vfx" aria-hidden="true"></div>
+<div id="travelFx" aria-hidden="true"></div>
+<input type="file" id="imgIn" accept="image/*" hidden>
+<input type="file" id="saveFile" accept=".txt,text/plain" hidden>
+
+<script src="./game-data-registry.5350fd57c39d09dd.js"></script>
+<script src="./game-data-elements.56e4b6216b088c57.js"></script>
+<script src="./game-data-skills.13d58a9f1b529077.js"></script>
+<script src="./game-data-classes.b20030dab4164ae7.js"></script>
+<script src="./game-data-equipment.b5da02154a81ac71.js"></script>
+<script src="./game-data-consumables.bf9df0fd5ed788c5.js"></script>
+<script src="./game-data-beasts.2a514a7212675550.js"></script>
+<script src="./game-data-exploration.6cfcf82495a0e5a0.js"></script>
+<script src="./game-data-story.b4ecd56118a196f0.js"></script>
+<script src="./game-data-localization.e4a49cb7cb33b036.js"></script>
+<script src="./game-data-presentation.7a313b5992cfa63e.js"></script>
+<script src="./game-data-secrets.0f9eceacb2511a0a.js"></script>
+<script src="./game-data-narrative.47d61b2cfc64f9d8.js"></script>
+<script src="./game-app.c88a88fb2ec71bde.js"></script>
+
+<script>
+Tutorial.clear();render=()=>{};Sound.fx=()=>{};Sound.cry=()=>{};S={"ver":6,"screen":"town","ui":{},"zone":null,"battle":null,"P":{"name":"ทดสอบ","cls":"swordsman","gender":"male","lv":3,"exp":0,"gold":150,"pts":{},"free":10,"eq":{"weapon":"wp_sword0"},"owned":[],"items":{"pot":5,"seal1":5,"eth":2,"antidote":1,"calm":1},"parts":{},"pets":[{"uid":1,"sp":"mandrake","lv":3,"form":0,"exp":0,"pts":{},"free":6,"hp":64,"mp":32}],"party":[1],"legend":{},"zoneMax":1,"arena":{},"seen":{"mandrake":1},"caught":{"mandrake":1},"uid":2,"hp":83,"mp":25,"carried":[1],"packVersion":1,"seenForms":{"mandrake":[0]},"discoveryVersion":1,"code":"CHECKTEST2345"}};delete S.P.tutorial;S.P.name='นักดาบแสงจันทร์';S.P.lv=12;S.zone={id:7,depth:2};
+const samples=[['forest',7,'wild'],['mist',2,'wild'],['desert',3,'wild'],['volcano',4,'boss'],['ruins',5,'wild'],['fortress',6,'wild'],['boss',1,'boss'],['arena',0,'npc'],['throne',6,'boss'],['world',6,'wild']];
+const active=new URLSearchParams(location.search).get('scene')||'forest';
+let cards='';for(const [key,zone,kind]of samples){if(active!=='all'&&key!==active)continue;const enemies=[wildUnit(zone===3?'sphinx':zone===4?'dragon':zone===6?'demonlord':'jackalope',12,0),wildUnit('kodama',10,1)];S.battle={v:4,kind,meta:zone,enemies,allies:[playerUnit(),wildUnit('wisp',12,2)],round:2,queue:[],cur:'p',log:[],target:0,atarget:0,menu:'main',over:null,used:[],fx:[]};S.battle.allies[1].side='ally';let board;if(key==='world'){board=compactOnlineBattle('world',{battle:S.battle,status:'finished',players:[],me:0});}else board=vBattle();const el=document.createElement('div');el.innerHTML=board;const panel=el.querySelector('.battle-scenery');cards+='<article><h2>'+BattleScenery.themes[key].label+'</h2>'+panel.outerHTML+'</article>';}
+document.getElementById('app').innerHTML='<main class="battle-preview"><header><small>SOULBEAST · สนามต่อสู้</small><h1>สมรภูมิแห่งโลกผนึก</h1><p>ฉากและลายประดับเปลี่ยนตามสถานที่</p><nav>'+samples.map(([key])=>'<a href="?scene='+key+'" '+(key===active?'aria-current="page"':'')+'>'+BattleScenery.themes[key].label+'</a>').join('')+'<a href="?scene=all">ดูทุกสนาม</a></nav></header><div class="battle-preview-grid">'+cards+'</div></main>';
+// This page is a static preview; target clicks cannot advance a real battle.
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b){e.preventDefault();e.stopImmediatePropagation();}},true);
+</script></body>
+</html>

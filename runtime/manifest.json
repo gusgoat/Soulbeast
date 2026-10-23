@@ -187,6 +187,11 @@
       "file": "webIntro.js",
       "description": "First-visit website video, skip, replay and media fallback",
       "units": 1
+    },
+    "battleScenery": {
+      "file": "battleScenery.js",
+      "description": "Location-aware battlefield frames and scenery (presentation only)",
+      "units": 1
     }
   },
   "order": [
@@ -1279,6 +1284,7 @@
     "1088-talesConsequences",
     "1089-tutorial",
     "1090-webIntro",
+    "1091-battleScenery",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9254,6 +9260,13 @@
         "WEB_INTRO"
       ],
       "type": "WebsiteIntroVideo"
+    },
+    "1091-battleScenery": {
+      "module": "battleScenery",
+      "names": [
+        "BattleScenery"
+      ],
+      "type": "BattlefieldScenery"
     }
   },
   "trailer": "\r\n\r\n"

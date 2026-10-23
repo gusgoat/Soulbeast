@@ -1,0 +1,17 @@
+// Small vector corner ornaments complement the existing painted location art.
+const fs=require('fs');
+const motifs={
+ forest:{ink:'#9bc6a0',dark:'#284f43',path:'M6 94C24 66 7 42 30 24S64 18 94 6M13 76C29 63 32 47 30 24M30 24C46 36 63 30 77 16',detail:'<path d="M16 66Q-3 44 16 37Q27 49 16 66M30 40Q43 21 54 29Q47 44 30 40M43 22Q43 3 59 9Q61 22 43 22M69 16Q77 1 92 9Q84 23 69 16"/><circle cx="26" cy="24" r="3"/>'},
+ mist:{ink:'#bbc7eb',dark:'#455376',path:'M8 92V26L26 8H92M12 55Q32 36 48 41T83 26M23 14L14 23V39',detail:'<path d="M30 17L17 30L30 43L43 30ZM9 70Q34 53 45 61M48 21Q63 12 82 17"/><circle cx="30" cy="30" r="4"/><path d="M63 8A13 13 0 0 0 79 23A13 13 0 0 1 63 8"/>'},
+ desert:{ink:'#e9c584',dark:'#796039',path:'M8 94V8H94M15 78V15H78M22 66V22H66',detail:'<path d="M25 9L9 25L25 41L41 25ZM24 18L17 25L24 32L31 25ZM8 55H20V48H8M55 8V20H48V8M17 91L23 85L17 79M91 17L85 23L79 17"/><circle cx="25" cy="25" r="2"/>'},
+ volcano:{ink:'#ffb282',dark:'#8b3d32',path:'M6 96L15 65L9 49L25 39L19 19L39 25L49 9L65 15L96 6M10 85L22 66L19 52L35 40L28 28L40 35L52 19L66 22L85 10',detail:'<path d="M12 45L23 47L14 59M45 12L47 23L59 14M20 20L13 5L31 14L39 5L36 26L26 36L5 39L14 31L5 13Z"/><path d="M25 22L21 29L28 26Z" fill="#ffd6a0"/>'},
+ ruins:{ink:'#d4c7ff',dark:'#65577e',path:'M8 94V42L15 34V15H34L42 8H94M14 74V45L22 37V22H37L45 14H74',detail:'<path d="M30 12L41 30L30 48L19 30ZM30 21L36 30L30 39L24 30ZM8 58L17 64L8 70M58 8L64 17L70 8"/><circle cx="30" cy="30" r="3"/>'},
+ fortress:{ink:'#b1afb8',dark:'#494655',path:'M8 94V8H94M15 76V25L25 15H76M5 62H19M62 5V19',detail:'<path d="M12 12H22V5H32V15H42V24L29 41L15 29ZM21 22L29 33L36 23M8 80L20 68M80 8L68 20"/><circle cx="15" cy="49" r="3"/><circle cx="49" cy="15" r="3"/>'},
+ boss:{ink:'#d5b57c',dark:'#6f5346',path:'M8 94V27L27 8H94M15 75V32L32 15H75',detail:'<path d="M29 7L34 22L49 29L34 36L29 51L22 36L7 29L22 22ZM29 19L39 29L29 39L19 29Z"/><circle cx="29" cy="29" r="3"/><path d="M8 60L16 53L8 46M60 8L53 16L46 8"/>'},
+ arena:{ink:'#f2ce88',dark:'#806746',path:'M8 94V23L23 8H94M15 70V30L30 15H70',detail:'<path d="M18 18L44 44M17 28L28 17M36 36L44 34L48 48L34 44ZM44 18L18 44M34 17L45 28M25 37L25 45L14 48L17 34"/><path d="M10 64Q26 52 21 39M64 10Q52 26 39 21"/>'},
+ throne:{ink:'#dca3bb',dark:'#67415b',path:'M8 94V36L18 26L12 12L26 18L36 8H94M15 77V43L27 31L31 27L43 15H77',detail:'<path d="M17 21L30 27L27 10L40 22L49 12L44 36L27 44L12 49L22 40L10 27L27 30ZM27 36L36 27L39 39Z"/><circle cx="45" cy="15" r="3"/>'},
+ world:{ink:'#f4bc92',dark:'#805061',path:'M8 94V48A40 40 0 0 1 48 8H94M15 78V48A33 33 0 0 1 48 15H78',detail:'<circle cx="30" cy="30" r="17"/><circle cx="30" cy="30" r="10"/><path d="M30 5V15M30 45V55M5 30H15M45 30H55M12 12L19 19M41 41L48 48M12 48L19 41M41 19L48 12"/><path d="M36 21A12 12 0 1 0 36 39A15 15 0 0 1 36 21" fill="#f4bc92"/>'}
+};
+fs.mkdirSync('assets/ui/battle-frames',{recursive:true});
+for(const [key,m]of Object.entries(motifs))fs.writeFileSync('assets/ui/battle-frames/'+key+'.svg',`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none"><path d="${m.path}" stroke="#030b14" stroke-width="6" stroke-linejoin="round"/><path d="${m.path}" stroke="${m.ink}" stroke-width="1.5" stroke-linecap="round"/><g stroke="${m.ink}" stroke-width="1.3" fill="${m.dark}" stroke-linejoin="round">${m.detail}</g></svg>\n`);
+console.log('Built '+Object.keys(motifs).length+' lightweight battlefield corner ornaments');
