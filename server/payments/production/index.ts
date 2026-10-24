@@ -38,8 +38,17 @@ const handler=withSupabase({auth:'none'},async(req,ctx)=>{
    const result=await service.reconcile();return response(result,result.ok?200:503);
   }
   payDemand(raw.length<=16384,'body_too_large');const body=JSON.parse(raw);
-  if(['connection_check','checkout_probe'].includes(body.action)){
+  if(['connection_check','checkout_probe','play_connection_check'].includes(body.action)){
    payDemand(await paymentCheckAuthorized(req.headers,name=>Deno.env.get(name),sha),'diagnostic_auth_required');
+   if(body.action==='play_connection_check'){
+    let apiAccessible=false,error,httpStatus;
+    try{payDemand(google.ready,'play_credentials_missing');await google.voided();apiAccessible=true;}
+    catch(e){error=['play_credentials_missing','play_authorization_failed'].includes(e.message)?e.message:'google_play_api_unavailable';httpStatus=e.status;}
+    const result={ok:apiAccessible,readOnly:true,credentialsConfigured:google.ready,credentialIdentityMatches:credentials?.client_email==='soulbeast-payments@soulbeast-billing.iam.gserviceaccount.com',apiAccessible,...(error?{error}:{}),...(httpStatus?{httpStatus}:{}),
+     rtdnConfigured:!!Deno.env.get('SB_PAY_RTDN_AUDIENCE')&&!!Deno.env.get('SB_PAY_RTDN_SERVICE_ACCOUNT_EMAIL')&&!!Deno.env.get('SB_PAY_RTDN_SUBSCRIPTION'),
+     salesSwitches:{stripe:settings.stripe_enabled===true,google_play:settings.play_enabled===true},purchaseTested:false,ledgerWrites:0};
+    return response(result,result.ok?200:503);
+   }
    const {data:packs,error}=await db.from('sb_pay_packs').select('id,coupons,amount_satang,promotion,stripe_price_id,active');
    payDemand(!error&&Array.isArray(packs),'billing_database_unavailable');
    if(body.action==='checkout_probe'){

@@ -130,6 +130,15 @@ cp.execFileSync(process.execPath,['tools/build-production-payments.cjs'],{stdio:
   return Response.json({id:'cs_live_cleanup',livemode:true,url:'https://checkout.stripe.com/hidden'});
  }});
  const cleanup=await failedProbe.probeCheckout(liveOrder);assert(!cleanup.ok&&cleanup.status==='cleanup_required');assert(!JSON.stringify(cleanup).includes('https://'));
- await db.close();console.log('PASS production billing: real PostgreSQL ledger/CAS, shared promo, ownership, unpaid/test rejection, refunds/disputes/debt, durable consumption/revocation, replay, RLS, worker and notification authentication, exact disabled Edge readiness');
+ // Google readiness is admin-only, never returns provider purchase records or writes the ledger.
+ let googleChecks=0;
+ ctx.productionGoogle=()=>({ready:true,voided:async()=>{googleChecks++;return {voidedPurchases:[{purchaseToken:'never-return-private-token'}]};}});
+ const googleCheckRequest=key=>new Request('https://example.invalid',{method:'POST',headers:{apikey:key},body:'{"action":"play_connection_check"}'});
+ assert.equal((await ctx.endpoint.fetch(googleCheckRequest('sb_publishable_fixture'))).status,401);assert.equal(googleChecks,0);
+ const googleCheckResponse=await ctx.endpoint.fetch(googleCheckRequest(adminKey)),googleCheckBody=await googleCheckResponse.json();
+ assert.equal(googleCheckResponse.status,200);assert(googleCheckBody.ok&&googleCheckBody.readOnly&&googleCheckBody.ledgerWrites===0);assert.equal(googleChecks,1);assert(!JSON.stringify(googleCheckBody).includes('never-return'));
+ ctx.productionGoogle=()=>({ready:true,voided:async()=>{throw Error('private-provider-error');}});
+ const googleFailed=await ctx.endpoint.fetch(googleCheckRequest(adminKey)),googleFailedBody=await googleFailed.json();assert.equal(googleFailed.status,503);assert.equal(googleFailedBody.error,'google_play_api_unavailable');assert(!JSON.stringify(googleFailedBody).includes('private-provider-error'));
+ await db.close();console.log('PASS production billing: real PostgreSQL ledger/CAS, shared promo, ownership, unpaid/test rejection, refunds/disputes/debt, durable consumption/revocation, replay, RLS, worker and notification authentication, exact Edge readiness including private Google connection check');
 })().catch(e=>{console.error(e);process.exitCode=1;});
 
