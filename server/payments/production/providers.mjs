@@ -3,11 +3,13 @@ export function liveStripe({key,webhookSecret,returnUrl,fetcher=fetch}){
  async function api(path,method='GET',body,idempotency){
   demand(/^(sk|rk)_live_[A-Za-z0-9]+$/.test(key||''),'stripe_live_key_missing');
   const r=await fetcher('https://api.stripe.com/v1/'+path,{method,headers:{Authorization:'Bearer '+key,...(body?{'Content-Type':'application/x-www-form-urlencoded'}:{}),...(idempotency?{'Idempotency-Key':idempotency}:{})},...(body?{body:new URLSearchParams(body)}:{}),signal:AbortSignal.timeout(20000)});
-  demand(r.ok,'stripe_unavailable');const v=await r.json();demand(v.livemode!==false,'test_payment_forbidden');return v;
+  if(!r.ok){const e=Error('stripe_unavailable');e.status=r.status;throw e;}const v=await r.json();demand(v.livemode!==false,'test_payment_forbidden');return v;
  }
  async function verifyPrice(o){const p=await api('prices/'+encodeURIComponent(o.stripe_price_id)+'?expand[]=product');demand(p.id===o.stripe_price_id&&p.livemode===true&&p.active&&p.type==='one_time'&&p.recurring===null&&p.currency==='thb'&&p.unit_amount===o.amount_satang&&p.billing_scheme==='per_unit'&&!p.custom_unit_amount&&p.product?.active,'stripe_price_mismatch');}
  return {
   ready:/^(sk|rk)_live_[A-Za-z0-9]+$/.test(key||'')&&!!webhookSecret,
+  keyConfigured:/^(sk|rk)_live_[A-Za-z0-9]+$/.test(key||''),
+  checkPrice:verifyPrice,
   async create(o){await verifyPrice(o);const s=await api('checkout/sessions','POST',{
    mode:'payment','line_items[0][price]':o.stripe_price_id,'line_items[0][quantity]':'1',
    'payment_method_types[0]':'card','payment_method_types[1]':'promptpay',locale:'th',

@@ -38,12 +38,19 @@ const handler=withSupabase({auth:'none'},async(req,ctx)=>{
    const result=await service.reconcile();return response(result,result.ok?200:503);
   }
   payDemand(raw.length<=16384,'body_too_large');const body=JSON.parse(raw);
+  if(body.action==='connection_check'){
+   payDemand(await paymentCheckAuthorized(req.headers,name=>Deno.env.get(name),sha),'diagnostic_auth_required');
+   const {data:packs,error}=await db.from('sb_pay_packs').select('id,coupons,amount_satang,promotion,stripe_price_id,active');
+   payDemand(!error&&Array.isArray(packs),'billing_database_unavailable');
+   const result=await checkPaymentConnection({catalog:PROD_CATALOG,packs,stripe,settings,webhookConfigured:/^whsec_[A-Za-z0-9]+$/.test(Deno.env.get('STRIPE_LIVE_WEBHOOK_SECRET')||'')});
+   return response(result,result.ok?200:503);
+  }
   if(body.action==='catalog')return response(await service.handle(null,body));
   payDemand(bearer,'login_required');const {data,error}=await db.auth.getUser(bearer);payDemand(!error&&data?.user?.email_confirmed_at,'verified_account_required');
   return response(await service.handle(data.user,body));
  }catch(e){
   const known=['login_required','verified_account_required','purchases_disabled','provider_not_configured','promotion_unavailable','character_not_owned','bad_order','order_not_found','request_changed','billing_busy_retry','billing_review_required','invalid_purchase_binding','bad_purchase_token','purchase_token_changed','purchase_order_changed','invalid_google_play_purchase','purchase_already_consumed','payment_amount_mismatch','stripe_price_mismatch','stripe_price_not_configured','order_needs_review','coupon_account_unavailable','test_payment_forbidden','notification_auth_required','worker_auth_required','invalid_signature','bad_notification','notification_order_not_found','notification_needs_reconciliation','game_environment_mismatch','billing_database_unavailable'];
-  const code=known.includes(e.message)?e.message:'payment_service_unavailable';return response({ok:false,error:code},['login_required','verified_account_required','notification_auth_required','worker_auth_required','invalid_signature'].includes(code)?401:['purchases_disabled','provider_not_configured','billing_database_unavailable','payment_service_unavailable'].includes(code)?503:409);
+  const code=e.message==='diagnostic_auth_required'?e.message:known.includes(e.message)?e.message:'payment_service_unavailable';return response({ok:false,error:code},['diagnostic_auth_required','login_required','verified_account_required','notification_auth_required','worker_auth_required','invalid_signature'].includes(code)?401:['purchases_disabled','provider_not_configured','billing_database_unavailable','payment_service_unavailable'].includes(code)?503:409);
  }
 });
 export default {async fetch(req){

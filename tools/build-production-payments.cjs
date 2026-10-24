@@ -2,7 +2,7 @@ const fs=require('fs'),path=require('path'),acorn=(()=>{try{return require('acor
 const catalog=require('../content/payment-packs.production.json'),out='build/payments-production';fs.mkdirSync(out,{recursive:true});
 if(catalog.packs.length!==8||new Set(catalog.packs.map(p=>p.id)).size!==8||catalog.packs.some(p=>!Number.isSafeInteger(p.amountSatang)||p.amountSatang<=0||!p.productId))throw Error('Invalid production catalog');
 const read=f=>fs.readFileSync(path.join('server/payments',f),'utf8');
-const modules=['core.mjs','play-provider.mjs','production/providers.mjs','production/service.mjs'].map(f=>read(f).replace(/^export /gm,'')).join('\n');
+const modules=['core.mjs','play-provider.mjs','production/providers.mjs','production/service.mjs','production/connection-check.mjs'].map(f=>read(f).replace(/^export /gm,'')).join('\n');
 const source=read('production/index.ts').replace('/* PRODUCTION_MODULES */',modules).replace('/* PRODUCTION_CATALOG */',JSON.stringify(catalog));
 acorn.parse(source,{ecmaVersion:'latest',sourceType:'module'});fs.writeFileSync(out+'/index.ts',source);
 const vals=catalog.packs.map(p=>`('${p.id}',${p.coupons},${p.amountSatang},${p.promotion},'${p.productId}')`).join(',\n');
