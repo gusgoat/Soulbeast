@@ -2,7 +2,9 @@
 
 ระบบที่เตรียมวันที่ 24 ตุลาคม 2026 ใช้ร้านเว็บ `topup.html` และ Google Play Billing ในแอป 0.2.17 ขึ้นไป ทั้งสองช่องทางใช้รายการซื้อ/โปรโมชั่นชุดเดียวกัน แยกจาก Stripe Sandbox และ Play test ledger เดิม
 
-**ยังไม่เปิดรับเงินจนกว่าบัญชีผู้ขาย คีย์ สินค้า การแจ้งผล และการทดสอบครบวงจรจะพร้อม** โค้ดทดสอบผ่านไม่ใช่หลักฐานว่าบัญชีผู้ขายได้รับอนุมัติหรือจ่ายผ่านผู้ให้บริการจริงแล้ว
+**สถานะล่าสุด 24 ตุลาคม 2026: เปิด Stripe บนเว็บแล้วตามคำขอเจ้าของ** ตั้ง `SB_PAY_STRIPE_ENABLED=true` และ `sb_pay_settings.stripe_enabled=true` ตรวจ public catalog จริงตอบ `enabled.stripe=true` ครบ 8 แพ็ก หลัง Stripe Account status แสดง Payments/Payouts/PromptPay Active และไม่มีงานยืนยันตัวตนค้าง
+
+**Google Play Billing ยังไม่เปิด** Console ยังแสดง Create a payments profile to get started และ Supabase ยังไม่มี `GOOGLE_PLAY_PRODUCTION_SERVICE_ACCOUNT_JSON` / RTDN settings เจ้าของต้องสร้าง Payments profile ที่ https://play.google.com/console/u/0/developers/8061807277043627100/paymentssettings ก่อน แล้วจึงสร้างสินค้า 8 แพ็ก เชื่อมสิทธิ์ API/การแจ้งผล และทดสอบการซื้อใน Play ไม่เปิดสวิตช์ Google ก่อนขั้นตอนเหล่านี้เสร็จ ข้อมูลสถานะปิดร้านในผลทดสอบด้านล่างเป็นประวัติก่อนเปิด Stripe
 
 ## จุดตั้งค่าของคุณ
 
