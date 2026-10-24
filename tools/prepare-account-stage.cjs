@@ -9,8 +9,8 @@ manifest.order.splice(manifest.order.indexOf('1076-ExpressionStatement'),0,'1091
 const result=build(null,{write:false,readFile:file=>file===path.join(root,'runtime/manifest.json')?JSON.stringify(manifest):fs.readFileSync(file,'utf8')});
 const app=result.assets.staging.find(x=>x.startsWith('game-app.'));
 fs.writeFileSync(path.join(root,app),result.files[app]);
-let html=result.files['staging-index.html'];
-html=html.replace('<div id="app"></div>','<link rel="stylesheet" href="./client/account.css"><div id="app"></div><script>window.SOULBEAST_ACCOUNTS=true;window.SHEET_URL="https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-accounts";</script>');
+let html=result.files['staging-index.html'].replace(/\r\n/g,'\n');
+html=html.replace('<div id="app"></div>','<link rel="stylesheet" href="./client/account.css"><link rel="stylesheet" href="./client/coupon-shop.css"><div id="app"></div><script>window.SOULBEAST_ACCOUNTS=true;window.SHEET_URL="https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-accounts";</script>');
 fs.writeFileSync(path.join(root,'accounts-staging.html'),html);
 fs.writeFileSync(path.join(root,'accounts-preview.html'),html.replace('<div id="app"></div>','<div id="app"></div><script src="./client/accounts-preview.js"></script>'));
 console.log('Prepared separate account staging entry '+app+'; production unchanged');

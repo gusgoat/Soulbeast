@@ -1,0 +1,26 @@
+/* Shared coupon artwork and captions for the website and packaged Android shop. */
+#packs.packs{display:block}
+.coupon-pack-section{margin:22px 0;padding:0;border:0;background:none;border-radius:0}
+.coupon-pack-section>h2,.coupon-pack-section>h3{margin:0 0 14px;color:#f4d593;font-size:21px;line-height:1.4}
+.coupon-pack-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 14px}
+.coupon-pack{min-width:0;display:flex;flex-direction:column;border:1px solid #75623e;border-radius:16px;overflow:hidden;background:linear-gradient(145deg,#1b3443,#0b1928);box-shadow:inset 0 1px #f7d98b15,0 6px 20px #0003}
+button.coupon-pack-button,.production-shop [data-pack].coupon-pack-button{position:static;display:grid;place-items:center;flex:none;width:100%;min-width:0;aspect-ratio:1;margin:0;padding:8px;border:0;border-radius:0;background:radial-gradient(ellipse at center,#2b536b66,transparent 72%);box-shadow:none;cursor:pointer;transition:background .15s,filter .15s}
+.coupon-pack-button img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:contain;pointer-events:none}
+.coupon-pack-button:not(:disabled):hover{background:radial-gradient(ellipse at center,#4c849088,transparent 78%);filter:brightness(1.12)}
+.coupon-pack-button:focus-visible{outline:3px solid #ffe5a3;outline-offset:-4px}
+.coupon-pack-button:disabled{opacity:.48;cursor:not-allowed}
+.coupon-pack-caption{display:flex;flex:1;flex-direction:column;gap:5px;text-align:center;padding:8px 8px 16px;line-height:1.5;overflow-wrap:anywhere}
+.coupon-pack-caption>strong{font-size:19px;color:#fff0c9}
+.coupon-pack-price{display:block;color:#f6d583;font-size:23px;font-weight:700;font-variant-numeric:tabular-nums}
+.coupon-pack-caption>small{font-size:12px;color:#b7c9d3;line-height:1.5}
+.coupon-pack-caption>.coupon-pack-state{color:#f4be93}
+.coupon-pack-state:empty{display:none}
+dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padding:20px;border:1px solid #cfaf6c;border-radius:18px;background:linear-gradient(145deg,#18303f,#0b1826);color:#eaf0f4;box-shadow:0 20px 70px #000b}
+dialog.production-shop::backdrop{background:#020a12bb;backdrop-filter:blur(4px)}
+.production-shop h2{font-size:24px;margin:0 0 12px}
+.production-shop p{font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.production-shop details{margin:16px 0;border-top:1px solid #657484;padding-top:12px}
+.production-shop summary{cursor:pointer;color:#f0d38d}
+.production-shop>.production-shop-close{display:block;position:sticky;bottom:0;margin-top:12px;width:100%;background:linear-gradient(#f3d690,#bb944b);color:#18232c;z-index:1}
+@media(min-width:850px){#packs .coupon-pack-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:380px){dialog.production-shop{padding:14px}.coupon-pack-grid{gap:12px 8px}.coupon-pack-caption>strong{font-size:16px}.coupon-pack-price{font-size:21px}.coupon-pack-caption>small{font-size:11px}}

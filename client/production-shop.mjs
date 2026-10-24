@@ -9,12 +9,16 @@ const words={
  review:['มีรายการคืนเงินที่ต้องตรวจสอบ กรุณาติดต่อ Line @soulbeast','A refunded purchase needs review. Contact Line @soulbeast.','退款交易需要审核，请联系Line @soulbeast。'],
  terms:['ชำระครั้งเดียว ไม่มีต่ออายุอัตโนมัติ · โปรโมชั่นใช้ร่วมเว็บและแอป · ตรวจอัตราสุ่มในหน้ากาชาก่อนซื้อ','One-time purchases, no automatic renewal. Promotions are shared across web and app. Review gacha rates before buying.','一次性购买，无自动续费。网页与应用共享首购资格，购买前请查看扭蛋概率。'],
  refresh:['ตรวจรายการ','Check orders','检查订单'],close:['ปิด','Close','关闭'],buy:['ซื้อ','Buy','购买'],
+ promotions:['โปรโมชั่นครั้งแรก','First-purchase offers','首购优惠'],regular:['แพ็กปกติ','Regular packs','常规礼包'],once:['ซื้อได้ครั้งเดียวต่อบัญชี','Once per game account','每个游戏账户限购一次'],repeat:['ซื้อซ้ำได้','Repeat purchases allowed','可重复购买'],
  used:['ใช้สิทธิ์แล้วหรือมีรายการค้าง','Used or pending','已使用或有待处理订单'],
  reserved:['กำลังสร้างรายการ','Creating order','创建订单中'],open:['รอชำระเงิน','Awaiting payment','等待付款'],credited:['ส่งคูปองแล้ว','Coupons delivered','已发放兑换券'],refunded:['ปรับสิทธิ์จากการคืนเงินแล้ว','Refund entitlement adjusted','已调整退款权益'],disputed:['กำลังตรวจข้อโต้แย้ง','Payment dispute under review','付款争议审核中'],expired:['ยกเลิกหรือหมดอายุ','Cancelled or expired','已取消或过期'],
  history:['ประวัติการซื้อ','Purchase history','购买记录'],recipient:['ผู้รับคูปอง','Recipient','接收角色'],
  support:['ติดต่อเรื่องการซื้อ/คืนเงิน: Line @soulbeast พร้อมเลขรายการ ไม่ต้องส่งรหัสผ่าน','Purchase/refund support: Line @soulbeast. Include the order ID, never your password.','购买/退款支持：Line @soulbeast。请提供订单号，勿发送密码。']
 };
 export const shopText=(key,lang='th')=>words[key]?.[lang==='en'?1:lang==='zh-CN'?2:0]||key;
+export const couponCount=(count,lang='th')=>lang==='en'?`${count} coupons`:lang==='zh-CN'?`${count}张兑换券`:`${count} คูปอง`;
+export function couponArtwork(count){return [5,10,50,100,200].includes(count)?`./assets/shop/coupons-${count}.png`:'';}
+export const couponPrice=(amountSatang,lang='th')=>new Intl.NumberFormat(lang==='en'?'en-US':lang==='zh-CN'?'zh-CN':'th-TH',{style:'currency',currency:'THB',maximumFractionDigits:2,minimumFractionDigits:0}).format(amountSatang/100);
 export function paymentApi(client,fetcher=fetch){return async(action,body={})=>{
  const send=async force=>fetcher(PAYMENT_ENDPOINT,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',...(action==='catalog'?{}:{Authorization:'Bearer '+await client.sessions.token(force)})},body:JSON.stringify({action,...body}),signal:AbortSignal.timeout(60000)});
  let r=await send(false);if(r.status===401&&action!=='catalog')r=await send(true);const v=await r.json();if(!r.ok||!v.ok)throw Error(v.error||'payment_service_unavailable');return v;
@@ -34,10 +38,13 @@ export async function openProductionPlayShop({client,code,native,config,notify,o
  let busy=false;
  const update=async()=>{
   const state=await api('status');historyRows.replaceChildren();for(const o of state.orders){const row=document.createElement('p');row.textContent=o.pack_id+' · '+t(o.status)+' · '+o.id;historyRows.append(row);}
-  for(const b of dialog.querySelectorAll('[data-pack]')){const pack=catalog.packs.find(p=>p.id===b.dataset.pack);b.disabled=busy||state.debt>0||pack.promotion&&state.orders.some(o=>o.pack_id===pack.id&&o.status!=='expired');}
+  for(const b of dialog.querySelectorAll('[data-pack]')){const pack=catalog.packs.find(p=>p.id===b.dataset.pack),used=pack.promotion&&state.orders.some(o=>o.pack_id===pack.id&&o.status!=='expired');b.disabled=busy||state.debt>0||used;b.closest('article').querySelector('.coupon-pack-state').textContent=used?t('used'):'';}
  };
- for(const pack of catalog.packs){const product=products.find(p=>p.id===pack.productId);if(!product)continue;
-  const b=document.createElement('button');b.className='btn full';b.dataset.pack=pack.id;b.textContent=pack.names[lang==='en'?1:lang==='zh-CN'?2:0]+' · '+product.formattedPrice;dialog.append(b);
+ for(const promotion of [true,false]){const section=document.createElement('section');section.className='coupon-pack-section';const heading=document.createElement('h3');heading.textContent=t(promotion?'promotions':'regular');const grid=document.createElement('div');grid.className='coupon-pack-grid';section.append(heading,grid);
+ for(const pack of catalog.packs.filter(p=>p.promotion===promotion)){const product=products.find(p=>p.id===pack.productId);if(!product)continue;
+  const card=document.createElement('article');card.className='coupon-pack';const b=document.createElement('button');b.className='coupon-pack-button';b.dataset.pack=pack.id;b.setAttribute('aria-label',t('buy')+' '+couponCount(pack.coupons,lang)+' · '+product.formattedPrice+' · '+t(promotion?'once':'repeat'));
+  const img=document.createElement('img');img.src=couponArtwork(pack.coupons);img.alt='';img.width=512;img.height=512;img.decoding='async';b.append(img);
+  const caption=document.createElement('div');caption.className='coupon-pack-caption';const count=document.createElement('strong');count.textContent=couponCount(pack.coupons,lang);const price=document.createElement('span');price.className='coupon-pack-price';price.textContent=product.formattedPrice;const rule=document.createElement('small');rule.textContent=t(promotion?'once':'repeat');const packState=document.createElement('small');packState.className='coupon-pack-state';caption.append(count,price,rule,packState);card.append(b,caption);grid.append(card);
   b.onclick=async()=>{if(busy)return;busy=true;await update();try{
    const {order}=await api('create',{pack_id:pack.id,code,request_id:crypto.randomUUID()});
    const p=await native.purchase({productId:order.productId,obfuscatedAccountId:order.accountHash,obfuscatedProfileId:order.id});
@@ -45,8 +52,8 @@ export async function openProductionPlayShop({client,code,native,config,notify,o
    const r=p.purchaseToken?await api('verify',{order_id:order.id,purchaseToken:p.purchaseToken}):{pending:true};
    status.textContent=t(r.credited?'received':r.order?.status==='refunded'?'review':'pending');await onUpdated();
   }catch{status.textContent=t('failed');}finally{busy=false;await update();}};
- }
+ }if(grid.childElementCount)dialog.append(section);}
  const refresh=document.createElement('button');refresh.className='btn';refresh.textContent=t('refresh');refresh.onclick=async()=>{if(busy)return;busy=true;try{await recover();await update();status.textContent=t('refresh');}catch{status.textContent=t('failed');}finally{busy=false;await update();}};dialog.append(refresh,history);
  const support=document.createElement('p');support.textContent=t('support');dialog.append(support);
- const close=document.createElement('button');close.className='btn';close.textContent=t('close');close.onclick=()=>dialog.close();dialog.append(close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);await update();dialog.showModal();
+ const close=document.createElement('button');close.className='btn production-shop-close';close.textContent=t('close');close.onclick=()=>dialog.close();dialog.append(close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);await update();dialog.showModal();
 }
