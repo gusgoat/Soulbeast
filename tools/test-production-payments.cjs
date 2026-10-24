@@ -77,7 +77,7 @@ cp.execFileSync(process.execPath,['tools/build-production-payments.cjs'],{stdio:
  // Exact generated Edge entry: public readiness is available, every private route is independently authenticated.
  const vm=require('vm'),source=fs.readFileSync('build/payments-production/index.ts','utf8').replace(/^import .*\r?\n/gm,'').replace('export default {','globalThis.endpoint={');
  const ctx=vm.createContext({Response,Request,Headers,URL,URLSearchParams,AbortSignal,TextEncoder,TextDecoder,Uint8Array,Date,crypto:crypto.webcrypto,btoa,atob,fetch:()=>{throw Error('Unexpected network');},createRemoteJWKSet:()=>null,jwtVerify:async()=>{throw Error('invalid JWT');},Deno:{env:{get:()=>undefined}},withSupabase:(_,f)=>req=>f(req,{supabaseAdmin:{from:()=>({select:async()=>({data:checkPacks})}),rpc:async()=>({data:{game_env:'test',stripe_enabled:false,play_enabled:false}}),auth:{getUser:async()=>({data:{user:null},error:Error('invalid')})}}})});vm.runInContext(source,ctx);
- for(const action of ['status','checkout','create','verify','connection_check']){const r=await ctx.endpoint.fetch(new Request('https://example.invalid/functions/v1/soulbeast-payments',{method:'POST',body:JSON.stringify({action})}));assert.equal(r.status,401);}
+ for(const action of ['status','checkout','create','verify','connection_check','checkout_probe']){const r=await ctx.endpoint.fetch(new Request('https://example.invalid/functions/v1/soulbeast-payments',{method:'POST',body:JSON.stringify({action})}));assert.equal(r.status,401);}
  for(const path of ['stripe-webhook','play-notifications','reconcile']){const r=await ctx.endpoint.fetch(new Request('https://example.invalid/'+path,{method:'POST',body:'{}'}));assert.equal(r.status,path==='stripe-webhook'?503:401,path);}
  const rejectedOrigin=await ctx.endpoint.fetch(new Request('https://example.invalid',{method:'OPTIONS',headers:{Origin:'https://evil.invalid'}}));assert.equal(rejectedOrigin.status,403);
  const ready=await ctx.endpoint.fetch(new Request('https://example.invalid',{method:'POST',body:'{"action":"catalog"}'}));assert.equal(ready.status,200);assert.deepEqual((await ready.json()).enabled,{stripe:false,google_play:false});
@@ -98,6 +98,38 @@ cp.execFileSync(process.execPath,['tools/build-production-payments.cjs'],{stdio:
 
  const failedProvider=liveStripe({key:'rk_live_fixture',webhookSecret:'whsec_fixture',fetcher:async()=>new Response('never expose provider body',{status:403})});
  const failedCheck=await checkPaymentConnection({catalog,packs:checkPacks,stripe:failedProvider,settings:{},webhookConfigured:true});assert(!failedCheck.ok);assert.equal(failedCheck.checks[0].httpStatus,403);assert(!JSON.stringify(failedCheck).includes('never expose'));
+ // Exact deployed entry routes probes through existing admin authorization only.
+ const probeEdgeCalls=[];ctx.fetch=async(url,opt)=>{
+  probeEdgeCalls.push([url,opt.method]);
+  if(url.includes('/prices/')){const p=checkPacks.find(p=>url.includes('/'+p.stripe_price_id+'?'));assert(p);return Response.json({id:p.stripe_price_id,livemode:true,active:true,type:'one_time',recurring:null,currency:'thb',unit_amount:p.amount_satang,billing_scheme:'per_unit',product:{active:true}});}
+  if(url.endsWith('/expire'))return Response.json({id:'cs_live_edge_probe',livemode:true,status:'expired',payment_status:'unpaid'});
+  return Response.json({id:'cs_live_edge_probe',livemode:true,url:'https://checkout.stripe.com/private-fixture'});
+ };
+ const edgeProbeRequest=key=>new Request('https://example.invalid',{method:'POST',headers:{apikey:key},body:'{"action":"checkout_probe"}'});
+ assert.equal((await ctx.endpoint.fetch(edgeProbeRequest('sb_publishable_fixture'))).status,401);assert.equal(probeEdgeCalls.length,0);
+ const edgeProbeResponse=await ctx.endpoint.fetch(edgeProbeRequest(adminKey));assert.equal(edgeProbeResponse.status,200);const edgeProbeBody=await edgeProbeResponse.json();assert(edgeProbeBody.ok&&edgeProbeBody.ledgerWrites===0);assert.equal(probeEdgeCalls.length,3);assert(!JSON.stringify(edgeProbeBody).includes('https://'));assert(!edgeProbeBody.salesSwitches.stripe&&!edgeProbeBody.salesSwitches.google_play);
+ // Current Stripe Checkout uses Dashboard-managed methods for real orders too.
+ const dynamicProvider=liveStripe({key:'rk_live_fixture',webhookSecret:'whsec_fixture',returnUrl:'https://example.invalid',fetcher:async(url,opt)=>{
+  if(url.includes('/prices/'))return Response.json({id:'price_real',livemode:true,active:true,type:'one_time',recurring:null,currency:'thb',unit_amount:3500,billing_scheme:'per_unit',product:{active:true}});
+  assert.equal(opt.method,'POST');const params=new URLSearchParams(opt.body);assert(![...params.keys()].some(k=>k.startsWith('payment_method_types')));assert.equal(params.get('metadata[order_id]'),'order');assert.equal(params.get('line_items[0][price]'),'price_real');assert.equal(params.get('line_items[0][quantity]'),'1');
+  return Response.json({id:'cs_live_dynamic',livemode:true,url:'https://checkout.stripe.com/fixture'});
+ }});assert.equal((await dynamicProvider.create(liveOrder)).id,'cs_live_dynamic');
+ // Unpaid live probe creates no game order, exposes no payable URL, and always attempts expiry.
+ const probeCalls=[];
+ const probeProvider=liveStripe({key:'rk_live_fixture',webhookSecret:'whsec_fixture',returnUrl:'https://example.invalid/topup',fetcher:async(url,opt)=>{
+  probeCalls.push([url,opt.method]);
+  if(url.includes('/prices/'))return Response.json({id:'price_real',livemode:true,active:true,type:'one_time',recurring:null,currency:'thb',unit_amount:3500,billing_scheme:'per_unit',product:{active:true}});
+  if(url.endsWith('/expire'))return Response.json({id:'cs_live_probe',livemode:true,status:'expired',payment_status:'unpaid'});
+  const params=new URLSearchParams(opt.body);assert(![...params.keys()].some(k=>k.startsWith('payment_method_types')));assert(params.has('metadata[qa_probe]'));assert(!params.has('metadata[order_id]'));assert(!params.has('metadata[account_id]'));
+  return Response.json({id:'cs_live_probe',livemode:true,status:'open',payment_status:'unpaid',url:'https://checkout.stripe.com/never-return'});
+ }});
+ const probeResult=await probeProvider.probeCheckout(liveOrder);assert(probeResult.ok);assert.equal(probeCalls.length,3);assert.equal(probeCalls[2][1],'POST');assert(probeCalls[2][0].endsWith('/expire'));assert(!JSON.stringify(probeResult).includes('https://'));
+ const failedProbe=liveStripe({key:'rk_live_fixture',webhookSecret:'whsec_fixture',returnUrl:'https://example.invalid',fetcher:async(url,opt)=>{
+  if(url.includes('/prices/'))return Response.json({id:'price_real',livemode:true,active:true,type:'one_time',recurring:null,currency:'thb',unit_amount:3500,billing_scheme:'per_unit',product:{active:true}});
+  if(url.endsWith('/expire'))return new Response('hidden error',{status:503});
+  return Response.json({id:'cs_live_cleanup',livemode:true,url:'https://checkout.stripe.com/hidden'});
+ }});
+ const cleanup=await failedProbe.probeCheckout(liveOrder);assert(!cleanup.ok&&cleanup.status==='cleanup_required');assert(!JSON.stringify(cleanup).includes('https://'));
  await db.close();console.log('PASS production billing: real PostgreSQL ledger/CAS, shared promo, ownership, unpaid/test rejection, refunds/disputes/debt, durable consumption/revocation, replay, RLS, worker and notification authentication, exact disabled Edge readiness');
 })().catch(e=>{console.error(e);process.exitCode=1;});
 

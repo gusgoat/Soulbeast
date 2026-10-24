@@ -38,10 +38,17 @@ const handler=withSupabase({auth:'none'},async(req,ctx)=>{
    const result=await service.reconcile();return response(result,result.ok?200:503);
   }
   payDemand(raw.length<=16384,'body_too_large');const body=JSON.parse(raw);
-  if(body.action==='connection_check'){
+  if(['connection_check','checkout_probe'].includes(body.action)){
    payDemand(await paymentCheckAuthorized(req.headers,name=>Deno.env.get(name),sha),'diagnostic_auth_required');
    const {data:packs,error}=await db.from('sb_pay_packs').select('id,coupons,amount_satang,promotion,stripe_price_id,active');
    payDemand(!error&&Array.isArray(packs),'billing_database_unavailable');
+   if(body.action==='checkout_probe'){
+    payDemand(settings.stripe_enabled===false&&settings.play_enabled===false,'purchases_disabled');
+    const pack=packs.find(p=>p.id==='normal-5'),expected=PROD_CATALOG.packs.find(p=>p.id==='normal-5');
+    payDemand(pack?.active&&pack.coupons===expected.coupons&&pack.amount_satang===expected.amountSatang&&!pack.promotion,'stripe_price_mismatch');
+    const result=await stripe.probeCheckout(pack);
+    return response({...result,kind:'unpaid_live_checkout_probe',salesSwitches:{stripe:false,google_play:false},ledgerWrites:0},result.ok?200:503);
+   }
    const result=await checkPaymentConnection({catalog:PROD_CATALOG,packs,stripe,settings,webhookConfigured:/^whsec_[A-Za-z0-9]+$/.test(Deno.env.get('STRIPE_LIVE_WEBHOOK_SECRET')||'')});
    return response(result,result.ok?200:503);
   }

@@ -129,6 +129,18 @@ URL:
 - ตรวจคูปองตัวละครจากเซิร์ฟเวอร์และการกู้รายการเดิม ไม่มีการแก้คูปองใน client
 - การซื้อเงินจริงครั้งแรกต้องเป็นการซื้อที่เจ้าของตั้งใจทำด้วยตนเอง ไม่ให้เอเจนต์กดชำระแทน
 
+## ผลตรวจ Checkout / webhook วันที่ 24 ตุลาคม 2026
+
+ทดสอบกับ Stripe Sandbox จริงโดยไม่ใช้เงินหรือคูปองเกมจริง: บัตรจำลอง 35 บาทและ PromptPay จำลอง 35 บาทสำเร็จ, webhook ตอบ HTTP 200 และเพิ่มใน `sb_shop_test_credits` รายการละ 5 ใบเท่านั้น ส่งเหตุการณ์บัตรเดิมซ้ำแล้วตอบ 200 โดยเครดิตยังมี 1 รายการ/5 ใบ อีก Checkout กดกลับและสั่งหมดอายุแล้วได้รับ `checkout.session.expired` HTTP 200 โดยเครดิตเป็น 0 ทั้งหมดใช้คำสั่งซื้อ QA ที่จอง/ผูกผ่านคำสั่งผู้ดูแล ไม่ได้ทดสอบการล็อกอินและคลิกซื้อผ่านหน้าร้านด้วย session ผู้เล่น
+
+endpoint จริงปฏิเสธ webhook ไม่มีลายเซ็น/ลายเซ็นปลอม (Sandbox 400, Live 401) และ public catalog ยังปิด Stripe/Google Play ชุด `test:payments` และ `test:production` ผ่าน รวมการคืนเงิน/ข้อพิพาท/ยอดติดลบ/สิทธิ์โปรโมชั่น/การส่งซ้ำในฐานข้อมูล PostgreSQL ทดสอบและ provider fixtures; การคืนเงินจริง/ข้อพิพาทจริงและ Google Play ยังไม่ได้ทดสอบกับผู้ให้บริการจริง
+
+เพิ่มคำสั่งผู้ดูแล `{"action":"checkout_probe"}` ตามอนุมัติ ใช้ admin key แบบเดียวกับ connection_check เฉพาะขณะสวิตช์ร้านทั้งสองปิด: ตรวจราคา normal-5 สร้าง Live Checkout ที่ไม่ผูกคำสั่งซื้อหรือบัญชีเกม แล้ว expire ทันที ไม่ส่ง payable URL กลับ ไม่แก้ ledger ถ้าปิดไม่สำเร็จจะคืน sessionId และ `cleanup_required` ให้ผู้ดูแลปิดรายการทันที ห้ามเรียกซ้ำโดยไม่ตรวจผลครั้งก่อน
+
+การทดสอบ Live รอบแรกถูก Stripe ปฏิเสธ HTTP 400 (`req_1zjT53ggvFMntE`) เพราะ `payment_method_types` ไม่รองรับในการสร้าง Checkout ตาม API ของบัญชี โค้ดปรับให้ใช้วิธีชำระจาก Stripe Dashboard ตามคู่มือ https://docs.stripe.com/payments/payment-methods/dynamic-payment-methods และเพิ่ม regression test ทั้ง Checkout จริงและ probe แล้ว เจ้าของอนุมัติและติดตั้งการแก้นี้แล้ว ทดสอบ Live ผ่าน HTTP 200: session `cs_live_a10qBpCeTF3Gtkfca2MCBposz93reecSfTMoS7GTl983XHHTUDUfgjKi7D` ถูกปิดทันทีเป็น expired/unpaid, ไม่มี payment_intent และ ledgerWrites=0; webhook จริง `evt_1UTxVlLgZW0zbsdXFL3diSKm` ส่งถึงปลายทาง Live ตอบ HTTP 200 `{ok:true,ignored:true}` ตามที่ตั้งใจ เพราะ QA session ไม่ใช่คำสั่งซื้อผู้เล่น จึงยืนยันลายเซ็น/การส่ง Live ได้โดยไม่คิดเงินจริง
+
+ตรวจหลังทดสอบ: production orders ยังคง 0, Stripe/Play disabled ทั้งใน DB และ public catalog, anonymous checkout_probe และ webhook ไม่มีลายเซ็นถูกปฏิเสธ 401 บัตรและ PromptPay เปิดใช้ใน Stripe Dashboard แต่บัญชียังแสดง Payouts paused ต้องให้เจ้าของจัดการ View task ก่อนเปิดรับเงินจริง การทดสอบนี้ไม่ยืนยัน paid fulfillment ด้วยเงินจริงหรือการซื้อ Google Play จริง
+
 ## เปิดและหยุดรับคำสั่งซื้อ
 
 เมื่อทุกข้อผ่านและเจ้าของอนุมัติเปิดรับเงิน ให้เปิดทีละช่องทาง:

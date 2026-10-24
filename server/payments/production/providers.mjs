@@ -10,9 +10,25 @@ export function liveStripe({key,webhookSecret,returnUrl,fetcher=fetch}){
   ready:/^(sk|rk)_live_[A-Za-z0-9]+$/.test(key||'')&&!!webhookSecret,
   keyConfigured:/^(sk|rk)_live_[A-Za-z0-9]+$/.test(key||''),
   checkPrice:verifyPrice,
+  async probeCheckout(o){
+   await verifyPrice(o);
+   const probe=crypto.randomUUID();
+   const s=await api('checkout/sessions','POST',{
+    mode:'payment','line_items[0][price]':o.stripe_price_id,'line_items[0][quantity]':'1',
+    locale:'th', // Eligible payment methods are configured in Stripe Dashboard.
+    success_url:returnUrl+'?qa=unpaid',cancel_url:returnUrl+'?qa=cancelled',
+    client_reference_id:'sb-qa-'+probe,'metadata[qa_probe]':probe
+   },'soulbeast-unpaid-probe-'+probe);
+   demand(s.livemode===true&&s.id?.startsWith('cs_live_'),'invalid_purchase_binding');
+   // Never return the payable URL. Close the session before reporting success.
+   try{
+    const closed=await api('checkout/sessions/'+encodeURIComponent(s.id)+'/expire','POST',{});
+    return {ok:closed.id===s.id&&closed.livemode===true&&closed.status==='expired'&&closed.payment_status==='unpaid',sessionId:s.id,status:closed.status,paymentStatus:closed.payment_status,charged:false};
+   }catch{return {ok:false,sessionId:s.id,status:'cleanup_required',charged:false};}
+  },
   async create(o){await verifyPrice(o);const s=await api('checkout/sessions','POST',{
    mode:'payment','line_items[0][price]':o.stripe_price_id,'line_items[0][quantity]':'1',
-   'payment_method_types[0]':'card','payment_method_types[1]':'promptpay',locale:'th',
+   locale:'th', // Eligible payment methods are configured in Stripe Dashboard.
    success_url:returnUrl+'?order='+o.id,cancel_url:returnUrl+'?order='+o.id+'&cancelled=1',
    client_reference_id:o.id,'metadata[order_id]':o.id,'metadata[account_id]':o.account_id,'metadata[pack_id]':o.pack_id,
    'payment_intent_data[metadata][order_id]':o.id,'payment_intent_data[metadata][account_id]':o.account_id
