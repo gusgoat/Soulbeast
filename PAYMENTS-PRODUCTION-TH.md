@@ -4,13 +4,15 @@
 
 **สถานะล่าสุด 24 ตุลาคม 2026: เปิด Stripe บนเว็บแล้วตามคำขอเจ้าของ** ตั้ง `SB_PAY_STRIPE_ENABLED=true` และ `sb_pay_settings.stripe_enabled=true` ตรวจ public catalog จริงตอบ `enabled.stripe=true` ครบ 8 แพ็ก หลัง Stripe Account status แสดง Payments/Payouts/PromptPay Active และไม่มีงานยืนยันตัวตนค้าง
 
-**Google Play Billing ยังไม่เปิด: ตั้งค่าสินค้าและการเชื่อมต่อแล้ว** สร้าง Payments profile สำเร็จ สินค้าทั้ง 8 แพ็ก Active มี buy option แบบ backwards compatible และคำอธิบายไทย/อังกฤษ/จีน ราคาไทยตรงตาราง Google แปลงราคาประเทศอื่นให้ตามระบบ
+**Google Play Billing เปิดแล้วตามคำขอเจ้าของวันที่ 24 ตุลาคม 2026** ตั้ง `SB_PAY_PLAY_ENABLED=true` และ `sb_pay_settings.play_enabled=true` ตรวจ public catalog จริงตอบ `enabled.stripe=true` และ `enabled.google_play=true` ครบ 8 แพ็ก สร้าง Payments profile สำเร็จ สินค้าทั้ง 8 แพ็ก Active มี buy option แบบ backwards compatible และคำอธิบายไทย/อังกฤษ/จีน ราคาไทยตรงตาราง Google แปลงราคาประเทศอื่นให้ตามระบบ
 
 โปรเจกต์ Cloud `soulbeast-billing` (156699718421) เปิด Android Publisher และ Pub/Sub API แล้ว บัญชี `soulbeast-payments@soulbeast-billing.iam.gserviceaccount.com` มีสิทธิ์เฉพาะแอป SoulBeast: อ่านข้อมูลแอป/คุณภาพแอปตามสิทธิ์พื้นฐาน ดูข้อมูลการเงิน และจัดการรายการซื้อ เจ้าของบันทึก JSON ใน Supabase โดยตรง ตัว agent ไม่อ่านกุญแจ ตรวจด้วยคำสั่งผู้ดูแล `play_connection_check` แล้ว OAuth และ Voided Purchases API ผ่านจริง (ก่อนหน้านั้นตอบ 401 ระหว่างสิทธิ์ใหม่ยังเริ่มใช้งาน)
 
 RTDN: topic `projects/soulbeast-billing/topics/soulbeast-payments` ให้บัญชี Google Play notifications เป็น Publisher เฉพาะ topic; subscription `projects/soulbeast-billing/subscriptions/soulbeast-payments` ใช้ authenticated push ในนาม `soulbeast-rtdn@soulbeast-billing.iam.gserviceaccount.com` ไม่มี JSON key/สิทธิ์โปรเจกต์ Audience และ endpoint ตรง `/play-notifications` ตั้ง acknowledgement deadline 60 วินาที retry แบบ exponential 10–600 วินาที ไม่หมดอายุ เก็บข้อความที่ยังไม่ตอบรับ 7 วัน เปิดแจ้งทุก one-time product/voided purchase ใน Play แล้ว Pub/Sub แสดง push acknowledgement จริงเวลา 13:39, 13:42 และ 13:43 วันที่ 24 ตุลาคม 2026 (ไทย) คำสั่งตรวจไม่คืน purchase records หรือ tokens และไม่เขียน ledger
 
-**ยังเหลือก่อนเปิด Google:** เจ้าของตั้งกุญแจ worker ค่าเดียวกันใน Edge `SB_PAY_RECONCILE_SECRET` และ Vault `soulbeast_pay_reconcile` จากนั้นติดตั้ง `005-reconciliation-cron.sql` และตรวจงานทุก 5 นาที แล้วทดสอบซื้อจากแอปบนมือถือจริง (ยังไม่ได้ทำ/ไม่ได้เรียกเก็บเงินโดย agent) สวิตช์ Google ทั้ง Edge และฐานข้อมูลยังปิดอยู่ ข้อมูลสถานะปิดร้านในผลทดสอบด้านล่างเป็นประวัติก่อนเปิด Stripe
+เจ้าของตั้งกุญแจ worker ค่าเดียวกันใน Edge `SB_PAY_RECONCILE_SECRET` และ Vault `soulbeast_pay_reconcile` แล้ว ติดตั้ง `005-reconciliation-cron.sql` สำเร็จ งาน `soulbeast-payments-reconcile` เปิดใช้งาน schedule `*/5 * * * *` เรียกทดสอบผ่าน `net.http_post` โดยอ่านกุญแจภายในฐานข้อมูลโดยตรง ได้ HTTP 200, `ok=true`, ไม่ timeout และไม่มี network error ยืนยันว่ากุญแจทั้งสองจุดตรงกันโดยไม่เปิดอ่านค่าลับ
+
+**ข้อจำกัดการตรวจ:** ยังไม่ได้ทดสอบการชำระเงินจริงและรับคูปองผ่านมือถือจริง และ agent ไม่ได้ทำรายการจ่ายเงิน ผู้ใช้เปิดแอปจาก Google Play รุ่น 0.2.17 (version code 19) ขึ้นไป ปิดเปิดแอปใหม่แล้วเข้าร้านได้ ราคาที่แสดงระหว่างซื้ออ่านจาก Google Play ข้อมูลสถานะปิดร้านในผลทดสอบด้านล่างเป็นประวัติก่อนเปิดจริง
 
 ## จุดตั้งค่าของคุณ
 
