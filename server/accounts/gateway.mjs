@@ -1,7 +1,18 @@
 // Reuses the current authoritative game engine; every character is authorized before dispatch.
-export function accountGateway({command,execute,hash,makeCharacter,uuid=()=>crypto.randomUUID()}){
+export function accountGateway({command,execute,hash,makeCharacter,syncName=async()=>{},uuid=()=>crypto.randomUUID()}){
  const safe=c=>({code:c.code,name:c.name,cls:c.class_id,lv:c.level,status:c.status});
  const fail=message=>{throw Error(message);};
+ const profile=async(c,result,env,user)=>{
+  if(!result?.ok)return c;
+  let player;try{player=JSON.parse(result.data||'null')?.P;}catch{}
+  const name=result.account?.name||player?.name;
+  if(typeof name!=='string'||!name.trim())return c;
+  const renamedAt=Number(result.account?.renameAt||player?.renameAt||0);
+  // Only authoritative engine output reaches the service-only registry update.
+  // A projection failure must not turn a committed rename into a failed rename.
+  try{await syncName(user.id,env,c.code,name,renamedAt);}catch{}
+  return {...c,name};
+ };
  const materialize=async(c,env,user)=>{
   if(c.status==='deleted')fail('character_deleted');
   if(c.status==='active')return c;
@@ -15,7 +26,11 @@ export function accountGateway({command,execute,hash,makeCharacter,uuid=()=>cryp
   if(!['test','live'].includes(env)||!body||typeof body!=='object'||Array.isArray(body))fail('bad_data');
   if(body.action==='account_list'){
    const chars=await command('list',user.id,env,{}),out=[];
-   for(const c of chars.filter(c=>c.status!=='deleted'))out.push(safe(await materialize(c,env,user)));
+   for(const c of chars.filter(c=>c.status!=='deleted')){
+    const active=await materialize(c,env,user);
+    const loaded=await execute({action:'load',code:c.code,pin:c.engine_pin,_sbRequest:uuid()},env);
+    out.push(safe(await profile(active,loaded,env,user)));
+   }
    const capacity=await command('capacity',user.id,env,{});
    return {ok:true,email:user.email,characters:out,characterLimit:5,slotsUsed:capacity.used};
   }
@@ -47,6 +62,8 @@ export function accountGateway({command,execute,hash,makeCharacter,uuid=()=>cryp
   if(c.status==='deleted')fail('character_deleted');
   if(c.status!=='active')fail('character_not_ready');
   if(body.newPin!=null||body.action==='delete')fail('account_action_not_supported');
-  return execute({...body,code,pin:c.engine_pin},env);
+  const result=await execute({...body,code,pin:c.engine_pin},env);
+  if(['camp_profile','load','save'].includes(body.action))await profile(c,result,env,user);
+  return result;
  };
 }

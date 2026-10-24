@@ -179,7 +179,7 @@ function surrenderForest(){if(!S.zone){S.ui.confirm=null;render();return}
 // @soulbeast-end 0351-surrenderForest
 // @soulbeast-unit 0353-document-addEventListener
 
-document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t||t.disabled)return;if(t.dataset.a!=='soundtoggle'){Sound.unlock();if(!['fork','bt'].includes(t.dataset.a))Sound.fx('click')}const f=handlers[t.dataset.a];if(f)f(t.dataset.v??'')});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t||t.disabled)return;if(t.dataset.a!=='soundtoggle'){Sound.unlock();if(!['fork','bt'].includes(t.dataset.a))Sound.fx('click')}const f=handlers[t.dataset.a];if(f){const pending=f(t.dataset.v??'');if(pending&&typeof pending.then==='function')withOnline(t.dataset.a,()=>pending).catch(error=>toast(onlineMessage(error)));}});
 // @soulbeast-end 0353-document-addEventListener
 // @soulbeast-unit 0354-document-addEventListener
 
@@ -213,9 +213,9 @@ function vZone(){const zs=S.zone,z={...ZN[zs.id-1],boss:zs.boss||ZN[zs.id-1].bos
   <p class="sub" style="margin:0">ทางสิ้นสุดตรงนี้ ชนะบอสเพื่อกลับเมืองและปลดล็อกพื้นที่ถัดไป ถ้าต้องการใช้ยา เปิดกระเป๋าก่อนได้</p>
   <div class="row"><button class="btn" data-a="go" data-v="bag">กระเป๋า</button><button class="btn danger grow" data-a="boss">เข้าสู้บอส</button></div></div>`}
  else main=`<p class="sub" style="margin:0">ทางแยกข้างหน้า เลือกทางที่จะเดินต่อ</p><div class="grid2">${zs.fork.map((d,i)=>{const e=d.h?{g:'?',n:'ทางมืด',d:'มืดจนมองไม่เห็นว่ามีอะไรรออยู่'}:EV[d.k];return `<button class="door ${d.h?'hid':''}" data-a="fork" data-v="${i}">${routePicture(d.k,d.h)}<span class="sub">ทาง${i?'ขวา':'ซ้าย'}</span><span class="door-g">${e.g}</span><b>${e.n}</b><small>${e.d}</small></button>`}).join('')}</div>`;
- return `<div class="stack">${zoneArt(z.id)}${z.train?'<div class="card story-card"><p>ก่อนออกเดินทาง ธาราเทพแนะนำให้ฝึกในป่าเล็กหลังเมือง เรียนรู้จังหวะต่อสู้และดูแลคู่หูของคุณ</p></div>':storyCard(z.id)}<button class="btn sm seal" data-a="story">อ่านบันทึกการเดินทาง</button><div><h2>${z.n}</h2><span class="sub">อสูร Lv ${z.lv[0]}–${z.lv[1]} · ออกได้เมื่อชนะบอส เจอทางออก หรือพ่ายแพ้</span></div>
- <div class="card stack" style="gap:6px"><div class="row"><span class="grow sub">ความลึก</span><span class="num">${Math.min(zs.depth,ZDEPTH)}/${ZDEPTH}</span></div><div class="steps">${Array.from({length:ZDEPTH+1},(_,i)=>`<i class="${i<zs.depth?'done':i===zs.depth?'now':''} ${i===ZDEPTH?'boss':''}"></i>`).join('')}</div></div>
- ${miniStatus()}${main}<div class="log">${zs.log.map(l=>`<p>${l}</p>`).join('')}</div></div>`}
+ return `<div class="stack">${zoneArt(z.id)}${z.train?'<div class="card story-card"><p>ก่อนออกเดินทาง ธาราเทพแนะนำให้ฝึกในป่าเล็กหลังเมือง เรียนรู้จังหวะต่อสู้และดูแลคู่หูของคุณ</p></div>':''}<button class="btn sm seal" data-a="story">อ่านบันทึกการเดินทาง</button><div><h2>${z.n}</h2><span class="sub">อสูร Lv ${z.lv[0]}–${z.lv[1]} · ออกได้เมื่อชนะบอส เจอทางออก หรือพ่ายแพ้</span></div>
+ <section class="stack forest-travel-stage"><div class="card stack forest-depth" style="gap:6px"><div class="row"><span class="grow sub">ความลึก</span><span class="num">${Math.min(zs.depth,ZDEPTH)}/${ZDEPTH}</span></div><div class="steps">${Array.from({length:ZDEPTH+1},(_,i)=>`<i class="${i<zs.depth?'done':i===zs.depth?'now':''} ${i===ZDEPTH?'boss':''}"></i>`).join('')}</div></div>
+ ${miniStatus()}${main}</section></div>`}
 // @soulbeast-end 0380-vZone
 // @soulbeast-unit 0454-forestDetail
 

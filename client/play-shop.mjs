@@ -1,3 +1,4 @@
+import {withLoading} from './online-loading.mjs';
 // Android only. Prices come from Google Play; entitlement and account ownership come from the server.
 export async function openPlayShop({client,code,native,config,notify,translate=text=>text,onUpdated=()=>{}}){
  const caps=await native.getCapabilities();
@@ -21,7 +22,7 @@ export async function openPlayShop({client,code,native,config,notify,translate=t
   const button=document.createElement('button');button.className='btn full';button.textContent=translate(pack.name)+' · '+product.formattedPrice;buttons.push(button);
   const old=catalog.orders?.find(o=>o.pack===pack.id&&o.code===code&&o.status==='reserved');
   button.disabled=pack.promotion&&catalog.promotions?.includes(pack.id)&&!old;
-  button.onclick=async()=>{
+  button.onclick=()=>withLoading(dialog,translate('กำลังดำเนินการซื้อและตรวจคูปอง…'),async()=>{
    buttons.forEach(b=>{b.disabled=true;});status.textContent=translate('กำลังดำเนินการ…');
    try{
     const r=await api({action:'create',pack_id:pack.id,code,request_id:crypto.randomUUID()}),order=r.order;
@@ -31,7 +32,7 @@ export async function openPlayShop({client,code,native,config,notify,translate=t
     status.textContent=translate(result.credited?'ตรวจสอบและเพิ่มคูปองแล้ว':'รอการตรวจสอบ');await onUpdated();
    }catch{status.textContent=translate('รายการยังไม่สำเร็จ กรุณาเปิดร้านอีกครั้งเพื่อตรวจรายการค้าง');}
    finally{buttons.forEach(b=>{b.disabled=true;});}
-  };dialog.append(button);
+  });dialog.append(button);
  }
  const close=document.createElement('button');close.className='btn';close.textContent=translate('ปิด');close.onclick=()=>dialog.close();dialog.append(close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();
 }

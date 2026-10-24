@@ -2,6 +2,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),crypto=require('crypto');
 let authenticated=true,verified=true,account='11111111-1111-4111-8111-111111111111',tables={},revision=0;const rows=[],receipts=new Map();
 const db={auth:{getUser:async()=>({data:{user:authenticated?{id:account,email:'qa@example.invalid',email_confirmed_at:verified?'2026-10-22':null}:null},error:!authenticated})},rpc:async(name,args)=>{
+ if(name==='sb_player_sync_name'){const c=rows.find(c=>c.account_id===args.p_account&&c.env===args.p_env&&c.code===args.p_code);if(!c)return {error:{message:'character_not_owned'}};if(args.p_renamed_at>=Number(c.name_changed_at||0)){c.name=args.p_name;c.name_changed_at=args.p_renamed_at;}return {data:null};}
  if(name==='sb_player_account_command'){
   const {p_action:a,p_account:id,p_env:env,p_data:d}=args;
   if(a==='capacity')return {data:{used:rows.filter(c=>c.account_id===id&&c.status!=='deleted').length,limit:5}};
@@ -34,6 +35,10 @@ const call=(body,auth=true)=>ctx.handler.fetch(new Request('https://example.inva
  r=await call({...saveRequest,_sbRequest:crypto.randomUUID()});v=await r.json();assert.equal(v.error,'save_conflict','A stale device must never overwrite a newer save');
  r=await call({...saveRequest,expectedSaveAt:undefined,_sbRequest:crypto.randomUUID()});v=await r.json();assert.equal(v.error,'save_conflict','Version omission is not a bypass');
  r=await call({action:'load',code});v=await r.json();assert.equal(JSON.parse(v.data).P.gold,155);assert.equal(v.accountSaveAt,freshAt);
+ v=await (await call({action:'camp_profile',code,name:'ผู้ผนึกชื่อใหม่'})).json();assert(v.ok,JSON.stringify(v));assert.equal(rows.find(c=>c.code===code).name,'ผู้ผนึกชื่อใหม่','Rename syncs the account registry immediately');
+ const renamedList=await (await call({action:'account_list'})).json();assert.equal(renamedList.characters.find(c=>c.code===code).name,'ผู้ผนึกชื่อใหม่');
+ v=await (await call({action:'camp_profile',code,name:'Rejected name'})).json();assert.equal(v.ok,false);assert.equal(rows.find(c=>c.code===code).name,'ผู้ผนึกชื่อใหม่','Rejected rename does not change metadata');
+ v=await (await call({action:'load',code})).json();assert.equal(JSON.parse(v.data).P.name,'ผู้ผนึกชื่อใหม่');
  v=await (await call({action:'account_delete',code})).json();assert.equal(v.error,'delete_confirmation_required');
  v=await (await call({action:'account_delete',code,confirm:true})).json();assert(v.ok,JSON.stringify(v));assert(v.deleted);
  v=await (await call({action:'load',code})).json();assert.equal(v.error,'character_deleted');

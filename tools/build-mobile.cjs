@@ -6,7 +6,7 @@ const html=fs.readFileSync(path.join(root,'accounts-staging.html'),'utf8');
 const scripts=[...html.matchAll(/(?:src|href)="\.\/((?:game-[^"]+\.(?:js|css)))"/g)].map(x=>x[1]);
 fs.mkdirSync(out,{recursive:true});
 for(const f of scripts)fs.copyFileSync(path.join(root,f),path.join(out,f));
-const clientFiles=['account-client.mjs','account.css','coupon-shop.css','topup-session.mjs','topup-email.mjs','billing-client.mjs','play-shop.mjs','production-shop.mjs'];
+const clientFiles=['account-client.mjs','account.css','coupon-shop.css','topup-session.mjs','topup-email.mjs','billing-client.mjs','play-shop.mjs','production-shop.mjs','online-loading.mjs'];
 fs.mkdirSync(path.join(out,'client'),{recursive:true});for(const f of clientFiles)fs.copyFileSync(path.join(root,'client',f),path.join(out,'client',f));
 fs.mkdirSync(path.join(out,'content'),{recursive:true});fs.copyFileSync(path.join(root,'content/billing-channels.json'),path.join(out,'content/billing-channels.json'));
 fs.cpSync(path.join(root,'assets'),path.join(out,'assets'),{recursive:true});

@@ -17,10 +17,26 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  assert.equal(r("BattleScenery.resolve({meta:999}).key"),'forest');
  r("S.battle={v:4,kind:'wild',meta:7,enemies:[wildUnit('kodama',3,0)],allies:[playerUnit()],round:1,queue:[],cur:'p',log:[],target:0,atarget:0,menu:'main',over:null,used:[],fx:[]};");
  const before=r('JSON.stringify(S.battle)'),html=r('vBattle()');assert(html.includes('data-battle-scene="training"'));assert(html.includes('data-v="target:0"'));assert(html.includes('data-v="ally:0"'));assert(html.includes('battle-scenery-title'));assert.equal(r('JSON.stringify(S.battle)'),before);
+ // Both active and finished fights must render just one card set and one target per unit.
+ r('S.battle.cur=S.battle.allies[0].id');
+ for(const finished of [false,true]){
+  r('S.battle.over='+(finished?JSON.stringify({res:'win',title:'ชัยชนะ',lines:['ได้ EXP 198 · 73 เหรียญ']}):'null'));
+  const view=r('vBattle()');
+  assert.equal((view.match(/class="battle-vitals battle-scenery"/g)||[]).length,1);
+  assert(!view.includes('class="side"'),'Legacy card rows must not remain behind the arena');
+  assert(!view.includes('data-detail-u='),'No duplicate hidden effect targets');
+  assert(!view.includes('data-a="battleDetails"'),'No control to reveal the removed card layer');
+  for(const target of ['target:0','ally:0'])assert.equal(view.split('data-v="'+target+'"').length-1,1,target);
+  if(finished){assert(view.includes('data-v="done"'));assert(view.includes('ได้ EXP 198 · 73 เหรียญ'));}
+  else assert(view.includes('data-v="sk:attack"'));
+ }
+ r('S.battle.over=null');
  for(const mode of ['pvp','world','camp','guildwar']){
   r("S.battle.allies[0].owner=0;S.battle.enemies[0].owner=1;");
   const html=r(`compactOnlineBattle('${mode}',{battle:S.battle,status:'finished',me:0,players:[],winner:0})`);
   assert(html.includes('online-combat-board battle-scenery'));assert(html.includes('data-battle-scene="'+(mode==='world'?'world':mode==='pvp'?'arena':'fortress')+'"'));
+  assert.equal((html.match(/class="online-combat-scroll"/g)||[]).length,['pvp','world'].includes(mode)?1:0,'PVP and world boss use the separate scrollable card area');
+  if(mode==='pvp'){assert(html.includes('data-a="pvpTarget"'));assert(html.includes('data-a="pvpFriend"'));assert(html.indexOf('online-combat-scroll')<html.indexOf('online-combat-footer'));}
  }
  for(const key of JSON.parse(r('JSON.stringify(Object.keys(BattleScenery.themes))')))assert(fs.existsSync('assets/ui/battle-frames/'+key+'.svg'));
  console.log('PASS '+file+': seven locations, bosses/throne/tower/PVP/world/camp/guildwar, actual battle cards/target actions and unchanged state');

@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "method": "built-in ImageGen",
+  "composition": "rarity background + transparent frame + live portrait/meters/status",
+  "assets": [
+    {
+      "path": "assets/ui/painted-cards/background-common.png",
+      "sha256": "e0eba2ad525e9850b985c356bfa4a5b6dc2d4f15f7190fa234c4a4a852363f5a",
+      "bytes": 2549178,
+      "prompt": "Generate a standalone painted BACKGROUND LAYER for a premium SoulBeast RPG character status card, matching the attached fantasy game card style reference. Landscape 2:1 composition, full bleed. BACKGROUND ONLY: no characters, no portraits, no frames, no border, no text, no numbers, no bars, no UI or icons. The left 35% will later hold a circular portrait and right 65% will hold live name/HP/MP, so keep both areas very dark, low contrast and calm. Put rich environmental storytelling and magical detail at the distant upper and lower margins, atmospheric cinematic realistic fantasy illustration, subtle depth, polished game art. Strongly dark navy/black middle to preserve white text legibility. Theme: ordinary beasts: lush emerald woodland glade, mossy tree roots and a tiny distant sunlit opening, silver-blue mist, grounded natural materials, restrained magical atmosphere."
+    },
+    {
+      "path": "assets/ui/painted-cards/background-rare.png",
+      "sha256": "07f9b7eba6affdc3f3f2488a5f6098b72d12dbebfbcbdc280be8a0a1adbfbf68",
+      "bytes": 2421585,
+      "prompt": "Generate a standalone painted BACKGROUND LAYER for a premium SoulBeast RPG character status card, matching the attached fantasy game card style reference. Landscape 2:1 composition, full bleed. BACKGROUND ONLY: no characters, no portraits, no frames, no border, no text, no numbers, no bars, no UI or icons. The left 35% will later hold a circular portrait and right 65% will hold live name/HP/MP, so keep both areas very dark, low contrast and calm. Put rich environmental storytelling and magical detail at the distant upper and lower margins, atmospheric cinematic realistic fantasy illustration, subtle depth, polished game art. Strongly dark navy/black middle to preserve white text legibility. Theme: rare beasts: enchanted moonlit lake with violet aurora, delicate crystalline flowers and distant waterfalls at the far edges, blue-violet and cyan palette, clearly more magical than ordinary woodland."
+    },
+    {
+      "path": "assets/ui/painted-cards/background-legendary.png",
+      "sha256": "b416a2c7b28f15b6a8a645560d6d646063727e854670690e6e0460a782b572af",
+      "bytes": 2377739,
+      "prompt": "Generate a standalone painted BACKGROUND LAYER for a premium SoulBeast RPG character status card, matching the attached fantasy game card style reference. Landscape 2:1 composition, full bleed. BACKGROUND ONLY: no characters, no portraits, no frames, no border, no text, no numbers, no bars, no UI or icons. The left 35% will later hold a circular portrait and right 65% will hold live name/HP/MP, so keep both areas very dark, low contrast and calm. Put rich environmental storytelling and magical detail at the distant upper and lower margins, atmospheric cinematic realistic fantasy illustration, subtle depth, polished game art. Strongly dark navy/black middle to preserve white text legibility. Theme: legendary beasts: ancient celestial sanctuary floating above clouds, distant golden monumental arches, constellations and starlight, royal purple and gold accents, magnificent sacred atmosphere."
+    },
+    {
+      "path": "assets/ui/painted-cards/background-solar.png",
+      "sha256": "7deca2ebfce60d627540c3ffe897f05fa42d1b1810d372ea2c044be3e4b18c92",
+      "bytes": 2211576,
+      "prompt": "Generate a standalone painted BACKGROUND LAYER for a premium SoulBeast RPG character status card, matching the attached fantasy game card style reference. Landscape 2:1 composition, full bleed. BACKGROUND ONLY: no characters, no portraits, no frames, no border, no text, no numbers, no bars, no UI or icons. The left 35% will later hold a circular portrait and right 65% will hold live name/HP/MP, so keep both areas very dark, low contrast and calm. Put rich environmental storytelling and magical detail at the distant upper and lower margins, atmospheric cinematic realistic fantasy illustration, subtle depth, polished game art. Strongly dark navy/black middle to preserve white text legibility. Theme: highest Eclipse Legendary beasts: cosmic eclipse above a distant obsidian sanctuary, ember-red streams and black-gold celestial rings, crimson nebula at edges, spectacular yet extremely dark behind live UI, regal red black gold palette."
+    },
+    {
+      "path": "assets/ui/painted-cards/background-soulkeeper.png",
+      "sha256": "96d9da162e0658dea50ab0d89d210d581fb0a0a809ec1864ba0d5bd40dabbf4c",
+      "bytes": 2224652,
+      "prompt": "Generate a standalone painted BACKGROUND LAYER for a premium SoulBeast RPG character status card, matching the attached fantasy game card style reference. Landscape 2:1 composition, full bleed. BACKGROUND ONLY: no characters, no portraits, no frames, no border, no text, no numbers, no bars, no UI or icons. The left 35% will later hold a circular portrait and right 65% will hold live name/HP/MP, so keep both areas very dark, low contrast and calm. Put rich environmental storytelling and magical detail at the distant upper and lower margins, atmospheric cinematic realistic fantasy illustration, subtle depth, polished game art. Strongly dark navy/black middle to preserve white text legibility. Theme: human Soulkeepers: ancient eastern fantasy city under moonlight, elegant pagoda silhouettes at bottom right, distant sacred mountain silhouettes, swirling golden seal particles and subtle red silk at extreme corners, aristocratic black gold with crimson accents."
+    },
+    {
+      "path": "assets/ui/painted-cards/frame-beast.png",
+      "sha256": "7140463e883906ea5292ad38e88e36a95b059f62ae9e25118c07e9d3c2a194b6",
+      "bytes": 1175213,
+      "prompt": "Create one isolated premium fantasy RPG CARD FRAME OVERLAY as a genuine transparent PNG, landscape 2:1. Match the attached character card reference's luxurious dimensional engraved metal. ONLY a rounded rectangular outer frame, no background, no portrait ring, no character, no inset compartments, no UI, no text, no bars, no numbers. The ENTIRE large center (at least central 88% width and 80% height) must be completely transparent, not painted black. Rounded corners with smooth sculpted arcs; frame rails stay narrow within outer 4% of width and 7% of height so they cannot cover real character data. Delicate dimensional bevels, tiny restrained gems at the corners and midpoint, very elegant craftsmanship, complete frame fully inside canvas. Clear alpha outside and inside the frame. Do not draw any lettering. Palette/theme: ancient silver and warm gold alloy with subtle violet sapphire gems, mystical beast sigil motifs, softly curved vine-like metal engraving"
+    },
+    {
+      "path": "assets/ui/painted-cards/frame-soulkeeper.png",
+      "sha256": "51c8ba53522ad4d0463377a19116bdf19c99599d9c772f8ff05f4293c6940f71",
+      "bytes": 942895,
+      "prompt": "Create one isolated premium fantasy RPG CARD FRAME OVERLAY as a genuine transparent PNG, landscape 2:1. Match the attached character card reference's luxurious dimensional engraved metal. ONLY a rounded rectangular outer frame, no background, no portrait ring, no character, no inset compartments, no UI, no text, no bars, no numbers. The ENTIRE large center (at least central 88% width and 80% height) must be completely transparent, not painted black. Rounded corners with smooth sculpted arcs; frame rails stay narrow within outer 4% of width and 7% of height so they cannot cover real character data. Delicate dimensional bevels, tiny restrained gems at the corners and midpoint, very elegant craftsmanship, complete frame fully inside canvas. Clear alpha outside and inside the frame. Do not draw any lettering. Palette/theme: royal warm gold with ruby-red gems and flowing red filigree, a heroic human Soulkeeper's ceremonial frame"
+    }
+  ]
+}

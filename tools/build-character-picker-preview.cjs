@@ -1,0 +1,10 @@
+const fs=require('fs');
+let html=require('./read-game-document.cjs')('accounts-staging.html');
+const fixture=require('./game-context.cjs')('build/staging-index.html').run('JSON.stringify(S)');
+const samples=[{code:'PREVIEW000000001',name:'ผู้พิทักษ์จันทรา',cls:'swordsman',gender:'male',lv:18},{code:'PREVIEW000000002',name:'จอมเวทแสงดาว',cls:'archmage',gender:'female',lv:35},{code:'PREVIEW000000003',name:'ผู้เชื่อมวิญญาณ',cls:'spiritlord',gender:'male',lv:30}];
+const setup=`Sound.fx=()=>{};Sound.sync=()=>{};ACCOUNT_GAME.user={id:'offline-art-preview',email:'preview@example.invalid',email_confirmed_at:'2026'};ACCOUNT_GAME.mode='list';ACCOUNT_GAME.characters=${JSON.stringify(samples)};ACCOUNT_GAME.slotsUsed=3;ACCOUNT_GAME.client={identity:async()=>ACCOUNT_GAME.user,game:async(action,d)=>{if(action==='load'){const c=ACCOUNT_GAME.characters.find(c=>c.code===d.code),s=${fixture};Object.assign(s.P,c);return {ok:true,data:JSON.stringify(s),at:1};}if(action==='account_list')return {ok:true,characters:ACCOUNT_GAME.characters,slotsUsed:3};return {ok:false,error:'offline_preview'};}};render();`;
+const boot='window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});';
+if(!html.includes(boot))throw Error('Missing bootstrap');
+html=html.replace('<head>','<head><base href="/"><script>Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Offline portrait preview"));</script>').replace(boot,setup);
+fs.writeFileSync('build/character-picker-preview.html',html);
+console.log('Built offline character picker using actual account UI and official class/gender art');

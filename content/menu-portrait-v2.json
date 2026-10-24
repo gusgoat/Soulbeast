@@ -1,0 +1,104 @@
+{
+  "version": 2,
+  "mode": "built-in ImageGen",
+  "assets": [
+    {
+      "id": "panel-equipment",
+      "path": "assets/ui/menu-portrait/panel-equipment.webp",
+      "bytes": 145000,
+      "sha256": "6ef64f3f82e9fbf623fd087ba1cf08b09b4b04313a43a8ace65f589b4133a71a",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Equipped armor: antique armor, sword, crown and gauntlet grouped at the lower-right edge."
+    },
+    {
+      "id": "panel-supplies",
+      "path": "assets/ui/menu-portrait/panel-supplies.webp",
+      "bytes": 174088,
+      "sha256": "c92e3837e1ba12528cc6ae9698c5f35f6cf94f4a905745b629a8340c821c69b5",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Travel supplies: leather satchel, two small potion bottles, herbs and folded sealing parchment at lower-right."
+    },
+    {
+      "id": "panel-retinue",
+      "path": "assets/ui/menu-portrait/panel-retinue.webp",
+      "bytes": 146592,
+      "sha256": "d3e7f3385f23e3847f2b7f1712e0d4da4e139460a3308ff6682d412a53a08f59",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Beast compendium and contracted retinue: subtle ghostly dragon and beast silhouettes framing the lower corners, a tiny magical pact seal at upper-left."
+    },
+    {
+      "id": "panel-stats",
+      "path": "assets/ui/menu-portrait/panel-stats.webp",
+      "bytes": 146056,
+      "sha256": "63ac13889557810a945c458542a6b396ba36a65709ef372510ab1f3b744c4e8c",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Character statistics: understated celestial astrolabe and engraved compass at lower-right."
+    },
+    {
+      "id": "panel-journal",
+      "path": "assets/ui/menu-portrait/panel-journal.webp",
+      "bytes": 211504,
+      "sha256": "acc1f53167a545ea2d2883bf7ea060d313b7820f7402eb4621375a49bb4ebbc9",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Quest journal: rolled map, sealed parchment and quill at lower-right."
+    },
+    {
+      "id": "panel-inventory",
+      "path": "assets/ui/menu-portrait/panel-inventory.webp",
+      "bytes": 172334,
+      "sha256": "d0122c55c005bd0dc4d4975519aed8d1de4f98664279b53a3ff00f868dd0dbfb",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Stored inventory: elegant worn adventurer backpack with rolled blanket and gear at lower-right."
+    },
+    {
+      "id": "panel-skills",
+      "path": "assets/ui/menu-portrait/panel-skills.webp",
+      "bytes": 166152,
+      "sha256": "1f14acfb2991a6a47773608bb003d6f3bb96a64ba7a69c2183b0b2cd69f7bf53",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Learned skills: closed arcane spellbook and faint rune circle at lower-right."
+    },
+    {
+      "id": "panel-workshop",
+      "path": "assets/ui/menu-portrait/panel-workshop.webp",
+      "bytes": 141458,
+      "sha256": "1c12a987bff8fa33e9fe1c2da20d11165ca7dd42eb58cb85f6342adb5e891148",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Blacksmith crafting: small anvil, hammer and cooled ingots at lower-right."
+    },
+    {
+      "id": "panel-market",
+      "path": "assets/ui/menu-portrait/panel-market.webp",
+      "bytes": 174146,
+      "sha256": "022920f2b72641c6579ef678f1c1a6af4612249bb2cb065339b3255f7412b104",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Shop: small coin purse and ornate merchant balance scale at lower-right."
+    },
+    {
+      "id": "panel-settings",
+      "path": "assets/ui/menu-portrait/panel-settings.webp",
+      "bytes": 127420,
+      "sha256": "855b145eaefb3a4b861d9c7795fafaaae06c9446bb56ba2c8289c67b14d57f27",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Settings: restrained bronze mechanical gears and small blue crystal at lower-right."
+    },
+    {
+      "id": "panel-promotion",
+      "path": "assets/ui/menu-portrait/panel-promotion.webp",
+      "bytes": 153102,
+      "sha256": "a52919eb889f20ff1d0ebfd69407bc6845958303e16797db680ac9f4785fc7df",
+      "prompt": "Use case: stylized-concept. Create a NEW portrait 2:3 mobile fantasy RPG information-panel background for SoulBeast. Designed for narrow phone cards with long vertically flowing live text. Full-bleed continuous dark midnight navy (#0b1825) parchment-like enchanted stone atmosphere from TOP TO BOTTOM. No horizontal split, no abruptly ending artwork, no frame, no border, no text, no letters, no numbers, no UI. Central 85% almost uniform quiet darkness, low contrast, white text must remain easy to read. Beautiful realistic dimensional fantasy art, antique gold and blue accents, very sparse ornaments ONLY within outer 8% edges or bottom 15%; no large objects behind text. Delicate atmospheric mist connects entire vertical canvas without seams. All corners must remain inside safe margins. Context: Class advancement: a small ascending ceremonial staircase and awakening soul crystal at lower-right."
+    },
+    {
+      "id": "frame-common-white",
+      "path": "assets/ui/menu-portrait/frame-common-white.png",
+      "bytes": 1696353,
+      "sha256": "b82bec5fc67f0579cc97ac32d061e7feb013e5178fd89eb0e614355ef4a5fcbb",
+      "prompt": "Use case: stylized-concept. Create one NEW premium fantasy RPG character-card FRAME OVERLAY, portrait 2:3 aspect ratio. Actual transparent background and entirely transparent empty center. Rounded rectangular complete frame following the canvas edges within 3% margins, beautiful 3D sculpted polished silver-white metal, one small pearl gem at corners. Elegant SoulBeast fantasy style, restrained thin rails, graceful filigree scrolls hugging corners, fine bevels and specular reflections, refined dimensional ornamentation. All top bottom left right rails connected and complete. Center 85% absolutely empty transparent. No background scene, no character, no words, no numbers, no watermark. White/green/blue frame identity must be unmistakable; no gold or red or purple metal. Precise front view for nine-slice scaling onto narrow phone cards of varying height."
+    },
+    {
+      "id": "frame-common-green",
+      "path": "assets/ui/menu-portrait/frame-common-green.png",
+      "bytes": 1681833,
+      "sha256": "9c83ca828d43b98564b014d85c99bc4e328fc58795f89a1ee1e34c274d832e3b",
+      "prompt": "Use case: stylized-concept. Create one NEW premium fantasy RPG character-card FRAME OVERLAY, portrait 2:3 aspect ratio. Actual transparent background and entirely transparent empty center. Rounded rectangular complete frame following the canvas edges within 3% margins, beautiful 3D sculpted emerald green silver metal, two paired emerald gems at corners. Elegant SoulBeast fantasy style, restrained thin rails, graceful filigree scrolls hugging corners, fine bevels and specular reflections, refined dimensional ornamentation. All top bottom left right rails connected and complete. Center 85% absolutely empty transparent. No background scene, no character, no words, no numbers, no watermark. White/green/blue frame identity must be unmistakable; no gold or red or purple metal. Precise front view for nine-slice scaling onto narrow phone cards of varying height."
+    },
+    {
+      "id": "frame-common-blue",
+      "path": "assets/ui/menu-portrait/frame-common-blue.png",
+      "bytes": 1613922,
+      "sha256": "204829e5c4f50f0cfa39e5114e8ee38e0b35d31c58095775d72e27c62ebb67e3",
+      "prompt": "Use case: stylized-concept. Create one NEW premium fantasy RPG character-card FRAME OVERLAY, portrait 2:3 aspect ratio. Actual transparent background and entirely transparent empty center. Rounded rectangular complete frame following the canvas edges within 3% margins, beautiful 3D sculpted sapphire ice-blue silver metal, three small sapphire gems at corners. Elegant SoulBeast fantasy style, restrained thin rails, graceful filigree scrolls hugging corners, fine bevels and specular reflections, refined dimensional ornamentation. All top bottom left right rails connected and complete. Center 85% absolutely empty transparent. No background scene, no character, no words, no numbers, no watermark. White/green/blue frame identity must be unmistakable; no gold or red or purple metal. Precise front view for nine-slice scaling onto narrow phone cards of varying height."
+    }
+  ]
+}

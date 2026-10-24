@@ -112,7 +112,7 @@ const communityBaseGo=go;
 // @soulbeast-end 0596-communityBaseGo
 // @soulbeast-unit 0597-go
 
-go=function(screen){if(GACHA.busy){toast(ct('กำลังตรวจผลสุ่ม กรุณารอสักครู่','Checking draw results, please wait','正在核验抽奖结果，请稍候'));return;}if(['gacha','friends'].includes(screen)&&communityBattleBusy()){toast(communityError('finish other battle'));return;}communityBaseGo(screen);if(screen==='gacha')gachaCall();if(screen==='friends')communityCall('social_sync',{},true);};
+go=function(screen){if(GACHA.busy){toast(ct('กำลังตรวจผลสุ่ม กรุณารอสักครู่','Checking draw results, please wait','正在核验抽奖结果，请稍候'));return;}if(['gacha','friends'].includes(screen)&&communityBattleBusy()){toast(communityError('finish other battle'));return;}communityBaseGo(screen);if(screen==='gacha')return withOnline('gacha_status',()=>gachaCall());if(screen==='friends')return communityCall('social_sync',{},true);};
 // @soulbeast-end 0597-go
 // @soulbeast-unit 0598-communityBaseRender
 

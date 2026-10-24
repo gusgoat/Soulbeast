@@ -27,6 +27,8 @@ jobs:
       - name: Verify account and billing boundaries
         run: |
           npm run test:accounts
+          npm run test:names
+          npm run test:loading
           node tools/test-platform-billing.cjs
           npm run test:play
           npm run test:production

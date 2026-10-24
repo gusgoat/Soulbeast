@@ -81,16 +81,16 @@ function guildConfirm(action,extra,message){GUILD_UI.confirm={action,extra,messa
 handlers.guildConfirmCancel=()=>{GUILD_UI.confirm=null;render();};
 // @soulbeast-end 0787-handlers-guildConfirmCancel
 // @soulbeast-unit 0788-handlers-guildConfirmAccept
-handlers.guildConfirmAccept=()=>{const p=GUILD_UI.confirm;if(!p)return;GUILD_UI.confirm=null;guildRequest(p.action,p.extra);};
+handlers.guildConfirmAccept=()=>{const p=GUILD_UI.confirm;if(!p)return;GUILD_UI.confirm=null;return guildRequest(p.action,p.extra);};
 // @soulbeast-end 0788-handlers-guildConfirmAccept
 // @soulbeast-unit 0789-handlers-guildRefresh
 handlers.guildRefresh=()=>guildRequest('guild_sync',{search:GUILD_UI.search,page:GUILD_UI.page});
 // @soulbeast-end 0789-handlers-guildRefresh
 // @soulbeast-unit 0790-handlers-guildPage
-handlers.guildPage=p=>{GUILD_UI.page=Number(p)||0;guildRequest('guild_sync',{search:GUILD_UI.search,page:GUILD_UI.page});};
+handlers.guildPage=p=>{GUILD_UI.page=Number(p)||0;return guildRequest('guild_sync',{search:GUILD_UI.search,page:GUILD_UI.page});};
 // @soulbeast-end 0790-handlers-guildPage
 // @soulbeast-unit 0791-handlers-guildSearch
-handlers.guildSearch=()=>{GUILD_UI.search=document.getElementById('guildSearch')?.value||'';GUILD_UI.page=0;guildRequest('guild_sync',{search:GUILD_UI.search});};
+handlers.guildSearch=()=>{GUILD_UI.search=document.getElementById('guildSearch')?.value||'';GUILD_UI.page=0;return guildRequest('guild_sync',{search:GUILD_UI.search});};
 // @soulbeast-end 0791-handlers-guildSearch
 // @soulbeast-unit 0792-handlers-guildRetry
 handlers.guildRetry=()=>guildRequest('',{},true);
@@ -142,7 +142,7 @@ vGuildWar=function(){let h=registeredGuildWarView(),d=GUILD_UI.data;if(d?.guild)
 // @soulbeast-end 0865-vGuildWar
 // @soulbeast-unit 0866-handlers-guildDefenseSave
 
-handlers.guildDefenseSave=()=>{const pets=[...campSelection('campGuardPets')];if(!pets.length)return toast('เลือกอสูรตั้งรับก่อน');guildRequest('guild_defense',{pets});};
+handlers.guildDefenseSave=()=>{const pets=[...campSelection('campGuardPets')];if(!pets.length)return toast('เลือกอสูรตั้งรับก่อน');return guildRequest('guild_defense',{pets});};
 // @soulbeast-end 0866-handlers-guildDefenseSave
 // @soulbeast-unit 0872-handlers-guildBattleClose
 

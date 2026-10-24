@@ -379,7 +379,7 @@ sealChance=function(e,pow){return e?.bossHelper?0:balanceSealChance(e,pow);};
 // @soulbeast-end 0757-sealChance
 // @soulbeast-unit 0829-handlers-battleDetails
 
-// Compact HP overview stays beside the commands while detailed cards/log remain scrollable.
+// Compatibility handler for older local UI state; the arena is the only combat card set.
 handlers.battleDetails=function(){S.ui.battleDetails=!S.ui.battleDetails;render();};
 // @soulbeast-end 0829-handlers-battleDetails
 // @soulbeast-unit 0831-playBattleBase
@@ -388,12 +388,12 @@ const playBattleBase=vBattle;
 // @soulbeast-end 0831-playBattleBase
 // @soulbeast-unit 0832-vBattle
 vBattle=function(){let html=playBattleBase();const b=B();if(!b)return html;
- // Detailed cards are secondary: each effect ID belongs only to the visible portrait.
+ // Only the arena owns combat portraits and effect targets.
  html=html.replace(/data-u=/g,'data-detail-u=');
  if(!b.over){const start=html.lastIndexOf('<div class="panel">');if(start>=0){const hidden=!!S.ui.battleCommandsHidden,controls='<div class="battle-command-controls">'+(teamAutoAllowed()?'<button class="btn sm '+(S.ui.autoTeam?'pri':'')+'" data-a="teamAuto" aria-pressed="'+!!S.ui.autoTeam+'">ออโต้ทีม '+(S.ui.autoTeam?'เปิด':'ปิด')+'</button>':'')+(b.allies.length>1?'<button class="btn sm" data-a="bt" data-v="auto:1" aria-pressed="'+!!S.ui.autoPet+'">อสูรออโต้ '+(S.ui.autoPet?'เปิด':'ปิด')+'</button>':'')+'<button class="btn sm" data-a="battleCommands" aria-expanded="'+!hidden+'" aria-controls="battleCommandBody">'+(hidden?'แสดงคำสั่ง':'ซ่อนคำสั่ง')+'</button></div>';html=html.slice(0,start)+'<section class="battle-command-dock"><div id="battleCommandBody" class="battle-command-body" '+(hidden?'hidden':'')+'>'+html.slice(start,-6)+'</div>'+controls+'</section></div>';}}
 
  const side=(units,enemy)=>'<section class="battle-side-summary"><small>'+(enemy?'ศัตรู':'ทีมเรา')+'</small><div class="battle-side-units">'+units.map((u,i)=>statusBattleCard('<button class="battle-vital '+(u.hp<=0?'down ':'')+(b.cur===u.id?'acting ':'')+((enemy?b.target:b.atarget)===i?'selected':'')+'" data-a="bt" data-v="'+(enemy?'target:':'ally:')+i+'"><span class="battle-face" data-u="'+esc(u.id)+'">'+portrait(u.img||u.sp,28,{form:u.evo||0})+'</span><div class="battle-meter"><b><span class="battle-unit-name">'+esc(u.name)+'</span><small class="battle-level">Lv '+esc(u.lv)+'</small></b>'+bar(u.hp,u.st.hp)+'<small>HP '+u.hp+'/'+u.st.hp+'</small>'+bar(u.mp,u.st.mp,'mp')+'<small>MP '+u.mp+'/'+u.st.mp+'</small></div>'+(b.fx||[]).filter(f=>f.id===u.id).map(f=>'<span class="fx '+esc(f.c)+'">'+esc(f.t)+'</span>').join('')+'</button>',u)).join('')+'</div></section>';
- const overview='<div class="battle-vitals battle-scenery"'+BattleScenery.attributes(b)+'>'+BattleScenery.decoration(b)+side(b.enemies,true)+side(b.allies,false)+'</div><button class="btn sm" data-a="battleDetails">'+(S.ui.battleDetails?'ย่อรายละเอียด':'ดูรูปและสถานะการต่อสู้')+'</button>';
+ const overview='<div class="battle-vitals battle-scenery"'+BattleScenery.attributes(b)+'>'+BattleScenery.decoration(b)+side(b.enemies,true)+side(b.allies,false)+'</div>';
  return html.replace('<div class="field battle-enhanced">','<div class="field battle-enhanced">'+overview);
 };
 // @soulbeast-end 0832-vBattle

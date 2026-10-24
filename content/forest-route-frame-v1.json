@@ -1,0 +1,6 @@
+{
+  "tool": "image_gen built-in",
+  "asset": "assets/ui/forest-route-frame-v1.png",
+  "prompt": "Create a production game UI asset: ONE empty rounded rectangular fantasy frame for a mobile RPG forest route choice button, portrait aspect ratio 2:3. Transparent background AND entirely transparent hollow center. Frame fills canvas almost edge to edge, symmetrical rounded corners radius about 12% width. Elegant dimensional antique gold beveled metal double rim, dark teal enamel inlay, very delicate small ivy leaves and engraved botanical filigree confined to corners and thin edges. Restrained premium fantasy aesthetic, matches dark navy mobile fantasy game UI, warm soft metallic highlights. Border thickness about 3% of width, discreet corner ornaments maximum 8% width, no ornament projects into central content area. Flat front-facing orthographic UI overlay, crisp clean polished 3D relief, continuous straight middle rails suitable for 9-slice resizing to different heights. No letters, no words, no symbols, no pictures, no scenery, no objects in the central window. No filled panel. No drop shadow outside frame. Deliver only the isolated frame on genuine alpha transparency.",
+  "usage": "Nine-slice border overlay; 180px slices; no center fill."
+}

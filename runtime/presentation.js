@@ -398,6 +398,7 @@ itemIcon=function(id,size=44){if(id==='eternalSeal')return `<span class="eternal
 // @soulbeast-unit 0623-releaseArtButton
 
 function releaseArtButton(screen,image,title,sub){return `<button class="release-art-button" data-a="go" data-v="${screen}"><img src="assets/ui/${image}.webp" alt="" loading="lazy"><span><b translate="no">${title}</b><small translate="no">${sub}</small></span></button>`;}
+function couponShopButton(placement='menu'){const label=ct('ร้านคูปอง','Coupon Shop','兑换券商店');return `<button type="button" class="coupon-shop-entry coupon-shop-entry-${placement}" data-a="couponShop" aria-label="${esc(label)}" title="${esc(label)}" translate="no"><img src="assets/shop/coupon-shop-entry-square.png" alt="" width="1254" height="1254" decoding="async">${placement==='top'?'':`<span>${label}</span>`}</button>`;}
 // @soulbeast-end 0623-releaseArtButton
 // @soulbeast-unit 0640-beastFrameKind
 

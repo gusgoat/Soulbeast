@@ -63,7 +63,21 @@ export function productionPayments({catalog,command,snapshot,stripe,google,hash,
    enabled:{stripe:cfg.stripe_enabled&&cfg.stripe_prices_ready&&readiness.stripe,google_play:cfg.play_enabled&&readiness.google_play},packs:catalog.packs};
   payDemand(user?.id&&user.email_confirmed_at,'verified_account_required');
   if(b.action==='request_delete')return {ok:true,...await command('request_delete',user.id,{confirmed:b.confirmed===true})};
-  if(b.action==='status')return {ok:true,...await command('status',user.id,{})};
+  if(b.action==='status'){
+   const state=await command('status',user.id,{});
+   // Older renames already exist in the game but can predate registry syncing.
+   // Resolve only this account's recipients; codes and ownership never change.
+   const characters=await Promise.all((state.characters||[]).map(async c=>{
+    try{
+     const s=await snapshot(c.game_env||cfg.game_env,c.code);
+     if(s.mode!==(c.game_env||cfg.game_env))return c;
+     const row=s.tables?.Camps?.slice(1).find(r=>r[0]===c.code);
+     const profile=row&&JSON.parse(String(row[1]));
+     return typeof profile?.name==='string'&&profile.name.trim()?{...c,name:profile.name}:c;
+    }catch{return c;}
+   }));
+   return {ok:true,...state,characters};
+  }
   if(['checkout','create'].includes(b.action)){
    const provider=b.action==='checkout'?'stripe':'google_play';payDemand(readiness[provider],'provider_not_configured');
    payDemand(catalog.packs.some(p=>p.id===b.pack_id)&&/^[A-Z0-9]{12,16}$/.test(b.code||'')&&/^[a-f0-9-]{36}$/i.test(b.request_id||''),'bad_order');

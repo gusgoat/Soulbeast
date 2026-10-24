@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "mode": "built-in ImageGen",
+  "horizon": 0.55,
+  "crossfade": [
+    0.42,
+    0.58
+  ],
+  "assets": [
+    {
+      "id": "element-normal",
+      "path": "assets/ui/element-card-scenes/element-normal.webp",
+      "bytes": 331360,
+      "sha256": "558751eeaca9ee5b0e2880b2b4e1a793d0a38efe172038eade1adec713393c2d",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: neutral normal element: an old forest clearing with simple weathered stone and soft pearl gray mist, natural earthy brown and muted silver"
+    },
+    {
+      "id": "element-grass",
+      "path": "assets/ui/element-card-scenes/element-grass.webp",
+      "bytes": 328386,
+      "sha256": "35358e1f8ea62b688e3983a07dddb7e441ab8f458fdff43bb41f91eb7f37ff70",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: plant element: a lush living woodland, moss and twisting roots, emerald leaves and small glowing green sprouts"
+    },
+    {
+      "id": "element-water",
+      "path": "assets/ui/element-card-scenes/element-water.webp",
+      "bytes": 335428,
+      "sha256": "093ba7de9bcd603eb2489be4b1b2a14e5207c116bd211b6126edb4ebbf53abef",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: water element: a serene submerged temple and flowing deep blue water, turquoise caustics at the margins"
+    },
+    {
+      "id": "element-fire",
+      "path": "assets/ui/element-card-scenes/element-fire.webp",
+      "bytes": 269030,
+      "sha256": "cc363efc73b7169c7ff4d7cf24e0cb00b0d8cdbcd2e3d8d76f3540bd13a2f1b9",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: fire element: a volcanic cavern with a glowing lava stream, red-orange embers, black basalt, very subtle orange reflected light"
+    },
+    {
+      "id": "element-electric",
+      "path": "assets/ui/element-card-scenes/element-electric.webp",
+      "bytes": 317592,
+      "sha256": "707cbec0d59f6d224b7a8ffcc04a96c211e0b033db5b39a1ded825eafe1ddbbb",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: lightning/electric element: a storm-charged plateau with yellow electric arcs and distant thunderclouds, golden amber energy"
+    },
+    {
+      "id": "element-fighting",
+      "path": "assets/ui/element-card-scenes/element-fighting.webp",
+      "bytes": 339302,
+      "sha256": "6a4aed695bc8ed70f26531294e4a3395e53ce3a71b7f3176b45340a42c36a4f4",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: fighting element: an ancient martial training courtyard with worn stone flooring, red cloth banners and bronze braziers"
+    },
+    {
+      "id": "element-ice",
+      "path": "assets/ui/element-card-scenes/element-ice.webp",
+      "bytes": 316906,
+      "sha256": "d27e0f96c9056484a4ee08008459b6b0a6850c09f39fc3c4ac6fdcc4635c1055",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: ice element: a frozen palace cavern with blue ice crystals and snow, frosty cyan and white"
+    },
+    {
+      "id": "element-poison",
+      "path": "assets/ui/element-card-scenes/element-poison.webp",
+      "bytes": 283446,
+      "sha256": "b4184bcf4ab01df94a4e916e05181e492862f155eeffc7e5daf499ddaf57c1e7",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: poison element: a toxic marsh cave, glowing violet mushrooms and green vapor, emerald and purple chemical wisps"
+    },
+    {
+      "id": "element-flying",
+      "path": "assets/ui/element-card-scenes/element-flying.webp",
+      "bytes": 299792,
+      "sha256": "32ef63a41c81c052295dc87ccb4846f4a8c3f5b74fdbca6156c3268a2c599954",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: wind element: a high mountain passage with flowing pale teal air currents, feather-like clouds and airy silver-blue mist; no birds"
+    },
+    {
+      "id": "element-bug",
+      "path": "assets/ui/element-card-scenes/element-bug.webp",
+      "bytes": 367534,
+      "sha256": "f3cee7f1735f0a332569d61570aa681c0c5a020a5df5d9716cfbc9451ec78bbd",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: insect element: the floor of an ancient insect forest, amber resin, cocoon-like organic architecture, yellow-green chitin textures; no creatures"
+    },
+    {
+      "id": "element-ground",
+      "path": "assets/ui/element-card-scenes/element-ground.webp",
+      "bytes": 273334,
+      "sha256": "b56152200e1a3601792a0085e6e657dc4779311d21bd366caaa975ad7b37efe1",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: earth element: a deep terracotta canyon floor, layers of brown soil and ochre dust, warm earthen palette"
+    },
+    {
+      "id": "element-psychic",
+      "path": "assets/ui/element-card-scenes/element-psychic.webp",
+      "bytes": 306910,
+      "sha256": "dfe53b7481469a9ff4af260902c2d914ee1c47733834778ab6e81feaa0dfeaa1",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: psychic element: an otherworldly mind sanctuary, levitating violet stone fragments and subtle magenta concentric telekinetic ripples"
+    },
+    {
+      "id": "element-ghost",
+      "path": "assets/ui/element-card-scenes/element-ghost.webp",
+      "bytes": 279312,
+      "sha256": "8f2eced1c17b8a95b279a345d6d921869f68ce9dabbfb40cb73a55eddf657504",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: ghost element: an abandoned spectral shrine with translucent blue-white spirit flame and pale lavender fog, haunted atmosphere; no figures"
+    },
+    {
+      "id": "element-dark",
+      "path": "assets/ui/element-card-scenes/element-dark.webp",
+      "bytes": 215116,
+      "sha256": "572fe6cc6ec7cd20c2b3dcd385349cbabdc0b012a53d7cb15477b047358fdb0f",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: dark element: a moonless obsidian ruin, violet-black mist and faint crimson shadows, eerie dark purple"
+    },
+    {
+      "id": "element-rock",
+      "path": "assets/ui/element-card-scenes/element-rock.webp",
+      "bytes": 285336,
+      "sha256": "d5eac3009158a00ccbff9a004ca8b2adda37074a4cf992a281da2672e82911c7",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: rock element: a rugged gray stone cavern, faceted granite pillars and mineral veins, slate gray and muted gold"
+    },
+    {
+      "id": "element-dragon",
+      "path": "assets/ui/element-card-scenes/element-dragon.webp",
+      "bytes": 299018,
+      "sha256": "a4c4c3603c7aafe4866f53d6363746b56aab224c46b03d5ab782e1e7785c4288",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: dragon element: a vast dragon sanctuary of scale-carved stone, ancient curled architectural ribs, deep indigo and restrained golden draconic runes; no dragon creatures"
+    },
+    {
+      "id": "element-fairy",
+      "path": "assets/ui/element-card-scenes/element-fairy.webp",
+      "bytes": 407350,
+      "sha256": "61db78912ee0b8c5f4e90f01189c78f83ac845fee05fe837fd6265bd6f7170c2",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: divine/fairy element: a sacred celestial garden temple, luminous ivory pillars and tiny pink-white magical lights, pearlescent gold and soft rose"
+    },
+    {
+      "id": "element-steel",
+      "path": "assets/ui/element-card-scenes/element-steel.webp",
+      "bytes": 238966,
+      "sha256": "923637043da7f4f4e2814b5b3b570b2e6311ba31dccdb00ef139028f46ffde7c",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: steel element: a forged steel citadel floor, brushed silver metal architecture, iron pillars and pale blue reflections"
+    },
+    {
+      "id": "class-sword",
+      "path": "assets/ui/element-card-scenes/class-sword.webp",
+      "bytes": 250852,
+      "sha256": "9b2ffcb4ffc7220c4ceb0e73068aaa6a8f55a68e57404d54e1bf5b6be562b551",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: swordsman: an elegant sword training hall, polished dark wood floor, crossed sword racks at the far edges, crimson banners and warm gold lamps"
+    },
+    {
+      "id": "class-shield",
+      "path": "assets/ui/element-card-scenes/class-shield.webp",
+      "bytes": 294494,
+      "sha256": "fd114b251fb6f39c455b643bc5930c398a5e70ed8b4e44b1a12e8a1c20a76c0f",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: gladiator/guardian: a fortified knight's bastion, monumental shields and stone ramparts at edges, bronze-green reflected light"
+    },
+    {
+      "id": "class-bow",
+      "path": "assets/ui/element-card-scenes/class-bow.webp",
+      "bytes": 351802,
+      "sha256": "f89901fac5807238b1fd0c4ba576d6b81e683c8eb7d062b48e5eccedb43eecc1",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: archer: a woodland archery pavilion with bow racks and distant targets at margins, green and warm silver light"
+    },
+    {
+      "id": "class-arcane",
+      "path": "assets/ui/element-card-scenes/class-arcane.webp",
+      "bytes": 348178,
+      "sha256": "76e7853bacae6bb2af0155259ff4b4187c0e5afe8a1d39c2bb806a1778ef9ff8",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: mage: a wizard's arcane study with spellbooks, violet runic circles and crystalline lamps at the margins"
+    },
+    {
+      "id": "class-grove",
+      "path": "assets/ui/element-card-scenes/class-grove.webp",
+      "bytes": 349390,
+      "sha256": "055ee38292b244142d8bad8db62cdd326e37f3646e5170fc2654ddd7e10e44c1",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: druid: a sacred living tree sanctuary, vine-wrapped pillars, oak roots and emerald firefly light"
+    },
+    {
+      "id": "class-shuriken",
+      "path": "assets/ui/element-card-scenes/class-shuriken.webp",
+      "bytes": 233788,
+      "sha256": "2c24a9f5bd3c4f24f3a8d641efd44edb1888543c206a30848116fe24bf22a8b9",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: ninja: a secret moonlit rooftop dojo, dark blue roof tiles, a few shuriken-shaped ornaments at edges, subdued violet lanterns"
+    },
+    {
+      "id": "class-summon",
+      "path": "assets/ui/element-card-scenes/class-summon.webp",
+      "bytes": 344210,
+      "sha256": "aa6d0a0f167549b25cba522c4ec0b7c184ae7fe559cea299b6ac486c73ac7744",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: summoner: an ancient summoning chamber with blue-gold ritual seals on the floor, celestial portals at outer edges"
+    },
+    {
+      "id": "class-daggers",
+      "path": "assets/ui/element-card-scenes/class-daggers.webp",
+      "bytes": 263948,
+      "sha256": "d55568e6a14dc319d42a53e3b688b42ac9518b4eb67eba381651434a435284bd",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: thief/assassin: a secret shadow guild hideout, concealed dagger racks and dark stone alley textures at edges, charcoal and amethyst light"
+    },
+    {
+      "id": "class-gun",
+      "path": "assets/ui/element-card-scenes/class-gun.webp",
+      "bytes": 297176,
+      "sha256": "dabc78a10786596caeae588a0571f3831fa851396549ee902800faf1a721ff7e",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: gunner: a fantasy gunsmith's firing gallery, brass mechanisms and gun racks at edges, smoky blue and amber light"
+    },
+    {
+      "id": "class-hammer",
+      "path": "assets/ui/element-card-scenes/class-hammer.webp",
+      "bytes": 291298,
+      "sha256": "5272dec70cca3be4556db291e145e74258ce47ded32487e1db08d6d2bf5acb37",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: blacksmith/mechanic: a dark fantasy forge workshop, a large anvil silhouette and gear mechanisms at the margins, warm ember reflections"
+    },
+    {
+      "id": "class-coin",
+      "path": "assets/ui/element-card-scenes/class-coin.webp",
+      "bytes": 301752,
+      "sha256": "297be2277b9d3693a50fc72983e6c1c396c4dfba50d0b278475f017accd8b239",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: merchant: an extravagant fantasy trading vault, coin chests, scales and silk at the edges, muted green and warm gold"
+    },
+    {
+      "id": "class-flask",
+      "path": "assets/ui/element-card-scenes/class-flask.webp",
+      "bytes": 296894,
+      "sha256": "07e13bbb83070cbedd75f9d28ab3ea910eab475459d33091fac9f19f52f91ce7",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: alchemist: an ancient potion laboratory with glass flasks, herbs and subtle turquoise and violet vapor at outer edges"
+    },
+    {
+      "id": "class-lyre",
+      "path": "assets/ui/element-card-scenes/class-lyre.webp",
+      "bytes": 382974,
+      "sha256": "18687810b6ce5df0398363dfff6c91f18b2599ba151122f4fd9c3bdf720c4aa1",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: bard: a magical concert pavilion, lyres and music-scroll motifs at edges, flowing rose-gold sound-light ribbons"
+    },
+    {
+      "id": "class-boss",
+      "path": "assets/ui/element-card-scenes/class-boss.webp",
+      "bytes": 268040,
+      "sha256": "fcaa71bca88a31a2b826dd306fcd57e218ddeab6668c1a09792d1011551860ff",
+      "prompt": "Create one NEW landscape 2:1 painted BACKGROUND LAYER for a SoulBeast RPG status card. Match the supplied reference's realistic detailed fantasy painting. Part of a modular series that must combine in ANY left/right pair: identical eye-level camera, identical horizon at 55% height, identical lighting direction from upper left, dark navy ambient shadow. Flat continuous foreground floor along the bottom at the same height. Keep the entire central 25% vertical band featureless dark blue-gray atmospheric mist so it can blend seamlessly into ANY other scene. Put thematic objects and colors ONLY in the outer left and right thirds, and keep central 65% height extremely calm and dark for live white text, HP/MP and a portrait that will be drawn later. The theme must be visually recognizable at edges but not overpower the game UI. No characters, no creatures, no portraits, no card frame, no borders, no text, no numbers, no UI. Full bleed, no margins. Theme: Demon Lord and world boss: a magnificent infernal throne chamber seen from INSIDE, black skeleton and rib-like columns at the far edges, an ominous dark throne silhouette at far right, restrained blood-red and violet lighting. Black bone and crimson architecture; no figures."
+    }
+  ]
+}

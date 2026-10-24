@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "mode": "built-in ImageGen",
+  "assets": [
+    {
+      "id": "panel-equipment",
+      "path": "assets/ui/menu-theme/panel-equipment.webp",
+      "bytes": 86594,
+      "sha256": "7ed1c6cb3a86e9351b1eda5134363a293cc1e7e4c21734f4b91d81879700714f",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: equipped gear: a tasteful suit of armor, crown, gauntlet and sword displayed together only at the far bottom-right corner, elegant equipment armory atmosphere"
+    },
+    {
+      "id": "panel-supplies",
+      "path": "assets/ui/menu-theme/panel-supplies.webp",
+      "bytes": 68486,
+      "sha256": "dea81be7b1abe03f2cd4bda7af9bcb689b5f213a554f3cc31921daa617fee1bf",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: travel bag contents: a small leather satchel, red and blue potion bottles, a folded parchment seal and a herb bundle only at the bottom-right corner"
+    },
+    {
+      "id": "panel-retinue",
+      "path": "assets/ui/menu-theme/panel-retinue.webp",
+      "bytes": 99458,
+      "sha256": "975b19e2fc860c070b2f187a981844dfdaa15ea42548f3a434e85b0fe43da2fc",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: bonded beast retinue: faint silhouettes of several noble fantasy beasts and a luminous circular pact seal only at the far corners, restrained blue-gold magical bond imagery"
+    },
+    {
+      "id": "panel-stats",
+      "path": "assets/ui/menu-theme/panel-stats.webp",
+      "bytes": 62066,
+      "sha256": "7ae4669c9b241d5e0e9e9a47069382b7ec42a4eb048059d1b58cb042bc3d4701",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: character information: a tiny antique compass and a quiet constellation chart only at the far bottom-right corner, restrained blue-gold accents"
+    },
+    {
+      "id": "panel-journal",
+      "path": "assets/ui/menu-theme/panel-journal.webp",
+      "bytes": 78852,
+      "sha256": "7427fad83c43a50cdad0c533f936f2dcbfdc7c7250b48e90c829ace7646dcb0d",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: quests, events and story: a folded old map, a sealed scroll and a tiny quill near the bottom-right corner, very subtle warm gold edge lighting"
+    },
+    {
+      "id": "panel-inventory",
+      "path": "assets/ui/menu-theme/panel-inventory.webp",
+      "bytes": 71408,
+      "sha256": "640c9271288f60566c5a750fa09a1dc29539b0547602019bf8127bceec73a841",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: travel bag and stored equipment: an ornate leather backpack partly open with the hint of a sword hilt and a few bundled items only at the far bottom-right corner"
+    },
+    {
+      "id": "panel-skills",
+      "path": "assets/ui/menu-theme/panel-skills.webp",
+      "bytes": 89338,
+      "sha256": "54a21f115c8543e58bf5b5350142c7a04accf1ed86cb1a95629d3e85a0d3ab99",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: abilities and classes: a closed arcane spellbook and a faint magic circle near one far corner, soft violet and gold accent light"
+    },
+    {
+      "id": "panel-workshop",
+      "path": "assets/ui/menu-theme/panel-workshop.webp",
+      "bytes": 72590,
+      "sha256": "584febcf840f3f51c832da86ae9a4f1bb40400ecc35c8347249827631fe0b5db",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: crafting and forge: a small anvil, a hammer and a softly glowing metal ingot at the bottom-right corner, restrained warm amber light"
+    },
+    {
+      "id": "frame-button",
+      "path": "assets/ui/menu-theme/frame-button.png",
+      "bytes": 566186,
+      "sha256": "d1e374e16980274ed019be01bd53cf2d18f73147e48a5c02a07c7df1edfc5877",
+      "prompt": "Generate an isolated elegant fantasy RPG BUTTON FRAME OVERLAY, genuine transparent PNG, wide horizontal 4:1. Only a rounded rectangular narrow dimensional engraved gold metal frame, restrained small sapphire details at left and right tips, smooth rounded corners. Match the supplied SoulBeast premium fantasy frame reference, but much simpler, very readable and quiet. Entire central 88% width and 65% height must be completely transparent. No background, no fill, no text, no characters, no bars. Thin straight middle rail segments and small corner details suitable for nine-slice scaling to buttons of different widths. No large center-top crest. Frame completely within canvas. Alpha transparency both inside and outside."
+    },
+    {
+      "id": "panel-market",
+      "path": "assets/ui/menu-theme/panel-market.webp",
+      "bytes": 66910,
+      "sha256": "2d193f5d382415bfae227feca3f2826bede474155a0e77c1a46521bf74c4d4cc",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: fantasy item shop: a small ornate coin purse, a few gold coins and a merchant scale only in a far corner, tasteful teal-gold accents"
+    },
+    {
+      "id": "frame-panel",
+      "path": "assets/ui/menu-theme/frame-panel.png",
+      "bytes": 661157,
+      "sha256": "0adb9d1de388c5c7267e52822265a518edfaa65870f032aa3d1754f5e8abc490",
+      "prompt": "Generate an isolated premium fantasy RPG INFORMATION BOX FRAME OVERLAY, genuine transparent PNG, landscape 2:1. Only a rounded rectangular very thin sculpted warm gold and aged silver frame, restrained tiny sapphire details at four curved corners. Match the supplied SoulBeast fantasy frame style but quieter and less ornate than a character card. Entire central 90% width and 84% height must be completely transparent. No background, no fill, no text, no numbers, no bars, no portraits. Straight rails between curved detailed corners, suitable for nine-slice scaling to very tall or wide text boxes. No center-top/bottom crest. Frame fully inside canvas, transparent inside and outside."
+    },
+    {
+      "id": "panel-settings",
+      "path": "assets/ui/menu-theme/panel-settings.webp",
+      "bytes": 62654,
+      "sha256": "b60efaca7c6584c41057b16ca50537c752ca39e7d207fec0f89077d5c102448e",
+      "prompt": "Create one NEW premium fantasy RPG INFORMATION PANEL BACKGROUND for SoulBeast, matching the reference style. Landscape 2:1, full bleed, no frame, no text, no numbers, no icons or UI, no character portrait. The central 80% of this panel must be almost uniform dark navy-black with very low contrast, intended for long paragraphs of readable white text. Keep sparse themed decorative objects confined to a small far corner, no more than 15% of the image area, dark and understated. Subtle dimensional realism and elegant gold-blue fantasy materials. No busy scene, no bright glow behind the text area, no dominant object. Be quiet, refined and cohesive with blue/gold fantasy game frames. Context: game settings and information: a tiny elegant golden mechanical gear and a soft blue crystal near a far corner, almost invisible star dust along outer edges"
+    }
+  ]
+}

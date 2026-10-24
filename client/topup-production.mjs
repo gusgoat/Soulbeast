@@ -1,5 +1,7 @@
+import {withLoading} from './online-loading.mjs';
 import {connectAccounts,accountError} from './account-client.mjs';
 import {paymentApi,shopText,couponArtwork,couponCount,couponPrice} from './production-shop.mjs';
+document.getElementById('shopBootWait')?.remove();
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const client=connectAccounts(()=>boot()),api=paymentApi(client);let lang='th',state=null,catalog=null,busy=false,target='';
 const t=k=>shopText(k,lang),text=(th,en,zh)=>[th,en,zh][lang==='en'?1:lang==='zh-CN'?2:0];
@@ -20,6 +22,6 @@ function render(){
 }
 function go(o){if(o.settled){notice(t(o.status==='credited'?'received':'review'));return;}if(o.checkout_url){const u=new URL(o.checkout_url);if(u.origin!=='https://checkout.stripe.com')throw Error('invalid_checkout_url');location.assign(u.href);}else notice(t('pending'));}
 async function sync(){state=await api('status');if(state.debt)notice(t('review'));}
-async function run(fn){if(busy)return;busy=true;render();try{await fn();}catch(e){notice(['billing_review_required'].includes(e.message)?t('review'):e.message==='provider_not_configured'||e.message==='purchases_disabled'?t('unavailable'):t('failed'));}finally{busy=false;render();}}
-async function boot(){try{catalog=await api('catalog');if(client.sessions.read()){await client.identity();await sync();const id=new URL(location.href).searchParams.get('order');if(/^[a-f0-9-]{36}$/i.test(id||'')){const r=await api('refresh',{order_id:id});notice(t(r.order?.status==='credited'?'received':r.order?.settled?'review':'pending'));await sync();}else notice(catalog.enabled.stripe?t('title'):t('unavailable'));}else notice(catalog.enabled.stripe?t('title'):t('unavailable'));}catch{notice(t('unavailable'));}render();}
+async function run(fn){if(busy)return;busy=true;render();return withLoading(document.querySelector('main'),t('checking'),async()=>{try{await fn();}catch(e){notice(['billing_review_required'].includes(e.message)?t('review'):e.message==='provider_not_configured'||e.message==='purchases_disabled'?t('unavailable'):t('failed'));}finally{busy=false;render();}});}
+async function boot(){return withLoading(document.querySelector('main'),t('loading'),async()=>{try{catalog=await api('catalog');if(client.sessions.read()){await client.identity();await sync();const id=new URL(location.href).searchParams.get('order');if(/^[a-f0-9-]{36}$/i.test(id||'')){const r=await api('refresh',{order_id:id});notice(t(r.order?.status==='credited'?'received':r.order?.settled?'review':'pending'));await sync();}else notice(catalog.enabled.stripe?t('title'):t('unavailable'));}else notice(catalog.enabled.stripe?t('title'):t('unavailable'));}catch{notice(t('unavailable'));}render();});}
 lang=localStorage.getItem('soulbeast_shop_language')||'th';$('shopLanguage').value=lang;$('shopLanguage').onchange=e=>{const previous=lang,old=$('notice').textContent;lang=e.target.value;for(const k of ['unavailable','received','pending','failed','review','title'])if(shopText(k,previous)===old)notice(t(k));localStorage.setItem('soulbeast_shop_language',lang);render();};await boot();
