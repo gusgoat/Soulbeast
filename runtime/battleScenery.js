@@ -26,9 +26,9 @@ const BattleScenery={
   const t=this.resolve(b,mode);
   return ' data-battle-scene="'+t.key+'" style="--battle-art:url(\''+t.art+'\')"';
  },
- decoration(b,mode=''){
-  const t=this.resolve(b,mode);
-  return '<div class="battle-scenery-title"><span aria-hidden="true">'+t.mark+'</span><small>'+esc(t.label)+'</small><span aria-hidden="true">'+t.mark+'</span></div><span class="battle-scenery-corner corner-nw" aria-hidden="true"></span><span class="battle-scenery-corner corner-ne" aria-hidden="true"></span><span class="battle-scenery-corner corner-sw" aria-hidden="true"></span><span class="battle-scenery-corner corner-se" aria-hidden="true"></span>'+(['training','forest','mist'].includes(t.key)?'<span class="battle-scenery-foliage foliage-nw" aria-hidden="true"></span><span class="battle-scenery-foliage foliage-se" aria-hidden="true"></span>':'');
+ decoration(){
+  // Leave the battlefield header area free for combat cards.
+  return '';
  }
 };
 // @soulbeast-end 1091-battleScenery

@@ -16,7 +16,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  }
  assert.equal(r("BattleScenery.resolve({meta:999}).key"),'forest');
  r("S.battle={v:4,kind:'wild',meta:7,enemies:[wildUnit('kodama',3,0)],allies:[playerUnit()],round:1,queue:[],cur:'p',log:[],target:0,atarget:0,menu:'main',over:null,used:[],fx:[]};");
- const before=r('JSON.stringify(S.battle)'),html=r('vBattle()');assert(html.includes('data-battle-scene="training"'));assert(html.includes('data-v="target:0"'));assert(html.includes('data-v="ally:0"'));assert(html.includes('battle-scenery-title'));assert.equal(r('JSON.stringify(S.battle)'),before);
+ const before=r('JSON.stringify(S.battle)'),html=r('vBattle()');assert(html.includes('data-battle-scene="training"'));assert(html.includes('data-v="target:0"'));assert(html.includes('data-v="ally:0"'));assert(!html.includes('battle-scenery-title'));assert(!html.includes('battle-scenery-corner'));assert.equal(r('JSON.stringify(S.battle)'),before);
  // Both active and finished fights must render just one card set and one target per unit.
  r('S.battle.cur=S.battle.allies[0].id');
  for(const finished of [false,true]){

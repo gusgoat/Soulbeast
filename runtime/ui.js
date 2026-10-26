@@ -409,7 +409,7 @@ const releaseTown=vTown;
 // @soulbeast-end 0624-releaseTown
 // @soulbeast-unit 0625-vTown
 
-vTown=function(){return releaseTown().replace(/<div class="community-links">[\s\S]*?<\/div>$/,'')+`<div class="release-menu"><div class="coupon-town-links">${releaseArtButton('gacha','gachapon',ct('กาชาปองแห่งพันผนึก','Soulseal Gachapon','封印扭蛋'),ct('ลุ้นอสูรและอาวุธตำนาน · ใช้คูปอง','Legendary beasts & weapons · Coupons only','传说妖兽与武器 · 仅限兑换券'))}${couponShopButton()}</div>${releaseArtButton('guide','handbook',ct('คู่มือผู้ผนึก','Soulkeeper Handbook','封印师指南'),ct('วิธีเล่น · สมุดอสูร · อาวุธ · อาชีพ','How to play · Beasts · Weapons · Classes','玩法 · 妖兽 · 武器 · 职业'))}</div>`;};
+vTown=function(){return releaseTown().replace(/<div class="community-links">[\s\S]*?<\/div>$/,'')+`<div class="release-menu"><div class="coupon-town-links">${releaseArtButton('gacha','gachapon-square-v2',ct('กาชาปองแห่งพันผนึก','Soulseal Gachapon','封印扭蛋'),ct('ลุ้นอสูรและอาวุธตำนาน · ใช้คูปอง','Legendary beasts & weapons · Coupons only','传说妖兽与武器 · 仅限兑换券'))}${couponShopButton()}</div>${releaseArtButton('guide','handbook',ct('คู่มือผู้ผนึก','Soulkeeper Handbook','封印师指南'),ct('วิธีเล่น · สมุดอสูร · อาวุธ · อาชีพ','How to play · Beasts · Weapons · Classes','玩法 · 妖兽 · 武器 · 职业'))}</div>`;};
 // @soulbeast-end 0625-vTown
 // @soulbeast-unit 0626-guideBack
 

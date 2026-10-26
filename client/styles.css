@@ -876,3 +876,118 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 #app[data-screen="zone"] .door[data-a="fork"]:focus-visible{outline:2px solid #ffe7a0;outline-offset:3px}
 
 .account-wait{text-align:center;padding:16px;min-height:180px;display:grid;place-content:center;gap:10px}.account-wait .online-hourglass{width:120px}.account-wait p{margin:0;color:#f1d99b}
+
+/* No battlefield title or corner ornaments: cards start near the upper edge. */
+.battle-vitals.battle-scenery{padding-top:5px}
+.online-combat-board.battle-scenery{grid-template-rows:minmax(0,.7fr) minmax(0,1fr);padding-top:5px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-board{padding-top:5px}
+
+/* Compact battle cards: portrait and meters at the top, status icons in a lower rail. */
+#app .battle-scenery .battle-vital.unit-frame{min-height:0;height:auto;padding:5px 10px 4px;grid-template-rows:auto 18px;row-gap:4px;align-content:start;align-items:start}
+#app .battle-scenery .battle-vital>.battle-face{grid-column:1;grid-row:1;align-self:start;margin-top:4px}
+#app .battle-scenery .battle-vital>.battle-meter{grid-column:2;grid-row:1;align-self:start}
+#app .battle-scenery .battle-vital>.battle-effect-strip{grid-column:1/-1;grid-row:2;align-self:end;justify-content:flex-start;min-width:0;width:100%;height:18px;min-height:18px;max-height:18px;margin:0;padding:0;gap:3px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+#app .battle-scenery .battle-effect-strip::-webkit-scrollbar{display:none}
+#app .battle-scenery .battle-effect-strip>.battle-effect-icon{width:18px;height:18px;flex:0 0 18px}
+#app .online-unit-grid{align-items:start}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-unit-grid{grid-auto-rows:auto}
+#app .online-unit-grid[style*="--unit-cols:4"] .battle-vital.unit-frame{min-height:0;height:auto;padding:5px 7px 4px;grid-template-rows:auto auto 18px;row-gap:4px;align-content:start}
+#app .online-unit-grid[style*="--unit-cols:4"] .battle-vital>.battle-face{grid-column:1;grid-row:1}
+#app .online-unit-grid[style*="--unit-cols:4"] .battle-vital>.battle-meter{grid-column:1;grid-row:2}
+#app .online-unit-grid[style*="--unit-cols:4"] .battle-vital>.battle-effect-strip{grid-row:3}
+
+/* Each four-unit side uses two cards per row in the phone-shaped battlefield. */
+.battle-vitals .battle-side-units{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+/* A gold seal line separates the enemy and allied formations. */
+.battle-scenery .battle-side-summary+.battle-side-summary::before,.battle-scenery .online-combat-side+.online-combat-side::before{content:"";position:absolute;left:4px;right:4px;top:-5px;height:2px;background:linear-gradient(90deg,transparent,#a68447 12%,#f6dda1 43%,transparent 47% 53%,#f6dda1 57%,#a68447 88%,transparent);box-shadow:0 1px 2px #0009;pointer-events:none}
+.battle-scenery .battle-side-summary+.battle-side-summary::after,.battle-scenery .online-combat-side+.online-combat-side::after{content:"◆";position:absolute;left:50%;top:-10px;transform:translateX(-50%);height:12px;line-height:12px;font-size:9px;color:#eacb82;text-shadow:0 1px 2px #000,0 0 5px #d9b35b66;pointer-events:none}
+
+/* The accepted two-by-two formation also applies to the online battle modes. */
+#app .standard-arena .online-combat-board{display:flex;flex-direction:column;gap:14px;overflow:auto;padding:7px 12px 12px}
+#app .standard-arena .online-combat-side{flex:none;min-height:auto;gap:4px}
+#app .standard-arena .online-unit-grid{flex:none;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:auto;gap:8px}
+#app .standard-arena .battle-vital.unit-frame{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);column-gap:8px}
+#app .standard-arena .battle-meter>b{font-size:10px}
+#app .standard-arena .battle-meter small{font-size:8px}
+#app .standard-arena .online-combat-scroll{padding:6px 5px 9px;gap:14px}
+
+/* World raid: one third for the boss, two thirds for four rows of player cards. */
+#app[data-screen="world"] .world-arena .online-combat-board{display:flex;flex-direction:column;gap:0;padding:8px 10px 10px;overflow:hidden}
+#app[data-screen="world"] .world-arena .online-combat-scroll{display:grid;grid-template-rows:minmax(0,1fr) minmax(0,2fr);gap:14px;flex:1;min-height:0;padding:2px 3px;overflow:hidden}
+#app[data-screen="world"] .world-arena .online-combat-side{min-height:0;flex:1;gap:4px}
+#app[data-screen="world"] .world-arena .online-combat-side>small{font-size:10px;line-height:13px;flex:none;min-height:13px;margin:0}
+#app[data-screen="world"] .world-arena .our-side .online-unit-grid{flex:1;min-height:0;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(var(--team-rows,4),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:6px;align-items:center;overflow:visible}
+#app[data-screen="world"] .world-arena .our-side .world-player-card{height:100%;max-height:52px;min-height:0;min-width:0;padding:3px;display:grid;grid-template-columns:20px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 3px 3px 9px;gap:1px 3px;border-width:1px;border-radius:9px;align-content:stretch;align-self:center}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{width:18px;height:18px;max-width:18px;max-height:18px;grid-row:1;grid-column:1;margin-top:3px;align-self:start;justify-self:center}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-face .pt{width:100%!important;height:100%!important;border-width:1px;box-shadow:0 0 0 1px #06101b,0 0 0 2px var(--painted-ring)}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-meter{display:contents}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>b{grid-column:2;grid-row:1;display:block;min-width:0;align-self:center;font-size:8px;line-height:10px}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .online-unit-name{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter .battle-level{display:block;font-size:7px!important;line-height:8px;margin:0}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>.bar{grid-column:1/-1;grid-row:2;width:100%;height:3px;margin:0;border-width:0;align-self:center}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>.bar.mp{grid-row:3}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>small,#app[data-screen="world"] .world-arena .our-side .world-player-card .online-unit-status{display:none}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-effect-strip{grid-column:1/-1;grid-row:4;height:9px;min-height:9px;max-height:9px;gap:1px;margin:0;padding:0;align-self:end}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-effect-icon{width:9px;height:9px;flex:0 0 9px;border-radius:2px}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-portrait-elements{--portrait-element-size:8px;top:-2px;left:-2px;right:-2px;gap:1px}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-portrait-elements .element-icon{width:8px;height:8px;padding:0}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.unit-frame-corner,#app[data-screen="world"] .world-arena .our-side .world-player-card>.unit-frame-sprig{display:none}
+#app[data-screen="world"] .world-arena .our-side .world-player-card::after{inset:-1px;border-radius:9px}
+#app[data-screen="world"] .world-arena .our-side .world-player-card[data-card-rarity="common"]::after{border-width:6px;border-image-width:6px}
+#app[data-screen="world"] .world-arena .world-empty-position{height:100%;max-height:52px;min-height:0;display:grid;place-content:center;color:#c4ad6544;border:1px dashed #c4ad6533;border-radius:8px;background:#08111b55;font-size:15px}
+
+/* Boss helpers share the upper third alongside the larger main boss card. */
+#app[data-screen="world"] .world-arena .opponent-side .online-unit-grid{flex:1;min-height:0;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);grid-auto-rows:minmax(0,1fr);gap:6px;align-items:center}
+#app[data-screen="world"] .world-arena .opponent-side .online-unit-grid:has(.world-helper-card){grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:repeat(var(--helper-rows,2),minmax(0,1fr))}
+#app[data-screen="world"] .world-arena .world-boss-card{grid-column:1;grid-row:1/-1;height:100%;max-height:132px;min-height:0;padding:7px 10px;grid-template-columns:minmax(0,.7fr) minmax(0,1.5fr);grid-template-rows:minmax(0,1fr) 18px;gap:3px 8px;align-items:center;align-content:center}
+#app[data-screen="world"] .world-arena .world-boss-card>.battle-face{width:100%;height:auto;max-width:64px;max-height:64px;margin-top:4px;align-self:center}
+#app[data-screen="world"] .world-arena .world-boss-card>.battle-meter{align-self:center}
+#app[data-screen="world"] .world-arena .world-boss-card .battle-meter>b{font-size:12px}
+#app[data-screen="world"] .world-arena .world-boss-card .battle-meter small{font-size:9px;line-height:12px}
+#app[data-screen="world"] .world-arena .world-helper-card{grid-column:2;height:100%;max-height:64px;min-height:0;padding:3px 5px;grid-template-columns:22px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 9px;gap:1px 4px;border-radius:10px}
+#app[data-screen="world"] .world-arena .world-helper-card>.battle-face{width:20px;height:20px;max-width:20px;max-height:20px;margin-top:3px;align-self:start}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-meter>b{font-size:8px;line-height:10px}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-meter small{display:none}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-meter .bar{height:3px;margin:2px 0}
+#app[data-screen="world"] .world-arena .world-helper-card>.battle-effect-strip{height:9px;min-height:9px;max-height:9px;grid-row:2;gap:1px}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-effect-icon{width:9px;height:9px;flex:0 0 9px}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-portrait-elements{--portrait-element-size:9px;top:-2px;gap:1px}
+.world-unit-inspection{display:flex;align-items:center;flex-wrap:wrap;gap:1px 6px;margin:3px 6px;font-size:10px;line-height:13px;color:#f0d594}
+.world-unit-inspection>span{min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.world-unit-inspection>small{font-size:9px;color:var(--fg)}
+@media(max-height:680px){
+ #app[data-screen="world"] .world-arena .online-combat-board{padding:5px 8px 7px}
+ #app[data-screen="world"] .world-arena .online-combat-scroll{gap:12px;padding-block:1px}
+ #app[data-screen="world"] .world-arena .our-side .online-unit-grid{gap:4px}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card{padding:2px;grid-template-columns:17px minmax(0,1fr)}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{width:14px;height:14px;max-width:14px;max-height:14px;margin-top:0}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>b{font-size:7px;line-height:8px}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter .battle-level{font-size:6px!important;line-height:7px}
+ #app[data-screen="world"] .world-arena .world-boss-card{padding:4px 7px}
+ #app[data-screen="world"] .world-arena .world-boss-card>.battle-face{max-width:38px;max-height:38px}
+ #app[data-screen="world"] .world-arena .world-boss-card .battle-meter>b{font-size:10px}
+ #app[data-screen="world"] .world-arena .world-boss-card .battle-meter small{font-size:8px;line-height:10px}
+ #app[data-screen="world"] .world-arena .world-helper-card{padding:2px 3px;grid-template-columns:17px minmax(0,1fr)}
+ #app[data-screen="world"] .world-arena .world-helper-card>.battle-face{width:16px;height:16px;max-width:16px;max-height:16px}
+}
+
+/* Keep the scrolling content close to the branded menu dividers. */
+#app>.brand-seam+main{padding-top:0}
+#app>nav.bottom{padding-top:4px}
+#app>nav.bottom::after{top:-26px;height:42px}
+
+/* World battle: reserve one third for portraits and two thirds for meters. */
+#app[data-screen="world"] .world-arena .our-side .world-player-card{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{grid-column:1;grid-row:1/4;width:100%;height:auto;aspect-ratio:1;max-width:36px;max-height:36px;margin-top:0;align-self:center}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>.bar{grid-column:2}
+#app[data-screen="world"] .world-arena .world-helper-card{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+#app[data-screen="world"] .world-arena .world-helper-card>.battle-face{width:100%;height:auto;aspect-ratio:1;max-width:42px;max-height:42px;margin-top:0;align-self:center}
+#app[data-screen="world"] .world-arena .world-boss-card{grid-template-columns:minmax(0,1.2fr) minmax(0,1.4fr)}
+#app[data-screen="world"] .world-arena .world-boss-card>.battle-face{width:100%;height:auto;aspect-ratio:1;max-width:112px;max-height:112px;margin-top:0;align-self:center}
+@media(max-height:680px){
+ #app[data-screen="world"] .world-arena .world-boss-card>.battle-face{max-width:48px;max-height:48px}
+ #app[data-screen="world"] .world-arena .world-boss-card .battle-meter>small{display:none}
+ #app[data-screen="world"] .world-arena .world-helper-card>.battle-face{max-width:28px;max-height:28px}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{max-width:30px;max-height:30px}
+}
