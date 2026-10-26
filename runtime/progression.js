@@ -248,11 +248,14 @@ showEvolutionNotice=function(){try{return progressionEvolutionNotice();}catch(er
 // @soulbeast-end 0909-showEvolutionNotice
 // @soulbeast-unit 1047-classCombatFactor
 
-function classCombatFactor(u,t,sk){const type=sk.t==='auto'?u.atkType:sk.t;let f=1;if(isBalancedPvp()&&u.kind==='pet'){const n=Math.max(1,sideOf(u).filter(x=>x.kind==='pet'&&x.owner===u.owner&&x.hp>0).length);const hero=sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner),growth=hero?.cls&&baseOf(hero.cls)==='summoner'?.35:.15;f*=(1+growth*(n-1))/n;if(t.kind==='player')f*=.6;}if(u.cls&&baseOf(u.cls)==='thief'&&['p','h'].includes(type)){if(t.cls){const victim=baseOf(t.cls);if(['mage','gunner','archer'].includes(victim))f*=isBalancedPvp()?1.15:1.25;else if(['gladiator','druid'].includes(victim))f*=isBalancedPvp()?.7:.4;}}
+// Solo Demon Lord encounter: support underperforming final careers without changing PVP or other stages.
+const SOLO_DEMON_CAREER_DAMAGE={"shogun":1.75,"dirge":1.3,"archmage":1.6,"elementalist":1.95,"gunsaint":1.3,"bounty":1.85,"cannoneer":1.6,"demolisher":1.5};
+function soloDemonCareerFactor(u){return B()?.kind==='boss'&&Number(B().meta)===6&&u.kind==='player'&&!u.temporary?(SOLO_DEMON_CAREER_DAMAGE[u.cls]||1):1;}
+function classCombatFactor(u,t,sk){const type=sk.t==='auto'?u.atkType:sk.t;let f=t.boss&&['pet','npcpet'].includes(u.kind)?.7:1;if(isBalancedPvp()&&u.kind==='pet'){const n=Math.max(1,sideOf(u).filter(x=>x.kind==='pet'&&x.owner===u.owner&&x.hp>0).length);const hero=sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner),growth=hero?.cls&&baseOf(hero.cls)==='summoner'?.35:.15;f*=(1+growth*(n-1))/n;if(t.kind==='player')f*=.7;}if(u.cls&&baseOf(u.cls)==='thief'&&['p','h'].includes(type)){if(t.cls){const victim=baseOf(t.cls);if(['mage','gunner','archer'].includes(victim))f*=isBalancedPvp()?1.15:1.25;else if(['gladiator','druid'].includes(victim))f*=isBalancedPvp()?.7:.4;}}
 if(u.cls&&t.cls&&baseOf(t.cls)==='gladiator'&&['mage','archer'].includes(baseOf(u.cls)))f*=isBalancedPvp()?1.2:1.35;
 if(isBalancedPvp()){if(u.cls==='packlord')f*=.75;if(t.cls==='packlord')f*=1.25;}
 if(isBalancedPvp()&&u.cls&&baseOf(u.cls)==='mage'&&type==='m')f*=1.15;
-if(u.cls==='gunsaint'&&type==='p')f*=.95;if(hasPas(u,'arcaneMastery')&&type==='m')f*=1.15;return f;}
+if(u.cls==='gunsaint'&&type==='p')f*=.95;if(hasPas(u,'arcaneMastery')&&type==='m')f*=1.15;return f*soloDemonCareerFactor(u);}
 // @soulbeast-end 1047-classCombatFactor
 // @soulbeast-unit 1068-balanceCareerPanel
 

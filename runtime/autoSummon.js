@@ -4,7 +4,7 @@
 function chooseAutoSummon(u){
  const b=B();if(!b||b.over||b.kind==='world'||b.kind==='pvp'&&b.turns>=26||!u||u.hp<=0||u.temporary||!['player','human'].includes(u.kind))return null;
  const mates=sideOf(u),alive=mates.filter(x=>x.hp>0),foes=foesOf(u).filter(x=>x.hp>0);
- if(!foes.length||alive.filter(x=>x.temporary).length>=2)return null;
+ if(!foes.length||!battleHasRoom(u))return null;
  // Let the existing healer policy handle emergencies before investing a turn.
  if(u.skills.some(id=>{const s=SK[id];return s?.t==='heal'&&!cooldownOf(u,id)&&costOf(u,s)<=u.mp&&(s.tg==='self'?[u]:alive).some(x=>x.hp/x.st.hp<.4);}))return null;
  const ids=['shadow_clone','summon_golem','hire_merc'].filter(id=>u.skills.includes(id)&&SK[id]&&!cooldownOf(u,id)&&costOf(u,SK[id])<=u.mp);

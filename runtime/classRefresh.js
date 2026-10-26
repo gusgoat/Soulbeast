@@ -5,6 +5,13 @@ PAS.class10_desperation={n:'พลังฮึดสู้ · Lv10',d:'ดาเ
 CLS.gladiator.pas.push('class10_desperation');
 const classRefreshUnit=unit;unit=function(o){const u=classRefreshUnit(o);if(u.lv<10)u.pas=u.pas.filter(k=>k!=='class10_desperation');return u;};
 const classRefreshFactor=classCombatFactor;classCombatFactor=function(u,t,sk){const f=classRefreshFactor(u,t,sk);return class10Damaging(sk)&&hasPas(u,'class10_desperation')&&u.st?.hp>0&&Number.isFinite(u.hp)?f*(1+Math.max(0,Math.min(1,1-u.hp/u.st.hp))):f;};
+// PVP Lv60 career balance: same coefficients for every gear set and opponent.
+const PVP_CAREER_BALANCE={"templar":{"out":1.55,"incoming":0.9,"pet":1.55},"eternal":1.4,"warlord":{"out":1.5,"incoming":0.85,"pet":1.5},"bloodwar":{"out":1.75,"incoming":0.85,"pet":1.75},"sniper":{"out":1.08,"incoming":0.78,"pet":1.08},"maestro":{"out":1.22,"incoming":0.78,"pet":1.22},"bounty":1.15,"archdruid":0.78,"beastking":{"out":0.82,"incoming":0.9,"pet":0.82},"soulsage":{"out":0.93,"incoming":0.95,"pet":0.93},"sealmaster":{"out":1.05,"pet":0.83,"incoming":0.9},"wildgod":0.88,"ronin":1.15,"cannoneer":1.1,"demolisher":1.15,"spiritlord":{"out":0.97,"incoming":0.95,"pet":0.97},"dirge":1.17,"packlord":1.08,"masterthief":1.08,"ninja":1.05};
+function pvpCareerOutgoing(u){if(!isBalancedPvp())return 1;const hero=u.kind==='pet'?sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner):u;const a=PVP_CAREER_BALANCE[hero?.cls];return typeof a==='number'?a:(u.kind==='pet'?a?.pet:a?.out)||1;}
+function pvpCareerIncoming(t){return isBalancedPvp()&&t.kind==='player'?(PVP_CAREER_BALANCE[t.cls]?.incoming||1):1;}
+const careerBalancedAttack=classCombatFactor;classCombatFactor=function(u,t,sk){return careerBalancedAttack(u,t,sk)*pvpCareerOutgoing(u);};
+const careerBalancedDefense=pvpDamageFactor;pvpDamageFactor=function(u,t){return careerBalancedDefense(u,t)*pvpCareerIncoming(t);};
+
 const classRefreshActions=[];
 function classRefreshStealthCrit(u){const context=classRefreshActions.at(-1);return !!(context?.id===u.id&&context.crit)||!!(u.cls&&baseOf(u.cls)==='archer'&&class10Invisible(u));}
 function takeFreeForm(u){if(!u?.freeFormPending)return false;u.freeFormPending=false;return true;}
@@ -25,11 +32,11 @@ const classRefreshHit=hitOne;hitOne=function(u,sk,t,...args){
 PAS.class10_stealth.d='ไม่เป็นเป้าท่าเดี่ยว 3 เทิร์น โดนท่าหมู่ได้ โจมตีแรกจากล่องหนรับประกันคริติคอลทุกฮิตเมื่อโจมตีโดน แล้วล่องหนหาย ใช้บัฟและยาได้';
 
 const classRefreshAfter=after;after=function(){const b=B(),u=b&&uById(b.cur);if(takeFreeForm(u)){b.menu='main';render();if(teamAutoUnit(u)){b.menu='wait';battleLater(aiAct,150);}return;}return classRefreshAfter();};
-const classRefreshDesc=skillDesc;skillDesc=function(id){const s=SK[id];return classRefreshDesc(id)+(s?.t==='form'?' · สายดรูอิดแปลงร่างไม่เสียเทิร์น (ยังใช้ MP)':'')+(id==='shadow_clone'?' · HP 50% และค่าสถานะอื่น 80% ของร่างจริง':'');};
+const classRefreshDesc=skillDesc;skillDesc=function(id){const s=SK[id];return classRefreshDesc(id)+(s?.t==='form'?' · สายดรูอิดแปลงร่างไม่เสียเทิร์น (ยังใช้ MP)':'')+(id==='shadow_clone'?' · HP 25% และค่าสถานะอื่น 80% ของร่างจริง':'');};
 // Follow-up balance: one-battle archer veil, healing parry, reflect AI, free hire.
 SK.class10_parry.cd=2;
 PAS.class10_parry.d='ป้องกันท่าโจมตี 1 ท่า รวมทุกฮิต และฟื้น HP เท่าดาเมจที่ป้องกันได้ ไม่เกิน HP สูงสุด อยู่ 3 เทิร์น คูลดาวน์ 3 เทิร์น';
-PAS.class10_stealth.d='Lv10: ล่องหนแบบพาสซีฟ ป้องกันท่าโจมตีเดี่ยว 1 ท่าต่อการต่อสู้ ไม่กันท่าหมู่ ไม่เพิ่มคริติคอล';
+PAS.class10_stealth.d='Lv10: ล่องหนแบบพาสซีฟ ลดดาเมจท่าโจมตีเดี่ยวแรก 50% รวมทุกฮิต 1 ครั้งต่อการต่อสู้ ไม่กันท่าหมู่ ไม่เพิ่มคริติคอล และยังรับสถานะตามปกติ';
 CLS.archer.sk=CLS.archer.sk.filter(([,id])=>id!=='class10_stealth');
 CLS.archer.pas.push('class10_stealth');
 delete SK.class10_stealth;
@@ -50,20 +57,22 @@ const defenseFollowupAuto=class10AutoDefense;class10AutoDefense=function(u){retu
 class10BlockHit=function(u,sk,t,damaging){
  const c=class10AttackContexts.at(-1),key=t.id+'|'+u.id;
  if(c?.blocked.has(key))return true;
- if(c?.absorbing?.has(key))return false;
+ if(c?.absorbing?.has(key)||c?.archerHalfGuardTargets?.has(key))return false;
  const parry=t.buffs.some(x=>x.pas==='class10_parry'&&x.tn>0);
  if(parry&&damaging){t.buffs=t.buffs.filter(x=>x.pas!=='class10_parry');if(c)(c.absorbing??=new Set()).add(key);return false;}
  const veil=damaging&&!sk.all&&t.archerVeil>0,barrier=damaging&&t.class10Barrier>0;
- if(!parry&&!veil&&!barrier)return false;
- if(parry)t.buffs=t.buffs.filter(x=>x.pas!=='class10_parry');else if(veil)t.archerVeil=0;else t.class10Barrier=0;
- c?.blocked.add(key);blog(t.name+' ใช้ '+(parry?'ตั้งสมาธิปัดป้อง':veil?'ล่องหน':'บาเรียเวทย์')+' ป้องกัน '+sk.n);vfx('buff',t.id);return true;
+ if(veil){t.archerVeil=0;if(c)(c.archerHalfGuardTargets??=new Set()).add(key);blog(t.name+' ใช้ล่องหน ลดดาเมจ '+sk.n+' 50%');vfx('buff',t.id);return false;}
+ if(!parry&&!barrier)return false;
+ if(parry)t.buffs=t.buffs.filter(x=>x.pas!=='class10_parry');else t.class10Barrier=0;
+ c?.blocked.add(key);blog(t.name+' ใช้ '+(parry?'ตั้งสมาธิปัดป้อง':'บาเรียเวทย์')+' ป้องกัน '+sk.n);vfx('buff',t.id);return true;
 };
+function classDefenseDamageFactor(u,t){return class10AttackContexts.at(-1)?.archerHalfGuardTargets?.has(t.id+'|'+u.id)? .5:1;}
 function classDefenseAbsorb(u,sk,t,d){if(!class10AttackContexts.at(-1)?.absorbing?.has(t.id+'|'+u.id))return false;const restored=heal(t,d);blog(t.name+' ปัดป้อง '+d+' ดาเมจ และฟื้น HP '+restored);vfx('heal',t.id);return true;}
 const defenseFollowupAct=act;act=function(u,id,...args){if(id==='class10_stealth')return false;return defenseFollowupAct(u,id,...args);};
 const defenseFollowupReplayApply=applyClass10Replay;applyClass10Replay=function(b,f){defenseFollowupReplayApply(b,f);for(const [id,count]of f.archerVeils||[]){const u=[...b.allies,...b.enemies].find(x=>x.id===id);if(u)u.archerVeil=count;}};
 
-const defenseFollowupEffects=battleSpecialEffects;battleSpecialEffects=function(u){const out=defenseFollowupEffects(u);if(u.archerVeil>0)out.push('<span class="battle-effect-icon special-effect good" data-effect="class10_stealth" title="ล่องหน · กันท่าโจมตีเดี่ยวได้อีก 1 ท่า"><span class="battle-special-image" style="background-position:40% 66.6667%"></span></span>');return out;};
-const defenseFollowupCareer=careerPanel;careerPanel=function(cls){return defenseFollowupCareer(cls)+(baseOf(cls)==='archer'?'<p class="sub">Lv10: ล่องหนแบบพาสซีฟ กันท่าโจมตีเดี่ยว 1 ท่าต่อการต่อสู้ ไม่เพิ่มคริติคอล</p>':'');};
+const defenseFollowupEffects=battleSpecialEffects;battleSpecialEffects=function(u){const out=defenseFollowupEffects(u);if(u.archerVeil>0)out.push('<span class="battle-effect-icon special-effect good" data-effect="class10_stealth" title="ล่องหน · ลดดาเมจท่าเดี่ยวแรก 50% ได้อีก 1 ครั้ง"><span class="battle-special-image" style="background-position:40% 66.6667%"></span></span>');return out;};
+const defenseFollowupCareer=careerPanel;careerPanel=function(cls){return defenseFollowupCareer(cls)+(baseOf(cls)==='archer'?'<p class="sub">Lv10: ล่องหนแบบพาสซีฟ ลดดาเมจท่าเดี่ยวแรก 50% รวมทุกฮิต 1 ครั้งต่อการต่อสู้ ยังรับสถานะตามปกติ</p>':'');};
 const defenseFollowupDesc=skillDesc;skillDesc=function(id){return defenseFollowupDesc(id)+(id==='hire_merc'?' · สายพ่อค้าเรียกทหารรับจ้างไม่เสียเทิร์น ยังใช้ MP และเงินตามเดิม':'');};
 
 // Requested revision: free parry, reflective shield without defense-stat buffs.
@@ -121,5 +130,11 @@ function classAbilityImage(id,size=30){const key=CLASS_ABILITY_ART[id];if(!key)r
 const classAbilityBasePicture=skillPicture;skillPicture=function(u,sk,id){const picture=classAbilityBasePicture(u,sk,id);return CLASS_ABILITY_ART[id]?picture.replace('skill-painted','skill-painted class-ability-picture').replace('role="img"','data-class-ability="'+esc(id)+'" role="img"'):picture;};
 const classAbilityCareerPanel=careerPanel;careerPanel=function(cls){const ids=[...new Set(chain(cls).flatMap(c=>[...(CLS[c].pas||[]),...(CLS[c].sk||[]).map(x=>x[1])]))].filter(id=>CLASS_ABILITY_ART[id]);return classAbilityCareerPanel(cls)+(ids.length?'<details class="class-ability-guide"><summary>สกิลและความสามารถเฉพาะอาชีพ</summary>'+ids.map(id=>SK[id]?skillRow(id,true):'<div class="row">'+classAbilityImage(id,44)+'<div class="grow"><b>'+esc(PAS[id].n)+'</b><div class="sub">'+esc(PAS[id].d)+'</div></div></div>').join('')+'</details>':'');};
 
+
+// Summoner line: one companion in exchange for a second life, inherited by every promotion.
+PAS.summoner_soul_exchange={n:'สัญญาแลกวิญญาณ',d:'เมื่อหมดสติ ฟื้น HP 30% ได้ 1 ครั้งต่อการต่อสู้ แลกกับคู่หูที่ยังมีชีวิต 1 ตัว (เลือก HP ปัจจุบันน้อยสุด) ไม่นับตัวอัญเชิญชั่วคราว; พาสซีฟฟื้นคืนชีพเดิมทำงานก่อน'};
+CLS.summoner.pas.push('summoner_soul_exchange');
+
 // @soulbeast-end 1085-classRefresh
+
 

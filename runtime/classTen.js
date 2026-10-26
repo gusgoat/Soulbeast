@@ -65,7 +65,8 @@ function class10AutoDefense(u){
 }
 function applyClass10Replay(b,f){
  for(const u of f.spawns||[])if(![...b.allies,...b.enemies].some(x=>x.id===u.id))(u.side==='ally'?b.allies:b.enemies).push(JSON.parse(JSON.stringify(u)));
- if(f.enemyIds)b.enemies=b.enemies.filter(u=>f.enemyIds.includes(u.id));
+ if(f.enemyIds)b.enemies=f.enemyIds.map(id=>b.enemies.find(u=>u.id===id)).filter(Boolean);
+ if(f.allyIds)b.allies=f.allyIds.map(id=>b.allies.find(u=>u.id===id)).filter(Boolean);
  for(const [id,barrier,buffs] of f.class10Units||[]){const u=[...b.allies,...b.enemies].find(x=>x.id===id);if(u){u.class10Barrier=barrier;u.buffs=JSON.parse(JSON.stringify(buffs));}}
 }
 

@@ -469,10 +469,10 @@ SK.th_ambush.bf.eva=.35;
 // @soulbeast-unit 1056-SK-sbw_doom
 
 
-SK.sbw_doom.pw=230;
+SK.sbw_doom.pw=460;
 // @soulbeast-end 1056-SK-sbw_doom
 // @soulbeast-unit 1057-SK-sbw_doom
-SK.sbw_doom.basePower=230;
+SK.sbw_doom.basePower=460;
 // @soulbeast-end 1057-SK-sbw_doom
 // @soulbeast-unit 1058-SK-sbw_doom
 SK.sbw_doom.pi=.3;

@@ -10,11 +10,26 @@ function beginUnitTurn(u){u.freeFormUsed=false;u.freeFormPending=false;u.cooldow
 // @soulbeast-end 0100-beginUnitTurn
 // @soulbeast-unit 0102-addTemporary
 
-function addTemporary(u,sk){const list=sideOf(u);if(list.filter(x=>x.temporary&&x.hp>0).length>=2)return false;let n;
- if(sk.summon==='clone'){n=JSON.parse(JSON.stringify(u));n.st=Object.fromEntries(Object.entries(u.st).map(([k,v])=>[k,Math.max(k==='hp'?1:0,Math.round(v*(k==='hp'?.5:.8)))]));n.hp=n.st.hp;n.mp=n.st.mp;n.skills=n.skills.slice();n.name='ร่างแยก '+u.name;n.shadowOwner=u.id;}
+// Four positions per sealer (world raid) or side. Dead positions are reused.
+function battleSlotGroup(u,b=B()){if(!b)return [];const list=u.side==='ally'?b.allies:b.enemies;return b.kind==='world'&&u.side==='ally'?list.filter(x=>x.owner===u.owner):list;}
+function battleHasRoom(u,b=B()){return !!b&&battleSlotGroup(u,b).filter(x=>x.hp>0).length<4;}
+function battlePlaceUnit(u,n){
+ const b=B(),list=sideOf(u),group=battleSlotGroup(u);if(group.filter(x=>x.hp>0).length>=4)return false;
+ const old=group.find(x=>x.hp<=0);if(old){
+  if(!old.temporary)(b.retiredUnits??=[]).push(old);
+  // Persist a defeated pet before its visible slot is reused.
+  const p=old.side==='ally'&&old.kind==='pet'&&S.P?.pets?.find(p=>p.uid===old.uid);
+  if(p){p.hp=old.hp;p.mp=old.mp;p.ailments=Object.fromEntries(['poison','burn','confuse','para','static','freeze','chill'].filter(k=>old.status?.[k]).map(k=>[k,Math.max(2,old.status[k])]));}
+  b.queue=(b.queue||[]).filter(id=>String(id).replace(/\*$/,'')!==old.id);
+  list[list.indexOf(old)]=n;
+ }else list.push(n);
+ (b.queue??=[]).push(n.id);return true;
+}
+function addTemporary(u,sk){if(!battleHasRoom(u))return false;let n;
+ if(sk.summon==='clone'){n=JSON.parse(JSON.stringify(u));n.st=Object.fromEntries(Object.entries(u.st).map(([k,v])=>[k,Math.max(k==='hp'?1:0,Math.round(v*(k==='hp'?(u.cls&&baseOf(u.cls)==='thief'?.25:.5):.8)))]));n.hp=n.st.hp;n.mp=n.st.mp;n.skills=n.skills.slice();n.name='ร่างแยก '+u.name;n.shadowOwner=u.id;}
  else if(sk.summon==='golem'){n=wildUnit('bastion_golem',u.lv,0);n.name='โกเลมอัญเชิญ';n.taunt=3;n.skills=['attack','guard_taunt'];}
  else{const P=u.kind==='player'||u.owner!=null?S.P:u;if(!Number.isFinite(P.gold))P.gold=u.lv*30;const cost=Math.floor(Math.max(0,P.gold)*.10);if(cost<1)return false;P.gold-=cost;const jobs=Object.keys(CLS).filter(c=>baseOf(c)!=='merchant'&&tierOf(c)<=Math.max(0,tierOf(u.cls)-1));const lv=Math.max(1,Math.floor(u.lv*.85));const eligible=jobs.filter(c=>tierOf(c)===0||lv>=(tierOf(c)===1?25:40));n=humanUnit('ทหารรับจ้าง',pick(eligible),lv,0);n.skills=n.skills.filter(id=>!SK[id].summon);}
- n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;list.push(n);B().queue.push(n.id);return true;
+ n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;delete n.uid;return battlePlaceUnit(u,n);
 }
 // @soulbeast-end 0102-addTemporary
 // @soulbeast-unit 0216-B
@@ -53,9 +68,9 @@ function humanUnit(name,cls,lv,i){const eq=npcEq(cls,lv),focus=clsMult(cls,'patk
 // @soulbeast-unit 0241-startBattle
 
 
-function startBattle(enemies,kind,meta,pre){VQ.length=0;
+function startBattle(enemies,kind,meta,pre){VQ.length=0;enemies=enemies.slice(0,4);
  const P=S.P,allies=[playerUnit()],used=[];
- party().filter(p=>p.hp>0).slice(0,clsSum(P.cls)).forEach(p=>{allies.push(petUnit(p));used.push(p.uid)});
+ party().filter(p=>p.hp>0).slice(0,Math.min(3,clsSum(P.cls))).forEach(p=>{allies.push(petUnit(p));used.push(p.uid)});
  enemies.forEach(e=>{if(e.sp)markFormSeen(e.sp,e.evo||0)});
  if(kind!=='npc')enemies.filter(e=>e.sp).slice(0,3).forEach((e,i)=>Sound.cry(e.sp,false,i*.18));
  S.battle={v:4,kind,meta,enemies,allies,round:0,queue:[],cur:null,log:[],target:0,atarget:allies.length>1&&baseOf(P.cls)==='summoner'?1:0,menu:'wait',over:null,used,fx:[]};
@@ -92,6 +107,8 @@ function eff(u,k){const a=u.buffs.reduce((s,b)=>b.st===k?s+b.amt:s,0);let v=u.st
  if(k==='spd'&&hasPas(u,'swift'))v*=1.2;if(k==='eva'&&hasPas(u,'elusive'))v*=1.25;if(k==='acc'&&hasPas(u,'eagle'))v*=1.15;if(k==='crit'&&hasPas(u,'keen'))v+=10;
  if((k==='patk'||k==='matk')&&hasPas(u,'rage')&&u.hp<u.st.hp/2)v*=1.3;
  if((k==='pdef'||k==='mdef')&&hasPas(u,'laststand')&&u.hp<u.st.hp*.3)v*=1.5;
+ if(['patk','matk'].includes(k)&&['pet','npcpet'].includes(u.kind)&&!u.temporary){const count=sideOf(u).filter(x=>['pet','npcpet'].includes(x.kind)&&!x.temporary&&x.hp>0&&x.owner===u.owner).length;v*=Math.max(0,1-.15*Math.max(0,count-1));}
+ if(k==='acc'&&u.boss)v+=15;
  if(isWorldBattle()&&u.immortalWorld&&['patk','matk'].includes(k))v*=Math.pow(1.05,Math.max(0,(B().bossTurns||1)-1));return Math.max(k==='crit'?0:1,pvpOffense(u,k,v))}
 // @soulbeast-end 0248-eff
 // @soulbeast-unit 0249-hitChance
@@ -104,8 +121,19 @@ const costOf=(u,sk)=>sk.mp?Math.round(sk.mp*(hasPas(u,'mpsave')?.7:1)*WorldTales
 // @soulbeast-end 0252-costOf
 // @soulbeast-unit 0255-hurt
 
+// Once per battle; only an owner's living permanent companion can pay the cost.
+function trySummonerSoulRevive(u){
+ if(!u.cls||baseOf(u.cls)!=='summoner'||!['player','human'].includes(u.kind)||u.temporary||u.summonerSoulRevived||!B())return false;
+ const pet=sideOf(u).filter(p=>['pet','npcpet'].includes(p.kind)&&!p.temporary&&p.owner===u.owner&&p.hp>0).reduce((a,p)=>!a||p.hp<a.hp?p:a,null);
+ if(!pet)return false;
+ u.summonerSoulRevived=true;pet.hp=0;pet.reborn=1;
+ u.hp=Math.max(1,Math.round(u.st.hp*.3));
+ u.status=typeof retainedBattleAilments==='function'?retainedBattleAilments(u):{};
+ blog(pet.name+' สละพลังชีวิตให้ '+u.name+' ฟื้นคืนชีพด้วย HP 30% (1 ครั้งต่อการต่อสู้)');
+ fxAdd(pet,'สละชีวิต','bad');fxAdd(u,'คืนชีพ 30%','good');vfx('heal',u.id);return true;
+}
 function hurt(u,d,c='bad'){if(isWorldBattle()&&u.immortalWorld){const b=B(),damage=Math.max(0,Math.min(1e12,Math.round(Number(d)||0)));b.damageTotal=(b.damageTotal||0)+damage;const owner=b.wbDamageOwner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;u.hp=u.st.hp;fxAdd(u,'-'+damage,c);return;}const wasAlive=u.hp>0;u.hp=Math.max(0,u.hp-d);fxAdd(u,'-'+d,c);
- if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status=retainedBattleAilments(u);blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else{blog(`${u.name} ล้มลง`);if(wasAlive)Sound.cry(u.sp,true)}}}
+ if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status=retainedBattleAilments(u);blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else if(wasAlive&&trySummonerSoulRevive(u)){/* revived before settlement */}else{blog(`${u.name} ล้มลง`);if(wasAlive)Sound.cry(u.sp,true)}}}
 // @soulbeast-end 0255-hurt
 // @soulbeast-unit 0256-heal
 
@@ -147,7 +175,7 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
  if(sk.t==='revert'){u.form=null;u.types=u.defenseTypes?u.defenseTypes.slice():[];u.skills=u.baseSkills||u.skills;u.img=u.kind==='player'?'player':u.img;blog(`${u.name} คืนร่างมนุษย์`);return true}
  if(sk.t==='heal'||sk.t==='buff'){
   let list=sk.tg==='team'?mates.filter(x=>x.hp>0||((sk.revAll)&&x.kind!=='player')):sk.tg==='self'?[u]:[atgt&&(atgt.hp>0||sk.rev)&&mates.includes(atgt)?atgt:u];
-  const hm=hasPas(u,'healer')?1.3:1;
+  const hm=(hasPas(u,'healer')?1.3:1)*((['pet','npcpet','summon'].includes(u.kind)||u.kind==='beast'&&u.side==='ally') ? .7 : ['player','human'].includes(u.kind)&&u.cls&&['druid','summoner'].includes(baseOf(u.cls))&&!(['pvp','raid','camp','guildwar','tower','world'].includes(B()?.kind)||B()?.towerRun) ? .7 : 1);
   list.forEach(x=>{if(sk.t==='heal'){if(x.hp<=0){if(sk.rev||sk.revAll){x.hp=Math.round(x.st.hp*sk.pw/100);x.status=retainedBattleAilments(x);blog(`${x.name} ฟื้นคืนชีพ!`);fxAdd(x,'คืนชีพ','good')}return}
    heal(x,(x.st.hp*sk.pw/100+eff(u,'matk')*.5)*hm);if(sk.cure)x.status=retainedBattleAilments(x);vfx('heal',x.id)}
    if(sk.t==='buff')vfx('buff',x.id,{c:sk.charge?'#6f9cf0':'#d9b35b'});
@@ -200,8 +228,8 @@ function hitOne(u,sk,t,scale,areaCount=0){
  d*=pvpDamageFactor(u,t)*classCombatFactor(u,t,sk);
  if(hasPas(t,'thick')&&(attackHasElement(u,sk,'fire')||attackHasElement(u,sk,'ice')))d*=.5;
  if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;
- const crit=classRefreshStealthCrit(u)||(!hasPas(t,'nocrit')&&!rogueCritBlocked(u,t)&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0)));if(crit)d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5; if(crit)ExtraAudio.skill(VSKID.get(sk),u,true);
- d*=hasPas(t,'counter50')?.5:hasPas(t,'reflect50')?.8:1;d=Math.max(1,Math.round(d));if(classDefenseAbsorb(u,sk,t,d))return;
+ const crit=classRefreshStealthCrit(u)||(!hasPas(t,'nocrit')&&!rogueCritBlocked(u,t)&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0)));if(crit){d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5;if(t.boss)d*=.75;} if(crit)ExtraAudio.skill(VSKID.get(sk),u,true);
+ d*=hasPas(t,'counter50')?.5:hasPas(t,'reflect50')?.8:1;d*=classDefenseDamageFactor(u,t);d=Math.max(1,Math.round(d));if(classDefenseAbsorb(u,sk,t,d))return;
  if(hasPas(t,'sturdy')&&t.hp===t.st.hp&&d>=t.hp&&t.hp>1){d=t.hp-1;blog(`${t.name} อึดทนไว้ได้!`)}
  blog(`→ ${t.name} ${d} ดาเมจ${crit?' คริติคอล!':''}${m>1?' ได้ผลดีมาก':m<1?' ไม่ค่อยได้ผล':''}`);
  vfx('hit',t.id,{skill:VSKID.get(sk)||sk._pvpId,el:sk.el,phys:type!=='m',crit});
@@ -252,9 +280,9 @@ function syncBack(){const b=B(),P=S.P,pu=b.allies[0];P.hp=pu.hp;P.mp=pu.mp;b.all
 // @soulbeast-end 0290-syncBack
 // @soulbeast-unit 0292-endBattle
 
-function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,lines=[];const earned=b.enemies.filter(e=>e.hp<=0&&!e.temporary).reduce((n,e)=>n+scoreValue(e),0);if(earned){P.score=(P.score||0)+earned;lines.push('คะแนนสะสม +'+earned)}
+function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,lines=[];const earned=[...b.enemies,...(b.retiredUnits||[]).filter(x=>x.side==='enemy')].filter(e=>e.hp<=0&&!e.temporary).reduce((n,e)=>n+scoreValue(e),0);if(earned){P.score=(P.score||0)+earned;lines.push('คะแนนสะสม +'+earned)}
  if(res==='win'){let exp=0,gold=0;
-  b.enemies.filter(e=>!e.temporary).forEach(e=>{let x=expFor(e.lv)*(e.boss?3:e.rare?2:1)*(e.kind==='human'?1.5:1);if(e.captured)x*=.5;exp+=x;
+  [...b.enemies,...(b.retiredUnits||[]).filter(x=>x.side==='enemy')].filter(e=>!e.temporary).forEach(e=>{let x=expFor(e.lv)*(e.boss?3:e.rare?2:1)*(e.kind==='human'?1.5:1);if(e.captured)x*=.5;exp+=x;
    if(e.kind==='human'&&b.kind==='traveler')x*=2;
    if(e.kind==='human'&&b.kind==='bandit'){const g=e.lv*20+R(0,e.lv*10);gold+=g;lines.push(`ยึดถุงเงินโจรได้ ${fmt(g)} เหรียญ`)}
    if(e.kind!=='human'&&!e.captured&&e.sp){gold+=e.lv*4+R(0,e.lv*3);const n=e.boss||e.rare?2:Math.random()<.6?1:0;
@@ -309,12 +337,17 @@ function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
    ExtraAudio.play('quest');t.captured=true;t.hp=0;fxAdd(t,'ผนึก!','good');blog(`สำเร็จ! ${petName(p)} ถูกผนึกแล้ว`)}
   else{ExtraAudio.play('miss');fxAdd(t,'หลุด','muted');blog(`ผนึกแตก! ${t.name} ดิ้นหลุดออกมา`)}
   after();return}
- if(k==='swap'){if(b.over||u.side!=='ally'||u.hp<=0)return;const p=petBy(+a);if(!p||p.hp<=0||!S.P.carried.includes(p.uid)||b.allies.some(x=>x.uid===p.uid))return;const n=clsSum(S.P.cls),pets=b.allies.slice(1);let slot;
-  const sel=b.allies[b.atarget];
-  if(sel&&sel.kind==='pet')slot=b.allies.indexOf(sel);else if(pets.length<n)slot=b.allies.length;else slot=1;
-  const old=b.allies[slot];if(old){const op=petBy(old.uid);if(op){op.hp=old.hp;op.mp=old.mp}b.queue=b.queue.map(x=>x.replace('*','')===old.id?x.replace(old.id,'pet'+p.uid):x)}
-  b.allies[slot]=petUnit(p);if(!b.used.includes(p.uid))b.used.push(p.uid);
-  S.P.party=b.allies.slice(1).map(x=>x.uid);blog(`เรียก ${petName(p)} ออกจากผนึก!`);b.menu='main';render();return}
+ if(k==='swap'){if(b.over||u.side!=='ally'||u.hp<=0)return;const p=petBy(+a);if(!p||p.hp<=0||!S.P.carried.includes(p.uid)||b.allies.some(x=>x.uid===p.uid))return;
+  const pets=b.allies.filter(x=>x.kind==='pet'&&x.hp>0),dead=b.allies.findIndex(x=>x.hp<=0&&x.kind!=='player'),sel=b.allies[b.atarget];let slot;
+  if(dead>=0)slot=dead;
+  else if(battleHasRoom(u)&&pets.length<Math.min(3,clsSum(S.P.cls)))slot=b.allies.length;
+  else if(sel?.kind==='pet'&&sel.hp>0)slot=b.allies.indexOf(sel);
+  else slot=b.allies.findIndex(x=>x.kind==='pet'&&x.hp>0);
+  if(slot<0){toast(ct('สนามเต็ม 4 ตำแหน่งแล้ว','All four battlefield positions are occupied','战场四个位置已满'));return;}
+  const old=b.allies[slot],n=petUnit(p);if(old){const op=petBy(old.uid);if(op){op.hp=old.hp;op.mp=old.mp;op.ailments=Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>old.status?.[k]).map(k=>[k,Math.max(2,old.status[k])]));}b.queue=b.queue.map(id=>String(id).replace(/\*$/,'')===old.id?id.replace(old.id,n.id):id);}
+  b.allies[slot]=n;if(!old||old.hp<=0){b.queue=b.queue.filter(id=>String(id).replace(/\*$/,'')!==n.id);b.queue.push(n.id);}
+  if(!b.used.includes(p.uid))b.used.push(p.uid);
+  S.P.party=b.allies.filter(x=>x.kind==='pet').map(x=>x.uid);blog(`เรียก ${petName(p)} ออกจากผนึก!`);b.menu='main';render();return;}
  if(k==='flee'){if(!['wild','bandit','traveler'].includes(b.kind)){toast('หนีไม่ได้ในการต่อสู้นี้');return}const es=b.enemies.filter(e=>e.hp>0);const avg=es.reduce((s,e)=>s+eff(e,'spd'),0)/es.length;
   if(Math.random()<clamp(.5+(eff(u,'spd')-avg)*.03,.2,.92)){endBattle('flee');render()}else{blog('หนีไม่สำเร็จ!');after()}return}
 }
@@ -337,7 +370,7 @@ function bossSummonDue(u){u.legendTurn=(u.legendTurn||0)+1;const alive=B().enemi
 // @soulbeast-end 0737-bossSummonDue
 // @soulbeast-unit 0738-bossSummonLegends
 
-function bossSummonLegends(u,count){const b=B(),pool=Object.keys(SP).filter(k=>SP[k].legendary&&!SP[k].noseal);b.enemies=b.enemies.filter(x=>!x.bossHelper);b.queue=b.queue.filter(id=>!String(id).includes('_legend_'));const chosen=pool.slice();for(let i=0;i<count;i++){const sp=chosen.splice(Math.floor(Math.random()*chosen.length),1)[0],n=wildUnit(sp,40,0);n.id=u.id+'_legend_'+(u.legendBatch=(u.legendBatch||0)+1);n.side='enemy';n.owner=-1;n.temporary=true;n.bossHelper=true;n.summonedBy=u.id;n.r=99;n.skills=n.skills.filter(id=>!SK[id]?.summon);b.enemies.push(n);b.queue.push(n.id);}u.legendSummoned=true;u.legendDeadAt=null;blog(u.name+' ใช้ '+SK.boss_legend_call.n+' เรียกอสูรตำนาน Lv 40 จำนวน '+count+' ตัว');b.effects=b.effects||[];b.effects.push({k:'cast',uid:u.id,skill:'boss_legend_call'});if(typeof Sound!=='undefined')Sound.fx('charge');return true;}
+function bossSummonLegends(u,count){const b=B(),pool=Object.keys(SP).filter(k=>SP[k].legendary&&!SP[k].noseal);if(!battleHasRoom(u))return false;const chosen=pool.slice();let placed=0;for(let i=0;i<count&&battleHasRoom(u);i++){const sp=chosen.splice(Math.floor(Math.random()*chosen.length),1)[0],n=wildUnit(sp,40,0);n.id=u.id+'_legend_'+(u.legendBatch=(u.legendBatch||0)+1);n.side=u.side;n.owner=u.owner;n.temporary=true;n.bossHelper=true;n.summonedBy=u.id;n.r=99;n.skills=n.skills.filter(id=>!SK[id]?.summon);if(battlePlaceUnit(u,n))placed++;}u.legendSummoned=true;u.legendDeadAt=null;blog(u.name+' ใช้ '+SK.boss_legend_call.n+' เรียกอสูรตำนาน Lv 40 จำนวน '+placed+' ตัว');b.effects=b.effects||[];b.effects.push({k:'cast',uid:u.id,skill:'boss_legend_call'});if(typeof Sound!=='undefined')Sound.fx('charge');return true;}
 // @soulbeast-end 0738-bossSummonLegends
 // @soulbeast-unit 0739-balanceBossAct
 
@@ -473,7 +506,7 @@ humanUnit=function(name,cls,lv,i){const u=elementsHumanUnit(name,cls,lv,i);u.def
 // @soulbeast-unit 1052-minimumHitChance
 
 
-function minimumHitChance(u,t){return u.cls&&t.cls&&['gladiator','druid'].includes(baseOf(u.cls))&&baseOf(t.cls)==='thief'?80:25;}
+function minimumHitChance(u,t){return u.cls&&t.cls&&['gladiator','druid'].includes(baseOf(u.cls))&&baseOf(t.cls)==='thief'?80:u.boss?40:25;}
 // @soulbeast-end 1052-minimumHitChance
 // @soulbeast-unit 1054-rogueCritBlocked
 

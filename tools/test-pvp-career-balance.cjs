@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const close=(a,b,m)=>assert(Math.abs(a-b)<1e-10,m+': '+a+' != '+b);
+function suite(run,label){
+ const map=JSON.parse(run('JSON.stringify(PVP_CAREER_BALANCE)'));
+ for(const [cls,adj]of Object.entries(map))for(const mode of ['pvp','boss','wild','world','raid','camp','guildwar','npc','tower'])for(const side of ['ally','enemy']){
+ const out=JSON.parse(run(`JSON.stringify((()=>{const h={id:'h',kind:'player',cls:${JSON.stringify(cls)},side:${JSON.stringify(side)},owner:2,hp:100,st:{hp:100},buffs:[],pas:[]},pet={...h,id:'p',kind:'pet',cls:undefined},foreign={...pet,id:'f',owner:9},t={...h,id:'t',cls:'swordsman',side:h.side==='ally'?'enemy':'ally',owner:1};S={P:{},battle:{kind:${JSON.stringify(mode)},allies:h.side==='ally'?[h,pet,foreign]:[t],enemies:h.side==='enemy'?[h,pet,foreign]:[t]}};return {hero:pvpCareerOutgoing(h),pet:pvpCareerOutgoing(pet),foreign:pvpCareerOutgoing(foreign),incoming:pvpCareerIncoming(h),petIncoming:pvpCareerIncoming(pet),actual:classCombatFactor(h,t,{t:'p'}),base:careerBalancedAttack(h,t,{t:'p'}),defense:pvpDamageFactor(t,h),baseDefense:careerBalancedDefense(t,h)}})())`));
+ const attack=mode==='pvp'?(typeof adj==='number'?adj:adj.out||1):1,incoming=mode==='pvp'?(adj.incoming||1):1;
+ close(out.hero,attack,cls+' hero');close(out.pet,mode==='pvp'?(typeof adj==='number'?adj:adj.pet||1):1,cls+' pet');close(out.foreign,1,'ownership');close(out.incoming,incoming,'incoming');close(out.petIncoming,1,'pet defense unchanged');close(out.actual,out.base*attack,'integrated attack');close(out.defense,out.baseDefense*incoming,'integrated defense');
+ }
+ assert.equal(run('SK.sbw_doom.pw'),460);assert.equal(run('SK.sbw_doom.basePower'),460);assert.equal(run('SK.sbw_doom.mp'),20);assert.equal(run('SK.sbw_doom.pi'),.3);assert.equal(run('CLS.sbwar.m.hp'),1.2);assert.equal(run('CLS.sbwar.m.patk'),1.375);assert.equal(run('CLS.sbwar.m.matk'),1.54);console.log('PASS '+label+': career attack/defense, owner isolation, both sides, nine modes, sbwar stats/skill');
+}
+const game=require('./game-context.cjs')('build/live-index.html');suite(game.run,'client');
+let source=fs.readFileSync('server/accounts/engine.ts','utf8').replace(/^import .*\r?\n/gm,'');source=source.replace('return {dispatch(packet){','return {testRun:code=>eval(code),dispatch(packet){');const ctx=vm.createContext({console,Date,structuredClone,TextEncoder,TextDecoder,Uint8Array,crypto:require('crypto').webcrypto,sha256:()=>'',withSupabase:()=>{},btoa,atob});vm.runInContext(source,ctx);const engine=vm.runInContext('createEngine(createWorkbook({}),{})',ctx);suite(engine.testRun,'server');

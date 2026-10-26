@@ -103,7 +103,7 @@ function doGet() { onlineResetIO_();
     seen: Number(r[8]) || 0, caught: Number(r[9]) || 0, legend: Number(r[10]) || 0, clears: Number(r[11]) || 0,
     updated: r[12],score:Number(r[13])||0,profile:profileImage_(r[14]),gender:['male','female'].includes(r[15])?r[15]:undefined
   }));
-  return json_({ ok: true, rows, pvpVersion: 1, pvpRules: {turnSeconds:0,maxTurns:30,items:false} });
+  return json_({ ok: true, rows, pvpVersion: 1, pvpRules: {turnSeconds:0,maxTurns:60,items:false} });
 }
 
 function doPost(e) { onlineResetIO_();
@@ -558,10 +558,10 @@ swordsman:{n:'นักดาบ',w:'sword',em:'🤺',m:{hp:1.15,mp:.7,patk:1.2,
   shogun:{n:'โชกุน',p:'samurai',m:{hp:1.15,pdef:1.1},pas:['intimidate'],sk:[[40,'sh_army']],d:'แม่ทัพซามูไร บัฟทั้งทีม ข่มขวัญศัตรู'},
  spellblade:{n:'ดาบเวทย์',p:'swordsman',m:{matk:1.7,mp:1.5},pas:['mpregen'],sk:[[25,'sb_thunder'],[32,'sb_frost']],d:'ผสานเวทย์เข้ากับคมดาบ โจมตีแบบผสมกายภาพและเวทย์'},
   sbsummon:{n:'ดาบเวทย์อัญเชิญ',p:'spellblade',m:{matk:1.1},pas:['guardian'],sum:2,sk:[[40,'sbs_unite']],d:'นำอสูรออกสู้ได้ 2 ตัว ผสานพลังกับอสูร'},
-  sbwar:{n:'ดาบเวทย์สงคราม',p:'spellblade',m:{patk:1.1,matk:1.1},pas:['pierce'],sk:[[40,'sbw_doom']],d:'ดาบเวทย์ทำลายล้างหมู่ เมินเกราะ'},
+  sbwar:{n:'ดาบเวทย์สงคราม',p:'spellblade',m:{hp:1.2,patk:1.375,matk:1.54},pas:['pierce'],sk:[[40,'sbw_doom']],d:'ดาบเวทย์ทำลายล้างหมู่ เมินเกราะ'},
 gladiator:{n:'กลาดิเอเตอร์',w:'axe',em:'🛡️',m:{hp:1.4,mp:.6,patk:1.05,matk:.5,pdef:1.4,mdef:1.2,eva:.6,spd:.85,crit:.8},pas:['nocrit'],sk:[[1,'gl_shield'],[4,'gl_taunt'],[8,'gl_wall'],[12,'gl_quake'],[17,'gl_counter'],[22,'gl_roar']],
  d:'ปราการแนวหน้า ยั่วยุให้ศัตรูโจมตีตัวเอง',pro:'HP และป้องกันสูงสุด ไม่โดนคริติคอล ปกป้องอสูรได้',con:'ช้า หลบหลีกต่ำ ดาเมจไม่สูง'},
- paladin:{n:'พาลาดิน',p:'gladiator',m:{mdef:1.15,matk:1.6},pas:['guardian'],sk:[[25,'pa_holy'],[32,'pa_hammer']],d:'อัศวินศักดิ์สิทธิ์ ป้องกันและรักษาทีม'},
+ paladin:{n:'พาลาดิน',p:'gladiator',m:{mdef:1.15,matk:1.6},pas:['guardian'],sk:[[25,'pa_holy'],[25,'pa_hammer']],d:'อัศวินศักดิ์สิทธิ์ ป้องกันและรักษาทีม'},
   templar:{n:'เทมพลาร์',p:'paladin',m:{matk:1.15},pas:['imm_mind'],sk:[[40,'te_judge']],d:'แสงพิพากษาโจมตีหมู่ จิตไม่หวั่นไหว'},
   eternal:{n:'ผู้พิทักษ์นิรันดร์',p:'paladin',m:{hp:1.2,pdef:1.15},pas:['regen'],sk:[[40,'et_bastion']],d:'ปราการที่ไม่มีวันล้ม'},
  berserker:{n:'เบอร์เซิร์กเกอร์',p:'gladiator',m:{patk:1.25,pdef:.9},pas:['rage'],sk:[[25,'be_frenzy'],[32,'be_storm']],d:'ยิ่งเจ็บยิ่งแรง แลกป้องกันเป็นพลังโจมตี'},
@@ -904,7 +904,7 @@ const MILE={
  gladiator:{10:{n:'โล่สะท้อน',t:'buff',tg:'self',bf:{pdef:.5},pas:'thorns2',tn:3,mp:8},20:{n:'ทุบแผ่นดินแยก',t:'p',pw:150,el:'ground',all:1,st:{para:.2},mp:12},30:{n:'ป้อมปราการเหล็ก',t:'buff',tg:'team',bf:{pdef:.4,mdef:.3},tn:3,taunt:3,mp:14},
   40:{n:'ขวานสังหาร',t:'p',pw:280,el:'fighting',cb:20,mp:16},50:{n:'ไม่มีวันล้ม',t:'heal',tg:'self',pw:50,cure:1,mp:20},60:{n:'พิโรธแห่งกลาดิเอเตอร์',t:'p',pw:310,el:'fighting',all:1,ct:1,mp:28}},
  archer:{10:{n:'ศรพิษสามดอก',t:'p',pw:70,hits:3,el:'poison',st:{poison:.2},mp:8},20:{n:'ฝนศรเพลิง',t:'p',pw:140,el:'fire',all:1,st:{burn:.2},mp:12},30:{n:'ตาเทพเหยี่ยว',t:'buff',tg:'team',bf:{acc:.3,crit:.6},tn:3,mp:14},
-  40:{n:'ศรสายฟ้าฟาด',t:'p',pw:260,el:'electric',st:{para:.3},mp:16},50:{n:'ศรนับพัน',t:'p',pw:70,hits:6,rt:1,el:'normal',mp:20},60:{n:'ศรสวรรค์ทะลุมิติ',t:'p',pw:480,el:'fairy',ct:1,pi:.5,mp:28}},
+  40:{n:'ศรสายฟ้าฟาด',t:'p',pw:220,el:'electric',st:{para:.2},mp:16,cd:3},50:{n:'ศรนับพัน',t:'p',pw:70,hits:4,rt:1,el:'normal',mp:20,cd:3},60:{n:'ศรสวรรค์ทะลุมิติ',t:'p',pw:480,el:'fairy',ct:1,pi:.5,mp:28}},
  mage:{10:{n:'ลูกไฟสามลูก',t:'m',pw:70,hits:3,rt:1,el:'fire',st:{burn:.1},mp:8},20:{n:'หมอกน้ำแข็งพิฆาต',t:'m',pw:200,el:'ice',st:{freeze:.25},mp:12},30:{n:'ม่านมานา',t:'buff',tg:'self',bf:{mdef:.6},pas:'mpsave',tn:3,mp:10},
   40:{n:'เมเทออร์เพลิง',t:'m',pw:200,el:'fire',all:1,st:{burn:.25},mp:20},50:{n:'มหาสายฟ้าพิโรธ',t:'m',pw:300,el:'electric',st:{para:.4},mp:22},60:{n:'มหาเวทวันสิ้นโลก',t:'m',pw:330,el:'dragon',all:1,ct:1,mp:34}},
  merchant:{10:{n:'โยนถุงทอง',t:'p',pw:150,el:'steel',all:1,gc:3,mp:4},20:{n:'บริการพิเศษ',t:'heal',tg:'team',pw:25,mp:12},30:{n:'ค้อนทองคำ',t:'p',pw:260,el:'steel',gold:1,mp:14},
@@ -1054,12 +1054,28 @@ function effectiveElement(u,sk){
 }
 function attackHasElement(u,sk,el){const value=effectiveElement(u,sk);return Array.isArray(value)?value.includes(el):value===el;}
 function attackMultiplier(u,sk,t){return typeMult(effectiveElement(u,sk),t.types)*(attackHasElement(u,sk,'ground')&&hasPas(t,'levitate')?0:1);}
-function addTemporary(u,sk){const list=sideOf(u);if(list.filter(x=>x.temporary&&x.hp>0).length>=2)return false;let n;
+// Four positions per sealer (world raid) or side. Dead positions are reused.
+function battleSlotGroup(u,b=B()){if(!b)return [];const list=u.side==='ally'?b.allies:b.enemies;return b.kind==='world'&&u.side==='ally'?list.filter(x=>x.owner===u.owner):list;}
+function battleHasRoom(u,b=B()){return !!b&&battleSlotGroup(u,b).filter(x=>x.hp>0).length<4;}
+function battlePlaceUnit(u,n){
+ const b=B(),list=sideOf(u),group=battleSlotGroup(u);if(group.filter(x=>x.hp>0).length>=4)return false;
+ const old=group.find(x=>x.hp<=0);if(old){
+  if(!old.temporary)(b.retiredUnits??=[]).push(old);
+  // Persist a defeated pet before its visible slot is reused.
+  const p=old.side==='ally'&&old.kind==='pet'&&S.P?.pets?.find(p=>p.uid===old.uid);
+  if(p){p.hp=old.hp;p.mp=old.mp;p.ailments=Object.fromEntries(['poison','burn','confuse','para','static','freeze','chill'].filter(k=>old.status?.[k]).map(k=>[k,Math.max(2,old.status[k])]));}
+  b.queue=(b.queue||[]).filter(id=>String(id).replace(/\*$/,'')!==old.id);
+  list[list.indexOf(old)]=n;
+ }else list.push(n);
+ (b.queue??=[]).push(n.id);return true;
+}
+function addTemporary(u,sk){if(!battleHasRoom(u))return false;let n;
  if(sk.summon==='clone'){n=JSON.parse(JSON.stringify(u));n.st=Object.fromEntries(Object.entries(u.st).map(([k,v])=>[k,Math.max(k==='hp'?1:0,Math.round(v*(k==='hp'?.5:.8)))]));n.hp=n.st.hp;n.mp=n.st.mp;n.skills=n.skills.slice();n.name='ร่างแยก '+u.name;n.shadowOwner=u.id;}
  else if(sk.summon==='golem'){n=wildUnit('bastion_golem',u.lv,0);n.name='โกเลมอัญเชิญ';n.taunt=3;n.skills=['attack','guard_taunt'];}
  else{const P=u.kind==='player'||u.owner!=null?S.P:u;if(!Number.isFinite(P.gold))P.gold=u.lv*30;const cost=Math.floor(Math.max(0,P.gold)*.10);if(cost<1)return false;P.gold-=cost;const jobs=Object.keys(CLS).filter(c=>baseOf(c)!=='merchant'&&tierOf(c)<=Math.max(0,tierOf(u.cls)-1));const lv=Math.max(1,Math.floor(u.lv*.85));const eligible=jobs.filter(c=>tierOf(c)===0||lv>=(tierOf(c)===1?25:40));n=humanUnit('ทหารรับจ้าง',pick(eligible),lv,0);n.skills=n.skills.filter(id=>!SK[id].summon);}
- n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;list.push(n);B().queue.push(n.id);return true;
+ n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;delete n.uid;return battlePlaceUnit(u,n);
 }
+
 function scoreValue(e){return Math.round(Math.max(1,e.lv||1)*(['human','player'].includes(e.kind)?15:e.boss?30:e.rare?20:8))}
 
 
@@ -1088,12 +1104,25 @@ function eff(u,k){const a=u.buffs.reduce((s,b)=>b.st===k?s+b.amt:s,0);let v=u.st
  if(k==='spd'&&hasPas(u,'swift'))v*=1.2;if(k==='eva'&&hasPas(u,'elusive'))v*=1.25;if(k==='acc'&&hasPas(u,'eagle'))v*=1.15;if(k==='crit'&&hasPas(u,'keen'))v+=10;
  if((k==='patk'||k==='matk')&&hasPas(u,'rage')&&u.hp<u.st.hp/2)v*=1.3;
  if((k==='pdef'||k==='mdef')&&hasPas(u,'laststand')&&u.hp<u.st.hp*.3)v*=1.5;
+ if(['patk','matk'].includes(k)&&['pet','npcpet'].includes(u.kind)&&!u.temporary){const count=sideOf(u).filter(x=>['pet','npcpet'].includes(x.kind)&&!x.temporary&&x.hp>0&&x.owner===u.owner).length;v*=Math.max(0,1-.15*Math.max(0,count-1));}
+ if(k==='acc'&&u.boss)v+=15;
  if(isWorldBattle()&&u.immortalWorld&&['patk','matk'].includes(k))v*=Math.pow(1.05,Math.max(0,(B().bossTurns||1)-1));return Math.max(k==='crit'?0:1,pvpOffense(u,k,v))}
 const hitChance=(u,t,sk)=>clamp(eff(u,'acc')-eff(t,'eva')+15+((sk&&sk.acc)||0),minimumHitChance(u,t),100);
 function fxAdd(u,t,c){B().fx.push({id:u.id,t,c})}
 const costOf=(u,sk)=>sk.mp?Math.round(sk.mp*(hasPas(u,'mpsave')?.7:1)):0;
+// Once per battle; only an owner's living permanent companion can pay the cost.
+function trySummonerSoulRevive(u){
+ if(!u.cls||baseOf(u.cls)!=='summoner'||!['player','human'].includes(u.kind)||u.temporary||u.summonerSoulRevived||!B())return false;
+ const pet=sideOf(u).filter(p=>['pet','npcpet'].includes(p.kind)&&!p.temporary&&p.owner===u.owner&&p.hp>0).reduce((a,p)=>!a||p.hp<a.hp?p:a,null);
+ if(!pet)return false;
+ u.summonerSoulRevived=true;pet.hp=0;pet.reborn=1;
+ u.hp=Math.max(1,Math.round(u.st.hp*.3));
+ u.status=typeof retainedBattleAilments==='function'?retainedBattleAilments(u):{};
+ blog(pet.name+' สละพลังชีวิตให้ '+u.name+' ฟื้นคืนชีพด้วย HP 30% (1 ครั้งต่อการต่อสู้)');
+ fxAdd(pet,'สละชีวิต','bad');fxAdd(u,'คืนชีพ 30%','good');vfx('heal',u.id);return true;
+}
 function hurt(u,d,c='bad'){if(isWorldBattle()&&u.immortalWorld){const b=B(),damage=Math.max(0,Math.min(1e12,Math.round(Number(d)||0)));b.damageTotal=(b.damageTotal||0)+damage;const owner=b.wbDamageOwner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;u.hp=u.st.hp;fxAdd(u,'-'+damage,c);return;}const wasAlive=u.hp>0;u.hp=Math.max(0,u.hp-d);fxAdd(u,'-'+d,c);
- if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status={};blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else{blog(`${u.name} ล้มลง`);if(wasAlive)Sound.cry(u.sp,true)}}}
+ if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status={};blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else if(wasAlive&&trySummonerSoulRevive(u)){/* revived before settlement */}else{blog(`${u.name} ล้มลง`);if(wasAlive)Sound.cry(u.sp,true)}}}
 function heal(u,a){const v=Math.min(u.st.hp-u.hp,Math.round(a));if(v>0){u.hp+=v;fxAdd(u,'+'+v,'good')}return v}
 function turnStartBase(u){const s=u.status;
  u.buffs.forEach(x=>x.tn--);u.buffs=u.buffs.filter(x=>x.tn>0);if(u.taunt>0&&!isWorldBattle())u.taunt--;
@@ -1126,7 +1155,7 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
  if(sk.t==='revert'){u.form=null;u.types=u.defenseTypes?u.defenseTypes.slice():[];u.skills=u.baseSkills||u.skills;u.img=u.kind==='player'?'player':u.img;blog(`${u.name} คืนร่างมนุษย์`);return true}
  if(sk.t==='heal'||sk.t==='buff'){
   let list=sk.tg==='team'?mates.filter(x=>x.hp>0||((sk.revAll)&&x.kind!=='player')):sk.tg==='self'?[u]:[atgt&&(atgt.hp>0||sk.rev)&&mates.includes(atgt)?atgt:u];
-  const hm=hasPas(u,'healer')?1.3:1;
+  const hm=(hasPas(u,'healer')?1.3:1)*((['pet','npcpet','summon'].includes(u.kind)||u.kind==='beast'&&u.side==='ally') ? .7 : ['player','human'].includes(u.kind)&&u.cls&&['druid','summoner'].includes(baseOf(u.cls))&&!(['pvp','raid','camp','guildwar','tower','world'].includes(B()?.kind)||B()?.towerRun) ? .7 : 1);
   list.forEach(x=>{if(sk.t==='heal'){if(x.hp<=0){if(sk.rev||sk.revAll){x.hp=Math.round(x.st.hp*sk.pw/100);x.status={};blog(`${x.name} ฟื้นคืนชีพ!`);fxAdd(x,'คืนชีพ','good')}return}
    heal(x,(x.st.hp*sk.pw/100+eff(u,'matk')*.5)*hm);if(sk.cure)x.status={};vfx('heal',x.id)}
    if(sk.t==='buff')vfx('buff',x.id,{c:sk.charge?'#6f9cf0':'#d9b35b'});
@@ -1190,7 +1219,7 @@ function pvpOffense(u,k,v){
 }
 function pvpDamageFactor(u,t){if(!isBalancedPvp())return 1;let f=1;
  if(u.kind==='player'&&baseOf(u.cls)==='gladiator'&&!['gladiator','paladin'].includes(u.cls))f*=1.2;
- if(t.kind==='player'&&['sealmaster','spiritlord'].includes(t.cls)&&sideOf(t).some(x=>x.kind==='pet'&&x.hp>0))f*=.8;
+ if(t.kind==='player'&&['sealmaster','spiritlord'].includes(t.cls)&&sideOf(t).some(x=>x.kind==='pet'&&x.hp>0))f*=.6;
  if(t.kind==='player'&&t.cls==='wildgod')f*=.85;
  return f;
 }
@@ -1220,7 +1249,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
  if(hasPas(t,'thick')&&(attackHasElement(u,sk,'fire')||attackHasElement(u,sk,'ice')))d*=.5;
  if(sideOf(t).some(x=>x.hp>0&&hasPas(x,'guardian')))d*=.9;
  const crit=classRefreshStealthCrit(u)||(!hasPas(t,'nocrit')&&!rogueCritBlocked(u,t)&&Math.random()*100<(isBalancedPvp()?Math.min(65,eff(u,'crit')+(sk.cb||0)):eff(u,'crit')+(sk.cb||0)));if(crit)d*=hasPas(u,'deadly')?(isBalancedPvp()?1.7:2):1.5;
- d*=hasPas(t,'counter50')?.5:hasPas(t,'reflect50')?.8:1;d=Math.max(1,Math.round(d));if(classDefenseAbsorb(u,sk,t,d))return;
+ d*=hasPas(t,'counter50')?.5:hasPas(t,'reflect50')?.8:1;d*=classDefenseDamageFactor(u,t);d=Math.max(1,Math.round(d));if(classDefenseAbsorb(u,sk,t,d))return;
  if(hasPas(t,'sturdy')&&t.hp===t.st.hp&&d>=t.hp&&t.hp>1){d=t.hp-1;blog(`${t.name} อึดทนไว้ได้!`)}
  blog(`→ ${t.name} ${d} ดาเมจ${crit?' คริติคอล!':''}${m>1?' ได้ผลดีมาก':m<1?' ไม่ค่อยได้ผล':''}`);
  vfx('hit',t.id,{skill:VSKID.get(sk)||sk._pvpId,el:sk.el,phys:type!=='m',crit});
@@ -1274,7 +1303,7 @@ const VSKID=new Map(Object.entries(SK).map(([id,sk])=>[sk,id]));
 /* ---------- PVP rooms: no writes to the player's RPG save during matches ---------- */
 const PVP_ROOM='PVPRooms', PVP_HEAD=['room','status','updated','expires','data1','data2','data3','data4','data5'];
 const PVP_CMD='PVPCommands', PVP_CMD_HEAD=['request','room','revision','seat','actor','skill','target','friend','time'];
-const PVP_TURN_MS=30000, PVP_MAX_TURNS=30, PVP_ROOM_MS=30*60*1000;
+const PVP_TURN_MS=30000, PVP_MAX_TURNS=60, PVP_ROOM_MS=30*60*1000;
 function pvpFail_(message){throw new Error(message)}
 function pvpOwn_(table,key){return Object.prototype.hasOwnProperty.call(table,key)}
 function pvpId_(){return Utilities.getUuid().replace(/-/g,'').toUpperCase()}
@@ -1285,7 +1314,7 @@ function pvpTeam_(raw,seat,mode){
  const worldParty=['world','raid','guildwar'].includes(mode)?[...(raw.party||[])]:null;carryNormalize_(raw);if(worldParty)raw.party=worldParty;const lv=Number(raw.lv),cls=String(raw.cls||'');if(!Number.isInteger(lv)||lv<1||lv>60||!pvpOwn_(CLS,cls))pvpFail_('bad character');if((tierOf(cls)===1&&lv<25)||(tierOf(cls)===2&&lv<40))pvpFail_('bad class');
  const eq={};for(const [slot] of SLOTS){const id=raw.eq&&raw.eq[slot];if(!id)continue;if(!pvpOwn_(EQ,id)||EQ[id].slot!==slot||EQ[id].lv>lv)pvpFail_('bad equipment');eq[slot]=id}if(!eq.weapon)pvpFail_('bad weapon');
  const p={worldPower:num_(raw.worldPower,1e9),name:String(raw.name||'ผู้ผนึก').slice(0,20),cls,lv,pts:pvpPts_(raw.pts,5*(lv-1)),eq,pets:[],party:[],gold:num_(raw.gold,1e9)};
- const saved=Array.isArray(raw.pets)?raw.pets:[],ids=Array.isArray(raw.party)?[...new Set(raw.party)]:[];if(ids.length>(['world','raid','guildwar'].includes(mode)?(baseOf(cls)==='summoner'?3:1):clsSum(cls)))pvpFail_('too many pets');
+ const saved=Array.isArray(raw.pets)?raw.pets:[],ids=Array.isArray(raw.party)?[...new Set(raw.party)]:[];if(ids.length>(['world','raid','guildwar'].includes(mode)?(baseOf(cls)==='summoner'?3:1):Math.min(3,clsSum(cls))))pvpFail_('too many pets');
  for(const uid of ids){if(!raw.carried.includes(uid))pvpFail_('pet at camp');const pet=saved.find(x=>x.uid===uid);if(!pet||!pvpOwn_(SP,pet.sp)||SP[pet.sp].noseal)pvpFail_('bad pet');if(SP[pet.sp].legendary&&!(Number(raw.cleared)>0)&&raw.gachaLegendPets?.[pet.uid]!==pet.sp)pvpFail_('legend locked');const pl=Number(pet.lv);if(!Number.isInteger(pl)||pl<1||pl>60)pvpFail_('bad pet level');p.pets.push({uid,sp:pet.sp,lv:pl,form:formFor(pet.sp,pl),pts:pvpPts_(pet.pts,3*(pl-1)),hp:1,mp:1})}
  S={P:p,battle:null};p.hp=pStats().hp;p.mp=pStats().mp;const hero=playerUnit();hero.id='p'+seat;hero.owner=seat;hero.side=seat?'enemy':'ally';
  const team=[hero];p.pets.forEach((pet,i)=>{const stats=calcPet(pet);pet.hp=stats.hp;pet.mp=stats.mp;const u=petUnit(pet);u.id='p'+seat+'pet'+i;u.owner=seat;u.side=seat?'enemy':'ally';team.push(u)});return {team,name:p.name,cls,lv,gold:p.gold}
@@ -1306,8 +1335,8 @@ function pvpAutoStep_(r,timeout=false){if(r.status!=='active'||r.raid)return fal
  if(move.id==='defend'||!act(u,move.id,move.target,move.friend)){move.id='defend';u.buffs.push({st:'pdef',amt:.5,tn:1},{st:'mdef',amt:.5,tn:1});vfx('buff',u.id,{c:'#d9b35b'});}
  blog((timeout?'⌛ หมดเวลา เลือกท่าอัตโนมัติ: ':'⚙ ออโต้: ')+u.name);r.players[u.owner].gold=S.P.gold;r.rev++;r.last={actor:u.id,skill:move.id,seat:u.owner,automatic:true,timeout};if(!takeFreeForm(u)&&!pvpCompleteTurn_(r))pvpNext_(r);return true;}
 
-function pvpExpire_(r){pvpNormalize_(r);if(!['waiting','lobby','active'].includes(r.status))return false;if(r.status==='active'&&r.battle.turns>=PVP_MAX_TURNS){if(!pvpCheckEnd_(r))pvpFinish_(r,-1,'เสมอ: ครบ 30 เทิร์นแล้วยังไม่มีผู้ชนะ');return true}if(Date.now()>r.expires){pvpFinish_(r,-1,'ห้องหมดอายุ');return true}return false}
-function pvpCompleteTurn_(r){r.battle.turns=(r.battle.turns||0)+1;if(pvpCheckEnd_(r))return true;if(r.battle.turns>=(r.raid?100:PVP_MAX_TURNS)){pvpFinish_(r,-1,'เสมอ: ครบ 30 เทิร์นแล้วยังไม่มีผู้ชนะ');return true}return false}
+function pvpExpire_(r){pvpNormalize_(r);if(!['waiting','lobby','active'].includes(r.status))return false;if(r.status==='active'&&r.battle.turns>=PVP_MAX_TURNS){if(!pvpCheckEnd_(r))pvpFinish_(r,-1,'เสมอ: ครบ 60 เทิร์นแล้วยังไม่มีผู้ชนะ');return true}if(Date.now()>r.expires){pvpFinish_(r,-1,'ห้องหมดอายุ');return true}return false}
+function pvpCompleteTurn_(r){r.battle.turns=(r.battle.turns||0)+1;if(pvpCheckEnd_(r))return true;if(r.battle.turns>=(r.raid?100:PVP_MAX_TURNS)){pvpFinish_(r,-1,'เสมอ: ครบ 60 เทิร์นแล้วยังไม่มีผู้ชนะ');return true}return false}
 function pvpNext_(r){const b=r.battle;if(!r.raid)b.kind='pvp';S={P:{gold:0},battle:b};for(let step=0;step<200;step++){
  if(pvpCheckEnd_(r))return;
  if(!b.queue.length){b.round++;const speed=u=>eff(u,'spd')*(b.round===1&&hasPas(u,'firstblood')?2:1),ord=allU().filter(u=>u.hp>0).map(u=>[u,speed(u)*(.97+Math.random()*.06)]).sort((a,c)=>class10OpeningOrder(a[0],c[0],b)||c[1]-a[1]);const extras=[];for(const [u] of ord){b.queue.push(u.id);const opp=foesOf(u).filter(x=>x.hp>0);if(opp.length&&speed(u)>=2*Math.max(...opp.map(speed))){if(r.raid)b.queue.push(u.id+'*');else if(b.round>1&&b.round%2===0)extras.push(u.id+'*')}}b.queue.push(...extras);if(!r.raid&&b.round===1){for(const side of [b.allies,b.enemies]){const guard=side.find(x=>x.hp>0&&x.kind!=='player'&&(x.skills||[]).some(id=>SK[id]&&SK[id].taunt));if(guard){guard.taunt=Math.max(guard.taunt||0,2);blog(guard.name+' ตั้งรับคุ้มกันเปิดการประลอง')}}}}
@@ -1358,7 +1387,7 @@ function campAdjust_(P,c){P.gold=(Number(P.gold)||0)+(c.delta-(Number(P.campAppl
 function campAccount_(code){const c=campState_(code);return {delta:c.delta,scoreDelta:c.scoreDelta,name:c.name||'',renameAt:c.renameAt||0,world:wbAccount_(code),stakes:stakeEvents_(code)}}
 function campFlush_(){const sh=sheet_('CampTransfers',CAMP_TRANS_HEAD),values=sh.getDataRange().getValues();for(let i=1;i<values.length;i++){const [id,from,to,gold,state]=values[i];if(state==='done'||!id)continue;for(const [code,sign] of [[from,-1],[to,1]]){const c=campState_(code);if(!c.receipts.includes(id)){c.delta+=Number(gold)*sign;c.receipts.push(id);campWrite_(c)}}sh.getRange(i+1,5).setValues([['done']])}}
 function campSettle_(r){if(!r.raid||r.status!=='finished')return;const sh=sheet_('CampTransfers',CAMP_TRANS_HEAD),id='raid-'+r.id;if(findRow_(sh,id)<0&&r.winner!==-1){const from=r.players[1-r.winner].code,to=r.players[r.winner].code,P=campAdjust_(campRaw_(from).P,campState_(from)),amount=Math.floor(Math.max(0,P.gold)*.20);sh.appendRow([id,from,to,amount,'pending'])}campFlush_();}
-function campScore_(r){if(r.status!=='finished')return;for(let seat=0;seat<r.players.length;seat++){const c=campState_(r.players[seat].code),id='score-'+r.id+'-'+seat;if(c.receipts.includes(id))continue;const enemies=seat===0?r.battle.enemies:r.battle.allies;c.scoreDelta+=enemies.filter(u=>u.hp<=0&&!u.temporary).reduce((n,u)=>n+scoreValue(u),0);c.receipts.push(id);campWrite_(c)}}
+function campScore_(r){if(r.status!=='finished')return;for(let seat=0;seat<r.players.length;seat++){const c=campState_(r.players[seat].code),id='score-'+r.id+'-'+seat;if(c.receipts.includes(id))continue;const enemies=[...(seat===0?r.battle.enemies:r.battle.allies),...(r.battle.retiredUnits||[]).filter(u=>u.side===(seat===0?'enemy':'ally'))];c.scoreDelta+=enemies.filter(u=>u.hp<=0&&!u.temporary).reduce((n,u)=>n+scoreValue(u),0);c.receipts.push(id);campWrite_(c)}}
 function campTeam_(raw,pet,seat){const p=JSON.parse(JSON.stringify(raw));if(!p.pets.some(x=>x.uid===pet))pvpFail_('choose one pet');p.party=[pet];p.carried=[pet];return pvpTeam_(p,seat)}
 function campView_(r){campSettle_(r);campScore_(r);return {...pvpView_(r,0),camp:true,account:campAccount_(r.players[0].code)}}
 function campAI_(r){for(let i=0;i<120&&r.status==='active';i++){const u=[...r.battle.allies,...r.battle.enemies].find(x=>x.id===r.battle.cur);if(!u)return;S={P:{gold:r.players[u.owner].gold},battle:r.battle};const foes=foesOf(u).filter(x=>x.hp>0),mates=sideOf(u).filter(x=>x.hp>0);let id='attack',target=foes.find(x=>x.taunt>0)||foes[0],friend=mates.slice().sort((a,b)=>a.hp/a.st.hp-b.hp/b.st.hp)[0];const legal=u.skills.filter(k=>SK[k]&&!cooldownOf(u,k)&&costOf(u,SK[k])<=u.mp&&!SK[k].summon);const healSkill=legal.find(k=>SK[k].t==='heal');const taunt=legal.find(k=>SK[k].taunt);if(friend&&friend.hp<friend.st.hp*.45&&healSkill)id=healSkill;else if(chooseAutoForm(u))id=chooseAutoForm(u);else if(class10AutoDefense(u))id=class10AutoDefense(u);else if(chooseAutoSummon(u))id=chooseAutoSummon(u);else if(taunt&&!u.taunt)id=taunt;else{const damage=legal.filter(k=>['p','m','h','auto'].includes(SK[k].t));damage.sort((a,b)=>combatSkillScore(u,b,target,foes)-combatSkillScore(u,a,target,foes));id=damage[0]||'attack'}const visibleMove=class10AutoMove(u,{id,target,friend});if(!act(u,visibleMove.id,visibleMove.target,visibleMove.friend))act(u,'rest',null,u);r.players[u.owner].gold=S.P.gold;r.rev++;if(!takeFreeForm(u)&&!pvpCompleteTurn_(r))pvpNext_(r)}if(r.status==='active'&&uById(r.battle.cur)?.owner===1)pvpFinish_(r,-1,'ขีดจำกัดการต่อสู้')}
@@ -1579,7 +1608,7 @@ function wagersMatch(a,b){return (!a&&!b)||!!(a&&b&&wagerClass(a)===wagerClass(b
 
 SK.boss_legend_call={n:'พันธสัญญาอสูรตำนาน',t:'summon',mp:0,summon:'legendary',life:999};
 function bossSummonDue(u){u.legendTurn=(u.legendTurn||0)+1;const alive=B().enemies.some(x=>x.bossHelper&&x.hp>0);if(alive){u.legendDeadAt=null;return false;}if(!u.legendSummoned)return true;if(u.legendDeadAt==null)u.legendDeadAt=u.legendTurn;return u.legendTurn-u.legendDeadAt>=2;}
-function bossSummonLegends(u,count){const b=B(),pool=Object.keys(SP).filter(k=>SP[k].legendary&&!SP[k].noseal);b.enemies=b.enemies.filter(x=>!x.bossHelper);b.queue=b.queue.filter(id=>!String(id).includes('_legend_'));const chosen=pool.slice();for(let i=0;i<count;i++){const sp=chosen.splice(Math.floor(Math.random()*chosen.length),1)[0],n=wildUnit(sp,40,0);n.id=u.id+'_legend_'+(u.legendBatch=(u.legendBatch||0)+1);n.side='enemy';n.owner=-1;n.temporary=true;n.bossHelper=true;n.summonedBy=u.id;n.r=99;n.skills=n.skills.filter(id=>!SK[id]?.summon);b.enemies.push(n);b.queue.push(n.id);}u.legendSummoned=true;u.legendDeadAt=null;blog(u.name+' ใช้ '+SK.boss_legend_call.n+' เรียกอสูรตำนาน Lv 40 จำนวน '+count+' ตัว');b.effects=b.effects||[];b.effects.push({k:'cast',uid:u.id,skill:'boss_legend_call'});if(typeof Sound!=='undefined')Sound.fx('charge');return true;}
+function bossSummonLegends(u,count){const b=B(),pool=Object.keys(SP).filter(k=>SP[k].legendary&&!SP[k].noseal);if(!battleHasRoom(u))return false;const chosen=pool.slice();let placed=0;for(let i=0;i<count&&battleHasRoom(u);i++){const sp=chosen.splice(Math.floor(Math.random()*chosen.length),1)[0],n=wildUnit(sp,40,0);n.id=u.id+'_legend_'+(u.legendBatch=(u.legendBatch||0)+1);n.side=u.side;n.owner=u.owner;n.temporary=true;n.bossHelper=true;n.summonedBy=u.id;n.r=99;n.skills=n.skills.filter(id=>!SK[id]?.summon);if(battlePlaceUnit(u,n))placed++;}u.legendSummoned=true;u.legendDeadAt=null;blog(u.name+' ใช้ '+SK.boss_legend_call.n+' เรียกอสูรตำนาน Lv 40 จำนวน '+placed+' ตัว');b.effects=b.effects||[];b.effects.push({k:'cast',uid:u.id,skill:'boss_legend_call'});if(typeof Sound!=='undefined')Sound.fx('charge');return true;}
 const balanceBossAct=act;act=function(u,id,t,a,free){const b=B(),prior=b?.balanceDamageActor;if(b&&isWorldBattle())b.balanceDamageActor={side:u.side,owner:u.owner};try{if(id==='boss_legend_call')return bossSummonLegends(u,u.immortalWorld?2:1);return balanceBossAct(u,id,t,a,free);}finally{if(b)b.balanceDamageActor=prior;}};
 function worldAttackTarget(b){return b.enemies.find(x=>x.bossHelper&&x.hp>0)||b.enemies[0];}
 
@@ -1592,7 +1621,7 @@ const balanceWorldBossTurn=wbBossTurn_;wbBossTurn_=function(r){const u=r.battle.
 const balanceWorldReward=worldReward;worldReward=function(score,roll,choice){const r=balanceWorldReward(score,roll,choice);const chance=score>=4000?.10:score>=2000?.05:score>=1000?.01:score>=500?.005:0;for(const id of Object.keys(r.loot))if(EQ[id]?.worldLegend)delete r.loot[id];r.chance=chance;if(roll<chance)r.loot[WORLD_LEGENDS[Math.min(WORLD_LEGENDS.length-1,Math.floor(choice*WORLD_LEGENDS.length))]]=1;if(score>=25)r.loot.eth=score>=500?3:1;if(score>=100)r.loot.revivePotion=1;r.gold=score*20;r.score=score;r.xp=score*25;r.power=Math.floor(score/10);return r;};
 function balancePartyReward(r,score,roll,choice){const v=worldReward(score,roll,choice),eligible=r.players.filter(p=>!p.forfeit&&p.lv>=45).length>=3;if(!eligible){for(const id of Object.keys(v.loot))if(EQ[id]?.worldLegend)delete v.loot[id];v.chance=0;v.legendaryLocked=true;}return v;}
 const balanceStakeReady=stakeSyncReady_;stakeSyncReady_=function(r){const x=stakeRead_(r.id);if(!wagersMatch(x.offers[0],x.offers[1]))pvpFail_('stake rarity mismatch');return balanceStakeReady(r);};
-const balanceReplayFrame=replayFrame_;replayFrame_=function(r){balanceReplayFrame(r);if(!r.replay?.frames?.length)return;const f=r.replay.frames[r.replay.frames.length-1],known=r._balanceKnown||(r._balanceKnown=Object.fromEntries([...r.replay.initial.allies,...r.replay.initial.enemies].map(u=>[u.id,true])));f.spawns=[];for(const u of [...r.battle.allies,...r.battle.enemies])if(!known[u.id]){f.spawns.push(JSON.parse(JSON.stringify(u)));known[u.id]=true;}f.enemyIds=r.battle.enemies.map(u=>u.id);};
+const balanceReplayFrame=replayFrame_;replayFrame_=function(r){balanceReplayFrame(r);if(!r.replay?.frames?.length)return;const f=r.replay.frames[r.replay.frames.length-1],known=r._balanceKnown||(r._balanceKnown=Object.fromEntries([...r.replay.initial.allies,...r.replay.initial.enemies].map(u=>[u.id,true])));f.spawns=[];for(const u of [...r.battle.allies,...r.battle.enemies])if(!known[u.id]){f.spawns.push(JSON.parse(JSON.stringify(u)));known[u.id]=true;}f.enemyIds=r.battle.enemies.map(u=>u.id);f.allyIds=r.battle.allies.map(u=>u.id);};
 
 // Shared reward application supports ordinary legendary and crafted guild prizes.
 const guildWorldApplyBase=worldApply;
@@ -1748,22 +1777,25 @@ CLS.archmage.pas=CLS.archmage.pas.filter(k=>k!=='adapt').concat('arcaneMastery')
 if(!CLS.gladiator.pas.includes('counter'))CLS.gladiator.pas.push('counter');
 if(!CLS.gladiator.pas.includes('thorns'))CLS.gladiator.pas.push('thorns');
 SK.th_ambush.charge=1.65;SK.th_ambush.bf.eva=.35;
-function classCombatFactor(u,t,sk){const type=sk.t==='auto'?u.atkType:sk.t;let f=1;if(isBalancedPvp()&&u.kind==='pet'){const n=Math.max(1,sideOf(u).filter(x=>x.kind==='pet'&&x.owner===u.owner&&x.hp>0).length);const hero=sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner),growth=hero?.cls&&baseOf(hero.cls)==='summoner'?.35:.15;f*=(1+growth*(n-1))/n;if(t.kind==='player')f*=.6;}if(u.cls&&baseOf(u.cls)==='thief'&&['p','h'].includes(type)){if(t.cls){const victim=baseOf(t.cls);if(['mage','gunner','archer'].includes(victim))f*=isBalancedPvp()?1.15:1.25;else if(['gladiator','druid'].includes(victim))f*=isBalancedPvp()?.7:.4;}}
+// Solo Demon Lord encounter: support underperforming final careers without changing PVP or other stages.
+const SOLO_DEMON_CAREER_DAMAGE={"shogun":1.75,"dirge":1.3,"archmage":1.6,"elementalist":1.95,"gunsaint":1.3,"bounty":1.85,"cannoneer":1.6,"demolisher":1.5};
+function soloDemonCareerFactor(u){return B()?.kind==='boss'&&Number(B().meta)===6&&u.kind==='player'&&!u.temporary?(SOLO_DEMON_CAREER_DAMAGE[u.cls]||1):1;}
+function classCombatFactor(u,t,sk){const type=sk.t==='auto'?u.atkType:sk.t;let f=t.boss&&['pet','npcpet'].includes(u.kind)?.7:1;if(isBalancedPvp()&&u.kind==='pet'){const n=Math.max(1,sideOf(u).filter(x=>x.kind==='pet'&&x.owner===u.owner&&x.hp>0).length);const hero=sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner),growth=hero?.cls&&baseOf(hero.cls)==='summoner'?.35:.15;f*=(1+growth*(n-1))/n;if(t.kind==='player')f*=.7;}if(u.cls&&baseOf(u.cls)==='thief'&&['p','h'].includes(type)){if(t.cls){const victim=baseOf(t.cls);if(['mage','gunner','archer'].includes(victim))f*=isBalancedPvp()?1.15:1.25;else if(['gladiator','druid'].includes(victim))f*=isBalancedPvp()?.7:.4;}}
 if(u.cls&&t.cls&&baseOf(t.cls)==='gladiator'&&['mage','archer'].includes(baseOf(u.cls)))f*=isBalancedPvp()?1.2:1.35;
 if(isBalancedPvp()){if(u.cls==='packlord')f*=.75;if(t.cls==='packlord')f*=1.25;}
 if(isBalancedPvp()&&u.cls&&baseOf(u.cls)==='mage'&&type==='m')f*=1.15;
-if(u.cls==='gunsaint'&&type==='p')f*=.95;if(hasPas(u,'arcaneMastery')&&type==='m')f*=1.15;return f;}
+if(u.cls==='gunsaint'&&type==='p')f*=.95;if(hasPas(u,'arcaneMastery')&&type==='m')f*=1.15;return f*soloDemonCareerFactor(u);}
 const elementsPlayerUnit=playerUnit;playerUnit=function(){const u=elementsPlayerUnit();u.defenseTypes=equipmentElements(S.P.eq);u.types=u.defenseTypes.slice();return u;};
 const elementsHumanUnit=humanUnit;humanUnit=function(name,cls,lv,i){const u=elementsHumanUnit(name,cls,lv,i);u.defenseTypes=equipmentElements(npcEq(cls,lv));u.types=u.defenseTypes.slice();return u;};
 
-function minimumHitChance(u,t){return u.cls&&t.cls&&['gladiator','druid'].includes(baseOf(u.cls))&&baseOf(t.cls)==='thief'?80:25;}
+function minimumHitChance(u,t){return u.cls&&t.cls&&['gladiator','druid'].includes(baseOf(u.cls))&&baseOf(t.cls)==='thief'?80:u.boss?40:25;}
 
 if(!CLS.druid.pas.includes('thorns'))CLS.druid.pas.push('thorns');
 function rogueCritBlocked(u,t){return !!(u.cls&&t.cls&&baseOf(u.cls)==='thief'&&baseOf(t.cls)==='druid');}
 
 function frontlinePierce(u,t){return u.cls&&t.cls&&baseOf(u.cls)==='archer'&&baseOf(t.cls)==='gladiator'?.3:0;}
 
-SK.sbw_doom.pw=230;SK.sbw_doom.basePower=230;SK.sbw_doom.pi=.3;SK.sbw_doom.mp=20;
+SK.sbw_doom.pw=460;SK.sbw_doom.basePower=460;SK.sbw_doom.pi=.3;SK.sbw_doom.mp=20;
 // Deterministic pressure estimate: autoplay respects armor elements and the same area budget.
 function combatSkillScore(u,id,target,targets=foesOf(u).filter(x=>x.hp>0)){
  const sk=pvpSkill(id);if(!sk||!['p','m','h','auto'].includes(sk.t)||!targets.length)return 0;
@@ -1797,7 +1829,7 @@ calcPet=function(p,wild=1){if(SP[p.sp].solar){const s=calcPet({...p,sp:SP[p.sp].
 function chooseAutoSummon(u){
  const b=B();if(!b||b.over||b.kind==='world'||b.kind==='pvp'&&b.turns>=26||!u||u.hp<=0||u.temporary||!['player','human'].includes(u.kind))return null;
  const mates=sideOf(u),alive=mates.filter(x=>x.hp>0),foes=foesOf(u).filter(x=>x.hp>0);
- if(!foes.length||alive.filter(x=>x.temporary).length>=2)return null;
+ if(!foes.length||!battleHasRoom(u))return null;
  // Let the existing healer policy handle emergencies before investing a turn.
  if(u.skills.some(id=>{const s=SK[id];return s?.t==='heal'&&!cooldownOf(u,id)&&costOf(u,s)<=u.mp&&(s.tg==='self'?[u]:alive).some(x=>x.hp/x.st.hp<.4);}))return null;
  const ids=['shadow_clone','summon_golem','hire_merc'].filter(id=>u.skills.includes(id)&&SK[id]&&!cooldownOf(u,id)&&costOf(u,SK[id])<=u.mp);
@@ -1887,7 +1919,8 @@ function class10AutoDefense(u){
 }
 function applyClass10Replay(b,f){
  for(const u of f.spawns||[])if(![...b.allies,...b.enemies].some(x=>x.id===u.id))(u.side==='ally'?b.allies:b.enemies).push(JSON.parse(JSON.stringify(u)));
- if(f.enemyIds)b.enemies=b.enemies.filter(u=>f.enemyIds.includes(u.id));
+ if(f.enemyIds)b.enemies=f.enemyIds.map(id=>b.enemies.find(u=>u.id===id)).filter(Boolean);
+ if(f.allyIds)b.allies=f.allyIds.map(id=>b.allies.find(u=>u.id===id)).filter(Boolean);
  for(const [id,barrier,buffs] of f.class10Units||[]){const u=[...b.allies,...b.enemies].find(x=>x.id===id);if(u){u.class10Barrier=barrier;u.buffs=JSON.parse(JSON.stringify(buffs));}}
 }
 
@@ -1896,10 +1929,21 @@ const class10WorldPrevious=wbAuto_;wbAuto_=function(u){const id=class10AutoDefen
 const class10ReplayPrevious=replayFrame_;replayFrame_=function(r){class10ReplayPrevious(r);if(!r.replay?.frames?.length)return;const f=r.replay.frames.at(-1),memo=r._replayUnits||(r._replayUnits={});f.class10Units=[];for(const u of [...r.battle.allies,...r.battle.enemies]){const value=JSON.stringify([u.class10Barrier||0,u.buffs||[]]),key='c10:'+u.id;if(memo[key]!==value){f.class10Units.push([u.id,...JSON.parse(value)]);memo[key]=value;}}};
 
 // Requested follow-up balance: free druid forms, desperation, stronger clones, stealth criticals.
+// Summoner line: one companion in exchange for a second life, inherited by every promotion.
+PAS.summoner_soul_exchange={n:'สัญญาแลกวิญญาณ',d:'เมื่อหมดสติ ฟื้น HP 30% ได้ 1 ครั้งต่อการต่อสู้ แลกกับคู่หูที่ยังมีชีวิต 1 ตัว (เลือก HP ปัจจุบันน้อยสุด) ไม่นับตัวอัญเชิญชั่วคราว; พาสซีฟฟื้นคืนชีพเดิมทำงานก่อน'};
+CLS.summoner.pas.push('summoner_soul_exchange');
+
 PAS.class10_desperation={n:'พลังฮึดสู้ · Lv10',d:'ดาเมจโจมตีเพิ่ม 1% ต่อ HP สูงสุดที่เสียไปทุก 1% สูงสุดเกือบ 100% เมื่อใกล้หมดสติ'};
 CLS.gladiator.pas.push('class10_desperation');
 const classRefreshUnit=unit;unit=function(o){const u=classRefreshUnit(o);if(u.lv<10)u.pas=u.pas.filter(k=>k!=='class10_desperation');return u;};
 const classRefreshFactor=classCombatFactor;classCombatFactor=function(u,t,sk){const f=classRefreshFactor(u,t,sk);return class10Damaging(sk)&&hasPas(u,'class10_desperation')&&u.st?.hp>0&&Number.isFinite(u.hp)?f*(1+Math.max(0,Math.min(1,1-u.hp/u.st.hp))):f;};
+// PVP Lv60 career balance: same coefficients for every gear set and opponent.
+const PVP_CAREER_BALANCE={"templar":{"out":1.55,"incoming":0.9,"pet":1.55},"eternal":1.4,"warlord":{"out":1.5,"incoming":0.85,"pet":1.5},"bloodwar":{"out":1.75,"incoming":0.85,"pet":1.75},"sniper":{"out":1.08,"incoming":0.78,"pet":1.08},"maestro":{"out":1.22,"incoming":0.78,"pet":1.22},"bounty":1.15,"archdruid":0.78,"beastking":{"out":0.82,"incoming":0.9,"pet":0.82},"soulsage":{"out":0.93,"incoming":0.95,"pet":0.93},"sealmaster":{"out":1.05,"pet":0.83,"incoming":0.9},"wildgod":0.88,"ronin":1.15,"cannoneer":1.1,"demolisher":1.15,"spiritlord":{"out":0.97,"incoming":0.95,"pet":0.97},"dirge":1.17,"packlord":1.08,"masterthief":1.08,"ninja":1.05};
+function pvpCareerOutgoing(u){if(!isBalancedPvp())return 1;const hero=u.kind==='pet'?sideOf(u).find(x=>x.kind==='player'&&x.owner===u.owner):u;const a=PVP_CAREER_BALANCE[hero?.cls];return typeof a==='number'?a:(u.kind==='pet'?a?.pet:a?.out)||1;}
+function pvpCareerIncoming(t){return isBalancedPvp()&&t.kind==='player'?(PVP_CAREER_BALANCE[t.cls]?.incoming||1):1;}
+const careerBalancedAttack=classCombatFactor;classCombatFactor=function(u,t,sk){return careerBalancedAttack(u,t,sk)*pvpCareerOutgoing(u);};
+const careerBalancedDefense=pvpDamageFactor;pvpDamageFactor=function(u,t){return careerBalancedDefense(u,t)*pvpCareerIncoming(t);};
+
 const classRefreshActions=[];
 function classRefreshStealthCrit(u){const context=classRefreshActions.at(-1);return !!(context?.id===u.id&&context.crit)||!!(u.cls&&baseOf(u.cls)==='archer'&&class10Invisible(u));}
 function takeFreeForm(u){if(!u?.freeFormPending)return false;u.freeFormPending=false;return true;}
@@ -1924,7 +1968,7 @@ const classRefreshWorld=wbAuto_;wbAuto_=function(u){const id=chooseAutoForm(u);r
 // Follow-up balance: one-battle archer veil, healing parry, reflect AI, free hire.
 SK.class10_parry.cd=2;
 PAS.class10_parry.d='ป้องกันท่าโจมตี 1 ท่า รวมทุกฮิต และฟื้น HP เท่าดาเมจที่ป้องกันได้ ไม่เกิน HP สูงสุด อยู่ 3 เทิร์น คูลดาวน์ 3 เทิร์น';
-PAS.class10_stealth.d='Lv10: ล่องหนแบบพาสซีฟ ป้องกันท่าโจมตีเดี่ยว 1 ท่าต่อการต่อสู้ ไม่กันท่าหมู่ ไม่เพิ่มคริติคอล';
+PAS.class10_stealth.d='Lv10: ล่องหนแบบพาสซีฟ ลดดาเมจท่าโจมตีเดี่ยวแรก 50% รวมทุกฮิต 1 ครั้งต่อการต่อสู้ ไม่กันท่าหมู่ ไม่เพิ่มคริติคอล และยังรับสถานะตามปกติ';
 CLS.archer.sk=CLS.archer.sk.filter(([,id])=>id!=='class10_stealth');
 CLS.archer.pas.push('class10_stealth');
 delete SK.class10_stealth;
@@ -1945,14 +1989,16 @@ const defenseFollowupAuto=class10AutoDefense;class10AutoDefense=function(u){retu
 class10BlockHit=function(u,sk,t,damaging){
  const c=class10AttackContexts.at(-1),key=t.id+'|'+u.id;
  if(c?.blocked.has(key))return true;
- if(c?.absorbing?.has(key))return false;
+ if(c?.absorbing?.has(key)||c?.archerHalfGuardTargets?.has(key))return false;
  const parry=t.buffs.some(x=>x.pas==='class10_parry'&&x.tn>0);
  if(parry&&damaging){t.buffs=t.buffs.filter(x=>x.pas!=='class10_parry');if(c)(c.absorbing??=new Set()).add(key);return false;}
  const veil=damaging&&!sk.all&&t.archerVeil>0,barrier=damaging&&t.class10Barrier>0;
- if(!parry&&!veil&&!barrier)return false;
- if(parry)t.buffs=t.buffs.filter(x=>x.pas!=='class10_parry');else if(veil)t.archerVeil=0;else t.class10Barrier=0;
- c?.blocked.add(key);blog(t.name+' ใช้ '+(parry?'ตั้งสมาธิปัดป้อง':veil?'ล่องหน':'บาเรียเวทย์')+' ป้องกัน '+sk.n);vfx('buff',t.id);return true;
+ if(veil){t.archerVeil=0;if(c)(c.archerHalfGuardTargets??=new Set()).add(key);blog(t.name+' ใช้ล่องหน ลดดาเมจ '+sk.n+' 50%');vfx('buff',t.id);return false;}
+ if(!parry&&!barrier)return false;
+ if(parry)t.buffs=t.buffs.filter(x=>x.pas!=='class10_parry');else t.class10Barrier=0;
+ c?.blocked.add(key);blog(t.name+' ใช้ '+(parry?'ตั้งสมาธิปัดป้อง':'บาเรียเวทย์')+' ป้องกัน '+sk.n);vfx('buff',t.id);return true;
 };
+function classDefenseDamageFactor(u,t){return class10AttackContexts.at(-1)?.archerHalfGuardTargets?.has(t.id+'|'+u.id)? .5:1;}
 function classDefenseAbsorb(u,sk,t,d){if(!class10AttackContexts.at(-1)?.absorbing?.has(t.id+'|'+u.id))return false;const restored=heal(t,d);blog(t.name+' ปัดป้อง '+d+' ดาเมจ และฟื้น HP '+restored);vfx('heal',t.id);return true;}
 const defenseFollowupAct=act;act=function(u,id,...args){if(id==='class10_stealth')return false;return defenseFollowupAct(u,id,...args);};
 const defenseFollowupReplayApply=applyClass10Replay;applyClass10Replay=function(b,f){defenseFollowupReplayApply(b,f);for(const [id,count]of f.archerVeils||[]){const u=[...b.allies,...b.enemies].find(x=>x.id===id);if(u)u.archerVeil=count;}};
@@ -1998,6 +2044,7 @@ const counterShadowHit=hitOne;hitOne=function(u,sk,t,...args){
   }return counterShadowHit(u,sk,t,...args);
  }finally{if(own)class10AttackContexts.pop();}
 };
+
 
 // World participants retain their granted guard action after a druid transformation.
 const worldFormGuardAct=act;act=function(u,id,...args){const ok=worldFormGuardAct(u,id,...args);if(ok&&SK[id]?.t==='form'&&isWorldBattle()&&!u.skills.includes('wb_guard'))u.skills.push('wb_guard');return ok;};

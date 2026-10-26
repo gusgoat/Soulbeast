@@ -60,7 +60,7 @@ MILE:()=>({
  gladiator:{10:{n:'โล่สะท้อน',t:'buff',tg:'self',bf:{pdef:.5},pas:'thorns2',tn:3,mp:8},20:{n:'ทุบแผ่นดินแยก',t:'p',pw:150,el:'ground',all:1,st:{para:.2},mp:12},30:{n:'ป้อมปราการเหล็ก',t:'buff',tg:'team',bf:{pdef:.4,mdef:.3},tn:3,taunt:3,mp:14},
   40:{n:'ขวานสังหาร',t:'p',pw:280,el:'fighting',cb:20,mp:16},50:{n:'ไม่มีวันล้ม',t:'heal',tg:'self',pw:50,cure:1,mp:20},60:{n:'พิโรธแห่งกลาดิเอเตอร์',t:'p',pw:310,el:'fighting',all:1,ct:1,mp:28}},
  archer:{10:{n:'ศรพิษสามดอก',t:'p',pw:70,hits:3,el:'poison',st:{poison:.2},mp:8},20:{n:'ฝนศรเพลิง',t:'p',pw:140,el:'fire',all:1,st:{burn:.2},mp:12},30:{n:'ตาเทพเหยี่ยว',t:'buff',tg:'team',bf:{acc:.3,crit:.6},tn:3,mp:14},
-  40:{n:'ศรสายฟ้าฟาด',t:'p',pw:260,el:'electric',st:{para:.3},mp:16},50:{n:'ศรนับพัน',t:'p',pw:70,hits:6,rt:1,el:'normal',mp:20},60:{n:'ศรสวรรค์ทะลุมิติ',t:'p',pw:480,el:'fairy',ct:1,pi:.5,mp:28}},
+  40:{n:'ศรสายฟ้าฟาด',t:'p',pw:220,el:'electric',st:{para:.2},mp:16,cd:3},50:{n:'ศรนับพัน',t:'p',pw:70,hits:4,rt:1,el:'normal',mp:20,cd:3},60:{n:'ศรสวรรค์ทะลุมิติ',t:'p',pw:480,el:'fairy',ct:1,pi:.5,mp:28}},
  mage:{10:{n:'ลูกไฟสามลูก',t:'m',pw:70,hits:3,rt:1,el:'fire',st:{burn:.1},mp:8},20:{n:'หมอกน้ำแข็งพิฆาต',t:'m',pw:200,el:'ice',st:{freeze:.25},mp:12},30:{n:'ม่านมานา',t:'buff',tg:'self',bf:{mdef:.6},pas:'mpsave',tn:3,mp:10},
   40:{n:'เมเทออร์เพลิง',t:'m',pw:200,el:'fire',all:1,st:{burn:.25},mp:20},50:{n:'มหาสายฟ้าพิโรธ',t:'m',pw:300,el:'electric',st:{para:.4},mp:22},60:{n:'มหาเวทวันสิ้นโลก',t:'m',pw:330,el:'dragon',all:1,ct:1,mp:34}},
  merchant:{10:{n:'โยนถุงทอง',t:'p',pw:150,el:'steel',all:1,gc:3,mp:4},20:{n:'บริการพิเศษ',t:'heal',tg:'team',pw:25,mp:12},30:{n:'ค้อนทองคำ',t:'p',pw:260,el:'steel',gold:1,mp:14},
