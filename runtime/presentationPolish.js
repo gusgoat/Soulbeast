@@ -29,7 +29,7 @@ portrait=function(key,size,opts={}){
  return html.replace(/<img class="(?:atlas-face|legendary-beast-portrait)"[^>]*>|<span class="mist-beast-art"[^>]*><\/span>/,layers).replace('class="pt ','class="pt motion-unit gallery-motion ').replace('style="','style="'+CharacterMotion.styles(a)).replace('<div ','<div '+CharacterMotion.attrs(a)+' ');
 };
 const galleryItem=itemIcon;
-itemIcon=function(id,size=44){if(['hero','bag','weaponbook'].includes(S.screen)&&!S.battle)size=S.screen==='weaponbook'?128:Math.max(size,72);return galleryItem(id,size);};
+itemIcon=function(id,size=44){if(size>=36&&['hero','bag','weaponbook'].includes(S.screen)&&!S.battle)size=S.screen==='weaponbook'?128:Math.max(size,72);return galleryItem(id,size);};
 const secretRiddleText={
  yggdrasil:'คืนที่ไม่มีลม ผู้เฝ้าจดไว้ว่า ส่วนที่แตะฟ้าจะตื่นไม่ได้จนกว่าส่วนที่ยืนรับน้ำหนักจะส่งชีวิตให้ ส่วนที่ยืนรับน้ำหนักเองไม่มีสิทธิ์เริ่มพิธี และสิ่งที่เริ่มพิธีต้องไม่เคยเห็นดวงดาว จงเรียงทั้งสามเพียงครั้งเดียว',
  shangrila:'ผู้เดินทางตีระฆังใบสุดท้ายแล้วกลับมายืนที่เดิม ผู้เฝ้าจึงบอกกฎสองข้อ: สิ่งที่ทำให้พรุ่งนี้ต่างจากเมื่อวานต้องอยู่ท้ายสุด ส่วนการอยู่ร่วมกับความจริงต้องเกิดหลังการมองเห็นมัน ระฆังทั้งสามห้ามตีซ้ำ',

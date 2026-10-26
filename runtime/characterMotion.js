@@ -18,7 +18,7 @@ const CharacterMotion={
   return html.replace(art,this.layers(a)).replace(/<button\b([^>]*)>/,(_,tag)=>'<button '+this.attrs(a)+' data-motion-unit="'+esc(u.id)+'" '+tag.replace('class="','class="motion-unit battle-motion ').replace(/style="/,'style="'+this.styles(a))+(tag.includes('style="')?'':' style="'+this.styles(a)+'"')+'>');
  },
  reduced(){return !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;},
- schedule(fn,ms){const context=this.context,id=setTimeout(()=>{this.timers.delete(id);if(this.context===context)fn();},ms);this.timers.add(id);return id;},
+ schedule(fn,ms){const context=this.context,id=setTimeout(()=>{this.timers.delete(id);if(this.context===context)fn();},BattleSpeed.ms(ms));this.timers.add(id);return id;},
  reset(){for(const t of this.timers)clearTimeout(t);this.timers.clear();for(const f of [...this.flights])f();this.states.clear();},
  sync(){
   const b=BattleEffects.battle(),room=compactRoom(),context=b?(S.screen+':'+(room?.id||b.kind)+':'+(b.meta||'')):null;if(this.context!==context){this.reset();this.context=context;}
@@ -26,11 +26,11 @@ const CharacterMotion={
   for(const [node,inst]of this.instances)if(!node.isConnected){inst.destroy();this.instances.delete(node);}
   for(const node of app.querySelectorAll('.battle-motion'))if(!this.instances.has(node)){
    const inst=new window.SoulbeastUnitMotion(node);this.instances.set(node,inst);
-   const st=this.states.get(node.dataset.motionUnit);if(st&&st.until>Date.now()){inst.set(st.phase);node.style.setProperty('--um-elapsed',-(Date.now()-st.start)+'ms');}
+   const st=this.states.get(node.dataset.motionUnit);if(st&&st.until>Date.now()){inst.set(st.phase);node.style.setProperty('--um-elapsed',-((Date.now()-st.start)*BattleSpeed.rate())+'ms');}
   }
  },
  phase(id,phase,duration){
-  if(this.reduced())return;const st={phase,start:Date.now(),until:Date.now()+duration};this.states.set(String(id),st);
+  if(this.reduced())return;const st={phase,start:Date.now(),until:Date.now()+BattleSpeed.ms(duration)};this.states.set(String(id),st);
   for(const [node,inst]of this.instances)if(node.dataset.motionUnit===String(id)){node.style.setProperty('--um-elapsed','0ms');inst.set(phase);}
   this.schedule(()=>{if(this.states.get(String(id))!==st)return;this.states.delete(String(id));for(const [n,i]of this.instances)if(n.dataset.motionUnit===String(id)){n.style.setProperty('--um-elapsed','0ms');i.set('idle');}},duration);
  },

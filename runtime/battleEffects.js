@@ -51,7 +51,7 @@ const BattleEffects={
   const r=face?.getBoundingClientRect();if(!r||r.width<=0||r.height<=0)return null;
   return {node:face,x:r.left+r.width/2,y:r.top+r.height/2,size:Math.min(72,Math.max(28,Math.min(r.width,r.height)))};
  },
- later(fn,ms,epoch=this.epoch){const id=setTimeout(()=>{this.timers.delete(id);if(epoch===this.epoch)fn();},ms);this.timers.add(id);return id;},
+ later(fn,ms,epoch=this.epoch){const id=setTimeout(()=>{this.timers.delete(id);if(epoch===this.epoch)fn();},BattleSpeed.ms(ms));this.timers.add(id);return id;},
  clear(){this.epoch++;for(const t of this.timers)clearTimeout(t);this.timers.clear();for(const f of [...this.live])f();this.live.clear();document.getElementById('vfx')?.querySelectorAll('.battle-fx-owned').forEach(n=>n.remove());},
  watch(){if(this.observer||typeof MutationObserver==='undefined')return;this.observer=new MutationObserver(()=>{if(this.screen!==S.screen){this.clear();return;}for(const f of [...this.live])if(f.stale?.())f();});this.observer.observe(document.getElementById('app'),{childList:true,subtree:true});},
  spawn(L,shape,x,y,p,vars={}){const n=vSpawn(L,'battle-fx-owned sig-fx sig-'+shape,[x,y],p.color,null,{'--a':p.accent,'--size':Math.min(window.innerWidth<620?112:170,92+(p.signature?35:0))+'px','--theta':p.seed%180+'deg','--dx':'0px','--dy':'-25px','--duration':'720ms','--life-ms':820,'--wait':'0ms',...vars});if(n){n.dataset.skill=p.id;n.dataset.theme=p.theme;n.setAttribute('aria-hidden','true');}return n;},

@@ -252,6 +252,11 @@
       "file": "forestJourney.js",
       "description": "Immersive forest route presentation",
       "units": 1
+    },
+    "battleSpeed": {
+      "file": "battleSpeed.js",
+      "description": "Sequential forests and battle presentation speed",
+      "units": 1
     }
   },
   "order": [
@@ -1357,6 +1362,7 @@
     "1102-motionTimeline",
     "1101-presentationPolish",
     "1103-forestJourney",
+    "1104-battleSpeed",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9421,6 +9427,13 @@
       "module": "forestJourney",
       "names": [
         "ForestJourney"
+      ],
+      "type": "Presentation"
+    },
+    "1104-battleSpeed": {
+      "module": "battleSpeed",
+      "names": [
+        "BattleSpeed"
       ],
       "type": "Presentation"
     }

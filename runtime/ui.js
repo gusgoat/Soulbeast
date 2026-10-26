@@ -301,7 +301,7 @@ function vSettings(){const P=S.P;return `<div class="stack"><div class="row"><h2
 // @soulbeast-end 0452-vSettings
 // @soulbeast-unit 0453-vWild
 
-function vWild(){const chosen=ZN.find(z=>z.id===Number(S.ui.forestChoice));return `<div class="stack"><div class="row"><h2 class="grow">เลือกจุดหมาย</h2>${chosen?'<button class="btn sm" data-a="forestPick" data-v="">ดูป่าทั้งหมด</button>':''}</div>${chosen?forestDetail(chosen):`<div class="forest-gallery">${[...ZN.filter(z=>z.train),...ZN.filter(z=>!z.train)].map(z=>{const open=z.train||S.P.zoneMax>=z.id;return `<button class="forest-portrait ${open?'':'sealed'}" data-a="forestPick" data-v="${z.id}" aria-label="${esc(z.n)}${open?'':' ยังไม่ปลดล็อก'}"><span class="forest-picture"><img src="${BUILTIN_SCENES[z.id===7?8:z.id+1]}" alt=""><span aria-hidden="true">${open?'✧':'🔒'}</span></span><strong class="forest-name">${esc(z.n)}</strong></button>`}).join('')}</div>`}</div>`}
+function vWild(){const chosen=ZN.find(z=>z.id===Number(S.ui.forestChoice));return `<div class="stack"><div class="row"><h2 class="grow">เลือกจุดหมาย</h2>${chosen?'<button class="btn sm" data-a="forestPick" data-v="">ดูป่าทั้งหมด</button>':''}</div>${chosen?forestDetail(chosen):`<div class="forest-gallery">${[...ZN.filter(z=>z.train),...ZN.filter(z=>!z.train)].map(z=>{const open=forestUnlocked(z.id);return `<button class="forest-portrait ${open?'':'sealed'}" data-a="forestPick" data-v="${z.id}" aria-label="${esc(z.n)}${open?'':' ยังไม่ปลดล็อก'}"><span class="forest-picture"><img src="${BUILTIN_SCENES[z.id===7?8:z.id+1]}" alt=""><span aria-hidden="true">${open?'✧':'🔒'}</span></span><strong class="forest-name">${esc(z.n)}</strong></button>`}).join('')}</div>`}</div>`}
 // @soulbeast-end 0453-vWild
 // @soulbeast-unit 0462-vStart
 

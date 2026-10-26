@@ -250,7 +250,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
 // @soulbeast-end 0279-hitOne
 // @soulbeast-unit 0283-battleLater
 
-function battleLater(fn,ms){const battle=S.battle;const run=()=>{if(S.battle!==battle||!battle)return;if(S.ui.trapNotice||S.ui.confirm?.act==='dosurrender'){setTimeout(run,150);return}fn()};setTimeout(run,ms)}
+function battleLater(fn,ms){const battle=S.battle;const run=()=>{if(S.battle!==battle||!battle)return;if(S.ui.trapNotice||S.ui.confirm?.act==='dosurrender'){setTimeout(run,150);return}fn()};setTimeout(run,BattleSpeed.ms(ms))}
 // @soulbeast-end 0283-battleLater
 // @soulbeast-unit 0285-after
 
@@ -292,7 +292,7 @@ function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,line
   if(b.kind==='traveler')lines.push(...travelerLoot(b.enemies[0]));
   if(b.kind==='boss'&&b.enemies.some(e=>e.sp==='demonlord')){P.rewardRulesVersion=2;lines.push('รางวัลจอมมารจะยืนยันจากเซิร์ฟเวอร์เมื่อบันทึกออนไลน์');}
   if(b.kind==='boss'&&ZN[b.meta-1].final&&b.enemies.some(e=>e.sp==='demonlord')){if(!P.cleared){gold+=20000;lines.push('🏆 ปราบจอมมารสำเร็จเป็นครั้งแรก! รางวัลพิเศษ 20,000 เหรียญ')}else lines.push('🏆 ปราบจอมมารได้อีกครั้ง!');P.cleared=(P.cleared||0)+1}
-  if(b.kind==='boss'){const z=b.meta;if(P.zoneMax<=z&&z<ZN.length){P.zoneMax=z+1;lines.push(`ปลดล็อกพื้นที่ใหม่: ${ZN[z].n}`)}gold+=ZN[z-1].boss.lv*25}
+  if(b.kind==='boss'){const z=b.meta;const next=forestNext(z);if(next&&!forestUnlocked(next)){P.zoneMax=next;lines.push(`ปลดล็อกพื้นที่ใหม่: ${ZN[next-1].n}`)}gold+=ZN[z-1].boss.lv*25}
   const lucky=b.allies[0].pas.filter(k=>k==='lucky').length;if(lucky)gold=Math.round(gold*(1+.25*lucky));
   P.gold+=gold;lines.unshift(`ได้ EXP ${fmt(progressionRewardExp(P,exp))} · ${fmt(gold)} เหรียญ`);
   lines.push(...gainExp(P,progressionRewardExp(P,exp),true));b.used.forEach(uid=>{const p=petBy(uid);if(p)lines.push(...gainExp(p,progressionRewardExp(p,exp),false))});

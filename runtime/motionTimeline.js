@@ -16,7 +16,7 @@ const MotionTimeline={
   CharacterMotion.sync();if(!VQ.length)return;const events=BattleEffects.enrich(VQ.splice(0).slice(-64)),L=document.getElementById('vfx');if(!L)return;
   if(CharacterMotion.reduced()){this.held.clear();this.until=0;render();return;}
   const groups=new Map();for(const e of events){const key=e.group+':'+(e.source||e.id);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);}
-  let offset=Math.max(0,this.until-Date.now());
+  let offset=Math.max(0,this.until-Date.now())*BattleSpeed.rate();
   for(const list of groups.values()){
    const cast=list.find(e=>e.k==='cast'||e.k==='charge'),first=list[0],source=cast?.id||first.source,skill=cast?.skill||first.skill||'attack',actor=BattleEffects.actor(source),a=CharacterMotion.resolve(actor),mode=CharacterMotion.mode(skill,actor),targets=list.filter(e=>['hit','miss','heal','buff','debuff'].includes(e.k));
    const windup=a?(mode==='ranged'?(a.windupDuration||1)*1000:mode==='support'?(a.assets.threat?1800:(a.windupDuration||1)*1000):0):0;
@@ -41,7 +41,7 @@ const MotionTimeline={
    },offset);
    offset+=span;
   }
-  this.until=Date.now()+offset;
+  this.until=Date.now()+BattleSpeed.ms(offset);
   CharacterMotion.schedule(()=>{if(Date.now()+20<this.until)return;this.held.clear();this.until=0;render();},offset);
  }
 };

@@ -10,9 +10,9 @@ g.ctx.document.querySelector=()=>stage;g.ctx.setTimeout=(fn,ms)=>{timers.push({f
 r('let journeyResolved=0;chooseFork=function(){journeyResolved++};');
 const before=r('JSON.stringify(S)');await r('ForestJourney.begin(1)');
 assert.equal(r('journeyResolved'),0);assert.equal(r('JSON.stringify(S)'),before);
-await r('ForestJourney.begin(0)');assert.equal(frames.length,1);assert.equal(frames[0].o.duration,5000);assert.equal(r('ForestJourney.stepMs'),1250);
-assert(frames[0].f.at(-1).transform.includes('-12%'));assert(timers.some(t=>t.ms===5000));
+await r('ForestJourney.begin(0)');assert.equal(frames.length,1);assert.equal(frames[0].o.duration,3000);assert.equal(r('ForestJourney.stepMs'),1000);
+assert(frames[0].f.at(-1).transform.includes('-9%'));assert(timers.some(t=>t.ms===3000));
 r('ForestJourney.finish(ForestJourney.active)');assert.equal(r('journeyResolved'),1);assert.equal(r('ForestJourney.active'),null);
 await r('ForestJourney.begin(0)');r('S.screen="town";ForestJourney.finish(ForestJourney.active)');assert.equal(r('journeyResolved'),1);
-console.log('PASS 30 scene files, hidden route spoilers, 4x1250ms, no early state change, double click guard, exactly-once resolution, navigation cancellation');
+console.log('PASS 30 scene files, hidden route spoilers, 3x1000ms, no early state change, double click guard, exactly-once resolution, navigation cancellation');
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,7 +1,7 @@
 // @soulbeast-unit 1103-forestJourney
-// Visual travel only. Resolve the original route exactly once after four steps.
+// Visual travel only. Resolve the original route exactly once after three steps.
 const ForestJourney={
- duration:5000,stepMs:1250,active:null,completing:false,audio:new Map(),
+ duration:3000,stepMs:1000,active:null,completing:false,audio:new Map(),
  counts:{1:4,2:3,3:3,4:4,5:4,6:6,7:3,8:3},
  art(z){const count=this.counts[z.id]||3;return 'assets/ui/forest-journey/zone-'+z.id+'-'+(z.depth%count)+'.webp';},
  sound(z,door){return ['spring','cleanse'].includes(door.k)?'water':z.id===6?'hall':[3,4,5].includes(z.id)?'stone':z.id===8?'leaves':'forest';},
@@ -20,13 +20,13 @@ const ForestJourney={
   const buffer=await Promise.race([Promise.all([load,ready]).then(x=>x[0]),new Promise(resolve=>setTimeout(()=>resolve(null),1500))]);
   if(run.cancelled||S.zone!==zone||S.screen!=='zone'){this.cancel();return;}
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  const frames=[];for(let step=0;step<4;step++){const base=step/4,next=(step+1)/4;const scale=1+step*.12;const pan=(index? -1:1)*step*3;
+  const frames=[];for(let step=0;step<3;step++){const base=step/3,next=(step+1)/3;const scale=1+step*.12;const pan=(index? -1:1)*step*3;
    frames.push({offset:base,transform:'translate('+pan+'%,0) scale('+scale+')'});
    frames.push({offset:base+.12,transform:'translate('+(pan+(index?-1:1)*1.5)+'%,'+(step%2?-0.7:0.7)+'%) scale('+(scale+.065)+')'});
    frames.push({offset:next,transform:'translate('+((index?-1:1)*(step+1)*3)+'%,0) scale('+(scale+.12)+')'});
   }
   run.animation=image?.animate(reduced?[{opacity:1},{opacity:1}]:frames,{duration:this.duration,easing:'linear',fill:'forwards'});
-  if(buffer&&Sound.enabled&&Sound.ctx){const start=Sound.ctx.currentTime;for(let i=0;i<4;i++){const source=Sound.ctx.createBufferSource();source.buffer=buffer;source.connect(audioBus('effects'));source.start(start+i*1.25);run.sources.push(source);stage.dataset.scheduledFootsteps=String(run.sources.length);Sound.voices.add(source);source.onended=()=>Sound.voices.delete(source);}}
+  if(buffer&&Sound.enabled&&Sound.ctx){const start=Sound.ctx.currentTime;for(let i=0;i<3;i++){const source=Sound.ctx.createBufferSource();source.buffer=buffer;source.connect(audioBus('effects'));source.start(start+i);run.sources.push(source);stage.dataset.scheduledFootsteps=String(run.sources.length);Sound.voices.add(source);source.onended=()=>Sound.voices.delete(source);}}
   run.started=Date.now();stage.dataset.walkDirection=index?'right':'left';stage.dataset.walkStarted=String(run.started);
   run.timer=setTimeout(()=>this.finish(run),this.duration);
  },

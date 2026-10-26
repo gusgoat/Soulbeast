@@ -177,7 +177,7 @@ function skillVisualLegacy(L,e,x,y){if(!e.skill||e.skill==='attack'||e.skill==='
 // @soulbeast-end 0221-skillVisualLegacy
 // @soulbeast-unit 0223-vSpawn
 
-function vSpawn(L,cls,pos,c,txt,vars={}){if(!L||L.childElementCount>=(window.innerWidth<620?150:240))return;const d=document.createElement('div');d.className='vx '+cls;d.style.setProperty('--c',c);if(pos){d.style.left=pos[0]+'px';d.style.top=pos[1]+'px';}for(const k in vars)d.style.setProperty(k,String(vars[k]));if(txt)d.textContent=txt;L.appendChild(d);const life=Math.min(3400,Math.max(400,Number(vars['--life-ms'])||1100))+(parseFloat(vars['--wait'])||0);setTimeout(()=>d.remove(),life+60);return d;}
+function vSpawn(L,cls,pos,c,txt,vars={}){if(!L||L.childElementCount>=(window.innerWidth<620?150:240))return;const d=document.createElement('div');d.className='vx '+cls;d.style.setProperty('--c',c);if(pos){d.style.left=pos[0]+'px';d.style.top=pos[1]+'px';}for(const k in vars)d.style.setProperty(k,String(vars[k]));if(txt)d.textContent=txt;L.appendChild(d);const life=Math.min(3400,Math.max(400,Number(vars['--life-ms'])||1100))+(parseFloat(vars['--wait'])||0);setTimeout(()=>d.remove(),BattleSpeed.ms(life+60));return d;}
 // @soulbeast-end 0223-vSpawn
 // @soulbeast-unit 0225-skillVisual
 

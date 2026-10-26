@@ -1031,3 +1031,8 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 @media(prefers-reduced-motion:reduce){.journey-ui{transition:opacity .15s}.forest-journey>.journey-scene{transform:none!important}}
 
 #app.forest-walking main button{visibility:hidden}
+/* Recovery buttons reserve their icon column even when gallery art is enlarged. */
+.bag-cure-actions{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));width:100%;gap:8px!important}
+.bag-cure-actions .btn{display:grid!important;grid-template-columns:32px minmax(0,1fr);align-items:center;padding:8px!important;min-height:52px;line-height:1.35}
+.bag-dose-icon{width:32px;height:32px;flex-basis:32px;overflow:hidden}.bag-dose-icon>*{--item-size:30px!important;--s:30px!important;max-width:30px;max-height:30px;flex-shrink:0}
+.battle-speed{align-self:flex-end;min-height:30px;margin:2px 0 6px;position:relative;z-index:3}

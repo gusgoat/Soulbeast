@@ -219,7 +219,7 @@ function vZone(){const zs=S.zone,z={...ZN[zs.id-1],boss:zs.boss||ZN[zs.id-1].bos
 // @soulbeast-end 0380-vZone
 // @soulbeast-unit 0454-forestDetail
 
-function forestDetail(z){const open=z.train||S.P.zoneMax>=z.id;return `<div class="card stack forest-detail">${zoneArt(z.id)}<h2>${esc(z.n)}</h2><p>${esc(z.d)}</p><small>อสูร Lv ${z.lv.join('–')} · บอส Lv ${z.boss.lv}</small><div class="row wrap">${z.sp.map(k=>`<span title="${esc(SP[k].n)}">${portrait(k,42)}</span>`).join('')}</div><div class="row wrap"><small>หายาก</small>${z.rare.map(k=>portrait(k,42)).join('')}</div>${open?`<button class="btn pri full" data-a="zone" data-v="${z.id}">เข้าสู่${esc(z.n)}</button>`:'<p>ชนะบอสในดินแดนก่อนหน้าเพื่อปลดล็อก</p>'}</div>`}
+function forestDetail(z){const open=forestUnlocked(z.id);return `<div class="card stack forest-detail">${zoneArt(z.id)}<h2>${esc(z.n)}</h2><p>${esc(z.d)}</p><small>อสูร Lv ${z.lv.join('–')} · บอส Lv ${z.boss.lv}</small><div class="row wrap">${z.sp.map(k=>`<span title="${esc(SP[k].n)}">${portrait(k,42)}</span>`).join('')}</div><div class="row wrap"><small>หายาก</small>${z.rare.map(k=>portrait(k,42)).join('')}</div>${open?`<button class="btn pri full" data-a="zone" data-v="${z.id}">เข้าสู่${esc(z.n)}</button>`:'<p>ชนะบอสในดินแดนก่อนหน้าเพื่อปลดล็อก</p>'}</div>`}
 // @soulbeast-end 0454-forestDetail
 // @soulbeast-unit 0467-zoneEnterFull
 
@@ -282,7 +282,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&towerActi
 // @soulbeast-unit 0956-forestPassed
 
 
-function forestPassed(z){return (S.P.forestClears?.[z.id]||0)>0||(!z.train&&(z.final?(S.P.cleared||0)>0:(S.P.zoneMax||1)>z.id));}
+function forestPassed(z){return (S.P.forestClears?.[z.id]||0)>0||(z.final&&(S.P.cleared||0)>0);}
 // @soulbeast-end 0956-forestPassed
 // @soulbeast-unit 0957-forestBossFor
 

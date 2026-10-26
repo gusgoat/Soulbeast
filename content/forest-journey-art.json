@@ -140,7 +140,7 @@
   },
   "audio": {
     "source": "https://quickshare.samsungcloud.com/xXuU1eZnqyRZ",
-    "processing": "One 0.55-second footstep from each supplied recording; scheduled four times at 1.25-second intervals; original source files retained in outputs/forest-journey-source",
+    "processing": "One 0.55-second footstep from each supplied recording; scheduled three times at 1-second intervals; original source files retained in outputs/forest-journey-source",
     "files": {
       "forest": "assets/audio/forest-journey/forest.mp3",
       "leaves": "assets/audio/forest-journey/leaves.mp3",
