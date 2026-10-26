@@ -45,14 +45,14 @@ const CharacterMotion={
  melee(source,target){
   const from=BattleEffects.anchor(source),to=BattleEffects.anchor(target);if(!from||!to||source===target)return 0;
   const card=from.node.closest('.battle-motion');if(!card)return 0;
-  const arena=card.closest('.battle-vitals')||card.parentElement,box=arena.getBoundingClientRect(),p=this.contact(from.node,to.node),copy=card.cloneNode(true);
+  const arena=card.closest('.battle-vitals,.online-combat-board')||card.parentElement,box=arena.getBoundingClientRect(),p=this.contact(from.node,to.node),copy=card.cloneNode(true);
   for(const n of [copy,...copy.querySelectorAll('*')])for(const key of ['id','data-u','data-a','data-v','data-motion-unit','tabindex'])n.removeAttribute(key);
   const face=copy.querySelector('.pt');if(!face)return 0;
   const shell=document.createElement('div');shell.className='motion-contact-layer';shell.setAttribute('aria-hidden','true');
   Object.assign(shell.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});
   copy.className='motion-unit motion-flight';copy.replaceChildren(face);Object.assign(copy.style,{left:p.left-box.left+'px',top:p.top-box.top+'px',width:p.width+'px',height:p.height+'px'});shell.appendChild(copy);document.body.appendChild(shell);
-  const inst=new window.SoulbeastUnitMotion(copy),previous=from.node.style.opacity;from.node.style.opacity='.2';let anim,done=false;
-  const clean=()=>{if(done)return;done=true;anim?.cancel();inst.destroy();shell.remove();if(from.node.isConnected)from.node.style.opacity=previous;this.flights.delete(clean);};this.flights.add(clean);
+  const inst=new window.SoulbeastUnitMotion(copy),previous=from.node.style.opacity;from.node.style.opacity='0';MotionTimeline.away.add(String(source));card.classList.add('motion-away');let anim,done=false;
+  const clean=()=>{if(done)return;done=true;anim?.cancel();inst.destroy();shell.remove();if(from.node.isConnected)from.node.style.opacity=previous;this.flights.delete(clean);MotionTimeline.away.delete(String(source));for(const [n]of this.instances)if(n.dataset.motionUnit===String(source))n.classList.remove('motion-away');};this.flights.add(clean);
   inst.set('melee');inst.pause(true);
   anim=copy.animate?.([{transform:'translate(0,0)'},{transform:`translate(${p.x}px,${p.y}px)`}],{duration:300,easing:'linear',fill:'forwards'});
   this.schedule(()=>{inst.pause(false);inst.set('melee');},300);

@@ -991,3 +991,20 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
  #app[data-screen="world"] .world-arena .world-helper-card>.battle-face{max-width:28px;max-height:28px}
  #app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{max-width:30px;max-height:30px}
 }
+/* Readable gallery art without expanding navigation icons or combat cards. */
+.gallery-motion{position:relative;isolation:isolate;overflow:hidden!important;background:var(--um-scene) center/cover;flex-shrink:0}
+.gallery-motion .um-art{position:absolute;inset:3%;width:94%;height:94%;object-fit:contain;pointer-events:none}
+#app .dex-form{flex:1 1 120px;max-width:150px}
+#app .pet-open{flex-wrap:wrap;justify-content:center}
+#app .pet-open>.grow{flex-basis:100%;text-align:center}
+#app[data-screen="hero"] main>.stack>.card.row.unit-frame{flex-wrap:wrap;justify-content:center}
+#app[data-screen="hero"] main>.stack>.card.row.unit-frame>.grow{min-width:150px}
+.weapon-book-grid article>.row{flex-wrap:wrap;justify-content:center;text-align:center}
+.weapon-book-grid article>.row>.grow{flex-basis:100%}
+.reward-with-art{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.reward-icons{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;flex-shrink:0}
+.toast.reward-with-art{max-width:calc(100vw - 24px);height:auto;white-space:normal}
+@media(prefers-reduced-motion:reduce){.gallery-motion .um-body,.gallery-motion .um-aura,.gallery-motion .um-embers i{animation:none}}
+.battle-motion.motion-away>.battle-face .pt{visibility:hidden!important}
+.motion-damage-number{position:fixed;z-index:30;font:bold 20px var(--f-num);text-shadow:0 2px 3px #000;pointer-events:none;animation:motion-damage-rise 1.2s ease-out both}
+@keyframes motion-damage-rise{0%{transform:translate(-50%,-30%);opacity:0}10%{opacity:1}100%{transform:translate(-50%,-150%);opacity:0}}

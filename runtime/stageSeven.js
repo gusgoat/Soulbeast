@@ -2,7 +2,7 @@
 // @soulbeast-unit 1096-stageSeven
 const STAGE_SEVEN=8;
 const stageSevenPools={entry:['gargoyle','golem','cerberus','obsidian_scarab'],crypt:['wisp','jiangshi','jorogumo','frost_lich','vampire_queen'],hall:['dragon','nue','wendigo','fallen_seraph','abyss_emperor']};
-ZN.push({id:8,n:'ป่าทมิฬพันธนาการ · ด่าน 7',d:'เมื่อจอมมารล่มสลาย ประตูหลังบัลลังก์เผยป่าเหล็กดำ เฟอร์รอธและมอร์ทิวาร์ยังคงรวบรวมวิญญาณไว้ในป้อมนิรันดร์ จงปลดพันธนาการที่เหลืออยู่',lv:[55,60],sp:Object.values(stageSevenPools).flat().filter(k=>!SP[k].rare),rare:Object.values(stageSevenPools).flat().filter(k=>SP[k].rare),boss:{sp:'solar_ferroth',lv:60,n:'เฟอร์รอธ และมอร์ทิวาร์'},mini:2,stageSeven:true});
+ZN.push({id:8,n:'ป่าทมิฬพันธนาการ',d:'เมื่อจอมมารล่มสลาย ประตูหลังบัลลังก์เผยป่าเหล็กดำ เฟอร์รอธและมอร์ทิวาร์ยังคงรวบรวมวิญญาณไว้ในป้อมนิรันดร์ จงปลดพันธนาการที่เหลืออยู่',lv:[55,60],sp:Object.values(stageSevenPools).flat().filter(k=>!SP[k].rare),rare:Object.values(stageSevenPools).flat().filter(k=>SP[k].rare),boss:{sp:'solar_ferroth',lv:60,n:'เฟอร์รอธ และมอร์ทิวาร์'},mini:2,stageSeven:true});
 const stageSevenEvents={},stageSeven_tune={heal:.4,physical:.1,purge:false};
 SK.audit_repair={n:'ซ่อมเกราะพันธนาการ',t:'buff',tg:'self',bf:{},mp:16,cd:4};SK.audit_warn={n:'เตรียมท่าใหญ่',t:'buff',tg:'self',bf:{},mp:0};
 var stageSeven_oldAI=aiChoose,stageSeven_oldAct=act,stageSeven_oldHurt=hurt,stageSeven_oldEff=eff,stageSeven_oldEnd=endUnitTurn;
@@ -61,7 +61,7 @@ const stageSevenLegendDrop=legendDrop;legendDrop=function(z){return stageSevenLe
 const stageSevenZone=handlers.zone,stageSevenDoZone=handlers.dozone;for(const [key,fn]of [['zone',stageSevenZone],['dozone',stageSevenDoZone]])handlers[key]=function(v){if(Number(v)===8&&!(S.P.cleared>0)){toast('ต้องชนะจอมมารก่อนจึงจะเข้าด่าน 7 ได้');return;}return fn(v);};
 const stageSevenForestPassed=forestPassed;forestPassed=function(z){return z.id===8?(S.P.forestClears?.[8]||0)>0:stageSevenForestPassed(z);};
 const stageSevenDetail=forestDetail;forestDetail=function(z){if(z.id!==8)return stageSevenDetail(z);const old=S.P.zoneMax;if(S.P.cleared>0)S.P.zoneMax=Math.max(8,old);try{return stageSevenDetail(z);}finally{S.P.zoneMax=old;}};
-const stageSevenArt=zoneArt;zoneArt=function(id,small=false){return id===8?'<figure class="scene-art"><img src="assets/ui/stage7/forest.png" alt="ป่าทมิฬพันธนาการ" style="width:100%;border-radius:14px" width="1536" height="1024"></figure>':stageSevenArt(id,small);};
+const stageSevenArt=zoneArt;zoneArt=function(id,small=false){return id===8?sceneArt(9,ZN[7].n,small):stageSevenArt(id,small);};
 const stageSevenLatestArt=latestForestArt;latestForestArt=function(){return S.P?.lastForestId===8?'assets/ui/stage7/forest.png':stageSevenLatestArt();};
 const stageSevenZoneView=vZone;vZone=function(){let html=stageSevenZoneView();if(S.zone?.id===8)html=html.replace('assets/ui/boss-gates/gate-8.webp','assets/ui/stage7/gate.png').replace(' · ผนึกแล้วออร่าหาย',' · บอสและสมุนผนึกไม่ได้');return html;};
 
