@@ -247,6 +247,11 @@
       "file": "motionTimeline.js",
       "description": "Visual-only attack timeline and HP presentation",
       "units": 1
+    },
+    "forestJourney": {
+      "file": "forestJourney.js",
+      "description": "Immersive forest route presentation",
+      "units": 1
     }
   },
   "order": [
@@ -1351,6 +1356,7 @@
     "1099-characterMotion",
     "1102-motionTimeline",
     "1101-presentationPolish",
+    "1103-forestJourney",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9408,6 +9414,13 @@
       "module": "motionTimeline",
       "names": [
         "MotionTimeline"
+      ],
+      "type": "Presentation"
+    },
+    "1103-forestJourney": {
+      "module": "forestJourney",
+      "names": [
+        "ForestJourney"
       ],
       "type": "Presentation"
     }

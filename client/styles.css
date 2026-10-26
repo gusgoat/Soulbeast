@@ -1008,3 +1008,26 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 .battle-motion.motion-away>.battle-face .pt{visibility:hidden!important}
 .motion-damage-number{position:fixed;z-index:30;font:bold 20px var(--f-num);text-shadow:0 2px 3px #000;pointer-events:none;animation:motion-damage-rise 1.2s ease-out both}
 @keyframes motion-damage-rise{0%{transform:translate(-50%,-30%);opacity:0}10%{opacity:1}100%{transform:translate(-50%,-150%);opacity:0}}
+
+/* Immersive route selection: the scene remains visible around compact controls. */
+#app.forest-fork main>.stack>.scene,#app.forest-fork main>.stack>.story-card,#app.forest-fork main>.stack>button[data-a="story"],#app.forest-fork main>.stack>div:has(>h2){display:none}
+#app.forest-fork main{padding-top:0}
+.forest-journey{position:relative;isolation:isolate;overflow:hidden;min-height:min(720px,calc(100dvh - 190px))!important;border:1px solid #a88e58;border-radius:18px;padding:14px 10px!important;background:#101e22;display:block!important}
+.forest-journey>.journey-scene{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 60%;z-index:-2;pointer-events:none}
+.journey-ui{display:flex;flex-direction:column;gap:12px;min-height:inherit;transition:opacity .25s ease,transform .25s ease}
+.forest-journey .forest-depth,.forest-journey .mini{width:88%;align-self:center;box-sizing:border-box;padding:9px 12px!important;background-color:#0b1c29dc;gap:5px!important}
+.forest-journey .forest-depth{font-size:12px}.forest-journey .steps{height:7px}.forest-journey .steps i{height:7px}
+.forest-journey .mini>.row{gap:6px;min-height:31px}.forest-journey .mini .pt{--s:28px!important;width:28px;height:28px}
+.forest-journey .mini .grow{min-width:0}.forest-journey .mini b,.forest-journey .mini .sub,.forest-journey .mini span{font-size:11px!important}
+.forest-journey .mini .bar{height:5px;margin-top:2px}.forest-journey .mini .grow>.row>.grow{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.forest-journey .journey-ui>p{display:none}
+.forest-journey .grid2{margin-top:auto;margin-bottom:clamp(100px,20vh,180px);gap:18%;padding:0 5%;align-items:end}
+.forest-journey .door{min-width:0;min-height:0!important;padding:7px!important;gap:4px!important;border-radius:16px!important;background-color:#102333e8}
+.forest-journey .door .route-picture,.forest-journey .door img{height:clamp(62px,18vw,100px)!important;min-height:0!important;width:100%;object-fit:cover;border-radius:10px!important}
+.forest-journey .door b{font-size:12px;line-height:1.25}.forest-journey .door .sub{font-size:10px}.forest-journey .door .door-g{display:none}
+#app.forest-walking .journey-ui{opacity:0;transform:translateY(12px);pointer-events:none}
+#app.forest-walking main{overflow:hidden}#app.forest-walking nav.bottom{pointer-events:none}
+#app.forest-walking main button{pointer-events:none}
+@media(prefers-reduced-motion:reduce){.journey-ui{transition:opacity .15s}.forest-journey>.journey-scene{transform:none!important}}
+
+#app.forest-walking main button{visibility:hidden}

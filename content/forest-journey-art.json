@@ -1,0 +1,152 @@
+{
+  "source": "https://quickshare.samsungcloud.com/exfMGVaeZ6Ss",
+  "zones": {
+    "1": [
+      {
+        "file": "assets/ui/forest-journey/zone-1-0.webp",
+        "source": "file_000000000b4882079ec08eba934cf663.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-1-1.webp",
+        "source": "file_000000009f308211a783d4e33957c7d2.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-1-2.webp",
+        "source": "file_00000000db1082118010db10f4599f8c.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-1-3.webp",
+        "source": "file_00000000e5248211a7576a87b819e962.png"
+      }
+    ],
+    "2": [
+      {
+        "file": "assets/ui/forest-journey/zone-2-0.webp",
+        "source": "file_000000001ac08207a9e291837d1b7b25.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-2-1.webp",
+        "source": "file_000000005b288211bc719ebd8dcc7a30.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-2-2.webp",
+        "source": "file_000000007ef082118452f2c6d31da22d.png"
+      }
+    ],
+    "3": [
+      {
+        "file": "assets/ui/forest-journey/zone-3-0.webp",
+        "source": "file_00000000089c821182dbed35d1c40b69.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-3-1.webp",
+        "source": "file_00000000a3388207854db007e6ef2298.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-3-2.webp",
+        "source": "file_00000000f5948211bc75193d27237212.png"
+      }
+    ],
+    "4": [
+      {
+        "file": "assets/ui/forest-journey/zone-4-0.webp",
+        "source": "file_000000005954820798cdee5d6ce620b8.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-4-1.webp",
+        "source": "file_000000006bf08211bd5ab375ac11842a.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-4-2.webp",
+        "source": "file_0000000096c08211963b97c3d4b6c777.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-4-3.webp",
+        "source": "file_00000000e3988211b52e02f894da866b.png"
+      }
+    ],
+    "5": [
+      {
+        "file": "assets/ui/forest-journey/zone-5-0.webp",
+        "source": "file_00000000330482118da8d15ab6c4e758.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-5-1.webp",
+        "source": "file_0000000049cc8211be0b6268ccdd6428.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-5-2.webp",
+        "source": "file_00000000719482119ad2c013222b95f9.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-5-3.webp",
+        "source": "file_000000007cd88211931725431d124f3a.png"
+      }
+    ],
+    "6": [
+      {
+        "file": "assets/ui/forest-journey/zone-6-0.webp",
+        "source": "file_00000000023c8211afee18d54dec2287.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-6-1.webp",
+        "source": "file_0000000018048207885b5c3e7cc1a6de.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-6-2.webp",
+        "source": "file_0000000059608211bb3fad49eb34e284.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-6-3.webp",
+        "source": "file_0000000084cc82078a577a47355f27bd.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-6-4.webp",
+        "source": "file_00000000b75c8207a3035126cb05ada1.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-6-5.webp",
+        "source": "file_00000000cc048211a0f535a8cb447fec.png"
+      }
+    ],
+    "7": [
+      {
+        "file": "assets/ui/forest-journey/zone-7-0.webp",
+        "source": "file_000000001b7c8207bf765d9fd84e88b6.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-7-1.webp",
+        "source": "file_000000003bf48211b01bf1d014b947df.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-7-2.webp",
+        "source": "file_0000000052408211bf0f12930ad78711.png"
+      }
+    ],
+    "8": [
+      {
+        "file": "assets/ui/forest-journey/zone-8-0.webp",
+        "source": "file_0000000016048211a838b3c85ac5a9b1.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-8-1.webp",
+        "source": "file_000000009040821194dfc0e207d7ce76.png"
+      },
+      {
+        "file": "assets/ui/forest-journey/zone-8-2.webp",
+        "source": "file_00000000ad548211bf421dfb4fd209de.png"
+      }
+    ]
+  },
+  "audio": {
+    "source": "https://quickshare.samsungcloud.com/xXuU1eZnqyRZ",
+    "processing": "One 0.55-second footstep from each supplied recording; scheduled four times at 1.25-second intervals; original source files retained in outputs/forest-journey-source",
+    "files": {
+      "forest": "assets/audio/forest-journey/forest.mp3",
+      "leaves": "assets/audio/forest-journey/leaves.mp3",
+      "water": "assets/audio/forest-journey/water.mp3",
+      "hall": "assets/audio/forest-journey/hall.mp3",
+      "stone": "assets/audio/forest-journey/stone.mp3"
+    }
+  }
+}
