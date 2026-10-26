@@ -4,7 +4,7 @@ const run=g.run;
 const art=JSON.parse(fs.readFileSync('content/individual-skill-art.json','utf8')).skills;
 const skills=JSON.parse(run('JSON.stringify(SK)'));
 assert.deepEqual(Object.keys(skills).filter(k=>k.startsWith('enchant_')).sort(),['fire','flying','water'].map(e=>'enchant_'+e).sort());
-for(const id of Object.keys(skills))assert(art.some(a=>a.id===id),'Missing artwork '+id);
+for(const id of Object.keys(skills)){if(run('Object.hasOwn(STAGE_SEVEN_SKILL_ART,'+JSON.stringify(id)+')'))assert(run('skillPicture(null,SK['+JSON.stringify(id)+'],'+JSON.stringify(id)+')').includes('assets/ui/stage7/story.png'));else assert(art.some(a=>a.id===id),'Missing artwork '+id);}
 const hashes=new Set(),locations=new Set();
 for(const a of art.filter(a=>skills[a.id])){
  const location=a.path||a.kind+':'+a.index;assert(!locations.has(location),'Reused skill art '+a.id);locations.add(location);

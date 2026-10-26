@@ -83,7 +83,7 @@ function trap(){const t=pick(TRAPS),P=S.P,s=pStats();
 // @soulbeast-end 0304-trap
 // @soulbeast-unit 0305-ZT
 
-const ZT=id=>ZN[id-1].train?0:id-1;
+const ZT=id=>ZN[id-1].train?0:Math.min(5,id-1);
 // @soulbeast-end 0305-ZT
 // @soulbeast-unit 0307-openChest
 

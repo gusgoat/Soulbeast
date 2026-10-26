@@ -3,7 +3,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  const g=require('./game-context.cjs')(file),r=g.run;
  r('render=()=>{};Sound.fx=()=>{};Sound.cry=()=>{};ExtraAudio.play=()=>{};');
  const reset=(zone=7)=>r(`handlers.newgame();S.ui={};S.P.lv=60;S.P.zoneMax=7;S.P.gold=100000;S.P.items.pot=50;S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.zone={id:${zone},depth:1,log:[]};S.screen='zone';WorldTales.run();`);
- assert.equal(r('TALES_DATA.quests.length'),28);assert.equal(r('TALES_DATA.special.length'),7);
+ assert.equal(r('TALES_DATA.quests.length'),32);assert.equal(r('TALES_DATA.special.length'),8);
  for(const d of JSON.parse(r('JSON.stringify(TALES_DATA.quests)')))for(let branch=0;branch<d.actions.length;branch++){
   reset(d.zone);g.ctx.def=d;r("S.zone.taleSession={id:def.id,mode:'offer',token:'offer',result:[]};WorldTales.accept('offer');");assert.equal(r('WorldTales.state().quests[def.id].status'),'active');
   assert(!r('WorldTales.eligible().some(d=>d.id===def.id)'),'Active quest cannot be offered again');

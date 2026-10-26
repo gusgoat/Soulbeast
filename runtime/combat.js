@@ -46,7 +46,7 @@ function unit(o){return {buffs:[],status:{},pas:[],stab:[],types:[],taunt:0,...o
 // @soulbeast-unit 0236-playerUnit
 
 function playerUnit(){const P=S.P,s=pStats(),w=EQ[P.eq.weapon];
- return unit({id:'P',side:'ally',kind:'player',name:P.name,lv:P.lv,st:s,hp:Math.min(P.hp,s.hp),mp:Math.min(P.mp,s.mp),skills:humanSkills(P.cls,P.lv,P.eq),pas:humanPas(P.cls,P.eq),stab:w&&w.el?[w.el]:[],atkType:w?w.t:'p',img:'player',cls:P.cls,gender:P.gender})}
+ return unit({id:'P',side:'ally',kind:'player',name:P.name,lv:P.lv,st:s,hp:Math.min(P.hp,s.hp),mp:Math.min(P.mp,s.mp),skills:humanSkills(P.cls,P.lv,P.eq),pas:humanPas(P.cls,P.eq,P.lv),stab:w&&w.el?[w.el]:[],atkType:w?w.t:'p',img:'player',cls:P.cls,gender:P.gender})}
 // @soulbeast-end 0236-playerUnit
 // @soulbeast-unit 0237-petUnit
 
@@ -63,7 +63,7 @@ function wildUnit(sp,lv,i,boss){const t={sp,lv,form:formFor(sp,lv),pts:{}},s=cal
 function humanUnit(name,cls,lv,i){const eq=npcEq(cls,lv),focus=clsMult(cls,'patk')>=clsMult(cls,'matk')?'patk':'matk',pts={},n=5*(lv-1);
  Object.entries({[focus]:.35,hp:.25,pdef:.1,mdef:.1,spd:.1,acc:.1}).forEach(([k,v])=>pts[k]=n*v);
  const s=humanStats(cls,lv,pts,eq);s.hp=Math.round(s.hp*1.3);const w=EQ[eq.weapon];
- return unit({id:'e'+i,side:'enemy',kind:'human',name,cls,lv,st:s,hp:s.hp,mp:s.mp,skills:humanSkills(cls,lv,eq).filter(k=>!['form','revert'].includes(SK[k].t)&&!SK[k].gc),pas:humanPas(cls,eq),stab:w&&w.el?[w.el]:[],atkType:w.t,img:'npc:'+cls})}
+ return unit({id:'e'+i,side:'enemy',kind:'human',name,cls,lv,st:s,hp:s.hp,mp:s.mp,skills:humanSkills(cls,lv,eq).filter(k=>!['form','revert'].includes(SK[k].t)&&!SK[k].gc),pas:humanPas(cls,eq,lv),stab:w&&w.el?[w.el]:[],atkType:w.t,img:'npc:'+cls})}
 // @soulbeast-end 0240-humanUnit
 // @soulbeast-unit 0241-startBattle
 
@@ -171,7 +171,7 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
  if(id!=='attack'&&id!=='rest')vfx('cast',u.id,{skill:id,n:sk.n,el:sk.el,c:sk.t==='heal'?'#7fd08a':!sk.el?'#d9b35b':null});
  const mates=sideOf(u);
  if(sk.t==='rest'){const m=Math.round(u.st.mp*.3);u.mp=Math.min(u.st.mp,u.mp+m);blog(`${u.name} ตั้งสมาธิ ฟื้น MP ${m}`);fxAdd(u,'+'+m+' MP','mp');return true}
- if(sk.t==='form'){const f=FORMS[sk.form];if(!u.baseSkills)u.baseSkills=u.skills;u.form=sk.form;u.types=u.defenseTypes?u.defenseTypes.slice():f.t.slice();u.skills=[...f.sk,'revert'];u.img='form:'+sk.form;blog(`${u.name} แปลงเป็น${f.n}!`);fxAdd(u,f.n,'good');return true}
+ if(sk.t==='form'){const f=FORMS[sk.form];if(!u.baseSkills)u.baseSkills=u.skills;u.form=sk.form;u.types=u.defenseTypes?u.defenseTypes.slice():f.t.slice();u.skills=[...new Set([...f.sk,...(u.cls&&baseOf(u.cls)==='druid'?(u.baseSkills||[]).filter(id=>SK[id]):[]),'revert'])];u.img='form:'+sk.form;blog(`${u.name} แปลงเป็น${f.n}!`);fxAdd(u,f.n,'good');return true}
  if(sk.t==='revert'){u.form=null;u.types=u.defenseTypes?u.defenseTypes.slice():[];u.skills=u.baseSkills||u.skills;u.img=u.kind==='player'?'player':u.img;blog(`${u.name} คืนร่างมนุษย์`);return true}
  if(sk.t==='heal'||sk.t==='buff'){
   let list=sk.tg==='team'?mates.filter(x=>x.hp>0||((sk.revAll)&&x.kind!=='player')):sk.tg==='self'?[u]:[atgt&&(atgt.hp>0||sk.rev)&&mates.includes(atgt)?atgt:u];

@@ -7,7 +7,8 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  const g=require('./game-context.cjs')(file),r=g.run,json=s=>JSON.parse(r('JSON.stringify('+s+')'));
  assert.equal(hash(mechanics(json('SoulbeastContent.WORLD_TALES()'))),baseline.WORLD_TALES);
  assert.equal(hash(mechanics(json('SoulbeastContent.SECRET_LOCATIONS()'))),baseline.SECRET_LOCATIONS);
- const tales=json('TALES_DATA'),secrets=json('SECRET_DATA');assert.equal(tales.quests.length,28);
+ const tales=json('TALES_DATA'),secrets=json('SECRET_DATA');for(const key of ['quests','special'])tales[key]=tales[key].filter(d=>d.zone!==8);for(const key of ['locations','repeatableEvents','riddles'])secrets[key]=secrets[key].filter(d=>d.zone!==8); // Existing expanded multilingual narrative; stage 7 has its own content tests.
+assert.equal(tales.quests.length,28);
  for(const q of tales.quests){assert(q.intro.includes('\n\n'),q.id);assert(q.scene.includes('\n\n'));assert(q.actions.every(a=>a.outcome.includes('\n\n')));if(q.kind==='short')continue;assert.equal(q.stages.length,q.targets.length);for(let i=0;i<q.stages.length;i++){
   r('S.screen="zone";S.battle=null;S.zone={id:'+q.targets[i]+',depth:3,log:[],taleSession:{id:'+JSON.stringify(q.id)+',followId:'+JSON.stringify(q.id)+',mode:"follow",token:"prose",result:[]}};');
   r('WorldTales.state().quests['+JSON.stringify(q.id)+']={id:'+JSON.stringify(q.id)+',kind:'+JSON.stringify(q.kind)+',status:"active",progress:'+i+',targets:'+JSON.stringify(q.targets)+'};');

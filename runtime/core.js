@@ -150,7 +150,7 @@ function humanSkills(cls,lv,eq){const a=['attack',...clsSkills(cls,lv)];for(cons
 // @soulbeast-end 0133-humanSkills
 // @soulbeast-unit 0134-humanPas
 
-function humanPas(cls,eq){const a=[...clsPas(cls)];for(const sl in eq){const it=EQ[eq[sl]];if(it&&it.pas)a.push(it.pas)}return a}
+function humanPas(cls,eq,lv=S?.P?.lv||0){PAS.gunnerBossBounty={n:'ล่าค่าหัว',d:'ปลดล็อก Lv55: ผู้ผนึกสายมือปืนโจมตีบอสทุกตัว รวมบอสโลก แรงขึ้น 60% (×1.6) ไม่เพิ่มดาเมจคู่หู'};const a=[...clsPas(cls)];if(baseOf(cls)==='gunner'&&lv>=55)a.push('gunnerBossBounty');for(const sl in eq){const it=EQ[eq[sl]];if(it&&it.pas)a.push(it.pas)}return a}
 // @soulbeast-end 0134-humanPas
 // @soulbeast-unit 0139-sigLearned
 

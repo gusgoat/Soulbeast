@@ -16,8 +16,8 @@ function skTag(s){return (s.t==='p'?'กายภาพ · ':s.t==='m'?'เว�
 
 function skillDesc(id){const s=SK[id],a=[];if(s.el)a.push(elementIcon(s.el));if(s.cd)a.push('คูลดาวน์ '+s.cd+' เทิร์น');if(s.trueD)a.push('ทะลุพลังป้องกัน');if(s.immune)a.push('ป้องกัน'+(s.immune==='p'?'กายภาพ':'เวท')+' 100% จนจบเทิร์นถัดไป');if(s.summon)a.push('เรียกผู้ช่วย '+s.life+' เทิร์น'+(s.pctGold?' จ่ายเงิน 10% คลาสก่อนหน้า/เลเวล 85% · ออโต้จ้างไม่เกิน 1 ครั้งต่อการต่อสู้':''));if(s.dot)a.push('จบเทิร์นเสีย HP '+Math.round(s.dot.rate*100)+'% นาน '+s.dot.turns+' เทิร์น');if(s.enchant)a.push(`เพิ่มธาตุ${EL[s.enchant]?.n||s.enchant} ผสมกับการโจมตีปกติและสกิลโจมตี 3 เทิร์น · ธาตุซ้ำนับครั้งเดียว`);
  if(['p','m','h','auto'].includes(s.t))a.push(`${s.t==='p'?'กายภาพ':s.t==='m'?'เวทย์':s.t==='h'?'ผสม':'ตามอาวุธ'} พลัง ${s.pw}${s.hits?` × ${s.hits} ครั้ง${s.rt?' สุ่มเป้า':''}`:''}`);
- if(s.t==='heal')a.push(`ฟื้น HP ${s.pw}%${s.rev||s.revAll?' ชุบชีวิตได้':''}${s.cure?' ล้างสถานะ':''}`);
- if(s.t==='form')a.push(`เปลี่ยนเป็น${FORMS[s.form].n} ได้สกิลชุดใหม่`);
+ if(s.t==='heal')a.push(`ฟื้น HP ${s.pw}% ของ HP สูงสุดเป้าหมาย + 50% ของพลังเวทผู้ใช้ ก่อนตัวคูณฟื้นฟู${s.rev||s.revAll?' ชุบชีวิตได้':''}${s.cure?' ล้างสถานะ':''}`);
+ if(s.t==='form')a.push(`เปลี่ยนเป็น${FORMS[s.form].n} ได้สกิลประจำร่าง และสายดรูอิดยังใช้สกิลร่างคนได้ทุกท่า`);
  if(s.bf){const pos=Object.entries(s.bf).filter(([,v])=>v>0),neg=Object.entries(s.bf).filter(([,v])=>v<0);
   if(pos.length)a.push(`เพิ่ม ${pos.map(([k,v])=>`${SH[k]} ${Math.round(v*100)}%`).join(' ')}`);
   if(neg.length)a.push(`${['buff','heal'].includes(s.t)?'ลดของตัวเอง':'ลดของเป้า'} ${neg.map(([k,v])=>`${SH[k]} ${Math.round(-v*100)}%`).join(' ')}`);
@@ -210,9 +210,9 @@ function vArenaBase(){const P=S.P;return `<div class="stack"><div class="row"><h
 // @soulbeast-end 0379-vArenaBase
 // @soulbeast-unit 0385-vLegendBase
 
-function vLegendBase(){const P=S.P,L=P.legend||{},n=Object.keys(L).length;return `<div class="card stack"><div class="row"><h3 class="grow">ของในตำนาน</h3><span class="num sub">${n}/${ZN.filter(z=>!z.train).length*SLOTS.length+WORLD_LEGENDS.length}</span></div>
- <p class="sub" style="margin:0">แต่ละแผนที่มีของในตำนานครบทุกช่องสวมใส่ ช่องละ 1 ชิ้น หาได้จากหีบโบราณแห่งตำนาน หีบทองคำ หีบโลหิต และนักเดินทางปริศนาเท่านั้น</p>
- ${ZN.filter(z=>!z.train).map(z=>`<div><b style="font-size:13px">${z.n}</b> <span class="sub">${SLOTS.filter(([sl])=>L[z.id+'_'+sl]).length}/${SLOTS.length}</span><div class="sub" style="font-size:12px;line-height:1.7">${SLOTS.map(([sl,nm])=>{const it=EQ[sl==='weapon'?`lg${z.id}_weapon_${clsWeapon(P.cls)}`:`lg${z.id}_${sl}`];return L[z.id+'_'+sl]?`<span class="lgn">${it.n}</span> <span>(${PAS[it.pas].n}${it.sk?' · '+SK[it.sk].n:''}${it.ws?' · '+SK[it.ws].n:''})</span>`:`<span>${nm}: ???</span>`}).join('<br>')}</div></div>`).join('')}</div>`}
+function vLegendBase(){const P=S.P,L=P.legend||{},n=Object.keys(L).length;return `<div class="card stack"><div class="row"><h3 class="grow">ของในตำนาน</h3><span class="num sub">${n}/${ZN.filter(z=>!z.train&&!z.stageSeven).length*SLOTS.length+WORLD_LEGENDS.length}</span></div>
+ <p class="sub" style="margin:0">หกด่านหลักมีของในตำนานครบทุกช่องสวมใส่ (ด่าน 7 ใช้ชุดของปราสาทจอมมาร) ช่องละ 1 ชิ้น หาได้จากหีบโบราณแห่งตำนาน หีบทองคำ หีบโลหิต และนักเดินทางปริศนาเท่านั้น</p>
+ ${ZN.filter(z=>!z.train&&!z.stageSeven).map(z=>`<div><b style="font-size:13px">${z.n}</b> <span class="sub">${SLOTS.filter(([sl])=>L[z.id+'_'+sl]).length}/${SLOTS.length}</span><div class="sub" style="font-size:12px;line-height:1.7">${SLOTS.map(([sl,nm])=>{const it=EQ[sl==='weapon'?`lg${z.id}_weapon_${clsWeapon(P.cls)}`:`lg${z.id}_${sl}`];return L[z.id+'_'+sl]?`<span class="lgn">${it.n}</span> <span>(${PAS[it.pas].n}${it.sk?' · '+SK[it.sk].n:''}${it.ws?' · '+SK[it.ws].n:''})</span>`:`<span>${nm}: ???</span>`}).join('<br>')}</div></div>`).join('')}</div>`}
 // @soulbeast-end 0385-vLegendBase
 // @soulbeast-unit 0389-vHero
 

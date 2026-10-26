@@ -212,6 +212,16 @@
       "file": "solarBeasts.js",
       "description": "Eclipse Legendary rarity, eight gacha-exclusive beasts and 48 signature skills",
       "units": 1
+    },
+    "stageSeven": {
+      "file": "stageSeven.js",
+      "description": "Post-demon forest, paired bosses and one-time secret",
+      "units": 1
+    },
+    "stageSevenQuests": {
+      "file": "stageSevenQuests.js",
+      "description": "Stage 7 illustrated quests and events",
+      "units": 1
     }
   },
   "order": [
@@ -1309,6 +1319,8 @@
     "1093-accountManagement",
     "1094-battleEffects",
     "1095-solarBeasts",
+    "1096-stageSeven",
+    "1097-stageSevenQuests",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9319,6 +9331,20 @@
         "SolarBeasts"
       ],
       "type": "SolarBeasts"
+    },
+    "1096-stageSeven": {
+      "module": "stageSeven",
+      "names": [
+        "STAGE_SEVEN"
+      ],
+      "type": "VariableDeclaration"
+    },
+    "1097-stageSevenQuests": {
+      "module": "stageSevenQuests",
+      "names": [
+        "STAGE_SEVEN_QUESTS"
+      ],
+      "type": "VariableDeclaration"
     }
   },
   "trailer": "\r\n\r\n"

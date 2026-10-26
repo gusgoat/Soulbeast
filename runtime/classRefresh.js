@@ -32,10 +32,10 @@ const classRefreshHit=hitOne;hitOne=function(u,sk,t,...args){
 PAS.class10_stealth.d='ไม่เป็นเป้าท่าเดี่ยว 3 เทิร์น โดนท่าหมู่ได้ โจมตีแรกจากล่องหนรับประกันคริติคอลทุกฮิตเมื่อโจมตีโดน แล้วล่องหนหาย ใช้บัฟและยาได้';
 
 const classRefreshAfter=after;after=function(){const b=B(),u=b&&uById(b.cur);if(takeFreeForm(u)){b.menu='main';render();if(teamAutoUnit(u)){b.menu='wait';battleLater(aiAct,150);}return;}return classRefreshAfter();};
-const classRefreshDesc=skillDesc;skillDesc=function(id){const s=SK[id];return classRefreshDesc(id)+(s?.t==='form'?' · สายดรูอิดแปลงร่างไม่เสียเทิร์น (ยังใช้ MP)':'')+(id==='shadow_clone'?' · HP 25% และค่าสถานะอื่น 80% ของร่างจริง':'');};
+const classRefreshDesc=skillDesc;skillDesc=function(id){const s=SK[id];return classRefreshDesc(id)+(s?.t==='form'?' · สายดรูอิดแปลงร่างครั้งแรกไม่เสียเทิร์น (ยังใช้ MP)':'')+(id==='shadow_clone'?' · HP 25% และค่าสถานะอื่น 80% ของร่างจริง':'');};
 // Follow-up balance: one-battle archer veil, healing parry, reflect AI, free hire.
 SK.class10_parry.cd=2;
-PAS.class10_parry.d='ป้องกันท่าโจมตี 1 ท่า รวมทุกฮิต และฟื้น HP เท่าดาเมจที่ป้องกันได้ ไม่เกิน HP สูงสุด อยู่ 3 เทิร์น คูลดาวน์ 3 เทิร์น';
+PAS.class10_parry.d='ป้องกันท่าโจมตี 1 ท่า รวมทุกฮิต และฟื้น HP เท่าดาเมจที่ป้องกันได้ ไม่เกิน HP สูงสุด อยู่ 3 เทิร์น คูลดาวน์ 2 เทิร์น';
 PAS.class10_stealth.d='Lv10: ล่องหนแบบพาสซีฟ ลดดาเมจท่าโจมตีเดี่ยวแรก 50% รวมทุกฮิต 1 ครั้งต่อการต่อสู้ ไม่กันท่าหมู่ ไม่เพิ่มคริติคอล และยังรับสถานะตามปกติ';
 CLS.archer.sk=CLS.archer.sk.filter(([,id])=>id!=='class10_stealth');
 CLS.archer.pas.push('class10_stealth');
@@ -134,6 +134,61 @@ const classAbilityCareerPanel=careerPanel;careerPanel=function(cls){const ids=[.
 // Summoner line: one companion in exchange for a second life, inherited by every promotion.
 PAS.summoner_soul_exchange={n:'สัญญาแลกวิญญาณ',d:'เมื่อหมดสติ ฟื้น HP 30% ได้ 1 ครั้งต่อการต่อสู้ แลกกับคู่หูที่ยังมีชีวิต 1 ตัว (เลือก HP ปัจจุบันน้อยสุด) ไม่นับตัวอัญเชิญชั่วคราว; พาสซีฟฟื้นคืนชีพเดิมทำงานก่อน'};
 CLS.summoner.pas.push('summoner_soul_exchange');
+
+// Boss defenses and small-group area specialization, shared by every battle mode.
+PAS.archer_boss_evasion={n:'ล่องหนล่าบอส · Lv55',d:'สุ่มหลบแยก 30% ต่อฮิตโจมตีจากบอส รวมท่าหมู่ ไม่ใช่บวกค่าหลบ 30 จุด และไม่ใช้สิทธิ์ลดดาเมจท่าเดี่ยวเดิม'};
+PAS.mage_elemental_barrier={n:'บาเรียธาตุ · Lv50',d:'ลดดาเมจโจมตีจากบอส50% สำหรับ5ฮิตแรกที่ผ่านการหลบและการป้องกันเดิม ต่อการต่อสู้ ไม่นับพิษหรือความเสียหายต่อเนื่อง'};
+PAS.small_group_area={n:'ถล่มเป้าหมายจำกัด',d:'สกิลโจมตีหมู่แรงขึ้น50%เมื่อเริ่มใช้ท่าแล้วศัตรูมีชีวิตไม่เกิน2ตัว'};
+function bossCareerPassives(cls,lv){const a=[];if(!cls)return a;const base=baseOf(cls);if(base==='archer'&&lv>=55)a.push('archer_boss_evasion');if(base==='mage'&&lv>=50)a.push('mage_elemental_barrier');if(['stormcaller','demolisher'].includes(cls))a.push('small_group_area');return a;}
+const bossCareerHumanPas=humanPas;humanPas=function(cls,eq,lv=S?.P?.lv||0){return [...new Set([...bossCareerHumanPas(cls,eq,lv),...bossCareerPassives(cls,lv)])];};
+const bossCareerUnit=unit;unit=function(o){const u=bossCareerUnit(o);if(['player','human'].includes(u.kind)&&!u.temporary){u.pas=[...new Set([...u.pas,...bossCareerPassives(u.cls,u.lv)])];if(u.elementalBarrierHits==null)u.elementalBarrierHits=u.cls&&baseOf(u.cls)==='mage'&&u.lv>=50?5:0;}return u;};
+const bossCareerHits=[],bossCareerActions=[];
+const bossCareerHit=hitOne;hitOne=function(u,sk,t,...args){bossCareerHits.push({u,t,barrier:false});try{return bossCareerHit(u,sk,t,...args);}finally{bossCareerHits.pop();}};
+const bossCareerBlock=class10BlockHit;class10BlockHit=function(u,sk,t,damaging){
+ const hero=['player','human'].includes(t.kind)&&!t.temporary;
+ if(damaging&&u.boss&&hero&&t.cls&&baseOf(t.cls)==='archer'&&t.lv>=55&&Math.random()<.3){blog(t.name+' ล่องหนหลบการโจมตีบอส');vfx('miss',t.id);return true;}
+ const blocked=bossCareerBlock(u,sk,t,damaging);if(blocked)return true;
+ const c=bossCareerHits.at(-1);
+ if(damaging&&u.boss&&hero&&t.cls&&baseOf(t.cls)==='mage'&&t.lv>=50&&t.elementalBarrierHits>0&&c?.u===u&&c?.t===t){c.barrier=true;t.elementalBarrierHits--;blog(t.name+' บาเรียธาตุลดดาเมจ50% เหลือ '+t.elementalBarrierHits+' ฮิต');}
+ return false;
+};
+const bossCareerDefense=classDefenseDamageFactor;classDefenseDamageFactor=function(u,t){const c=bossCareerHits.at(-1);return bossCareerDefense(u,t)*(c?.u===u&&c?.t===t&&c.barrier? .5:1);};
+const bossCareerAct=act;act=function(u,id,...args){bossCareerActions.push({u,count:foesOf(u).filter(x=>x.hp>0).length});try{return bossCareerAct(u,id,...args);}finally{bossCareerActions.pop();}};
+function smallGroupAreaFactor(u,sk){if(!['player','human'].includes(u.kind)||u.temporary||!['stormcaller','demolisher'].includes(u.cls)||!sk.all||!class10Damaging(sk))return 1;const c=bossCareerActions.at(-1),n=c?.u===u?c.count:foesOf(u).filter(x=>x.hp>0).length;return n>0&&n<=2?1.5:1;}
+const bossCareerFactor=classCombatFactor;classCombatFactor=function(u,t,sk){return bossCareerFactor(u,t,sk)*smallGroupAreaFactor(u,sk);};
+const bossCareerReplayApply=applyClass10Replay;applyClass10Replay=function(b,f){bossCareerReplayApply(b,f);for(const [id,hits]of f.elementalBarrierHits||[]){const u=[...b.allies,...b.enemies].find(x=>x.id===id);if(u)u.elementalBarrierHits=hits;}};
+const bossCareerEffects=battleSpecialEffects;battleSpecialEffects=function(u){const a=bossCareerEffects(u);if(u.elementalBarrierHits>0)a.push('<span class="battle-effect-icon good" title="บาเรียธาตุ ลดดาเมจบอส50% เหลือ '+u.elementalBarrierHits+' ฮิต">🛡'+u.elementalBarrierHits+'</span>');return a;};
+
+
+// Opening gunner evasion: expires after two landed attack hits or first own action.
+PAS.gunner_ambush55={n:'ซุ่มยิง · Lv55',d:'หลบฮิตโจมตีแน่นอน 2 ครั้งแรก หมดผลเมื่อจบการกระทำครั้งแรก ใช้ครั้งเดียวต่อการต่อสู้'};
+const ambushHumanPas=humanPas;humanPas=function(cls,eq,lv=S?.P?.lv||0){const a=ambushHumanPas(cls,eq,lv);return cls&&baseOf(cls)==='gunner'&&lv>=55?[...new Set([...a,'gunner_ambush55'])]:a;};
+const ambushUnit=unit;unit=function(o){const u=ambushUnit(o);if(u.ambushHits==null)u.ambushHits=['player','human'].includes(u.kind)&&!u.temporary&&u.cls&&baseOf(u.cls)==='gunner'&&u.lv>=55?2:0;return u;};
+const ambushBlock=class10BlockHit;class10BlockHit=function(u,sk,t,damaging){if(damaging&&t.ambushHits>0){t.ambushHits--;blog(t.name+' ซุ่มยิงหลบการโจมตี เหลือ '+t.ambushHits+' ครั้ง');vfx('miss',t.id);return true;}return ambushBlock(u,sk,t,damaging);};
+const ambushEnd=endUnitTurn;endUnitTurn=function(u){if(u)u.ambushHits=0;return ambushEnd(u);};
+
+
+// Presentation-only descriptions, kept beside the current combat rules.
+CAREER_GUIDE.druid.con='การแปลงร่างยังใช้ MP ครั้งแรกไม่เสียเทิร์น ร่างแปลงทุกแบบใช้สกิลร่างคนได้ แต่ต้องบริหาร MP และคูลดาวน์';
+CAREER_GUIDE.feral.con='ต้องลงทุนกายภาพให้ตรงร่าง และบริหาร MP; แปลงร่างครั้งแรกไม่เสียเทิร์น';
+CAREER_GUIDE.wildgod.con='ต้องบริหาร MP และคูลดาวน์ ร่างมังกรยังใช้สกิลร่างคนได้ทุกท่า';
+const latestCareerPanel=careerPanel;careerPanel=function(cls){
+ const base=baseOf(cls),ids=[];const notes=[];
+ if(base==='archer')ids.push('archer_boss_evasion');
+ if(base==='mage')ids.push('mage_elemental_barrier');
+ if(base==='gunner'){humanPas(cls,{},60);ids.push('gunnerBossBounty','gunner_ambush55');}
+ if(base==='summoner')ids.push('summoner_soul_exchange');
+ if(['stormcaller','demolisher'].includes(cls))ids.push('small_group_area');
+ if(base==='druid')notes.push('ร่างแปลงทุกร่างใช้สกิลร่างคนได้ทุกท่า แปลงร่างครั้งแรกต่อการต่อสู้ไม่เสียเทิร์น แต่ยังใช้ MP');
+ if(['druid','summoner'].includes(base))notes.push('สกิลฟื้น HP: เล่นคนเดียว ×0.70; PVP จู่โจมค่าย สงครามกิลด์ หอคอย และบอสโลก ×1.00 ไม่ใช่ตัวคูณของการดูดเลือดหรือฟื้นต่อเนื่อง');
+ if(base==='thief')notes.push('ร่างเงา: HP 25% และค่าสถานะอื่น 80% ของร่างจริง');
+ if(['sealmaster','spiritlord'].includes(cls))notes.push('เฉพาะ PVP เมื่อยังมีคู่หูมีชีวิต: รับดาเมจ ×0.60; คู่หูฝ่ายตรงข้ามโจมตีผู้ผนึกมีตัวคูณ ×0.70 อีกชั้น ก่อนตัวปรับอาชีพ PVP');
+ if(SOLO_DEMON_CAREER_DAMAGE[cls])notes.push('เฉพาะศึกจอมมารโหมดคนเดียว: ดาเมจผู้ผนึก ×'+SOLO_DEMON_CAREER_DAMAGE[cls]+' ไม่เพิ่มดาเมจคู่หู');
+ const a=PVP_CAREER_BALANCE[cls];if(a){const out=typeof a==='number'?a:a.out||1,pet=typeof a==='number'?a:a.pet||1,inc=typeof a==='number'?1:a.incoming||1;notes.push('ตัวปรับสมดุลเฉพาะ PVP: ดาเมจผู้ผนึก ×'+out+' / คู่หู ×'+pet+' / ดาเมจที่ผู้ผนึกได้รับ ×'+inc+' คูณร่วมกับกติกาอื่น');}
+ return latestCareerPanel(cls)+(ids.length?'<div class="card stack"><b>ความสามารถเพิ่มเติมตามเลเวล</b>'+ids.map(id=>'<div><b>'+esc(PAS[id].n)+'</b><p class="sub">'+esc(PAS[id].d)+'</p></div>').join('')+'</div>':'')+notes.map(t=>'<p class="sub">'+esc(t)+'</p>').join('');
+};
+const latestClassTree=vClassTree;vClassTree=function(){return latestClassTree()+'<details class="card"><summary>กติกาคู่หูและการฟื้นฟูที่ใช้ร่วมกันทุกอาชีพ</summary><p>คู่หูที่ยังมีชีวิตเกิน 1 ตัว: พลังโจมตีกายภาพและเวทของคู่หูทุกตัวลด 15% ต่อตัวที่เกิน (2 ตัวเหลือ 85%, 3 ตัวเหลือ 70%)</p><p>คู่หูโจมตีบอส: ดาเมจ ×0.70; เฉพาะ PVP คู่หูโจมตีผู้ผนึก: ×0.70 และมีการแบ่งพลังฝูงเพิ่มเติม</p><p>สกิลฟื้น HP ของอสูร: ×0.70 ทุกอาชีพ พาสซีฟเพิ่มฮีลและผลเฉพาะการต่อสู้ยังคูณร่วมกัน</p><p>คริติคอลใส่บอส: ดาเมจของฮิตคริติคอล ×0.75 หลังคำนวณคริ</p></details>';};
+const latestSkillDescription=skillDesc;skillDesc=function(id){const sk=SK[id];return latestSkillDescription(id)+(id==='class10_parry'?' · '+PAS.class10_parry.d:'')+(sk?.t==='heal'?' · สายดรูอิด/อัญเชิญ: ฮีลเล่นคนเดียว ×0.70 โหมดอื่น ×1.00; อสูรฮีล ×0.70'+(sk.rev||sk.revAll?' · การชุบชีวิตใช้ HP '+sk.pw+'% โดยไม่บวกพลังเวทหรือคูณฮีล':''):'');};
 
 // @soulbeast-end 1085-classRefresh
 
