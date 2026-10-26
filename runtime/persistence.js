@@ -205,7 +205,6 @@ const sbRender=render;
 // @soulbeast-end 0717-sbRender
 // @soulbeast-unit 0718-render
 render=function(){sbRender();const main=document.querySelector('main');if(!main?.querySelector)return;
- if(SB_ENV==='test'&&!main.querySelector('.sb-test-notice'))main.insertAdjacentHTML('afterbegin','<p class="sb-test-notice" style="padding:8px;border:1px solid #d9b35b;color:#f1d48a">SUPABASE TEST · ข้อมูลจำลอง แยกจากเกมจริง</p>');
  if(SB_ENV==='live'&&SB_CHECK.needed&&!main.querySelector('.sb-migration-notice'))main.insertAdjacentHTML('afterbegin',`<div class="card stack sb-migration-notice"><b>${ct('ยืนยันเซฟหลังย้ายระบบออนไลน์','Confirm your save after migration','迁移后确认存档')}</b><p>${ct('พบเซฟออนไลน์ที่ต่างจากในเครื่อง กรุณาตรวจและโหลดเซฟก่อนทำรายการ ข้อมูลในเครื่องจะสำรองไว้เมื่อคุณยืนยันโหลด','The online save differs from this device. Review and load it before online actions. Your current local save will be backed up when you confirm.','在线存档与本机不同。请先核对并读取，再进行在线操作。确认读取时会备份当前本地存档。')}</p><button class="btn pri" data-a="sbMigrationLoad">${ct('ตรวจและโหลดเซฟออนไลน์','Review and load online save','核对并读取在线存档')}</button></div>`);
 };
 // @soulbeast-end 0718-render
