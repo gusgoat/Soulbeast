@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "goldalch-male",
+      "kind": "player",
+      "cls": "goldalch",
+      "gender": "male",
+      "name": "นักแปรธาตุทองคำ (male)",
+      "powerName": "พลังนักแปรธาตุทองคำ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "mace",
+      "source": {
+        "x": 38.7,
+        "y": 25.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.7,
+        "effectOriginX": 50.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38.7,
+          "y": 25.2,
+          "asset": "assets/beasts/motion/goldalch-male-windup-v1.webp",
+          "sha256": "3550d0823d3044803dd9742064006ab511e5ac2d6c1336f7efd53227b8bb2e7a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/goldalch-male-power-v1.webp",
+          "sha256": "910d8c14b998cd93fe81ce9054b37fc8a3cac1d81201c110ed9bb7787090b1c1",
+          "originY": 48.7,
+          "originX": 50.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/goldalch-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/goldalch-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดกระบองประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87.3,
+        "y": 71.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/goldalch-male-melee-v1.webp",
+        "sha256": "0200efc02ec9f38265d503a39acc7f992d53b1c73a2500c9f21065badd655a50",
+        "effect": {
+          "asset": "assets/beasts/motion/goldalch-male-melee-effect-v1.webp",
+          "sha256": "47639ca2320796fbea86378a4e183e7065b6737afa0cc3afa3d39456ddc78b20",
+          "x": 80,
+          "y": 79
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/goldalch-male-contact.png"
+      }
+    },
+    {
+      "id": "goldalch-female",
+      "kind": "player",
+      "cls": "goldalch",
+      "gender": "female",
+      "name": "นักแปรธาตุทองคำ (female)",
+      "powerName": "พลังนักแปรธาตุทองคำ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "mace",
+      "source": {
+        "x": 39.3,
+        "y": 24.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 46.1,
+        "effectOriginX": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 39.3,
+          "y": 24.6,
+          "asset": "assets/beasts/motion/goldalch-female-windup-v1.webp",
+          "sha256": "f0b1ee195941f8d1fb825aaab80cb4df8912594b7e6535d79348b0cc01c13c94"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/goldalch-female-power-v1.webp",
+          "sha256": "7f142f90c9b8e05d275b93706f12322fc58c408adf05fc21ac52c19adbb0c4fe",
+          "originY": 46.1,
+          "originX": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/goldalch-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/goldalch-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดกระบองประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90.3,
+        "y": 75,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/goldalch-female-melee-v1.webp",
+        "sha256": "56623f466ec737e8b0c0f90a0d8dc689a5ccdd8edcaf918669ed3ebdb6045aa0",
+        "effect": {
+          "asset": "assets/beasts/motion/goldalch-female-melee-effect-v1.webp",
+          "sha256": "6eee5d2d11c754180d60e97a65b399ac08a5d9167da54c5cc7456a6c3f258e99",
+          "x": 80,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/goldalch-female-contact.png"
+      }
+    },
+    {
+      "id": "gunner-male",
+      "kind": "player",
+      "cls": "gunner",
+      "gender": "male",
+      "name": "มือปืน (male)",
+      "powerName": "พลังมือปืน (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 41.2,
+        "y": 14.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 41.2,
+          "y": 14.6,
+          "asset": "assets/beasts/motion/gunner-male-windup-v1.webp",
+          "sha256": "9ea68fd9fef57db53699aa469b5412b9ca9a363335412492b0e5e00ae8c01aa9"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gunner-male-power-v1.webp",
+          "sha256": "170997b27c72ddc77328a69e91f66715dcba11730c68c02c2598a1a2ff63589d",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gunner-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gunner-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.7,
+        "y": 64.3,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gunner-male-melee-v1.webp",
+        "sha256": "ce7409620a01f31857ede4fd5da59e9c73aeee238832ecb52df83e2509fcaa69",
+        "effect": {
+          "asset": "assets/beasts/motion/gunner-male-melee-effect-v1.webp",
+          "sha256": "8c11a80f00db9ebcce0cc85b50cfe8f4aaa5e91d399b2ff7f1b2a868b4db4ec7",
+          "x": 78.5,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gunner-male-contact.png"
+      }
+    },
+    {
+      "id": "gunner-female",
+      "kind": "player",
+      "cls": "gunner",
+      "gender": "female",
+      "name": "มือปืน (female)",
+      "powerName": "พลังมือปืน (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 38.1,
+        "y": 15.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38.1,
+          "y": 15.6,
+          "asset": "assets/beasts/motion/gunner-female-windup-v1.webp",
+          "sha256": "e5ea50937e4219e2aa52dcbfa306e8ad0d76d8ebcb73bcfb29294fbb16579690"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gunner-female-power-v1.webp",
+          "sha256": "cee4442995e35d6d4a7eed79516e434a3a43bd6375d12bb6d421d1fe67ca64dd",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gunner-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gunner-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.7,
+        "y": 64.4,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gunner-female-melee-v1.webp",
+        "sha256": "acf47a1f2caa2209756ee7982c4b6a644e901d55a579a4763521e38d3000de9c",
+        "effect": {
+          "asset": "assets/beasts/motion/gunner-female-melee-effect-v1.webp",
+          "sha256": "ef51a0ae60371a05a9f87a2ff88ff7745530c812ecdc743093fd83d24bcf3a12",
+          "x": 80.5,
+          "y": 79.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gunner-female-contact.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,408 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "coral-crab",
+      "species": "coral_crab",
+      "form": 0,
+      "name": "ปูปะการังพิทักษ์",
+      "powerName": "พลังปูปะการังพิทักษ์",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 42,
+        "y": 35,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 42,
+          "y": 35,
+          "asset": "assets/beasts/motion/coral-crab-windup-v1.webp",
+          "sha256": "86d8451b6e892d9abbb9e9e66631a64042760e7188c5eb61e7d9d8d8e7baebb2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/coral-crab-power-v1.webp",
+          "sha256": "a2a82754b068736f8f3a115199bab721f50062bbf187b601981492054e81fa97",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/coral-crab-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/coral-crab-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 88,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/coral-crab-melee-v1.webp",
+        "sha256": "79ea576f93448da7df03d7d05d553ce96f8bdbc276c5f7a0a2434dd79607778e",
+        "effect": {
+          "asset": "assets/beasts/motion/coral-crab-melee-effect-v1.webp",
+          "sha256": "3296b57b615386918b984336edf451c77c77ad8c65cfb1ae2bb74f8d6d47c234",
+          "x": 73.4,
+          "y": 55
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; cropped spire/ice tips corrected",
+          "windup inspected before power",
+          "actual claw/mouth/palm/chest and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/coral-crab-contact.png"
+      }
+    },
+    {
+      "id": "obsidian-rhino",
+      "species": "obsidian_rhino",
+      "form": 0,
+      "name": "แรดออบซิเดียน",
+      "powerName": "พลังแรดออบซิเดียน",
+      "idleMode": "breathe",
+      "background": "ground",
+      "source": {
+        "x": 82,
+        "y": 65,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 82,
+          "y": 65,
+          "asset": "assets/beasts/motion/obsidian-rhino-windup-v1.webp",
+          "sha256": "8ac0186e56108f6ba1164210eb0c07b4e0f3e583c27ba0028ed07288992d7fb1"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/obsidian-rhino-power-v1.webp",
+          "sha256": "e4e7313def157b4d1336272ed00aaa4bdffcea6f18f93871421a2b96f598b9ef",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/obsidian-rhino-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/obsidian-rhino-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97.7,
+        "y": 52.6,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/obsidian-rhino-melee-v1.webp",
+        "sha256": "f97c3069225b56f6c10546ff0273e3ba61fc22dbfff9b8066ca8d714344c343d",
+        "effect": {
+          "asset": "assets/beasts/motion/obsidian-rhino-melee-effect-v1.webp",
+          "sha256": "bd5091a45f637b8f8b42066707be992f410aacd26ee8e6ddd22b42d83c5bea95",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; cropped spire/ice tips corrected",
+          "windup inspected before power",
+          "actual claw/mouth/palm/chest and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/obsidian-rhino-contact.png"
+      }
+    },
+    {
+      "id": "glacier-bear",
+      "species": "glacier_bear",
+      "form": 0,
+      "name": "หมีธารน้ำแข็ง",
+      "powerName": "พลังหมีธารน้ำแข็ง",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 70.2,
+        "y": 27.9,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 70.2,
+          "y": 27.9,
+          "asset": "assets/beasts/motion/glacier-bear-windup-v1.webp",
+          "sha256": "f546b94ccf0e2704676a40ecc1be6cca923347ffbb93903a150343e90efbfb93"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/glacier-bear-power-v1.webp",
+          "sha256": "28125b296c347a207843ead9ef26c67beb5a0d19369b8ce26cec561315eb7f8a",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/glacier-bear-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/glacier-bear-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90.9,
+        "y": 78.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/glacier-bear-melee-v1.webp",
+        "sha256": "2f75afe7a18a7aa1fb187b81460fa08881df9c92023aca1d37c808c542ab2e9a",
+        "effect": {
+          "asset": "assets/beasts/motion/glacier-bear-melee-effect-v1.webp",
+          "sha256": "724af15855957ae82ac1a5a4f4d0e55bad7a68f31a27632c0c77843a36b12d61",
+          "x": 76.5,
+          "y": 84
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; cropped spire/ice tips corrected",
+          "windup inspected before power",
+          "actual claw/mouth/palm/chest and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/glacier-bear-contact.png"
+      }
+    },
+    {
+      "id": "thunder-gorilla",
+      "species": "thunder_gorilla",
+      "form": 0,
+      "name": "กอริลลาอัสนี",
+      "powerName": "พลังกอริลลาอัสนี",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 32.1,
+        "y": 26.4,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 32.1,
+          "y": 26.4,
+          "asset": "assets/beasts/motion/thunder-gorilla-windup-v1.webp",
+          "sha256": "fb64798d1132a5f7768d0008893a580ff90f463c0afb976f5c9a9ca845c492c8"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/thunder-gorilla-power-v1.webp",
+          "sha256": "6399b2006e1c9c4372ca1c41200a89512b35d0fd5710e91d02518e8ac8e34b41",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/thunder-gorilla-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/thunder-gorilla-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82.1,
+        "y": 75.3,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/thunder-gorilla-melee-v1.webp",
+        "sha256": "cce74f0c90e1c9d5cfbeafb0185d392005f94dbefd31338dc455d61555ea27ee",
+        "effect": {
+          "asset": "assets/beasts/motion/thunder-gorilla-melee-effect-v1.webp",
+          "sha256": "6acb453452970686b305819c67147f7295553c6e8fb0c9d2cd584bd5b93f6e49",
+          "x": 76.5,
+          "y": 76.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; cropped spire/ice tips corrected",
+          "windup inspected before power",
+          "actual claw/mouth/palm/chest and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/thunder-gorilla-contact.png"
+      }
+    },
+    {
+      "id": "bastion-golem",
+      "species": "bastion_golem",
+      "form": 0,
+      "name": "โกเลมป้อมปราการ",
+      "powerName": "พลังโกเลมป้อมปราการ",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 56.5,
+        "y": 37.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 56.5,
+          "y": 37.5,
+          "asset": "assets/beasts/motion/bastion-golem-windup-v1.webp",
+          "sha256": "a8c3e7e52e76338c51624b51877492bceecca3e9bb7501e01f315a18cbd748b3"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bastion-golem-power-v1.webp",
+          "sha256": "0761005bd47160f6d7c55743e037bdb6e58b55e25b410c4b9f1af998309c6cbc",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bastion-golem-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bastion-golem-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bastion-golem-melee-v1.webp",
+        "sha256": "346e946952a21f0ff2b8f8e0ba13636dd6192246efbdd7adb84cca3d5d96031a",
+        "effect": {
+          "asset": "assets/beasts/motion/bastion-golem-melee-effect-v1.webp",
+          "sha256": "e6bf9b06630e22a2585b6e0d23c77a92ce8fae76b54a504f6cd90fc1aacb3b2e",
+          "x": 67,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; cropped spire/ice tips corrected",
+          "windup inspected before power",
+          "actual claw/mouth/palm/chest and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bastion-golem-contact.png"
+      }
+    },
+    {
+      "id": "jade-bull",
+      "species": "jade_bull",
+      "form": 0,
+      "name": "กระทิงหยกสวรรค์",
+      "powerName": "พลังกระทิงหยกสวรรค์",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 33.1,
+        "y": 26.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 33.1,
+          "y": 26.6,
+          "asset": "assets/beasts/motion/jade-bull-windup-v1.webp",
+          "sha256": "01c5433aa6205b4117973dede4300834540ccfb23cfefc88cc361bafc321579c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jade-bull-power-v1.webp",
+          "sha256": "ea1d468132f3314afd9888e72c8b4ad6dbff6ce200e88c43d56b735e90c23567",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jade-bull-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jade-bull-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93.3,
+        "y": 30.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/jade-bull-melee-v1.webp",
+        "sha256": "96921ceef49a0561b67ba58fdd2cf14d86b5c35e4541491a4ff833ee12e4af8d",
+        "effect": {
+          "asset": "assets/beasts/motion/jade-bull-melee-effect-v1.webp",
+          "sha256": "792d003d8ccf945607b10df4e9674ff0101efce552276e7678b3454cdcbe3817",
+          "x": 70,
+          "y": 68
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; cropped spire/ice tips corrected",
+          "windup inspected before power",
+          "actual claw/mouth/palm/chest and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/jade-bull-contact.png"
+      }
+    }
+  ]
+}

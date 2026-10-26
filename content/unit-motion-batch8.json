@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "manticore",
+      "form": 0,
+      "name": "แมนติคอร์",
+      "powerName": "ลมหายใจพิษทราย",
+      "idleMode": "breathe",
+      "background": "ground",
+      "source": {
+        "x": 57,
+        "y": 57.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 57,
+          "y": 57.5,
+          "asset": "assets/beasts/motion/manticore-windup-v1.webp",
+          "sha256": "e088f4e2c39529c4e5477747f3d25249729055f549a21f3d90ba166b5443c766"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/manticore-power-v1.webp",
+          "sha256": "5d92d907d41b3de84a478da2b3a4cc39c5cf2e2b33cf9af8e3244f475dda52c2",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/manticore-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/manticore-melee-effect-v1.webp"
+      },
+      "meleeName": "ตะปบกรงเล็บพิษ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 88,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/manticore-melee-v1.webp",
+        "sha256": "64cd058f6d9409adb475f32d992cbed7e3d4552951666a1975299bbcdfe010dc",
+        "effect": {
+          "asset": "assets/beasts/motion/manticore-melee-effect-v1.webp",
+          "sha256": "8978cb4561039b227acb6007c5698ae036d657251d15d8af4f26cdb247cbc766",
+          "x": 52,
+          "y": 51
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "windup and generated VFX origin inspected",
+          "attack/hit/standalone windup/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/manticore-contact.png"
+      }
+    },
+    {
+      "id": "yeti",
+      "form": 0,
+      "name": "เยติ",
+      "powerName": "ฝ่ามือคลื่นเยือกแข็ง",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 25,
+        "y": 36,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 25,
+          "y": 36,
+          "asset": "assets/beasts/motion/yeti-windup-v1.webp",
+          "sha256": "572623b02933284b9266249bc384aa2e0ad5f552bd4030486f30c05b5d079826"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/yeti-power-v1.webp",
+          "sha256": "0bcde4d0d28135c574d044c670a291eb2f41fdd389e3e193ca15e03b0b11dda5",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/yeti-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/yeti-melee-effect-v1.webp"
+      },
+      "meleeName": "หมัดเยือกแข็ง",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89,
+        "y": 88,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/yeti-melee-v1.webp",
+        "sha256": "65be171b42a6a81a09c1d05dee4d35d1e78b7bf16213ee0a22010f48735287d0",
+        "effect": {
+          "asset": "assets/beasts/motion/yeti-melee-effect-v1.webp",
+          "sha256": "4bd280dd79c54bfaf9df0bde4d7731eb9c8852026286c80314b4413f11414af2",
+          "x": 55,
+          "y": 53
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "windup and generated VFX origin inspected",
+          "attack/hit/standalone windup/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/yeti-contact.png"
+      }
+    },
+    {
+      "id": "golem",
+      "form": 0,
+      "name": "โกเลม",
+      "powerName": "คลื่นศิลาพิฆาต",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 25,
+        "y": 35,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 25,
+          "y": 35,
+          "asset": "assets/beasts/motion/golem-windup-v1.webp",
+          "sha256": "7b460a27ca35050d377689e35ee85007ace886c739d2997922b7c863147e2f92"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/golem-power-v1.webp",
+          "sha256": "5c96d9295cf151b07b116534e8eb965a89886ff050966d60532164c3565c6cf7",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/golem-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/golem-melee-effect-v1.webp"
+      },
+      "meleeName": "หมัดศิลาถล่ม",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/golem-melee-v1.webp",
+        "sha256": "254bee79ca9c7d62ce57f0e6785f8bb7dae0584d8bd92e6af0e240f8911135ea",
+        "effect": {
+          "asset": "assets/beasts/motion/golem-melee-effect-v1.webp",
+          "sha256": "75d53c49d7ea620b1d7cdbcf2cc6e17020f435382c01ca2ebb0f5a6552bcd875",
+          "x": 52,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "windup and generated VFX origin inspected",
+          "attack/hit/standalone windup/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/golem-contact.png"
+      }
+    }
+  ]
+}

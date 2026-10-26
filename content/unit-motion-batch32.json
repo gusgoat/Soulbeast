@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "kappa-warrior",
+      "species": "kappa",
+      "form": 1,
+      "name": "คัปปะนักรบ",
+      "powerName": "พลังคัปปะนักรบ",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 36,
+        "y": 42,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 36,
+          "y": 42,
+          "asset": "assets/beasts/motion/kappa-warrior-windup-v1.webp",
+          "sha256": "25d2d9810842252c95359d9f010e0f5acfe29ab489d25fe06509202f0cba975f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kappa-warrior-power-v1.webp",
+          "sha256": "2b98df7347b42712ac54bfcfdd984ac0b36b08c99b488df7d9b6bd716206e726",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kappa-warrior-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kappa-warrior-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 75,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kappa-warrior-melee-v1.webp",
+        "sha256": "92c75fe322425af4cdf2e12df9f1171743f68518baff51aefda4dcbcf176b12f",
+        "effect": {
+          "asset": "assets/beasts/motion/kappa-warrior-melee-effect-v1.webp",
+          "sha256": "b4d5f02ce009b4d8ac2d951918825f039e2549d64539fc2731a136d23225d216",
+          "x": 84.5,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kappa-warrior-contact.png"
+      }
+    },
+    {
+      "id": "kappa-king",
+      "species": "kappa",
+      "form": 2,
+      "name": "ราชาคัปปะ",
+      "powerName": "พลังราชาคัปปะ",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 29,
+        "y": 31,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 29,
+          "y": 31,
+          "asset": "assets/beasts/motion/kappa-king-windup-v1.webp",
+          "sha256": "ee3942da7f4cb0bd436551e8b0313b426083bfe472e110186bb8333715269a17"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kappa-king-power-v1.webp",
+          "sha256": "c5356b762693c1afceff320aeb115bbb762d1abe782a8df717f001e77b25ab6e",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kappa-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kappa-king-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kappa-king-melee-v1.webp",
+        "sha256": "292b321211c49bc7208865b277106dd666be45cbbc9b6c58c6740318394b457b",
+        "effect": {
+          "asset": "assets/beasts/motion/kappa-king-melee-effect-v1.webp",
+          "sha256": "0a20e2facb858ce2f8a748144067e27ba44775c61955c2bd3c03b8afaebf45d0",
+          "x": 80.5,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kappa-king-contact.png"
+      }
+    },
+    {
+      "id": "wisp-ghostfire",
+      "species": "wisp",
+      "form": 1,
+      "name": "วิสป์เพลิงผี",
+      "powerName": "พลังวิสป์เพลิงผี",
+      "idleMode": "float",
+      "background": "fire",
+      "source": {
+        "x": 73,
+        "y": 71,
+        "angle": 25,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 56.4,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 73,
+          "y": 71,
+          "asset": "assets/beasts/motion/wisp-ghostfire-windup-v1.webp",
+          "sha256": "4ac58a71d9110bc5d33dd6bac1adc9a7956e0c68bac6818320dcf658a203b410"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wisp-ghostfire-power-v1.webp",
+          "sha256": "bfcf5f0d0b92f6269f468fc88394dc2f3b60dda77ff1c8a84f60fa119e028916",
+          "originY": 56.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wisp-ghostfire-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wisp-ghostfire-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wisp-ghostfire-melee-v1.webp",
+        "sha256": "3728a19d81b4b3897aa5f7cfa64ed34a6c000c562012a7c07aafd1f41961d736",
+        "effect": {
+          "asset": "assets/beasts/motion/wisp-ghostfire-melee-effect-v1.webp",
+          "sha256": "3bf0c39cc5bb633d0468226dd63212bee0099ee8e325f64fd4af1344d7e64d16",
+          "x": 83,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wisp-ghostfire-contact.png"
+      }
+    },
+    {
+      "id": "wisp-death-lantern",
+      "species": "wisp",
+      "form": 2,
+      "name": "โคมวิญญาณมรณะ",
+      "powerName": "พลังโคมวิญญาณมรณะ",
+      "idleMode": "float",
+      "background": "ghost",
+      "source": {
+        "x": 56.5,
+        "y": 61.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 53.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 56.5,
+          "y": 61.5,
+          "asset": "assets/beasts/motion/wisp-death-lantern-windup-v1.webp",
+          "sha256": "e8c5a4dfb8242387c97c203847e680800a759ac82715696351e439a9a6586999"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wisp-death-lantern-power-v1.webp",
+          "sha256": "2085ad00416646c3082e7b3e2c56fbef4cac2f6e0029f04299c8087869dfd696",
+          "originY": 53.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wisp-death-lantern-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wisp-death-lantern-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84,
+        "y": 70,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wisp-death-lantern-melee-v1.webp",
+        "sha256": "92a4ee6f0a33433dce875ffc2b6d3f1ef2f7777903f2dae28b76d3e0670e1121",
+        "effect": {
+          "asset": "assets/beasts/motion/wisp-death-lantern-melee-effect-v1.webp",
+          "sha256": "e2fc89ca973cb22e254bef26201f19c655a2c315f82530adb8a357aa4f78687c",
+          "x": 81.5,
+          "y": 86
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wisp-death-lantern-contact.png"
+      }
+    },
+    {
+      "id": "mandrake-screamer",
+      "species": "mandrake",
+      "form": 1,
+      "name": "แมนเดรกกรีดร้อง",
+      "powerName": "พลังแมนเดรกกรีดร้อง",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 52,
+        "y": 31,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 52,
+          "y": 31,
+          "asset": "assets/beasts/motion/mandrake-screamer-windup-v1.webp",
+          "sha256": "6af49919d030cae9bc5fd3a2824ff016268623cd99442d405f761de7fa1e2e20"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mandrake-screamer-power-v1.webp",
+          "sha256": "27038a55e680b7379ff14464fa99e103c151a6b2329c0f7bf89e9e9db0ab113a",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mandrake-screamer-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mandrake-screamer-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 84,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mandrake-screamer-melee-v1.webp",
+        "sha256": "0fa4aa6c7c495e6dd6630daadffc0f30734726772456d9462a1b395c4e33e18d",
+        "effect": {
+          "asset": "assets/beasts/motion/mandrake-screamer-melee-effect-v1.webp",
+          "sha256": "abbb7a2163a2aa3ec25576dad65c193f7fc5a8d9d9750c9720a752dcf9f3cd31",
+          "x": 83.5,
+          "y": 82.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/mandrake-screamer-contact.png"
+      }
+    },
+    {
+      "id": "mandrake-queen",
+      "species": "mandrake",
+      "form": 2,
+      "name": "ราชินีแมนเดรก",
+      "powerName": "พลังราชินีแมนเดรก",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 41,
+        "y": 28,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 41,
+          "y": 28,
+          "asset": "assets/beasts/motion/mandrake-queen-windup-v1.webp",
+          "sha256": "7069091bff9341840048b32ce86e0f8e282b844a3d4c4ea63525ca1c1b503b8c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mandrake-queen-power-v1.webp",
+          "sha256": "1cc51243d4e78359721bdb1d15e3028950188be7b26deb57aa3b6cbc984d95dd",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mandrake-queen-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mandrake-queen-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 67,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mandrake-queen-melee-v1.webp",
+        "sha256": "005371d93f2e8d3c4381b932b3b41ba20dc73151416bafb5fee9832364fbae10",
+        "effect": {
+          "asset": "assets/beasts/motion/mandrake-queen-melee-effect-v1.webp",
+          "sha256": "0bd94eeb62be410954dc856d05c493f50bb54bcfa75bd0e96801eada8001c3ef",
+          "x": 86,
+          "y": 82.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/mandrake-queen-contact.png"
+      }
+    }
+  ]
+}

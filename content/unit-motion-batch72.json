@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "soullink-female",
+      "kind": "player",
+      "cls": "soullink",
+      "gender": "female",
+      "name": "ผู้เชื่อมวิญญาณ (female)",
+      "powerName": "พลังผู้เชื่อมวิญญาณ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "whip",
+      "source": {
+        "x": 70,
+        "y": 27.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 70,
+          "y": 27.5,
+          "asset": "assets/beasts/motion/soullink-female-windup-v1.webp",
+          "sha256": "6f5ee6fb848d5491c5f661f4a73c040864d771bcd9bb0bd576490a875932a175"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/soullink-female-power-v1.webp",
+          "sha256": "2c63053652d9f98005aed63e7dc96f5ed13f49c331fc70821efa7eca3589890b",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/soullink-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/soullink-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดแส้ประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88.2,
+        "y": 71.1,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/soullink-female-melee-v1.webp",
+        "sha256": "393bb497368b6215819cc67e0c283fa8cef87c32c5484556ba59d2b60b499847",
+        "effect": {
+          "asset": "assets/beasts/motion/soullink-female-melee-effect-v1.webp",
+          "sha256": "e3f45a48d8476ab56ee7973b3b009f8383a6e75f313d010931f0f89152b8d843",
+          "x": 66.6,
+          "y": 70.6
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/soullink-female-contact.png"
+      }
+    },
+    {
+      "id": "soulsage-male",
+      "kind": "player",
+      "cls": "soulsage",
+      "gender": "male",
+      "name": "ปราชญ์วิญญาณ (male)",
+      "powerName": "พลังปราชญ์วิญญาณ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "whip",
+      "source": {
+        "x": 64.3,
+        "y": 23.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 64.3,
+          "y": 23.5,
+          "asset": "assets/beasts/motion/soulsage-male-windup-v1.webp",
+          "sha256": "3d9d2f6827d95494445d3c3ecfd45da0d5991155cb68fad613ab416dfba75e2f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/soulsage-male-power-v1.webp",
+          "sha256": "62a6245794118c4bfcc634199eb21e07acb3352d51ad7702ae1f6592f07574cc",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/soulsage-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/soulsage-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดแส้ประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.2,
+        "y": 75.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/soulsage-male-melee-v1.webp",
+        "sha256": "0eb6c722d5e4569bbfa7f82054ce75cc5fd6045d57faa121b17680c93299701c",
+        "effect": {
+          "asset": "assets/beasts/motion/soulsage-male-melee-effect-v1.webp",
+          "sha256": "2f6df4bd18a78759abc542b4aee82dd94759123190438613fbbfb87336fdb5e2",
+          "x": 72.5,
+          "y": 70
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/soulsage-male-contact.png"
+      }
+    },
+    {
+      "id": "soulsage-female",
+      "kind": "player",
+      "cls": "soulsage",
+      "gender": "female",
+      "name": "ปราชญ์วิญญาณ (female)",
+      "powerName": "พลังปราชญ์วิญญาณ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "whip",
+      "source": {
+        "x": 65.9,
+        "y": 27,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 65.9,
+          "y": 27,
+          "asset": "assets/beasts/motion/soulsage-female-windup-v1.webp",
+          "sha256": "b9eca163dd652d582c78c42cbe197fe5f43632bd8824c1b67ac913c7ac5cc8f2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/soulsage-female-power-v1.webp",
+          "sha256": "4394d000848d243de910c60536471deaf6fdad745df16a90d6b6d401f93ea573",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/soulsage-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/soulsage-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดแส้ประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87.1,
+        "y": 76.3,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/soulsage-female-melee-v1.webp",
+        "sha256": "3dda430d437f984fdd360a36c4c542952c7d919f0dddede9e201c53c4d648390",
+        "effect": {
+          "asset": "assets/beasts/motion/soulsage-female-melee-effect-v1.webp",
+          "sha256": "646f73ee347b4450eb8174a0e795388c734b6cede7aca692e13afbc583a40b7e",
+          "x": 73.2,
+          "y": 67
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/soulsage-female-contact.png"
+      }
+    },
+    {
+      "id": "spiritlord-male",
+      "kind": "player",
+      "cls": "spiritlord",
+      "gender": "male",
+      "name": "เจ้าแห่งภูติ (male)",
+      "powerName": "พลังเจ้าแห่งภูติ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "whip",
+      "source": {
+        "x": 59.8,
+        "y": 33.8,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 59.8,
+          "y": 33.8,
+          "asset": "assets/beasts/motion/spiritlord-male-windup-v1.webp",
+          "sha256": "30d79b41167a5116c574fd638e7b273aa9e069dc39597e039a51f808183bac76"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/spiritlord-male-power-v1.webp",
+          "sha256": "5adb9a9dfe56b3fec17353be8357e7e3a08d58782303c9cd8065713122b3f8b6",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/spiritlord-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/spiritlord-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดแส้ประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.5,
+        "y": 73.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/spiritlord-male-melee-v1.webp",
+        "sha256": "6a3f123b250c8dd672c7fff6694c7f1089f738342b4d2481d74e93d3ebdb8a1f",
+        "effect": {
+          "asset": "assets/beasts/motion/spiritlord-male-melee-effect-v1.webp",
+          "sha256": "256f31a59c08e71b5a705c213d74aa45998a14f43929f03592cc9e694d855442",
+          "x": 70,
+          "y": 66.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/spiritlord-male-contact.png"
+      }
+    }
+  ]
+}

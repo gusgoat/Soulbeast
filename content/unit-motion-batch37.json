@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "basilisk-stone",
+      "species": "basilisk",
+      "form": 1,
+      "name": "บาซิลิสก์ศิลา",
+      "powerName": "พลังบาซิลิสก์ศิลา",
+      "idleMode": "breathe",
+      "background": "poison",
+      "source": {
+        "x": 89,
+        "y": 47,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.3,
+        "cropLeft": 3,
+        "anchor": {
+          "pose": "windup",
+          "x": 89,
+          "y": 47,
+          "asset": "assets/beasts/motion/basilisk-stone-windup-v1.webp",
+          "sha256": "f875389de52842ec7f65f3b00b76c3630345466f52a006d5f1f1c4821b146fe5"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/basilisk-stone-power-v1.webp",
+          "sha256": "c3f46863595b06192a13c576acf907e1a49d1e0904f883c16fbe0369f9b672da",
+          "originY": 51.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/basilisk-stone-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/basilisk-stone-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84,
+        "y": 56,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/basilisk-stone-melee-v1.webp",
+        "sha256": "52b5cda0d3c512f83f60f3e1cc5cf8b320d517cfdbdc8c6f8d3970a1e7a31238",
+        "effect": {
+          "asset": "assets/beasts/motion/basilisk-stone-melee-effect-v1.webp",
+          "sha256": "95e9db1fa0f58e4d1159c4f28c057fca9efeeb088540af9c74d0aa6727815afd",
+          "x": 80,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/basilisk-stone-contact.png"
+      }
+    },
+    {
+      "id": "basilisk-king",
+      "species": "basilisk",
+      "form": 2,
+      "name": "ราชันย์อสรพิษ",
+      "powerName": "พลังราชันย์อสรพิษ",
+      "idleMode": "breathe",
+      "background": "poison",
+      "source": {
+        "x": 83,
+        "y": 39,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.3,
+        "cropLeft": 7,
+        "anchor": {
+          "pose": "windup",
+          "x": 83,
+          "y": 39,
+          "asset": "assets/beasts/motion/basilisk-king-windup-v1.webp",
+          "sha256": "f7a139459df8d8952e4a4cb1295c8747dc1a1a3f6aa9a162e033e5f1848e3d17"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/basilisk-king-power-v1.webp",
+          "sha256": "ab1daf120bdd8eeb95542aede423dfb6eb2a8df199514da99421ce768efaf410",
+          "originY": 51.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/basilisk-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/basilisk-king-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89,
+        "y": 64,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/basilisk-king-melee-v1.webp",
+        "sha256": "337b47699a909098aa4c0e1e0fcd46dc135eb9769596c48a00e3a40b30ee3dc2",
+        "effect": {
+          "asset": "assets/beasts/motion/basilisk-king-melee-effect-v1.webp",
+          "sha256": "385e8c026c8f8d02fca04c697a6922231f2d58e468c60b14a7c1019cffbb5ad2",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/basilisk-king-contact.png"
+      }
+    },
+    {
+      "id": "cerberus-orthros",
+      "species": "cerberus",
+      "form": 1,
+      "name": "ออร์ธรอส",
+      "powerName": "พลังออร์ธรอส",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 75,
+        "y": 43,
+        "angle": 18,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.5,
+        "cropLeft": 2.5,
+        "anchor": {
+          "pose": "windup",
+          "x": 75,
+          "y": 43,
+          "asset": "assets/beasts/motion/cerberus-orthros-windup-v1.webp",
+          "sha256": "2e34cb24683098fc47a2dd4f1826b48e46e39d7b5fb728205828afa850a7920f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/cerberus-orthros-power-v1.webp",
+          "sha256": "f7399103483aec7e8305e3d3cdffeb4d92da3461c2ecffc1ac86ddae6e408a62",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/cerberus-orthros-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/cerberus-orthros-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 88,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/cerberus-orthros-melee-v1.webp",
+        "sha256": "96203f1f56adfeede14cf697de97e07cb69b047aaf89a7abc1acd57337a78f0d",
+        "effect": {
+          "asset": "assets/beasts/motion/cerberus-orthros-melee-effect-v1.webp",
+          "sha256": "4e9b7e46d67c3c21327202a1581de8b30d98e573eb828c9b89bdf0ed8064b2e9",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/cerberus-orthros-contact.png"
+      }
+    },
+    {
+      "id": "cerberus-final",
+      "species": "cerberus",
+      "form": 2,
+      "name": "เคอร์เบอรัส",
+      "powerName": "พลังเคอร์เบอรัส",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 94,
+        "y": 38,
+        "angle": 18,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.7,
+        "cropLeft": 6,
+        "anchor": {
+          "pose": "windup",
+          "x": 94,
+          "y": 38,
+          "asset": "assets/beasts/motion/cerberus-final-windup-v1.webp",
+          "sha256": "a5d205a204594ac57feb12c7c68062006966a8416585dddb6d0827e81a0fe58d"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/cerberus-final-power-v1.webp",
+          "sha256": "1535c4da45e3a2dabbdd9bf932873ebef78419f604d537836518e217f9600a69",
+          "originY": 50.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/cerberus-final-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/cerberus-final-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 81,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/cerberus-final-melee-v1.webp",
+        "sha256": "f46ec0ada529fbd1f0fd37387d6043e8025af0fb8021be666593ae21119bc12e",
+        "effect": {
+          "asset": "assets/beasts/motion/cerberus-final-melee-effect-v1.webp",
+          "sha256": "aed9c4b873beb54a8c6c5b7e773f6073791fe7e412d2de48060f515bb9b91b50",
+          "x": 80,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/cerberus-final-contact.png"
+      }
+    },
+    {
+      "id": "yeti-mountain",
+      "species": "yeti",
+      "form": 1,
+      "name": "เยติภูเขา",
+      "powerName": "พลังเยติภูเขา",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 32,
+        "y": 32,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 32,
+          "y": 32,
+          "asset": "assets/beasts/motion/yeti-mountain-windup-v1.webp",
+          "sha256": "a17990a8699cb5bcdd07b0d3b6164b9e107a1f96ef8d4932e6ff954a05dc4d8a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/yeti-mountain-power-v1.webp",
+          "sha256": "70435c6f81e080035497c41555ab4e4384e9586eb4c7ad9faf8741717cb232ab",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/yeti-mountain-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/yeti-mountain-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 63,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/yeti-mountain-melee-v1.webp",
+        "sha256": "284a2ba552aaf66740667307f7a98548a90a26731e0de566cd5d41c287bb01a5",
+        "effect": {
+          "asset": "assets/beasts/motion/yeti-mountain-melee-effect-v1.webp",
+          "sha256": "be98ceb96d90a072f17196df992f863739209348048b8d3819888128ad877673",
+          "x": 82,
+          "y": 83
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/yeti-mountain-contact.png"
+      }
+    },
+    {
+      "id": "yeti-king",
+      "species": "yeti",
+      "form": 2,
+      "name": "ราชาเยติ",
+      "powerName": "พลังราชาเยติ",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 32,
+        "y": 27,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 32,
+          "y": 27,
+          "asset": "assets/beasts/motion/yeti-king-windup-v1.webp",
+          "sha256": "341ffa4bde721c6fe265b7d09febe21b409acd58891698b9ebeb42e7fbd64cb7"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/yeti-king-power-v1.webp",
+          "sha256": "de27c579e05e721fbf601230dea2b0d5c0c0e711768abe9e3031788eed7897fe",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/yeti-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/yeti-king-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/yeti-king-melee-v1.webp",
+        "sha256": "d70c60f91c101510ee38dd2934034a8852a325c43d225b948b5396699c0a3f2e",
+        "effect": {
+          "asset": "assets/beasts/motion/yeti-king-melee-effect-v1.webp",
+          "sha256": "63ad2d40802c98ac0551af4ad5780e87fa5dc793112dc7348738cc99dd035b18",
+          "x": 80,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/yeti-king-contact.png"
+      }
+    }
+  ]
+}

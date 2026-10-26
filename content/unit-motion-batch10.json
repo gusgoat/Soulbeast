@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "dragon-young",
+      "species": "dragon",
+      "form": 0,
+      "name": "ลูกมังกร",
+      "powerName": "ลมหายใจลูกมังกร",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 92.5,
+        "y": 54.8,
+        "angle": 14,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 92.5,
+          "y": 54.8,
+          "asset": "assets/beasts/motion/dragon-young-windup-v1.webp",
+          "sha256": "2221166041d675d8f0926d46999fbb3430eedc84d99c5b36df83ba4cfb2678a0"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/dragon-young-power-v1.webp",
+          "sha256": "6855f7c036e66cf2a314ab0a256080b50d13a569550e13e45e0654d1e99cca2f",
+          "originY": 51.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/dragon-young-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/dragon-young-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บลูกมังกร",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 81,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/dragon-young-melee-v1.webp",
+        "sha256": "0f892a6b40613701feac4df655ef2389b3b3fe9f93d725f94686cc93740875aa",
+        "effect": {
+          "asset": "assets/beasts/motion/dragon-young-melee-effect-v1.webp",
+          "sha256": "3b4fbaf326171dbdea68b65bf09132d9efbfd01f59e7e220405305fe8def6b4d",
+          "x": 50,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity/anatomy and actual mouth inspected",
+          "generated windup before VFX",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "complete images and real alpha",
+          "correct particle exclusion",
+          "no horizontal overflow at320px",
+          "image-specific scale origin verified"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/dragon-young-contact.png"
+      }
+    },
+    {
+      "id": "naga",
+      "form": 0,
+      "name": "งูนาค",
+      "powerName": "ลมหายใจวารีนาค",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 92,
+        "y": 40,
+        "angle": 12,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 92,
+          "y": 40,
+          "asset": "assets/beasts/motion/naga-windup-v1.webp",
+          "sha256": "b3baeb9cb91baf862247cb3fb2dcfd070573e4af960d13c4537bf415fdcb1aa7"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/naga-power-v1.webp",
+          "sha256": "53ad6f3cec641270bbbf1ba5fe8d550a5ed3df414bcf3b2074e565005d351464",
+          "originY": 51.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/naga-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/naga-melee-effect-v1.webp"
+      },
+      "meleeName": "เขี้ยววารี",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 48,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/naga-melee-v1.webp",
+        "sha256": "f5afa5c43cb2d3ae8972c297c18ce780c119af9e4611d7c9972ff091698a241f",
+        "effect": {
+          "asset": "assets/beasts/motion/naga-melee-effect-v1.webp",
+          "sha256": "98f98e7d6c5cb24fdf6f80f0dcc544ee6f063df233d328e22e055e307ff4cd3d",
+          "x": 49.5,
+          "y": 48.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity/anatomy and actual mouth inspected",
+          "generated windup before VFX",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "complete images and real alpha",
+          "correct particle exclusion",
+          "no horizontal overflow at320px",
+          "image-specific scale origin verified"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/naga-contact.png"
+      }
+    },
+    {
+      "id": "hydra",
+      "form": 0,
+      "name": "ไฮดรา",
+      "powerName": "ลมหายใจพิษไฮดรา",
+      "idleMode": "breathe",
+      "background": "poison",
+      "source": {
+        "x": 51.5,
+        "y": 20.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 38.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 51.5,
+          "y": 20.5,
+          "asset": "assets/beasts/motion/hydra-windup-v1.webp",
+          "sha256": "f70b7f699c1dbd4d65cf30d6e640bf775dccc5f11b500af393d27e194842afea"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/hydra-power-v1.webp",
+          "sha256": "04ad618af5327d928cbd515cdb0bbacd545d240b02cd0a34859032e4055c2bfe",
+          "originY": 38.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/hydra-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/hydra-melee-effect-v1.webp"
+      },
+      "meleeName": "เขี้ยวไฮดรา",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 61.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/hydra-melee-v1.webp",
+        "sha256": "47ee15ff34c370f114a3382dc9e3e9f6113f38f03e0819bc571f1c0509f218fa",
+        "effect": {
+          "asset": "assets/beasts/motion/hydra-melee-effect-v1.webp",
+          "sha256": "eb67764814ce4c40a2aa4c25a1f45e5a4aa9188e80e144d0f63f06fc37de1cc7",
+          "x": 53,
+          "y": 50.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity/anatomy and actual mouth inspected",
+          "generated windup before VFX",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "complete images and real alpha",
+          "correct particle exclusion",
+          "no horizontal overflow at320px",
+          "image-specific scale origin verified"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/hydra-contact.png"
+      }
+    }
+  ]
+}

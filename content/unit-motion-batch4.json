@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "kitsune",
+      "form": 0,
+      "name": "จิ้งจอกสามหาง",
+      "powerName": "เพลิงจิ้งจอก",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 95,
+        "y": 43,
+        "angle": 8,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 52.5,
+        "anchor": {
+          "pose": "windup",
+          "x": 95,
+          "y": 43,
+          "asset": "assets/beasts/motion/kitsune-windup-v1.webp",
+          "sha256": "a7af9e89403ea9ea772b3d43e63d66b88c9909e30d7cde65aead981db0ea2630"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kitsune-power-v1.webp",
+          "sha256": "ed5fc21c239519555e21d322be940d28e48ec4103e371c21309dc8a6e972b876",
+          "originY": 52.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kitsune-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kitsune-melee-effect-v1.webp"
+      },
+      "meleeName": "ตะปบกรงเล็บ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 86,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kitsune-melee-v1.webp",
+        "sha256": "9a7aa1ad5bdddef1afeb1557537b9cc3bb5282f3ebdfae621e567b0221a12fad",
+        "effect": {
+          "asset": "assets/beasts/motion/kitsune-melee-effect-v1.webp",
+          "sha256": "7da66e437661eb3afd8d4225cab153219ff006672038f2fc491383cfa34b1f78",
+          "x": 57,
+          "y": 48
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "identity and anatomy inspected",
+          "calibrated pose and VFX origin",
+          "attack/hit/melee recovery",
+          "edge contact with visible target",
+          "no early-form particles",
+          "no broken image"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kitsune-contact.png"
+      }
+    },
+    {
+      "id": "tengu",
+      "form": 0,
+      "name": "เทงงุ",
+      "powerName": "แรงลมเทงงุ",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 35,
+        "y": 35,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "anchor": {
+          "pose": "windup",
+          "x": 35,
+          "y": 35,
+          "asset": "assets/beasts/motion/tengu-windup-v1.webp",
+          "sha256": "16891f28d9297f8bfe4257155ef0c749cb6b8cc26b0317a2ad7e11161b8cfe37"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/tengu-power-v1.webp",
+          "sha256": "53870922ee85ee0050e602f590ba1faa938f0eebcbe71fadee119f78cc1d3cd9",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/tengu-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/tengu-melee-effect-v1.webp"
+      },
+      "meleeName": "หมัดวายุ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 59,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/tengu-melee-v1.webp",
+        "sha256": "8796a6310962da0a8a15053b59f96844139fb4cb92baa1e099860778a4d83658",
+        "effect": {
+          "asset": "assets/beasts/motion/tengu-melee-effect-v1.webp",
+          "sha256": "985b14139fd5604392001ea1dc239e6a05de937ed4fb6fa638c8773834edd899",
+          "x": 53,
+          "y": 51
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "identity and anatomy inspected",
+          "calibrated pose and VFX origin",
+          "attack/hit/melee recovery",
+          "edge contact with visible target",
+          "no early-form particles",
+          "no broken image"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/tengu-contact.png"
+      }
+    },
+    {
+      "id": "griffin",
+      "form": 0,
+      "name": "กริฟฟิน",
+      "powerName": "ลมกริฟฟิน",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 90,
+        "y": 61,
+        "angle": 12,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 58,
+        "anchor": {
+          "pose": "windup",
+          "x": 90,
+          "y": 61,
+          "asset": "assets/beasts/motion/griffin-windup-v1.webp",
+          "sha256": "701c60e3fa8086f02ba31cf454d52aba20d91b2c574603d1da7dd2d569f3c5fd"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/griffin-power-v1.webp",
+          "sha256": "63164811c2a76ee483e8dde50c8fa793f0c4d06d47abe3ba5728897651f14aa3",
+          "originY": 58
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/griffin-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/griffin-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บอินทรี",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/griffin-melee-v1.webp",
+        "sha256": "97342de4a43089137c75cbf923f99db8905e55292c71574eb1e9e4d268315c6d",
+        "effect": {
+          "asset": "assets/beasts/motion/griffin-melee-effect-v1.webp",
+          "sha256": "3c636335ba87195c6d0e11fb4466df53640f72d7fd62c955c9bc4f22a9e53f36",
+          "x": 55,
+          "y": 55
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "identity and anatomy inspected",
+          "calibrated pose and VFX origin",
+          "attack/hit/melee recovery",
+          "edge contact with visible target",
+          "no early-form particles",
+          "no broken image"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/griffin-contact.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "spellblade-male",
+      "kind": "player",
+      "cls": "spellblade",
+      "gender": "male",
+      "name": "ดาบเวทย์ (male)",
+      "powerName": "พลังดาบเวทย์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 60.5,
+        "y": 19.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.3,
+        "effectOriginX": 50.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 60.5,
+          "y": 19.2,
+          "asset": "assets/beasts/motion/spellblade-male-windup-v1.webp",
+          "sha256": "5ef9a8eaf69afa7a637dd6ebb0a05370baf441450a7d28b3731ca781cc81391e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/spellblade-male-power-v1.webp",
+          "sha256": "5bf2c1c170220f2bc3d46bc6201fb8c66c3a330031f3298424051edd24346860",
+          "originY": 48.3,
+          "originX": 50.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/spellblade-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/spellblade-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96.6,
+        "y": 92.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/spellblade-male-melee-v1.webp",
+        "sha256": "61e5c33dc37deae391b82349e94b53e6ca9c147a2367730b0a8d8ab10b72d2b2",
+        "effect": {
+          "asset": "assets/beasts/motion/spellblade-male-melee-effect-v1.webp",
+          "sha256": "25ecfae12d892f8fb4af2a11616703d2772cfbef5da32b6151298f565ef861d0",
+          "x": 83.4,
+          "y": 80.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/spellblade-male-contact.png"
+      }
+    },
+    {
+      "id": "spellblade-female",
+      "kind": "player",
+      "cls": "spellblade",
+      "gender": "female",
+      "name": "ดาบเวทย์ (female)",
+      "powerName": "พลังดาบเวทย์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 62.5,
+        "y": 23.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.2,
+        "effectOriginX": 49.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 62.5,
+          "y": 23.2,
+          "asset": "assets/beasts/motion/spellblade-female-windup-v1.webp",
+          "sha256": "9429646e6ad22eb8fbcbae656d543c2deb9a80e57b2b53ea2b58735e0446ac34"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/spellblade-female-power-v1.webp",
+          "sha256": "48a73f030380cf1c11a01f7fc58e065d5f8c998df0dbea66dc4ab39fdb8590ba",
+          "originY": 50.2,
+          "originX": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/spellblade-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/spellblade-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97.5,
+        "y": 93.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/spellblade-female-melee-v1.webp",
+        "sha256": "756c12f426ec986b7de2691dff25622742a2143eceb5185213527e9a1db15fc8",
+        "effect": {
+          "asset": "assets/beasts/motion/spellblade-female-melee-effect-v1.webp",
+          "sha256": "e8751aecb8cb5272d46d96280c8893bf1a1782ed4b71b8b4a1b9f9777c3eab14",
+          "x": 87.8,
+          "y": 86.1
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/spellblade-female-contact.png"
+      }
+    },
+    {
+      "id": "sbsummon-male",
+      "kind": "player",
+      "cls": "sbsummon",
+      "gender": "male",
+      "name": "ดาบเวทย์อัญเชิญ (male)",
+      "powerName": "พลังดาบเวทย์อัญเชิญ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 60.7,
+        "y": 24.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.6,
+        "effectOriginX": 49.9,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 60.7,
+          "y": 24.5,
+          "asset": "assets/beasts/motion/sbsummon-male-windup-v1.webp",
+          "sha256": "89209d03901e1d948f2d06a45ec3eef0a35f556b2abc538878992301d4498ccd"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sbsummon-male-power-v1.webp",
+          "sha256": "8d8940c18dad81883ecf162e82c585577c6c202b8d4d018592b4f1fe205ab039",
+          "originY": 49.6,
+          "originX": 49.9
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sbsummon-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sbsummon-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.8,
+        "y": 89.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sbsummon-male-melee-v1.webp",
+        "sha256": "54c043d01e807f18e3c2f74f8428a2c991eab813be70bf440f6e8e50aec9db90",
+        "effect": {
+          "asset": "assets/beasts/motion/sbsummon-male-melee-effect-v1.webp",
+          "sha256": "d694245eab40ce5394428c1461bddce95a9f9d3bfdc370cd935585de6acd8892",
+          "x": 83.6,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sbsummon-male-contact.png"
+      }
+    },
+    {
+      "id": "sbsummon-female",
+      "kind": "player",
+      "cls": "sbsummon",
+      "gender": "female",
+      "name": "ดาบเวทย์อัญเชิญ (female)",
+      "powerName": "พลังดาบเวทย์อัญเชิญ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 59,
+        "y": 25.7,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.4,
+        "effectOriginX": 49.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 59,
+          "y": 25.7,
+          "asset": "assets/beasts/motion/sbsummon-female-windup-v1.webp",
+          "sha256": "65dad23ccc915ab862ec6c674457af069cf2285f008b0c80bb4623472fcd0fad"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sbsummon-female-power-v1.webp",
+          "sha256": "5bf354222c10f153f42838d62fee2e808e3f332652e16be895c25a4c6befcb22",
+          "originY": 49.4,
+          "originX": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sbsummon-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sbsummon-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97,
+        "y": 87.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sbsummon-female-melee-v1.webp",
+        "sha256": "ab75f2e788bcea9003d27520d8370b211b0778f1352faf664b469a9a3ab46559",
+        "effect": {
+          "asset": "assets/beasts/motion/sbsummon-female-melee-effect-v1.webp",
+          "sha256": "5d3e101236692a6a73992f5311f310ce2ab5a0366bdae7e5eb57c8486e7da737",
+          "x": 90.1,
+          "y": 82.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sbsummon-female-contact.png"
+      }
+    }
+  ]
+}

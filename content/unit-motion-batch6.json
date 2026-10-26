@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "harpy",
+      "form": 0,
+      "name": "ฮาร์ปี้",
+      "powerName": "คลื่นเสียงเงาวายุ",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 50,
+        "y": 38.7,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 50,
+          "y": 38.7,
+          "asset": "assets/beasts/motion/harpy-windup-v1.webp",
+          "sha256": "80412fe1657d89b372fbe04e0a7b091fce2263fa2ecbcfb932e2ae50844b6e3c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/harpy-power-v1.webp",
+          "sha256": "98dd7b061a472de559fd81e4480b6e6a1f27e4812f8bbf0379783514c8bc4d3b",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/harpy-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/harpy-melee-effect-v1.webp"
+      },
+      "meleeName": "ตะปบกรงเล็บนก",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/harpy-melee-v1.webp",
+        "sha256": "be46a8c49636fed5e0ba03737d187e5c4e175fd251641e5944b8eeece74ceded",
+        "effect": {
+          "asset": "assets/beasts/motion/harpy-melee-effect-v1.webp",
+          "sha256": "a7fe6d42d610ce449701437d60477d3d1a4770c5c762598a12539a0585f130cf",
+          "x": 52.5,
+          "y": 50.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 (DOM width verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "actual mouth and VFX origin inspected",
+          "attack/hit/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/harpy-contact.png"
+      }
+    },
+    {
+      "id": "kelpie",
+      "form": 0,
+      "name": "เคลปี้",
+      "powerName": "ลมหายใจวารีวิญญาณ",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 94.5,
+        "y": 49.5,
+        "angle": 8,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.8,
+        "cropLeft": 1,
+        "anchor": {
+          "pose": "windup",
+          "x": 94.5,
+          "y": 49.5,
+          "asset": "assets/beasts/motion/kelpie-windup-v1.webp",
+          "sha256": "580beb8fdebfa27ad012f7221fc16230fd11c8f51193e046e879150067540c6a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kelpie-power-v1.webp",
+          "sha256": "1f12a3a7132959ed679531b29ee753332d9cc1cd0215af1934ad2c4fd5e1f55f",
+          "originY": 51.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kelpie-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kelpie-melee-effect-v1.webp"
+      },
+      "meleeName": "กระแทกกีบวารี",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kelpie-melee-v1.webp",
+        "sha256": "63d8e77495e50cef50d68985ae4b20fd6676fd0b26681e87ec5287cf3bda5f43",
+        "effect": {
+          "asset": "assets/beasts/motion/kelpie-melee-effect-v1.webp",
+          "sha256": "a91003e2434ebeeb33012dd43c02c3e60eda7832a5805ee2c47cde1c0e1c41aa",
+          "x": 53,
+          "y": 68
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 (DOM width verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "actual mouth and VFX origin inspected",
+          "attack/hit/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kelpie-contact.png"
+      }
+    },
+    {
+      "id": "nue",
+      "form": 0,
+      "name": "นุเอะ",
+      "powerName": "คลื่นอัสนีทมิฬ",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 67,
+        "y": 56,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 67,
+          "y": 56,
+          "asset": "assets/beasts/motion/nue-windup-v1.webp",
+          "sha256": "d2eaa35a3d5f58e7c4891b53a529e6f22ba35b23bcfac1edeac288d12e15f501"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/nue-power-v1.webp",
+          "sha256": "7922f7ae0a3ffab1b1a76e1690418f9c5b9480de8170f64d32ff6074d0f15730",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/nue-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/nue-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บอัสนี",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/nue-melee-v1.webp",
+        "sha256": "d583c99565f5ef3b5ffb74de868f43bd9be7f7c41e12f9537f6a67b09127cedb",
+        "effect": {
+          "asset": "assets/beasts/motion/nue-melee-effect-v1.webp",
+          "sha256": "be90469b888ab2960a12dca0790b57d3d40f67ed3f20f6503fdbc5694f5f3400",
+          "x": 52,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 (DOM width verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "actual mouth and VFX origin inspected",
+          "attack/hit/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/nue-contact.png"
+      }
+    }
+  ]
+}

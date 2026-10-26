@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "alchemist-male",
+      "kind": "player",
+      "cls": "alchemist",
+      "gender": "male",
+      "name": "นักเล่นแร่แปรธาตุ (male)",
+      "powerName": "พลังนักเล่นแร่แปรธาตุ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "mace",
+      "source": {
+        "x": 66.6,
+        "y": 21.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 66.6,
+          "y": 21.5,
+          "asset": "assets/beasts/motion/alchemist-male-windup-v1.webp",
+          "sha256": "60b7f6534b88969fa8205059528f1623ac51175e65dc361447b8571adb84db49"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/alchemist-male-power-v1.webp",
+          "sha256": "6e92134c8821baa59c2af8a2bab43161a90f14a9705443dbc083a9ab98af18fd",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/alchemist-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/alchemist-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดกระบองประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88.9,
+        "y": 71.9,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/alchemist-male-melee-v1.webp",
+        "sha256": "01936b366331fdee45fa1b43f6114f44b457f938bd89681f8bc7d7a3dff110e2",
+        "effect": {
+          "asset": "assets/beasts/motion/alchemist-male-melee-effect-v1.webp",
+          "sha256": "88a55ddb761ef6ddeff88c9b89075ab9b59e5b47fe7ef3bf2b7763b380bc62b6",
+          "x": 80.9,
+          "y": 84.4
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/alchemist-male-contact.png"
+      }
+    },
+    {
+      "id": "alchemist-female",
+      "kind": "player",
+      "cls": "alchemist",
+      "gender": "female",
+      "name": "นักเล่นแร่แปรธาตุ (female)",
+      "powerName": "พลังนักเล่นแร่แปรธาตุ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "mace",
+      "source": {
+        "x": 66.8,
+        "y": 24.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 66.8,
+          "y": 24.2,
+          "asset": "assets/beasts/motion/alchemist-female-windup-v1.webp",
+          "sha256": "ffed6dd73c033bbacb3686ba5d32c1f0b4595f29690add7e75b3621000f3ac2c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/alchemist-female-power-v1.webp",
+          "sha256": "e7f64033df14a5236198c52db04e53223d7abac74db3725e20b60fa104dfccd7",
+          "originY": 49.5,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/alchemist-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/alchemist-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดกระบองประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90.5,
+        "y": 71.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/alchemist-female-melee-v1.webp",
+        "sha256": "e62d81471216d22fc6145a684df41bb71bb4b318150255006fe8d29a818295bd",
+        "effect": {
+          "asset": "assets/beasts/motion/alchemist-female-melee-effect-v1.webp",
+          "sha256": "25564a03a5092772b34444774e2dac9aaacd72f384abe3c9051c4afceba7e66c",
+          "x": 80.7,
+          "y": 87.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/alchemist-female-contact.png"
+      }
+    },
+    {
+      "id": "biochem-male",
+      "kind": "player",
+      "cls": "biochem",
+      "gender": "male",
+      "name": "นักชีวเคมี (male)",
+      "powerName": "พลังนักชีวเคมี (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "mace",
+      "source": {
+        "x": 60.4,
+        "y": 22.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.8,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 60.4,
+          "y": 22.5,
+          "asset": "assets/beasts/motion/biochem-male-windup-v1.webp",
+          "sha256": "f0ca6bbdeb42fbb65f83a5737b31af7065dca47edda18e3a10e62690179e5568"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/biochem-male-power-v1.webp",
+          "sha256": "19ac0c77b2d7a3c85abc311936e56e21db9153c043f3a59240743553cd748571",
+          "originY": 48.8,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/biochem-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/biochem-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดกระบองประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.1,
+        "y": 73,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/biochem-male-melee-v1.webp",
+        "sha256": "fac22af17db6f609a6bcc50cfb4d543dd63eca318dc4e678c8e3b2f5ff57f2f2",
+        "effect": {
+          "asset": "assets/beasts/motion/biochem-male-melee-effect-v1.webp",
+          "sha256": "513d8f966b9c0c08dc3692081d752f78a9b9d3c9aed533f1bcd2db7ad32d3575",
+          "x": 82.2,
+          "y": 88.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/biochem-male-contact.png"
+      }
+    },
+    {
+      "id": "biochem-female",
+      "kind": "player",
+      "cls": "biochem",
+      "gender": "female",
+      "name": "นักชีวเคมี (female)",
+      "powerName": "พลังนักชีวเคมี (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "mace",
+      "source": {
+        "x": 62.3,
+        "y": 28.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 62.3,
+          "y": 28.3,
+          "asset": "assets/beasts/motion/biochem-female-windup-v1.webp",
+          "sha256": "1f0c27282535f8bacb6a00660df4b3807867a0118b0501bea7d7d285a7143621"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/biochem-female-power-v1.webp",
+          "sha256": "6d9eb8d9808550285400ffc15817dd766443737497675b0cb52efbc4601ba9cb",
+          "originY": 49,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/biochem-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/biochem-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดกระบองประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88.5,
+        "y": 71,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/biochem-female-melee-v1.webp",
+        "sha256": "23829e933259b105bf7610998e6f5968a2f30e8359b91101aecf8031d4abe69e",
+        "effect": {
+          "asset": "assets/beasts/motion/biochem-female-melee-effect-v1.webp",
+          "sha256": "926c1553447ae00c7ce21aa70091d72b7453530e583797abf52f1ae0e315d3cf",
+          "x": 82,
+          "y": 90
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/biochem-female-contact.png"
+      }
+    }
+  ]
+}

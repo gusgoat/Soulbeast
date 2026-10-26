@@ -1,0 +1,10 @@
+/* Equipment stays still: animate only the light and the Eclipse motes. */
+.item-art.equipment-motion{isolation:isolate;--gear-light:#f4cc6b;--gear-light-soft:#f4cc6b55}
+.item-art.equipment-motion-eclipse{--gear-light:#f688cf;--gear-light-soft:#ce65ff66}
+.equipment-aura{position:absolute;inset:0;z-index:1;border-radius:inherit;pointer-events:none;background:radial-gradient(ellipse at 50% 76%,var(--gear-light-soft),transparent 68%);box-shadow:inset 0 0 8px var(--gear-light-soft);animation:equipment-aura-light 3.6s ease-in-out infinite}
+.equipment-motion-eclipse .equipment-aura{background:radial-gradient(ellipse at 30% 70%,#f2b34b55,transparent 58%),radial-gradient(ellipse at 78% 30%,var(--gear-light-soft),transparent 65%)}
+.equipment-motes{position:absolute;inset:4%;overflow:hidden;border-radius:inherit;z-index:3;pointer-events:none}
+.equipment-motes i{position:absolute;left:calc(9% + var(--mote) * 16%);bottom:8%;width:clamp(1px,calc(var(--item-size,44px) * .025),3px);height:clamp(1px,calc(var(--item-size,44px) * .025),3px);border-radius:50%;background:#fff1c7;box-shadow:0 0 3px #ffd56e,0 0 6px #d971ff;opacity:0;animation:equipment-mote-rise 2.8s linear infinite;animation-delay:calc(var(--mote) * -.47s)}
+@keyframes equipment-aura-light{0%,100%{opacity:.42}50%{opacity:.95}}
+@keyframes equipment-mote-rise{0%{opacity:0;transform:translate(0,0)}15%{opacity:.95}75%{opacity:.7}100%{opacity:0;transform:translate(-3px,calc(var(--item-size,44px) * -.7))}}
+@media(prefers-reduced-motion:reduce){.equipment-aura{animation:none;opacity:.7}.equipment-motes i{animation:none;opacity:.65;bottom:calc(12% + var(--mote) * 12%)}}

@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "necro-male",
+      "kind": "player",
+      "cls": "necro",
+      "gender": "male",
+      "name": "เนโครแมนเซอร์ (male)",
+      "powerName": "พลังเนโครแมนเซอร์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 36.1,
+        "y": 22.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 36.1,
+          "y": 22.3,
+          "asset": "assets/beasts/motion/necro-male-windup-v1.webp",
+          "sha256": "eaa93c87b66ce0d33a502fb44225440d1d23ea45f7b63b0d6e3d940269160623"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/necro-male-power-v1.webp",
+          "sha256": "4c6760c8aa6dfa1c707ca9d1011a6403250bfd97a14bb8eedd0570ac31518ec3",
+          "originY": 49.5,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/necro-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/necro-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 83.4,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/necro-male-melee-v1.webp",
+        "sha256": "1adbfc1b29d33f544b44a963199024ceb8e390d6f647d9aa410d4cec32aa507a",
+        "effect": {
+          "asset": "assets/beasts/motion/necro-male-melee-effect-v1.webp",
+          "sha256": "be4fc53f6dbe23f8731fc29603be4798de11b22ec8bb5d9a8b3b7c99b4bee3b7",
+          "x": 80.1,
+          "y": 83.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/necro-male-contact.png"
+      }
+    },
+    {
+      "id": "necro-female",
+      "kind": "player",
+      "cls": "necro",
+      "gender": "female",
+      "name": "เนโครแมนเซอร์ (female)",
+      "powerName": "พลังเนโครแมนเซอร์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 40.4,
+        "y": 24.8,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 40.4,
+          "y": 24.8,
+          "asset": "assets/beasts/motion/necro-female-windup-v1.webp",
+          "sha256": "82716fcc4377be436e5811998fac4f064a6de106d30a7a93e090ecb00a6cf27e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/necro-female-power-v1.webp",
+          "sha256": "bd360f14c90be2632c832cb76ca4a595aaf72dc458c2a88b15a1d51bf1a4fc78",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/necro-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/necro-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89.3,
+        "y": 81,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/necro-female-melee-v1.webp",
+        "sha256": "03e5822231758a7b81029cbc6c2a187dd3bafa22c96342bd429062d816548de4",
+        "effect": {
+          "asset": "assets/beasts/motion/necro-female-melee-effect-v1.webp",
+          "sha256": "1cceed8483ce6dce9014f992989ec89c6a55e0cd83492caa0d63a2ac40532a79",
+          "x": 77.4,
+          "y": 84.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/necro-female-contact.png"
+      }
+    },
+    {
+      "id": "enchanter-male",
+      "kind": "player",
+      "cls": "enchanter",
+      "gender": "male",
+      "name": "จอมมนตร์สะกด (male)",
+      "powerName": "พลังจอมมนตร์สะกด (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 38.1,
+        "y": 25.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38.1,
+          "y": 25.6,
+          "asset": "assets/beasts/motion/enchanter-male-windup-v1.webp",
+          "sha256": "06e5c3524e911822f46322d4713e1282ecc9eeb1ab7b8fa386e0a15f3f430c2e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/enchanter-male-power-v1.webp",
+          "sha256": "059864a13fb56a56defa5bf4b75b10b9ace81b022cba6195f23746db6c52cba4",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/enchanter-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/enchanter-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87.3,
+        "y": 83.3,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/enchanter-male-melee-v1.webp",
+        "sha256": "988f89da2e4c33d7c5d2fe07464ade521348d8608b0ed2908ba4752909548687",
+        "effect": {
+          "asset": "assets/beasts/motion/enchanter-male-melee-effect-v1.webp",
+          "sha256": "6151dff8e8df5680781761924d78f1ac3bc3e7732e592a04d69a3b33dc0b8e63",
+          "x": 78.9,
+          "y": 83.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/enchanter-male-contact.png"
+      }
+    },
+    {
+      "id": "enchanter-female",
+      "kind": "player",
+      "cls": "enchanter",
+      "gender": "female",
+      "name": "จอมมนตร์สะกด (female)",
+      "powerName": "พลังจอมมนตร์สะกด (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 37.9,
+        "y": 26,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 37.9,
+          "y": 26,
+          "asset": "assets/beasts/motion/enchanter-female-windup-v1.webp",
+          "sha256": "60c10daeb80c5b1ba3ff718f93b5c834a6ab82c7be353975388a99e7c4b70691"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/enchanter-female-power-v1.webp",
+          "sha256": "7b0bba93d0ad33b1abba8f0fb04902f719d4cefb2bb7d1360ed29724bb83e05c",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/enchanter-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/enchanter-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90.8,
+        "y": 79.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/enchanter-female-melee-v1.webp",
+        "sha256": "2f351e7ea4af956dd59f1dc1898575a24e39cdaa898cb6bcf036b842c1da84e3",
+        "effect": {
+          "asset": "assets/beasts/motion/enchanter-female-melee-effect-v1.webp",
+          "sha256": "fa8c5b5552a89b1625cc71d62f85bfc56feda20fc913c84ab10a4f1fc47a5864",
+          "x": 77,
+          "y": 85.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/enchanter-female-contact.png"
+      }
+    }
+  ]
+}

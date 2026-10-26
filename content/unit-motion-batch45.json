@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "sbwar-male",
+      "kind": "player",
+      "cls": "sbwar",
+      "gender": "male",
+      "name": "ดาบเวทย์สงคราม (male)",
+      "powerName": "พลังดาบเวทย์สงคราม (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 69.5,
+        "y": 20.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 47.6,
+        "effectOriginX": 50.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 69.5,
+          "y": 20.6,
+          "asset": "assets/beasts/motion/sbwar-male-windup-v1.webp",
+          "sha256": "34278f06816be79d5ea1c6de160df36c9efe4c87ec363ed51c3132e006212a3b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sbwar-male-power-v1.webp",
+          "sha256": "c2593b25f375ae9a938abc3b4fd77783f677517580f5e65851ea3aedbceb455f",
+          "originY": 47.6,
+          "originX": 50.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sbwar-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sbwar-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97,
+        "y": 91.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sbwar-male-melee-v1.webp",
+        "sha256": "34766836fb7ef3d83c7fd56d165bbef46e14080b77d8b964bbdf1c2d22662c91",
+        "effect": {
+          "asset": "assets/beasts/motion/sbwar-male-melee-effect-v1.webp",
+          "sha256": "efaa35a8be22a0c722143ef1bc270222b4fe3a597f95e2417ed5ea86e1cec76a",
+          "x": 83.6,
+          "y": 84.9
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sbwar-male-contact.png"
+      }
+    },
+    {
+      "id": "sbwar-female",
+      "kind": "player",
+      "cls": "sbwar",
+      "gender": "female",
+      "name": "ดาบเวทย์สงคราม (female)",
+      "powerName": "พลังดาบเวทย์สงคราม (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 63.6,
+        "y": 24.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.2,
+        "effectOriginX": 50.3,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 63.6,
+          "y": 24.1,
+          "asset": "assets/beasts/motion/sbwar-female-windup-v1.webp",
+          "sha256": "7ebd35916d615fea2de58bd3ab79ee85dac50b18e84874c670d1d49fc89a9c3c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sbwar-female-power-v1.webp",
+          "sha256": "d66c51f1e92e2389ea56adc78cef5841c6041a9aa426a9b8566ae6c420ab6000",
+          "originY": 49.2,
+          "originX": 50.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sbwar-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sbwar-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.8,
+        "y": 90.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sbwar-female-melee-v1.webp",
+        "sha256": "63b2ea79a07613ff9d781656fa6747d3200b528a1dd6c4846e171faf99acd356",
+        "effect": {
+          "asset": "assets/beasts/motion/sbwar-female-melee-effect-v1.webp",
+          "sha256": "af091f7ab4123264285ac9d61e199731e9fee2b7bd2988166cc658d69d99a8c0",
+          "x": 81.6,
+          "y": 79.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sbwar-female-contact.png"
+      }
+    },
+    {
+      "id": "gladiator-male",
+      "kind": "player",
+      "cls": "gladiator",
+      "gender": "male",
+      "name": "กลาดิเอเตอร์ (male)",
+      "powerName": "พลังกลาดิเอเตอร์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 65.5,
+        "y": 40.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 53,
+        "effectOriginX": 49.9,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 65.5,
+          "y": 40.6,
+          "asset": "assets/beasts/motion/gladiator-male-windup-v1.webp",
+          "sha256": "664ce5e272260ae21435fe35721a052199e47e603ba9dbe3ee4209fc72e700e0"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gladiator-male-power-v1.webp",
+          "sha256": "80253ab784235eb29b8af5d885fda5bb58174afdefeb2fd7befdec9fb82ad678",
+          "originY": 53,
+          "originX": 49.9
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gladiator-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gladiator-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80.7,
+        "y": 83.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gladiator-male-melee-v1.webp",
+        "sha256": "7a75268f29402aad3235d2058dda4a1cba57a4adc3ccb2d9386efaef16c46d88",
+        "effect": {
+          "asset": "assets/beasts/motion/gladiator-male-melee-effect-v1.webp",
+          "sha256": "506cd57b4e66b886a9ba1675f055c373ba2d8224d6983171f3d9d7619b30de89",
+          "x": 82,
+          "y": 83.2
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gladiator-male-contact.png"
+      }
+    },
+    {
+      "id": "gladiator-female",
+      "kind": "player",
+      "cls": "gladiator",
+      "gender": "female",
+      "name": "กลาดิเอเตอร์ (female)",
+      "powerName": "พลังกลาดิเอเตอร์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 65.2,
+        "y": 42.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.3,
+        "effectOriginX": 50.3,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 65.2,
+          "y": 42.2,
+          "asset": "assets/beasts/motion/gladiator-female-windup-v1.webp",
+          "sha256": "660846db053d3ea1d89d0004720c65a9b3acb16f3b1fb0b2bcf691c48d130bd4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gladiator-female-power-v1.webp",
+          "sha256": "b1534cff1f305488ea5ea81391068755bd7ad7f8eea6141aa6fc994dac8f0724",
+          "originY": 49.3,
+          "originX": 50.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gladiator-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gladiator-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 83,
+        "y": 82.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gladiator-female-melee-v1.webp",
+        "sha256": "9a0638777a5f1e157a45c4dbee4cd10a540ed2d247947db5906cd7379d09e68b",
+        "effect": {
+          "asset": "assets/beasts/motion/gladiator-female-melee-effect-v1.webp",
+          "sha256": "698f6d1a4e6798c5779124333e7a8a9f366d86fd407bf1570a08536e7b4242bd",
+          "x": 78.9,
+          "y": 81.2
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gladiator-female-contact.png"
+      }
+    }
+  ]
+}

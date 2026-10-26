@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "phoenix",
+      "form": 0,
+      "name": "ฟีนิกซ์",
+      "powerName": "เปลวเพลิงวิหคอมตะ",
+      "idleMode": "float",
+      "background": "fire",
+      "source": {
+        "x": 92,
+        "y": 52.5,
+        "angle": 25,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 49,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 92,
+          "y": 52.5,
+          "asset": "assets/beasts/motion/phoenix-windup-v1.webp",
+          "sha256": "203c6517a594ed4f39b721dde1605fa148ac7dbece436356667a590b77362412"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/phoenix-power-v1.webp",
+          "sha256": "917a04f9ad74ab100c3bc8a470167250f9a99612e093d7820fd3ac345f39d6ef",
+          "originY": 49
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/phoenix-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/phoenix-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บฟีนิกซ์",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 86,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/phoenix-melee-v1.webp",
+        "sha256": "27c5e550dedcc80065bfd6ecc82bde9aae6e08204e4d05197212a3eccf01e698",
+        "effect": {
+          "asset": "assets/beasts/motion/phoenix-melee-effect-v1.webp",
+          "sha256": "7c194c8841462b92f66d5b0608d9e3fe1505a3e37b59a64913ebe3856775bb9d",
+          "x": 76,
+          "y": 79
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual beak/palm/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles only"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/phoenix-contact.png"
+      }
+    },
+    {
+      "id": "garuda",
+      "form": 0,
+      "name": "พญาครุฑ",
+      "powerName": "วายุเทพครุฑ",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 43,
+        "y": 33.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.3,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 43,
+          "y": 33.2,
+          "asset": "assets/beasts/motion/garuda-windup-v1.webp",
+          "sha256": "9bfc16b9270e3467ee05e64d27437a1448e44a35719ad33125c2804ae0176aab"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/garuda-power-v1.webp",
+          "sha256": "bf204a62a3f0dcb61088c846dd5a0ad9739c5b4adffa6be698ac137c069b229b",
+          "originY": 49.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/garuda-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/garuda-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บครุฑ",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 69,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/garuda-melee-v1.webp",
+        "sha256": "073c42444818bb95355c518d4f095493c43cb2306b394d6be5820199a9ccab0c",
+        "effect": {
+          "asset": "assets/beasts/motion/garuda-melee-effect-v1.webp",
+          "sha256": "5da3c3955076fbfedd11d3032ad7af651560a2e60ee3f2e9aae8286ce2cd34ed",
+          "x": 77,
+          "y": 73
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual beak/palm/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles only"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/garuda-contact.png"
+      }
+    },
+    {
+      "id": "nekomata",
+      "form": 0,
+      "name": "บาเกเนโกะ",
+      "powerName": "คลื่นเสียงวิญญาณ",
+      "idleMode": "breathe",
+      "background": "ghost",
+      "source": {
+        "x": 73,
+        "y": 41,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 73,
+          "y": 41,
+          "asset": "assets/beasts/motion/nekomata-windup-v1.webp",
+          "sha256": "432cf902ec3ccb28524fdc83bc5fb3f0e66b517d83b59c06ed876899714e90d5"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/nekomata-power-v1.webp",
+          "sha256": "071b21542564477a1ceb6aacd98b2b6de6f68a97fb27a249e7d71edd7562df8d",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/nekomata-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/nekomata-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บบาเกเนโกะ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 85.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/nekomata-melee-v1.webp",
+        "sha256": "0a79006e6d1d447b3387ffae5e995959c1b07cc1b6c8efbcdf01c347afaf7171",
+        "effect": {
+          "asset": "assets/beasts/motion/nekomata-melee-effect-v1.webp",
+          "sha256": "dc8c66bd1f5718cd19ea5ce1edb485919ce31fdedd692d8b69e04873c09a7d3a",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual beak/palm/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles only"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/nekomata-contact.png"
+      }
+    }
+  ]
+}

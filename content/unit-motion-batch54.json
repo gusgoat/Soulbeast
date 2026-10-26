@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "elementalist-male",
+      "kind": "player",
+      "cls": "elementalist",
+      "gender": "male",
+      "name": "จอมเวทธาตุ (male)",
+      "powerName": "พลังจอมเวทธาตุ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 43.2,
+        "y": 27.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 43.2,
+          "y": 27.1,
+          "asset": "assets/beasts/motion/elementalist-male-windup-v1.webp",
+          "sha256": "73b4795dbf765ba4997940c55e0fbdf06b5a979274311f05f12c780cbeb11363"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/elementalist-male-power-v1.webp",
+          "sha256": "d4b078ed744f761ec0ff380110f99675a55e994a8ddff7b37531ff7879b7a6d2",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/elementalist-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/elementalist-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 79,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/elementalist-male-melee-v1.webp",
+        "sha256": "a0ecbd9b8c828344621e32950d030d0752ae6a8a228a051ebdfb0b57e4290868",
+        "effect": {
+          "asset": "assets/beasts/motion/elementalist-male-melee-effect-v1.webp",
+          "sha256": "4d583a14d8e9c7c338e1b2b9cf49c2ce986e4a22f400b416b9e1edd2191aab33",
+          "x": 71.8,
+          "y": 83.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/elementalist-male-contact.png"
+      }
+    },
+    {
+      "id": "elementalist-female",
+      "kind": "player",
+      "cls": "elementalist",
+      "gender": "female",
+      "name": "จอมเวทธาตุ (female)",
+      "powerName": "พลังจอมเวทธาตุ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 41,
+        "y": 23.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 41,
+          "y": 23.6,
+          "asset": "assets/beasts/motion/elementalist-female-windup-v1.webp",
+          "sha256": "f0af21a2b6953fb13d43932379a57133e8c4abc75eaf8ffafe1f64c7583eacf3"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/elementalist-female-power-v1.webp",
+          "sha256": "0dc47449635e5463e63c6de30e93569ea22b0e2d3cea9e7a1713d1523c641379",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/elementalist-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/elementalist-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/elementalist-female-melee-v1.webp",
+        "sha256": "3923474525f29b0330f28514daa5ea0a51c35c65d1795a9840295994c3ade3b6",
+        "effect": {
+          "asset": "assets/beasts/motion/elementalist-female-melee-effect-v1.webp",
+          "sha256": "385f2a80fbbb3bb6b1d980ea35720de52fa2ab3600b0519b7f12db47848c8578",
+          "x": 84.5,
+          "y": 75.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/elementalist-female-contact.png"
+      }
+    },
+    {
+      "id": "warlock-male",
+      "kind": "player",
+      "cls": "warlock",
+      "gender": "male",
+      "name": "พ่อมดมืด (male)",
+      "powerName": "พลังพ่อมดมืด (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 41.2,
+        "y": 22.65,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 41.2,
+          "y": 22.65,
+          "asset": "assets/beasts/motion/warlock-male-windup-v1.webp",
+          "sha256": "b0ae45a0bac0b5e10eff9b6ee1226afca9e5f3ba764f48aefd7d863458c91726"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/warlock-male-power-v1.webp",
+          "sha256": "584f7ba937f73da33e7bf5cc3a4c68956d549ed5b2df3627b369723b7e0cb695",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/warlock-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/warlock-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/warlock-male-melee-v1.webp",
+        "sha256": "c7faa49ae7221d1d74e9673e47c1897837179c22b4ca0d87238f7dab80cfa422",
+        "effect": {
+          "asset": "assets/beasts/motion/warlock-male-melee-effect-v1.webp",
+          "sha256": "75e3ee9aa941d661ac5a0abee0d65f542f9cac1417a50b8c79805bd17ee2ad8b",
+          "x": 79.7,
+          "y": 84.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/warlock-male-contact.png"
+      }
+    },
+    {
+      "id": "warlock-female",
+      "kind": "player",
+      "cls": "warlock",
+      "gender": "female",
+      "name": "พ่อมดมืด (female)",
+      "powerName": "พลังพ่อมดมืด (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 44.7,
+        "y": 22.85,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 44.7,
+          "y": 22.85,
+          "asset": "assets/beasts/motion/warlock-female-windup-v1.webp",
+          "sha256": "40588669ea727e46c8c19ba4a90eaf1a039287dcb4d5dacb68660149bc83a803"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/warlock-female-power-v1.webp",
+          "sha256": "e660bf94c35b001b12670b51658570077b0822a4da9b0a56ddc19f5165f4cc16",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/warlock-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/warlock-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/warlock-female-melee-v1.webp",
+        "sha256": "63b22c369a178945f31cf34249fb35ce26d266244b7ec1e02d1bab54a806272f",
+        "effect": {
+          "asset": "assets/beasts/motion/warlock-female-melee-effect-v1.webp",
+          "sha256": "0e40a8ebb479a461c11b83284cc76d8d4730216f9ed9dc22a9e39a668e20408b",
+          "x": 77.4,
+          "y": 79.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/warlock-female-contact.png"
+      }
+    }
+  ]
+}

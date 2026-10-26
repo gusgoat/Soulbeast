@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "amabie",
+      "form": 0,
+      "name": "อามาบิเอะ",
+      "powerName": "วังวนจิตวารี",
+      "idleMode": "float",
+      "background": "water",
+      "source": {
+        "x": 49.4,
+        "y": 23.8,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.7,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 49.4,
+          "y": 23.8,
+          "asset": "assets/beasts/motion/amabie-windup-v1.webp",
+          "sha256": "d99907f91b6760af75bd5d524f694848d3e9b1c66e77863fe1bad648ca69648e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/amabie-power-v1.webp",
+          "sha256": "af227baf275923baca5dd4617bc4826710eb7a2cb185187df24fe58199326a40",
+          "originY": 49.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/amabie-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/amabie-melee-effect-v1.webp"
+      },
+      "meleeName": "ฝ่ามืออามาบิเอะ",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96,
+        "y": 25.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/amabie-melee-v1.webp",
+        "sha256": "38a44dd26cb88cecf170049b398185e72c40f93e6ac3cda58f4f845a90a749e2",
+        "effect": {
+          "asset": "assets/beasts/motion/amabie-melee-effect-v1.webp",
+          "sha256": "19ffa653d534cb1f541a03d1bb85a2991e96def6cc939685a68c7d5c18e983b8",
+          "x": 79.7,
+          "y": 72.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; salamander idle corrected to four legs before poses",
+          "windup inspected before power",
+          "actual palm/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/amabie-contact.png"
+      }
+    },
+    {
+      "id": "kinnaree",
+      "form": 0,
+      "name": "กินรี",
+      "powerName": "วายุมนตรากินรี",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 50.3,
+        "y": 29,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 50.3,
+          "y": 29,
+          "asset": "assets/beasts/motion/kinnaree-windup-v1.webp",
+          "sha256": "3d86f461419fed2a6939e5e8f0e1b3c04df1c1904acc2928d52472568c526439"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kinnaree-power-v1.webp",
+          "sha256": "cf0e82ef7b5b28f6e67639af4d29deaa9ee48d137d1c40d0aafcc3cd40ba3e2e",
+          "originY": 49
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kinnaree-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kinnaree-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บกินรี",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 40.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kinnaree-melee-v1.webp",
+        "sha256": "81c0f47dad8b881267d4b1b3ad5faf7357d110c9c30286ed21ec0fe9450afccd",
+        "effect": {
+          "asset": "assets/beasts/motion/kinnaree-melee-effect-v1.webp",
+          "sha256": "4ea9a9f506741e395b81963f18a2a9da732da7fe3c1894dce4a2bdd2437a0a6e",
+          "x": 75,
+          "y": 74.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; salamander idle corrected to four legs before poses",
+          "windup inspected before power",
+          "actual palm/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kinnaree-contact.png"
+      }
+    },
+    {
+      "id": "salamander",
+      "form": 0,
+      "name": "ซาลาแมนเดอร์",
+      "powerName": "ลมหายใจศิลาเพลิง",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 94,
+        "y": 56.7,
+        "angle": 15,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 94,
+          "y": 56.7,
+          "asset": "assets/beasts/motion/salamander-windup-v1.webp",
+          "sha256": "e2c2ca60449685edf9cc188d298fdbb9de832af4044f358655dd564f1e589709"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/salamander-power-v1.webp",
+          "sha256": "62b162e5d6e1bbc4124027ffe10f66fe981026bd501996259ee69d03b35890c0",
+          "originY": 51.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/salamander-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/salamander-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บศิลาเพลิง",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 78,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/salamander-melee-v1.webp",
+        "sha256": "b21504380fbc59811ed219bf5fca7c39252d22c78f24e7f40776ebd7d0bef58f",
+        "effect": {
+          "asset": "assets/beasts/motion/salamander-melee-effect-v1.webp",
+          "sha256": "e000a2b9a9ed7530e494081964dd5fa91a69015ea60c0b7cce43bf3a2777a0a3",
+          "x": 70,
+          "y": 73.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; salamander idle corrected to four legs before poses",
+          "windup inspected before power",
+          "actual palm/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/salamander-contact.png"
+      }
+    }
+  ]
+}

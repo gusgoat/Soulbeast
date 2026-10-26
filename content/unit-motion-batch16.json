@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "lamassu",
+      "form": 0,
+      "name": "ลามัสซู",
+      "powerName": "มนตร์ศิลาเทพพิทักษ์",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 65.5,
+        "y": 37.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 65.5,
+          "y": 37.2,
+          "asset": "assets/beasts/motion/lamassu-windup-v1.webp",
+          "sha256": "290983be6f6a134721f52ebd03ab743732ec9388ccdf74c9157fe2a16c117cd5"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/lamassu-power-v1.webp",
+          "sha256": "8da337043898f6b744cf5bd00ca1488e35ee3f44d9561400f9aea04a890c434f",
+          "originY": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/lamassu-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/lamassu-melee-effect-v1.webp"
+      },
+      "meleeName": "กีบคู่ลามัสซู",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 91,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/lamassu-melee-v1.webp",
+        "sha256": "93d794acda9065d85c8904af655e7811aaaa090f927ed68bd83500006b313824",
+        "effect": {
+          "asset": "assets/beasts/motion/lamassu-melee-effect-v1.webp",
+          "sha256": "cf4829e9810a2c70515f13d916aebb16884405bb1072405e89c1a545b1540b1d",
+          "x": 73.5,
+          "y": 76.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; Kraken idle eighth arm corrected before poses",
+          "windup inspected before power",
+          "actual mouth/beak and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles enabled"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/lamassu-contact.png"
+      }
+    },
+    {
+      "id": "fenrir",
+      "form": 0,
+      "name": "เฟนเรียร์",
+      "powerName": "ลมหายใจเหมันต์ทมิฬ",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 94.5,
+        "y": 61.5,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 54,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 94.5,
+          "y": 61.5,
+          "asset": "assets/beasts/motion/fenrir-windup-v1.webp",
+          "sha256": "5ac58172d078e36f3e035c213b991f32f4a5814f6535f64dbe672ba23ad87c69"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/fenrir-power-v1.webp",
+          "sha256": "671a3fa3506bd376b886679a59e15e5c015d9eac02117e410a6d1931025bac9c",
+          "originY": 54
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/fenrir-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/fenrir-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บเฟนเรียร์",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 73,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/fenrir-melee-v1.webp",
+        "sha256": "0acae17590d387485a36706e8896f81dd0868dedfcb669ce05b142430fbe2b5d",
+        "effect": {
+          "asset": "assets/beasts/motion/fenrir-melee-effect-v1.webp",
+          "sha256": "c55d97a4c65dbd03c9b1d2fc823919a78af66b05ee9e26dc364f47571063b88c",
+          "x": 78,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; Kraken idle eighth arm corrected before poses",
+          "windup inspected before power",
+          "actual mouth/beak and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles enabled"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/fenrir-contact.png"
+      }
+    },
+    {
+      "id": "kraken",
+      "form": 0,
+      "name": "คราเคน",
+      "powerName": "แรงอัดวารีทมิฬ",
+      "idleMode": "float",
+      "background": "water",
+      "source": {
+        "x": 56.4,
+        "y": 59.8,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 56.4,
+          "y": 59.8,
+          "asset": "assets/beasts/motion/kraken-windup-v1.webp",
+          "sha256": "cb10bf283d82b6ac39e6e3e39d601fdfd75a08acf9cb81c2fe06d22700c304d6"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kraken-power-v1.webp",
+          "sha256": "52c3cb125c649575f61419f65886987bdc6ddbb8b3f0e8dc436760a671e81f77",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kraken-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kraken-melee-effect-v1.webp"
+      },
+      "meleeName": "หนวดฟาดคราเคน",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90.5,
+        "y": 91.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kraken-melee-v1.webp",
+        "sha256": "c2cf444e59020681e80a4364b40335e973118f2cf200bec8e418645004f1af16",
+        "effect": {
+          "asset": "assets/beasts/motion/kraken-melee-effect-v1.webp",
+          "sha256": "657e0273024827f25eea905417055a9d62bdb07dfade3f2187384d2782b797c0",
+          "x": 77.5,
+          "y": 70.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; Kraken idle eighth arm corrected before poses",
+          "windup inspected before power",
+          "actual mouth/beak and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles enabled"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kraken-contact.png"
+      }
+    }
+  ]
+}

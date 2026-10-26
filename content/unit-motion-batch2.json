@@ -1,0 +1,209 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "jackalope",
+      "form": 0,
+      "name": "แจ็กคาโลป",
+      "powerName": "กระแทกเขาวายุ",
+      "idleMode": "breathe",
+      "background": "normal",
+      "source": {
+        "x": 50,
+        "y": 45,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "anchor": {
+          "pose": "windup",
+          "x": 50,
+          "y": 44.680851,
+          "asset": "assets/beasts/motion/jackalope-windup-v1.webp",
+          "sha256": "6bebe76d02e337a31333fbb114e388faa0219d341650750d7f71473ca346a477"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jackalope-power-v1.webp",
+          "sha256": "8010afdfdd1fd742f854dd2697868a0632b63eaab2ac8f037329837c5475f6b3",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jackalope-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jackalope-melee-effect-v1.webp"
+      },
+      "meleeName": "กระแทกเขา",
+      "meleeMode": "headbutt",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 65,
+        "y": 36,
+        "width": 95,
+        "height": 95,
+        "asset": "assets/beasts/motion/jackalope-melee-v1.webp",
+        "sha256": "ce5d02aee07e87422bf55d085c615e7216a1308da1124ae292ff68b62e313afd",
+        "effect": {
+          "asset": "assets/beasts/motion/jackalope-melee-effect-v1.webp",
+          "sha256": "9d6c4e40c9f19d1f043b5278e1787d8443dfe0cb77206bc73477b12910f205f0",
+          "x": 50,
+          "y": 56
+        }
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-jackalope-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    },
+    {
+      "id": "tanuki",
+      "form": 0,
+      "name": "บาเคดานุกิ",
+      "powerName": "ม่านลวงตาใบไม้",
+      "idleMode": "sway",
+      "background": "psychic",
+      "source": {
+        "x": 82,
+        "y": 48,
+        "angle": 0,
+        "width": 135,
+        "height": 45,
+        "anchor": {
+          "pose": "windup",
+          "x": 84.042553,
+          "y": 47.87234,
+          "asset": "assets/beasts/motion/tanuki-windup-v1.webp",
+          "sha256": "29432f5c55b0575bee139d8b958df6df4ab814fca69a0833aacd0dcf0d0883cd"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/tanuki-power-v1.webp",
+          "sha256": "90396dde1fa90f9b3a867646a99d6f66a2233ab22054756519f680e9441d34bb",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/tanuki-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/tanuki-melee-effect-v1.webp"
+      },
+      "meleeName": "ตบอุ้งมือ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 58,
+        "width": 90,
+        "height": 90,
+        "asset": "assets/beasts/motion/tanuki-melee-v1.webp",
+        "sha256": "5b6b47c8dce5e29f74632856ebcb5f1e98f53249fd23bddbbc10df85bf125caa",
+        "effect": {
+          "asset": "assets/beasts/motion/tanuki-melee-effect-v1.webp",
+          "sha256": "af82d060a24481e0f16458a36bd6a638c5fd81f220244aeaca13b4479e6ac3a9",
+          "x": 49,
+          "y": 46
+        }
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-tanuki-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    },
+    {
+      "id": "raiju",
+      "form": 0,
+      "name": "ไรจู",
+      "powerName": "ลมหายใจอัสนี",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 84,
+        "y": 55,
+        "angle": 10,
+        "width": 140,
+        "height": 46,
+        "cropLeft": 14,
+        "anchor": {
+          "pose": "windup",
+          "x": 86.170213,
+          "y": 55.319149,
+          "asset": "assets/beasts/motion/raiju-windup-v1.webp",
+          "sha256": "1f302b5352d1686747953e9e540a1e00792ca956f0db5e39dee6bcbba1e7a59d"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/raiju-power-v1.webp",
+          "sha256": "a370b386302a087110b47c3a727ed8ddbafd786df09b0e411599853162e91605",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/raiju-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/raiju-melee-effect-v1.webp"
+      },
+      "meleeName": "ตะปบอัสนี",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 80,
+        "width": 100,
+        "height": 100,
+        "asset": "assets/beasts/motion/raiju-melee-v1.webp",
+        "sha256": "5260bde248487cb323fc7c45f9bf7fc3f1253d455167b8e370e770e688f379e2",
+        "effect": {
+          "asset": "assets/beasts/motion/raiju-melee-effect-v1.webp",
+          "sha256": "2e129f692229a4a0706163f8ad3e77dcd3b8d19b6c920231ae4597c5f1de5f13",
+          "x": 50,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-raiju-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    }
+  ]
+}

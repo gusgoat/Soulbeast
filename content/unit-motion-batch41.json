@@ -1,0 +1,340 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "wendigo-hungry",
+      "species": "wendigo",
+      "form": 1,
+      "name": "เวนดิโกหิวโหย",
+      "powerName": "พลังเวนดิโกหิวโหย",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 32,
+        "y": 34,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 32,
+          "y": 34,
+          "asset": "assets/beasts/motion/wendigo-hungry-windup-v1.webp",
+          "sha256": "ef3eeeba5fba7cb335725f0fca2fb563daeb8bf58954e0e8bed4224e827e3dd2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wendigo-hungry-power-v1.webp",
+          "sha256": "fc4526d268f8375209190d68c3e7e142db4cfcae488cdc4a23cfd698a8e87e53",
+          "originY": 50,
+          "originX": 50
+        },
+        "effectOriginX": 50
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wendigo-hungry-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wendigo-hungry-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 82,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wendigo-hungry-melee-v1.webp",
+        "sha256": "46415abefa24d8cb940e34e78df88f8b9e9f881a838e4d18c0086d01c0e365bd",
+        "effect": {
+          "asset": "assets/beasts/motion/wendigo-hungry-melee-effect-v1.webp",
+          "sha256": "eb3ca7968cd990eb5c281036f7aecb8cf7354e6e34fa9497aa949084b2d08755",
+          "x": 85,
+          "y": 79
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wendigo-hungry-contact.png"
+      }
+    },
+    {
+      "id": "bunyip-death",
+      "species": "bunyip",
+      "form": 1,
+      "name": "บันยิปแห่งบึงมรณะ",
+      "powerName": "พลังบันยิปแห่งบึงมรณะ",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 74,
+        "y": 48,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 74,
+          "y": 48,
+          "asset": "assets/beasts/motion/bunyip-death-windup-v1.webp",
+          "sha256": "3f6095bc84e55031507c53377b31057362f64e2888bd9906b799fb8447cdab65"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bunyip-death-power-v1.webp",
+          "sha256": "d0453512e228b5e6f987eefb506a4bc1f4e5a572ca63f5ce4e63d9afeef469ae",
+          "originY": 50,
+          "originX": 50
+        },
+        "effectOriginX": 50
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bunyip-death-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bunyip-death-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 77,
+        "y": 80,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bunyip-death-melee-v1.webp",
+        "sha256": "3b1725812e21d59b3ccff76feca7bd7cd4b9e58ff1e893358888613c3c09b76a",
+        "effect": {
+          "asset": "assets/beasts/motion/bunyip-death-melee-effect-v1.webp",
+          "sha256": "292959dd5b4f43dbd8e2809fb40d19b2fd117113c6752b6325702d30a7831264",
+          "x": 83,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bunyip-death-contact.png"
+      }
+    },
+    {
+      "id": "wyvern-storm",
+      "species": "wyvern",
+      "form": 1,
+      "name": "ไวเวิร์นพายุ",
+      "powerName": "พลังไวเวิร์นพายุ",
+      "idleMode": "breathe",
+      "background": "dragon",
+      "source": {
+        "x": 81,
+        "y": 37,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 1,
+        "anchor": {
+          "pose": "windup",
+          "x": 81,
+          "y": 37,
+          "asset": "assets/beasts/motion/wyvern-storm-windup-v1.webp",
+          "sha256": "61850fb2984f4808d3edd1c2173d4c5a5a8744ba628d92741b56d20101fe583c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wyvern-storm-power-v1.webp",
+          "sha256": "8ca5a0f3757ffe5c4ca078604f298a7d3d42757ae0695a0691f9c8fbabf30489",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wyvern-storm-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wyvern-storm-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 82,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wyvern-storm-melee-v1.webp",
+        "sha256": "7fc046277944f54b7e56e85a4e8f91ad41f7c2f3ee9a502015d431aea1b1a42e",
+        "effect": {
+          "asset": "assets/beasts/motion/wyvern-storm-melee-effect-v1.webp",
+          "sha256": "0459ba231c1ac68e86ac16f0e354e4f38465206e7f39378532c20e715c9fb032",
+          "x": 83,
+          "y": 88
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wyvern-storm-contact.png"
+      }
+    },
+    {
+      "id": "roc-king",
+      "species": "roc",
+      "form": 1,
+      "name": "นกรุคราชาเวหา",
+      "powerName": "พลังนกรุคราชาเวหา",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 69,
+        "y": 43,
+        "angle": 30,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.5,
+        "cropLeft": 5,
+        "anchor": {
+          "pose": "windup",
+          "x": 69,
+          "y": 43,
+          "asset": "assets/beasts/motion/roc-king-windup-v1.webp",
+          "sha256": "e001326e6832955af0103986e302327da4f875f14f42ff19f33bc8e0a1c925a2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/roc-king-power-v1.webp",
+          "sha256": "895b4f1acfd168193b3f6f571b2a69f16c5fdd7707cef396c44e9c372824f0a8",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/roc-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/roc-king-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 86,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/roc-king-melee-v1.webp",
+        "sha256": "9a152a1a8a9be6fbc2bd90197633f3addc7d2616e2ffd1b542bb0c766846cdc6",
+        "effect": {
+          "asset": "assets/beasts/motion/roc-king-melee-effect-v1.webp",
+          "sha256": "1da394648477ebeb26200490115f947c6a9709b06b0bf8fe9fa894c36c9dad1a",
+          "x": 78,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/roc-king-contact.png"
+      }
+    },
+    {
+      "id": "rajasi-gold",
+      "species": "rajasi",
+      "form": 1,
+      "name": "ราชสีห์ทองหิมพานต์",
+      "powerName": "พลังราชสีห์ทองหิมพานต์",
+      "idleMode": "breathe",
+      "background": "fighting",
+      "source": {
+        "x": 86,
+        "y": 37,
+        "angle": 17,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 47.4,
+        "cropLeft": 1,
+        "anchor": {
+          "pose": "windup",
+          "x": 86,
+          "y": 37,
+          "asset": "assets/beasts/motion/rajasi-gold-windup-v1.webp",
+          "sha256": "abdb361b07b0cc9fd63df8f33b7a961713cc3d8cb3da0fde37ba9a89a2fc059d"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/rajasi-gold-power-v1.webp",
+          "sha256": "8703242a1fc8f29e34e4a2e9e2bc528997732f82c291fa000841edb38b510032",
+          "originY": 47.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/rajasi-gold-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/rajasi-gold-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 74,
+        "y": 86,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/rajasi-gold-melee-v1.webp",
+        "sha256": "a0edc27ecd376e7662bb1e7b6b10a7aabcd7e38cbf8456920c90932f98ee21ba",
+        "effect": {
+          "asset": "assets/beasts/motion/rajasi-gold-melee-effect-v1.webp",
+          "sha256": "d5619ec483b56c68efa519032cb79611162ce13b84d623dc3715c03bb9056c06",
+          "x": 83,
+          "y": 83
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/rajasi-gold-contact.png"
+      }
+    }
+  ]
+}

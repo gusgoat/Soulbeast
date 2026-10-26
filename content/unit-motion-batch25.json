@@ -1,0 +1,408 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "crocodile",
+      "species": "crocodile",
+      "form": 0,
+      "name": "จระเข้เกล็ดเหล็ก",
+      "powerName": "พลังจระเข้เกล็ดเหล็ก",
+      "idleMode": "breathe",
+      "background": "steel",
+      "source": {
+        "x": 85,
+        "y": 25.4,
+        "angle": 25,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 85,
+          "y": 25.4,
+          "asset": "assets/beasts/motion/crocodile-windup-v1.webp",
+          "sha256": "71de4dbbf91048189e11e599691da8e66f9d2dde849a36890ccd8865ca727c9b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/crocodile-power-v1.webp",
+          "sha256": "ac5e25885d130458b6fd5f9d058a165d12ca6927509d7b252abd8e2289ef7395",
+          "originY": 53.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/crocodile-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/crocodile-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/crocodile-melee-v1.webp",
+        "sha256": "7b305dbc9828bdb9b55672f121ebef30cf55fe81227c539967fc1d8b6ff46f4a",
+        "effect": {
+          "asset": "assets/beasts/motion/crocodile-melee-effect-v1.webp",
+          "sha256": "09d7db00b0b5b5c42125a78312af25f312c5c9d0f173e728697ff2640f0bcf37",
+          "x": 80,
+          "y": 77.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena card108.6px",
+        "checks": [
+          "identity anatomy and original staff equipment inspected",
+          "windup inspected before power and melee before contact trail",
+          "actual VFX cores normalized and pose/image SHA256 bound",
+          "linear .75s power; full attack hit windup melee recovery",
+          "no ordinary early-form particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "held power source preserved at normal and arena sizes",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/crocodile-contact.png"
+      }
+    },
+    {
+      "id": "night-horse",
+      "species": "night_horse",
+      "form": 0,
+      "name": "อาชารัตติกาล",
+      "powerName": "พลังอาชารัตติกาล",
+      "idleMode": "breathe",
+      "background": "ghost",
+      "source": {
+        "x": 69.5,
+        "y": 37,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.3,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 69.5,
+          "y": 37,
+          "asset": "assets/beasts/motion/night-horse-windup-v1.webp",
+          "sha256": "e45e851648c69f10556a8626105f696c448a67232c570572a3565070fed208f0"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/night-horse-power-v1.webp",
+          "sha256": "757cd23ff52fab5d6eb6968d6d7d6f2b83e8528c9fc42058e5f06fdd28a51a9c",
+          "originY": 49.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/night-horse-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/night-horse-melee-effect-v1.webp"
+      },
+      "meleeName": "เตะกีบ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 51.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/night-horse-melee-v1.webp",
+        "sha256": "c948570746971f1a533c754d2080845665bbc95ce8907231e4c5269a057be973",
+        "effect": {
+          "asset": "assets/beasts/motion/night-horse-melee-effect-v1.webp",
+          "sha256": "bbd61b4b46691c80bbe0c6e856e87755cc81189dce305ca98cd1136ae37305b0",
+          "x": 77,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena card108.6px",
+        "checks": [
+          "identity anatomy and original staff equipment inspected",
+          "windup inspected before power and melee before contact trail",
+          "actual VFX cores normalized and pose/image SHA256 bound",
+          "linear .75s power; full attack hit windup melee recovery",
+          "no ordinary early-form particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "held power source preserved at normal and arena sizes",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/night-horse-contact.png"
+      }
+    },
+    {
+      "id": "desert-witch",
+      "species": "desert_witch",
+      "form": 0,
+      "name": "แม่มดทราย",
+      "powerName": "พลังแม่มดทราย",
+      "idleMode": "breathe",
+      "background": "psychic",
+      "source": {
+        "x": 36,
+        "y": 20.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 36,
+          "y": 20.5,
+          "asset": "assets/beasts/motion/desert-witch-windup-v1.webp",
+          "sha256": "542aad4024e48d57fb6aff72a4da729499991efcc8d9e904019f6edbeba5d168"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/desert-witch-power-v1.webp",
+          "sha256": "79faea31b410227d7c80305006c9edf459ae4ab7dec5916afbf428738aeb4f0c",
+          "originY": 48.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/desert-witch-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/desert-witch-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทา",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92,
+        "y": 75,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/desert-witch-melee-v1.webp",
+        "sha256": "62efb8ebcf928f7ba0c92fa3f6ebdcef6644ce3d140d844180b7e5b15e8e4c87",
+        "effect": {
+          "asset": "assets/beasts/motion/desert-witch-melee-effect-v1.webp",
+          "sha256": "c903bf2c36846b264790e032f0c95fb2749dbf47311cece87e47b35cc6d298da",
+          "x": 78,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena card108.6px",
+        "checks": [
+          "identity anatomy and original staff equipment inspected",
+          "windup inspected before power and melee before contact trail",
+          "actual VFX cores normalized and pose/image SHA256 bound",
+          "linear .75s power; full attack hit windup melee recovery",
+          "no ordinary early-form particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "held power source preserved at normal and arena sizes",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/desert-witch-contact.png"
+      }
+    },
+    {
+      "id": "mummy-king",
+      "species": "mummy_king",
+      "form": 0,
+      "name": "ราชามัมมี่",
+      "powerName": "พลังราชามัมมี่",
+      "idleMode": "breathe",
+      "background": "ghost",
+      "source": {
+        "x": 34,
+        "y": 21,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 34,
+          "y": 21,
+          "asset": "assets/beasts/motion/mummy-king-windup-v1.webp",
+          "sha256": "77d8640b193f11d1c0c710d9e0cc486dd5ee8382a1aed26b5b8a9c190f602304"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mummy-king-power-v1.webp",
+          "sha256": "b01841e50fd1ee3d946aaf2f407310f57febbf41cdea7227f647ad7cff8bf906",
+          "originY": 48.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mummy-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mummy-king-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทา",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 68,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mummy-king-melee-v1.webp",
+        "sha256": "eed3f8293053d8266e38555c80af7d311bb9b5886387ca9c38be47e4a0a14bf3",
+        "effect": {
+          "asset": "assets/beasts/motion/mummy-king-melee-effect-v1.webp",
+          "sha256": "411d1de0000bf3fd3604de7bd0471ea6d590290da821e40b8aa9e5490545f8a3",
+          "x": 75,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena card108.6px",
+        "checks": [
+          "identity anatomy and original staff equipment inspected",
+          "windup inspected before power and melee before contact trail",
+          "actual VFX cores normalized and pose/image SHA256 bound",
+          "linear .75s power; full attack hit windup melee recovery",
+          "no ordinary early-form particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "held power source preserved at normal and arena sizes",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/mummy-king-contact.png"
+      }
+    },
+    {
+      "id": "ice-wolf",
+      "species": "ice_wolf",
+      "form": 0,
+      "name": "หมาป่าน้ำแข็ง",
+      "powerName": "พลังหมาป่าน้ำแข็ง",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 90.5,
+        "y": 59.3,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 60.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 90.5,
+          "y": 59.3,
+          "asset": "assets/beasts/motion/ice-wolf-windup-v1.webp",
+          "sha256": "3db975e89f79c1c5f5f5b1811b20fa07c31054e473446e4c8a3b7c8d9f067605"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ice-wolf-power-v1.webp",
+          "sha256": "2a20c5fd0badbe1781f0fe1b39f1bbe3535e0ba8b7472e466c3df41aadff4206",
+          "originY": 60.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ice-wolf-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ice-wolf-melee-effect-v1.webp"
+      },
+      "meleeName": "พุ่งกัด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 67.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ice-wolf-melee-v1.webp",
+        "sha256": "835a38000502890cb639997a6458beb1f7e7a74c1fb7082bf971287699e1c346",
+        "effect": {
+          "asset": "assets/beasts/motion/ice-wolf-melee-effect-v1.webp",
+          "sha256": "74e2d520c70a514a32f7ee153e48a8b64bd0aec64c3300029ce0ec571d52ac3b",
+          "x": 80,
+          "y": 76
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena card108.6px",
+        "checks": [
+          "identity anatomy and original staff equipment inspected",
+          "windup inspected before power and melee before contact trail",
+          "actual VFX cores normalized and pose/image SHA256 bound",
+          "linear .75s power; full attack hit windup melee recovery",
+          "no ordinary early-form particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "held power source preserved at normal and arena sizes",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ice-wolf-contact.png"
+      }
+    },
+    {
+      "id": "fire-imp",
+      "species": "fire_imp",
+      "form": 0,
+      "name": "อิมป์เพลิง",
+      "powerName": "พลังอิมป์เพลิง",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 37.5,
+        "y": 43,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 37.5,
+          "y": 43,
+          "asset": "assets/beasts/motion/fire-imp-windup-v1.webp",
+          "sha256": "3dfdb34eadda58c399bab4c6e17a106b85cc7a73944db0b447f390e9ebcadf9c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/fire-imp-power-v1.webp",
+          "sha256": "967a5b5d08b9993fbd28533b8e33a69955fe56ba74c2eaefbeac58d30a1c372c",
+          "originY": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/fire-imp-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/fire-imp-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/fire-imp-melee-v1.webp",
+        "sha256": "435b8a2e797db0f1bccf5db36531af4f5f922fb0644ba397054d65f7baaa7578",
+        "effect": {
+          "asset": "assets/beasts/motion/fire-imp-melee-effect-v1.webp",
+          "sha256": "9c38f36ee390bfba4b3d0606bf7d95d3e7e4d81287619c5071d0b5feb53ae54f",
+          "x": 75,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena card108.6px",
+        "checks": [
+          "identity anatomy and original staff equipment inspected",
+          "windup inspected before power and melee before contact trail",
+          "actual VFX cores normalized and pose/image SHA256 bound",
+          "linear .75s power; full attack hit windup melee recovery",
+          "no ordinary early-form particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "held power source preserved at normal and arena sizes",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/fire-imp-contact.png"
+      }
+    }
+  ]
+}

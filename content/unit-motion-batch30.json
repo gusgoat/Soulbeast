@@ -1,0 +1,420 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "aurorion",
+      "species": "legend2_aurorion",
+      "form": 0,
+      "name": "ออโรริออน มังกรแสงเหนือ",
+      "powerName": "พลังออโรริออน มังกรแสงเหนือ",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 90.6,
+        "y": 45.7,
+        "angle": 28,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 90.6,
+          "y": 45.7,
+          "asset": "assets/beasts/motion/aurorion-windup-v1.webp",
+          "sha256": "cd5f7b2060902515a373255d51b6842b47b9bdd5370d1c5f832c6b7a3d093c24"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/aurorion-power-v1.webp",
+          "sha256": "6b5a64d96a3315be2f800ed7120131c943985f5924fbac2a604805727aae9c17",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/aurorion-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/aurorion-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/aurorion-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 83,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/aurorion-melee-v1.webp",
+        "sha256": "57f5e8ebd7ac9396d58ca13d704c3dfdae89344be1422b4606ee8c54c50ef2a9",
+        "effect": {
+          "asset": "assets/beasts/motion/aurorion-melee-effect-v1.webp",
+          "sha256": "32e82e363dc8092f92ff6abb156248135f665e5fcd593ad406eeec639febd14e",
+          "x": 80,
+          "y": 85
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/aurorion-contact.png"
+      }
+    },
+    {
+      "id": "abyssarch",
+      "species": "legend2_abyssarch",
+      "form": 0,
+      "name": "แอสโมราธ จอมปีศาจสุญญตา",
+      "powerName": "พลังแอสโมราธ จอมปีศาจสุญญตา",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 38,
+        "y": 29,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38,
+          "y": 29,
+          "asset": "assets/beasts/motion/abyssarch-windup-v1.webp",
+          "sha256": "214e83e5be9eff785afca6066056cd0a780e7dff26264762d89c74aeb7c5c79d"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/abyssarch-power-v1.webp",
+          "sha256": "69c8a5c0d6cac94198dbe472383750e62ebdce81cc0bdb1350a446210f7ebfec",
+          "originY": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/abyssarch-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/abyssarch-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/abyssarch-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.7,
+        "y": 66.4,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/abyssarch-melee-v1.webp",
+        "sha256": "a9f4f6d63c4989d65e69e5f4b8b6d6827c9f8dbf2c67a455c46687f3325d2dca",
+        "effect": {
+          "asset": "assets/beasts/motion/abyssarch-melee-effect-v1.webp",
+          "sha256": "eb9465b6a4339fa080e2b5bb48bddf255dafa991c01f26582cf95f05144d7712",
+          "x": 85,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/abyssarch-contact.png"
+      }
+    },
+    {
+      "id": "selestia",
+      "species": "legend2_selestia",
+      "form": 0,
+      "name": "เซเลสเทีย เทพีมหาสุริยคราส",
+      "powerName": "พลังเซเลสเทีย เทพีมหาสุริยคราส",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 39.1,
+        "y": 20.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 39.1,
+          "y": 20.6,
+          "asset": "assets/beasts/motion/selestia-windup-v1.webp",
+          "sha256": "6750f76a438ba393231c332dbd4f31405e96b5fffaac62753678f75fc1e3770f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/selestia-power-v1.webp",
+          "sha256": "4d5365076206efdf68bb6f805706f6d739a95289b1f659a46ec53cd401ffc22a",
+          "originY": 48.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/selestia-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/selestia-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/selestia-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 79,
+        "y": 41.4,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/selestia-melee-v1.webp",
+        "sha256": "d93e468e9e7c73a55a60a88488869c35470aaadff0ef942f91993dcb07ed5d8e",
+        "effect": {
+          "asset": "assets/beasts/motion/selestia-melee-effect-v1.webp",
+          "sha256": "fdd6e29c8df1669af10813169b66d2016bf3bc5b62e22d1861f2bbdbc9049470",
+          "x": 81,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/selestia-contact.png"
+      }
+    },
+    {
+      "id": "aerelion",
+      "species": "legend2_aerelion",
+      "form": 0,
+      "name": "แอเรลิออน จอมเวทเอลฟ์ปีกดารา",
+      "powerName": "พลังแอเรลิออน จอมเวทเอลฟ์ปีกดารา",
+      "idleMode": "breathe",
+      "background": "psychic",
+      "source": {
+        "x": 39.8,
+        "y": 19.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 39.8,
+          "y": 19.1,
+          "asset": "assets/beasts/motion/aerelion-windup-v1.webp",
+          "sha256": "c278813aa4cad8b552efcaaf57ba704dc3675361f705cc49985b7aaa344d3b85"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/aerelion-power-v1.webp",
+          "sha256": "118297621e9649d4358afc7bacac9dd88741fb4569aa6bcd5a4746ffd083b6f1",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/aerelion-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/aerelion-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/aerelion-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85.9,
+        "y": 72.6,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/aerelion-melee-v1.webp",
+        "sha256": "b9c3d28b9a576ce516dd212ea24dc4774873a50a29f598e043a029d39dc12f09",
+        "effect": {
+          "asset": "assets/beasts/motion/aerelion-melee-effect-v1.webp",
+          "sha256": "6b37459911e5e542bdc064ae126e8f76957c0f9b54de69acc78df85ca73bd1ac",
+          "x": 81,
+          "y": 73
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/aerelion-contact.png"
+      }
+    },
+    {
+      "id": "myriapod",
+      "species": "legend2_myriapod",
+      "form": 0,
+      "name": "มหาตะขาบโยมินกันต์",
+      "powerName": "พลังมหาตะขาบโยมินกันต์",
+      "idleMode": "breathe",
+      "background": "poison",
+      "source": {
+        "x": 83.2,
+        "y": 54.7,
+        "angle": 43,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 83.2,
+          "y": 54.7,
+          "asset": "assets/beasts/motion/myriapod-windup-v1.webp",
+          "sha256": "ecd4a54aed9717e7ebcbcbda5703a92a623676cb82e456c840735729a6ba2897"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/myriapod-power-v1.webp",
+          "sha256": "0838d75b305dddbe419cd3ff3524a420c34d9d4c34634b288a409332d7393a28",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/myriapod-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/myriapod-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/myriapod-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/myriapod-melee-v1.webp",
+        "sha256": "7eac6032827b1dc4d54498232d3edca6c4bc65a7d48baee51339d554a32ba8e5",
+        "effect": {
+          "asset": "assets/beasts/motion/myriapod-melee-effect-v1.webp",
+          "sha256": "64d127ba98efcceb9b285a840805bb82eb7d156858028da606d60a2f5d9135b8",
+          "x": 80,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/myriapod-contact.png"
+      }
+    },
+    {
+      "id": "yggwarden",
+      "species": "legend2_yggwarden",
+      "form": 0,
+      "name": "อิกดราซิล ผู้พิทักษ์รากจักรวาล",
+      "powerName": "พลังอิกดราซิล ผู้พิทักษ์รากจักรวาล",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 28.9,
+        "y": 40.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 28.9,
+          "y": 40.6,
+          "asset": "assets/beasts/motion/yggwarden-windup-v1.webp",
+          "sha256": "b8d365e8b61050f0f45eea2002e7caed30fe8492abaf2d819a0ef7ea0a1591cb"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/yggwarden-power-v1.webp",
+          "sha256": "02cb91fe1ce05e972180264129d0649ed10c90ad644b336fe34e519229ea2346",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/yggwarden-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/yggwarden-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/yggwarden-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84,
+        "y": 73,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/yggwarden-melee-v1.webp",
+        "sha256": "0d568bab2c2dbe89e8d7395be1328d4be90ab312d2097294c4a6e3179cce630d",
+        "effect": {
+          "asset": "assets/beasts/motion/yggwarden-melee-effect-v1.webp",
+          "sha256": "b35281f4e6f9aa0a960d6a8ddee7da0798c0d3f9b15a2b67172607c55551f0d3",
+          "x": 80,
+          "y": 73
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/yggwarden-contact.png"
+      }
+    }
+  ]
+}

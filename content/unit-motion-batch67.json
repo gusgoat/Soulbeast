@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "rogue-male",
+      "kind": "player",
+      "cls": "rogue",
+      "gender": "male",
+      "name": "อันธพาล (male)",
+      "powerName": "พลังอันธพาล (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "dagger",
+      "source": {
+        "x": 71.5,
+        "y": 30,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 71.5,
+          "y": 30,
+          "asset": "assets/beasts/motion/rogue-male-windup-v1.webp",
+          "sha256": "7dbd84c250306feba43b37441fda2121168dd633d4cd72234e363c748c04a838"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/rogue-male-power-v1.webp",
+          "sha256": "41c365915e5c758e5ec870acf84229f4d40d82341fd44e3c383f2da4306ce7de",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/rogue-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/rogue-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 98.3,
+        "y": 77.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/rogue-male-melee-v1.webp",
+        "sha256": "9dd7da5f02a014529d122c4352d72a1b1cdfa36531810df8dd0ada960f75552c",
+        "effect": {
+          "asset": "assets/beasts/motion/rogue-male-melee-effect-v1.webp",
+          "sha256": "4b4d8cf54cfe6209d445bb2afc12837572afbb9f6c81fd09de80657c626377d3",
+          "x": 63,
+          "y": 65
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/rogue-male-contact.png"
+      }
+    },
+    {
+      "id": "rogue-female",
+      "kind": "player",
+      "cls": "rogue",
+      "gender": "female",
+      "name": "อันธพาล (female)",
+      "powerName": "พลังอันธพาล (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "dagger",
+      "source": {
+        "x": 65.5,
+        "y": 30,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 65.5,
+          "y": 30,
+          "asset": "assets/beasts/motion/rogue-female-windup-v1.webp",
+          "sha256": "278fa263edd1a32c043b7af48a1ff261391fc3e34e9d75fbf4112ddd30636923"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/rogue-female-power-v1.webp",
+          "sha256": "5f4edf0d195319cd4fa467c2e231dee1308fcf7dc03459ece9510df0ee13b689",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/rogue-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/rogue-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 98.2,
+        "y": 71.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/rogue-female-melee-v1.webp",
+        "sha256": "3e78c28431095ed6f5590717ec0377db2a1493133e67c3dd6b16ac148735e323",
+        "effect": {
+          "asset": "assets/beasts/motion/rogue-female-melee-effect-v1.webp",
+          "sha256": "34d812423e45c8835ce1767b8e9daecb0fb8fe64063399a68eec2b3c3560ef9e",
+          "x": 67.8,
+          "y": 67.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/rogue-female-contact.png"
+      }
+    },
+    {
+      "id": "masterthief-male",
+      "kind": "player",
+      "cls": "masterthief",
+      "gender": "male",
+      "name": "จอมโจร (male)",
+      "powerName": "พลังจอมโจร (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "dagger",
+      "source": {
+        "x": 71,
+        "y": 27,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 71,
+          "y": 27,
+          "asset": "assets/beasts/motion/masterthief-male-windup-v1.webp",
+          "sha256": "b1d881d284e54ddf764aaa104dabf80803ec6754c9de88df985ed5af0483dd5c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/masterthief-male-power-v1.webp",
+          "sha256": "51fa2ac4e00a6128e80000fb4306ee447c9826e845a71230fd7c359c40da52d2",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/masterthief-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/masterthief-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.8,
+        "y": 66,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/masterthief-male-melee-v1.webp",
+        "sha256": "c75fd7b5d8c90bb1408b1528ab2b64f56f0894f880f31ae79b744cdfe3f8b048",
+        "effect": {
+          "asset": "assets/beasts/motion/masterthief-male-melee-effect-v1.webp",
+          "sha256": "8238f8446b6bb66b5dc3c18ef0d50e5d921ede469f9de154aeba42c6c12fd7f2",
+          "x": 69.8,
+          "y": 66.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/masterthief-male-contact.png"
+      }
+    },
+    {
+      "id": "masterthief-female",
+      "kind": "player",
+      "cls": "masterthief",
+      "gender": "female",
+      "name": "จอมโจร (female)",
+      "powerName": "พลังจอมโจร (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "dagger",
+      "source": {
+        "x": 67,
+        "y": 26,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 67,
+          "y": 26,
+          "asset": "assets/beasts/motion/masterthief-female-windup-v1.webp",
+          "sha256": "60b78843763fc6443f4cf3fdd5f90b6cedfb4ad3ef88e52a3b3733b6ca3821e4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/masterthief-female-power-v1.webp",
+          "sha256": "bf5ca5b3bd6e40459a0490a55b65f4726e9b06ca31af9d0094bb7130eb0c1ff7",
+          "originY": 49,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/masterthief-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/masterthief-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 98.4,
+        "y": 65.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/masterthief-female-melee-v1.webp",
+        "sha256": "5f96e69128276b5c5ba172327c4b82649e32a2298790405071c9e5874b1eada2",
+        "effect": {
+          "asset": "assets/beasts/motion/masterthief-female-melee-effect-v1.webp",
+          "sha256": "614fb4caa8ba3fdb0dd8b78f8ad30ce3ac57500aa0558c304f101254c1940291",
+          "x": 65.7,
+          "y": 62.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/masterthief-female-contact.png"
+      }
+    }
+  ]
+}

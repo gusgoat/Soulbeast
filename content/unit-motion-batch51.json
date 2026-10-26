@@ -1,0 +1,278 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "bard-male",
+      "kind": "player",
+      "cls": "bard",
+      "gender": "male",
+      "name": "นักกวี (male)",
+      "powerName": "พลังนักกวี (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 96.8,
+        "y": 29,
+        "angle": -1,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.1,
+        "cropLeft": 8,
+        "anchor": {
+          "pose": "windup",
+          "x": 96.8,
+          "y": 29,
+          "asset": "assets/beasts/motion/bard-male-windup-v1.webp",
+          "sha256": "726eb180409b2cfa92f319ca8d5cc27b24327f3fe7f95aa1cf3835a153a5cfa3"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bard-male-power-v1.webp",
+          "sha256": "913422e67e83958d87fa2848ad670a03203f102b8f5b40cf4b6c9005d8964c99",
+          "originY": 50.1
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bard-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bard-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96,
+        "y": 77,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bard-male-melee-v1.webp",
+        "sha256": "92fcfaefadc64181a178c845a1611bb746a165ad48ed9b4f99dd8a90d153bcaa",
+        "effect": {
+          "asset": "assets/beasts/motion/bard-male-melee-effect-v1.webp",
+          "sha256": "9bb4c824e7da078128f8f1be052bff45af912d1478e1f966f70a2e7aa2453f5f",
+          "x": 80,
+          "y": 73.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bard-male-contact.png"
+      }
+    },
+    {
+      "id": "bard-female",
+      "kind": "player",
+      "cls": "bard",
+      "gender": "female",
+      "name": "นักกวี (female)",
+      "powerName": "พลังนักกวี (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 90.5,
+        "y": 30.6,
+        "angle": -1,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 52.5,
+        "cropLeft": 5,
+        "anchor": {
+          "pose": "windup",
+          "x": 90.5,
+          "y": 30.6,
+          "asset": "assets/beasts/motion/bard-female-windup-v1.webp",
+          "sha256": "a6d59a0fd487aa2634ae98cae03c4938c4137e4c0f087dcdced479a1e8c3b584"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bard-female-power-v1.webp",
+          "sha256": "7e00d8d78f5de2a377a736486c76083c73f53005fd305588cf5adda1e5ce7074",
+          "originY": 52.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bard-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bard-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96,
+        "y": 81,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bard-female-melee-v1.webp",
+        "sha256": "78b782e1485cccfb68ad119be5591ae68ea05f6185a030712bb827872c301feb",
+        "effect": {
+          "asset": "assets/beasts/motion/bard-female-melee-effect-v1.webp",
+          "sha256": "0f3e5a7f848945a4f435a87703da7a39c13f9b6b075297e67e432a126e068af7",
+          "x": 83,
+          "y": 79
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bard-female-contact.png"
+      }
+    },
+    {
+      "id": "maestro-male",
+      "kind": "player",
+      "cls": "maestro",
+      "gender": "male",
+      "name": "คีตกวีสวรรค์ (male)",
+      "powerName": "พลังคีตกวีสวรรค์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 91.4,
+        "y": 30.4,
+        "angle": 0,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 49.9,
+        "cropLeft": 9,
+        "anchor": {
+          "pose": "windup",
+          "x": 91.4,
+          "y": 30.4,
+          "asset": "assets/beasts/motion/maestro-male-windup-v1.webp",
+          "sha256": "2e94290c32e210441e21372ea2d58779239869c7902aedcd89448e5aab8d3ccb"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/maestro-male-power-v1.webp",
+          "sha256": "9090ce5963b380610e77df33d66176168093ca9e4bd7c28185bb989d08185f5e",
+          "originY": 49.9
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/maestro-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/maestro-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/maestro-male-melee-v1.webp",
+        "sha256": "67418212a1922a038e6c3e5e3cb1e79fc3b703274af2a72baccc837feb610dd9",
+        "effect": {
+          "asset": "assets/beasts/motion/maestro-male-melee-effect-v1.webp",
+          "sha256": "427b119160d91f1b20506df6311587bc87931c0046fd7a1e3d0308e02a73262f",
+          "x": 84,
+          "y": 76.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/maestro-male-contact.png"
+      }
+    },
+    {
+      "id": "maestro-female",
+      "kind": "player",
+      "cls": "maestro",
+      "gender": "female",
+      "name": "คีตกวีสวรรค์ (female)",
+      "powerName": "พลังคีตกวีสวรรค์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 97.8,
+        "y": 30.1,
+        "angle": 1,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.7,
+        "cropLeft": 7,
+        "anchor": {
+          "pose": "windup",
+          "x": 97.8,
+          "y": 30.1,
+          "asset": "assets/beasts/motion/maestro-female-windup-v1.webp",
+          "sha256": "e746bdf1a640684f065d3ba502d700e095ba0ffe8d59bdae2486b12a367528ee"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/maestro-female-power-v1.webp",
+          "sha256": "9c8ef754f820b3ce04cfe54001412d3a706e88a197ddac1f380f978699a8929e",
+          "originY": 50.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/maestro-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/maestro-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 72,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/maestro-female-melee-v1.webp",
+        "sha256": "a4a9bc836e09fb51efd5402e656555da6e69aa8f93b5baa04908340fcedc12d1",
+        "effect": {
+          "asset": "assets/beasts/motion/maestro-female-melee-effect-v1.webp",
+          "sha256": "4c18956f0f56a161407d5277aa80f450fe793968509926aebb94d5e7611008b0",
+          "x": 83.6,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/maestro-female-contact.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,412 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "jiangshi-king",
+      "species": "jiangshi",
+      "form": 2,
+      "name": "ราชันย์เจียงซือ",
+      "powerName": "พลังราชันย์เจียงซือ",
+      "idleMode": "breathe",
+      "background": "ghost",
+      "source": {
+        "x": 40,
+        "y": 26,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 40,
+          "y": 26,
+          "asset": "assets/beasts/motion/jiangshi-king-windup-v1.webp",
+          "sha256": "0b162e460eca777565073188937f2ade65f7fe868daaafc5c9cc2148e3a60a38"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jiangshi-king-power-v1.webp",
+          "sha256": "7bb959e83f8cee411a92b074d127bac581d4906d7a48b024e3b4c31a625414f8",
+          "originY": 49,
+          "originX": 50
+        },
+        "effectOriginX": 50
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jiangshi-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jiangshi-king-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 79,
+        "y": 43,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/jiangshi-king-melee-v1.webp",
+        "sha256": "e9b5e3418ef998e9e990f6df2f4e488cd0b2b826d7cc52a64ed94f7ff115104d",
+        "effect": {
+          "asset": "assets/beasts/motion/jiangshi-king-melee-effect-v1.webp",
+          "sha256": "451e41c08dd6ae1adb49182a7eac3d5e0e054595326c7bcddcf491725d225790",
+          "x": 82,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/jiangshi-king-contact.png"
+      }
+    },
+    {
+      "id": "nekomata-evolved",
+      "species": "nekomata",
+      "form": 1,
+      "name": "เนโกะมาตะ",
+      "powerName": "พลังเนโกะมาตะ",
+      "idleMode": "breathe",
+      "background": "ghost",
+      "source": {
+        "x": 77,
+        "y": 45,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 77,
+          "y": 45,
+          "asset": "assets/beasts/motion/nekomata-evolved-windup-v1.webp",
+          "sha256": "840ddc875f0d54a16d31616d3eb9856b3e79274fc02809ef5ff24c7b650a93c4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/nekomata-evolved-power-v1.webp",
+          "sha256": "b041cfcff0b446d6e597169a0fe28608c45a3ccc88543eb954def87c61dbcfd3",
+          "originY": 50,
+          "originX": 56.5
+        },
+        "effectOriginX": 56.5
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/nekomata-evolved-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/nekomata-evolved-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 84,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/nekomata-evolved-melee-v1.webp",
+        "sha256": "61c69bc05c4000474bb55b08e5c561a8326adde09019215ac5ddcf3cf293133b",
+        "effect": {
+          "asset": "assets/beasts/motion/nekomata-evolved-melee-effect-v1.webp",
+          "sha256": "2d39c134a3671e9d91fc8ea3634faa8e347c00075eac0f087bba616c9c019892",
+          "x": 84,
+          "y": 84
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/nekomata-evolved-contact.png"
+      }
+    },
+    {
+      "id": "amabie-seer",
+      "species": "amabie",
+      "form": 1,
+      "name": "อามาบิเอะผู้พยากรณ์",
+      "powerName": "พลังอามาบิเอะผู้พยากรณ์",
+      "idleMode": "float",
+      "background": "water",
+      "source": {
+        "x": 42,
+        "y": 25,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 42,
+          "y": 25,
+          "asset": "assets/beasts/motion/amabie-seer-windup-v1.webp",
+          "sha256": "3c2d1808d378c405a5b030d76dfd2f80556a0312b0076ad9bb1cbdcfe0c99c2b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/amabie-seer-power-v1.webp",
+          "sha256": "da85b024712ca66c9861ef38f204f4efaf162f4223ecbbca60b2cd62be962f00",
+          "originY": 49,
+          "originX": 52
+        },
+        "effectOriginX": 52
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/amabie-seer-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/amabie-seer-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 77,
+        "y": 43,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/amabie-seer-melee-v1.webp",
+        "sha256": "bdc2ce204cf08d952cbd049dd5e8dc736c3af386cc465de7189344b7e46be721",
+        "effect": {
+          "asset": "assets/beasts/motion/amabie-seer-melee-effect-v1.webp",
+          "sha256": "4a3e3cfff8fab36f940891b335d67d6260a2894de122b93e8b322e8383051df5",
+          "x": 80,
+          "y": 87
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/amabie-seer-contact.png"
+      }
+    },
+    {
+      "id": "kinnaree-queen",
+      "species": "kinnaree",
+      "form": 1,
+      "name": "กินรีราชินีหิมพานต์",
+      "powerName": "พลังกินรีราชินีหิมพานต์",
+      "idleMode": "float",
+      "background": "fairy",
+      "source": {
+        "x": 45,
+        "y": 28,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 45,
+          "y": 28,
+          "asset": "assets/beasts/motion/kinnaree-queen-windup-v1.webp",
+          "sha256": "1149962ce423b3254bf04deb4e8f9e9607d03c6b3cc6334b8c68194d94dec013"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kinnaree-queen-power-v1.webp",
+          "sha256": "ccf46cf0e113374d2347638b347852562ff943d1a9744f78a9f2f449edec9726",
+          "originY": 50,
+          "originX": 53.5
+        },
+        "effectOriginX": 53.5
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kinnaree-queen-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kinnaree-queen-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84,
+        "y": 53,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kinnaree-queen-melee-v1.webp",
+        "sha256": "2d1ca6806958e2eae326d001f3be02d6f35649f274a2e2e7e5bd0a740581c16f",
+        "effect": {
+          "asset": "assets/beasts/motion/kinnaree-queen-melee-effect-v1.webp",
+          "sha256": "65f1a1eb10462d38d085602525e1e9df3f4712bb9a58d10f0b580eeac3d318bb",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kinnaree-queen-contact.png"
+      }
+    },
+    {
+      "id": "salamander-lord",
+      "species": "salamander",
+      "form": 1,
+      "name": "จ้าวซาลาแมนเดอร์",
+      "powerName": "พลังจ้าวซาลาแมนเดอร์",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 90,
+        "y": 55,
+        "angle": 18,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 2,
+        "anchor": {
+          "pose": "windup",
+          "x": 90,
+          "y": 55,
+          "asset": "assets/beasts/motion/salamander-lord-windup-v1.webp",
+          "sha256": "805fb4292a4835732040a4b2e88f806651b6612352dbaa37b9066c8dbc2f12a1"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/salamander-lord-power-v1.webp",
+          "sha256": "c5f89082987e12172b65e8703b46f65d8445e6a3bfed0539ac0639e9906d67e1",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/salamander-lord-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/salamander-lord-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/salamander-lord-melee-v1.webp",
+        "sha256": "c988adb139390def251d7954c95c04be301f79bafa2c554904a49c299abb1aec",
+        "effect": {
+          "asset": "assets/beasts/motion/salamander-lord-melee-effect-v1.webp",
+          "sha256": "e5466a1584ae84d55b4860acc279ae9d29d29295d1017d3832e6ee639f024e62",
+          "x": 79,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/salamander-lord-contact.png"
+      }
+    },
+    {
+      "id": "cyclops-smith",
+      "species": "cyclops",
+      "form": 1,
+      "name": "ไซคลอปส์ช่างอสนี",
+      "powerName": "พลังไซคลอปส์ช่างอสนี",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 80,
+        "y": 42,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 80,
+          "y": 42,
+          "asset": "assets/beasts/motion/cyclops-smith-windup-v1.webp",
+          "sha256": "0dce86b4c68c98b447a7ffaccad09a0fb50e526fc5c2b6673e31496a6fc6d9d2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/cyclops-smith-power-v1.webp",
+          "sha256": "b986eb9d075c6f6d19a2622eb0d7a1b1170f676f9deb062f445be13d53b8f8ec",
+          "originY": 50,
+          "originX": 52
+        },
+        "effectOriginX": 52
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/cyclops-smith-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/cyclops-smith-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 81,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/cyclops-smith-melee-v1.webp",
+        "sha256": "4a97f8295c9d7d9f490b12c443166be1a2246568a0d1ec96390e657e26495d45",
+        "effect": {
+          "asset": "assets/beasts/motion/cyclops-smith-melee-effect-v1.webp",
+          "sha256": "1d9fb9a93c0781099ec90b2181b79e7e726017ca256dc9a8305b2d547c181332",
+          "x": 76,
+          "y": 83
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/cyclops-smith-contact.png"
+      }
+    }
+  ]
+}

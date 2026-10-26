@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "minotaur",
+      "form": 0,
+      "name": "มิโนทอร์",
+      "powerName": "คลื่นฝ่ามือกระทิง",
+      "idleMode": "breathe",
+      "background": "fighting",
+      "source": {
+        "x": 22,
+        "y": 31.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 22,
+          "y": 31.5,
+          "asset": "assets/beasts/motion/minotaur-windup-v1.webp",
+          "sha256": "91a66923666ab085162e37b108f299c35291a8ee68d920d28c013880d27baced"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/minotaur-power-v1.webp",
+          "sha256": "487acab71228d0417ee13094ec73fa1751d115da2c0737d2490951770c766b01",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/minotaur-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/minotaur-melee-effect-v1.webp"
+      },
+      "meleeName": "ขวานกระทิงฟาด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/minotaur-melee-v1.webp",
+        "sha256": "ff12a1eecdd11b1e0677874205bc534ad4895334e7ebdd9099515d337d35086a",
+        "effect": {
+          "asset": "assets/beasts/motion/minotaur-melee-effect-v1.webp",
+          "sha256": "edaeeffd445558f88582a706b9d8883097227b0bc813be206eb045355179cbcb",
+          "x": 52,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity/anatomy and actual source inspected",
+          "generated windup before VFX",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "complete image loads and real alpha",
+          "no early-form particles",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/minotaur-contact.png"
+      }
+    },
+    {
+      "id": "mummy",
+      "form": 0,
+      "name": "มัมมี่",
+      "powerName": "คำสาปทรายวิญญาณ",
+      "idleMode": "breathe",
+      "background": "ghost",
+      "source": {
+        "x": 31.5,
+        "y": 22,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 31.5,
+          "y": 22,
+          "asset": "assets/beasts/motion/mummy-windup-v1.webp",
+          "sha256": "16b1f543682435e5536b1f4daaabccd90a7880eecb9946bd66fd2b0cc439c65a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mummy-power-v1.webp",
+          "sha256": "3b2dd15067549822ce1e80360663f302998eb144a5bb3eb9342082d33ba45dee",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mummy-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mummy-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บวิญญาณ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mummy-melee-v1.webp",
+        "sha256": "3b818e77daf7bc8c09fd22b9d562fd0f07e9d1e7a4070f46135ef0efa2816170",
+        "effect": {
+          "asset": "assets/beasts/motion/mummy-melee-effect-v1.webp",
+          "sha256": "b0fa1475b1645a744913d45999b2eb89bc0e2aa932c1479f5c849012738b210a",
+          "x": 69,
+          "y": 71
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity/anatomy and actual source inspected",
+          "generated windup before VFX",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "complete image loads and real alpha",
+          "no early-form particles",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/mummy-contact.png"
+      }
+    },
+    {
+      "id": "scarab",
+      "form": 0,
+      "name": "สคารับ",
+      "powerName": "คลื่นอัญมณีทราย",
+      "idleMode": "breathe",
+      "background": "bug",
+      "source": {
+        "x": 50,
+        "y": 14,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 50,
+          "y": 14,
+          "asset": "assets/beasts/motion/scarab-windup-v1.webp",
+          "sha256": "0f1cc83c0e47f5bb41c8366fa8e1b85814e156747b44468dd341c59ca22f0ae1"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/scarab-power-v1.webp",
+          "sha256": "36b934f6f3e579e541b95ea798f7c35838e9293f5faf14d07a645ca979fb58ad",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/scarab-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/scarab-melee-effect-v1.webp"
+      },
+      "meleeName": "ตะขอแมลงทอง",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 74,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/scarab-melee-v1.webp",
+        "sha256": "3f5ce6f5382bccc45427132f6cd4bdc3d4de6fa86b1fa89ce83bdc309965cfef",
+        "effect": {
+          "asset": "assets/beasts/motion/scarab-melee-effect-v1.webp",
+          "sha256": "ebce058f30abb036afafb1deb5339ca2a859a7cdb9d1c797c2e582f990b5f271",
+          "x": 56,
+          "y": 61
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity/anatomy and actual source inspected",
+          "generated windup before VFX",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "complete image loads and real alpha",
+          "no early-form particles",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/scarab-contact.png"
+      }
+    }
+  ]
+}

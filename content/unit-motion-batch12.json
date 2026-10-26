@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "banshee",
+      "form": 0,
+      "name": "แบนชี",
+      "powerName": "เสียงคร่ำครวญวิญญาณ",
+      "idleMode": "float",
+      "background": "ghost",
+      "source": {
+        "x": 50.9,
+        "y": 15.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 50.9,
+          "y": 15.2,
+          "asset": "assets/beasts/motion/banshee-windup-v1.webp",
+          "sha256": "b039215adc6e6c36378f0f5a767ecbf5ee7a517e4d13e3a55340a1ffa402bda9"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/banshee-power-v1.webp",
+          "sha256": "d09cada22d612a401db4f40f9c6900215faea9aa76bcbefd30d2d6c437313d0c",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/banshee-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/banshee-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บวิญญาณ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92.3,
+        "y": 50.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/banshee-melee-v1.webp",
+        "sha256": "3aedde743472d7222540f101bd90ac1ad6837f62069e961ce1cc60543c5dd05e",
+        "effect": {
+          "asset": "assets/beasts/motion/banshee-melee-effect-v1.webp",
+          "sha256": "09028bdc48970ae1714f18cf9377b2ff8303877cd74730474d25521f97ea1a1a",
+          "x": 50,
+          "y": 51.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy and transparent pixel import inspected",
+          "windup inspected before power generation",
+          "actual mouth/palm and VFX origins inspected",
+          "attack/hit/windup/melee recovery",
+          "power linear .75s",
+          "visible target and non-overlapping edge contact at390 and320",
+          "correct particle exclusion",
+          "no horizontal overflow and complete loads"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/banshee-contact.png"
+      }
+    },
+    {
+      "id": "behemoth",
+      "form": 0,
+      "name": "เบฮีมอธ",
+      "powerName": "แรงอัดศิลาเหล็ก",
+      "idleMode": "breathe",
+      "background": "ground",
+      "source": {
+        "x": 77,
+        "y": 37.8,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 77,
+          "y": 37.8,
+          "asset": "assets/beasts/motion/behemoth-windup-v1.webp",
+          "sha256": "01d188d30107eea21f8cbabf73b84991ad9db23fbdf3c6d27f2fa3a8074147f2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/behemoth-power-v1.webp",
+          "sha256": "60bff45a0748bb42b8427073bc6b8652c872638783ba999dcc0fde31b651ee93",
+          "originY": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/behemoth-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/behemoth-melee-effect-v1.webp"
+      },
+      "meleeName": "หมัดเกราะทลาย",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 88.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/behemoth-melee-v1.webp",
+        "sha256": "d4451fa8cc7acc99d1e708d93e4040ce718c208f875e2b23933d0b4ae6cb16f5",
+        "effect": {
+          "asset": "assets/beasts/motion/behemoth-melee-effect-v1.webp",
+          "sha256": "4650231ac77de6855e5cec5d1e6627c554c565255928b068f595b05c68121eab",
+          "x": 50,
+          "y": 50.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy and transparent pixel import inspected",
+          "windup inspected before power generation",
+          "actual mouth/palm and VFX origins inspected",
+          "attack/hit/windup/melee recovery",
+          "power linear .75s",
+          "visible target and non-overlapping edge contact at390 and320",
+          "correct particle exclusion",
+          "no horizontal overflow and complete loads"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/behemoth-contact.png"
+      }
+    },
+    {
+      "id": "ifrit",
+      "form": 0,
+      "name": "อิฟริต",
+      "powerName": "เพลิงอเวจี",
+      "idleMode": "float",
+      "background": "fire",
+      "source": {
+        "x": 35.2,
+        "y": 23.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 35.2,
+          "y": 23.6,
+          "asset": "assets/beasts/motion/ifrit-windup-v1.webp",
+          "sha256": "83e445b4be10b51b6ad0cde19eb1c109111705c532a8f52658938db5a5c4759c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ifrit-power-v1.webp",
+          "sha256": "aa064eaa78fb37f5894a3554cb6d92e13366b90501f61ca0c247890cd9fa6d02",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ifrit-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ifrit-melee-effect-v1.webp"
+      },
+      "meleeName": "หมัดเพลิงอิฟริต",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 41.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ifrit-melee-v1.webp",
+        "sha256": "695176ca12f2069aabe9d0a66da80be2939a8197a12bce934612206901870bc2",
+        "effect": {
+          "asset": "assets/beasts/motion/ifrit-melee-effect-v1.webp",
+          "sha256": "0b066e0cc8944cf093bae9b97d6c2040974f21564ef9c42c76c72646361f8913",
+          "x": 59,
+          "y": 53
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy and transparent pixel import inspected",
+          "windup inspected before power generation",
+          "actual mouth/palm and VFX origins inspected",
+          "attack/hit/windup/melee recovery",
+          "power linear .75s",
+          "visible target and non-overlapping edge contact at390 and320",
+          "correct particle exclusion",
+          "no horizontal overflow and complete loads"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ifrit-contact.png"
+      }
+    }
+  ]
+}

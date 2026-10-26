@@ -1,0 +1,336 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "kodama-ancient",
+      "species": "kodama",
+      "form": 1,
+      "name": "โคดามะพันปี",
+      "powerName": "พลังโคดามะพันปี",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 30,
+        "y": 42,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 30,
+          "y": 42,
+          "asset": "assets/beasts/motion/kodama-ancient-windup-v1.webp",
+          "sha256": "1f7deea12a7cf6f922df7cb46cf7da83c22022a6971c538f722e42e346491afa"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kodama-ancient-power-v1.webp",
+          "sha256": "dd29a8c15a7a39927363dd21fb98c2886290da0e438b467070a13245eadae76f",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kodama-ancient-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kodama-ancient-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 83,
+        "y": 63,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kodama-ancient-melee-v1.webp",
+        "sha256": "376ded1f2664088c97c8709d8ce3983db05da85cdbdf0c978b1598b961782456",
+        "effect": {
+          "asset": "assets/beasts/motion/kodama-ancient-melee-effect-v1.webp",
+          "sha256": "339506ff2fac49dae01eca9c52da8962d67dcc362e363cb21ec83d42bc6d3eb0",
+          "x": 75,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kodama-ancient-contact.png"
+      }
+    },
+    {
+      "id": "kodama-sacred",
+      "species": "kodama",
+      "form": 2,
+      "name": "วิญญาณต้นไม้ศักดิ์สิทธิ์",
+      "powerName": "พลังวิญญาณต้นไม้ศักดิ์สิทธิ์",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 26,
+        "y": 48,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 26,
+          "y": 48,
+          "asset": "assets/beasts/motion/kodama-sacred-windup-v1.webp",
+          "sha256": "44fb6bcbb954833c4468a5cb02325dd17c0d6350dfe50dd431820c1322c57810"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kodama-sacred-power-v1.webp",
+          "sha256": "680d60368532e187aead9a3198764020cea6de39d087ff8342af20cd5829d0bf",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kodama-sacred-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kodama-sacred-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82,
+        "y": 72,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kodama-sacred-melee-v1.webp",
+        "sha256": "50b9461f07c5d73371ee01d7131185dbac72033320a9a2557663dca8970df7e1",
+        "effect": {
+          "asset": "assets/beasts/motion/kodama-sacred-melee-effect-v1.webp",
+          "sha256": "c475408b861a3acd5c891841268b7a75740617e1f6565350c6fa5da8e9039a46",
+          "x": 80,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kodama-sacred-contact.png"
+      }
+    },
+    {
+      "id": "redcap-coldblood",
+      "species": "redcap",
+      "form": 1,
+      "name": "เรดแคปเลือดเย็น",
+      "powerName": "พลังเรดแคปเลือดเย็น",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 26,
+        "y": 49,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 26,
+          "y": 49,
+          "asset": "assets/beasts/motion/redcap-coldblood-windup-v1.webp",
+          "sha256": "609a151a95275e57cfeda2b8d5802fe73967dc0ea90494d4318dc93af4de7503"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/redcap-coldblood-power-v1.webp",
+          "sha256": "15c58dbfb95b2bd2bb33bbe49eebe4b26aa33b1b262b02df3c7cd0c114d4cdec",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/redcap-coldblood-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/redcap-coldblood-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 72,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/redcap-coldblood-melee-v1.webp",
+        "sha256": "55081aa30cf729b49e9865c44eb463b15225d24866253524cc13d530940d0542",
+        "effect": {
+          "asset": "assets/beasts/motion/redcap-coldblood-melee-effect-v1.webp",
+          "sha256": "d45a2eb60574be09db31d878bf523eca24c6329a97c0723c59ccbe753ceecb9c",
+          "x": 80,
+          "y": 74
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/redcap-coldblood-contact.png"
+      }
+    },
+    {
+      "id": "redcap-king",
+      "species": "redcap",
+      "form": 2,
+      "name": "ราชันย์เรดแคป",
+      "powerName": "พลังราชันย์เรดแคป",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 26,
+        "y": 36,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 26,
+          "y": 36,
+          "asset": "assets/beasts/motion/redcap-king-windup-v1.webp",
+          "sha256": "e2b133e6e061e1b0b714f0537220ffb31a193c504828b4b7f69880ec10e4b5b8"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/redcap-king-power-v1.webp",
+          "sha256": "18a68aaa6371ae502b4173f8bf4285af51b224ca2bddb30bd13e017aabc3ce63",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/redcap-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/redcap-king-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 76,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/redcap-king-melee-v1.webp",
+        "sha256": "feff201c3f18935fba3dc9a16b5d3c75604a936200b1aa4b483f783f65502bf2",
+        "effect": {
+          "asset": "assets/beasts/motion/redcap-king-melee-effect-v1.webp",
+          "sha256": "bef57fada92a86005a449c5672ce3df845e4a50f63391e7511a72c703de3a2d0",
+          "x": 73,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/redcap-king-contact.png"
+      }
+    },
+    {
+      "id": "kitsune-six",
+      "species": "kitsune",
+      "form": 1,
+      "name": "จิ้งจอกหกหาง",
+      "powerName": "พลังจิ้งจอกหกหาง",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 84,
+        "y": 51,
+        "angle": 12,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 5.5,
+        "anchor": {
+          "pose": "windup",
+          "x": 84,
+          "y": 51,
+          "asset": "assets/beasts/motion/kitsune-six-windup-v1.webp",
+          "sha256": "1b770e1ac68b8733923eba4be98523339bd4a2c036806f9e6ceb562ef6bc9b2e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kitsune-six-power-v1.webp",
+          "sha256": "a085ff1c77c281976b35dd7604a6951fa76802ee5d85b0c8742e1499cbfc65f7",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kitsune-six-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kitsune-six-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kitsune-six-melee-v1.webp",
+        "sha256": "9072a1f179ed33ae82d090b453285be3089d156853e6c84e0d574ef37124ae4a",
+        "effect": {
+          "asset": "assets/beasts/motion/kitsune-six-melee-effect-v1.webp",
+          "sha256": "46a79fc1b62129c25a88deb8d80ff1a842918e1a4b50068c925c7fdc00fdf3bb",
+          "x": 91,
+          "y": 85
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kitsune-six-contact.png"
+      }
+    }
+  ]
+}

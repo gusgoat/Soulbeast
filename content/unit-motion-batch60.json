@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "marksman-male",
+      "kind": "player",
+      "cls": "marksman",
+      "gender": "male",
+      "name": "มือปืนแม่นยำ (male)",
+      "powerName": "พลังมือปืนแม่นยำ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 72.5,
+        "y": 29.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 72.5,
+          "y": 29.1,
+          "asset": "assets/beasts/motion/marksman-male-windup-v1.webp",
+          "sha256": "c4965ef57188642d1ee32548ac57243105b6629598d0e4b18103fdcdd067238c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/marksman-male-power-v1.webp",
+          "sha256": "978f6d60bcaba6d52f130e9c9c80f8dc197c2900080695e4deccc2a42145db0d",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/marksman-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/marksman-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 49,
+        "y": 50.6,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/marksman-male-melee-v1.webp",
+        "sha256": "ceba73625bc2585b619d2101adf2c441d47827320293aef234704ca23caa02ac",
+        "effect": {
+          "asset": "assets/beasts/motion/marksman-male-melee-effect-v1.webp",
+          "sha256": "669e055509966b15c794cb81bf2e822a2c0a453aff8222a8c2a024c79811cdc6",
+          "x": 80.1,
+          "y": 81.4
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/marksman-male-contact.png"
+      }
+    },
+    {
+      "id": "marksman-female",
+      "kind": "player",
+      "cls": "marksman",
+      "gender": "female",
+      "name": "มือปืนแม่นยำ (female)",
+      "powerName": "พลังมือปืนแม่นยำ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 26.8,
+        "y": 21.7,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 26.8,
+          "y": 21.7,
+          "asset": "assets/beasts/motion/marksman-female-windup-v1.webp",
+          "sha256": "7fb3eb1c6cb19475c04b6b85dac9cd3137d72e6607c84f0fb96ce60039ffc58f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/marksman-female-power-v1.webp",
+          "sha256": "1f7c0b7767134028831245f3758853973f602c38aad9c2e023225fa88e4066b0",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/marksman-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/marksman-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 39.1,
+        "y": 44.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/marksman-female-melee-v1.webp",
+        "sha256": "b881b877a414f98ed197c41bb07c504697f84472193879be3595ccb594f91821",
+        "effect": {
+          "asset": "assets/beasts/motion/marksman-female-melee-effect-v1.webp",
+          "sha256": "4da39eaa405ece1c5880332e2387283fcc5b57632d6e1bbda590577152f2a47e",
+          "x": 78.1,
+          "y": 82.6
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/marksman-female-contact.png"
+      }
+    },
+    {
+      "id": "gunsaint-male",
+      "kind": "player",
+      "cls": "gunsaint",
+      "gender": "male",
+      "name": "เทพปืน (male)",
+      "powerName": "พลังเทพปืน (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 66.4,
+        "y": 12.9,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 66.4,
+          "y": 12.9,
+          "asset": "assets/beasts/motion/gunsaint-male-windup-v1.webp",
+          "sha256": "91994648aac22cc789337ae0837370e7ec0aba399d5c0402069cecd713cbd89c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gunsaint-male-power-v1.webp",
+          "sha256": "8d086b22a0b371849d2d18404006c92073ba777f51f3fe45e01c6871ed822610",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gunsaint-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gunsaint-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 21.9,
+        "y": 54.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gunsaint-male-melee-v1.webp",
+        "sha256": "70271e777760d399a1b92d317ef9cee7717c7308465b2c0d707457032167cb5c",
+        "effect": {
+          "asset": "assets/beasts/motion/gunsaint-male-melee-effect-v1.webp",
+          "sha256": "88a555e938fd031804520bd0e7167d10dddc70a2d603d625edff1bb3581b9986",
+          "x": 27.3,
+          "y": 81.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gunsaint-male-contact.png"
+      }
+    },
+    {
+      "id": "gunsaint-female",
+      "kind": "player",
+      "cls": "gunsaint",
+      "gender": "female",
+      "name": "เทพปืน (female)",
+      "powerName": "พลังเทพปืน (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 66.8,
+        "y": 12.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 66.8,
+          "y": 12.1,
+          "asset": "assets/beasts/motion/gunsaint-female-windup-v1.webp",
+          "sha256": "ca155113794f7c638da140ee352becf817513f62cbdeaece667ccc201848ec16"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gunsaint-female-power-v1.webp",
+          "sha256": "ec95d3783fb10f5785fdc8f86bb61ed39f235028a060f5a9c2c0fdfed64fdec3",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gunsaint-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gunsaint-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.1,
+        "y": 66.3,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gunsaint-female-melee-v1.webp",
+        "sha256": "6e7a3f8308f00e453f9225697fec3800702a1946d8308f9d43ae7d28a47fad2f",
+        "effect": {
+          "asset": "assets/beasts/motion/gunsaint-female-melee-effect-v1.webp",
+          "sha256": "a741372527a55e6e43b732abbcbdcd88a954815b4818645e9f6cdcedf5e20ca0",
+          "x": 83.2,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gunsaint-female-contact.png"
+      }
+    }
+  ]
+}

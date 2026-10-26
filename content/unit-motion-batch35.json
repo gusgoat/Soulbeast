@@ -1,0 +1,468 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "tengu-karasu",
+      "species": "tengu",
+      "form": 1,
+      "name": "คาราสึเทงงุ",
+      "powerName": "พลังคาราสึเทงงุ",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 38,
+        "y": 26,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38,
+          "y": 26,
+          "asset": "assets/beasts/motion/tengu-karasu-windup-v1.webp",
+          "sha256": "d868dda3f64d9514652273ccab6ac83808df3331f47b08de0cfe7ebd646e5f1a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/tengu-karasu-power-v1.webp",
+          "sha256": "52e2df8f39e140c54a01035d92cc2329d8d9b3604960468cfb21480805d79b70",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/tengu-karasu-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/tengu-karasu-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 68,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/tengu-karasu-melee-v1.webp",
+        "sha256": "41cd672a3c4d73559c172009aefb4fc37737fc9de696f0f326a0540f72e49b02",
+        "effect": {
+          "asset": "assets/beasts/motion/tengu-karasu-melee-effect-v1.webp",
+          "sha256": "e9c65e3548cb3f685bf25128765565c70612e4fed16d0b13c7ca8d48cf1e9b97",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/tengu-karasu-contact.png"
+      }
+    },
+    {
+      "id": "tengu-dai",
+      "species": "tengu",
+      "form": 2,
+      "name": "ไดเทงงุ",
+      "powerName": "พลังไดเทงงุ",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 42,
+        "y": 24,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 42,
+          "y": 24,
+          "asset": "assets/beasts/motion/tengu-dai-windup-v1.webp",
+          "sha256": "890d31f9f4ae165eebc642f431e93cb88e03b8cadf5878cdb02c7ce3c92ba4f7"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/tengu-dai-power-v1.webp",
+          "sha256": "6a951c856c48d4ef4886330bc3205c78379871ce2e6983d3ba786c527b34fcf9",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/tengu-dai-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/tengu-dai-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 63,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/tengu-dai-melee-v1.webp",
+        "sha256": "8bb456f427767f7994fcc4bc1ab56deb40d96660bf106edf449e9cf6bbf9b78a",
+        "effect": {
+          "asset": "assets/beasts/motion/tengu-dai-melee-effect-v1.webp",
+          "sha256": "08ec8a50e9bcc2b008bb76d01913cdbc4e2d38e58dd7402a5ae78afbce30aee9",
+          "x": 82,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/tengu-dai-contact.png"
+      }
+    },
+    {
+      "id": "griffin-war",
+      "species": "griffin",
+      "form": 1,
+      "name": "กริฟฟินศึก",
+      "powerName": "พลังกริฟฟินศึก",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 73,
+        "y": 40,
+        "angle": 15,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53,
+        "cropLeft": 2,
+        "anchor": {
+          "pose": "windup",
+          "x": 73,
+          "y": 40,
+          "asset": "assets/beasts/motion/griffin-war-windup-v1.webp",
+          "sha256": "176ef9193ab8f5250337d56d1d849a90d2992b7d3fd4710f789ac4062e91d5d9"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/griffin-war-power-v1.webp",
+          "sha256": "3f9850c0dd46294fe95451bbc71962a86ded55e4190baf952ca4d096d171a17b",
+          "originY": 53
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/griffin-war-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/griffin-war-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/griffin-war-melee-v1.webp",
+        "sha256": "eaa100a87c1312412e2573157bd911d8d9b7b675ce0d88feb32dbbb56c31d4b1",
+        "effect": {
+          "asset": "assets/beasts/motion/griffin-war-melee-effect-v1.webp",
+          "sha256": "5c39034820d752887af6130779236c2209a2a5e5130737df3c081f22f1fd76af",
+          "x": 80,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/griffin-war-contact.png"
+      }
+    },
+    {
+      "id": "griffin-king",
+      "species": "griffin",
+      "form": 2,
+      "name": "ราชันย์กริฟฟิน",
+      "powerName": "พลังราชันย์กริฟฟิน",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 69,
+        "y": 39,
+        "angle": 15,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.3,
+        "cropLeft": 6,
+        "anchor": {
+          "pose": "windup",
+          "x": 69,
+          "y": 39,
+          "asset": "assets/beasts/motion/griffin-king-windup-v1.webp",
+          "sha256": "af73c98ef237790980b97bf8e292e7b9a1181dae6f27acc212faa83242008b0f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/griffin-king-power-v1.webp",
+          "sha256": "3e54278c751c921cf746953dbb482cb1924958a6b704307d7a7b7b7fabe5b2da",
+          "originY": 51.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/griffin-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/griffin-king-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 80,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/griffin-king-melee-v1.webp",
+        "sha256": "5a30197dbc0d4262d3da5d5e39fdee0f1cc105cc27fd30a94d6fedd3f49f0786",
+        "effect": {
+          "asset": "assets/beasts/motion/griffin-king-melee-effect-v1.webp",
+          "sha256": "678acba4e8a6a36568aee59f9e6bc7222b2cd5f3f2244e8be42bc02cc2adef10",
+          "x": 80,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/griffin-king-contact.png"
+      }
+    },
+    {
+      "id": "nilmangkorn-war",
+      "species": "nilmangkorn",
+      "form": 1,
+      "name": "ม้านิลมังกรศึก",
+      "powerName": "พลังม้านิลมังกรศึก",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 90,
+        "y": 31,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.3,
+        "cropLeft": 2,
+        "anchor": {
+          "pose": "windup",
+          "x": 90,
+          "y": 31,
+          "asset": "assets/beasts/motion/nilmangkorn-war-windup-v1.webp",
+          "sha256": "2372496e949c4ad9e2ac1fb9c9260eff4d79c9171dec98e86388f23a401cb0cd"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/nilmangkorn-war-power-v1.webp",
+          "sha256": "d0284056ee1fc58a4360ae8167f68529c7fb4622962051af5ef86ed2aded489f",
+          "originY": 51.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/nilmangkorn-war-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/nilmangkorn-war-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 69,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/nilmangkorn-war-melee-v1.webp",
+        "sha256": "672f52c8f84d31ad6e7b5ea7f2effe0bd8d1f5afc8420bd370741e625e674279",
+        "effect": {
+          "asset": "assets/beasts/motion/nilmangkorn-war-melee-effect-v1.webp",
+          "sha256": "4cf042be04a75cb8f0bf27feb18d237b301599e1077e469ec127c999f5eb7765",
+          "x": 74,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/nilmangkorn-war-contact.png"
+      }
+    },
+    {
+      "id": "nilmangkorn-royal",
+      "species": "nilmangkorn",
+      "form": 2,
+      "name": "ม้านิลมังกรทรงเครื่อง",
+      "powerName": "พลังม้านิลมังกรทรงเครื่อง",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 88,
+        "y": 32,
+        "angle": 16,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 3,
+        "anchor": {
+          "pose": "windup",
+          "x": 88,
+          "y": 32,
+          "asset": "assets/beasts/motion/nilmangkorn-royal-windup-v1.webp",
+          "sha256": "1e51d76bf2f1d888fc6acb261b3f8d41c3787dc99543b8d67757c9eee0c4082f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/nilmangkorn-royal-power-v1.webp",
+          "sha256": "21157390cf8bf522b91955a336278bf70004ae57c4006436eacadbbdd934ea60",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/nilmangkorn-royal-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/nilmangkorn-royal-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 57,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/nilmangkorn-royal-melee-v1.webp",
+        "sha256": "fea47f6e13496968519716f252ea819aded648ec261a808df29d48a92411dc54",
+        "effect": {
+          "asset": "assets/beasts/motion/nilmangkorn-royal-melee-effect-v1.webp",
+          "sha256": "4880999aaa6086874a7f7a1dd81b9948a93f8f092c83eeba9ebd6d71c61fce74",
+          "x": 80,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/nilmangkorn-royal-contact.png"
+      }
+    },
+    {
+      "id": "kitsune-nine",
+      "species": "kitsune",
+      "form": 2,
+      "name": "จิ้งจอกเก้าหาง",
+      "powerName": "พลังจิ้งจอกเก้าหาง",
+      "idleMode": "breathe",
+      "background": "psychic",
+      "source": {
+        "x": 69,
+        "y": 44,
+        "angle": 18,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.7,
+        "cropLeft": 3,
+        "anchor": {
+          "pose": "windup",
+          "x": 69,
+          "y": 44,
+          "asset": "assets/beasts/motion/kitsune-nine-windup-v1.webp",
+          "sha256": "452422d71136ba43959a42afa654184a002c034e4004d7820663fa85ef6f6751"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kitsune-nine-power-v1.webp",
+          "sha256": "237e1c13de1ec0280502120d245630b588ea33d71a2c7a5f4d49a1a32925793e",
+          "originY": 50.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kitsune-nine-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kitsune-nine-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 92,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kitsune-nine-melee-v1.webp",
+        "sha256": "5b49664b8d0fc0be9e48e8de08727183699d06722833c9525252d23fc732a2f4",
+        "effect": {
+          "asset": "assets/beasts/motion/kitsune-nine-melee-effect-v1.webp",
+          "sha256": "520a9333b78ecf753b596be1884964f24a0b5224345c3cfa59c8b67b937c3876",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kitsune-nine-contact.png"
+      }
+    }
+  ]
+}

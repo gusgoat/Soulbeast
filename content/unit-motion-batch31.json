@@ -1,0 +1,550 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "solar-pentadrake",
+      "species": "solar_pentadrake",
+      "form": 0,
+      "name": "เพนทาไพโรส มังกรห้าเศียรสุริยัน",
+      "powerName": "พลังเพนทาไพโรส มังกรห้าเศียรสุริยัน",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 54.5,
+        "y": 29.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 54.5,
+          "y": 29.5,
+          "asset": "assets/beasts/motion/solar-pentadrake-windup-v1.webp",
+          "sha256": "2f09ba277f855dfab3356e579ddd3d46f9e51187ed26a918c9c361e6a9cfe3f7"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/solar-pentadrake-power-v1.webp",
+          "sha256": "e319b4a09e6c375d771bd3a2296fcbae3b9f89b0c4b12d988cb763f5331cf962",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/solar-pentadrake-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/solar-pentadrake-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/solar-pentadrake-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 79,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/solar-pentadrake-melee-v1.webp",
+        "sha256": "b157399d23d271c3f3955e8696e33f73da1b9485f7abf7242b0d9abe9543474d",
+        "effect": {
+          "asset": "assets/beasts/motion/solar-pentadrake-melee-effect-v1.webp",
+          "sha256": "5e0f124de5c108fa65c269ebf47e34f2ef0f270d23853ed3f8ddaac9aea0299e",
+          "x": 83,
+          "y": 83.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px",
+          "Distinct threat pose loaded and recovered at390/320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/solar-pentadrake-contact.png"
+      }
+    },
+    {
+      "id": "solar-mortivar",
+      "species": "solar_mortivar",
+      "form": 0,
+      "name": "มอร์ทิวาร์ จอมเวทอันเดดนิรันดร์",
+      "powerName": "พลังมอร์ทิวาร์ จอมเวทอันเดดนิรันดร์",
+      "idleMode": "float",
+      "background": "dark",
+      "source": {
+        "x": 37.4,
+        "y": 29.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 37.4,
+          "y": 29.5,
+          "asset": "assets/beasts/motion/solar-mortivar-windup-v1.webp",
+          "sha256": "3082f07581078e530d01ad46faefdc08e17389bf1a44b1251280b3866c03b1cf"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/solar-mortivar-power-v1.webp",
+          "sha256": "ac9231a315a1ae3b2cd9f563d7a8f23c0c14c3ee919daa2429fbfe21dae2c97a",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/solar-mortivar-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/solar-mortivar-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/solar-mortivar-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.5,
+        "y": 75,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/solar-mortivar-melee-v1.webp",
+        "sha256": "609f6a13b9b94f1011c049275c73424866c8c68e5dcfd8a19447c6a3c7cd6859",
+        "effect": {
+          "asset": "assets/beasts/motion/solar-mortivar-melee-effect-v1.webp",
+          "sha256": "fb7f5d22aac7589b56dcec322f6561821ee48f7f100ee696ccf6518301de5d15",
+          "x": 80,
+          "y": 72
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px",
+          "Distinct threat pose loaded and recovered at390/320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/solar-mortivar-contact.png"
+      }
+    },
+    {
+      "id": "solar-aureolith",
+      "species": "solar_aureolith",
+      "form": 0,
+      "name": "ออรีโอลิธ ปราการศักดิ์สิทธิ์",
+      "powerName": "พลังออรีโอลิธ ปราการศักดิ์สิทธิ์",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 28,
+        "y": 42,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 28,
+          "y": 42,
+          "asset": "assets/beasts/motion/solar-aureolith-windup-v1.webp",
+          "sha256": "f41c92fcbe69fe6e6c838892a7acec6397b10ff7b9d20fa5706f6feae7b6dda6"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/solar-aureolith-power-v1.webp",
+          "sha256": "fc60adf1df8f9801a36bffa2e4c9b15d5ad1b0ebc3590ccf8856c425e7f0d135",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/solar-aureolith-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/solar-aureolith-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/solar-aureolith-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89.5,
+        "y": 65,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/solar-aureolith-melee-v1.webp",
+        "sha256": "b99901f8b5903d3357aec0a7ce639d71564d67e804b0c51fe91f21d44c47fadd",
+        "effect": {
+          "asset": "assets/beasts/motion/solar-aureolith-melee-effect-v1.webp",
+          "sha256": "829306e4e3035c6d25f2661503e6f65507ab8027a1972acc490bc9d4fceb0ba2",
+          "x": 80,
+          "y": 79
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px",
+          "Distinct threat pose loaded and recovered at390/320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/solar-aureolith-contact.png"
+      }
+    },
+    {
+      "id": "solar-heliotheon",
+      "species": "solar_heliotheon",
+      "form": 0,
+      "name": "เฮลิโอธีออน เทพจักรพรรดิเหล็กกล้า",
+      "powerName": "พลังเฮลิโอธีออน เทพจักรพรรดิเหล็กกล้า",
+      "idleMode": "float",
+      "background": "fairy",
+      "source": {
+        "x": 60,
+        "y": 28,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.4,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 60,
+          "y": 28,
+          "asset": "assets/beasts/motion/solar-heliotheon-windup-v1.webp",
+          "sha256": "23d49828a354da3f8da557286765294058777eb9994e7e514077c2305e08d6ef"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/solar-heliotheon-power-v1.webp",
+          "sha256": "81cfa9c22f2df68921c4f50ae4e9205c19622e43ce196e747313e096c847e897",
+          "originY": 48.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/solar-heliotheon-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/solar-heliotheon-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/solar-heliotheon-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 77,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/solar-heliotheon-melee-v1.webp",
+        "sha256": "284f47ed576d106e23136544bd6d8a37f34b032de718c157442adc0ced29bcf7",
+        "effect": {
+          "asset": "assets/beasts/motion/solar-heliotheon-melee-effect-v1.webp",
+          "sha256": "123b32db1c818f795dfff857c1d71707254d7517fbfa223f09a6f2e942306d38",
+          "x": 85,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px",
+          "Distinct threat pose loaded and recovered at390/320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/solar-heliotheon-contact.png"
+      }
+    },
+    {
+      "id": "solar-ferroth",
+      "species": "solar_ferroth",
+      "form": 0,
+      "name": "เฟอร์รอธ จักรพรรดิปีศาจเหล็กทมิฬ",
+      "powerName": "พลังเฟอร์รอธ จักรพรรดิปีศาจเหล็กทมิฬ",
+      "idleMode": "breathe",
+      "background": "steel",
+      "source": {
+        "x": 64,
+        "y": 30,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 64,
+          "y": 30,
+          "asset": "assets/beasts/motion/solar-ferroth-windup-v1.webp",
+          "sha256": "ac20894c0f5f572e88a43ce467352f8ae3c9268b8fca1c7e1785bb74e0fb2694"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/solar-ferroth-power-v1.webp",
+          "sha256": "6a3a5810fe8627af6bceb15528c0f97fe51484a27c5cc789eeb1d8db3ab9fbcb",
+          "originY": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/solar-ferroth-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/solar-ferroth-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/solar-ferroth-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/solar-ferroth-melee-v1.webp",
+        "sha256": "21a8f4a277f4b9c2ca4aefed43ca892e2bb9674af93a83cf6905b515427aae8d",
+        "effect": {
+          "asset": "assets/beasts/motion/solar-ferroth-melee-effect-v1.webp",
+          "sha256": "5f1b1971008ae8f8b2a06eaddb50824fea08791845235fde2614ed2725bfa456",
+          "x": 81,
+          "y": 79
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px",
+          "Distinct threat pose loaded and recovered at390/320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/solar-ferroth-contact.png"
+      }
+    },
+    {
+      "id": "solar-cryostag",
+      "species": "solar_cryostag",
+      "form": 0,
+      "name": "คริโอสเทล กวางมงกุฎเหมันต์",
+      "powerName": "พลังคริโอสเทล กวางมงกุฎเหมันต์",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 73,
+        "y": 58.5,
+        "angle": 35,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 52.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 73,
+          "y": 58.5,
+          "asset": "assets/beasts/motion/solar-cryostag-windup-v1.webp",
+          "sha256": "5a213d28eb43d1d6c62abd8af56959dcdcd58a35494a31c317ef236c0d3efa26"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/solar-cryostag-power-v1.webp",
+          "sha256": "b589d0f57ceeb398624788d0e517871a74404298cc5bf6d2891ffb875e39726c",
+          "originY": 52.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/solar-cryostag-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/solar-cryostag-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/solar-cryostag-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.5,
+        "y": 62,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/solar-cryostag-melee-v1.webp",
+        "sha256": "73e9255956cb71366eb841612354953aa01cb1346694d9c432aae2432bd4e5e7",
+        "effect": {
+          "asset": "assets/beasts/motion/solar-cryostag-melee-effect-v1.webp",
+          "sha256": "18f202811219dfbbf10625b93fd85cb661db52fa7bcf756d1e16877f6a0b979d",
+          "x": 81,
+          "y": 79
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px",
+          "Distinct threat pose loaded and recovered at390/320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/solar-cryostag-contact.png"
+      }
+    },
+    {
+      "id": "solar-raijaku",
+      "species": "solar_raijaku",
+      "form": 0,
+      "name": "ไรจาคุ ราชันมยุราวายุ",
+      "powerName": "พลังไรจาคุ ราชันมยุราวายุ",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 81,
+        "y": 44.5,
+        "angle": 38,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 81,
+          "y": 44.5,
+          "asset": "assets/beasts/motion/solar-raijaku-windup-v1.webp",
+          "sha256": "a529831749e8be7a2b08a990006d30a75627fb682a8c31ede3543427a952f45e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/solar-raijaku-power-v1.webp",
+          "sha256": "f318c3567ba571bedcbe976d9522a117b47f9860d7575efae56bdcf645f5dbb2",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/solar-raijaku-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/solar-raijaku-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/solar-raijaku-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 81,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/solar-raijaku-melee-v1.webp",
+        "sha256": "50a82a15987923a24371c05cedffbb51b60dc4b1cc7c1761cd326668fcffde0c",
+        "effect": {
+          "asset": "assets/beasts/motion/solar-raijaku-melee-effect-v1.webp",
+          "sha256": "6ad42bdc1c6b818bead269038653aa71c23e6eb14c1619741aec67bbb1500d59",
+          "x": 78.5,
+          "y": 81.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px",
+          "Distinct threat pose loaded and recovered at390/320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/solar-raijaku-contact.png"
+      }
+    },
+    {
+      "id": "solar-thalassyr",
+      "species": "solar_thalassyr",
+      "form": 0,
+      "name": "ธาลัสซีร์ นาคราชมหาสมุทร",
+      "powerName": "พลังธาลัสซีร์ นาคราชมหาสมุทร",
+      "idleMode": "float",
+      "background": "water",
+      "source": {
+        "x": 77,
+        "y": 37,
+        "angle": 30,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 77,
+          "y": 37,
+          "asset": "assets/beasts/motion/solar-thalassyr-windup-v1.webp",
+          "sha256": "3c3b2ffdaff6348b0af1297976ccb6d6bb02ce1bc422e20febc0ed995e4a5afe"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/solar-thalassyr-power-v1.webp",
+          "sha256": "9e9f374a6564d57609ac7e1210ea36239600f75d4bf792737c2f03de48565050",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/solar-thalassyr-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/solar-thalassyr-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/solar-thalassyr-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 83,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/solar-thalassyr-melee-v1.webp",
+        "sha256": "854ac2d00b6929d0a137b1cfa384075fe243e86fabf2d1352ab9265115edd30d",
+        "effect": {
+          "asset": "assets/beasts/motion/solar-thalassyr-melee-effect-v1.webp",
+          "sha256": "34006d741159ab4c1fa40fbafb658de2e8c5f917e89a996a2f3381151e91e419",
+          "x": 83,
+          "y": 82.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px",
+          "Distinct threat pose loaded and recovered at390/320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/solar-thalassyr-contact.png"
+      }
+    }
+  ]
+}

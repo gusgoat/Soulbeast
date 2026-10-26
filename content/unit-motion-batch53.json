@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "sage-male",
+      "kind": "player",
+      "cls": "sage",
+      "gender": "male",
+      "name": "ปราชญ์ (male)",
+      "powerName": "พลังปราชญ์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 34.4,
+        "y": 25.4,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 34.4,
+          "y": 25.4,
+          "asset": "assets/beasts/motion/sage-male-windup-v1.webp",
+          "sha256": "89bbee72f189131c756e645fbec6837fc6680ed15d216aa425eeec410b3a8012"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sage-male-power-v1.webp",
+          "sha256": "122677043d59a7d5ad420aacac391af06d7c55c7e3777b811c1393acdb0d9828",
+          "originY": 49.5,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sage-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sage-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 83,
+        "y": 74,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sage-male-melee-v1.webp",
+        "sha256": "e3790972de0b17fdef77b235c49354b0d45a1ef4ffc64a0003e326d8f8a3728c",
+        "effect": {
+          "asset": "assets/beasts/motion/sage-male-melee-effect-v1.webp",
+          "sha256": "62deb2e45da2be3e4e9c9a32afcbbbffe7e5bfacb5bbcbf57693f663c987f4f9",
+          "x": 75,
+          "y": 75.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sage-male-contact.png"
+      }
+    },
+    {
+      "id": "sage-female",
+      "kind": "player",
+      "cls": "sage",
+      "gender": "female",
+      "name": "ปราชญ์ (female)",
+      "powerName": "พลังปราชญ์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 40,
+        "y": 22.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.7,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 40,
+          "y": 22.5,
+          "asset": "assets/beasts/motion/sage-female-windup-v1.webp",
+          "sha256": "751efacfcb9952691cb16f5ed11f59518e5851ecc17230e04a7f180e28e1892f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sage-female-power-v1.webp",
+          "sha256": "550f3ed27c897cd40328df1842a55ddff7000cb66838f3692f7ff373aad1ac0b",
+          "originY": 49.7,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sage-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sage-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 74,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sage-female-melee-v1.webp",
+        "sha256": "76a70b1371708f922070e38c8704cbb4b38de612768e01338261ed3f14c1d148",
+        "effect": {
+          "asset": "assets/beasts/motion/sage-female-melee-effect-v1.webp",
+          "sha256": "b5319403c481bf67cfc89f5adbb0208a0ca0046d9fd7c375aa161b73f95e4a96",
+          "x": 78.2,
+          "y": 85.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sage-female-contact.png"
+      }
+    },
+    {
+      "id": "archmage-male",
+      "kind": "player",
+      "cls": "archmage",
+      "gender": "male",
+      "name": "อาร์คเมจ (male)",
+      "powerName": "พลังอาร์คเมจ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 37.9,
+        "y": 25.6,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.3,
+        "effectOriginX": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 37.9,
+          "y": 25.6,
+          "asset": "assets/beasts/motion/archmage-male-windup-v1.webp",
+          "sha256": "7ed9468a49a6457fd145d3c6aa7f0872194f3ac2efb85dbc1726dd2d286f9c3e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/archmage-male-power-v1.webp",
+          "sha256": "ea5cef0e6cf2555f12ac431030af5650ca13517f56568b10a5fde2da8a41b6c9",
+          "originY": 49.3,
+          "originX": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/archmage-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/archmage-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 80,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/archmage-male-melee-v1.webp",
+        "sha256": "860852bc3ee0676661462da87a86deb0950914e1e8bfd4bc00598fb2338a0726",
+        "effect": {
+          "asset": "assets/beasts/motion/archmage-male-melee-effect-v1.webp",
+          "sha256": "a1605f886fcfde561cbf34c1abf0b3e67d10b1b7e26cd314066a2b2c7ec0e403",
+          "x": 77.8,
+          "y": 83.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/archmage-male-contact.png"
+      }
+    },
+    {
+      "id": "archmage-female",
+      "kind": "player",
+      "cls": "archmage",
+      "gender": "female",
+      "name": "อาร์คเมจ (female)",
+      "powerName": "พลังอาร์คเมจ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 37.5,
+        "y": 27.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 37.5,
+          "y": 27.3,
+          "asset": "assets/beasts/motion/archmage-female-windup-v1.webp",
+          "sha256": "1fa1d62c952e511039d498f6651415a3c4489dccab52f3f3442517ed9f10cd5a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/archmage-female-power-v1.webp",
+          "sha256": "405690dc52e3378deb23a1d362e2926708d5540a7b0bddd6ae655a10fa1739e1",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/archmage-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/archmage-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/archmage-female-melee-v1.webp",
+        "sha256": "a5e2ec1af19a6d8dbe2f3cfc3c04f38a3d3d9fb3eeb632a815cbbfa5136cd72e",
+        "effect": {
+          "asset": "assets/beasts/motion/archmage-female-melee-effect-v1.webp",
+          "sha256": "8070bcd32c9ffad4dec1467ecb2f950cb6d16c71893bfe2c04cbc28d96bbd61a",
+          "x": 79.4,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/archmage-female-contact.png"
+      }
+    }
+  ]
+}

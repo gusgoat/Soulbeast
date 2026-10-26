@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "paladin-male",
+      "kind": "player",
+      "cls": "paladin",
+      "gender": "male",
+      "name": "พาลาดิน (male)",
+      "powerName": "พลังพาลาดิน (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 75,
+        "y": 36.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.4,
+        "effectOriginX": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 75,
+          "y": 36.2,
+          "asset": "assets/beasts/motion/paladin-male-windup-v1.webp",
+          "sha256": "4492eb2520158ee90b00b44e45776c995aef20862511d7fcb582b0c871720320"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/paladin-male-power-v1.webp",
+          "sha256": "067b93f45b67b65689615ada4b3bedd202a893f28903e8625d7717a38c05ae82",
+          "originY": 49.4,
+          "originX": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/paladin-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/paladin-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/paladin-male-melee-v1.webp",
+        "sha256": "cb9926f05cc1f08e6553f0727d0ac8a9638d3a92a13e0304560331a2c7da0db3",
+        "effect": {
+          "asset": "assets/beasts/motion/paladin-male-melee-effect-v1.webp",
+          "sha256": "1c8adc49f0fa86ce9cfa04eb9d9fa8e6c8debbe77067e8a83e323d41f71f597a",
+          "x": 77.7,
+          "y": 81.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/paladin-male-contact.png"
+      }
+    },
+    {
+      "id": "paladin-female",
+      "kind": "player",
+      "cls": "paladin",
+      "gender": "female",
+      "name": "พาลาดิน (female)",
+      "powerName": "พลังพาลาดิน (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 68.5,
+        "y": 37,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.9,
+        "effectOriginX": 49.7,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 68.5,
+          "y": 37,
+          "asset": "assets/beasts/motion/paladin-female-windup-v1.webp",
+          "sha256": "30f68f03f205ee0ea55c7918c0cc08ad6e7a83990d500ac7d3a667b86863ed93"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/paladin-female-power-v1.webp",
+          "sha256": "6d8c490e987841f77344cbdfc8fbafeac675fb48758dbc3a60251de7872357f1",
+          "originY": 49.9,
+          "originX": 49.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/paladin-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/paladin-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 80,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/paladin-female-melee-v1.webp",
+        "sha256": "e57d4c65c16007288bc4d993f20aadd37e0b0fdb6a9e6fabaf178dce34c53f6f",
+        "effect": {
+          "asset": "assets/beasts/motion/paladin-female-melee-effect-v1.webp",
+          "sha256": "187694e7e206e48762985ee097de43831d6680d4ef8dc7980bd5fdfe7cf4ff21",
+          "x": 86.4,
+          "y": 82.6
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/paladin-female-contact.png"
+      }
+    },
+    {
+      "id": "templar-male",
+      "kind": "player",
+      "cls": "templar",
+      "gender": "male",
+      "name": "เทมพลาร์ (male)",
+      "powerName": "พลังเทมพลาร์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 67.2,
+        "y": 19.4,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 47.7,
+        "effectOriginX": 49.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 67.2,
+          "y": 19.4,
+          "asset": "assets/beasts/motion/templar-male-windup-v1.webp",
+          "sha256": "d8f0ff23298c31fe682a59ee8991333bd8a55e717b5a4ec9770a482e12873502"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/templar-male-power-v1.webp",
+          "sha256": "dd5e1ecfad59bc31eea4bdb60d71063fb034ed2e08bf2d390fa68541a82d1069",
+          "originY": 47.7,
+          "originX": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/templar-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/templar-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 81.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/templar-male-melee-v1.webp",
+        "sha256": "ff73f3781eff7dc6117ce3c2b90e221cdde526da61a1eb5e1724f9fb80e1d6a7",
+        "effect": {
+          "asset": "assets/beasts/motion/templar-male-melee-effect-v1.webp",
+          "sha256": "3fb826ba3b104d2c3861457d86bd57bed3772f90b686a5b5746696c96adf00ee",
+          "x": 83.7,
+          "y": 82.4
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/templar-male-contact.png"
+      }
+    },
+    {
+      "id": "templar-female",
+      "kind": "player",
+      "cls": "templar",
+      "gender": "female",
+      "name": "เทมพลาร์ (female)",
+      "powerName": "พลังเทมพลาร์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 70.7,
+        "y": 23,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.1,
+        "effectOriginX": 49.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 70.7,
+          "y": 23,
+          "asset": "assets/beasts/motion/templar-female-windup-v1.webp",
+          "sha256": "ae607786bfc1936758f281ce00a22521a43708a441b87cfc5f928d6ce4342b25"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/templar-female-power-v1.webp",
+          "sha256": "e1db8f9e2fe780ed05d613e2fe4730253e1b1ea6c296c0010d12cb45dcfc7eff",
+          "originY": 49.1,
+          "originX": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/templar-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/templar-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87.5,
+        "y": 81.6,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/templar-female-melee-v1.webp",
+        "sha256": "7aad0c054752dd63f13d52992bc4c30a398f81f3675d60fb11e904080e30795f",
+        "effect": {
+          "asset": "assets/beasts/motion/templar-female-melee-effect-v1.webp",
+          "sha256": "17b7ee2e2ce84fbc831577f55efeb6faf631791bfcad21b62a82c90251f25154",
+          "x": 84.3,
+          "y": 81.4
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/templar-female-contact.png"
+      }
+    }
+  ]
+}

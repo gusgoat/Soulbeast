@@ -1,0 +1,10 @@
+const fs=require('fs'),path=require('path');const root=path.resolve(__dirname,'..');
+const actors=require('./unit-motion-manifests.cjs')().flatMap(m=>m.actors);
+require('./validate-motion-anchors.cjs')(actors);
+const g=require('./game-context.cjs')(path.join(root,'build/staging-index.html'));
+const catalog=JSON.parse(g.run('JSON.stringify({classes:CLS,beasts:SP,forms:FORMS,elements:EL})'));
+const data=actors.map(a=>{const assets={};for(const p of ['idle','hit','windup','power','melee','meleeEffect',...(a.poseAssets?.threat?['threat']:[])]){assets[p]=a.poseAssets?.[p]||(p==='power'&&a.powerAsset?a.powerAsset:`${a.assetBase||'assets/beasts/motion/'+a.id}-${p}-v1.webp`);if(!fs.existsSync(path.join(root,assets[p])))throw Error('Missing '+assets[p]);}return {...a,review:undefined,assets,scene:a.scene||`assets/ui/element-card-scenes/element-${a.background}.webp`,identity:require('./unit-motion-identity.cjs')(a,catalog)};});
+const production=data.map(a=>Object.fromEntries(['id','kind','form','species','cls','gender','idleMode','artFit','powerDuration','windupDuration','meleeMode','source','meleeSource','assets','scene'].filter(k=>a[k]!==undefined).map(k=>[k,a[k]]).concat([['identity',{particles:a.identity.particles,colors:a.identity.colors}]])));
+fs.writeFileSync(path.join(root,'runtime/motionCatalog.js'),'// @soulbeast-unit 1098-motionCatalog\nconst MOTION_ACTORS='+JSON.stringify(production)+';\n// @soulbeast-end 1098-motionCatalog\n');
+fs.writeFileSync(path.join(root,'runtime/motionController.js'),'// @soulbeast-unit 1100-motionController\n'+fs.readFileSync(path.join(root,'client/unit-motion.js'),'utf8')+'\n// @soulbeast-end 1100-motionController\n');
+console.log('Validated and built '+data.length+' calibrated motion actors');

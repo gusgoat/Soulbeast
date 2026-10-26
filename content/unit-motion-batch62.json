@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "cannoneer-male",
+      "kind": "player",
+      "cls": "cannoneer",
+      "gender": "male",
+      "name": "นายพลปืนใหญ่ (male)",
+      "powerName": "พลังนายพลปืนใหญ่ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 73.24,
+        "y": 19.73,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 73.24,
+          "y": 19.73,
+          "asset": "assets/beasts/motion/cannoneer-male-windup-v1.webp",
+          "sha256": "8e48c5a4427a23c9d8230ba93a43d96fcc07148ae55b0277c17d4c603fc4ef3a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/cannoneer-male-power-v1.webp",
+          "sha256": "e62a710456ba122fe9036db81f92731ee3029a122f056e3a09687b5c72591847",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/cannoneer-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/cannoneer-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.51,
+        "y": 51.37,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/cannoneer-male-melee-v1.webp",
+        "sha256": "3c37f3d567e346791822299c20109d2c854d9fd692aad7871722067a25d7b200",
+        "effect": {
+          "asset": "assets/beasts/motion/cannoneer-male-melee-effect-v1.webp",
+          "sha256": "97efaf0e3688592a2cb6717a4cb243a304bda370a5fd81bec8018e0ffbf5487e",
+          "x": 67.97,
+          "y": 50.59
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/cannoneer-male-contact.png"
+      }
+    },
+    {
+      "id": "cannoneer-female",
+      "kind": "player",
+      "cls": "cannoneer",
+      "gender": "female",
+      "name": "นายพลปืนใหญ่ (female)",
+      "powerName": "พลังนายพลปืนใหญ่ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 79.49,
+        "y": 21.09,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 79.49,
+          "y": 21.09,
+          "asset": "assets/beasts/motion/cannoneer-female-windup-v1.webp",
+          "sha256": "d6e1078dd61815442a50880e73bc5d3addeb1ddcff2f710f1d2d7e786e8b2f0e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/cannoneer-female-power-v1.webp",
+          "sha256": "aa4fd91fb1fdd0193ab3c7b3d0bafa876736878db4faace2e30ce9a5ad6852fd",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/cannoneer-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/cannoneer-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.12,
+        "y": 44.14,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/cannoneer-female-melee-v1.webp",
+        "sha256": "ff1e1fdc5794ca97b02a1e4e9c4b5f35337241910a83b7d01a51f38603f26b78",
+        "effect": {
+          "asset": "assets/beasts/motion/cannoneer-female-melee-effect-v1.webp",
+          "sha256": "401d454f25b98a8c251401f22d3c91e31fc892dfc876f82448488473be242b96",
+          "x": 68.36,
+          "y": 52.34
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/cannoneer-female-contact.png"
+      }
+    },
+    {
+      "id": "demolisher-male",
+      "kind": "player",
+      "cls": "demolisher",
+      "gender": "male",
+      "name": "ช่างระเบิด (male)",
+      "powerName": "พลังช่างระเบิด (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 68.95,
+        "y": 19.92,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 68.95,
+          "y": 19.92,
+          "asset": "assets/beasts/motion/demolisher-male-windup-v1.webp",
+          "sha256": "bc4115833f5982db5c390ab3f2fb6fc84dedc2bc0ee901a6c3f1a2a9783c9f23"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/demolisher-male-power-v1.webp",
+          "sha256": "03d2b014052c8a7544ed60d710710dd26a675dd77a7a628ec636c78f3b14b1d0",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/demolisher-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/demolisher-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.7,
+        "y": 44.53,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/demolisher-male-melee-v1.webp",
+        "sha256": "eb31ef4cba241ac8c4e20d303af7c822ba44b9225b7dda243ec13e5c3d9266f4",
+        "effect": {
+          "asset": "assets/beasts/motion/demolisher-male-melee-effect-v1.webp",
+          "sha256": "d82ee80e8c9f1445b4c2cd9d657ae6fe53094c9d019482fc0e38d0015e45cff0",
+          "x": 68.75,
+          "y": 51.17
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/demolisher-male-contact.png"
+      }
+    },
+    {
+      "id": "demolisher-female",
+      "kind": "player",
+      "cls": "demolisher",
+      "gender": "female",
+      "name": "ช่างระเบิด (female)",
+      "powerName": "พลังช่างระเบิด (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 69.92,
+        "y": 25,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 69.92,
+          "y": 25,
+          "asset": "assets/beasts/motion/demolisher-female-windup-v1.webp",
+          "sha256": "7f82d623e5efb75c21fba45a6a3f39076c35b7ff8c5e212e165c7796b6b789b7"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/demolisher-female-power-v1.webp",
+          "sha256": "0d01302c32ead8d04cf03f624d7688ba997c6e8921ea5dc9282fa3a4e8946593",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/demolisher-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/demolisher-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.51,
+        "y": 49.22,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/demolisher-female-melee-v1.webp",
+        "sha256": "38c087c39673aabbb1ddd87087e150beb0d368f0ae7c7eca171b4d586c91e223",
+        "effect": {
+          "asset": "assets/beasts/motion/demolisher-female-melee-effect-v1.webp",
+          "sha256": "634a6780c7aa1648685fffe016443b4182b45064398dbd2509180eeadf2b644a",
+          "x": 70.9,
+          "y": 54.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/demolisher-female-contact.png"
+      }
+    }
+  ]
+}

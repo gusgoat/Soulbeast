@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "warlord-male",
+      "kind": "player",
+      "cls": "warlord",
+      "gender": "male",
+      "name": "ราชันย์สนามรบ (male)",
+      "powerName": "พลังราชันย์สนามรบ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 68.4,
+        "y": 28,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 47.8,
+        "effectOriginX": 51,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 68.4,
+          "y": 28,
+          "asset": "assets/beasts/motion/warlord-male-windup-v1.webp",
+          "sha256": "a3752ea7f44bc63239682af020248a7e90f56a516cd81d099e67e218b462b4d4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/warlord-male-power-v1.webp",
+          "sha256": "86faff9ddd83afcc4f1fa21dc02b60ab24af67b45bad11bba15fa59e39b55463",
+          "originY": 47.8,
+          "originX": 51
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/warlord-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/warlord-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 82.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/warlord-male-melee-v1.webp",
+        "sha256": "cc452028ac482f823a888cbb5fc8bdcb24609caaa7f91903ace4d4eaa29e223b",
+        "effect": {
+          "asset": "assets/beasts/motion/warlord-male-melee-effect-v1.webp",
+          "sha256": "1672f79aa925fa62a5b71985f74383f866ace7347e931f695c2152ccf8f51a13",
+          "x": 86.4,
+          "y": 78.2
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/warlord-male-contact.png"
+      }
+    },
+    {
+      "id": "warlord-female",
+      "kind": "player",
+      "cls": "warlord",
+      "gender": "female",
+      "name": "ราชันย์สนามรบ (female)",
+      "powerName": "พลังราชันย์สนามรบ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 70.1,
+        "y": 27.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 45.9,
+        "effectOriginX": 50.9,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 70.1,
+          "y": 27.5,
+          "asset": "assets/beasts/motion/warlord-female-windup-v1.webp",
+          "sha256": "29c89c87ce7dfd67daddf817e916c300e90c2517e5ca326b079466e37f0bd0c9"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/warlord-female-power-v1.webp",
+          "sha256": "bc2475e00568541a7be1e627b87462216d3b78b53808531817d6ebd3f145bba0",
+          "originY": 45.9,
+          "originX": 50.9
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/warlord-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/warlord-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88.9,
+        "y": 79.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/warlord-female-melee-v1.webp",
+        "sha256": "bd55071f6491a347a9b3b708da09abf4c2b7b824802740017546576caec6ead2",
+        "effect": {
+          "asset": "assets/beasts/motion/warlord-female-melee-effect-v1.webp",
+          "sha256": "f9e8e03f8da949cd5cc6b8e37e1b711c37c33c5df820eb961ac2d72ce6491c23",
+          "x": 81.7,
+          "y": 85
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/warlord-female-contact.png"
+      }
+    },
+    {
+      "id": "bloodwar-male",
+      "kind": "player",
+      "cls": "bloodwar",
+      "gender": "male",
+      "name": "นักรบโลหิต (male)",
+      "powerName": "พลังนักรบโลหิต (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 68.2,
+        "y": 28.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 47,
+        "effectOriginX": 49.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 68.2,
+          "y": 28.3,
+          "asset": "assets/beasts/motion/bloodwar-male-windup-v1.webp",
+          "sha256": "ac3b3424505fe352f423c90248772db0c32f67d0757038561ee08ea62a9ff299"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bloodwar-male-power-v1.webp",
+          "sha256": "a9487cb8f08a319327b235dea2a5502043e6ba2e8e23deb7bb2de6117f82f21f",
+          "originY": 47,
+          "originX": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bloodwar-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bloodwar-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88.5,
+        "y": 82.1,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bloodwar-male-melee-v1.webp",
+        "sha256": "13b8134f597a9eef66dfe40c9fb0f743974f105959bdbb9eb2830bbfba95f273",
+        "effect": {
+          "asset": "assets/beasts/motion/bloodwar-male-melee-effect-v1.webp",
+          "sha256": "757652c693741a84ca4a9d3d34a580b12362ba81e957e4dcf4b8570483bac169",
+          "x": 87.7,
+          "y": 82.9
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bloodwar-male-contact.png"
+      }
+    },
+    {
+      "id": "bloodwar-female",
+      "kind": "player",
+      "cls": "bloodwar",
+      "gender": "female",
+      "name": "นักรบโลหิต (female)",
+      "powerName": "พลังนักรบโลหิต (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 66.4,
+        "y": 19.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.4,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 66.4,
+          "y": 19.5,
+          "asset": "assets/beasts/motion/bloodwar-female-windup-v1.webp",
+          "sha256": "a5704bfcab47829430cf28883158995ca74ed3d9208d682c582b6863e15da013"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bloodwar-female-power-v1.webp",
+          "sha256": "e916913858ad222c9913c9ada424894ab197d9ab43627b1c27d1cdf04e33c0bb",
+          "originY": 49.4,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bloodwar-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bloodwar-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.9,
+        "y": 79.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bloodwar-female-melee-v1.webp",
+        "sha256": "6f4d0f1f94be10cb895560c69ab199a9110d1ac55ed3fd5763eb7c7d93d3e0cd",
+        "effect": {
+          "asset": "assets/beasts/motion/bloodwar-female-melee-effect-v1.webp",
+          "sha256": "ecfdd72c1935135bf760303e002f469729d78e1311f43426d77166fd49acc140",
+          "x": 88.9,
+          "y": 86.9
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bloodwar-female-contact.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,285 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "kappa",
+      "form": 0,
+      "name": "คัปปะ",
+      "powerName": "คลื่นวารี",
+      "idleMode": "breathe",
+      "color": "#6bd8ff",
+      "background": "water",
+      "source": {
+        "x": 48,
+        "y": 62,
+        "angle": -3,
+        "width": 145,
+        "height": 48,
+        "anchor": {
+          "pose": "windup",
+          "x": 47.87234,
+          "y": 62.765957,
+          "asset": "assets/beasts/motion/kappa-windup-v1.webp",
+          "sha256": "8c4c0c1b547324a7a84f8a504933663509ef022fd30ac4c6634135222457b2d4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kappa-power-v1.webp",
+          "sha256": "c4dbf7399d5aadfdfbd714247242480cdf2bcd9c2a899b42d65624dc8628bc76",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kappa-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kappa-melee-effect-v1.webp"
+      },
+      "meleeName": "ตบฝ่ามือ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82,
+        "y": 68,
+        "width": 90,
+        "height": 90,
+        "asset": "assets/beasts/motion/kappa-melee-v1.webp",
+        "sha256": "260fb981ed475b1c2cf2ad2d3646a4d0d63a161bde0b1e1f7a80648150de0464",
+        "effect": {
+          "asset": "assets/beasts/motion/kappa-melee-effect-v1.webp",
+          "sha256": "bd99a972659924ca7f9dfb9713450054e095da552cb42ac59605219c06272983",
+          "x": 50,
+          "y": 53
+        }
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-kappa-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    },
+    {
+      "id": "wisp",
+      "form": 0,
+      "name": "วิลโอเดอะวิสป์",
+      "powerName": "เพลิงวิญญาณ",
+      "idleMode": "float",
+      "color": "#78b7ff",
+      "background": "ghost",
+      "source": {
+        "x": 63,
+        "y": 73,
+        "angle": 0,
+        "width": 135,
+        "height": 45,
+        "anchor": {
+          "pose": "windup",
+          "x": 63.829787,
+          "y": 74.468085,
+          "asset": "assets/beasts/motion/wisp-windup-v1.webp",
+          "sha256": "7462a69744660d825367acb1eede6b67dc8082997597ff9c02a5d29c8d19a14d"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wisp-power-v1.webp",
+          "sha256": "6de64fdaa7b17fad8d5a059f72e4a9c63ab7109006ccad7736d18b1006b8a697",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wisp-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wisp-melee-effect-v1.webp"
+      },
+      "meleeName": "พุ่งชนวิญญาณ",
+      "meleeMode": "ram",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84,
+        "y": 71,
+        "width": 85,
+        "height": 85,
+        "asset": "assets/beasts/motion/wisp-melee-v1.webp",
+        "sha256": "04487d46bd41ccda3c9f33014dd1cfc06d70a847abc6deb3dde5a4f1956a02db",
+        "effect": {
+          "asset": "assets/beasts/motion/wisp-melee-effect-v1.webp",
+          "sha256": "976e8531c820d8b7d512d3b3d073ff6b1b1a536bff03a933b8c8698182b7a382",
+          "x": 70,
+          "y": 65
+        }
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-wisp-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    },
+    {
+      "id": "mandrake",
+      "form": 0,
+      "name": "แมนเดรก",
+      "powerName": "รากไม้พิษ",
+      "idleMode": "sway",
+      "color": "#b4df72",
+      "background": "grass",
+      "source": {
+        "x": 67,
+        "y": 64,
+        "angle": -5,
+        "width": 140,
+        "height": 48,
+        "anchor": {
+          "pose": "windup",
+          "x": 68.085106,
+          "y": 64.893617,
+          "asset": "assets/beasts/motion/mandrake-windup-v1.webp",
+          "sha256": "a2914fb3550751324dd4c48ca5aeea63a56fd47147efffe0c832050fbc510d5e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mandrake-power-v1.webp",
+          "sha256": "bdc589d4ab9ff5b636173b002c0d5a617156c90ee4e537b6c35ce1c8a2dc83c7",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mandrake-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mandrake-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดรากไม้",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 77,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mandrake-melee-v1.webp",
+        "sha256": "339b0613f7f98e8424a721833e166e254acc2fe6dd5347919c7bc8a6ba9056ee",
+        "effect": {
+          "asset": "assets/beasts/motion/mandrake-melee-effect-v1.webp",
+          "sha256": "9389108e4ee4a00f91bf9be57d206c08af67347f6c3772dc862256617a284101",
+          "x": 76,
+          "y": 68
+        }
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-mandrake-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    },
+    {
+      "id": "summoner-male",
+      "kind": "player",
+      "cls": "summoner",
+      "gender": "male",
+      "form": 0,
+      "name": "ผู้ผนึก",
+      "powerName": "วิญญาณพันธสัญญา",
+      "idleMode": "breathe",
+      "color": "#9ee7df",
+      "assetBase": "assets/portraits/motion/summoner-male",
+      "scene": "assets/ui/element-card-scenes/class-summon.webp",
+      "source": {
+        "x": 82,
+        "y": 59,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "anchor": {
+          "pose": "windup",
+          "x": 84.042553,
+          "y": 59.574468,
+          "asset": "assets/portraits/motion/summoner-male-windup-v1.webp",
+          "sha256": "f9b71a0d214032132dee1744737a299e0af0b6e4a5d43367bdc223e1907a7705"
+        },
+        "effect": {
+          "asset": "assets/portraits/motion/summoner-male-power-front-v2.webp",
+          "sha256": "3c4e1600bf6bbd3304524583b314e52241c24635e5200d65096a29e98ed5e271",
+          "originY": 50
+        }
+      },
+      "powerAsset": "assets/portraits/motion/summoner-male-power-front-v2.webp",
+      "poseAssets": {
+        "melee": "assets/portraits/motion/summoner-male-melee-whip-v2.webp",
+        "meleeEffect": "assets/portraits/motion/summoner-male-melee-whip-effect-v2.webp"
+      },
+      "meleeName": "ฟาดแซ่",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 79,
+        "y": 85,
+        "width": 110,
+        "height": 110,
+        "asset": "assets/portraits/motion/summoner-male-melee-whip-v2.webp",
+        "sha256": "25cae7c44f1db4f62c0e2d5301552e3e1a03e71164c354057f5fef3101da87da",
+        "effect": {
+          "asset": "assets/portraits/motion/summoner-male-melee-whip-effect-v2.webp",
+          "sha256": "3d926abe0eb2541aa6870ad7e757e2b22dac6dafbf955d3cbc62c963e73e4d0d",
+          "x": 53,
+          "y": 49
+        }
+      },
+      "meleeWeapon": "whip",
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-summoner-male-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    }
+  ]
+}

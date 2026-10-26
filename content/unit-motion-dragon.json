@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "dragon",
+      "form": 2,
+      "level": 50,
+      "name": "มังกรตะวันตก",
+      "powerName": "ลมหายใจมังกร",
+      "idleMode": "breathe",
+      "background": "fire",
+      "artFit": "cover",
+      "embers": true,
+      "poseAssets": {
+        "idle": "assets/beasts/motion/dragon-cutout-v1.webp",
+        "hit": "assets/beasts/motion/dragon-hit-v1.webp",
+        "windup": "assets/beasts/motion/dragon-windup-v1.webp",
+        "melee": "assets/beasts/motion/dragon-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/dragon-melee-effect-v1.webp"
+      },
+      "powerAsset": "assets/beasts/motion/dragon-fire-realistic-v1.webp",
+      "powerDuration": 0.7,
+      "windupDuration": 1.1,
+      "source": {
+        "x": 70,
+        "y": 40,
+        "angle": 16,
+        "width": 125,
+        "height": 40,
+        "anchor": {
+          "pose": "windup",
+          "x": 78,
+          "y": 52,
+          "asset": "assets/beasts/motion/dragon-windup-v1.webp",
+          "sha256": "4bca12733632b7a1b5a8201b73e56a949b7c60e46fed225140bf2926bd08b7a5"
+        },
+        "cropLeft": 3,
+        "effect": {
+          "asset": "assets/beasts/motion/dragon-fire-realistic-v1.webp",
+          "sha256": "9c2713fe9e74de6e77ca31a26adc2b2824a9b8685925fd59751cb2e2686eba5d",
+          "originY": 50
+        }
+      },
+      "meleeName": "กรงเล็บมังกร",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 70,
+        "y": 78,
+        "width": 120,
+        "height": 120,
+        "asset": "assets/beasts/motion/dragon-melee-v1.webp",
+        "sha256": "ef101ca31e652367f9c213876a755e1c276c7449d33e7bb49fe09a1cddc581e4",
+        "effect": {
+          "asset": "assets/beasts/motion/dragon-melee-effect-v1.webp",
+          "sha256": "eb0d4b2e16034281e98482c83a74919791ae93552b82654e612d632cf368bee2",
+          "x": 55,
+          "y": 48
+        }
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-dragon-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    }
+  ]
+}

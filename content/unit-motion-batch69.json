@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "ninja-male",
+      "kind": "player",
+      "cls": "ninja",
+      "gender": "male",
+      "name": "นินจา (male)",
+      "powerName": "พลังนินจา (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "dagger",
+      "source": {
+        "x": 64,
+        "y": 31,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 64,
+          "y": 31,
+          "asset": "assets/beasts/motion/ninja-male-windup-v1.webp",
+          "sha256": "afc549ef9c395f77eb3963bd4cad79628978417a80e8ddd26b78a34bc4d25992"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ninja-male-power-v1.webp",
+          "sha256": "c60f81b20c7864afdcf479e9da9726e2a75507bcbdfe69ab366c0e5f6ca85d7f",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ninja-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ninja-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.5,
+        "y": 68.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ninja-male-melee-v1.webp",
+        "sha256": "853ef45edf6fec118584c8d71fd7722f4577eeb41683b142f7d5c1314f74e501",
+        "effect": {
+          "asset": "assets/beasts/motion/ninja-male-melee-effect-v1.webp",
+          "sha256": "11cc070bd7e41c1128df654c43c7c1fe381d9935633afb9d0680874d0f134063",
+          "x": 69,
+          "y": 67
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ninja-male-contact.png"
+      }
+    },
+    {
+      "id": "ninja-female",
+      "kind": "player",
+      "cls": "ninja",
+      "gender": "female",
+      "name": "นินจา (female)",
+      "powerName": "พลังนินจา (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "dagger",
+      "source": {
+        "x": 70,
+        "y": 32,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 70,
+          "y": 32,
+          "asset": "assets/beasts/motion/ninja-female-windup-v1.webp",
+          "sha256": "ce21dcc66c449c1643720bb7ac1c8080de6893ace0093f22fa668037ec907cdc"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ninja-female-power-v1.webp",
+          "sha256": "7d320e6a581c243443f9f6d3823e236f3cb027b757b8ebde6daf616ecb16270c",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ninja-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ninja-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97.8,
+        "y": 72.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ninja-female-melee-v1.webp",
+        "sha256": "9ff0dba30beadc883cb782b6ba49199399ebf5adb53e2260e8b4fdf6f6aacde8",
+        "effect": {
+          "asset": "assets/beasts/motion/ninja-female-melee-effect-v1.webp",
+          "sha256": "e5f2dffee67f2d3435237244882dc9c44aa300eb7a44e7276a47c9cd8de2f583",
+          "x": 66.5,
+          "y": 62.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ninja-female-contact.png"
+      }
+    },
+    {
+      "id": "ronin-male",
+      "kind": "player",
+      "cls": "ronin",
+      "gender": "male",
+      "name": "โรนิน (male)",
+      "powerName": "พลังโรนิน (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "dagger",
+      "source": {
+        "x": 65,
+        "y": 29,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 65,
+          "y": 29,
+          "asset": "assets/beasts/motion/ronin-male-windup-v1.webp",
+          "sha256": "84bcd46da084711006760f1b9307cef4bd44355a4a22405549626c6b8bc55437"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ronin-male-power-v1.webp",
+          "sha256": "0f1f180a7dcffdfae3dcdff6e018fa341c320a3ee3301c5b3f52fa61b598f082",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ronin-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ronin-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.5,
+        "y": 67.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ronin-male-melee-v1.webp",
+        "sha256": "9225fba2ed494f0e4c4bb3d38ab0c35430f05a5af479558a98029f2a1e2f3dfb",
+        "effect": {
+          "asset": "assets/beasts/motion/ronin-male-melee-effect-v1.webp",
+          "sha256": "87961a2a068fe7954f64593e2d817d01c750a29477a664b7502743b29853795e",
+          "x": 66.7,
+          "y": 64.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ronin-male-contact.png"
+      }
+    },
+    {
+      "id": "ronin-female",
+      "kind": "player",
+      "cls": "ronin",
+      "gender": "female",
+      "name": "โรนิน (female)",
+      "powerName": "พลังโรนิน (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "dagger",
+      "source": {
+        "x": 64,
+        "y": 30,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 64,
+          "y": 30,
+          "asset": "assets/beasts/motion/ronin-female-windup-v1.webp",
+          "sha256": "14f6815382f1afc8698b651df24e86fc8e42ad4fc193407a441ded230d1beca4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ronin-female-power-v1.webp",
+          "sha256": "ef997cda251a6206ca365e0d369733d6b5a45534328b4ace3063bd6587545f64",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ronin-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ronin-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 63.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ronin-female-melee-v1.webp",
+        "sha256": "15cf196b7997e1764c27e3b1113d3a06ece38174be2dc11ffe38b9d1b0f9b10f",
+        "effect": {
+          "asset": "assets/beasts/motion/ronin-female-melee-effect-v1.webp",
+          "sha256": "e47e30750c4f2567865d7f23328726a8835fc1aae8658b40de152e7f4ae32b54",
+          "x": 61.5,
+          "y": 62.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ronin-female-contact.png"
+      }
+    }
+  ]
+}

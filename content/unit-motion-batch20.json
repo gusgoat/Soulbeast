@@ -1,0 +1,405 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "wyvern",
+      "form": 0,
+      "name": "ไวเวิร์น",
+      "powerName": "พลังไวเวิร์น",
+      "idleMode": "breathe",
+      "background": "dragon",
+      "source": {
+        "x": 93.3,
+        "y": 50.4,
+        "angle": 22,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.3,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 93.3,
+          "y": 50.4,
+          "asset": "assets/beasts/motion/wyvern-windup-v1.webp",
+          "sha256": "8cdd0b868a290480fc30e433b77b1fe82591d17503c57a3188feba7b4734fb8f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wyvern-power-v1.webp",
+          "sha256": "bf5330e41fdd1eb21dafcd964c88eb887fe831bb1d8c8dae7cf07c6dafd47926",
+          "originY": 53.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wyvern-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wyvern-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 85.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wyvern-melee-v1.webp",
+        "sha256": "4d4871c661b41fd1f24617a87f6d7d606739c0c05177543718593c0055b02485",
+        "effect": {
+          "asset": "assets/beasts/motion/wyvern-melee-effect-v1.webp",
+          "sha256": "012cc5a80465c825dd37ddd94ef324797ea04a37a85ed4cf5253ff6611f799dd",
+          "x": 78,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual mouth/palm and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wyvern-contact.png"
+      }
+    },
+    {
+      "id": "roc",
+      "form": 0,
+      "name": "นกรุค",
+      "powerName": "พลังนกรุค",
+      "idleMode": "float",
+      "background": "flying",
+      "source": {
+        "x": 87,
+        "y": 50.8,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.6,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 87,
+          "y": 50.8,
+          "asset": "assets/beasts/motion/roc-windup-v1.webp",
+          "sha256": "c28aad36cbf8b33f7e94538339de871274b804a1d5bab174d60ed31bd920c7cb"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/roc-power-v1.webp",
+          "sha256": "bd0ecabf19685dfcb0a35d90837b6d1406e6b49fec90711086b90660bc6d645c",
+          "originY": 53.6
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/roc-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/roc-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/roc-melee-v1.webp",
+        "sha256": "5ae342962c2e494d5c1775f821f5c0b1ccbb514fe77c240f76597c6d878e43ef",
+        "effect": {
+          "asset": "assets/beasts/motion/roc-melee-effect-v1.webp",
+          "sha256": "d5c96daf3315fc789638f87e8811d66a60de977cc0788e49b4fdb74c961b4499",
+          "x": 78,
+          "y": 75
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual mouth/palm and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/roc-contact.png"
+      }
+    },
+    {
+      "id": "rajasi",
+      "form": 0,
+      "name": "ราชสีห์",
+      "powerName": "พลังราชสีห์",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 90,
+        "y": 46.5,
+        "angle": 18,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 90,
+          "y": 46.5,
+          "asset": "assets/beasts/motion/rajasi-windup-v1.webp",
+          "sha256": "62bbc8da144dd73183c1896c73f4199a287f88eaa628d37b477fba3373443597"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/rajasi-power-v1.webp",
+          "sha256": "2a12b495c7c7f998eb308a2a84a35d2a42d17cb885182a20861ac88cbe06e604",
+          "originY": 51.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/rajasi-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/rajasi-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/rajasi-melee-v1.webp",
+        "sha256": "5d35be5daca9a9ed9284a447eb9ac91002bcdb3130182891d94a0fce24f2b95c",
+        "effect": {
+          "asset": "assets/beasts/motion/rajasi-melee-effect-v1.webp",
+          "sha256": "66b63690e727ec307538870653ea56231b3326088994616634cde35d2b64908a",
+          "x": 77,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual mouth/palm and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/rajasi-contact.png"
+      }
+    },
+    {
+      "id": "moon-tortoise",
+      "species": "moon_tortoise",
+      "form": 0,
+      "name": "เต่าศิลาจันทร์",
+      "powerName": "พลังเต่าศิลาจันทร์",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 86,
+        "y": 60.3,
+        "angle": 15,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.9,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 86,
+          "y": 60.3,
+          "asset": "assets/beasts/motion/moon-tortoise-windup-v1.webp",
+          "sha256": "bbf2aae7538d671626bcd567bef473672218a90126cc7fe8e64b5e5100d230ed"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/moon-tortoise-power-v1.webp",
+          "sha256": "47526d68baf3cca324f23344d4d7a3f165f2cd45e0974f2a4ecd85be57ac3392",
+          "originY": 51.9
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/moon-tortoise-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/moon-tortoise-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 62,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/moon-tortoise-melee-v1.webp",
+        "sha256": "73b2535a38cda0a767808ef6f9a412821a4d651b7c49603837f844c72b7e4238",
+        "effect": {
+          "asset": "assets/beasts/motion/moon-tortoise-melee-effect-v1.webp",
+          "sha256": "a998d1870996b60943990f2a360e6a19f010ba4ebe436a5674542556f3a4d023",
+          "x": 76,
+          "y": 76
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual mouth/palm and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/moon-tortoise-contact.png"
+      }
+    },
+    {
+      "id": "iron-armadillo",
+      "species": "iron_armadillo",
+      "form": 0,
+      "name": "อาร์มาดิลโลเหล็ก",
+      "powerName": "พลังอาร์มาดิลโลเหล็ก",
+      "idleMode": "breathe",
+      "background": "steel",
+      "source": {
+        "x": 79,
+        "y": 29.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 79,
+          "y": 29.2,
+          "asset": "assets/beasts/motion/iron-armadillo-windup-v1.webp",
+          "sha256": "b6354105c756da8adb42c0e9880ebf451d43eea97a32e531dfe89650dc855535"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/iron-armadillo-power-v1.webp",
+          "sha256": "99b1ba1b3254b38f97570f79bc6182e05c5bac2596caeb121923f9fbf423e5cc",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/iron-armadillo-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/iron-armadillo-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 98,
+        "y": 88,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/iron-armadillo-melee-v1.webp",
+        "sha256": "f337f2b6fba175f69b168b543aee492ce8d1f48dd37366663cbbba75e695a12d",
+        "effect": {
+          "asset": "assets/beasts/motion/iron-armadillo-melee-effect-v1.webp",
+          "sha256": "121d7c8a0afe4ce8fe78ce13d5700efa5b7617bb67954ff3c1de7e745b309e26",
+          "x": 69,
+          "y": 69
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual mouth/palm and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/iron-armadillo-contact.png"
+      }
+    },
+    {
+      "id": "moss-treant",
+      "species": "moss_treant",
+      "form": 0,
+      "name": "ทรีแอนต์มอส",
+      "powerName": "พลังทรีแอนต์มอส",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 37,
+        "y": 33.7,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 37,
+          "y": 33.7,
+          "asset": "assets/beasts/motion/moss-treant-windup-v1.webp",
+          "sha256": "64b9e8e934aaee9701c33e402458a4ba41c4f2bce114979db6e6b2032be14d03"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/moss-treant-power-v1.webp",
+          "sha256": "5e6344eaf6da18bf2a266a09014ea080cd57a93159e5248298dd8193878697d7",
+          "originY": 49.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/moss-treant-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/moss-treant-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 70,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/moss-treant-melee-v1.webp",
+        "sha256": "e9f51a9ece29e13c4ba0e6a0ea7ce75d3f73b42cafb7fc82fabcd3ec3b116e69",
+        "effect": {
+          "asset": "assets/beasts/motion/moss-treant-melee-effect-v1.webp",
+          "sha256": "7246ed3168b095f89c5c45a8b099dbb0d3388c2bf309e47ad4d6d79c7affc521",
+          "x": 69,
+          "y": 68
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected",
+          "windup inspected before power",
+          "actual mouth/palm and VFX origin inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/moss-treant-contact.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "tanuki-shifter",
+      "species": "tanuki",
+      "form": 1,
+      "name": "ทานุกิแปลงกาย",
+      "powerName": "พลังทานุกิแปลงกาย",
+      "idleMode": "breathe",
+      "background": "normal",
+      "source": {
+        "x": 76,
+        "y": 42,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 76,
+          "y": 42,
+          "asset": "assets/beasts/motion/tanuki-shifter-windup-v1.webp",
+          "sha256": "39b69c7d149f5edb1a5365534a463d419fc2b4865901a3faebb4bc0abe9c0ef8"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/tanuki-shifter-power-v1.webp",
+          "sha256": "73743e3bec1ee7b09048ead9698fd8849fe96f1dca4917c81be0bf7f3ab1e3a9",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/tanuki-shifter-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/tanuki-shifter-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 65,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/tanuki-shifter-melee-v1.webp",
+        "sha256": "395bb6cd6297df8f4715d0a2b60459046400927bf1ed5d567ced4628d9889576",
+        "effect": {
+          "asset": "assets/beasts/motion/tanuki-shifter-melee-effect-v1.webp",
+          "sha256": "f56b3197b1243d281f84038fa5c5523ab6cfbdd645e30b8ccabf2b892a4c8ae1",
+          "x": 72,
+          "y": 73
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/tanuki-shifter-contact.png"
+      }
+    },
+    {
+      "id": "tanuki-thousand",
+      "species": "tanuki",
+      "form": 2,
+      "name": "ทานุกิพันหน้า",
+      "powerName": "พลังทานุกิพันหน้า",
+      "idleMode": "breathe",
+      "background": "psychic",
+      "source": {
+        "x": 80,
+        "y": 40,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 80,
+          "y": 40,
+          "asset": "assets/beasts/motion/tanuki-thousand-windup-v1.webp",
+          "sha256": "eb0fbd40e5dc3a9105c1676b0b3d1f7c2f9583af24511dbee634aa935389f5bc"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/tanuki-thousand-power-v1.webp",
+          "sha256": "e61456e23a47bad212782c0f2ca4f4687f227121a03cb66384ed7227f4a95a74",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/tanuki-thousand-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/tanuki-thousand-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 77,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/tanuki-thousand-melee-v1.webp",
+        "sha256": "d0dbf1356fbbf700b3c5bb440db14aacb9c8a658a13b6e95e01227b201b8deb0",
+        "effect": {
+          "asset": "assets/beasts/motion/tanuki-thousand-melee-effect-v1.webp",
+          "sha256": "f6bb81ca8a28ba238343f2acf7166c7754a9b0222a53816c1bae58990602247f",
+          "x": 78,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/tanuki-thousand-contact.png"
+      }
+    },
+    {
+      "id": "raiju-thunder",
+      "species": "raiju",
+      "form": 1,
+      "name": "ไรจูอัสนี",
+      "powerName": "พลังไรจูอัสนี",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 86,
+        "y": 55,
+        "angle": 16,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 55,
+        "cropLeft": 7.5,
+        "anchor": {
+          "pose": "windup",
+          "x": 86,
+          "y": 55,
+          "asset": "assets/beasts/motion/raiju-thunder-windup-v1.webp",
+          "sha256": "f1e5827ada2a46947655283314798736cd4ff3f09e780ebfa4c0780083142e93"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/raiju-thunder-power-v1.webp",
+          "sha256": "1aac5c631400925387fd8e8059864d8c03d2d5030f0c068a480e834ca1eff6ed",
+          "originY": 55
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/raiju-thunder-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/raiju-thunder-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 80,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/raiju-thunder-melee-v1.webp",
+        "sha256": "bea8346322a4dc0f83af5b9a4550cd621c8d92c38f39b861f6c48a48b1fa679c",
+        "effect": {
+          "asset": "assets/beasts/motion/raiju-thunder-melee-effect-v1.webp",
+          "sha256": "c7f15749c5294b805b09c071f7731055a783ee241784c47c343beeb58cdcddf9",
+          "x": 79,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/raiju-thunder-contact.png"
+      }
+    },
+    {
+      "id": "raiju-deity",
+      "species": "raiju",
+      "form": 2,
+      "name": "เทพอสูรสายฟ้า",
+      "powerName": "พลังเทพอสูรสายฟ้า",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 42,
+        "y": 26,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 42,
+          "y": 26,
+          "asset": "assets/beasts/motion/raiju-deity-windup-v1.webp",
+          "sha256": "062fc6449480da76df12d803fdf4a1776c9e15cf2537ca3c668ae7600c1a48f5"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/raiju-deity-power-v1.webp",
+          "sha256": "d9504463285d41a053da8ea43a46182d1de7a34a896fc62c47a250b29978deba",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/raiju-deity-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/raiju-deity-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 65,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/raiju-deity-melee-v1.webp",
+        "sha256": "dbf851333df76056f3e74cb880a6f1789bc9aabdefa4ffc7b16d0ff337dc1d2a",
+        "effect": {
+          "asset": "assets/beasts/motion/raiju-deity-melee-effect-v1.webp",
+          "sha256": "eb6e0e7090f800667b2eefd78cd044f4854b98ebd5278524dc342c5eea895d22",
+          "x": 80,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/raiju-deity-contact.png"
+      }
+    },
+    {
+      "id": "pixie-flower",
+      "species": "pixie",
+      "form": 1,
+      "name": "พิกซี่ดอกไม้",
+      "powerName": "พลังพิกซี่ดอกไม้",
+      "idleMode": "float",
+      "background": "fairy",
+      "source": {
+        "x": 42,
+        "y": 28,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 42,
+          "y": 28,
+          "asset": "assets/beasts/motion/pixie-flower-windup-v1.webp",
+          "sha256": "823cf99a44a31789f7d77f043b6640353255a7a183c1af21bb962d16094c67eb"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/pixie-flower-power-v1.webp",
+          "sha256": "57c2adb9ce009ac267df80a1de7f879ac7f73c2b922c66a42130b2f72cb4021a",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/pixie-flower-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/pixie-flower-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 54,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/pixie-flower-melee-v1.webp",
+        "sha256": "610a4c85c4116a6f370aec2b9d86c4354e463dbfa07504db56e0dae5d7ea6185",
+        "effect": {
+          "asset": "assets/beasts/motion/pixie-flower-melee-effect-v1.webp",
+          "sha256": "84cf7b0b5e12cc0db885297d122ce65fe07bbbc23cfe43bcdf2c8197dfb78a30",
+          "x": 77,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/pixie-flower-contact.png"
+      }
+    },
+    {
+      "id": "pixie-titania",
+      "species": "pixie",
+      "form": 2,
+      "name": "ราชินีภูตไททาเนีย",
+      "powerName": "พลังราชินีภูตไททาเนีย",
+      "idleMode": "float",
+      "background": "fairy",
+      "source": {
+        "x": 48,
+        "y": 27,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 48,
+          "y": 27,
+          "asset": "assets/beasts/motion/pixie-titania-windup-v1.webp",
+          "sha256": "08e1c5da03d810f31b0584cb08e224295117c66a9ba6092b3fbd1a0b5bdcd436"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/pixie-titania-power-v1.webp",
+          "sha256": "4971de5cd72cda76a24641ff1ca594907e8a8abc4c67fd525c79a2ffd72c0cdd",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/pixie-titania-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/pixie-titania-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 42,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/pixie-titania-melee-v1.webp",
+        "sha256": "c72c9b6b6facaf9e3e888b5f56242183082b7fffa7d115797a0a333c232913b8",
+        "effect": {
+          "asset": "assets/beasts/motion/pixie-titania-melee-effect-v1.webp",
+          "sha256": "045330643f25c72f37e0e457bd4f834f984cd3b7167c74814de206c0f529011c",
+          "x": 77,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/pixie-titania-contact.png"
+      }
+    }
+  ]
+}

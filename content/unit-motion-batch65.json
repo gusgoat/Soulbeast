@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "grove-male",
+      "kind": "player",
+      "cls": "grove",
+      "gender": "male",
+      "name": "ผู้พิทักษ์พงไพร (male)",
+      "powerName": "พลังผู้พิทักษ์พงไพร (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 39.65,
+        "y": 32,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.2,
+        "effectOriginX": 49.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 39.65,
+          "y": 32,
+          "asset": "assets/beasts/motion/grove-male-windup-v1.webp",
+          "sha256": "976adedb406a5baa278204cdccc5eb5889bb5e797df8211b1c74d150886e465c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/grove-male-power-v1.webp",
+          "sha256": "90360cd3eb59cc1ba3452723da7fe0270999e597fe10b779a996e29c6ae82b13",
+          "originY": 50.2,
+          "originX": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/grove-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/grove-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87.9,
+        "y": 74,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/grove-male-melee-v1.webp",
+        "sha256": "f628d86faf30ac46494532adff71766fe54ec4bd0986fe505b2b6c8c2f649378",
+        "effect": {
+          "asset": "assets/beasts/motion/grove-male-melee-effect-v1.webp",
+          "sha256": "f7c5b5b5807a46f54f1bd79c84de26ca1f161708fe036d9fe3880b16b956ac75",
+          "x": 75,
+          "y": 76.2
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/grove-male-contact.png"
+      }
+    },
+    {
+      "id": "grove-female",
+      "kind": "player",
+      "cls": "grove",
+      "gender": "female",
+      "name": "ผู้พิทักษ์พงไพร (female)",
+      "powerName": "พลังผู้พิทักษ์พงไพร (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 45.1,
+        "y": 30.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.8,
+        "effectOriginX": 49.4,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 45.1,
+          "y": 30.1,
+          "asset": "assets/beasts/motion/grove-female-windup-v1.webp",
+          "sha256": "2361bc504937e34b55429b6450cbf5afdb965e0efc6e3ca9e863345c003fcf7f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/grove-female-power-v1.webp",
+          "sha256": "62356e0944de4b2f945632224e7f1d91f3bd9c3390d0d2afcc6c2d9879f22ab4",
+          "originY": 48.8,
+          "originX": 49.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/grove-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/grove-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90.8,
+        "y": 76.4,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/grove-female-melee-v1.webp",
+        "sha256": "f15e19f7585d317248e4738635ec5fa09147c0e87a5dd97d50ff39d27feec164",
+        "effect": {
+          "asset": "assets/beasts/motion/grove-female-melee-effect-v1.webp",
+          "sha256": "36d59e9c134d0f5b3ff923ecab6c16cbf8537644f0a76b327eec563f06cf22d4",
+          "x": 74.8,
+          "y": 70.9
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/grove-female-contact.png"
+      }
+    },
+    {
+      "id": "archdruid-male",
+      "kind": "player",
+      "cls": "archdruid",
+      "gender": "male",
+      "name": "อาร์คดรูอิด (male)",
+      "powerName": "พลังอาร์คดรูอิด (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 68.6,
+        "y": 27.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 51.6,
+        "effectOriginX": 49.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 68.6,
+          "y": 27.5,
+          "asset": "assets/beasts/motion/archdruid-male-windup-v1.webp",
+          "sha256": "b90cd06d66547b0aea2d6b59ca1d842e79e7e1aff6bafa11444895c638df9a21"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/archdruid-male-power-v1.webp",
+          "sha256": "1e068b5a4b3d556264bc6225fdc7ba16b33bb38dfb18be2945aaa1f92c066cc3",
+          "originY": 51.6,
+          "originX": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/archdruid-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/archdruid-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91.6,
+        "y": 58.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/archdruid-male-melee-v1.webp",
+        "sha256": "f866ca0a4b3d4a463c7bd0dc551fa3a5d5beff346be9ae8e4322ea6025196717",
+        "effect": {
+          "asset": "assets/beasts/motion/archdruid-male-melee-effect-v1.webp",
+          "sha256": "ce69846b88dbbfb208837a18e3fc9ff03f841d9bb935aa23005330439ee98dea",
+          "x": 77.7,
+          "y": 67.2
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/archdruid-male-contact.png"
+      }
+    },
+    {
+      "id": "archdruid-female",
+      "kind": "player",
+      "cls": "archdruid",
+      "gender": "female",
+      "name": "อาร์คดรูอิด (female)",
+      "powerName": "พลังอาร์คดรูอิด (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 67,
+        "y": 29.9,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 67,
+          "y": 29.9,
+          "asset": "assets/beasts/motion/archdruid-female-windup-v1.webp",
+          "sha256": "164baa85fb1127e258ad1fedbf14155f242791b522c766f724584ed3b479b338"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/archdruid-female-power-v1.webp",
+          "sha256": "4641f86eda952c93d2f668564390739d1ed6ba6946e0ef96696d515bb596d007",
+          "originY": 50,
+          "originX": 50.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/archdruid-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/archdruid-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91.8,
+        "y": 66.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/archdruid-female-melee-v1.webp",
+        "sha256": "65af2ee2859745d2ccb1a80935a521bee7b0758e5fe84f7d9acfa6eb32435232",
+        "effect": {
+          "asset": "assets/beasts/motion/archdruid-female-melee-effect-v1.webp",
+          "sha256": "6f0a528007d141f756ca6406f1c6048b8835c361177b1f9bb722f15b96cd3f8f",
+          "x": 71.3,
+          "y": 74.2
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/archdruid-female-contact.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "eternal-male",
+      "kind": "player",
+      "cls": "eternal",
+      "gender": "male",
+      "name": "ผู้พิทักษ์นิรันดร์ (male)",
+      "powerName": "พลังผู้พิทักษ์นิรันดร์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 64,
+        "y": 39,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 64,
+          "y": 39,
+          "asset": "assets/beasts/motion/eternal-male-windup-v1.webp",
+          "sha256": "511a6f64db569d25149223d88bae72fdcac98393cd0f8ce26878197ef96bf290"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/eternal-male-power-v1.webp",
+          "sha256": "7a9f18a6c171ff0d2b702a055c33f8aedabb341ef379a4cab833cc70c2fc5e57",
+          "originY": 49.5,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/eternal-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/eternal-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 80,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/eternal-male-melee-v1.webp",
+        "sha256": "8436392869e79886e0b0769ad033d997bcd038db561e5b520587dd29ee484c62",
+        "effect": {
+          "asset": "assets/beasts/motion/eternal-male-melee-effect-v1.webp",
+          "sha256": "d0bc925b9dbfc9f24fef48575980258a93b88d47864bc2d0da874ceb1674769b",
+          "x": 87.8,
+          "y": 88
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/eternal-male-contact.png"
+      }
+    },
+    {
+      "id": "eternal-female",
+      "kind": "player",
+      "cls": "eternal",
+      "gender": "female",
+      "name": "ผู้พิทักษ์นิรันดร์ (female)",
+      "powerName": "พลังผู้พิทักษ์นิรันดร์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 68,
+        "y": 41,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "effectOriginX": 50.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 68,
+          "y": 41,
+          "asset": "assets/beasts/motion/eternal-female-windup-v1.webp",
+          "sha256": "85ec7ad349b0a1e6f13d9d737a0fc80d6ae3e7e8b2da7d6eee7b4ca7e42727bb"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/eternal-female-power-v1.webp",
+          "sha256": "c9608263bee998249365b04355899386424760e803ebaae4fde3ea078c7b58d8",
+          "originY": 49.5,
+          "originX": 50.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/eternal-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/eternal-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.1,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/eternal-female-melee-v1.webp",
+        "sha256": "172c8e2c7949dae76b1f87480c1411bbba79630f0bec5505ae27cd7661430123",
+        "effect": {
+          "asset": "assets/beasts/motion/eternal-female-melee-effect-v1.webp",
+          "sha256": "dcbfb548ac8a0bb76fb33a2efdc2b048e533aef633cbbcc13d5e504ab2cba322",
+          "x": 86.5,
+          "y": 82.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/eternal-female-contact.png"
+      }
+    },
+    {
+      "id": "berserker-male",
+      "kind": "player",
+      "cls": "berserker",
+      "gender": "male",
+      "name": "เบอร์เซิร์กเกอร์ (male)",
+      "powerName": "พลังเบอร์เซิร์กเกอร์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 73.4,
+        "y": 23.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.8,
+        "effectOriginX": 50.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 73.4,
+          "y": 23.2,
+          "asset": "assets/beasts/motion/berserker-male-windup-v1.webp",
+          "sha256": "3f00ee79119f2207871611f5c9a1b27645a30c3df7092569a30466173b608a88"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/berserker-male-power-v1.webp",
+          "sha256": "2f99c766726654cd197d106c3a9637103e4f0f00f5eeb00108adfe2707c2d4b2",
+          "originY": 49.8,
+          "originX": 50.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/berserker-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/berserker-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/berserker-male-melee-v1.webp",
+        "sha256": "c38ac7419f82f4e741f2226d43d06cff1b63396b4657e23497a4354bfcfac1e3",
+        "effect": {
+          "asset": "assets/beasts/motion/berserker-male-melee-effect-v1.webp",
+          "sha256": "8af4ad53fcc87f60217e59fa48f4709e8af398badb60863e78f5de7e49375244",
+          "x": 87.7,
+          "y": 84.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/berserker-male-contact.png"
+      }
+    },
+    {
+      "id": "berserker-female",
+      "kind": "player",
+      "cls": "berserker",
+      "gender": "female",
+      "name": "เบอร์เซิร์กเกอร์ (female)",
+      "powerName": "พลังเบอร์เซิร์กเกอร์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "axe",
+      "source": {
+        "x": 75,
+        "y": 22.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 47.8,
+        "effectOriginX": 49.6,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 75,
+          "y": 22.5,
+          "asset": "assets/beasts/motion/berserker-female-windup-v1.webp",
+          "sha256": "1a9f6b2ea3bb1f3f2715e7f5b99b97d20efca87256846c817debf7edfb0b4746"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/berserker-female-power-v1.webp",
+          "sha256": "565e0bfc5b3b8c9c198de80cb7cbdb3da756a81db2e48aceb0fe0478cdcbc194",
+          "originY": 47.8,
+          "originX": 49.6
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/berserker-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/berserker-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันขวานประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87.7,
+        "y": 84,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/berserker-female-melee-v1.webp",
+        "sha256": "58d9ecae3774f8fb19a3bd837430543c83b6e285a55917253b486ec827ebe68e",
+        "effect": {
+          "asset": "assets/beasts/motion/berserker-female-melee-effect-v1.webp",
+          "sha256": "2339929ec0c372ba6d435c6a8b1bca5bc95af92d8d60b83bdcbe22aed8ddfa14",
+          "x": 87.7,
+          "y": 83
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/berserker-female-contact.png"
+      }
+    }
+  ]
+}

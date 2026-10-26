@@ -1,0 +1,408 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "jade-moon-hare",
+      "species": "jade_moon_hare",
+      "form": 0,
+      "name": "กระต่ายหยกจันทรา",
+      "powerName": "พลังกระต่ายหยกจันทรา",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 59,
+        "y": 71,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 59,
+          "y": 71,
+          "asset": "assets/beasts/motion/jade-moon-hare-windup-v1.webp",
+          "sha256": "78ca79d3fbf916764234d607e5b56806795a4f975556c38894aba99aaeb891aa"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jade-moon-hare-power-v1.webp",
+          "sha256": "802f8f183e4dff322f5c95d8c2c62d63626fa42c388075536a0c96e171bf33b4",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jade-moon-hare-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jade-moon-hare-melee-effect-v1.webp"
+      },
+      "meleeName": "เตะสองขา",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86,
+        "y": 94,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/jade-moon-hare-melee-v1.webp",
+        "sha256": "023540d21397d1a33cdb4ecd51a02007ac96da949f91829b663226907611e356",
+        "effect": {
+          "asset": "assets/beasts/motion/jade-moon-hare-melee-effect-v1.webp",
+          "sha256": "d20743bb9b31d3e6e88f6744bcbe896017cd29d6d793cb9b235c58d88c1012e5",
+          "x": 85,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/jade-moon-hare-contact.png"
+      }
+    },
+    {
+      "id": "tempest-lynx",
+      "species": "tempest_lynx",
+      "form": 0,
+      "name": "ลิงซ์อัสนี",
+      "powerName": "พลังลิงซ์อัสนี",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 88,
+        "y": 47,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.3,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 88,
+          "y": 47,
+          "asset": "assets/beasts/motion/tempest-lynx-windup-v1.webp",
+          "sha256": "52ea079043953b6c4f4dbe9ef09aca5075f13b4636d3b49fbd11be7ec0578b4b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/tempest-lynx-power-v1.webp",
+          "sha256": "cea54f989b1f031fa53a487035f2d190521b125d128ae6f4cfd520fac5166539",
+          "originY": 53.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/tempest-lynx-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/tempest-lynx-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 91,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/tempest-lynx-melee-v1.webp",
+        "sha256": "0cb8655f9b9070efb5f7c7bb8a3484a2e633c73906e04ebe7003c59964f87d43",
+        "effect": {
+          "asset": "assets/beasts/motion/tempest-lynx-melee-effect-v1.webp",
+          "sha256": "49baf36dda0640d263d3c504ddd557b1e3721b9e05d5886c886dd880d7e7c33b",
+          "x": 83,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/tempest-lynx-contact.png"
+      }
+    },
+    {
+      "id": "bloom-jade-mare",
+      "species": "bloom_jade_mare",
+      "form": 0,
+      "name": "อาชาบุปผาหยก",
+      "powerName": "พลังอาชาบุปผาหยก",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 73,
+        "y": 47.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 73,
+          "y": 47.5,
+          "asset": "assets/beasts/motion/bloom-jade-mare-windup-v1.webp",
+          "sha256": "2b80dfc751f2b84d156c1d7e6c888a124dfe92bf750db4fcb7d3d2dc6f5ba561"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bloom-jade-mare-power-v1.webp",
+          "sha256": "a59f64ea8399fef3328e7b0bb8a3696206a5a1cb8190dda7b9fe0c4e7a1ad88f",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bloom-jade-mare-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bloom-jade-mare-melee-effect-v1.webp"
+      },
+      "meleeName": "เตะกีบ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 61,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bloom-jade-mare-melee-v1.webp",
+        "sha256": "18afecd1a563dc3e7f84d512c45a711e52cbf383e8174461a062bbb5ba9eeb2c",
+        "effect": {
+          "asset": "assets/beasts/motion/bloom-jade-mare-melee-effect-v1.webp",
+          "sha256": "70b219f78008c3f41232a282bfecd9dadd522c44d4d5ae96597aaba681a5ac74",
+          "x": 75,
+          "y": 83
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bloom-jade-mare-contact.png"
+      }
+    },
+    {
+      "id": "obsidian-scarab",
+      "species": "obsidian_scarab",
+      "form": 0,
+      "name": "ด้วงราชันออบซิเดียน",
+      "powerName": "พลังด้วงราชันออบซิเดียน",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 58,
+        "y": 55.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 58,
+          "y": 55.5,
+          "asset": "assets/beasts/motion/obsidian-scarab-windup-v1.webp",
+          "sha256": "d19bb65e1f0e2159b6465cb86ea2eab54165362fb9a335cf9c173b7c8d631a8f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/obsidian-scarab-power-v1.webp",
+          "sha256": "3ae90b4ec555db75d5c9fad8b4ece31518d8c339a924c9b8135931d2cd7f872c",
+          "originY": 49
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/obsidian-scarab-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/obsidian-scarab-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 91,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/obsidian-scarab-melee-v1.webp",
+        "sha256": "e584d6d64c2226d66a7e40181ee2e6c16006faa0a9e81a312f92b98d93e1ecda",
+        "effect": {
+          "asset": "assets/beasts/motion/obsidian-scarab-melee-effect-v1.webp",
+          "sha256": "bb04d30030e9efac3cabbd015d29cd345cdc33d58bd01c9a126297da24dd8383",
+          "x": 84,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/obsidian-scarab-contact.png"
+      }
+    },
+    {
+      "id": "aurora-whale",
+      "species": "aurora_whale",
+      "form": 0,
+      "name": "วาฬน้อยแสงเหนือ",
+      "powerName": "พลังวาฬน้อยแสงเหนือ",
+      "idleMode": "float",
+      "background": "water",
+      "source": {
+        "x": 95,
+        "y": 42,
+        "angle": 12,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 95,
+          "y": 42,
+          "asset": "assets/beasts/motion/aurora-whale-windup-v1.webp",
+          "sha256": "2bb8119922654acedbe7452b9f3cf5b99cc15e6d0a23cffa83ef12da0d6e5654"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/aurora-whale-power-v1.webp",
+          "sha256": "a242f33d51867c5961b5a253eaaee9cb6cc869a32004c154719a2cf72b644e42",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/aurora-whale-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/aurora-whale-melee-effect-v1.webp"
+      },
+      "meleeName": "พุ่งชน",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/aurora-whale-melee-v1.webp",
+        "sha256": "01d148d60a5b5fb09b60c9c82d7b535f945232c5d2638b63bf9dd7d06b8aa1b8",
+        "effect": {
+          "asset": "assets/beasts/motion/aurora-whale-melee-effect-v1.webp",
+          "sha256": "d1ea0f6d4c9ead97e6d80081e7cf7177a8a588432493a4c386c621eee35c146c",
+          "x": 86,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/aurora-whale-contact.png"
+      }
+    },
+    {
+      "id": "ember-jackal",
+      "species": "ember_jackal",
+      "form": 0,
+      "name": "หมาไนเถ้าเพลิง",
+      "powerName": "พลังหมาไนเถ้าเพลิง",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 91.5,
+        "y": 50,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 52.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 91.5,
+          "y": 50,
+          "asset": "assets/beasts/motion/ember-jackal-windup-v1.webp",
+          "sha256": "3613445fe87fcfda02334fce68f0e0f9612831dc07b4af4a63d25737c02c7d05"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ember-jackal-power-v1.webp",
+          "sha256": "a5fbbda620a7db47eed5737112f837f9f4fad7739a20ec8ffe618493acff5e13",
+          "originY": 52.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ember-jackal-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ember-jackal-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ember-jackal-melee-v1.webp",
+        "sha256": "07c0d2bedb1e250a8418a57fa050e335104cdbeaa1c0b32d89bb24e7d42bcead",
+        "effect": {
+          "asset": "assets/beasts/motion/ember-jackal-melee-effect-v1.webp",
+          "sha256": "79c904a948e4853befd1728dc6d8b15fe34fd98ba4d1f4501e0c68a218aa02b9",
+          "x": 82,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ember-jackal-contact.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "ammit",
+      "form": 0,
+      "name": "อัมมิต",
+      "powerName": "ลมหายใจทรายทมิฬ",
+      "idleMode": "breathe",
+      "background": "ground",
+      "source": {
+        "x": 91,
+        "y": 36.5,
+        "angle": 0,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.9,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 91,
+          "y": 36.5,
+          "asset": "assets/beasts/motion/ammit-windup-v1.webp",
+          "sha256": "4ec77abc33508f7e9d8970a82b44d2d80d0a464fa722ca897ef2e774f2431839"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ammit-power-v1.webp",
+          "sha256": "b3a4aca384cd2ab6991a620e5be0d23cd7380fa74c2ecbc817941341bd41f5fa",
+          "originY": 51.9
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ammit-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ammit-melee-effect-v1.webp"
+      },
+      "meleeName": "เขี้ยวอัมมิต",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 72,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ammit-melee-v1.webp",
+        "sha256": "0f23f10806499845b3ed3627ccfc4b8f5a8e7b542c6e62ba1f0fb7c2354596f8",
+        "effect": {
+          "asset": "assets/beasts/motion/ammit-melee-effect-v1.webp",
+          "sha256": "b8381fc0910a58d003c9fccaad6251e7ddfbb83d38c5366735e241509ed8a94f",
+          "x": 52,
+          "y": 49.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity and four-leg anatomy inspected",
+          "windup inspected before VFX",
+          "mouth/horn and actual VFX origins visually inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no overflow; rare particles present only for Qilin/Unicorn"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ammit-contact.png"
+      }
+    },
+    {
+      "id": "qilin",
+      "form": 0,
+      "name": "กิเลน",
+      "powerName": "ลมหายใจเพลิงมงคล",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 93,
+        "y": 22.7,
+        "angle": 3,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 93,
+          "y": 22.7,
+          "asset": "assets/beasts/motion/qilin-windup-v1.webp",
+          "sha256": "d6b5cff84ba6579ba5d3cb377de8ecd3129f7f8e974dc0d7c25a3cc36307a484"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/qilin-power-v1.webp",
+          "sha256": "ddcd5788ac98cf9c4d14dbcf222c858b4384e9c9d5bac10152d385e1951c6f92",
+          "originY": 51.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/qilin-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/qilin-melee-effect-v1.webp"
+      },
+      "meleeName": "กีบคู่กิเลน",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97,
+        "y": 60.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/qilin-melee-v1.webp",
+        "sha256": "81be19e842ba2200e05b383c2f060ed1f9ee98630c6acd36a4ef7528200b3bfc",
+        "effect": {
+          "asset": "assets/beasts/motion/qilin-melee-effect-v1.webp",
+          "sha256": "cb68fa79fc16f46a0556ea066be48c638a1c20a6f1c77f376227bc402743ab5d",
+          "x": 50.8,
+          "y": 50.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity and four-leg anatomy inspected",
+          "windup inspected before VFX",
+          "mouth/horn and actual VFX origins visually inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no overflow; rare particles present only for Qilin/Unicorn"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/qilin-contact.png"
+      }
+    },
+    {
+      "id": "unicorn",
+      "form": 0,
+      "name": "ยูนิคอร์น",
+      "powerName": "ลำแสงเขายูนิคอร์น",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 98.4,
+        "y": 47.6,
+        "angle": 17.5,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 98.4,
+          "y": 47.6,
+          "asset": "assets/beasts/motion/unicorn-windup-v1.webp",
+          "sha256": "4472d83a36b3e6dac5668d9ec6ef41bd2ece1c3354a924713e3eb8523c1b7ef6"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/unicorn-power-v1.webp",
+          "sha256": "2b011f63b02b48417f9410931a5f7a6675c654499e0a23f432f0caf3e5e860a4",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/unicorn-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/unicorn-melee-effect-v1.webp"
+      },
+      "meleeName": "เขาพุ่งยูนิคอร์น",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 98.8,
+        "y": 50.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/unicorn-melee-v1.webp",
+        "sha256": "04e066a2b2e11f9847f485315cd0431009534ec840882a0e91ffc6749ec450cc",
+        "effect": {
+          "asset": "assets/beasts/motion/unicorn-melee-effect-v1.webp",
+          "sha256": "d7903c432b763148a2a9bda1ebf4d627503792f5d9e81b0f9641dae5ff12bef3",
+          "x": 60,
+          "y": 64.6
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity and four-leg anatomy inspected",
+          "windup inspected before VFX",
+          "mouth/horn and actual VFX origins visually inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no overflow; rare particles present only for Qilin/Unicorn"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/unicorn-contact.png"
+      }
+    }
+  ]
+}

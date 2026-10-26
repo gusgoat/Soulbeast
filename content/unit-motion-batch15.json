@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "pegasus",
+      "form": 0,
+      "name": "เพกาซัส",
+      "powerName": "ลมหายใจวายุอัสนี",
+      "idleMode": "float",
+      "background": "electric",
+      "source": {
+        "x": 93,
+        "y": 49,
+        "angle": 15,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 52.9,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 93,
+          "y": 49,
+          "asset": "assets/beasts/motion/pegasus-windup-v1.webp",
+          "sha256": "9a1e4f5ef18e1fd66ad7489bc4f9d862d7d7e6da64b7a73c1dfd7ba8945a4ef9"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/pegasus-power-v1.webp",
+          "sha256": "5bf27454d52d2a40b998126bdc86fce53790fca88a52e80b55f3414488810d6d",
+          "originY": 52.9
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/pegasus-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/pegasus-melee-effect-v1.webp"
+      },
+      "meleeName": "กีบคู่เพกาซัส",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97.3,
+        "y": 81.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/pegasus-melee-v1.webp",
+        "sha256": "6b96f695635e14b66a25608b96cbed2274dcb62e61556e7a01eaa274a3a70f31",
+        "effect": {
+          "asset": "assets/beasts/motion/pegasus-melee-effect-v1.webp",
+          "sha256": "6a535a2cac1bd6b079803ec8b8fa23a7af2704c170a2edf27452668523c423e4",
+          "x": 50.4,
+          "y": 51.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; extra Erawan idle leg corrected before poses",
+          "windup inspected before VFX",
+          "actual mouth/trunk and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles enabled"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/pegasus-contact.png"
+      }
+    },
+    {
+      "id": "erawan",
+      "form": 0,
+      "name": "ช้างเอราวัณ",
+      "powerName": "ลมปราณเอราวัณ",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 96,
+        "y": 37.5,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.4,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 96,
+          "y": 37.5,
+          "asset": "assets/beasts/motion/erawan-windup-v1.webp",
+          "sha256": "1327fb65b826a46bef3c3b75707bbefb21c0a24fbb6f9daafaeb2feaef68bd63"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/erawan-power-v1.webp",
+          "sha256": "4e66eb90887c0daf16509147603077699c8763ddb7e6e5a2189943df8bb0bddb",
+          "originY": 50.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/erawan-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/erawan-melee-effect-v1.webp"
+      },
+      "meleeName": "งวงฟาดเอราวัณ",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96,
+        "y": 86.7,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/erawan-melee-v1.webp",
+        "sha256": "aee177dd5fe1995d147519e5800817f1a0051a9030e4d10df46ee40a4ec62888",
+        "effect": {
+          "asset": "assets/beasts/motion/erawan-melee-effect-v1.webp",
+          "sha256": "4da89a981d9794af96b7ddeeea0c130391393cbe6586cb2c9073f8e6ef8c1e9b",
+          "x": 51.8,
+          "y": 54.2
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; extra Erawan idle leg corrected before poses",
+          "windup inspected before VFX",
+          "actual mouth/trunk and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles enabled"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/erawan-contact.png"
+      }
+    },
+    {
+      "id": "baihu",
+      "form": 0,
+      "name": "เสือขาวไป๋หู่",
+      "powerName": "แรงอัดพยัคฆ์เหล็ก",
+      "idleMode": "breathe",
+      "background": "steel",
+      "source": {
+        "x": 63,
+        "y": 38.9,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 51.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 63,
+          "y": 38.9,
+          "asset": "assets/beasts/motion/baihu-windup-v1.webp",
+          "sha256": "147b34b2dc5a6950a6538dfa971eb07d0db60fe1c92471a0a20eaabd5d528c33"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/baihu-power-v1.webp",
+          "sha256": "b98e572c9ac6c2bbceca41f0be5b66bd06edbd3c7039345a76a3a8de28cd3445",
+          "originY": 51.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/baihu-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/baihu-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บไป๋หู่",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 85.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/baihu-melee-v1.webp",
+        "sha256": "1566e3ee9021acd7001be2182e7b6035a5e559d9a1337a7cbe51ee6ed9681e26",
+        "effect": {
+          "asset": "assets/beasts/motion/baihu-melee-effect-v1.webp",
+          "sha256": "b6c221b25d4373c1e92ff8533af7df02cfe3f3b0c011787d32551add4273dd31",
+          "x": 50,
+          "y": 53.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; extra Erawan idle leg corrected before poses",
+          "windup inspected before VFX",
+          "actual mouth/trunk and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; rare final-form particles enabled"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/baihu-contact.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "abyss-turtle",
+      "species": "abyss_turtle",
+      "form": 0,
+      "name": "เต่าอเวจี",
+      "powerName": "พลังเต่าอเวจี",
+      "idleMode": "float",
+      "background": "dark",
+      "source": {
+        "x": 93,
+        "y": 48,
+        "angle": 23,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 55.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 93,
+          "y": 48,
+          "asset": "assets/beasts/motion/abyss-turtle-windup-v1.webp",
+          "sha256": "e4d1d770fcf2b511539c31e87cf649f50aa61a6de760a753faae86d85a844f7e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/abyss-turtle-power-v1.webp",
+          "sha256": "c7aa18795fb02cf923abddeca60209dda69f518c15b622dc0e761145b0b6a9a5",
+          "originY": 55.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/abyss-turtle-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/abyss-turtle-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 91,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/abyss-turtle-melee-v1.webp",
+        "sha256": "eebb8fe92a923e8ae8f6d67c6b1973f4b4488126284e6013325a5faa640d67ca",
+        "effect": {
+          "asset": "assets/beasts/motion/abyss-turtle-melee-effect-v1.webp",
+          "sha256": "42841ab6b9230e33d48e44279ecf80ac0b5d6034c48c454dd08e6e283d89744e",
+          "x": 75.8,
+          "y": 80.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; five framing corrections retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles; ordinary turtle excluded",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/abyss-turtle-contact.png"
+      }
+    },
+    {
+      "id": "lunar-stag",
+      "species": "lunar_stag",
+      "form": 0,
+      "name": "กวางราชันย์จันทร์",
+      "powerName": "พลังกวางราชันย์จันทร์",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 89,
+        "y": 59,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.9,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 89,
+          "y": 59,
+          "asset": "assets/beasts/motion/lunar-stag-windup-v1.webp",
+          "sha256": "95b6af204bfa538f0127a9bc3d3d1e8004d18e03dd6478c4e3051fb075fef248"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/lunar-stag-power-v1.webp",
+          "sha256": "f3f85a2890538ba5235a104248b25f26354e55e85b9e86882fda1ca88dd0fa96",
+          "originY": 50.9
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/lunar-stag-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/lunar-stag-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97,
+        "y": 64,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/lunar-stag-melee-v1.webp",
+        "sha256": "8ebfbe4f9e9fc443506a6da1bf0f9f8fbd5ac1f397149aed2fe916ee96f7c39e",
+        "effect": {
+          "asset": "assets/beasts/motion/lunar-stag-melee-effect-v1.webp",
+          "sha256": "469ecdec6a7d26e566e0a7ee9fb52db0ff7a5fef0217ea3aa6520fdce30c1d1f",
+          "x": 81.3,
+          "y": 36.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; five framing corrections retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles; ordinary turtle excluded",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/lunar-stag-contact.png"
+      }
+    },
+    {
+      "id": "thorn-queen",
+      "species": "thorn_queen",
+      "form": 0,
+      "name": "ราชินีหนาม",
+      "powerName": "พลังราชินีหนาม",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 43,
+        "y": 20,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.3,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 43,
+          "y": 20,
+          "asset": "assets/beasts/motion/thorn-queen-windup-v1.webp",
+          "sha256": "68eb71981ff791d7404063c625fbd285ef390a65b666b9294c24f13af758c18a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/thorn-queen-power-v1.webp",
+          "sha256": "95c8c830c9192b83f10397e623ef7a7e2bd42ddcdb0bc3d94cb6deccf7d8ac07",
+          "originY": 50.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/thorn-queen-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/thorn-queen-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 56,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/thorn-queen-melee-v1.webp",
+        "sha256": "85f75563c19d9091e5b25ff4d66a0b658170f32a01145045b81b8a3311161a52",
+        "effect": {
+          "asset": "assets/beasts/motion/thorn-queen-melee-effect-v1.webp",
+          "sha256": "486d3cc3dae47e0f50336ce8486c4ed4928c810da5688a7457c5da386cee284a",
+          "x": 81,
+          "y": 76.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; five framing corrections retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles; ordinary turtle excluded",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/thorn-queen-contact.png"
+      }
+    },
+    {
+      "id": "mist-serpent",
+      "species": "mist_serpent",
+      "form": 0,
+      "name": "อสรพิษม่านหมอก",
+      "powerName": "พลังอสรพิษม่านหมอก",
+      "idleMode": "float",
+      "background": "water",
+      "source": {
+        "x": 85.5,
+        "y": 39.5,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.6,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 85.5,
+          "y": 39.5,
+          "asset": "assets/beasts/motion/mist-serpent-windup-v1.webp",
+          "sha256": "58ffbe5c867546e8a83fe821bfb79ff5daaec6324612c92a2ee10c5d277fea6c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mist-serpent-power-v1.webp",
+          "sha256": "38a01ba8a6ee4e25a2dae9dad862e0bc6f96f8528a1c96f4088db86052809211",
+          "originY": 51.6
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mist-serpent-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mist-serpent-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82,
+        "y": 70,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mist-serpent-melee-v1.webp",
+        "sha256": "9d47808405505074e7ebe601b63ba7071b92b4be1a00680c5537d9dbce8e64be",
+        "effect": {
+          "asset": "assets/beasts/motion/mist-serpent-melee-effect-v1.webp",
+          "sha256": "ebdfddba7a34cbbf9709632f988309037b085aa6e6a9eb35e11863eabbd66410",
+          "x": 88,
+          "y": 55
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; five framing corrections retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles; ordinary turtle excluded",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/mist-serpent-contact.png"
+      }
+    },
+    {
+      "id": "crow-emperor",
+      "species": "crow_emperor",
+      "form": 0,
+      "name": "จักรพรรดิอีกา",
+      "powerName": "พลังจักรพรรดิอีกา",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 72,
+        "y": 17.5,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 49.7,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 72,
+          "y": 17.5,
+          "asset": "assets/beasts/motion/crow-emperor-windup-v1.webp",
+          "sha256": "aafafb4b76a539f729b62b23cd4c551fe37bbcfd50df0bd4cae1c0017288eda5"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/crow-emperor-power-v1.webp",
+          "sha256": "fd9336060ba59f585552462829f52ccd42cc61d63be8b8ec90e4ac05e6caeecc",
+          "originY": 49.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/crow-emperor-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/crow-emperor-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 62,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/crow-emperor-melee-v1.webp",
+        "sha256": "359b416e1c33b321d3c7268f5b66d9c748535761779f109490d15bf2f5d4b7f4",
+        "effect": {
+          "asset": "assets/beasts/motion/crow-emperor-melee-effect-v1.webp",
+          "sha256": "cf397573e7a92d169fa3074b7ebf69e79a476d49ec4531b85e6420782879dc6c",
+          "x": 96,
+          "y": 36
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; five framing corrections retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles; ordinary turtle excluded",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/crow-emperor-contact.png"
+      }
+    },
+    {
+      "id": "sand-colossus",
+      "species": "sand_colossus",
+      "form": 0,
+      "name": "ยักษ์ทรายสุริยะ",
+      "powerName": "พลังยักษ์ทรายสุริยะ",
+      "idleMode": "breathe",
+      "background": "ground",
+      "source": {
+        "x": 53.8,
+        "y": 33,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.4,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 53.8,
+          "y": 33,
+          "asset": "assets/beasts/motion/sand-colossus-windup-v1.webp",
+          "sha256": "8064bfae409e797f418c504546e189cc9008aeb248be27024b9651badff53b3b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sand-colossus-power-v1.webp",
+          "sha256": "e55d93ee2f9981760bf92715440beb6c9784709a46197629e5bc7801c92ddbd4",
+          "originY": 49.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sand-colossus-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sand-colossus-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80.5,
+        "y": 44,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sand-colossus-melee-v1.webp",
+        "sha256": "10037e2d639cec0c15b34331ecb1f279d9008c61c3d14e66954eb8ca1c748e18",
+        "effect": {
+          "asset": "assets/beasts/motion/sand-colossus-melee-effect-v1.webp",
+          "sha256": "14f025ae4e461e86b0cc7d5cc54ab44afb461018331fde8be62eebdcafc6a7fe",
+          "x": 83,
+          "y": 29
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; five framing corrections retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles; ordinary turtle excluded",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sand-colossus-contact.png"
+      }
+    }
+  ]
+}

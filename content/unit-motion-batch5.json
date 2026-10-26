@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "nilmangkorn",
+      "form": 0,
+      "name": "ม้านิลมังกร",
+      "powerName": "วารีนิลมังกร",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 94,
+        "y": 41,
+        "angle": 10,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.5,
+        "cropLeft": 1.5,
+        "anchor": {
+          "pose": "windup",
+          "x": 94,
+          "y": 41,
+          "asset": "assets/beasts/motion/nilmangkorn-windup-v1.webp",
+          "sha256": "bb1eaa28cd854e273c21bf7bd79e363b3b789c7d50b3ea0a78eae8f0229d0a7a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/nilmangkorn-power-v1.webp",
+          "sha256": "0ba08076485be9f8938e6d23d281ce0ce7856151f7d27322d982150aed9240f3",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/nilmangkorn-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/nilmangkorn-melee-effect-v1.webp"
+      },
+      "meleeName": "กระแทกกีบคู่",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 69,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/nilmangkorn-melee-v1.webp",
+        "sha256": "bf776672c45ae4d9e50fbc813863114bc116a7bbb23c4009dd38de1f3650ce42",
+        "effect": {
+          "asset": "assets/beasts/motion/nilmangkorn-melee-effect-v1.webp",
+          "sha256": "f91637e37ed49ac7d6e7ba568c4e7542b733d1b1af44aa1d81cc5cec250cf210",
+          "x": 63.5,
+          "y": 71.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "identity and anatomy inspected",
+          "actual mouth/palm/trunk and VFX origins",
+          "attack/hit/melee recovery",
+          "visible target at edge contact",
+          "correct elemental palette",
+          "no early-form particles",
+          "real alpha and images load"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/nilmangkorn-contact.png"
+      }
+    },
+    {
+      "id": "jorogumo",
+      "form": 0,
+      "name": "โจโรกุโมะ",
+      "powerName": "ใยพิษพันธนาการ",
+      "idleMode": "breathe",
+      "background": "poison",
+      "source": {
+        "x": 39.4,
+        "y": 25.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 39.4,
+          "y": 25.5,
+          "asset": "assets/beasts/motion/jorogumo-windup-v1.webp",
+          "sha256": "1ebb650c216c4581f680709ccb75c3f4e7a7a809ae653469711cd4ff20319ea8"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jorogumo-power-v1.webp",
+          "sha256": "efc762f5aad6616e0862cb8cc5df732e54d9eca3ee08acc888f864ead0cad56d",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jorogumo-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jorogumo-melee-effect-v1.webp"
+      },
+      "meleeName": "แทงขาแมงมุม",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 88,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/jorogumo-melee-v1.webp",
+        "sha256": "70c08ab5d7cbd2c8b90c3e9110b0f4959b3811739cad332166158c089a5998b7",
+        "effect": {
+          "asset": "assets/beasts/motion/jorogumo-melee-effect-v1.webp",
+          "sha256": "fab0077fa2348f80d2269494fd3fd5ceaa53eae0571d046ba038cb12c9f65e08",
+          "x": 50,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "identity and anatomy inspected",
+          "actual mouth/palm/trunk and VFX origins",
+          "attack/hit/melee recovery",
+          "visible target at edge contact",
+          "correct elemental palette",
+          "no early-form particles",
+          "real alpha and images load"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/jorogumo-contact.png"
+      }
+    },
+    {
+      "id": "baku",
+      "form": 0,
+      "name": "บาคุ",
+      "powerName": "ม่านฝันบาคุ",
+      "idleMode": "breathe",
+      "background": "psychic",
+      "source": {
+        "x": 96,
+        "y": 49.8,
+        "angle": 3,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.7,
+        "cropLeft": 3.5,
+        "anchor": {
+          "pose": "windup",
+          "x": 96,
+          "y": 49.8,
+          "asset": "assets/beasts/motion/baku-windup-v1.webp",
+          "sha256": "ea1999ec6d528b8d3dcf1384b25ed44fa13eb1e6464bef06c8680d67fb7355c8"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/baku-power-v1.webp",
+          "sha256": "73b485704ce166de736dddb6467fe2809104298f62adec4b3d6c9d834a8f46ce",
+          "originY": 53.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/baku-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/baku-melee-effect-v1.webp"
+      },
+      "meleeName": "กระแทกหัว",
+      "meleeMode": "ram",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 48,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/baku-melee-v1.webp",
+        "sha256": "25a11309bc343977d9b0696000cd769582eb71b0199f29df40241966827a3ca3",
+        "effect": {
+          "asset": "assets/beasts/motion/baku-melee-effect-v1.webp",
+          "sha256": "fa0ad5f7c4af19186189dd1996152c5902e83b4fc32ab9a1a5447a1c1b98886e",
+          "x": 54,
+          "y": 51
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "identity and anatomy inspected",
+          "actual mouth/palm/trunk and VFX origins",
+          "attack/hit/melee recovery",
+          "visible target at edge contact",
+          "correct elemental palette",
+          "no early-form particles",
+          "real alpha and images load"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/baku-contact.png"
+      }
+    }
+  ]
+}

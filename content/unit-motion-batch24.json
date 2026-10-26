@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "abyss-emperor",
+      "species": "abyss_emperor",
+      "form": 0,
+      "name": "จักรพรรดิอเวจี",
+      "powerName": "พลังจักรพรรดิอเวจี",
+      "idleMode": "float",
+      "background": "ghost",
+      "source": {
+        "x": 40,
+        "y": 20.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 40,
+          "y": 20.5,
+          "asset": "assets/beasts/motion/abyss-emperor-windup-v1.webp",
+          "sha256": "c0eaf9e8f01bac3d9b0b85a20ee49bac76387f3accdf3b6231109b6f54c61cf5"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/abyss-emperor-power-v1.webp",
+          "sha256": "8522e991422db63da089160bde2e952c9e4ee3efee6e644855f8015cb7f26bf0",
+          "originY": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/abyss-emperor-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/abyss-emperor-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 75.5,
+        "y": 53.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/abyss-emperor-melee-v1.webp",
+        "sha256": "30e902a02655e6c20c802dd3978592981de997c5d67f7f31f7d0058b0667f0c8",
+        "effect": {
+          "asset": "assets/beasts/motion/abyss-emperor-melee-effect-v1.webp",
+          "sha256": "1fedbb6e06280e78d1fbca8e4a8dcf741357f2d65835b20ef626f86c4d8b1a8b",
+          "x": 80,
+          "y": 84
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity anatomy and equipment inspected; eight framing corrections retained in audit",
+          "windup inspected before power and melee before contact trail",
+          "normalized pose and actual VFX cores hash bound",
+          "linear .75s power and full attack hit windup melee recovery",
+          "only rare final emperor has particles; ordinary forms excluded",
+          "visible target non-overlapping edge contact both widths",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/abyss-emperor-contact.png"
+      }
+    },
+    {
+      "id": "goblin",
+      "species": "goblin",
+      "form": 0,
+      "name": "ก็อบลิน",
+      "powerName": "พลังก็อบลิน",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 82,
+        "y": 36.8,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 82,
+          "y": 36.8,
+          "asset": "assets/beasts/motion/goblin-windup-v1.webp",
+          "sha256": "83e79a485dbde03ab50242aa6985962d2619937ebf8512d5a940df1d762c1842"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/goblin-power-v1.webp",
+          "sha256": "945a44931b8272542a84f7acae70a1b2ac1effd607da3f08dce8e56c508fa4a6",
+          "originY": 49
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/goblin-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/goblin-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบโค้ง",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/goblin-melee-v1.webp",
+        "sha256": "ffb6d1327c584af6f5bb8e47dfaba68e040aabc0a964e2291967124ce0bb68a3",
+        "effect": {
+          "asset": "assets/beasts/motion/goblin-melee-effect-v1.webp",
+          "sha256": "e2754f09e46617cb1632d7a5415f361df2baf9463856c74b88ce1568e05a9bba",
+          "x": 83,
+          "y": 71
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity anatomy and equipment inspected; eight framing corrections retained in audit",
+          "windup inspected before power and melee before contact trail",
+          "normalized pose and actual VFX cores hash bound",
+          "linear .75s power and full attack hit windup melee recovery",
+          "only rare final emperor has particles; ordinary forms excluded",
+          "visible target non-overlapping edge contact both widths",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/goblin-contact.png"
+      }
+    },
+    {
+      "id": "silver-fox",
+      "species": "silver_fox",
+      "form": 0,
+      "name": "จิ้งจอกเงิน",
+      "powerName": "พลังจิ้งจอกเงิน",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 82,
+        "y": 48.5,
+        "angle": 25,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 82,
+          "y": 48.5,
+          "asset": "assets/beasts/motion/silver-fox-windup-v1.webp",
+          "sha256": "00277cf781cd87bd730278c2aa5f08ae64ea259676651c2aae6cee3d6090afe0"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/silver-fox-power-v1.webp",
+          "sha256": "ed36d5d413c81cc87420ff9cb7b40e979b908a7d5aa7e5529f7522825e35ed27",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/silver-fox-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/silver-fox-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/silver-fox-melee-v1.webp",
+        "sha256": "fabcffcda0919f5f1ede3d8cc62b5f8965653ca7ce2ab0508596d42994eb72f7",
+        "effect": {
+          "asset": "assets/beasts/motion/silver-fox-melee-effect-v1.webp",
+          "sha256": "2482dc5f0c69c08f2b697ffdcafd55158b9f56ea212a762740a9e1ef97e061d2",
+          "x": 79,
+          "y": 79
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity anatomy and equipment inspected; eight framing corrections retained in audit",
+          "windup inspected before power and melee before contact trail",
+          "normalized pose and actual VFX cores hash bound",
+          "linear .75s power and full attack hit windup melee recovery",
+          "only rare final emperor has particles; ordinary forms excluded",
+          "visible target non-overlapping edge contact both widths",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/silver-fox-contact.png"
+      }
+    },
+    {
+      "id": "moon-cat",
+      "species": "moon_cat",
+      "form": 0,
+      "name": "แมวจันทร์",
+      "powerName": "พลังแมวจันทร์",
+      "idleMode": "breathe",
+      "background": "psychic",
+      "source": {
+        "x": 49,
+        "y": 52,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.6,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 49,
+          "y": 52,
+          "asset": "assets/beasts/motion/moon-cat-windup-v1.webp",
+          "sha256": "132e8b6b60a734a4af1b4ddda7aa91e2b267008dee66e396b7429c6496ee535f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/moon-cat-power-v1.webp",
+          "sha256": "0f19de579e3243b94bd250cd9ebe6b9a6f92951e9f3fd7dfe42d184282b4dafe",
+          "originY": 48.6
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/moon-cat-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/moon-cat-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/moon-cat-melee-v1.webp",
+        "sha256": "110c0f3b5f7e080c3fbdf4139d0af6d3232790331773610d9a21fee3f51f2437",
+        "effect": {
+          "asset": "assets/beasts/motion/moon-cat-melee-effect-v1.webp",
+          "sha256": "036bb1eb95bdee75895accd41b915149cc6547f0c976b8e1f3414c360846ef61",
+          "x": 80,
+          "y": 76
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity anatomy and equipment inspected; eight framing corrections retained in audit",
+          "windup inspected before power and melee before contact trail",
+          "normalized pose and actual VFX cores hash bound",
+          "linear .75s power and full attack hit windup melee recovery",
+          "only rare final emperor has particles; ordinary forms excluded",
+          "visible target non-overlapping edge contact both widths",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/moon-cat-contact.png"
+      }
+    },
+    {
+      "id": "eagle",
+      "species": "eagle",
+      "form": 0,
+      "name": "อินทรีเวหา",
+      "powerName": "พลังอินทรีเวหา",
+      "idleMode": "float",
+      "background": "flying",
+      "source": {
+        "x": 86,
+        "y": 48.5,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 86,
+          "y": 48.5,
+          "asset": "assets/beasts/motion/eagle-windup-v1.webp",
+          "sha256": "708f90030a10d66f53790167394e8256d354e05dabd40a52f0b30b4caa68125e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/eagle-power-v1.webp",
+          "sha256": "509666006d09127e9369f18c41a857618fcf16741a43e343139da8f5198b6f64",
+          "originY": 53.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/eagle-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/eagle-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 84,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/eagle-melee-v1.webp",
+        "sha256": "eb7c3baadcbcd79a9e21584bb10326c7e3192567b619b184a3d16579bbc86e88",
+        "effect": {
+          "asset": "assets/beasts/motion/eagle-melee-effect-v1.webp",
+          "sha256": "3e206ff39cee9960f0f91eb8f5e18d1fa9293a64d2b3d0374623fba83000dd05",
+          "x": 80,
+          "y": 75
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity anatomy and equipment inspected; eight framing corrections retained in audit",
+          "windup inspected before power and melee before contact trail",
+          "normalized pose and actual VFX cores hash bound",
+          "linear .75s power and full attack hit windup melee recovery",
+          "only rare final emperor has particles; ordinary forms excluded",
+          "visible target non-overlapping edge contact both widths",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/eagle-contact.png"
+      }
+    },
+    {
+      "id": "mermaid",
+      "species": "mermaid",
+      "form": 0,
+      "name": "เงือกแก้ว",
+      "powerName": "พลังเงือกแก้ว",
+      "idleMode": "float",
+      "background": "water",
+      "source": {
+        "x": 70,
+        "y": 27.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 70,
+          "y": 27.5,
+          "asset": "assets/beasts/motion/mermaid-windup-v1.webp",
+          "sha256": "5ba6a9af391d79995c7019310b447de32f855e37a2dcd509e76ca058f8dadd98"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mermaid-power-v1.webp",
+          "sha256": "8f4b780e62d7cc73025fc25817e2ca4e938a9b9e035ddfdf586253633f3ee5f3",
+          "originY": 49.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mermaid-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mermaid-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 74,
+        "y": 93,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mermaid-melee-v1.webp",
+        "sha256": "02204387895171de966e0fc3905f862e954ad3e0444d28cfe786f781a21c4f82",
+        "effect": {
+          "asset": "assets/beasts/motion/mermaid-melee-effect-v1.webp",
+          "sha256": "6c98ad2a40651431844b03295c2c33588f0f2a34394ec07f5ce074a3344b98dd",
+          "x": 77,
+          "y": 76
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity anatomy and equipment inspected; eight framing corrections retained in audit",
+          "windup inspected before power and melee before contact trail",
+          "normalized pose and actual VFX cores hash bound",
+          "linear .75s power and full attack hit windup melee recovery",
+          "only rare final emperor has particles; ordinary forms excluded",
+          "visible target non-overlapping edge contact both widths",
+          "real alpha complete loads no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/mermaid-contact.png"
+      }
+    }
+  ]
+}

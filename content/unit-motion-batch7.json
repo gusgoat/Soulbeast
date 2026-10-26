@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "sphinx",
+      "form": 0,
+      "name": "สฟิงซ์",
+      "powerName": "ลมหายใจปริศนาทราย",
+      "idleMode": "breathe",
+      "background": "ground",
+      "source": {
+        "x": 50,
+        "y": 35,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 50,
+          "y": 35,
+          "asset": "assets/beasts/motion/sphinx-windup-v1.webp",
+          "sha256": "5b39a411a268a346cc49a90c729fe53bbd752a26f639d04d0b136d300ef812c9"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sphinx-power-v1.webp",
+          "sha256": "3d3b8cda658d1808aecbae2192fb8827616da3148f526876c6539a6f66f54a16",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sphinx-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sphinx-melee-effect-v1.webp"
+      },
+      "meleeName": "ตะปบกรงเล็บฟาโรห์",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sphinx-melee-v1.webp",
+        "sha256": "a5023979d1ba66d1ae5cbe65a09b55de01130114e3e87f88848144c2e37a88ae",
+        "effect": {
+          "asset": "assets/beasts/motion/sphinx-melee-effect-v1.webp",
+          "sha256": "3d594a113ba12453bc7161775d59ac2744a5ac8c54a132fe0fd34d06d5feee53",
+          "x": 55,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "windup mouth and generated VFX origin inspected",
+          "attack/hit/standalone windup/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sphinx-contact.png"
+      }
+    },
+    {
+      "id": "basilisk",
+      "form": 0,
+      "name": "บาซิลิสก์",
+      "powerName": "ลมหายใจพิษทมิฬ",
+      "idleMode": "breathe",
+      "background": "poison",
+      "source": {
+        "x": 91.5,
+        "y": 39.5,
+        "angle": 12,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 91.5,
+          "y": 39.5,
+          "asset": "assets/beasts/motion/basilisk-windup-v1.webp",
+          "sha256": "7cbdfd85e72151356e7f92dd723993cb49abb5850d195d6492b7dfdc24c44207"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/basilisk-power-v1.webp",
+          "sha256": "e3c6601ec97b1c6889f902bb31b1543e87fcdc17092a4a5230097649be6a2ecd",
+          "originY": 50.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/basilisk-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/basilisk-melee-effect-v1.webp"
+      },
+      "meleeName": "ฉกเขี้ยวอสรพิษ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 47,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/basilisk-melee-v1.webp",
+        "sha256": "32eeab677ce2e8138c1ba03707c636aae92c755a1aa5824da732a971f9cc30b7",
+        "effect": {
+          "asset": "assets/beasts/motion/basilisk-melee-effect-v1.webp",
+          "sha256": "9b963dba4eb6bc7965efce654a3e68b9743d5d1d6d888bcc18af3715b07913be",
+          "x": 56.5,
+          "y": 48
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "windup mouth and generated VFX origin inspected",
+          "attack/hit/standalone windup/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/basilisk-contact.png"
+      }
+    },
+    {
+      "id": "cerberus",
+      "form": 0,
+      "name": "สุนัขนรก",
+      "powerName": "ลมหายใจเพลิงนรก",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 46.5,
+        "y": 40,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 46.5,
+          "y": 40,
+          "asset": "assets/beasts/motion/cerberus-windup-v1.webp",
+          "sha256": "d2bcf2db6d381e700898f44772056b30dc1a55e18623e9d07c6501349171bce8"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/cerberus-power-v1.webp",
+          "sha256": "05beaed73b106f0f8c1dd271b03165c1cf04d561e8ca5295f637a0028cc970b1",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/cerberus-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/cerberus-melee-effect-v1.webp"
+      },
+      "meleeName": "ขย้ำเขี้ยวนรก",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 44,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/cerberus-melee-v1.webp",
+        "sha256": "5f9dbb0123afa22b2aacf336448cd45419fbb151bbf70ebabe986a368f5f950b",
+        "effect": {
+          "asset": "assets/beasts/motion/cerberus-melee-effect-v1.webp",
+          "sha256": "ea7566bda53de3502abc8447a2ee39bf678c4c40baf4f2d2cafe87d0678c3c8d",
+          "x": 50.5,
+          "y": 48.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "identity and anatomy inspected",
+          "windup mouth and generated VFX origin inspected",
+          "attack/hit/standalone windup/melee recovery",
+          "visible target at edge contact",
+          "real alpha and complete image loads",
+          "correct early-form particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/cerberus-contact.png"
+      }
+    }
+  ]
+}

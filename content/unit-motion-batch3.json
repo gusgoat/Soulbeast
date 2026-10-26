@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "pixie",
+      "form": 0,
+      "name": "พิกซี่",
+      "powerName": "ประกายกลีบภูต",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 41,
+        "y": 39.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "anchor": {
+          "pose": "windup",
+          "x": 41,
+          "y": 39.5,
+          "asset": "assets/beasts/motion/pixie-windup-v1.webp",
+          "sha256": "418c7d10e562f780ed0ad54002b42b2b214cd09e71adf2ad56b60fca647dced6"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/pixie-power-v1.webp",
+          "sha256": "6734a61ff26f6fc665cf72fe5be92c58fcbaf4b7dd101cdc8e697fd13bee41f7",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/pixie-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/pixie-melee-effect-v1.webp"
+      },
+      "meleeName": "ฝ่ามือภูต",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92,
+        "y": 62,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/pixie-melee-v1.webp",
+        "sha256": "f5ea0385590fe35651e626b505738c3a18b5e8c93b3824f5db64909b75ce7efd",
+        "effect": {
+          "asset": "assets/beasts/motion/pixie-melee-effect-v1.webp",
+          "sha256": "96e7c11d6040c08e6b66c32ea873774d07405f6014f78ea9f2e29eed76969a19",
+          "x": 54,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "generated identity and pose inspection",
+          "camera-facing palm power anchor",
+          "attack/hit/melee recovery",
+          "edge contact keeps target visible",
+          "no early-form particles",
+          "all images load"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/pixie-contact.png"
+      }
+    },
+    {
+      "id": "kodama",
+      "form": 0,
+      "name": "โคดามะ",
+      "powerName": "พลังพฤกษา",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 80,
+        "y": 48,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "anchor": {
+          "pose": "windup",
+          "x": 80,
+          "y": 48,
+          "asset": "assets/beasts/motion/kodama-windup-v1.webp",
+          "sha256": "499866468689b781af7e21e38d22e835b4390af2621f25f3e2918c1091618839"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kodama-power-v1.webp",
+          "sha256": "b3cb21bff46ef1aa935d9b3c8da06f85afe056a01aaa69c0b056784a39f6dd28",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kodama-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kodama-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดกิ่งไม้",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 76,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kodama-melee-v1.webp",
+        "sha256": "db3aeaa1cca54d98342317ae4d9ce4dcb1da6d3bbc95d7119b88ef86f268389f",
+        "effect": {
+          "asset": "assets/beasts/motion/kodama-melee-effect-v1.webp",
+          "sha256": "4ed7c56790e744d926b694003c57fa134b8f69de0158f5a8ce6e970540227187",
+          "x": 52,
+          "y": 54
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "generated identity and pose inspection",
+          "camera-facing palm power anchor",
+          "attack/hit/melee recovery",
+          "edge contact keeps target visible",
+          "no early-form particles",
+          "all images load"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kodama-contact.png"
+      }
+    },
+    {
+      "id": "redcap",
+      "form": 0,
+      "name": "เรดแคป",
+      "powerName": "มนตร์เงาทมิฬ",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 30.5,
+        "y": 47.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "anchor": {
+          "pose": "windup",
+          "x": 30.5,
+          "y": 47.5,
+          "asset": "assets/beasts/motion/redcap-windup-v1.webp",
+          "sha256": "fecb4026dff2f2ead9a151c28336df10668d2cad27dfd29f4db85359514b59c4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/redcap-power-v1.webp",
+          "sha256": "715d88c90f8e8d07de2104d3741d343f37773ec11b81e0ae82e8afb28d961873",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/redcap-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/redcap-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันมีดโค้ง",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 73,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/redcap-melee-v1.webp",
+        "sha256": "2eee727aaa7ad3b7aa2c6d2a380e0fe5b7425a1432110b131bd967fa39b2c620",
+        "effect": {
+          "asset": "assets/beasts/motion/redcap-melee-effect-v1.webp",
+          "sha256": "3d5b56e2b1f5c877a5b25e6cf3fdf0baceaab23f2e9d5ba976e9814a681993bb",
+          "x": 52,
+          "y": 54
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844",
+        "checks": [
+          "generated identity and pose inspection",
+          "camera-facing palm power anchor",
+          "attack/hit/melee recovery",
+          "edge contact keeps target visible",
+          "no early-form particles",
+          "all images load"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/redcap-contact.png"
+      }
+    }
+  ]
+}

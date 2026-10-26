@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "thunderbird",
+      "form": 0,
+      "name": "ธันเดอร์เบิร์ด",
+      "powerName": "ลมหายใจอัสนี",
+      "idleMode": "float",
+      "background": "electric",
+      "source": {
+        "x": 81.5,
+        "y": 44,
+        "angle": 15,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 46.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 81.5,
+          "y": 44,
+          "asset": "assets/beasts/motion/thunderbird-windup-v1.webp",
+          "sha256": "2a5e8c1be9225f0bc7d45320857e7514372b87b2341ce8c07f333c8ff9447544"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/thunderbird-power-v1.webp",
+          "sha256": "cda1cbf090624370f46523039787d3237fd76faf1e1a02d8897480dad087febc",
+          "originY": 46.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/thunderbird-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/thunderbird-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บอัสนี",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/thunderbird-melee-v1.webp",
+        "sha256": "4fcfa278bc2ba34a29224356bf17290c56e9989b538af8f704d97c2c9f378c3b",
+        "effect": {
+          "asset": "assets/beasts/motion/thunderbird-melee-effect-v1.webp",
+          "sha256": "67e0e8923115aa15fdf591d20ce45fca9eb902cbadef0a1d2ae5f69b7a0f6006",
+          "x": 57.5,
+          "y": 65
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "generated identity and anatomy inspected",
+          "windup inspected before power generation",
+          "real transparent pixels and complete image loads",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "correct particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/thunderbird-contact.png"
+      }
+    },
+    {
+      "id": "gargoyle",
+      "form": 0,
+      "name": "การ์กอยล์",
+      "powerName": "ลมหายใจศิลาวายุ",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 53,
+        "y": 36.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 47.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 53,
+          "y": 36.5,
+          "asset": "assets/beasts/motion/gargoyle-windup-v1.webp",
+          "sha256": "480fc678363bdd073fd061d84fd79f2fce5f7ef06b4cbb58e7d51879368e20be"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gargoyle-power-v1.webp",
+          "sha256": "a6d48e81d04d3a487227b33bc115a6dfadff3efc94dcfce76d5ec872ef520ae7",
+          "originY": 47.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gargoyle-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gargoyle-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บศิลา",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gargoyle-melee-v1.webp",
+        "sha256": "204bc3bb09870e1bfe235282a6e362b3eb39c5dce398cd95b7c69d37402628af",
+        "effect": {
+          "asset": "assets/beasts/motion/gargoyle-melee-effect-v1.webp",
+          "sha256": "42e69790ac8b1354d76a2d3c4e427a9c0871321a241e2105f95ce7c2212b9a4b",
+          "x": 52,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "generated identity and anatomy inspected",
+          "windup inspected before power generation",
+          "real transparent pixels and complete image loads",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "correct particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gargoyle-contact.png"
+      }
+    },
+    {
+      "id": "jiangshi",
+      "form": 0,
+      "name": "เจียงซือ",
+      "powerName": "ฝ่ามือวิญญาณ",
+      "idleMode": "breathe",
+      "background": "ghost",
+      "source": {
+        "x": 31.5,
+        "y": 26,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 31.5,
+          "y": 26,
+          "asset": "assets/beasts/motion/jiangshi-windup-v1.webp",
+          "sha256": "cc71191d2e6b7a00228d4c1ee54700ee54e83d3b7059ce27349e30eb81f36477"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jiangshi-power-v1.webp",
+          "sha256": "a2f26db8d57d33273b441d4cf5c355a906d720b928a9bac5d37777c95a22dcdf",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jiangshi-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jiangshi-melee-effect-v1.webp"
+      },
+      "meleeName": "ฝ่ามือกรงเล็บเจียงซือ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 67.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/jiangshi-melee-v1.webp",
+        "sha256": "5659aaec14771dd9befdfc8487111dbaad0d5d156c54573e7c91992d59c14e0b",
+        "effect": {
+          "asset": "assets/beasts/motion/jiangshi-melee-effect-v1.webp",
+          "sha256": "3a8d2c043287c3b72368d3d1cb3be4bf948ec49ce7acf8bbc62eb6e93ea5a167",
+          "x": 52,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740 (DOM widths verified)",
+        "checks": [
+          "generated identity and anatomy inspected",
+          "windup inspected before power generation",
+          "real transparent pixels and complete image loads",
+          "attack/hit/windup/melee recovery",
+          "unobscured edge contact",
+          "correct particle exclusion",
+          "no horizontal overflow at 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/jiangshi-contact.png"
+      }
+    }
+  ]
+}

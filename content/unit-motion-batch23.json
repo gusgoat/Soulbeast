@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "scorpion-pharaoh",
+      "species": "scorpion_pharaoh",
+      "form": 0,
+      "name": "ฟาโรห์แมงป่อง",
+      "powerName": "พลังฟาโรห์แมงป่อง",
+      "idleMode": "breathe",
+      "background": "poison",
+      "source": {
+        "x": 46,
+        "y": 20.4,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 46,
+          "y": 20.4,
+          "asset": "assets/beasts/motion/scorpion-pharaoh-windup-v1.webp",
+          "sha256": "f168e9c544d3dbb76b7245a0933d578957660bd3fdcc18b67c16140744aa90c8"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/scorpion-pharaoh-power-v1.webp",
+          "sha256": "2d9992b58930ae6a9da32003c4de5412e075bcfb8f0ad92ec2d925f4be4e5ff3",
+          "originY": 51.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/scorpion-pharaoh-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/scorpion-pharaoh-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 77,
+        "y": 69,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/scorpion-pharaoh-melee-v1.webp",
+        "sha256": "2d217b315be3657dd5b290b7393b7faa0bc1914ebcc506a65a897a6e7490d014",
+        "effect": {
+          "asset": "assets/beasts/motion/scorpion-pharaoh-melee-effect-v1.webp",
+          "sha256": "ae1aa840e11b41b27929d764ffa5aba04db19f72f9a0e5847ce167af1f6b6a41",
+          "x": 55,
+          "y": 48
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; eight rejected images retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/scorpion-pharaoh-contact.png"
+      }
+    },
+    {
+      "id": "storm-wyvern",
+      "species": "storm_wyvern",
+      "form": 0,
+      "name": "ไวเวิร์นพายุคลั่ง",
+      "powerName": "พลังไวเวิร์นพายุคลั่ง",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 92.5,
+        "y": 59,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 52.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 92.5,
+          "y": 59,
+          "asset": "assets/beasts/motion/storm-wyvern-windup-v1.webp",
+          "sha256": "8360a65d62fa6ac4f6df092ce8ec5bef439f8983b2cd6db6ea4e8b5117e5aa8c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/storm-wyvern-power-v1.webp",
+          "sha256": "c7a3ffa5481faf9f709d87554269ba272a737fda6b823cf657d7008ac5fc0700",
+          "originY": 52.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/storm-wyvern-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/storm-wyvern-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 86,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/storm-wyvern-melee-v1.webp",
+        "sha256": "af55e3c94b250fe5e56493cb23679079d2341bd2eb449f36ed5af77444a337c1",
+        "effect": {
+          "asset": "assets/beasts/motion/storm-wyvern-melee-effect-v1.webp",
+          "sha256": "7b341fd8c2c95228fabf532089739e7d6fe0aeb3fbc67218b0af9be0fbc96d64",
+          "x": 75,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; eight rejected images retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/storm-wyvern-contact.png"
+      }
+    },
+    {
+      "id": "frost-lich",
+      "species": "frost_lich",
+      "form": 0,
+      "name": "ลิชน้ำแข็งนิรันดร์",
+      "powerName": "พลังลิชน้ำแข็งนิรันดร์",
+      "idleMode": "float",
+      "background": "ice",
+      "source": {
+        "x": 38.3,
+        "y": 27.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38.3,
+          "y": 27.1,
+          "asset": "assets/beasts/motion/frost-lich-windup-v1.webp",
+          "sha256": "55e6ce1a14b922fbc67655788afa77928631215e151d23d592f105903e6b6753"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/frost-lich-power-v1.webp",
+          "sha256": "7f49cb802daba16f3641570c6a17c263b0c981ad423dfb8c1256fa62680ec0d6",
+          "originY": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/frost-lich-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/frost-lich-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 62,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/frost-lich-melee-v1.webp",
+        "sha256": "65d8735d33c6452e01cc14ca7046d701108fe1c78ce68fae231e0f3950c3a064",
+        "effect": {
+          "asset": "assets/beasts/motion/frost-lich-melee-effect-v1.webp",
+          "sha256": "8ec0b8df9fa893daeefddfbd31544cc899968a1ee16beca59d3b37540b278476",
+          "x": 79,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; eight rejected images retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/frost-lich-contact.png"
+      }
+    },
+    {
+      "id": "fallen-seraph",
+      "species": "fallen_seraph",
+      "form": 0,
+      "name": "เซราฟปีกหัก",
+      "powerName": "พลังเซราฟปีกหัก",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 41.5,
+        "y": 22.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 41.5,
+          "y": 22.3,
+          "asset": "assets/beasts/motion/fallen-seraph-windup-v1.webp",
+          "sha256": "86be3d0f68d190502cc99e8bc610c71aa4f4595da6d83d473e613bdc9e583f02"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/fallen-seraph-power-v1.webp",
+          "sha256": "01951b5f0de4243044e62ae07c882421548b799997c096bf28b8067be596af18",
+          "originY": 48.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/fallen-seraph-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/fallen-seraph-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 81,
+        "y": 60,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/fallen-seraph-melee-v1.webp",
+        "sha256": "533911d6d202ec006a095f901d7054b5f15d704fcd26e8bddbe66449a71cb62f",
+        "effect": {
+          "asset": "assets/beasts/motion/fallen-seraph-melee-effect-v1.webp",
+          "sha256": "8fb8dc1d590460d95bc604fa33df2bec3e3be497ace46d5396dd39d4476dc7d1",
+          "x": 70,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; eight rejected images retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/fallen-seraph-contact.png"
+      }
+    },
+    {
+      "id": "sun-devourer",
+      "species": "sun_devourer",
+      "form": 0,
+      "name": "อสูรกลืนตะวัน",
+      "powerName": "พลังอสูรกลืนตะวัน",
+      "idleMode": "breathe",
+      "background": "fire",
+      "source": {
+        "x": 71.8,
+        "y": 27.1,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 52,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 71.8,
+          "y": 27.1,
+          "asset": "assets/beasts/motion/sun-devourer-windup-v1.webp",
+          "sha256": "dd9470ca29ec51458b98174fc2327205af648d5de654519290d998e53de454d7"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sun-devourer-power-v1.webp",
+          "sha256": "4cea7fcdecfc0b6332be88c11223c1b1ea16caa480011715fbcb6504f7316250",
+          "originY": 52
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sun-devourer-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sun-devourer-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92,
+        "y": 82,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sun-devourer-melee-v1.webp",
+        "sha256": "6a08feed41023ad85a37d4cb27dce421e6ac47b6a838a070302ea1174ced7232",
+        "effect": {
+          "asset": "assets/beasts/motion/sun-devourer-melee-effect-v1.webp",
+          "sha256": "4ef280d45f7827b6af27b7a1c96d2545d08d3d10dc25acc9965ec74773c4537e",
+          "x": 78,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; eight rejected images retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sun-devourer-contact.png"
+      }
+    },
+    {
+      "id": "vampire-queen",
+      "species": "vampire_queen",
+      "form": 0,
+      "name": "ราชินีแวมไพร์",
+      "powerName": "พลังราชินีแวมไพร์",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 43,
+        "y": 22.7,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 43,
+          "y": 22.7,
+          "asset": "assets/beasts/motion/vampire-queen-windup-v1.webp",
+          "sha256": "20c519ef4397658a36d8e5e987c137f5bf110b850827554021efe3468e9a7306"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/vampire-queen-power-v1.webp",
+          "sha256": "9a6c711de7cae7b08a4ad4071f8b10fc4d33952e196b6b4dfe60734e83748c0c",
+          "originY": 48
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/vampire-queen-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/vampire-queen-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84,
+        "y": 57,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/vampire-queen-melee-v1.webp",
+        "sha256": "d1b7045a4de859656355d6ce26f6777a9a7de38b797cccc5dcce1bd7c4171a6e",
+        "effect": {
+          "asset": "assets/beasts/motion/vampire-queen-melee-effect-v1.webp",
+          "sha256": "139d9401b1094f5c9ec6a287f730a3f3a81368180d4422273c7a3371419c055f",
+          "x": 75,
+          "y": 76
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified",
+        "checks": [
+          "identity and anatomy inspected; eight rejected images retained in audit",
+          "windup inspected before power",
+          "actual pose and VFX origins calibrated with fingerprints",
+          "linear .75s power; attack/hit/windup/melee recovery",
+          "correct rare-final particles",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha, complete images and no horizontal overflow"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/vampire-queen-contact.png"
+      }
+    }
+  ]
+}

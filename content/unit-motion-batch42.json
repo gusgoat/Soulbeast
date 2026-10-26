@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "swordsman-male",
+      "kind": "player",
+      "cls": "swordsman",
+      "gender": "male",
+      "name": "นักดาบ (male)",
+      "powerName": "พลังนักดาบ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 61,
+        "y": 21,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 47.7,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 61,
+          "y": 21,
+          "asset": "assets/beasts/motion/swordsman-male-windup-v1.webp",
+          "sha256": "ba8b3a56065a49df7098d93b5b29e04e94ef6c3f207ffa611e551ea206fd0f33"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/swordsman-male-power-v1.webp",
+          "sha256": "8288df3e4a7a6829fe48995c2a6b566217571aa3336e80116c4a4f2ce004a4e1",
+          "originY": 47.7,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/swordsman-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/swordsman-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/swordsman-male-melee-v1.webp",
+        "sha256": "6a282b323fcc7b73a9bba4b516961714539e0017d2d089f30002d25b6c51ca59",
+        "effect": {
+          "asset": "assets/beasts/motion/swordsman-male-melee-effect-v1.webp",
+          "sha256": "ab8cc594eac9f43c31be5599417b18fd0fbaeb44fa0d3883baff3b00930685c8",
+          "x": 61,
+          "y": 60
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/swordsman-male-contact.png"
+      }
+    },
+    {
+      "id": "swordsman-female",
+      "kind": "player",
+      "cls": "swordsman",
+      "gender": "female",
+      "name": "นักดาบ (female)",
+      "powerName": "พลังนักดาบ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 62,
+        "y": 22,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 48.3,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 62,
+          "y": 22,
+          "asset": "assets/beasts/motion/swordsman-female-windup-v1.webp",
+          "sha256": "b71286d7db45d41a4e97ba418603dd8dde223828125f1b92835e41d15525ad0a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/swordsman-female-power-v1.webp",
+          "sha256": "f0b779b50bf337c2ab7b096c6936a39fac6e01be69cf2068b926a93373b2873f",
+          "originY": 48.3,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/swordsman-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/swordsman-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96,
+        "y": 88,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/swordsman-female-melee-v1.webp",
+        "sha256": "f6ba3a905dd444f4b124037f09aad8ed1484437ce2f37b8a1000f1c8321767ec",
+        "effect": {
+          "asset": "assets/beasts/motion/swordsman-female-melee-effect-v1.webp",
+          "sha256": "0b8dac63c7dabf23fe04bb21e630ad82a31732cb6bd2b8abd9d0277c420e7c06",
+          "x": 75,
+          "y": 70
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/swordsman-female-contact.png"
+      }
+    },
+    {
+      "id": "samurai-male",
+      "kind": "player",
+      "cls": "samurai",
+      "gender": "male",
+      "name": "ซามูไร (male)",
+      "powerName": "พลังซามูไร (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 63,
+        "y": 24,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 63,
+          "y": 24,
+          "asset": "assets/beasts/motion/samurai-male-windup-v1.webp",
+          "sha256": "8ca4d569124ab84eb7623a19bf45f31560d25e8755bbef2c1b7aaa8282a22bf5"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/samurai-male-power-v1.webp",
+          "sha256": "41c0710a30acb320baec322cfa5848c4fecbb618119efbe5f79d99bc71d7c60a",
+          "originY": 49,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/samurai-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/samurai-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 80,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/samurai-male-melee-v1.webp",
+        "sha256": "b49b2bc43451ccdd083fd2e6a1cc76a1077fc6f9477279825906e473ee4ca1ae",
+        "effect": {
+          "asset": "assets/beasts/motion/samurai-male-melee-effect-v1.webp",
+          "sha256": "549bcfe8eee9cd5be5b86be39cbc73e1297363b8b5e10df658197e0ee5e3efff",
+          "x": 46,
+          "y": 51
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/samurai-male-contact.png"
+      }
+    },
+    {
+      "id": "samurai-female",
+      "kind": "player",
+      "cls": "samurai",
+      "gender": "female",
+      "name": "ซามูไร (female)",
+      "powerName": "พลังซามูไร (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "sword",
+      "source": {
+        "x": 46,
+        "y": 25,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 46,
+          "y": 25,
+          "asset": "assets/beasts/motion/samurai-female-windup-v1.webp",
+          "sha256": "896590fce3bdd4fa04ee6d5b350415fdbd00927d8f16a03770eb6958dccc7fc2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/samurai-female-power-v1.webp",
+          "sha256": "a73a79fb17e4192d0aa8faea81d4de1fb16973ad28f5a4c2264e8161d22c5656",
+          "originY": 49,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/samurai-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/samurai-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันดาบประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 83,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/samurai-female-melee-v1.webp",
+        "sha256": "5d68200a63de3a9d5481636571544ac535a495c1005319fbedc3ef4f7aa2d8dd",
+        "effect": {
+          "asset": "assets/beasts/motion/samurai-female-melee-effect-v1.webp",
+          "sha256": "90198d08f21c397d13dd1882adcae08d76234412498c91816d3fea6f972530fe",
+          "x": 87,
+          "y": 83
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/samurai-female-contact.png"
+      }
+    }
+  ]
+}

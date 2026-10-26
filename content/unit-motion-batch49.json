@@ -1,0 +1,278 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "archer-male",
+      "kind": "player",
+      "cls": "archer",
+      "gender": "male",
+      "name": "นักธนู (male)",
+      "powerName": "พลังนักธนู (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 80.4,
+        "y": 31.2,
+        "angle": -1,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.5,
+        "cropLeft": 4,
+        "anchor": {
+          "pose": "windup",
+          "x": 80.4,
+          "y": 31.2,
+          "asset": "assets/beasts/motion/archer-male-windup-v1.webp",
+          "sha256": "c8c09eacd5cd70cd519c19346c6cc0c92cc4bde3a8b7b533ea88759c4f858755"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/archer-male-power-v1.webp",
+          "sha256": "719a9cb6a01bc182e84febdae1988497727874d48fa6647e1f70093f8c497529",
+          "originY": 51.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/archer-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/archer-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 97.5,
+        "y": 86,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/archer-male-melee-v1.webp",
+        "sha256": "103fa39d7ec16942113aeed22dcc971f520d9468aef16d2b32789a338d0352b4",
+        "effect": {
+          "asset": "assets/beasts/motion/archer-male-melee-effect-v1.webp",
+          "sha256": "e077b68100c7b59539c7eb3dd97c740e2d9679d4cfe7ec1c393d4750e2119a9e",
+          "x": 82,
+          "y": 75
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/archer-male-contact.png"
+      }
+    },
+    {
+      "id": "archer-female",
+      "kind": "player",
+      "cls": "archer",
+      "gender": "female",
+      "name": "นักธนู (female)",
+      "powerName": "พลังนักธนู (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 82.5,
+        "y": 30.3,
+        "angle": 1,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 49.6,
+        "cropLeft": 4.5,
+        "anchor": {
+          "pose": "windup",
+          "x": 82.5,
+          "y": 30.3,
+          "asset": "assets/beasts/motion/archer-female-windup-v1.webp",
+          "sha256": "ce19b3deab6b11da46030860502fdea9dc8875367c858eb2c497f5c7383f8850"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/archer-female-power-v1.webp",
+          "sha256": "0704c2b2ec46056af9fba9c2d5c01b34b137a52202ac0935f457b27c7a07db8a",
+          "originY": 49.6
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/archer-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/archer-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92.1,
+        "y": 86.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/archer-female-melee-v1.webp",
+        "sha256": "a47dac34f66acfed3bd97bed95bf8c3bea6624b75441bfef1bb91105653ab4cd",
+        "effect": {
+          "asset": "assets/beasts/motion/archer-female-melee-effect-v1.webp",
+          "sha256": "25ba6a8f607534413713c66986f446a695ecc478f0123226aea2e0c91c1a27e9",
+          "x": 90.5,
+          "y": 79.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/archer-female-contact.png"
+      }
+    },
+    {
+      "id": "ranger-male",
+      "kind": "player",
+      "cls": "ranger",
+      "gender": "male",
+      "name": "พรานป่า (male)",
+      "powerName": "พลังพรานป่า (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 73.6,
+        "y": 26.6,
+        "angle": -6,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 49.5,
+        "cropLeft": 7,
+        "anchor": {
+          "pose": "windup",
+          "x": 73.6,
+          "y": 26.6,
+          "asset": "assets/beasts/motion/ranger-male-windup-v1.webp",
+          "sha256": "73eacf1c0c4d2b2a61186c8591059835349325a67f16d9d2efe1eced7ae38221"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ranger-male-power-v1.webp",
+          "sha256": "a1941f1ff1bd26dff0543905e83702a6c3544c54e75062f9c2bbbc29f437e631",
+          "originY": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ranger-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ranger-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 79,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ranger-male-melee-v1.webp",
+        "sha256": "d57afe9f2f797a924094fe265468166016b2f9e00514bc9558ae1026873f9287",
+        "effect": {
+          "asset": "assets/beasts/motion/ranger-male-melee-effect-v1.webp",
+          "sha256": "3607a6c050acb081b3c188851fe3377301130c881f7d1d959e30dee0a4dc39e2",
+          "x": 78.5,
+          "y": 75.6
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ranger-male-contact.png"
+      }
+    },
+    {
+      "id": "ranger-female",
+      "kind": "player",
+      "cls": "ranger",
+      "gender": "female",
+      "name": "พรานป่า (female)",
+      "powerName": "พลังพรานป่า (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 82.7,
+        "y": 30,
+        "angle": -2,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.8,
+        "cropLeft": 8,
+        "anchor": {
+          "pose": "windup",
+          "x": 82.7,
+          "y": 30,
+          "asset": "assets/beasts/motion/ranger-female-windup-v1.webp",
+          "sha256": "507bbba758fe045013ff2567268efc0f1143bd4a838ad1568e758dddc5275b94"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/ranger-female-power-v1.webp",
+          "sha256": "c7eaac648e4b20479dec02ec5cc0732133493d4bdb1d79d142a0e31eca6399e8",
+          "originY": 50.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/ranger-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/ranger-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.3,
+        "y": 84.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/ranger-female-melee-v1.webp",
+        "sha256": "7195327180e87f9aeb18ff9ca0cf696324cbcaed85346e6a77ec0f161092de47",
+        "effect": {
+          "asset": "assets/beasts/motion/ranger-female-melee-effect-v1.webp",
+          "sha256": "96c723bce5565bb866d0a8f82975deb06e200a28205367a0ae0be7aae0747eb0",
+          "x": 81.7,
+          "y": 71.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/ranger-female-contact.png"
+      }
+    }
+  ]
+}

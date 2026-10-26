@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "demonlord",
+      "form": 0,
+      "level": 60,
+      "name": "จอมมาร",
+      "powerName": "สุริยคราสทมิฬ",
+      "idleMode": "breathe",
+      "background": "dark",
+      "scene": "assets/ui/element-card-scenes/class-boss.webp",
+      "source": {
+        "x": 85,
+        "y": 68,
+        "angle": 0,
+        "width": 125,
+        "height": 125,
+        "projection": "camera",
+        "anchor": {
+          "pose": "windup",
+          "x": 87,
+          "y": 68,
+          "asset": "assets/beasts/motion/demonlord-windup-v1.webp",
+          "sha256": "10c4f41b4e0e94755c4425ceb48ad62643cf6c0ccadec184c9a8dbc3c3c0de43"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/demonlord-power-v1.webp",
+          "sha256": "a0e87b6e5c5d8f092dab72c7bd89582652708d70ce22855209b8d30d80663862",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "threat": "assets/beasts/motion/demonlord-threat-v1.webp",
+        "melee": "assets/beasts/motion/demonlord-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/demonlord-melee-effect-v1.webp"
+      },
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82,
+        "y": 78,
+        "asset": "assets/beasts/motion/demonlord-melee-v1.webp",
+        "sha256": "253c02f40a91502916d83b84eb2a6f5d4740853e390db4f5cf0a1d326d96107f"
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-26",
+        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "checks": [
+          "Existing user-approved artwork reverified visually",
+          "Power linear .75s; original dragon .7s; recovery to idle",
+          "Hit, windup and melee recover; DemonLord threat recovers",
+          "Normalized SHA256-bound origins remain aligned at all three card widths",
+          "Edge contact preserves target recoil visibility",
+          "Particles match identity policy"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/legacy-demonlord-contact.png",
+        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
+        "heldEvidence": [
+          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
+          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
+        ]
+      }
+    }
+  ]
+}

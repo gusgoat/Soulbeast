@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "bounty-male",
+      "kind": "player",
+      "cls": "bounty",
+      "gender": "male",
+      "name": "นักล่าค่าหัว (male)",
+      "powerName": "พลังนักล่าค่าหัว (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 56.64,
+        "y": 17.77,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 56.64,
+          "y": 17.77,
+          "asset": "assets/beasts/motion/bounty-male-windup-v1.webp",
+          "sha256": "72d941a414cc20568cf4f4a4928fe8957a203c18854277f35ef113f5b5fbb382"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bounty-male-power-v1.webp",
+          "sha256": "a8cb413a78292fe84aef005b26c07238beeffaacfc6b20486347570c5fe4f424",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bounty-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bounty-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.92,
+        "y": 41.02,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bounty-male-melee-v1.webp",
+        "sha256": "7f311083aec86fb769be46844ab6dd4292eb623721b2ca597b4b4de5bf2e41c4",
+        "effect": {
+          "asset": "assets/beasts/motion/bounty-male-melee-effect-v1.webp",
+          "sha256": "d44a4a618d1a2e50711f987023edec418be550f48dea2c67a85946849329faf2",
+          "x": 70.12,
+          "y": 55.66
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bounty-male-contact.png"
+      }
+    },
+    {
+      "id": "bounty-female",
+      "kind": "player",
+      "cls": "bounty",
+      "gender": "female",
+      "name": "นักล่าค่าหัว (female)",
+      "powerName": "พลังนักล่าค่าหัว (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 57.81,
+        "y": 18.55,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 57.81,
+          "y": 18.55,
+          "asset": "assets/beasts/motion/bounty-female-windup-v1.webp",
+          "sha256": "ee05776ff53b438f0c16539a6bdb26dde0b5f3c6c947835fe274f22dd00b6996"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bounty-female-power-v1.webp",
+          "sha256": "795cc728ee2c08af10cab08a6c2d25e2e6efc2801d464388f4360d09fb468299",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bounty-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bounty-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96.29,
+        "y": 36.72,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bounty-female-melee-v1.webp",
+        "sha256": "3554bed61ab03bfb6ffc6c4b34bbee0b9f77644e33eec242a94aad81e5bad5f2",
+        "effect": {
+          "asset": "assets/beasts/motion/bounty-female-melee-effect-v1.webp",
+          "sha256": "2a802a9af79d8e5c6ec5601970848264f630469c0b5076fc2f3a130535194605",
+          "x": 69.73,
+          "y": 50
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bounty-female-contact.png"
+      }
+    },
+    {
+      "id": "artillery-male",
+      "kind": "player",
+      "cls": "artillery",
+      "gender": "male",
+      "name": "พลปืนใหญ่ (male)",
+      "powerName": "พลังพลปืนใหญ่ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 68.95,
+        "y": 25.78,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 68.95,
+          "y": 25.78,
+          "asset": "assets/beasts/motion/artillery-male-windup-v1.webp",
+          "sha256": "e3ab05a2f53fe11223a57ca7eba2abecf0c211114ca498f6b63b78a53479b900"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/artillery-male-power-v1.webp",
+          "sha256": "fb96fe7a251a440c3e8e7dc22d8d86d33947c534a66a757cc222333dc9954539",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/artillery-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/artillery-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.34,
+        "y": 47.07,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/artillery-male-melee-v1.webp",
+        "sha256": "3f56bf6670be2a319c87a3513bd20742579c4ad496ecee66750c6e2a7da97b5b",
+        "effect": {
+          "asset": "assets/beasts/motion/artillery-male-melee-effect-v1.webp",
+          "sha256": "3ccdce9f8debac74b9f9844b0ec4f6e7907c99c98227a903885f7f7f02452d0d",
+          "x": 70.31,
+          "y": 49.02
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/artillery-male-contact.png"
+      }
+    },
+    {
+      "id": "artillery-female",
+      "kind": "player",
+      "cls": "artillery",
+      "gender": "female",
+      "name": "พลปืนใหญ่ (female)",
+      "powerName": "พลังพลปืนใหญ่ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "gun",
+      "source": {
+        "x": 76.37,
+        "y": 23.63,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 76.37,
+          "y": 23.63,
+          "asset": "assets/beasts/motion/artillery-female-windup-v1.webp",
+          "sha256": "f6eb5d94a82ef451c597c540c8c1f306f3eaafbdc3603eb917f8f886d56f6069"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/artillery-female-power-v1.webp",
+          "sha256": "9830b21b39b38a0ea3c847a3edf7e45da6f978ac2d12f4812cbfbac69495aae8",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/artillery-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/artillery-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดปืนประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.12,
+        "y": 49.22,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/artillery-female-melee-v1.webp",
+        "sha256": "bdc34aef1ec4657665f48db572883f582d8df32ebfa6cd5a30936ba1bbd5b3aa",
+        "effect": {
+          "asset": "assets/beasts/motion/artillery-female-melee-effect-v1.webp",
+          "sha256": "bbedad997245f5583df6e36c0f66f77d6ebe6438e946de3c514e365fcbddee0f",
+          "x": 72.46,
+          "y": 49.41
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/artillery-female-contact.png"
+      }
+    }
+  ]
+}

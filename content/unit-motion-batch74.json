@@ -1,0 +1,270 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "wolf",
+      "kind": "transform",
+      "form": 0,
+      "name": "ร่างหมาป่า",
+      "powerName": "พลังร่างหมาป่า",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 86.8,
+        "y": 60,
+        "angle": 15,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.5,
+        "cropLeft": 15.2,
+        "anchor": {
+          "pose": "windup",
+          "x": 86.8,
+          "y": 60,
+          "asset": "assets/beasts/motion/wolf-windup-v1.webp",
+          "sha256": "2eead6ab94898b7b1d63fe26ac0afc38e6aace31f6e4e3b8bbb1d8902649d6b9"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wolf-power-v1.webp",
+          "sha256": "08086223c39c346a9397468f04418b1728ca75baa75cdf0326914163f89c5c6d",
+          "originY": 53.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wolf-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wolf-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิดร่างหมาป่า",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 58.6,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wolf-melee-v1.webp",
+        "sha256": "cf758b7f811c452a5f2fac684d16abfe2ecd8415998230d91a157b9149476b72",
+        "effect": {
+          "asset": "assets/beasts/motion/wolf-melee-effect-v1.webp",
+          "sha256": "8639f5698dfc38b8006d88a41d3586a37dcaee94fe6710e2c69cecda53ade92f",
+          "x": 66,
+          "y": 67.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wolf-contact.png"
+      }
+    },
+    {
+      "id": "bear",
+      "kind": "transform",
+      "form": 0,
+      "name": "ร่างหมี",
+      "powerName": "พลังร่างหมี",
+      "idleMode": "breathe",
+      "background": "ground",
+      "source": {
+        "x": 78.4,
+        "y": 51,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.4,
+        "cropLeft": 15.2,
+        "anchor": {
+          "pose": "windup",
+          "x": 78.4,
+          "y": 51,
+          "asset": "assets/beasts/motion/bear-windup-v1.webp",
+          "sha256": "4a6a0d132802835e8e8a7ffcd244e9d01d43645ee79fe7a9af8e3b7b91e9258b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bear-power-v1.webp",
+          "sha256": "fe3c2b384e0ec6e296150fbfa144b51575a6080595eebf3604225dcd3f23159d",
+          "originY": 53.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bear-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bear-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิดร่างหมี",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84.2,
+        "y": 73.9,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bear-melee-v1.webp",
+        "sha256": "2b58c38c82e0e9094cf631da565bfb9592f5d778b418587d7ac3a4ebd8fcf75e",
+        "effect": {
+          "asset": "assets/beasts/motion/bear-melee-effect-v1.webp",
+          "sha256": "948ec0e3f0eb5a73f26de7aeeec77faf1924233bc54774e9a9c1d3a2252e064f",
+          "x": 71.5,
+          "y": 71.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bear-contact.png"
+      }
+    },
+    {
+      "id": "hawk",
+      "kind": "transform",
+      "form": 0,
+      "name": "ร่างเหยี่ยว",
+      "powerName": "พลังร่างเหยี่ยว",
+      "idleMode": "breathe",
+      "background": "flying",
+      "source": {
+        "x": 83.7,
+        "y": 42.7,
+        "angle": 22,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.7,
+        "cropLeft": 13.6,
+        "anchor": {
+          "pose": "windup",
+          "x": 83.7,
+          "y": 42.7,
+          "asset": "assets/beasts/motion/hawk-windup-v1.webp",
+          "sha256": "c168ddd782f1294bf8dc04ab12f9402ff275f0cf4fb81ed0db7dd057cb532d33"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/hawk-power-v1.webp",
+          "sha256": "5af540907fa8e1c0088cd0e70f976cd48f6725fbfbcded78df82b4ac2485a49f",
+          "originY": 53.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/hawk-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/hawk-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิดร่างเหยี่ยว",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91.7,
+        "y": 76.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/hawk-melee-v1.webp",
+        "sha256": "918640261da4eeae9abb33b9c209c5320c6f73ce2acb85badd6b440b2b8ff55a",
+        "effect": {
+          "asset": "assets/beasts/motion/hawk-melee-effect-v1.webp",
+          "sha256": "34d55fe1a07c6537660203ce4e6edbf9cf58340a4a316852074f2a2976f4e076",
+          "x": 74,
+          "y": 70
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/hawk-contact.png"
+      }
+    },
+    {
+      "id": "treant",
+      "kind": "transform",
+      "form": 0,
+      "name": "ร่างพฤกษา",
+      "powerName": "พลังร่างพฤกษา",
+      "idleMode": "breathe",
+      "background": "grass",
+      "source": {
+        "x": 83,
+        "y": 35.9,
+        "angle": 0,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 49.6,
+        "cropLeft": 9.7,
+        "anchor": {
+          "pose": "windup",
+          "x": 83,
+          "y": 35.9,
+          "asset": "assets/beasts/motion/treant-windup-v1.webp",
+          "sha256": "69c9486d2e5b4ba3c8f0f058a50f27a6a2ac49adacfa7ffd1653440f565fdd78"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/treant-power-v1.webp",
+          "sha256": "802fec98ef9e449b078ae65ceac1f044fec3098e7bebcf85f0c90780f8b9699a",
+          "originY": 49.6
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/treant-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/treant-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิดร่างพฤกษา",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95.5,
+        "y": 74.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/treant-melee-v1.webp",
+        "sha256": "009f3e20e229bd9d112e83e3ec4e8674711dbb36490248a244eb4558666c5b1e",
+        "effect": {
+          "asset": "assets/beasts/motion/treant-melee-effect-v1.webp",
+          "sha256": "32ab312de8b325d5cdd3425cff496b9a39cc59f5b3b5b388256427335b4ba063",
+          "x": 70,
+          "y": 78.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/treant-contact.png"
+      }
+    }
+  ]
+}

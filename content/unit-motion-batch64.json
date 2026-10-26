@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "wildgod-male",
+      "kind": "player",
+      "cls": "wildgod",
+      "gender": "male",
+      "name": "เทพอสูรพงไพร (male)",
+      "powerName": "พลังเทพอสูรพงไพร (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 39.3,
+        "y": 27.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 39.3,
+          "y": 27.3,
+          "asset": "assets/beasts/motion/wildgod-male-windup-v1.webp",
+          "sha256": "4b2ae307697f34ea519ebcef878f1e06754ca6d6b4a6d7a21f27bbae332d8ce4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wildgod-male-power-v1.webp",
+          "sha256": "aa6ba21ad65864422cff2756d3e7d3ec38b06765b8b1c5ee2d5be4ee57ce5c03",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wildgod-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wildgod-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89.6,
+        "y": 58.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wildgod-male-melee-v1.webp",
+        "sha256": "54852fa3c09291366f17c3dcafd0daba88cd9d6ebe96f46de72e62255033c2e9",
+        "effect": {
+          "asset": "assets/beasts/motion/wildgod-male-melee-effect-v1.webp",
+          "sha256": "305055dccd4efabac0b81fa26362eb98bc5d23bfa83ddf883053ea12eb9f3e61",
+          "x": 73.2,
+          "y": 73
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wildgod-male-contact.png"
+      }
+    },
+    {
+      "id": "wildgod-female",
+      "kind": "player",
+      "cls": "wildgod",
+      "gender": "female",
+      "name": "เทพอสูรพงไพร (female)",
+      "powerName": "พลังเทพอสูรพงไพร (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 38.9,
+        "y": 28.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38.9,
+          "y": 28.5,
+          "asset": "assets/beasts/motion/wildgod-female-windup-v1.webp",
+          "sha256": "6476d43ba0ea7dd4d0dd3fb0eea00c1f5a29116a59ff732b355c63ac5ce3ead3"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wildgod-female-power-v1.webp",
+          "sha256": "0d70e191cfbd5ec52fd3be7e1ff0c2a63402da81fcd171c517f51418f3cc5be0",
+          "originY": 49,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wildgod-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wildgod-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89.3,
+        "y": 58.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wildgod-female-melee-v1.webp",
+        "sha256": "1fc2e05b2946d0c5c8c996f659c8fcc9043bc40db4cb3544c5257cfb8ab93a39",
+        "effect": {
+          "asset": "assets/beasts/motion/wildgod-female-melee-effect-v1.webp",
+          "sha256": "11d24fb74d89ed51ce605a8f9720904bd540f4103134a19ad52b197ec4391786",
+          "x": 73.2,
+          "y": 76.2
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wildgod-female-contact.png"
+      }
+    },
+    {
+      "id": "packlord-male",
+      "kind": "player",
+      "cls": "packlord",
+      "gender": "male",
+      "name": "จ้าวแห่งฝูง (male)",
+      "powerName": "พลังจ้าวแห่งฝูง (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 36.7,
+        "y": 30.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "effectOriginX": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 36.7,
+          "y": 30.1,
+          "asset": "assets/beasts/motion/packlord-male-windup-v1.webp",
+          "sha256": "5c1f992de6812a1b7d83b7d2854fcc362b7dc8131cd0a11c85d27b1307481e8e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/packlord-male-power-v1.webp",
+          "sha256": "454a790ab322835541a623f69cf64dfdb61f66451e7f835455497367bde79322",
+          "originY": 49.5,
+          "originX": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/packlord-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/packlord-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85.4,
+        "y": 57.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/packlord-male-melee-v1.webp",
+        "sha256": "1ae3e79b331765814ccb53f46cbafc175b3bff30ad2f168eab3ab430ce351178",
+        "effect": {
+          "asset": "assets/beasts/motion/packlord-male-melee-effect-v1.webp",
+          "sha256": "2d2c8b94ac005b6195d69bc1c305cfbe251286f53473cb177cfc9007a01db098",
+          "x": 71.5,
+          "y": 68.6
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/packlord-male-contact.png"
+      }
+    },
+    {
+      "id": "packlord-female",
+      "kind": "player",
+      "cls": "packlord",
+      "gender": "female",
+      "name": "จ้าวแห่งฝูง (female)",
+      "powerName": "พลังจ้าวแห่งฝูง (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 34.6,
+        "y": 27.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.5,
+        "effectOriginX": 49.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 34.6,
+          "y": 27.3,
+          "asset": "assets/beasts/motion/packlord-female-windup-v1.webp",
+          "sha256": "3750acba896907fd0783d12f70bde621351add61ee6e160ca127bd827bbf6f60"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/packlord-female-power-v1.webp",
+          "sha256": "2cf5aa3a8776b88c24e69d4527221cce863059b1f15828218d28e87cd8d2f7ea",
+          "originY": 49.5,
+          "originX": 49.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/packlord-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/packlord-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90.4,
+        "y": 58.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/packlord-female-melee-v1.webp",
+        "sha256": "ac2671d1587e64aa0a981d523cbcc559c5455f460ca96e3e4d4687ec4b514369",
+        "effect": {
+          "asset": "assets/beasts/motion/packlord-female-melee-effect-v1.webp",
+          "sha256": "321cb3e8b83c4e36e7277ab3f71db1a6c98b51dec05979cfab6898bdbd0d0e9f",
+          "x": 68.9,
+          "y": 68
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/packlord-female-contact.png"
+      }
+    }
+  ]
+}

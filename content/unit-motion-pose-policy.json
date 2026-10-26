@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "scope": "art-production-requirements",
+  "requiredForAll": [
+    "idle",
+    "windup",
+    "hit",
+    "power",
+    "melee"
+  ],
+  "threatOnly": [
+    "legendary",
+    "solar-eclipse-legendary",
+    "demonlord"
+  ],
+  "meleeDirection": "Player/sealer melee must use the actual class weapon from the game catalog. Beast melee follows anatomy. Inspect pose before generating its trail.",
+  "readiness": "Require generated assets and verified compositing before enabling each pose.",
+  "playerWeaponSource": "CLS[cls].w",
+  "particles": {
+    "eligibility": "Player/sealer always. Beasts only at final form: rare, legendary, solar-eclipse legendary, or ordinary with exactly 3 forms. Ordinary 1-2 forms and earlier forms have no particles. Demon Lord is outside the latest explicit list.",
+    "beastPalette": "EL[type].c; alternate dual elements",
+    "playerPalette": [
+      "#fff5df",
+      "#eac56b"
+    ],
+    "respectPause": true,
+    "clipToCard": true
+  },
+  "timing": {
+    "windupDefaultSeconds": 1,
+    "dragonWindupSeconds": 1.1,
+    "powerDefaultSeconds": 0.75,
+    "dragonPowerSeconds": 0.7
+  },
+  "combatIntegration": {
+    "status": "planned-not-enabled",
+    "hitReaction": {
+      "trigger": "Resolved attack lands on the target and is not blocked by a protective shield.",
+      "suppressOn": [
+        "miss",
+        "evade",
+        "no-contact",
+        "shield-block"
+      ],
+      "decisionSource": "Authoritative resolved combat result for each target/hit, not projectile arrival or the presence of a shield buff.",
+      "timing": "Play target hit pose at the resolved impact beat only."
+    },
+    "actions": {
+      "rangedAttack": {
+        "sequence": [
+          "windup",
+          "power"
+        ],
+        "synchronizeWith": "Existing in-game projectile effects; release starts projectile travel and hit reaction follows the resolved impact.",
+        "preserveProjectileSpeed": true
+      },
+      "normalAttack": {
+        "sequence": [
+          "edge-contact-approach",
+          "melee",
+          "return"
+        ],
+        "keepTargetVisible": true
+      },
+      "meleeSkill": {
+        "sequence": [
+          "edge-contact-approach",
+          "melee",
+          "return"
+        ],
+        "keepTargetVisible": true
+      },
+      "nonAttackSkill": {
+        "examples": [
+          "heal",
+          "buff",
+          "debuff",
+          "summon"
+        ],
+        "preferredPose": "threat",
+        "fallbackPose": "windup",
+        "fallbackWhen": "Actor has no authored threat/roar pose.",
+        "releaseAttackPower": false,
+        "meleeTravel": false,
+        "keepSkillEffects": true
+      }
+    },
+    "classification": "Use gameplay skill intent/range, not the visual shape of an effect. A non-damaging debuff remains non-attack even when targeting an enemy.",
+    "availability": "Keep existing threat-only art eligibility. Missing threat pose uses windup alone and returns to idle; do not automatically chain into ranged power."
+  }
+}

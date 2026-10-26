@@ -1,0 +1,416 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "prism-owl",
+      "species": "prism_owl",
+      "form": 0,
+      "name": "นกฮูกปริซึม",
+      "powerName": "พลังนกฮูกปริซึม",
+      "idleMode": "float",
+      "background": "psychic",
+      "source": {
+        "x": 70,
+        "y": 58.4,
+        "angle": 30,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 70,
+          "y": 58.4,
+          "asset": "assets/beasts/motion/prism-owl-windup-v1.webp",
+          "sha256": "fe2678fd1840b41be64d68e0979d10e67d1d41254506cdea06fd21e78f221788"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/prism-owl-power-v1.webp",
+          "sha256": "5d93dd877d65cdad125c5c92b58bb5a29452a71f52591667a75e38d1712a4d7d",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/prism-owl-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/prism-owl-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82,
+        "y": 86,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/prism-owl-melee-v1.webp",
+        "sha256": "c54c17d073933b8ea22a5fc3d8d8e6f96269c4706053448abc7d59e4c92403ea",
+        "effect": {
+          "asset": "assets/beasts/motion/prism-owl-melee-effect-v1.webp",
+          "sha256": "c6ad04a94995fa66ffe7f492b2dea167fbf49d7338d12ad21c7cda68e4b44b15",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/prism-owl-contact.png"
+      }
+    },
+    {
+      "id": "dusk-panther",
+      "species": "dusk_panther",
+      "form": 0,
+      "name": "เสือดาวหมอกทมิฬ",
+      "powerName": "พลังเสือดาวหมอกทมิฬ",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 87,
+        "y": 72,
+        "angle": 25,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 87,
+          "y": 72,
+          "asset": "assets/beasts/motion/dusk-panther-windup-v1.webp",
+          "sha256": "820c32bf77fdac298029b71355fcaa6d0306869259a001c8e818bb31101e453d"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/dusk-panther-power-v1.webp",
+          "sha256": "a9c59d2762eb9ec54d7e653dc945e082581847d01d7437623d96816293e89ec1",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/dusk-panther-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/dusk-panther-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/dusk-panther-melee-v1.webp",
+        "sha256": "d3db4115a3c599fde0e4c5d80aa978e8f22b26366f86aea2337fa543f3ba4758",
+        "effect": {
+          "asset": "assets/beasts/motion/dusk-panther-melee-effect-v1.webp",
+          "sha256": "9db5ffc704ea333814cbaf7c6d9acae6f29e8ce5c6537109182b02f3724c9f6d",
+          "x": 83,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/dusk-panther-contact.png"
+      }
+    },
+    {
+      "id": "primordial-ouroboros",
+      "species": "primordial_ouroboros",
+      "form": 0,
+      "name": "อุโรโบรอสปฐมกาล",
+      "powerName": "พลังอุโรโบรอสปฐมกาล",
+      "idleMode": "float",
+      "background": "dragon",
+      "source": {
+        "x": 93,
+        "y": 50,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 93,
+          "y": 50,
+          "asset": "assets/beasts/motion/primordial-ouroboros-windup-v1.webp",
+          "sha256": "96cb89c8c7003a6577d9f25727978855509bfa461a41aa6801b8d0cab164342b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/primordial-ouroboros-power-v1.webp",
+          "sha256": "f42f726c1529255aab64b56d4ce01095988c0b40db1b5bdb24d1e4bb178a56c0",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/primordial-ouroboros-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/primordial-ouroboros-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/primordial-ouroboros-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 66.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/primordial-ouroboros-melee-v1.webp",
+        "sha256": "02c1f5258badb0fdef9fe5e60e1463e0ba1891a6a93414dd0aa463f0107a1038",
+        "effect": {
+          "asset": "assets/beasts/motion/primordial-ouroboros-melee-effect-v1.webp",
+          "sha256": "c7fd57538e4f8464718411a85a120e0db6db362fb75844ca1b160f9a3e119987",
+          "x": 78,
+          "y": 85
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/primordial-ouroboros-contact.png"
+      }
+    },
+    {
+      "id": "dawn-valkyrie",
+      "species": "dawn_valkyrie",
+      "form": 0,
+      "name": "วาลคิรีรุ่งอรุณ",
+      "powerName": "พลังวาลคิรีรุ่งอรุณ",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 61,
+        "y": 30.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 61,
+          "y": 30.5,
+          "asset": "assets/beasts/motion/dawn-valkyrie-windup-v1.webp",
+          "sha256": "f8bd67e8a3e9b9340576b9c9ec6b1c954ea96c5c792785c1e31b5c717bcdf3e2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/dawn-valkyrie-power-v1.webp",
+          "sha256": "94fa841c21b78b1906227954a112802b63dbf5d095e37a758a110994ed781040",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/dawn-valkyrie-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/dawn-valkyrie-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/dawn-valkyrie-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 94.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/dawn-valkyrie-melee-v1.webp",
+        "sha256": "1b58a6eb2a6a4764b94df7a250699e622f1c1cf0007dd1f9bf0e9f8169e6083a",
+        "effect": {
+          "asset": "assets/beasts/motion/dawn-valkyrie-melee-effect-v1.webp",
+          "sha256": "7918f463aafde4db17e7e8b724f069b53ea7738b4ba76970e38c012815f86cf8",
+          "x": 84,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/dawn-valkyrie-contact.png"
+      }
+    },
+    {
+      "id": "astral-dragon",
+      "species": "astral_dragon",
+      "form": 0,
+      "name": "มังกรดารานภา",
+      "powerName": "พลังมังกรดารานภา",
+      "idleMode": "breathe",
+      "background": "dragon",
+      "source": {
+        "x": 90,
+        "y": 57.8,
+        "angle": 25,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 90,
+          "y": 57.8,
+          "asset": "assets/beasts/motion/astral-dragon-windup-v1.webp",
+          "sha256": "8f68def89adcc823020e2d7fd13c9f1df70101004acd5273bc92cd21b0756b38"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/astral-dragon-power-v1.webp",
+          "sha256": "1944a83645e53f9ac6b53abd9b135b526afe36190621e090cd5b063904999a9c",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/astral-dragon-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/astral-dragon-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/astral-dragon-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88.3,
+        "y": 87.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/astral-dragon-melee-v1.webp",
+        "sha256": "cb58d9cf0060c1e68bb39c9a951219ed9f5715bf069dd8761f7c9bb6e58fee83",
+        "effect": {
+          "asset": "assets/beasts/motion/astral-dragon-melee-effect-v1.webp",
+          "sha256": "6a7430d84a64ed8526767815e76f1e436e4c43b1953ee15ae93ad09b4d5cf9a9",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/astral-dragon-contact.png"
+      }
+    },
+    {
+      "id": "cosmic-tortoise",
+      "species": "cosmic_tortoise",
+      "form": 0,
+      "name": "เต่าจักรวาล",
+      "powerName": "พลังเต่าจักรวาล",
+      "idleMode": "float",
+      "background": "rock",
+      "source": {
+        "x": 58.6,
+        "y": 58.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 58.6,
+          "y": 58.2,
+          "asset": "assets/beasts/motion/cosmic-tortoise-windup-v1.webp",
+          "sha256": "a71a1d3c31ab11ac2b0fcce831794e39e7b84ffb6aa5943dafe6edcff2823f9d"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/cosmic-tortoise-power-v1.webp",
+          "sha256": "d7b71b1202baded0682822206ac11b732c71c9ed23608e9403d29aea63e4757d",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/cosmic-tortoise-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/cosmic-tortoise-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/cosmic-tortoise-threat-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88.3,
+        "y": 90.6,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/cosmic-tortoise-melee-v1.webp",
+        "sha256": "75e949de010431d6802616eaa31dcb32880da0bffc0cebc1faccfd725af60e9d",
+        "effect": {
+          "asset": "assets/beasts/motion/cosmic-tortoise-melee-effect-v1.webp",
+          "sha256": "78135e520c4cbb6261f1d288d91f303d1a51e658abfc70c67ebfbbc62ea764f4",
+          "x": 79,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes",
+          "Authored threat pose, pause and recovery verified at 390 and 320px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/cosmic-tortoise-contact.png"
+      }
+    }
+  ]
+}

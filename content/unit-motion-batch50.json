@@ -1,0 +1,278 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "sniper-male",
+      "kind": "player",
+      "cls": "sniper",
+      "gender": "male",
+      "name": "สไนเปอร์ (male)",
+      "powerName": "พลังสไนเปอร์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 95.8,
+        "y": 29.9,
+        "angle": 0,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 6,
+        "anchor": {
+          "pose": "windup",
+          "x": 95.8,
+          "y": 29.9,
+          "asset": "assets/beasts/motion/sniper-male-windup-v1.webp",
+          "sha256": "63a19d7319eccfe9edd6411747711a7c5f681bd3ea540447850ee0eb16f98318"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sniper-male-power-v1.webp",
+          "sha256": "a2012ec0de1a2cf1e4151d3f9e3451e8066be3b951869dcecf834b92f3dd1df1",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sniper-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sniper-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.8,
+        "y": 74,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sniper-male-melee-v1.webp",
+        "sha256": "87013ba179c710141f21d5a1b952b4993a8d4d794f99637ed1fc8df3eec86170",
+        "effect": {
+          "asset": "assets/beasts/motion/sniper-male-melee-effect-v1.webp",
+          "sha256": "9847e4f6140b1a91896c7f844e206ff1a0178e623d11499e835d3ddc986b5525",
+          "x": 84.5,
+          "y": 75.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sniper-male-contact.png"
+      }
+    },
+    {
+      "id": "sniper-female",
+      "kind": "player",
+      "cls": "sniper",
+      "gender": "female",
+      "name": "สไนเปอร์ (female)",
+      "powerName": "พลังสไนเปอร์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 95.2,
+        "y": 30,
+        "angle": 3,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 8,
+        "anchor": {
+          "pose": "windup",
+          "x": 95.2,
+          "y": 30,
+          "asset": "assets/beasts/motion/sniper-female-windup-v1.webp",
+          "sha256": "f5fafb0abf2b056cd9a743b749615668bb56ab607a3d53d2ae5d5f5acc40fc6f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/sniper-female-power-v1.webp",
+          "sha256": "b0199eccd5707a824c5b652109b0ff6922ce0d207de908499ade109e3f951924",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/sniper-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/sniper-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.6,
+        "y": 71.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/sniper-female-melee-v1.webp",
+        "sha256": "0fe52d13be025bb011ccc5649b685832534c0a0e7aa0042e4a53a5ef3721c444",
+        "effect": {
+          "asset": "assets/beasts/motion/sniper-female-melee-effect-v1.webp",
+          "sha256": "cf5f5a0e4f1a52b92817a32c9917b2c959c46629b518aa9b198e8c1938c6af92",
+          "x": 83.5,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/sniper-female-contact.png"
+      }
+    },
+    {
+      "id": "wildlord-male",
+      "kind": "player",
+      "cls": "wildlord",
+      "gender": "male",
+      "name": "นายพรานพงไพร (male)",
+      "powerName": "พลังนายพรานพงไพร (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 92,
+        "y": 29,
+        "angle": 0,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 49.2,
+        "cropLeft": 8,
+        "anchor": {
+          "pose": "windup",
+          "x": 92,
+          "y": 29,
+          "asset": "assets/beasts/motion/wildlord-male-windup-v1.webp",
+          "sha256": "be606d83b9e856af14d082b65985515f264b3a57be383edcff78ed8befb14961"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wildlord-male-power-v1.webp",
+          "sha256": "17a8d6deea42b7e2a0ec4510e1241a9ccb0976c5ad188637cee50b568efe1d96",
+          "originY": 49.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wildlord-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wildlord-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 86,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wildlord-male-melee-v1.webp",
+        "sha256": "2ae02a759af6958e16a57260be659235552956d143dd2b74cbdf43e449432c57",
+        "effect": {
+          "asset": "assets/beasts/motion/wildlord-male-melee-effect-v1.webp",
+          "sha256": "e1a730fbef576ae9594b59547d9a84b66428a6437729f108cf30b0f7ec940309",
+          "x": 83,
+          "y": 80.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wildlord-male-contact.png"
+      }
+    },
+    {
+      "id": "wildlord-female",
+      "kind": "player",
+      "cls": "wildlord",
+      "gender": "female",
+      "name": "นายพรานพงไพร (female)",
+      "powerName": "พลังนายพรานพงไพร (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 90.6,
+        "y": 30,
+        "angle": 0,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 49.8,
+        "cropLeft": 6,
+        "anchor": {
+          "pose": "windup",
+          "x": 90.6,
+          "y": 30,
+          "asset": "assets/beasts/motion/wildlord-female-windup-v1.webp",
+          "sha256": "bf4150d9c3e457b1034c1be52a0b8acaccb16a5193c911243d88e76fdb8f977b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wildlord-female-power-v1.webp",
+          "sha256": "b7c2a4705107679ee337524d2e47e8f972345962deb1cc7d088311ca78591a7b",
+          "originY": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wildlord-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wildlord-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92.2,
+        "y": 75,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wildlord-female-melee-v1.webp",
+        "sha256": "0eeaeb3ae86f7a1902b278e19282beb584435b2eb5595b430f47f283049e8684",
+        "effect": {
+          "asset": "assets/beasts/motion/wildlord-female-melee-effect-v1.webp",
+          "sha256": "e4db5bc7ec9f5a3f255f813a1b01dbc2e01d259d7f732cd6eba91c45d89af398",
+          "x": 83.5,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wildlord-female-contact.png"
+      }
+    }
+  ]
+}

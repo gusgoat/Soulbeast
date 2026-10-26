@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "cyclops",
+      "form": 0,
+      "name": "ไซคลอปส์",
+      "powerName": "เนตรศิลาอัสนี",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 50,
+        "y": 10.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 50,
+          "y": 10.3,
+          "asset": "assets/beasts/motion/cyclops-windup-v1.webp",
+          "sha256": "fbab365e395ca7f777f5d063cc24d2b869b3a4e8baf76424ab65632d88d1c5f4"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/cyclops-power-v1.webp",
+          "sha256": "5b729e2e264c1d7d384bd954765b6c5230520b2ef8fafb284c65cf64be6bf265",
+          "originY": 49
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/cyclops-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/cyclops-melee-effect-v1.webp"
+      },
+      "meleeName": "หมัดไซคลอปส์",
+      "meleeMode": "slam",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 56.9,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/cyclops-melee-v1.webp",
+        "sha256": "a124c548b6ab2222ff484100f163e37bd09c999b24d97ede33f0a6c7776796bf",
+        "effect": {
+          "asset": "assets/beasts/motion/cyclops-melee-effect-v1.webp",
+          "sha256": "8e92536851abb7da2185652105d557662fac1bcc30c8ac6546dfcfbc1da3c7dc",
+          "x": 79,
+          "y": 85
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; Cyclops side eyes removed before power",
+          "windup inspected before power",
+          "actual eye/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/cyclops-contact.png"
+      }
+    },
+    {
+      "id": "wendigo",
+      "form": 0,
+      "name": "เวนดิโก",
+      "powerName": "ลมหายใจภูตเหมันต์",
+      "idleMode": "breathe",
+      "background": "ice",
+      "source": {
+        "x": 86.4,
+        "y": 44.3,
+        "angle": 15,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 53.5,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 86.4,
+          "y": 44.3,
+          "asset": "assets/beasts/motion/wendigo-windup-v1.webp",
+          "sha256": "55b3b874a0a77ec1731d2ed9205fbf20c88bf976e3ef38b10fd11b7d858c8b6b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/wendigo-power-v1.webp",
+          "sha256": "4aacfa5044a4cf7f694961f2cabc769da8c162c3d72cf487d09d1b07dd4bd398",
+          "originY": 53.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/wendigo-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/wendigo-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บเวนดิโก",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 89,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/wendigo-melee-v1.webp",
+        "sha256": "a1cd854d9f8433a67128a7a8512a78961eb665524b2c9141f24d2a8d2a0e1080",
+        "effect": {
+          "asset": "assets/beasts/motion/wendigo-melee-effect-v1.webp",
+          "sha256": "ec457253617085a8ba31a2d2c81a5bca9c6af416b188642e7a5135c09d844e79",
+          "x": 80,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; Cyclops side eyes removed before power",
+          "windup inspected before power",
+          "actual eye/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/wendigo-contact.png"
+      }
+    },
+    {
+      "id": "bunyip",
+      "form": 0,
+      "name": "บันยิป",
+      "powerName": "วังวนโคลนบันยิป",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 69.8,
+        "y": 34.3,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.7,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 69.8,
+          "y": 34.3,
+          "asset": "assets/beasts/motion/bunyip-windup-v1.webp",
+          "sha256": "8d9646a093d17673a9d8ab059a2c80d7a9dd8f98f1e7cee9064e4f43e5e73c57"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/bunyip-power-v1.webp",
+          "sha256": "55fa0c296e94fe610127334e07145d9d1d7d5770418f93749982f6c7afdab65c",
+          "originY": 50.7
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/bunyip-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/bunyip-melee-effect-v1.webp"
+      },
+      "meleeName": "กรงเล็บบันยิป",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 88,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/bunyip-melee-v1.webp",
+        "sha256": "c7f54b5b7ddc0c3ac3c6d984744bc6efd8a192f2e5cc2649c96c49e729cd438d",
+        "effect": {
+          "asset": "assets/beasts/motion/bunyip-melee-effect-v1.webp",
+          "sha256": "71b6d7ba7c583053c5f8686ca83f253bec103cfe66ebd189a18da8255060f7b5",
+          "x": 74,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "checks": [
+          "identity/anatomy inspected; Cyclops side eyes removed before power",
+          "windup inspected before power",
+          "actual eye/mouth and VFX origins inspected on both widths",
+          "attack/hit/windup/melee recovery",
+          "linear .75s power",
+          "visible target and non-overlapping edge contact on both widths",
+          "real alpha and complete image loads",
+          "no horizontal overflow; no early-form particles"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/bunyip-contact.png"
+      }
+    }
+  ]
+}

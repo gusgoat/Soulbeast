@@ -222,6 +222,21 @@
       "file": "stageSevenQuests.js",
       "description": "Stage 7 illustrated quests and events",
       "units": 1
+    },
+    "motionCatalog": {
+      "file": "motionCatalog.js",
+      "description": "Presentation-only authored motion integration",
+      "units": 1
+    },
+    "characterMotion": {
+      "file": "characterMotion.js",
+      "description": "Presentation-only authored motion integration",
+      "units": 1
+    },
+    "motionController": {
+      "file": "motionController.js",
+      "description": "Shared calibrated portrait controller",
+      "units": 1
     }
   },
   "order": [
@@ -1321,6 +1336,9 @@
     "1095-solarBeasts",
     "1096-stageSeven",
     "1097-stageSevenQuests",
+    "1098-motionCatalog",
+    "1100-motionController",
+    "1099-characterMotion",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9345,6 +9363,27 @@
         "STAGE_SEVEN_QUESTS"
       ],
       "type": "VariableDeclaration"
+    },
+    "1098-motionCatalog": {
+      "module": "motionCatalog",
+      "names": [
+        "MOTION_ACTORS"
+      ],
+      "type": "Presentation"
+    },
+    "1099-characterMotion": {
+      "module": "characterMotion",
+      "names": [
+        "CharacterMotion"
+      ],
+      "type": "Presentation"
+    },
+    "1100-motionController": {
+      "module": "motionController",
+      "names": [
+        "SoulbeastUnitMotion"
+      ],
+      "type": "Presentation"
     }
   },
   "trailer": "\r\n\r\n"

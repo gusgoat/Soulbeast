@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "druid-male",
+      "kind": "player",
+      "cls": "druid",
+      "gender": "male",
+      "name": "ดรูอิด (male)",
+      "powerName": "พลังดรูอิด (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 42.8,
+        "y": 24.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.4,
+        "effectOriginX": 50.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 42.8,
+          "y": 24.2,
+          "asset": "assets/beasts/motion/druid-male-windup-v1.webp",
+          "sha256": "2b6a9d450db9be3d50f92188baf8aab6cd0bf07030f22e8ed2813fb5e7e7f2de"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/druid-male-power-v1.webp",
+          "sha256": "7ccb169e7ce731ec9544c89beaad44ba4636b4bf2e39f9b82ee9abde4f7448e6",
+          "originY": 49.4,
+          "originX": 50.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/druid-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/druid-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87.3,
+        "y": 56.6,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/druid-male-melee-v1.webp",
+        "sha256": "70f973bbbe414e469235c974b485efba1b2902b40bc933b1318d8addf1af0854",
+        "effect": {
+          "asset": "assets/beasts/motion/druid-male-melee-effect-v1.webp",
+          "sha256": "ca4108f5d1621b216945e130d3052e0e14cafda34e856e6f050366c3980afe22",
+          "x": 72.3,
+          "y": 72.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/druid-male-contact.png"
+      }
+    },
+    {
+      "id": "druid-female",
+      "kind": "player",
+      "cls": "druid",
+      "gender": "female",
+      "name": "ดรูอิด (female)",
+      "powerName": "พลังดรูอิด (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 62.3,
+        "y": 25.4,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 62.3,
+          "y": 25.4,
+          "asset": "assets/beasts/motion/druid-female-windup-v1.webp",
+          "sha256": "104c7faf20165d4a1eb237868bd0588219d4ea6f2b27b41aa8ecf7c8ec0c6d97"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/druid-female-power-v1.webp",
+          "sha256": "fe026a0c569e50ff9c112365f1986fee7e005f32444a6e3b12f89e7fe3e09953",
+          "originY": 49,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/druid-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/druid-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89.5,
+        "y": 53.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/druid-female-melee-v1.webp",
+        "sha256": "b4b2d84fdf5f1c64cd5e0c19d93cdb241452bf2638295add008d6aa2ebf94ed8",
+        "effect": {
+          "asset": "assets/beasts/motion/druid-female-melee-effect-v1.webp",
+          "sha256": "9e8b669409ede5c6498800d58569c402d178a0583a8aa30e194fda790204195d",
+          "x": 71.3,
+          "y": 71.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/druid-female-contact.png"
+      }
+    },
+    {
+      "id": "feral-male",
+      "kind": "player",
+      "cls": "feral",
+      "gender": "male",
+      "name": "ราชันย์สัตว์ป่า (male)",
+      "powerName": "พลังราชันย์สัตว์ป่า (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 35.9,
+        "y": 31.25,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 35.9,
+          "y": 31.25,
+          "asset": "assets/beasts/motion/feral-male-windup-v1.webp",
+          "sha256": "fd9ad109b4d79fa2549216f8888aa0778e682f71e15e01bb47b0a2c492e2ba0d"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/feral-male-power-v1.webp",
+          "sha256": "ca5a4b5469228633750a95062bc882fd55c0bf2059a6e8a9df2d66550132f355",
+          "originY": 50,
+          "originX": 50.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/feral-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/feral-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.3,
+        "y": 63.9,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/feral-male-melee-v1.webp",
+        "sha256": "9ae2d71dbfb4472b40f199a42e22687e7cbbecdd0bf4bd95968172c62311255a",
+        "effect": {
+          "asset": "assets/beasts/motion/feral-male-melee-effect-v1.webp",
+          "sha256": "b023037bc7fd189df99ab5ce5e2e20941a28fadd14269747c4f33ee0f619cf9b",
+          "x": 73.2,
+          "y": 67.6
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/feral-male-contact.png"
+      }
+    },
+    {
+      "id": "feral-female",
+      "kind": "player",
+      "cls": "feral",
+      "gender": "female",
+      "name": "ราชันย์สัตว์ป่า (female)",
+      "powerName": "พลังราชันย์สัตว์ป่า (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 38.7,
+        "y": 30.7,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38.7,
+          "y": 30.7,
+          "asset": "assets/beasts/motion/feral-female-windup-v1.webp",
+          "sha256": "c0659fc54c8d91ee21b059789e240f0f1a3c150c597fc7027ef18ba6df49f23c"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/feral-female-power-v1.webp",
+          "sha256": "4a3ac3735dcd832b2b993f493b49643155f5b51504de9f7aaf14c8faacc32670",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/feral-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/feral-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92.2,
+        "y": 63.3,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/feral-female-melee-v1.webp",
+        "sha256": "074d8e3789069e008da52549f30e3dee7dbff8688b0970bb6f3cfe28a2f84705",
+        "effect": {
+          "asset": "assets/beasts/motion/feral-female-melee-effect-v1.webp",
+          "sha256": "5da13f2f295667933b79bf13e2b614de4391a17808871989c5a058ccf01cd27a",
+          "x": 68.6,
+          "y": 71.3
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/feral-female-contact.png"
+      }
+    }
+  ]
+}

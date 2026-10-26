@@ -1,0 +1,408 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "stone-lion",
+      "species": "stone_lion",
+      "form": 0,
+      "name": "สิงห์ศิลา",
+      "powerName": "พลังสิงห์ศิลา",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 59,
+        "y": 34.2,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.8,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 59,
+          "y": 34.2,
+          "asset": "assets/beasts/motion/stone-lion-windup-v1.webp",
+          "sha256": "71f2eec21aa883e8532f591e0be596cc4a45420bcad87cddaa8b3d6d2edfa96f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/stone-lion-power-v1.webp",
+          "sha256": "9b100dba4f2c3e0217c8b02c4cfb028f3f9d14e7b2f400ff5f9952579062ea36",
+          "originY": 49.8
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/stone-lion-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/stone-lion-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/stone-lion-melee-v1.webp",
+        "sha256": "19a8c3ba79cba1481d717bff99fba852bdc7236d7b0ad58660daa7865fe46728",
+        "effect": {
+          "asset": "assets/beasts/motion/stone-lion-melee-effect-v1.webp",
+          "sha256": "121a739b23ef7ad006b9e5fa0cde9b3728400846046c26569291106d8772b97d",
+          "x": 75,
+          "y": 76
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/stone-lion-contact.png"
+      }
+    },
+    {
+      "id": "celestial-deer",
+      "species": "celestial_deer",
+      "form": 0,
+      "name": "กวางดารา",
+      "powerName": "พลังกวางดารา",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 97,
+        "y": 43,
+        "angle": 22,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 97,
+          "y": 43,
+          "asset": "assets/beasts/motion/celestial-deer-windup-v1.webp",
+          "sha256": "a40fc6d5ff7b26c51961857a1a1102c106debe7ce80b3e66229c4ac3899cddb3"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/celestial-deer-power-v1.webp",
+          "sha256": "05b839c340a33791430b5d6a1561641d227968aa1743f0e2df7b7e9f5ccdaef3",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/celestial-deer-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/celestial-deer-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94.5,
+        "y": 50.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/celestial-deer-melee-v1.webp",
+        "sha256": "00040172303a66f190b5f5531a57c925517b27efe1dc47e9780a29bd66c21dae",
+        "effect": {
+          "asset": "assets/beasts/motion/celestial-deer-melee-effect-v1.webp",
+          "sha256": "b001710e215f839e64f83131d38ffe833e26167477fe834f8dd999f8ad5de724",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/celestial-deer-contact.png"
+      }
+    },
+    {
+      "id": "storm-drake",
+      "species": "storm_drake",
+      "form": 0,
+      "name": "เดรคเมฆา",
+      "powerName": "พลังเดรคเมฆา",
+      "idleMode": "float",
+      "background": "dragon",
+      "source": {
+        "x": 81,
+        "y": 46.5,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 81,
+          "y": 46.5,
+          "asset": "assets/beasts/motion/storm-drake-windup-v1.webp",
+          "sha256": "108eb4b7719233d95d47a532b37b92e04dd43ca0f0b7521ca67fb5f0630975ce"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/storm-drake-power-v1.webp",
+          "sha256": "1d75de471631e491c0d8e99c63ae6f3680a92b2a72aeb84eec312af2da6b8063",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/storm-drake-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/storm-drake-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 87,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/storm-drake-melee-v1.webp",
+        "sha256": "4671fb82aba2b541687dc32cfde7f247be12719fcbc32c7d2c507bb12996f19a",
+        "effect": {
+          "asset": "assets/beasts/motion/storm-drake-melee-effect-v1.webp",
+          "sha256": "a583959b76bdf6bde99b8c16ab0febebba291aae3828932d280ba5bec040d706",
+          "x": 78,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/storm-drake-contact.png"
+      }
+    },
+    {
+      "id": "demon-knight",
+      "species": "demon_knight",
+      "form": 0,
+      "name": "อัศวินปีศาจ",
+      "powerName": "พลังอัศวินปีศาจ",
+      "idleMode": "breathe",
+      "background": "fighting",
+      "source": {
+        "x": 38,
+        "y": 29.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.4,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38,
+          "y": 29.5,
+          "asset": "assets/beasts/motion/demon-knight-windup-v1.webp",
+          "sha256": "8876e04d915c0e4fb46472e3e193135db8948e26a9def12bd70bcc55d53b3162"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/demon-knight-power-v1.webp",
+          "sha256": "08930cd404e02160fbe0a23097852d455fe1ac37b343ce87d67b37823b7ff1c5",
+          "originY": 49.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/demon-knight-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/demon-knight-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟันง้าว",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 90,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/demon-knight-melee-v1.webp",
+        "sha256": "0311d4f071940ab9b34e209920e70df90744e65f28455dae2e6ffc0274975aa3",
+        "effect": {
+          "asset": "assets/beasts/motion/demon-knight-melee-effect-v1.webp",
+          "sha256": "8a9988e15241d3f5ea969818a087177ee110fd523e297422392ce4dd7e1404f1",
+          "x": 81,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/demon-knight-contact.png"
+      }
+    },
+    {
+      "id": "zombie",
+      "species": "zombie",
+      "form": 0,
+      "name": "ซอมบี้เฝ้าสุสาน",
+      "powerName": "พลังซอมบี้เฝ้าสุสาน",
+      "idleMode": "breathe",
+      "background": "poison",
+      "source": {
+        "x": 35,
+        "y": 24.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49.3,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 35,
+          "y": 24.5,
+          "asset": "assets/beasts/motion/zombie-windup-v1.webp",
+          "sha256": "b89cc418f7ccc60fce88f049baf9d4214e445aab9b5871955cade12e9ea68480"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/zombie-power-v1.webp",
+          "sha256": "47aa6bfe49aa04714613da36e67c0e3fde102ba68838bb157262a9d19dfeff41",
+          "originY": 49.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/zombie-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/zombie-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทา",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 94,
+        "y": 93,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/zombie-melee-v1.webp",
+        "sha256": "4e45b4acc17d1896fa30d289fc3af4c7780e9bd57d474768ef17ae3f24b27b0e",
+        "effect": {
+          "asset": "assets/beasts/motion/zombie-melee-effect-v1.webp",
+          "sha256": "0c2ee263caac03d3e59d12937f520df67816ec0abd4c13565b0b2bebaa8b2cbb",
+          "x": 76,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/zombie-contact.png"
+      }
+    },
+    {
+      "id": "void-mantis",
+      "species": "void_mantis",
+      "form": 0,
+      "name": "ตั๊กแตนตำข้าวมิติ",
+      "powerName": "พลังตั๊กแตนตำข้าวมิติ",
+      "idleMode": "breathe",
+      "background": "bug",
+      "source": {
+        "x": 98,
+        "y": 56.5,
+        "angle": 25,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 98,
+          "y": 56.5,
+          "asset": "assets/beasts/motion/void-mantis-windup-v1.webp",
+          "sha256": "514f4a560cb2c73762191772be17bc09cd85484316713c0dbaed3613cf7e3900"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/void-mantis-power-v1.webp",
+          "sha256": "06f8799ab2984daea355333079b5df7116117c483bb52f9e2579c1394819d92a",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/void-mantis-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/void-mantis-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 93,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/void-mantis-melee-v1.webp",
+        "sha256": "36e700fa5e12cd0fcebb8f22dc7d8dde938acb3cd747636f36b32a951719df49",
+        "effect": {
+          "asset": "assets/beasts/motion/void-mantis-melee-effect-v1.webp",
+          "sha256": "f108933eb386fcfef4aace166df50a233511f51bf2c68ccfe36c1d3ca081b768",
+          "x": 84,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual window.innerWidth verified; arena108.6px",
+        "checks": [
+          "Identity, anatomy and equipment visually inspected",
+          "Windup and melee inspected before generating distinct VFX",
+          "Pose and VFX origins normalized and SHA256 bound",
+          "Power .75s linear; attack, hit, windup and melee recover to idle",
+          "Correct final-form particle rule; all images loaded; no horizontal overflow",
+          "Edge contact keeps target visible without portrait overlap",
+          "Real alpha verified by importer",
+          "Held power aligned at normal293.6px and arena108.6px sizes"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/void-mantis-contact.png"
+      }
+    }
+  ]
+}

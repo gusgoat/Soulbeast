@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "naga-great",
+      "species": "naga",
+      "form": 2,
+      "name": "พญานาค",
+      "powerName": "พลังพญานาค",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 90,
+        "y": 35,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 56,
+        "cropLeft": 3,
+        "anchor": {
+          "pose": "windup",
+          "x": 90,
+          "y": 35,
+          "asset": "assets/beasts/motion/naga-great-windup-v1.webp",
+          "sha256": "37aedc7a5857de8756774afa94344ef569d3e4b83617ef4c4930c5b34883c707"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/naga-great-power-v1.webp",
+          "sha256": "36f1e3d69d15e847168ab149723fffc2d2322b711353f467c5aa93fe2367fb32",
+          "originY": 56
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/naga-great-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/naga-great-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 89,
+        "y": 55,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/naga-great-melee-v1.webp",
+        "sha256": "e83ebdc2976ceb61686d497de992cf21f9be5e7a125341e82ebeac96b9675b52",
+        "effect": {
+          "asset": "assets/beasts/motion/naga-great-melee-effect-v1.webp",
+          "sha256": "0b71fe412b08b546678997c3f33925f9a4ff9cd79dcc04ba3dc4ffce8b100080",
+          "x": 78,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/naga-great-contact.png"
+      }
+    },
+    {
+      "id": "thunderbird-storm",
+      "species": "thunderbird",
+      "form": 1,
+      "name": "ธันเดอร์เบิร์ดพายุ",
+      "powerName": "พลังธันเดอร์เบิร์ดพายุ",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 70,
+        "y": 44,
+        "angle": 22,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.6,
+        "cropLeft": 4,
+        "anchor": {
+          "pose": "windup",
+          "x": 70,
+          "y": 44,
+          "asset": "assets/beasts/motion/thunderbird-storm-windup-v1.webp",
+          "sha256": "9100fa1830671069edb97f7ec03d3a893ff0072db5ba373f774913b13d5a9654"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/thunderbird-storm-power-v1.webp",
+          "sha256": "07f2d182feca250ea2b60d5868e7ddabd6619ccd7ba281181f8e7f342024f030",
+          "originY": 50.6
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/thunderbird-storm-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/thunderbird-storm-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 80,
+        "y": 89,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/thunderbird-storm-melee-v1.webp",
+        "sha256": "1954cefbc8c6c4376e48a20acdd30f3c5410b5adfb3622306c1928db91bf5656",
+        "effect": {
+          "asset": "assets/beasts/motion/thunderbird-storm-melee-effect-v1.webp",
+          "sha256": "6f85f1af526243b2558988d06ca773ecfa7b1c59478532a49fe119634188c2d3",
+          "x": 83,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/thunderbird-storm-contact.png"
+      }
+    },
+    {
+      "id": "thunderbird-lord",
+      "species": "thunderbird",
+      "form": 2,
+      "name": "นกอัสนีจ้าวพายุ",
+      "powerName": "พลังนกอัสนีจ้าวพายุ",
+      "idleMode": "breathe",
+      "background": "electric",
+      "source": {
+        "x": 66,
+        "y": 45,
+        "angle": 22,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 3,
+        "anchor": {
+          "pose": "windup",
+          "x": 66,
+          "y": 45,
+          "asset": "assets/beasts/motion/thunderbird-lord-windup-v1.webp",
+          "sha256": "8817a18a52c4e12307d0a6aaf5a9b8d83edd84ab16a7834ffcf3a296f5370eb2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/thunderbird-lord-power-v1.webp",
+          "sha256": "1268b14d8cde3828ba772d928ae89d8522aea8a2fba18b291c966d74c495ec82",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/thunderbird-lord-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/thunderbird-lord-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 85,
+        "y": 89,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/thunderbird-lord-melee-v1.webp",
+        "sha256": "e3fc43aaf68dd008d4e6b946902334c14ee09d89cd10004de366dbe1c963067e",
+        "effect": {
+          "asset": "assets/beasts/motion/thunderbird-lord-melee-effect-v1.webp",
+          "sha256": "db2c9df69e77c494007cd5e926b715d480c6ee8b315bd81d87f4beea6d3fe688",
+          "x": 81,
+          "y": 81
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/thunderbird-lord-contact.png"
+      }
+    },
+    {
+      "id": "gargoyle-stone",
+      "species": "gargoyle",
+      "form": 1,
+      "name": "การ์กอยล์ศิลา",
+      "powerName": "พลังการ์กอยล์ศิลา",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 28,
+        "y": 39,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 28,
+          "y": 39,
+          "asset": "assets/beasts/motion/gargoyle-stone-windup-v1.webp",
+          "sha256": "c1906a0b51571d42dd6458311ab6798bf0a8dc517ba69a6308a432cf522933ae"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gargoyle-stone-power-v1.webp",
+          "sha256": "d72887bd47f4a1c7f5671534ce02e3b8e0f5988bfb73fe5cbe9fb1258aa5f4b5",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gargoyle-stone-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gargoyle-stone-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 83,
+        "y": 80,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gargoyle-stone-melee-v1.webp",
+        "sha256": "3233657cf34a603ed29801dbbdb6fc5bd1e3cd313f2469bf81131b6720c87f66",
+        "effect": {
+          "asset": "assets/beasts/motion/gargoyle-stone-melee-effect-v1.webp",
+          "sha256": "3a2cbcc7243f2b3066e399ebc0b1d55a9b83cc88e63983e471a106689a945bf7",
+          "x": 78,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gargoyle-stone-contact.png"
+      }
+    },
+    {
+      "id": "gargoyle-demon",
+      "species": "gargoyle",
+      "form": 2,
+      "name": "การ์กอยล์ปีศาจ",
+      "powerName": "พลังการ์กอยล์ปีศาจ",
+      "idleMode": "breathe",
+      "background": "rock",
+      "source": {
+        "x": 34,
+        "y": 33,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 34,
+          "y": 33,
+          "asset": "assets/beasts/motion/gargoyle-demon-windup-v1.webp",
+          "sha256": "d6bab862cc4397a5101579bdc000b35975866199272b37d8faa134b579af84b0"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gargoyle-demon-power-v1.webp",
+          "sha256": "f8f5f648951d501b91bfaee1a6265f1fdafb3cacda4e422eae863302542c1d2c",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gargoyle-demon-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gargoyle-demon-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 75,
+        "y": 61,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gargoyle-demon-melee-v1.webp",
+        "sha256": "f62e6ff6205ebc14f819128c4d610f9a5d965993233cbbb57e404bc3b7066f6f",
+        "effect": {
+          "asset": "assets/beasts/motion/gargoyle-demon-melee-effect-v1.webp",
+          "sha256": "a4695a211ec7d529ad1609500c4549961435f4b22646f2a36cf878d0d200a382",
+          "x": 80,
+          "y": 77
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gargoyle-demon-contact.png"
+      }
+    },
+    {
+      "id": "jiangshi-century",
+      "species": "jiangshi",
+      "form": 1,
+      "name": "เจียงซือร้อยปี",
+      "powerName": "พลังเจียงซือร้อยปี",
+      "idleMode": "breathe",
+      "background": "ghost",
+      "source": {
+        "x": 39,
+        "y": 26,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 39,
+          "y": 26,
+          "asset": "assets/beasts/motion/jiangshi-century-windup-v1.webp",
+          "sha256": "f5b5d816fcfb699bd81273ade6f442c24ddda30e5faa5df6fe62c004a977667f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jiangshi-century-power-v1.webp",
+          "sha256": "1adfc22f83b2876e6108283e46e990f8a9363b203091711824cee231711051cb",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jiangshi-century-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jiangshi-century-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 82,
+        "y": 56,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/jiangshi-century-melee-v1.webp",
+        "sha256": "e34e4b514c99b5f5f8c054650013fcdd0296de84efd7b4c4c8c29a7a2e0c4864",
+        "effect": {
+          "asset": "assets/beasts/motion/jiangshi-century-melee-effect-v1.webp",
+          "sha256": "9166d789d1a82944ae4b1882b16d7d7f84d0aede919befa819d1c469381d760f",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/jiangshi-century-contact.png"
+      }
+    }
+  ]
+}

@@ -3,10 +3,11 @@ const fs=require('fs'),path=require('path'),crypto=require('crypto'),vm=require(
 const repo=path.resolve(__dirname,'..');
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 function build(output,{readFile=file=>fs.readFileSync(file,'utf8'),write=true}={}){
+ require('./validate-motion-anchors.cjs')(require('./unit-motion-manifests.cjs')().flatMap(m=>m.actors),repo);
  const read=rel=>readFile(path.join(repo,rel));
  const config=JSON.parse(read('client/build.json'));
  if(config.version!==1||!Array.isArray(config.contentGroups)||new Set(config.contentGroups).size!==config.contentGroups.length||config.contentGroups.some(g=>!/^[a-z]+$/.test(g)))throw Error('Invalid content group configuration');
- const shell=read('client/shell.html'),styles=read('client/styles.css');
+ const shell=read('client/shell.html'),styles=['client/styles.css','client/character-motion.css','client/equipment-aura.css'].map(read).join('\n');
  for(const marker of ['<!-- SOULBEAST_STYLES -->','<!-- SOULBEAST_SCRIPTS -->'])if(shell.split(marker).length!==2)throw Error('Expected exactly one '+marker);
  const registry="'use strict';\nconst SoulbeastContent=Object.create(null);\n";
  const packs=config.contentGroups.map(group=>({group,code:read('content/'+group+'.js')}));

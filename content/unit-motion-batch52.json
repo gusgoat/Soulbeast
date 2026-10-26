@@ -1,0 +1,282 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "dirge-male",
+      "kind": "player",
+      "cls": "dirge",
+      "gender": "male",
+      "name": "นักดนตรีมรณะ (male)",
+      "powerName": "พลังนักดนตรีมรณะ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 87,
+        "y": 28.8,
+        "angle": -2,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51.5,
+        "cropLeft": 8.4,
+        "anchor": {
+          "pose": "windup",
+          "x": 87,
+          "y": 28.8,
+          "asset": "assets/beasts/motion/dirge-male-windup-v1.webp",
+          "sha256": "9c7a6a1582ea7073c9f9b0f71b7aba91767c06472dc0f67b1211088252eeb65b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/dirge-male-power-v1.webp",
+          "sha256": "5adb6a300f5255f09805d349bbb301dec06eaab2d72f87f468b42b3c9e51723b",
+          "originY": 51.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/dirge-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/dirge-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 84,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/dirge-male-melee-v1.webp",
+        "sha256": "532bfb69a29081551f563182c8b1f0476ab164fa20e7407893bce3e8da808e2b",
+        "effect": {
+          "asset": "assets/beasts/motion/dirge-male-melee-effect-v1.webp",
+          "sha256": "2a8faf0eb6b7a3b43b28934cd907e44fd0b8343d9f8057be2e03516fb404d5d0",
+          "x": 83,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/dirge-male-contact.png"
+      }
+    },
+    {
+      "id": "dirge-female",
+      "kind": "player",
+      "cls": "dirge",
+      "gender": "female",
+      "name": "นักดนตรีมรณะ (female)",
+      "powerName": "พลังนักดนตรีมรณะ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "bow",
+      "source": {
+        "x": 91.5,
+        "y": 30.2,
+        "angle": -1,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.3,
+        "cropLeft": 8.5,
+        "anchor": {
+          "pose": "windup",
+          "x": 91.5,
+          "y": 30.2,
+          "asset": "assets/beasts/motion/dirge-female-windup-v1.webp",
+          "sha256": "35a3027e65f9da006ebe11d8870aed5d96be6f1a8157633a9b258ded14f3be0f"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/dirge-female-power-v1.webp",
+          "sha256": "53f2e4dbd12667f68698c3c5cb0d6c9e17d0cac8c32896a2481d349cf4bd7737",
+          "originY": 50.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/dirge-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/dirge-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดธนูประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90.3,
+        "y": 72,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/dirge-female-melee-v1.webp",
+        "sha256": "19403e12dee38be09b5d550886650bcdee6543732ed995c6786900a8b5743f09",
+        "effect": {
+          "asset": "assets/beasts/motion/dirge-female-melee-effect-v1.webp",
+          "sha256": "d7a677e46ed0b45112710e585d7a76889101f965e10498a830ea31516c87f204",
+          "x": 84.5,
+          "y": 79.8
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/dirge-female-contact.png"
+      }
+    },
+    {
+      "id": "mage-male",
+      "kind": "player",
+      "cls": "mage",
+      "gender": "male",
+      "name": "นักเวทย์ (male)",
+      "powerName": "พลังนักเวทย์ (male)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 31.8,
+        "y": 19.5,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 49,
+        "effectOriginX": 50.2,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 31.8,
+          "y": 19.5,
+          "asset": "assets/beasts/motion/mage-male-windup-v1.webp",
+          "sha256": "968b267a6fc5c4dbc91beb9c444751e42b81fb55d75750f2d10e3fb4ac64e88a"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mage-male-power-v1.webp",
+          "sha256": "81534825f4159f2e159cdb6cc4b3c522a92bb3e464ac8831d1e0ad4bed5ea779",
+          "originY": 49,
+          "originX": 50.2
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mage-male-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mage-male-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 84.5,
+        "y": 78.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mage-male-melee-v1.webp",
+        "sha256": "daccc7c36fe6d23c9407f4294659ed81d6278764d1bbf679613798a5ca7f720c",
+        "effect": {
+          "asset": "assets/beasts/motion/mage-male-melee-effect-v1.webp",
+          "sha256": "85c1fa6c6c2bb8ba5db9b29557ff7fb4a7d3660cb84a8c8959e3eed9cf8f751b",
+          "x": 83,
+          "y": 75.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/mage-male-contact.png"
+      }
+    },
+    {
+      "id": "mage-female",
+      "kind": "player",
+      "cls": "mage",
+      "gender": "female",
+      "name": "นักเวทย์ (female)",
+      "powerName": "พลังนักเวทย์ (female)",
+      "idleMode": "breathe",
+      "background": "normal",
+      "meleeWeapon": "staff",
+      "source": {
+        "x": 37.5,
+        "y": 21.4,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50.4,
+        "effectOriginX": 50.4,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 37.5,
+          "y": 21.4,
+          "asset": "assets/beasts/motion/mage-female-windup-v1.webp",
+          "sha256": "b335bcaafac8d9a1c3ea419083bd2a19837587371b7778d4ce190115fa705aa2"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/mage-female-power-v1.webp",
+          "sha256": "111012ef3020fcadf8669fa6e1a66c6c7854914b2899d7adf9f3c6c42277f0bd",
+          "originY": 50.4,
+          "originX": 50.4
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/mage-female-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/mage-female-melee-effect-v1.webp"
+      },
+      "meleeName": "ฟาดคทาประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 87,
+        "y": 75.8,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/mage-female-melee-v1.webp",
+        "sha256": "9f0712617d9a27c626cb97489dc7b5691298d72aa88208e77accf050c56bd4eb",
+        "effect": {
+          "asset": "assets/beasts/motion/mage-female-melee-effect-v1.webp",
+          "sha256": "24de9badda05002f43ae255fcaced123d975d9a3e23c66e5f1942725ba275a9c",
+          "x": 81,
+          "y": 75.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/mage-female-contact.png"
+      }
+    }
+  ]
+}

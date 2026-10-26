@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "saber",
+      "kind": "transform",
+      "form": 0,
+      "name": "ร่างเสือเขี้ยวดาบ",
+      "powerName": "พลังร่างเสือเขี้ยวดาบ",
+      "idleMode": "breathe",
+      "background": "normal",
+      "source": {
+        "x": 79.3,
+        "y": 57,
+        "angle": 18,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 52.1,
+        "cropLeft": 13.6,
+        "anchor": {
+          "pose": "windup",
+          "x": 79.3,
+          "y": 57,
+          "asset": "assets/beasts/motion/saber-windup-v1.webp",
+          "sha256": "eca448dfc94f9d05c6bd88b1bb4bb97462ecb7aace33988147de52d6ae3e76a9"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/saber-power-v1.webp",
+          "sha256": "566063b0963c876372ae18d5a40f995d396c340dabb9b0ba97aad92dce06b82c",
+          "originY": 52.1
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/saber-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/saber-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิดร่างเสือเขี้ยวดาบ",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 92.2,
+        "y": 72.5,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/saber-melee-v1.webp",
+        "sha256": "d35bdbafea28943bc08f001a0731542dbec58ed1d6a5cbb725900589c45a9676",
+        "effect": {
+          "asset": "assets/beasts/motion/saber-melee-effect-v1.webp",
+          "sha256": "0d8bbfd1071dd0d716aee0c98ba266132b2fe4519f3d85ad02ab6fe98eb9a09e",
+          "x": 76,
+          "y": 72.5
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/saber-contact.png"
+      }
+    },
+    {
+      "id": "gdragon",
+      "kind": "transform",
+      "form": 0,
+      "name": "ร่างมังกรพงไพร",
+      "powerName": "พลังร่างมังกรพงไพร",
+      "idleMode": "breathe",
+      "background": "dragon",
+      "source": {
+        "x": 89.3,
+        "y": 48.6,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50.3,
+        "cropLeft": 11.2,
+        "anchor": {
+          "pose": "windup",
+          "x": 89.3,
+          "y": 48.6,
+          "asset": "assets/beasts/motion/gdragon-windup-v1.webp",
+          "sha256": "9ab673b8f18750e7cba5da972a2a11777c99c39d78e759232d35bc5ed7047f86"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/gdragon-power-v1.webp",
+          "sha256": "cbfe64df9a6bc45f920fde817a47464ddf1a5e4764af634cab9da3c64255d314",
+          "originY": 50.3
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/gdragon-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/gdragon-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิดร่างมังกรพงไพร",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 96.5,
+        "y": 87.3,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/gdragon-melee-v1.webp",
+        "sha256": "8ce8ff7790d2b623cafc9b4cef0072d839ec74bc04fadcec06a9adee5ea0041d",
+        "effect": {
+          "asset": "assets/beasts/motion/gdragon-melee-effect-v1.webp",
+          "sha256": "78227b008b0ad55e0475d3f3fc8b4f4d27521fdf0398ae2d87de1548f757215f",
+          "x": 67.8,
+          "y": 70.7
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/gdragon-contact.png"
+      }
+    },
+    {
+      "id": "moon",
+      "kind": "transform",
+      "form": 0,
+      "name": "ร่างวิญญาณจันทรา",
+      "powerName": "พลังร่างวิญญาณจันทรา",
+      "idleMode": "breathe",
+      "background": "fairy",
+      "source": {
+        "x": 45.5,
+        "y": 27.1,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "effectOriginX": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 45.5,
+          "y": 27.1,
+          "asset": "assets/beasts/motion/moon-windup-v1.webp",
+          "sha256": "1affdaf44a361383b002fae35bdcb6582854e55b063a3a22b0d4040d3ba997cd"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/moon-power-v1.webp",
+          "sha256": "96e297ea4564701be9af148648c26d115003342b3769c5028643b2f0143d4198",
+          "originY": 50,
+          "originX": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/moon-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/moon-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิดร่างวิญญาณจันทรา",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 77.3,
+        "y": 30.2,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/moon-melee-v1.webp",
+        "sha256": "98d8615def05c11aaa20c1603420cbd7a70488591e88e58b48aaaa1445d22e5a",
+        "effect": {
+          "asset": "assets/beasts/motion/moon-melee-effect-v1.webp",
+          "sha256": "fd8bc7a5d2f044fc095ef058f6aa18fcd3dbbd51159fcac4bb7732240f90a8a8",
+          "x": 69.3,
+          "y": 53.6
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/moon-contact.png"
+      }
+    }
+  ]
+}

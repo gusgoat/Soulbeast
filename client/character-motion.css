@@ -1,0 +1,71 @@
+.um-body{position:absolute;inset:0;z-index:2;display:block;transform-origin:50% 80%;animation:um-breathe 4s ease-in-out infinite}
+.um-window{position:absolute;inset:0;border-radius:50%;overflow:hidden}
+.um-art[data-pose=hit],.um-art[data-pose=windup]{opacity:0}
+[data-motion-phase=hit] .um-art,[data-motion-phase=windup] .um-art,[data-motion-phase=power] .um-art{opacity:0}
+[data-motion-phase=hit] .um-art[data-pose=hit],[data-motion-phase=windup] .um-art[data-pose=windup],[data-motion-phase=power] .um-art[data-pose=windup]{opacity:1}
+.um-aura{position:absolute;inset:-4%;z-index:1;background:var(--um-power) center/140% 100% no-repeat;opacity:.24;rotate:-35deg;animation:um-aura 4.2s ease-in-out infinite;pointer-events:none;border-radius:50%;mask-image:radial-gradient(ellipse,#000 40%,transparent 70%)}
+.um-power{position:absolute;z-index:3;left:var(--um-x);top:calc(var(--um-y) - var(--um-h) * var(--um-power-origin-y,.5));width:var(--um-w);height:var(--um-h);rotate:var(--um-angle);transform-origin:0 calc(var(--um-power-origin-y,.5) * 100%);background:var(--um-power) right center/var(--um-texture-scale,100%) 100% no-repeat;opacity:0;pointer-events:none}
+[data-motion-phase=power] .um-power{animation:um-power var(--um-power-duration,.75s) linear both}
+[data-motion-phase=hit] .um-body{animation:um-hit 1.5s ease-out both}
+[data-motion-phase=windup] .um-body{animation:um-windup var(--um-windup-duration,1s) ease-in-out both}
+[data-motion-phase=power] .um-body{animation:um-release var(--um-power-duration,.75s) ease-in-out both}
+[data-idle-mode=float][data-motion-phase=idle] .um-body{animation:um-float 3.6s ease-in-out infinite}
+[data-idle-mode=sway][data-motion-phase=idle] .um-body{animation:um-sway 4.4s ease-in-out infinite}
+[data-motion-paused] :is(.um-body,.um-power,.um-aura){animation-play-state:paused!important}
+[data-no-aura] .um-aura{display:none}
+@keyframes um-breathe{0%,100%{transform:scale(1)}50%{transform:translateY(-1%) scale(1.016,1.025)}}
+@keyframes um-float{0%,100%{transform:translateY(1%)}50%{transform:translateY(-4%) rotate(1deg)}}
+@keyframes um-sway{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg) scaleY(1.02)}}
+@keyframes um-aura{0%,100%{opacity:.15;scale:.94}50%{opacity:.35;scale:1.08}}
+@keyframes um-hit{0%,100%{transform:translateX(0)}14%{transform:translateX(-5%) rotate(-4deg)}28%{transform:translateX(2%) rotate(2deg)}45%,75%{transform:translateX(-1%) rotate(-1deg)}}
+@keyframes um-windup{0%{transform:scale(1)}45%{transform:translate(-2%,2%) scale(.98)}100%{transform:translate(-1%,1%) scale(1.03)}}
+@keyframes um-release{0%{transform:translate(-1%,1%) scale(1.03)}100%{transform:translateX(0)}30%{transform:translateX(-2%) rotate(-1deg)}60%{transform:translateX(1%)}}
+@keyframes um-power{0%{opacity:1;transform:scale(.1,.85)}80%{opacity:1}100%{opacity:0;transform:scale(1,1.05)}}
+@media(prefers-reduced-motion:reduce){.motion-unit:not([data-motion-opt-in]) :is(.um-body,.um-power,.um-aura){animation-play-state:paused!important}}
+/* Match the caster's camera-facing palm instead of reusing a side-on jet. */
+.motion-unit[data-power-projection="camera"] .um-power{left:calc(var(--um-x) - var(--um-w) * var(--um-power-origin-x,.5));transform-origin:calc(var(--um-power-origin-x,.5) * 100%) calc(var(--um-power-origin-y,.5) * 100%)}
+.motion-unit[data-power-projection="camera"][data-motion-phase="power"] .um-power{animation-name:um-power-camera}
+@keyframes um-power-camera{0%{opacity:1;transform:scale(.06)}80%{opacity:1}100%{opacity:0;transform:scale(1.4)}}
+.motion-unit[data-art-fit="cover"] .um-art{object-fit:cover}
+.um-embers{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;border-radius:50%}
+.um-embers i{position:absolute;left:calc(8% + var(--i)*11%);top:95%;width:2px;height:100%;opacity:0;animation:um-ember 3.6s linear infinite;animation-delay:calc(var(--i)*-.47s)}
+.um-embers i::after{content:"";position:absolute;left:0;top:0;width:2px;height:3px;border-radius:50%;background:var(--um-particle-color,#ffdc8b);box-shadow:0 0 4px var(--um-particle-color,#ff5a15)}
+@keyframes um-ember{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}85%{opacity:.5}100%{transform:translate(8px,-95%);opacity:0}}
+[data-no-aura] .um-embers{display:none}
+[data-motion-paused] .um-embers i{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.motion-unit:not([data-motion-opt-in]) .um-embers i{animation-play-state:paused}}
+/* Optional elite poses: only actors with generated art expose these actions. */
+.um-art[data-pose=threat],.um-art[data-pose=melee]{opacity:0}
+[data-motion-phase=threat] .um-art,[data-motion-phase=melee] .um-art{opacity:0}
+[data-motion-phase=threat] .um-art[data-pose=threat],[data-motion-phase=melee] .um-art[data-pose=melee]{opacity:1}
+[data-motion-phase=threat] .um-body{animation:um-threat 1.8s ease-in-out both}
+[data-motion-phase=threat] .um-aura{opacity:.5;animation:um-threat-aura 1.8s ease-in-out both}
+[data-motion-phase=melee] .um-body{animation:um-melee .9s linear both}
+.um-melee-effect{position:absolute;z-index:4;left:calc(var(--um-x) - var(--um-melee-w,130%) * var(--um-melee-origin-x,.5));top:calc(var(--um-y) - var(--um-melee-h,130%) * var(--um-melee-origin-y,.5));width:var(--um-melee-w,130%);height:var(--um-melee-h,130%);background:var(--um-melee) center/contain no-repeat;transform-origin:calc(var(--um-melee-origin-x,.5) * 100%) calc(var(--um-melee-origin-y,.5) * 100%);opacity:0;pointer-events:none}
+[data-motion-phase=melee] .um-melee-effect{animation:um-melee-trail .9s linear both}
+@keyframes um-threat{0%,100%{transform:scale(1)}25%{transform:translateY(-2%) scale(1.055)}40%{transform:translate(-1%,-2%) scale(1.06)}55%{transform:translate(1%,-2%) scale(1.06)}75%{transform:translateY(-1%) scale(1.04)}}
+@keyframes um-threat-aura{0%,100%{opacity:.24;scale:1}35%,65%{opacity:.65;scale:1.25}}
+@keyframes um-melee{0%,100%{transform:translate(0,0)}25%{transform:translate(-4%,-3%) rotate(-5deg)}50%{transform:translate(5%,3%) rotate(5deg)}75%{transform:translate(2%,1%) rotate(2deg)}}
+@keyframes um-melee-trail{0%{opacity:0;transform:scale(.2)}20%{opacity:0}30%,65%{opacity:1}100%{opacity:0;transform:scale(1.2)}}
+[data-motion-paused] .um-melee-effect{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.motion-unit:not([data-motion-opt-in]) .um-melee-effect{animation-play-state:paused!important}}
+[data-melee-mode=ram][data-motion-phase=melee] .um-body{animation-name:um-melee-ram}
+[data-melee-mode=headbutt][data-motion-phase=melee] .um-body,[data-melee-mode=thrust][data-motion-phase=melee] .um-body{animation-name:um-melee-headbutt}
+@keyframes um-melee-ram{0%,100%{transform:translateX(0) scale(1)}25%{transform:translateX(-6%) scale(.96)}50%{transform:translateX(10%) scale(1.04)}75%{transform:translateX(4%) scale(1.02)}}
+@keyframes um-melee-headbutt{0%,100%{transform:scale(1)}25%{transform:translateY(2%) scale(.94)}50%{transform:translateY(-1%) scale(1.1)}75%{transform:scale(1.04)}}
+/* Contact demo uses the same art/controller without mutating battle state. */
+@keyframes um-target-recoil{0%,100%{transform:translate(0,0)}20%{transform:translate(var(--um-hit-dx),var(--um-hit-dy))}40%{transform:translate(calc(var(--um-hit-dx) * .3),calc(var(--um-hit-dy) * .3))}65%{transform:translate(calc(var(--um-hit-dx) * .1),calc(var(--um-hit-dy) * .1))}}
+/* Flight supplies the lunge; keep its portrait circle stable at edge contact. */
+/* Keep the full-roster preview compact on phones. */
+.battle-motion{isolation:isolate;overflow:hidden!important}
+.battle-motion .pt,.motion-flight .pt{position:relative;background:var(--um-scene) center/cover;overflow:visible}
+.battle-motion .um-art,.motion-flight .um-art{position:absolute;inset:3%;width:94%;height:94%;object-fit:contain;object-position:50% 50%;transition:opacity .08s linear;pointer-events:none}
+.battle-motion .um-body,.battle-motion .um-power,.battle-motion .um-melee-effect{animation-delay:var(--um-elapsed,0ms)}
+.battle-motion.down .um-body,.battle-motion.down .um-aura,.battle-motion.down .um-embers i{animation:none}
+.battle-motion .um-power,.battle-motion .um-melee-effect{max-width:none}
+.motion-contact-layer{position:fixed;z-index:25;pointer-events:none;overflow:hidden;border-radius:12px}
+.motion-flight{position:absolute;display:block;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;pointer-events:none;overflow:visible}
+.motion-flight .pt{width:100%!important;height:100%!important;display:block}
+.motion-flight .um-body{transform:none!important}
+.motion-flight .um-window{overflow:hidden}
+@media(prefers-reduced-motion:reduce){.battle-motion .um-body,.battle-motion .um-aura,.battle-motion .um-embers i{animation:none!important}.battle-motion .um-power,.battle-motion .um-melee-effect{display:none}}

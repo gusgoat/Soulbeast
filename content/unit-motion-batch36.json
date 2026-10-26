@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "scope": "offline-preview",
+  "actors": [
+    {
+      "id": "jorogumo-maiden",
+      "species": "jorogumo",
+      "form": 1,
+      "name": "โจโรกุโมะสาว",
+      "powerName": "พลังโจโรกุโมะสาว",
+      "idleMode": "float",
+      "background": "bug",
+      "source": {
+        "x": 38,
+        "y": 27,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 38,
+          "y": 27,
+          "asset": "assets/beasts/motion/jorogumo-maiden-windup-v1.webp",
+          "sha256": "34bc0c1e6255d2e7d3c1a8d2f5a066a9884d4a4989cf1469b038b48bf8fdfc1e"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jorogumo-maiden-power-v1.webp",
+          "sha256": "619dccdfa042ecd3d4591797cce8c61805930a0d5cf5b485f3b23c70a684f8ef",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jorogumo-maiden-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jorogumo-maiden-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 68,
+        "y": 39,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/jorogumo-maiden-melee-v1.webp",
+        "sha256": "7c0cb5d2b0091a012ffc945b95665b237650be3fd59d704b6badcb580cbaa1a6",
+        "effect": {
+          "asset": "assets/beasts/motion/jorogumo-maiden-melee-effect-v1.webp",
+          "sha256": "bd245f958b373e40736052ddf99863899d2ad5d242bf5d45eb31bd920cc4a640",
+          "x": 85,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/jorogumo-maiden-contact.png"
+      }
+    },
+    {
+      "id": "jorogumo-queen",
+      "species": "jorogumo",
+      "form": 2,
+      "name": "ราชินีแมงมุมโจโร",
+      "powerName": "พลังราชินีแมงมุมโจโร",
+      "idleMode": "float",
+      "background": "bug",
+      "source": {
+        "x": 42,
+        "y": 26,
+        "angle": 0,
+        "width": 115,
+        "height": 115,
+        "projection": "camera",
+        "effectOriginY": 50,
+        "cropLeft": 0,
+        "anchor": {
+          "pose": "windup",
+          "x": 42,
+          "y": 26,
+          "asset": "assets/beasts/motion/jorogumo-queen-windup-v1.webp",
+          "sha256": "47ad8f09547b5c81a14191fa30d281fd86551a389e1e6682792705056c40a272"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/jorogumo-queen-power-v1.webp",
+          "sha256": "be362b9da25100295f782cd602e1c2a46609bf1265caacfce8329e590079dc0c",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/jorogumo-queen-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/jorogumo-queen-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 69,
+        "y": 52,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/jorogumo-queen-melee-v1.webp",
+        "sha256": "e89929c555f56bc1b64fd8dc29439ad902f29bda20e3b1bc2f3177ccce2dc7b4",
+        "effect": {
+          "asset": "assets/beasts/motion/jorogumo-queen-melee-effect-v1.webp",
+          "sha256": "f72e2e1bc257fc26a6efab1ea81bdc423c4ab58251953b8869c91de46b7830af",
+          "x": 80,
+          "y": 80
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/jorogumo-queen-contact.png"
+      }
+    },
+    {
+      "id": "kelpie-haunt",
+      "species": "kelpie",
+      "form": 1,
+      "name": "เคลปี้หลอน",
+      "powerName": "พลังเคลปี้หลอน",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 89,
+        "y": 38,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 54.5,
+        "cropLeft": 5,
+        "anchor": {
+          "pose": "windup",
+          "x": 89,
+          "y": 38,
+          "asset": "assets/beasts/motion/kelpie-haunt-windup-v1.webp",
+          "sha256": "3aca977180a30615f9825b3a18fd30052c8f6f86bb42a2b96d375deecf1ed27b"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kelpie-haunt-power-v1.webp",
+          "sha256": "621d0a77cb1ed7a672aaf61b85d687bf5aaf7f8afed1687c7e971cb81bb0a7c7",
+          "originY": 54.5
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kelpie-haunt-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kelpie-haunt-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 78,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kelpie-haunt-melee-v1.webp",
+        "sha256": "e6d00ef53b4054a07b17428b651d3fad4437e5e31d08da11088a963b4cdbc855",
+        "effect": {
+          "asset": "assets/beasts/motion/kelpie-haunt-melee-effect-v1.webp",
+          "sha256": "43a23ff24bb616bd623e4fade16556c1ad0b1c9a344945f701e8b3f727023686",
+          "x": 74,
+          "y": 88
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kelpie-haunt-contact.png"
+      }
+    },
+    {
+      "id": "kelpie-spirit",
+      "species": "kelpie",
+      "form": 2,
+      "name": "ม้าวิญญาณทะเลสาบ",
+      "powerName": "พลังม้าวิญญาณทะเลสาบ",
+      "idleMode": "breathe",
+      "background": "water",
+      "source": {
+        "x": 89,
+        "y": 32,
+        "angle": 20,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 51,
+        "cropLeft": 3,
+        "anchor": {
+          "pose": "windup",
+          "x": 89,
+          "y": 32,
+          "asset": "assets/beasts/motion/kelpie-spirit-windup-v1.webp",
+          "sha256": "33d4ab8d31dce5e36df79d08ca93c5713d7ec8430bb7f973ba080d03e99e2217"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/kelpie-spirit-power-v1.webp",
+          "sha256": "4b892b055234fe2e5241d2cc47841d622504f37444c89eb6bc30c25a9ede200d",
+          "originY": 51
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/kelpie-spirit-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/kelpie-spirit-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 95,
+        "y": 74,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/kelpie-spirit-melee-v1.webp",
+        "sha256": "1ff73d1479dbc9c2cbe6ede9070e2b029cd01e61e6519ea6e5b089ab64d9a990",
+        "effect": {
+          "asset": "assets/beasts/motion/kelpie-spirit-melee-effect-v1.webp",
+          "sha256": "27142aabb1939fe5401985b5c52d61187d4f66a64a8eac083797473ba29d22c4",
+          "x": 75,
+          "y": 87
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/kelpie-spirit-contact.png"
+      }
+    },
+    {
+      "id": "nue-dark",
+      "species": "nue",
+      "form": 1,
+      "name": "นุเอะทมิฬ",
+      "powerName": "พลังนุเอะทมิฬ",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 74,
+        "y": 55,
+        "angle": 18,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 3,
+        "anchor": {
+          "pose": "windup",
+          "x": 74,
+          "y": 55,
+          "asset": "assets/beasts/motion/nue-dark-windup-v1.webp",
+          "sha256": "ae9f27205eb20ad8b6bdd81a00357f3d3c858762d7b9e537cba4a6b26fee65dc"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/nue-dark-power-v1.webp",
+          "sha256": "8948950e111ab1bc6b90f9e9f5af5a28d02126b94f47ebc0ae6e2d0f81df5d75",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/nue-dark-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/nue-dark-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 90,
+        "y": 89,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/nue-dark-melee-v1.webp",
+        "sha256": "47cabcac667a1f571397377028939b79b949502e24f508a395bcb7e8a9a5bfbd",
+        "effect": {
+          "asset": "assets/beasts/motion/nue-dark-melee-effect-v1.webp",
+          "sha256": "80f09d7fa5fb41a10f76f8bd5c11ef1665dd565b8be9acae4ef9a606ccfebc83",
+          "x": 82,
+          "y": 82
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/nue-dark-contact.png"
+      }
+    },
+    {
+      "id": "nue-king",
+      "species": "nue",
+      "form": 2,
+      "name": "นุเอะราชาเมฆา",
+      "powerName": "พลังนุเอะราชาเมฆา",
+      "idleMode": "breathe",
+      "background": "dark",
+      "source": {
+        "x": 77,
+        "y": 48,
+        "angle": 18,
+        "width": 125,
+        "height": 55,
+        "projection": "side",
+        "effectOriginY": 50,
+        "cropLeft": 3,
+        "anchor": {
+          "pose": "windup",
+          "x": 77,
+          "y": 48,
+          "asset": "assets/beasts/motion/nue-king-windup-v1.webp",
+          "sha256": "5ef7fe3f9ad9a72ec786e20686f4452b7dba0decccaf4a6eb9b49149433822bb"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/nue-king-power-v1.webp",
+          "sha256": "0bc4ed60ed7e8256f61771bac8484e8d44321fa758753e9bbbd14a5297cc43b4",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "melee": "assets/beasts/motion/nue-king-melee-v1.webp",
+        "meleeEffect": "assets/beasts/motion/nue-king-melee-effect-v1.webp"
+      },
+      "meleeName": "โจมตีประชิด",
+      "meleeMode": "swipe",
+      "meleeSource": {
+        "pose": "melee",
+        "x": 91,
+        "y": 85,
+        "width": 105,
+        "height": 105,
+        "asset": "assets/beasts/motion/nue-king-melee-v1.webp",
+        "sha256": "825e5172bb3c3316737a23aafe40458acc9b2790c043826ddfc250378258f764",
+        "effect": {
+          "asset": "assets/beasts/motion/nue-king-melee-effect-v1.webp",
+          "sha256": "b01d5ff844c64bc236b5db355b25a2ff5449a9ed5359eeb5cd502c6edf590e49",
+          "x": 80,
+          "y": 78
+        }
+      },
+      "review": {
+        "status": "verified",
+        "viewport": "390x844 and 320x740; actual innerWidth verified; held card widths293.6/142.8/108.6px",
+        "checks": [
+          "Identity, anatomy, equipment and distinct poses visually inspected",
+          "Windup and melee inspected before individual VFX",
+          "Real-alpha assets and normalized source/contact anchors SHA256 bound",
+          "Power .75s linear; attack/hit/windup/melee recover to idle",
+          "Correct final-form particles, full image loads and no horizontal overflow",
+          "Edge contact avoids portrait overlap and retains target recoil",
+          "Held power compositing checked at293.6/142.8/108.6px"
+        ],
+        "proof": "../outputs/all-character-motion-20261025/nue-king-contact.png"
+      }
+    }
+  ]
+}
