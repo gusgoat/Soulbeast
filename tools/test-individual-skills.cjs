@@ -22,8 +22,8 @@ for(const t of ['heal','buff','form','status','debuff','rest'])assert.equal(run(
 for(const el of ['fire','electric','ground','water','flying'])for(const target of Object.keys(JSON.parse(run('JSON.stringify(EL)')))){
  assert.equal(run(`attackMultiplier({...enchanted,enchant:'${el}'},{t:'p',el:'fire'},{types:['${target}'],pas:[],buffs:[]})`),run(`typeMult(${JSON.stringify([...new Set(['fire',el])])},['${target}'])`));
 }
-assert.equal(run("attackMultiplier({...enchanted,enchant:'ground'},{t:'m',el:'fire'},{types:['normal'],pas:['levitate'],buffs:[]})"),0);
-assert.equal(run("attackMultiplier({...enchanted,enchant:'water'},{t:'h',el:'electric'},{types:['ground'],pas:[],buffs:[]})"),0,'An immune component blocks the composite attack');
+assert.equal(run("attackMultiplier({...enchanted,enchant:'ground'},{t:'m',el:'fire'},{types:['normal'],pas:['levitate'],buffs:[]})"),.25);
+assert.equal(run("attackMultiplier({...enchanted,enchant:'water'},{t:'h',el:'electric'},{types:['ground'],pas:[],buffs:[]})"),.5,'Former immunity reduces composite damage by 75%');
 assert.equal((run("skillElementOnly(enchanted,SK.sw_magnum,'sw_magnum')").match(/class="element-icon/g)||[]).length,2);
 // Authoritative online engine must expose the exact same rules and catalogue as the client.
 const server=fs.readFileSync('server/accounts/engine.ts','utf8');

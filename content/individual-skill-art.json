@@ -32347,6 +32347,27 @@
       "sha256": "4019a161cecc0b03aabe829572720ab9513aef5d57010ee1799d5c2c66a8296c",
       "sourceSha256": "6cb23750ba904024be93c4673334631f7ac165241e42973843960496ec82b613",
       "sourceGroup": "solar-legends-v1"
+    },
+    {
+      "id": "ne_spirit",
+      "name": "อัญเชิญวิญญาณ",
+      "path": "assets/skills/painted-v2/ne_spirit.webp",
+      "sha256": "551ccf65b37113149e23a722bed07fb72d0ef3d6fd338554de5c881c25e8ef41",
+      "generator": "built-in imagegen",
+      "cropBox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "outputSize": [
+        256,
+        256
+      ]
     }
   ]
 }

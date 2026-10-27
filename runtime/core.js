@@ -94,7 +94,7 @@ function effectiveElement(u,sk){
  return elements.length>1?elements:elements[0]||base;
 }
 function attackHasElement(u,sk,el){const value=effectiveElement(u,sk);return Array.isArray(value)?value.includes(el):value===el;}
-function attackMultiplier(u,sk,t){return typeMult(effectiveElement(u,sk),t.types)*(attackHasElement(u,sk,'ground')&&hasPas(t,'levitate')?0:1);}
+function attackMultiplier(u,sk,t){return typeMult(effectiveElement(u,sk),t.types)*(attackHasElement(u,sk,'ground')&&hasPas(t,'levitate')?.25:1);}
 // @soulbeast-end 0101-effectiveElement
 // @soulbeast-unit 0103-scoreValue
 

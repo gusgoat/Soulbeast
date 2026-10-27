@@ -137,11 +137,11 @@ CLS.summoner.pas.push('summoner_soul_exchange');
 
 // Boss defenses and small-group area specialization, shared by every battle mode.
 PAS.archer_boss_evasion={n:'ล่องหนล่าบอส · Lv55',d:'สุ่มหลบแยก 30% ต่อฮิตโจมตีจากบอส รวมท่าหมู่ ไม่ใช่บวกค่าหลบ 30 จุด และไม่ใช้สิทธิ์ลดดาเมจท่าเดี่ยวเดิม'};
-PAS.mage_elemental_barrier={n:'บาเรียธาตุ · Lv50',d:'ลดดาเมจโจมตีจากบอส50% สำหรับ5ฮิตแรกที่ผ่านการหลบและการป้องกันเดิม ต่อการต่อสู้ ไม่นับพิษหรือความเสียหายต่อเนื่อง'};
+PAS.mage_elemental_barrier={n:'บาเรียธาตุ · Lv50',d:'ลดดาเมจโจมตีจากบอส50% สำหรับ3ฮิตแรกที่ผ่านการหลบและการป้องกันเดิม ต่อการต่อสู้ ไม่นับพิษหรือความเสียหายต่อเนื่อง'};
 PAS.small_group_area={n:'ถล่มเป้าหมายจำกัด',d:'สกิลโจมตีหมู่แรงขึ้น50%เมื่อเริ่มใช้ท่าแล้วศัตรูมีชีวิตไม่เกิน2ตัว'};
 function bossCareerPassives(cls,lv){const a=[];if(!cls)return a;const base=baseOf(cls);if(base==='archer'&&lv>=55)a.push('archer_boss_evasion');if(base==='mage'&&lv>=50)a.push('mage_elemental_barrier');if(['stormcaller','demolisher'].includes(cls))a.push('small_group_area');return a;}
 const bossCareerHumanPas=humanPas;humanPas=function(cls,eq,lv=S?.P?.lv||0){return [...new Set([...bossCareerHumanPas(cls,eq,lv),...bossCareerPassives(cls,lv)])];};
-const bossCareerUnit=unit;unit=function(o){const u=bossCareerUnit(o);if(['player','human'].includes(u.kind)&&!u.temporary){u.pas=[...new Set([...u.pas,...bossCareerPassives(u.cls,u.lv)])];if(u.elementalBarrierHits==null)u.elementalBarrierHits=u.cls&&baseOf(u.cls)==='mage'&&u.lv>=50?5:0;}return u;};
+const bossCareerUnit=unit;unit=function(o){const u=bossCareerUnit(o);if(['player','human'].includes(u.kind)&&!u.temporary){u.pas=[...new Set([...u.pas,...bossCareerPassives(u.cls,u.lv)])];if(u.elementalBarrierHits==null)u.elementalBarrierHits=u.cls&&baseOf(u.cls)==='mage'&&u.lv>=50?3:0;}return u;};
 const bossCareerHits=[],bossCareerActions=[];
 const bossCareerHit=hitOne;hitOne=function(u,sk,t,...args){bossCareerHits.push({u,t,barrier:false});try{return bossCareerHit(u,sk,t,...args);}finally{bossCareerHits.pop();}};
 const bossCareerBlock=class10BlockHit;class10BlockHit=function(u,sk,t,damaging){
@@ -149,7 +149,7 @@ const bossCareerBlock=class10BlockHit;class10BlockHit=function(u,sk,t,damaging){
  if(damaging&&u.boss&&hero&&t.cls&&baseOf(t.cls)==='archer'&&t.lv>=55&&Math.random()<.3){blog(t.name+' ล่องหนหลบการโจมตีบอส');vfx('miss',t.id);return true;}
  const blocked=bossCareerBlock(u,sk,t,damaging);if(blocked)return true;
  const c=bossCareerHits.at(-1);
- if(damaging&&u.boss&&hero&&t.cls&&baseOf(t.cls)==='mage'&&t.lv>=50&&t.elementalBarrierHits>0&&c?.u===u&&c?.t===t){c.barrier=true;t.elementalBarrierHits--;blog(t.name+' บาเรียธาตุลดดาเมจ50% เหลือ '+t.elementalBarrierHits+' ฮิต');}
+ if(damaging&&u.boss&&hero&&t.cls&&baseOf(t.cls)==='mage'&&t.lv>=50&&t.elementalBarrierHits>0&&c?.u===u&&c?.t===t){c.barrier=true;t.elementalBarrierHits=Math.min(3,t.elementalBarrierHits)-1;blog(t.name+' บาเรียธาตุลดดาเมจ50% เหลือ '+t.elementalBarrierHits+' ฮิต');}
  return false;
 };
 const bossCareerDefense=classDefenseDamageFactor;classDefenseDamageFactor=function(u,t){const c=bossCareerHits.at(-1);return bossCareerDefense(u,t)*(c?.u===u&&c?.t===t&&c.barrier? .5:1);};
@@ -157,7 +157,7 @@ const bossCareerAct=act;act=function(u,id,...args){bossCareerActions.push({u,cou
 function smallGroupAreaFactor(u,sk){if(!['player','human'].includes(u.kind)||u.temporary||!['stormcaller','demolisher'].includes(u.cls)||!sk.all||!class10Damaging(sk))return 1;const c=bossCareerActions.at(-1),n=c?.u===u?c.count:foesOf(u).filter(x=>x.hp>0).length;return n>0&&n<=2?1.5:1;}
 const bossCareerFactor=classCombatFactor;classCombatFactor=function(u,t,sk){return bossCareerFactor(u,t,sk)*smallGroupAreaFactor(u,sk);};
 const bossCareerReplayApply=applyClass10Replay;applyClass10Replay=function(b,f){bossCareerReplayApply(b,f);for(const [id,hits]of f.elementalBarrierHits||[]){const u=[...b.allies,...b.enemies].find(x=>x.id===id);if(u)u.elementalBarrierHits=hits;}};
-const bossCareerEffects=battleSpecialEffects;battleSpecialEffects=function(u){const a=bossCareerEffects(u);if(u.elementalBarrierHits>0)a.push('<span class="battle-effect-icon good" title="บาเรียธาตุ ลดดาเมจบอส50% เหลือ '+u.elementalBarrierHits+' ฮิต">🛡'+u.elementalBarrierHits+'</span>');return a;};
+const bossCareerEffects=battleSpecialEffects;battleSpecialEffects=function(u){const a=bossCareerEffects(u);if(u.elementalBarrierHits>0)a.push('<span class="battle-effect-icon good barrier-counter" title="บาเรียธาตุ ลดดาเมจบอส50% เหลือ '+u.elementalBarrierHits+' ฮิต" aria-label="บาเรียธาตุ เหลือ '+u.elementalBarrierHits+' ฮิต"><span aria-hidden="true">🛡</span><b>'+u.elementalBarrierHits+'</b></span>');return a;};
 
 
 // Opening gunner evasion: expires after two landed attack hits or first own action.

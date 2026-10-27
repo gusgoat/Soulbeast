@@ -31,7 +31,7 @@ mage:{n:'นักเวทย์',w:'staff',em:'🧙',m:{hp:.8,mp:1.5,patk:.5,m
   archmage:{n:'อาร์คเมจ',p:'sage',m:{matk:1.15},pas:['adapt'],sk:[[40,'am_meteor']],d:'เรียกอุกกาบาตถล่มศัตรูทั้งหมด'},
   elementalist:{n:'จอมเวทธาตุ',p:'sage',m:{matk:1.1,mp:1.1},pas:['pierce'],sk:[[40,'el_omni']],d:'หลอมรวมทุกธาตุ ทุกเวทย์ได้โบนัสธาตุ'},
  warlock:{n:'พ่อมดมืด',p:'mage',m:{matk:1.15},pas:['lifesteal'],sk:[[25,'wk_curse'],[32,'wk_plague']],d:'คำสาปและเวทมืด'},
-  necro:{n:'เนโครแมนเซอร์',p:'warlock',m:{hp:1.15},pas:['regen'],sk:[[40,'ne_soul']],d:'ดูดวิญญาณศัตรู'},
+  necro:{n:'เนโครแมนเซอร์',p:'warlock',m:{hp:1.15},pas:['regen'],sk:[[40,'ne_soul'],[45,'ne_spirit']],d:'ดูดวิญญาณและอัญเชิญอสูรศัตรูที่ตายมาเป็นพวก'},
   enchanter:{n:'จอมมนตร์สะกด',p:'warlock',m:{spd:1.1},pas:['imm_mind'],sk:[[40,'en_mind']],d:'ควบคุมจิตศัตรูทั้งกลุ่ม'},
 merchant:{n:'พ่อค้า',w:'mace',em:'💰',m:{hp:1.1,mp:.8,matk:.7,pdef:1.05,mdef:.95,spd:.95},pas:['lucky'],merch:1,sk:[[1,'me_mammon'],[4,'me_cart'],[8,'me_potion'],[12,'me_shout'],[17,'me_coinbomb'],[22,'me_insure']],
  d:'ใช้เงินเป็นอาวุธ ซื้อถูก ขายแพง',pro:'ได้เงินจากการต่อสู้ +25% ร้านลด 15% ขายชิ้นส่วน +20%',con:'ค่าสถานะกลาง ๆ บางสกิลต้องจ่ายเงิน'},

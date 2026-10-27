@@ -212,21 +212,21 @@ const EL={normal:{n:'ปกติ',c:'#b3b28a'},fire:{n:'ไฟ',c:'#ee8130'},wa
  fighting:{n:'ต่อสู้',c:'#e0564e'},poison:{n:'พิษ',c:'#c060be'},ground:{n:'ดิน',c:'#e2bf65'},flying:{n:'ลม',c:'#a98ff3'},psychic:{n:'จิต',c:'#f95587'},bug:{n:'แมลง',c:'#a6b91a'},
  rock:{n:'หิน',c:'#c4ad4a'},ghost:{n:'ผี',c:'#9a7cc4'},dragon:{n:'มังกร',c:'#8a62ff'},dark:{n:'มืด',c:'#a08470'},steel:{n:'เหล็ก',c:'#b7b7ce'},fairy:{n:'เทพ',c:'#e58fbc'}};
 const TC={
- normal:{rock:.5,ghost:0,steel:.5},
+ normal:{rock:.5,ghost:.25,steel:.5},
  fire:{fire:.5,water:.5,grass:2,ice:2,bug:2,rock:.5,dragon:.5,steel:2},
  water:{fire:2,water:.5,grass:.5,ground:2,rock:2,dragon:.5},
  grass:{fire:.5,water:2,grass:.5,poison:.5,ground:2,flying:.5,bug:.5,rock:2,dragon:.5,steel:.5},
- electric:{water:2,grass:.5,electric:.5,ground:0,flying:2,dragon:.5},
+ electric:{water:2,grass:.5,electric:.5,ground:.25,flying:2,dragon:.5},
  ice:{fire:.5,water:.5,grass:2,ice:.5,ground:2,flying:2,dragon:2,steel:.5},
- fighting:{normal:2,ice:2,poison:.5,flying:.5,psychic:.5,bug:.5,rock:2,ghost:0,dark:2,steel:2,fairy:.5},
- poison:{grass:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:0,fairy:2},
- ground:{fire:2,grass:.5,electric:2,poison:2,flying:0,bug:.5,rock:2,steel:2},
+ fighting:{normal:2,ice:2,poison:.5,flying:.5,psychic:.5,bug:.5,rock:2,ghost:.25,dark:2,steel:2,fairy:.5},
+ poison:{grass:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:.25,fairy:2},
+ ground:{fire:2,grass:.5,electric:2,poison:2,flying:.25,bug:.5,rock:2,steel:2},
  flying:{grass:2,electric:.5,fighting:2,bug:2,rock:.5,steel:.5},
- psychic:{fighting:2,poison:2,psychic:.5,dark:0,steel:.5},
+ psychic:{fighting:2,poison:2,psychic:.5,dark:.25,steel:.5},
  bug:{fire:.5,grass:2,fighting:.5,poison:.5,flying:.5,psychic:2,ghost:.5,dark:2,steel:.5,fairy:.5},
  rock:{fire:2,ice:2,fighting:.5,ground:.5,flying:2,bug:2,steel:.5},
- ghost:{normal:0,psychic:2,ghost:2,dark:.5},
- dragon:{dragon:2,steel:.5,fairy:0},
+ ghost:{normal:.25,psychic:2,ghost:2,dark:.5},
+ dragon:{dragon:2,steel:.5,fairy:.25},
  dark:{fighting:.5,psychic:2,ghost:2,dark:.5,fairy:.5},
  steel:{fire:.5,water:.5,electric:.5,ice:2,rock:2,steel:.5,fairy:2},
  fairy:{fire:.5,fighting:2,poison:.5,dragon:2,dark:2,steel:.5},
@@ -260,7 +260,7 @@ const PAS={
  regen:{n:'ฟื้นฟูตนเอง',d:'ฟื้น HP 6% ทุกตา'},
  mpregen:{n:'สมาธิไหลเวียน',d:'ฟื้น MP 8% ทุกตา'},
  thick:{n:'ไขมันหนา',d:'รับดาเมจธาตุไฟและน้ำแข็งครึ่งเดียว'},
- levitate:{n:'ลอยตัว',d:'ไม่โดนท่าธาตุดิน'},
+ levitate:{n:'ลอยตัว',d:'ลดดาเมจธาตุดิน 75%'},
  sturdy:{n:'อึดทน',d:'ถ้า HP เต็ม จะรอดจากการโจมตีที่ถึงตายด้วย HP 1'},
  swift:{n:'ฝีเท้าไว',d:'ความเร็ว +20%'},
  keen:{n:'สายตาคม',d:'โอกาสคริติคอล +10%'},
@@ -407,6 +407,7 @@ am_meteor:{n:'อุกกาบาตถล่ม',t:'m',pw:200,el:'rock',mp:22
 el_omni:{n:'หลอมรวมธาตุ',t:'buff',tg:'self',bf:{matk:.4},pas:'omni',tn:3,mp:14},
 wk_curse:{n:'คำสาปมรณะ',t:'m',pw:195,el:'dark',mp:10},
 wk_plague:{n:'คำสาปโรคระบาด',t:'status',el:'poison',mp:13,all:1,st:{poison:.6},bf:{mdef:-.2},tn:3},
+ne_spirit:{n:'อัญเชิญวิญญาณ',t:'summon',summon:'enemySpirit',el:'ghost',mp:30,cd:4,life:4,d:'เรียกวิญญาณอสูรศัตรูที่ตายในศึกนี้มาเป็นพวก 4 เทิร์น ด้วย HP/MP 50% ไม่รวมบอสและอสูรอัญเชิญ ใช้ศพแต่ละตัวได้ครั้งเดียว และต้องมีที่ว่างในทีม'},
 ne_soul:{n:'ดูดวิญญาณ',t:'m',pw:210,el:'ghost',mp:16,ls:.4},
 en_mind:{n:'ควบคุมจิตหมู่',t:'status',el:'psychic',mp:18,all:1,st:{charm:.4,confuse:.35}},
 /* ---- merchant line ---- */
@@ -581,7 +582,7 @@ mage:{n:'นักเวทย์',w:'staff',em:'🧙',m:{hp:.8,mp:1.5,patk:.5,m
   archmage:{n:'อาร์คเมจ',p:'sage',m:{matk:1.15},pas:['adapt'],sk:[[40,'am_meteor']],d:'เรียกอุกกาบาตถล่มศัตรูทั้งหมด'},
   elementalist:{n:'จอมเวทธาตุ',p:'sage',m:{matk:1.1,mp:1.1},pas:['pierce'],sk:[[40,'el_omni']],d:'หลอมรวมทุกธาตุ ทุกเวทย์ได้โบนัสธาตุ'},
  warlock:{n:'พ่อมดมืด',p:'mage',m:{matk:1.15},pas:['lifesteal'],sk:[[25,'wk_curse'],[32,'wk_plague']],d:'คำสาปและเวทมืด'},
-  necro:{n:'เนโครแมนเซอร์',p:'warlock',m:{hp:1.15},pas:['regen'],sk:[[40,'ne_soul']],d:'ดูดวิญญาณศัตรู'},
+  necro:{n:'เนโครแมนเซอร์',p:'warlock',m:{hp:1.15},pas:['regen'],sk:[[40,'ne_soul'],[45,'ne_spirit']],d:'ดูดวิญญาณและอัญเชิญอสูรศัตรูที่ตายมาเป็นพวก'},
   enchanter:{n:'จอมมนตร์สะกด',p:'warlock',m:{spd:1.1},pas:['imm_mind'],sk:[[40,'en_mind']],d:'ควบคุมจิตศัตรูทั้งกลุ่ม'},
 merchant:{n:'พ่อค้า',w:'mace',em:'💰',m:{hp:1.1,mp:.8,matk:.7,pdef:1.05,mdef:.95,spd:.95},pas:['lucky'],merch:1,sk:[[1,'me_mammon'],[4,'me_cart'],[8,'me_potion'],[12,'me_shout'],[17,'me_coinbomb'],[22,'me_insure']],
  d:'ใช้เงินเป็นอาวุธ ซื้อถูก ขายแพง',pro:'ได้เงินจากการต่อสู้ +25% ร้านลด 15% ขายชิ้นส่วน +20%',con:'ค่าสถานะกลาง ๆ บางสกิลต้องจ่ายเงิน'},
@@ -1053,7 +1054,7 @@ function effectiveElement(u,sk){
  return elements.length>1?elements:elements[0]||base;
 }
 function attackHasElement(u,sk,el){const value=effectiveElement(u,sk);return Array.isArray(value)?value.includes(el):value===el;}
-function attackMultiplier(u,sk,t){return typeMult(effectiveElement(u,sk),t.types)*(attackHasElement(u,sk,'ground')&&hasPas(t,'levitate')?0:1);}
+function attackMultiplier(u,sk,t){return typeMult(effectiveElement(u,sk),t.types)*(attackHasElement(u,sk,'ground')&&hasPas(t,'levitate')?.25:1);}
 // Four positions per sealer (world raid) or side. Dead positions are reused.
 function battleSlotGroup(u,b=B()){if(!b)return [];const list=u.side==='ally'?b.allies:b.enemies;return b.kind==='world'&&u.side==='ally'?list.filter(x=>x.owner===u.owner):list;}
 function battleHasRoom(u,b=B()){return !!b&&battleSlotGroup(u,b).filter(x=>x.hp>0).length<4;}
@@ -1069,11 +1070,13 @@ function battlePlaceUnit(u,n){
  }else list.push(n);
  (b.queue??=[]).push(n.id);return true;
 }
+function spiritCorpse(u){return [...foesOf(u),...(B()?.retiredUnits||[]).filter(x=>x.side!==u.side)].find(x=>x.hp<=0&&x.sp&&SP[x.sp]&&!x.boss&&!x.temporary&&!x.spiritClaimed&&!x.bossHelper);}
 function addTemporary(u,sk){if(!battleHasRoom(u))return false;let n;
  if(sk.summon==='clone'){n=JSON.parse(JSON.stringify(u));n.st=Object.fromEntries(Object.entries(u.st).map(([k,v])=>[k,Math.max(k==='hp'?1:0,Math.round(v*(k==='hp'?.5:.8)))]));n.hp=n.st.hp;n.mp=n.st.mp;n.skills=n.skills.slice();n.name='ร่างแยก '+u.name;n.shadowOwner=u.id;}
+ else if(sk.summon==='enemySpirit'){const corpse=spiritCorpse(u);if(!corpse)return false;n=JSON.parse(JSON.stringify(corpse));n.name='วิญญาณ '+corpse.name;n.hp=Math.max(1,Math.round(n.st.hp*.5));n.mp=Math.round(n.st.mp*.5);n.skills=n.skills.filter(id=>!SK[id]?.summon);n.spiritSource=corpse.id;}
  else if(sk.summon==='golem'){n=wildUnit('bastion_golem',u.lv,0);n.name='โกเลมอัญเชิญ';n.taunt=3;n.skills=['attack','guard_taunt'];}
  else{const P=u.kind==='player'||u.owner!=null?S.P:u;if(!Number.isFinite(P.gold))P.gold=u.lv*30;const cost=Math.floor(Math.max(0,P.gold)*.10);if(cost<1)return false;P.gold-=cost;const jobs=Object.keys(CLS).filter(c=>baseOf(c)!=='merchant'&&tierOf(c)<=Math.max(0,tierOf(u.cls)-1));const lv=Math.max(1,Math.floor(u.lv*.85));const eligible=jobs.filter(c=>tierOf(c)===0||lv>=(tierOf(c)===1?25:40));n=humanUnit('ทหารรับจ้าง',pick(eligible),lv,0);n.skills=n.skills.filter(id=>!SK[id].summon);}
- n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;delete n.uid;return battlePlaceUnit(u,n);
+ n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;delete n.uid;const placed=battlePlaceUnit(u,n);if(placed&&n.spiritSource){const corpse=[...foesOf(u),...(B().retiredUnits||[])].find(x=>x.id===n.spiritSource);if(corpse)corpse.spiritClaimed=true;}return placed;
 }
 
 function scoreValue(e){return Math.round(Math.max(1,e.lv||1)*(['human','player'].includes(e.kind)?15:e.boss?30:e.rare?20:8))}
@@ -1742,6 +1745,9 @@ function towerDispatch_(d){const {code,P}=pvpSaveAuth_(d);communityAllowed_(code
   if(d.outcome==='win'){t.lastCouponFloor=floor;t.lastCouponReward=0;if(floor>(t.couponFloor??t.best??0)){const c=communitySyncCredits_(code);c.coupons+=2;communityWriteCoupon_(c);t.couponFloor=floor;t.lastCouponReward=2;}t.cleared=floor;t.best=Math.max(t.best||0,floor);t.floor=floor+1;if(floor===TOWER_ORDER.length){t.active=false;t.outcome='clear';}else if(floor%5===0)t.restPending=floor;}
   else{t.active=false;t.outcome='lose';}
   if(!t.active)towerRecover_(code,t,'all');guildWrite_('tw:'+code,t);
+ }else if(d.action==='tower_surrender'){
+  if(!t.id||t.id!==String(d.run))pvpFail_('tower wrong run');
+  if(t.active){t.active=false;t.outcome='surrender';t.restPending=0;towerRecover_(code,t,'all');guildWrite_('tw:'+code,t);}
  }else if(d.action==='tower_rest'){
   if(t.id!==String(d.run)||!['spring','revival','cleanse','treasure'].includes(d.choice))pvpFail_('tower wrong run');
   if(t.restPending){towerRecover_(code,t,d.choice);t.restPending=0;guildWrite_('tw:'+code,t);}
@@ -2081,11 +2087,11 @@ SolarBeasts.install();
 
 // Boss defenses and small-group area specialization, shared by every battle mode.
 PAS.archer_boss_evasion={n:'ล่องหนล่าบอส · Lv55',d:'โอกาสหลบเพิ่มอีก30%ต่อฮิตโจมตีจากบอส รวมท่าหมู่ ไม่ใช้จำนวนครั้งล่องหนเดิม'};
-PAS.mage_elemental_barrier={n:'บาเรียธาตุ · Lv50',d:'ลดดาเมจโจมตีจากบอส50% สำหรับ5ฮิตแรกที่ผ่านการหลบและการป้องกันเดิม ต่อการต่อสู้ ไม่นับพิษหรือความเสียหายต่อเนื่อง'};
+PAS.mage_elemental_barrier={n:'บาเรียธาตุ · Lv50',d:'ลดดาเมจโจมตีจากบอส50% สำหรับ3ฮิตแรกที่ผ่านการหลบและการป้องกันเดิม ต่อการต่อสู้ ไม่นับพิษหรือความเสียหายต่อเนื่อง'};
 PAS.small_group_area={n:'ถล่มเป้าหมายจำกัด',d:'สกิลโจมตีหมู่แรงขึ้น50%เมื่อเริ่มใช้ท่าแล้วศัตรูมีชีวิตไม่เกิน2ตัว'};
 function bossCareerPassives(cls,lv){const a=[];if(!cls)return a;const base=baseOf(cls);if(base==='archer'&&lv>=55)a.push('archer_boss_evasion');if(base==='mage'&&lv>=50)a.push('mage_elemental_barrier');if(['stormcaller','demolisher'].includes(cls))a.push('small_group_area');return a;}
 const bossCareerHumanPas=humanPas;humanPas=function(cls,eq,lv=S?.P?.lv||0){return [...new Set([...bossCareerHumanPas(cls,eq,lv),...bossCareerPassives(cls,lv)])];};
-const bossCareerUnit=unit;unit=function(o){const u=bossCareerUnit(o);if(['player','human'].includes(u.kind)&&!u.temporary){u.pas=[...new Set([...u.pas,...bossCareerPassives(u.cls,u.lv)])];if(u.elementalBarrierHits==null)u.elementalBarrierHits=u.cls&&baseOf(u.cls)==='mage'&&u.lv>=50?5:0;}return u;};
+const bossCareerUnit=unit;unit=function(o){const u=bossCareerUnit(o);if(['player','human'].includes(u.kind)&&!u.temporary){u.pas=[...new Set([...u.pas,...bossCareerPassives(u.cls,u.lv)])];if(u.elementalBarrierHits==null)u.elementalBarrierHits=u.cls&&baseOf(u.cls)==='mage'&&u.lv>=50?3:0;}return u;};
 const bossCareerHits=[],bossCareerActions=[];
 const bossCareerHit=hitOne;hitOne=function(u,sk,t,...args){bossCareerHits.push({u,t,barrier:false});try{return bossCareerHit(u,sk,t,...args);}finally{bossCareerHits.pop();}};
 const bossCareerBlock=class10BlockHit;class10BlockHit=function(u,sk,t,damaging){
@@ -2093,7 +2099,7 @@ const bossCareerBlock=class10BlockHit;class10BlockHit=function(u,sk,t,damaging){
  if(damaging&&u.boss&&hero&&t.cls&&baseOf(t.cls)==='archer'&&t.lv>=55&&Math.random()<.3){blog(t.name+' ล่องหนหลบการโจมตีบอส');vfx('miss',t.id);return true;}
  const blocked=bossCareerBlock(u,sk,t,damaging);if(blocked)return true;
  const c=bossCareerHits.at(-1);
- if(damaging&&u.boss&&hero&&t.cls&&baseOf(t.cls)==='mage'&&t.lv>=50&&t.elementalBarrierHits>0&&c?.u===u&&c?.t===t){c.barrier=true;t.elementalBarrierHits--;blog(t.name+' บาเรียธาตุลดดาเมจ50% เหลือ '+t.elementalBarrierHits+' ฮิต');}
+ if(damaging&&u.boss&&hero&&t.cls&&baseOf(t.cls)==='mage'&&t.lv>=50&&t.elementalBarrierHits>0&&c?.u===u&&c?.t===t){c.barrier=true;t.elementalBarrierHits=Math.min(3,t.elementalBarrierHits)-1;blog(t.name+' บาเรียธาตุลดดาเมจ50% เหลือ '+t.elementalBarrierHits+' ฮิต');}
  return false;
 };
 const bossCareerDefense=classDefenseDamageFactor;classDefenseDamageFactor=function(u,t){const c=bossCareerHits.at(-1);return bossCareerDefense(u,t)*(c?.u===u&&c?.t===t&&c.barrier? .5:1);};

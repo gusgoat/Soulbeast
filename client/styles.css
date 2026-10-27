@@ -1040,3 +1040,11 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 
 /* Keep battle speed alongside the three command controls on mobile. */
 .battle-command-controls.has-battle-speed{display:flex!important;flex-wrap:nowrap;gap:4px}.battle-command-controls.has-battle-speed>.btn{flex:1 1 0;min-width:0;padding:6px 3px;font-size:clamp(10px,2.8vw,12px);line-height:1.25}.battle-command-controls.has-battle-speed>.battle-speed{align-self:stretch;margin:0;min-height:42px}
+
+/* Keep status art and counters inside their own visible box. */
+#app .battle-scenery .battle-vital>.battle-effect-strip{height:24px;min-height:24px;max-height:24px;padding:2px 0;box-sizing:border-box}
+#app .battle-scenery .battle-effect-strip>.battle-effect-icon{box-sizing:border-box;flex-shrink:0}
+.barrier-counter{position:relative;overflow:visible!important;min-width:22px!important;flex-basis:22px!important;font-size:13px}
+.barrier-counter b{position:absolute;right:-1px;bottom:-1px;min-width:10px;height:11px;line-height:11px;font-size:9px;background:#102b20;color:white;border-radius:3px;text-align:center}
+
+.battle-painted-flight{animation:none!important}.battle-painted-flight.painted-beam{transform-origin:0 50%;overflow:hidden}.painted-beam img{animation:painted-current .18s linear infinite alternate}.painted-meteor img,.battle-painted-flight[data-asset="music"] img,.battle-painted-flight[data-asset="shuriken"] img,.battle-painted-flight[data-asset="crescent"] img{object-fit:contain}.painted-impact{position:absolute;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 7px #ffc56b);max-width:40vw;max-height:40vw}

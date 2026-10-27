@@ -64,7 +64,7 @@ battleLater=function(fn,ms){const b=S.battle;if(!b?.towerRun)return towerBattleL
 // @soulbeast-end 0925-battleLater
 // @soulbeast-unit 0926-handlers-towerConfirm
 
-handlers.towerConfirm=function(){if(TOWER_UI.busy||towerActive()||!TOWER_UI.ready)return;S.ui.confirm={msg:'เข้าหอคอยประลองยุทธ? ต้องเริ่มชั้น 1 และสู้ต่อเนื่องจนจบหรือตาย ออกไปใช้ยา รักษาตัว หรือเปลี่ยนอสูรจากค่ายไม่ได้ ใช้สกิลฮีลและพักฟื้นได้ มีจุดพักทุก 5 ชั้น ฟื้น HP/MP ทั้งหมดฟรีก่อนเข้าและเมื่อจบ แพ้ไม่เสีย EXP หรือเงิน · วันละครั้ง (รีเซ็ตเที่ยงคืนเวลาไทย)',act:'towerEnter'};render();};
+handlers.towerConfirm=function(){if(TOWER_UI.busy||towerActive()||!TOWER_UI.ready)return;S.ui.confirm={msg:'เข้าหอคอยประลองยุทธ? ต้องเริ่มชั้น 1 และสู้ต่อเนื่องจนจบ ยอมแพ้ หรือพ่ายแพ้ ออกไปใช้ยา รักษาตัว หรือเปลี่ยนอสูรจากค่ายไม่ได้ ใช้สกิลฮีลและพักฟื้นได้ มีจุดพักทุก 5 ชั้น ฟื้น HP/MP ทั้งหมดฟรีก่อนเข้าและเมื่อจบ แพ้ไม่เสีย EXP หรือเงิน · วันละครั้ง (รีเซ็ตเที่ยงคืนเวลาไทย)',act:'towerEnter'};render();};
 // @soulbeast-end 0926-handlers-towerConfirm
 // @soulbeast-unit 0927-handlers-towerEnter
 
@@ -73,6 +73,8 @@ handlers.towerEnter=async function(){if(TOWER_UI.busy)return;S.ui.confirm=null;T
 // @soulbeast-unit 0928-handlers-towerRefresh
 
 handlers.towerRefresh=towerStatus;
+handlers.towerSurrender=function(){if(!towerActive()||TOWER_UI.busy)return;S.ui.confirm={msg:'ยอมแพ้และจบการท้าทายหอคอย? ไม่เสีย EXP หรือเงิน ฟื้น HP/MP และล้างสถานะทั้งหมดฟรี ใช้สิทธิ์ของวันนี้แล้ว',act:'towerSurrenderConfirm'};render();};
+handlers.towerSurrenderConfirm=async function(){if(!towerActive()||TOWER_UI.busy)return;S.ui.confirm=null;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await towerSaveNow();const r=await lbPost({action:'tower_surrender',run:S.P.towerRun.id});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);CharacterMotion.reset();BattleEffects.clear();S.battle=null;S.P.towerRun.checkpoint=null;S.screen='town';await towerSaveNow();}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;render();}};
 // @soulbeast-end 0928-handlers-towerRefresh
 // @soulbeast-unit 0930-handlers-towerNext
 
@@ -100,7 +102,7 @@ const towerGo=go;
 // @soulbeast-end 0936-towerGo
 // @soulbeast-unit 0937-go
 
-go=function(screen){if(towerActive()&&!['battle','settings'].includes(screen)){toast('ออกจากหอคอยไม่ได้จนกว่าจะเคลียร์หอคอยหรือตาย');towerResume();render();return;}if(screen==='arena'){if(S.zone||S.battle)return towerGo(screen);S.screen='arena';render();towerStatus();return;}return towerGo(screen);};
+go=function(screen){if(towerActive()&&!['battle','settings'].includes(screen)){toast('ออกจากหอคอยไม่ได้จนกว่าจะเคลียร์หอคอย ยอมแพ้ หรือพ่ายแพ้');towerResume();render();return;}if(screen==='arena'){if(S.zone||S.battle)return towerGo(screen);S.screen='arena';render();towerStatus();return;}return towerGo(screen);};
 // @soulbeast-end 0937-go
 // @soulbeast-unit 0939-towerPackLocked
 
@@ -126,7 +128,7 @@ const towerBattleView=vBattle;
 // @soulbeast-end 0947-towerBattleView
 // @soulbeast-unit 0948-vBattle
 
-vBattle=function(){let html=towerBattleView(),b=S.battle;if(!b?.towerRun)return html;html='<div class="tower-floor">หอคอยประลองยุทธ · ชั้น '+b.towerFloor+'/'+TOWER_FLOORS.length+'</div>'+html;html=html.replace(/<button\b[^>]*data-v="menu:(?:item|seal)"[^>]*>[\s\S]*?<\/button>/g,'');if(b.over)html=html.replace('data-v="done">ไปต่อ','data-v="done" '+(TOWER_UI.busy?'disabled':'')+'>'+(TOWER_UI.busy?'กำลังบันทึก…':b.over.res==='lose'?'จบการท้าทาย':b.towerFloor===TOWER_FLOORS.length?'เคลียร์หอคอย · กลับเมือง':b.towerFloor%5===0?'ไปจุดพัก':'ขึ้นชั้นถัดไป'));if(TOWER_UI.error)html+='<div class="card" role="alert">'+esc(TOWER_UI.error)+' · กดไปต่อเพื่อลองบันทึกอีกครั้ง</div>';return html;};
+vBattle=function(){let html=towerBattleView(),b=S.battle;if(!b?.towerRun)return html;html='<div class="tower-floor">หอคอยประลองยุทธ · ชั้น '+b.towerFloor+'/'+TOWER_FLOORS.length+'</div>'+html;html=html.replace(/<button\b[^>]*data-v="menu:(?:item|seal)"[^>]*>[\s\S]*?<\/button>/g,'');if(b.over)html=html.replace('data-v="done">ไปต่อ','data-v="done" '+(TOWER_UI.busy?'disabled':'')+'>'+(TOWER_UI.busy?'กำลังบันทึก…':b.over.res==='lose'?'จบการท้าทาย':b.towerFloor===TOWER_FLOORS.length?'เคลียร์หอคอย · กลับเมือง':b.towerFloor%5===0?'ไปจุดพัก':'ขึ้นชั้นถัดไป'));if(!b.over)html+='<button class="btn danger full" data-a="towerSurrender" '+(TOWER_UI.busy?'disabled':'')+'>ยอมแพ้ · ออกจากหอคอย</button>';if(TOWER_UI.error)html+='<div class="card" role="alert">'+esc(TOWER_UI.error)+' · กดไปต่อเพื่อลองบันทึกอีกครั้ง</div>';return html;};
 // @soulbeast-end 0948-vBattle
 // @soulbeast-unit 0949-towerRender
 
@@ -139,7 +141,7 @@ render=function(){if(towerActive()&&S.screen!=='settings'&&(S.screen!=='battle'|
 // @soulbeast-unit 0952-towerRestView
 
 
-function towerRestView(){const choice=(type,title,description)=>'<button class="door tower-rest-choice" data-a="towerRest" data-v="'+type+'" '+(TOWER_UI.busy?'disabled':'')+'>'+routePicture(type,false)+'<b>'+title+'</b><small>'+description+'</small><span class="chip">เลือก'+title+'</span></button>';return '<div class="stack"><h2>จุดพัก · หลังชั้น '+S.P.towerRun.restPending+'</h2><p>เลือกได้หนึ่งอย่าง ก่อนขึ้นชั้น '+S.P.towerRun.floor+'</p>'+towerRestVitals()+'<div class="grid2 tower-rest-grid">'+choice('revival','บ่อชุบชีวิต','อสูรที่พกและหมดสติฟื้น HP เต็มและ MP ครึ่งหนึ่ง หากไม่มีผู้หมดสติ ฟื้น HP 50% ให้ผู้ที่มีสัดส่วน HP ต่ำที่สุดหนึ่งตัว')+choice('spring','ลำธารใส','ฟื้น HP และ MP 35% ให้ผู้เล่นและอสูรที่พกซึ่งยังมีสติ')+choice('cleanse','บ่อชำระล้าง','ล้างสถานะผิดปกติทั้งหมดให้ผู้ผนึกและอสูรทุกตัว รวมในค่าย ฟรี พร้อมฟื้น HP/MP 10% ให้ผู้ที่ยังมีสติ')+choice('treasure','หีบสมบัติ','อุปกรณ์ที่ไม่ใช่ตำนาน 1 ชิ้น และเงิน '+fmt(150+S.P.towerRun.restPending*30)+' เหรียญ · ไม่ฟื้นพลังหรือล้างสถานะ')+'</div>'+(TOWER_UI.error?'<p role="alert">'+esc(TOWER_UI.error)+'</p>':'')+'</div>';}
+function towerRestView(){const choice=(type,title,description)=>'<button class="door tower-rest-choice" data-a="towerRest" data-v="'+type+'" '+(TOWER_UI.busy?'disabled':'')+'>'+routePicture(type,false)+'<b>'+title+'</b><small>'+description+'</small><span class="chip">เลือก'+title+'</span></button>';return '<div class="stack"><h2>จุดพัก · หลังชั้น '+S.P.towerRun.restPending+'</h2><p>เลือกได้หนึ่งอย่าง ก่อนขึ้นชั้น '+S.P.towerRun.floor+'</p>'+towerRestVitals()+'<button class="btn danger full" data-a="towerSurrender" '+(TOWER_UI.busy?'disabled':'')+'>ยอมแพ้ · ออกจากหอคอย</button>'+'<div class="grid2 tower-rest-grid">'+choice('revival','บ่อชุบชีวิต','อสูรที่พกและหมดสติฟื้น HP เต็มและ MP ครึ่งหนึ่ง หากไม่มีผู้หมดสติ ฟื้น HP 50% ให้ผู้ที่มีสัดส่วน HP ต่ำที่สุดหนึ่งตัว')+choice('spring','ลำธารใส','ฟื้น HP และ MP 35% ให้ผู้เล่นและอสูรที่พกซึ่งยังมีสติ')+choice('cleanse','บ่อชำระล้าง','ล้างสถานะผิดปกติทั้งหมดให้ผู้ผนึกและอสูรทุกตัว รวมในค่าย ฟรี พร้อมฟื้น HP/MP 10% ให้ผู้ที่ยังมีสติ')+choice('treasure','หีบสมบัติ','อุปกรณ์ที่ไม่ใช่ตำนาน 1 ชิ้น และเงิน '+fmt(150+S.P.towerRun.restPending*30)+' เหรียญ · ไม่ฟื้นพลังหรือล้างสถานะ')+'</div>'+(TOWER_UI.error?'<p role="alert">'+esc(TOWER_UI.error)+'</p>':'')+'</div>';}
 // @soulbeast-end 0952-towerRestView
 // @soulbeast-unit 0953-handlers-towerRest
 

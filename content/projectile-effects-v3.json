@@ -1,0 +1,53 @@
+{
+  "version": 3,
+  "assets": [
+    {
+      "id": "shuriken",
+      "path": "assets/vfx/projectiles/v3/shuriken.png",
+      "sha256": "c6c139acd2009396a300451be9bd3239a2900d4a0270a644dac60639b295bc8a",
+      "generator": "built-in imagegen",
+      "source": "7148a47b-eef1-4618-a2b3-772e173b0854"
+    },
+    {
+      "id": "music",
+      "path": "assets/vfx/projectiles/v3/music.png",
+      "sha256": "1ad26dba0660204cf8836e50d69c6970224644d92fa5eb50ac1cb0cd18d3782a",
+      "generator": "built-in imagegen",
+      "source": "64e865e9-2272-4a2d-8de1-21a2233c1dd4"
+    },
+    {
+      "id": "meteor",
+      "path": "assets/vfx/projectiles/v3/meteor.png",
+      "sha256": "4051621e72b463858ea34929f812ba6af1a85d87078c83a445d68a29a09fb69f",
+      "generator": "built-in imagegen",
+      "source": "f6cdc451-ae8e-40b8-a4e1-809500279ad2"
+    },
+    {
+      "id": "crescent",
+      "path": "assets/vfx/projectiles/v3/crescent.png",
+      "sha256": "4d1c759c42c0bd0c9bf2860d26c4c4990482ced79bd563160750220ac4024aca",
+      "generator": "built-in imagegen",
+      "source": "73391a35-3148-4d4e-be33-f96cc034a5d2"
+    },
+    {
+      "id": "melee",
+      "path": "assets/vfx/projectiles/v3/melee.png",
+      "sha256": "0d66f50f18d68cc57fccd196002bc8db2ec40ed81f0a2852c0bfe62be134254c",
+      "generator": "built-in imagegen",
+      "source": "b394c702-0d0d-4e64-aba3-553c9cf92c57"
+    },
+    {
+      "id": "impact",
+      "path": "assets/vfx/projectiles/v3/impact.png",
+      "generator": "built-in imagegen",
+      "sha256": "3dee180b724e741cb5382629afe2948611460e0d5342a80ca830c0e4394104f8"
+    },
+    {
+      "id": "slam",
+      "path": "assets/vfx/projectiles/v3/slam.png",
+      "generator": "built-in imagegen",
+      "sha256": "5c8ab86ad2de43dce1517af2f09310b6281d5a8380c7f48d685338c59776ef58"
+    }
+  ],
+  "notes": "Generated separately with built-in imagegen. RGBA preserved. Source prompts and validation in outputs/combat-vfx-v3-20261027."
+}

@@ -118,6 +118,7 @@ am_meteor:{n:'อุกกาบาตถล่ม',t:'m',pw:200,el:'rock',mp:22
 el_omni:{n:'หลอมรวมธาตุ',t:'buff',tg:'self',bf:{matk:.4},pas:'omni',tn:3,mp:14},
 wk_curse:{n:'คำสาปมรณะ',t:'m',pw:195,el:'dark',mp:10},
 wk_plague:{n:'คำสาปโรคระบาด',t:'status',el:'poison',mp:13,all:1,st:{poison:.6},bf:{mdef:-.2},tn:3},
+ne_spirit:{n:'อัญเชิญวิญญาณ',t:'summon',summon:'enemySpirit',el:'ghost',mp:30,cd:4,life:4,d:'เรียกวิญญาณอสูรศัตรูที่ตายในศึกนี้มาเป็นพวก 4 เทิร์น ด้วย HP/MP 50% ไม่รวมบอสและอสูรอัญเชิญ ใช้ศพแต่ละตัวได้ครั้งเดียว และต้องมีที่ว่างในทีม'},
 ne_soul:{n:'ดูดวิญญาณ',t:'m',pw:210,el:'ghost',mp:16,ls:.4},
 en_mind:{n:'ควบคุมจิตหมู่',t:'status',el:'psychic',mp:18,all:1,st:{charm:.4,confuse:.35}},
 /* ---- merchant line ---- */

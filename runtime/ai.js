@@ -38,7 +38,7 @@ function aiChoose(u){const form=chooseAutoForm(u);if(form)return [form,foesOf(u)
  const legal=u.skills.filter(id=>{const s=SK[id];return s&&!cooldownOf(u,id)&&costOf(u,s)<=u.mp&&!['form','revert','rest'].includes(s.t)&&!(s.charge&&u.charge)});
  const options=[];
  const add=(id,t,a,score)=>{if(score>0)options.push({id,t,a,score})};
- for(const id of [...new Set(['attack',...legal])]){const s=SK[id];if(s.summon){if(battleHasRoom(u))add(id,targets[0],null,Math.max(u.st.patk,u.st.matk)*1.4);continue}
+ for(const id of [...new Set(['attack',...legal])]){const s=SK[id];if(s.summon){if(battleHasRoom(u)&&(s.summon!=='enemySpirit'||spiritCorpse(u)))add(id,targets[0],null,Math.max(u.st.patk,u.st.matk)*1.4);continue}
   if(s.t==='heal'){const pool=s.tg==='self'?[u]:mates;const wounded=pool.filter(x=>x.hp<x.st.hp).sort((a,b)=>a.hp/a.st.hp-b.hp/b.st.hp);
    if((s.rev||s.revAll)&&dead.length&&s.tg!=='self')add(id,targets[0],dead[0],dead[0].st.hp*.9);
    if(wounded.length){const list=s.tg==='team'?wounded:[wounded[0]];let value=list.reduce((n,x)=>n+Math.min(x.st.hp-x.hp,x.st.hp*(s.pw||0)/100+u.st.matk*.5),0);if(wounded[0].hp/wounded[0].st.hp<.35)value*=1.7;add(id,targets[0],wounded[0],value)}continue}

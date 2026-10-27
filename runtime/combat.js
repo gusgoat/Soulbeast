@@ -25,11 +25,13 @@ function battlePlaceUnit(u,n){
  }else list.push(n);
  (b.queue??=[]).push(n.id);return true;
 }
+function spiritCorpse(u){return [...foesOf(u),...(B()?.retiredUnits||[]).filter(x=>x.side!==u.side)].find(x=>x.hp<=0&&x.sp&&SP[x.sp]&&!x.boss&&!x.temporary&&!x.spiritClaimed&&!x.bossHelper);}
 function addTemporary(u,sk){if(!battleHasRoom(u))return false;let n;
  if(sk.summon==='clone'){n=JSON.parse(JSON.stringify(u));n.st=Object.fromEntries(Object.entries(u.st).map(([k,v])=>[k,Math.max(k==='hp'?1:0,Math.round(v*(k==='hp'?(u.cls&&baseOf(u.cls)==='thief'?.25:.5):.8)))]));n.hp=n.st.hp;n.mp=n.st.mp;n.skills=n.skills.slice();n.name='ร่างแยก '+u.name;n.shadowOwner=u.id;}
+ else if(sk.summon==='enemySpirit'){const corpse=spiritCorpse(u);if(!corpse)return false;n=JSON.parse(JSON.stringify(corpse));n.name='วิญญาณ '+corpse.name;n.hp=Math.max(1,Math.round(n.st.hp*.5));n.mp=Math.round(n.st.mp*.5);n.skills=n.skills.filter(id=>!SK[id]?.summon);n.spiritSource=corpse.id;}
  else if(sk.summon==='golem'){n=wildUnit('bastion_golem',u.lv,0);n.name='โกเลมอัญเชิญ';n.taunt=3;n.skills=['attack','guard_taunt'];}
  else{const P=u.kind==='player'||u.owner!=null?S.P:u;if(!Number.isFinite(P.gold))P.gold=u.lv*30;const cost=Math.floor(Math.max(0,P.gold)*.10);if(cost<1)return false;P.gold-=cost;const jobs=Object.keys(CLS).filter(c=>baseOf(c)!=='merchant'&&tierOf(c)<=Math.max(0,tierOf(u.cls)-1));const lv=Math.max(1,Math.floor(u.lv*.85));const eligible=jobs.filter(c=>tierOf(c)===0||lv>=(tierOf(c)===1?25:40));n=humanUnit('ทหารรับจ้าง',pick(eligible),lv,0);n.skills=n.skills.filter(id=>!SK[id].summon);}
- n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;delete n.uid;return battlePlaceUnit(u,n);
+ n.id=u.id+'_summon_'+(B().summonSerial=(B().summonSerial||0)+1);n.side=u.side;n.owner=u.owner;n.kind='summon';n.temporary=true;n.summonLife=sk.life+1;n.cooldowns={};n.buffs=[];n.status={};n.dots=[];n.immune=null;n.enchant=null;delete n.uid;const placed=battlePlaceUnit(u,n);if(placed&&n.spiritSource){const corpse=[...foesOf(u),...(B().retiredUnits||[])].find(x=>x.id===n.spiritSource);if(corpse)corpse.spiritClaimed=true;}return placed;
 }
 // @soulbeast-end 0102-addTemporary
 // @soulbeast-unit 0216-B
@@ -250,7 +252,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
 // @soulbeast-end 0279-hitOne
 // @soulbeast-unit 0283-battleLater
 
-function battleLater(fn,ms){const battle=S.battle;const run=()=>{if(S.battle!==battle||!battle)return;if(S.ui.trapNotice||S.ui.confirm?.act==='dosurrender'){setTimeout(run,150);return}fn()};setTimeout(run,BattleSpeed.ms(ms))}
+function battleLater(fn,ms){const battle=S.battle;const run=()=>{if(S.battle!==battle||!battle)return;if(S.ui.trapNotice||['dosurrender','towerSurrenderConfirm'].includes(S.ui.confirm?.act)||TOWER_UI.busy&&S.battle?.towerRun){setTimeout(run,150);return}fn()};setTimeout(run,BattleSpeed.ms(ms))}
 // @soulbeast-end 0283-battleLater
 // @soulbeast-unit 0285-after
 
