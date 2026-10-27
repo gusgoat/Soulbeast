@@ -1,6 +1,6 @@
 {
   "live": [
-    "game-styles.2a8395fe483ace34.css",
+    "game-styles.b8708593deb48965.css",
     "game-data-registry.5350fd57c39d09dd.js",
     "game-data-elements.2936c00742247389.js",
     "game-data-skills.cc44041210824676.js",
@@ -14,10 +14,10 @@
     "game-data-presentation.7a313b5992cfa63e.js",
     "game-data-secrets.b755c3d1bd3b2d7e.js",
     "game-data-narrative.3437bb33483fc5e0.js",
-    "game-app.fe1849594c6af13e.js"
+    "game-app.55ec270e4b9c9eab.js"
   ],
   "staging": [
-    "game-styles.2a8395fe483ace34.css",
+    "game-styles.b8708593deb48965.css",
     "game-data-registry.5350fd57c39d09dd.js",
     "game-data-elements.2936c00742247389.js",
     "game-data-skills.cc44041210824676.js",
@@ -31,6 +31,6 @@
     "game-data-presentation.7a313b5992cfa63e.js",
     "game-data-secrets.b755c3d1bd3b2d7e.js",
     "game-data-narrative.3437bb33483fc5e0.js",
-    "game-app.a0cd75c391ab5440.js"
+    "game-app.3f8f31729bd5fbd7.js"
   ]
 }

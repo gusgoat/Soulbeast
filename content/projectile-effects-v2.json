@@ -1,0 +1,112 @@
+{
+  "version": 2,
+  "generator": "built-in imagegen",
+  "scope": "Presentation only; skill power, unlock levels and costs are read, never modified.",
+  "scaling": "tier 0 keeps original VFX; tier 1..4 scale = 1 + tier * 0.35",
+  "assets": [
+    {
+      "id": "lightning",
+      "path": "assets/vfx/projectiles/v2/lightning.png",
+      "transparent": true,
+      "emission": {
+        "x": 0.08,
+        "y": 0.5
+      },
+      "terminal": {
+        "x": 0.92,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "fire",
+      "path": "assets/vfx/projectiles/v2/fire.png",
+      "transparent": true,
+      "emission": {
+        "x": 0.08,
+        "y": 0.5
+      },
+      "terminal": {
+        "x": 0.92,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "storm",
+      "path": "assets/vfx/projectiles/v2/storm.png",
+      "transparent": true,
+      "emission": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "terminal": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "beam",
+      "path": "assets/vfx/projectiles/v2/beam.png",
+      "transparent": true,
+      "emission": {
+        "x": 0.08,
+        "y": 0.5
+      },
+      "terminal": {
+        "x": 0.92,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "ice",
+      "path": "assets/vfx/projectiles/v2/ice.png",
+      "transparent": true,
+      "emission": {
+        "x": 0.08,
+        "y": 0.5
+      },
+      "terminal": {
+        "x": 0.92,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "dark",
+      "path": "assets/vfx/projectiles/v2/dark.png",
+      "transparent": true,
+      "emission": {
+        "x": 0.08,
+        "y": 0.5
+      },
+      "terminal": {
+        "x": 0.92,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "holy",
+      "path": "assets/vfx/projectiles/v2/holy.png",
+      "transparent": true,
+      "emission": {
+        "x": 0.08,
+        "y": 0.5
+      },
+      "terminal": {
+        "x": 0.92,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "nature",
+      "path": "assets/vfx/projectiles/v2/nature.png",
+      "transparent": true,
+      "emission": {
+        "x": 0.08,
+        "y": 0.5
+      },
+      "terminal": {
+        "x": 0.92,
+        "y": 0.5
+      }
+    }
+  ]
+}

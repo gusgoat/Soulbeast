@@ -1,0 +1,24 @@
+const fs=require('fs');
+let html=require('./read-game-document.cjs')('build/staging-index.html');
+const setup=`
+save=()=>{};gsSave=async()=>{};lbSubmit=async()=>{};Sound.fx=()=>{};Sound.cry=()=>{};advance=()=>{};
+const input=document.createElement('input');input.id='nm';input.value='ผู้เรียกพายุ';input.hidden=true;document.body.append(input);
+S={screen:'start',ui:{}};handlers.newgame();input.remove();delete S.P.tutorial;S.P.cls='stormcaller';S.P.lv=60;S.P.hp=pStats().hp;S.P.mp=pStats().mp;
+S.P.forestAutoIntroduced=true;S.zone={id:7,depth:0,log:[],fork:null};S.screen='zone';startBattle([wildUnit('kappa',10,0)],'wild',7);delete S.ui.cinema;S.battle.cur='P';S.battle.menu='main';S.ui.battleCommandsHidden=true;render();
+const toolbar=document.createElement('section');toolbar.className='projectile-toolbar';
+const samples=['mg_fire','mg_thunderstorm','gv_storm','sc_tempest','f_dragonbreath','f_moonbeam','am_meteor','mg_blizzard','ne_soul','ms_mage50','ms_mage60','solar_raijaku_s6'];
+toolbar.innerHTML='<strong>โปรเจกไทล์ตามระดับสกิล</strong><select id="projectileSkill" aria-label="สกิล">'+samples.filter(id=>SK[id]).map(id=>'<option value="'+id+'">'+SK[id].n+'</option>').join('')+'</select><div><button id="projectilePlay" class="btn sm">เล่นท่า</button><button id="projectileHold" class="btn sm">ค้างภาพ</button><button id="projectileReverse" class="btn sm">สลับฝั่ง</button><button id="projectileSpeed" class="btn sm">×1</button></div><small id="projectileInfo"></small>';
+document.body.prepend(toolbar);let holding=false,reversed=false;const later=BattleEffects.later.bind(BattleEffects);BattleEffects.later=function(fn,ms,...rest){if(!holding)return later(fn,ms,...rest);};
+function play(hold=false){holding=hold;BattleEffects.clear();CharacterMotion.reset();const id=document.getElementById('projectileSkill').value,actor=S.battle.allies[0],enemy=S.battle.enemies[0],source=reversed?enemy:actor,target=reversed?actor:enemy;
+ const p=BattleEffects.profile(id,source),from=CharacterMotion.emission(BattleEffects.anchor(source.id)),to=BattleEffects.anchor(target.id);document.getElementById('projectileInfo').textContent=SK[id].n+' · '+(p.painted?'ระดับ '+p.painted.tier+' · '+p.painted.kind:'เอฟเฟกต์เริ่มต้น');
+ CharacterMotion.phase(source.id,'windup',350);CharacterMotion.schedule(()=>{CharacterMotion.phase(source.id,'power',750);BattleEffects.travel(document.getElementById('vfx'),from,to,p);if(hold)for(const n of document.querySelectorAll('.battle-painted-flight,.battle-projectile,.battle-skill-beam'))for(const a of n.getAnimations()){a.pause();a.currentTime=a.effect.getTiming().duration*.55;}setTimeout(()=>{let proof=document.getElementById('projectileProof');if(!proof){proof=document.createElement('output');proof.id='projectileProof';proof.hidden=true;toolbar.append(proof);}proof.textContent=JSON.stringify({width:innerWidth,skill:id,reversed,rates:[...document.querySelectorAll('.battle-painted-flight')].flatMap(n=>n.getAnimations().map(a=>a.playbackRate)),clipBottom:document.querySelector('.painted-projectile-clip')?.getBoundingClientRect().bottom,controlsTop:document.querySelector('.battle-command-controls')?.getBoundingClientRect().top});},80);},hold?0:350);
+}
+document.getElementById('projectilePlay').onclick=()=>play();document.getElementById('projectileHold').onclick=()=>play(true);document.getElementById('projectileReverse').onclick=()=>{reversed=!reversed;play(holding);};document.getElementById('projectileSpeed').onclick=e=>{BattleSpeed.value=BattleSpeed.value===1?2:1;e.target.textContent='×'+BattleSpeed.value;play();};
+const query=new URLSearchParams(location.search),requested=query.get('skill');if(requested&&samples.includes(requested))document.getElementById('projectileSkill').value=requested;if(query.has('hold'))play(true);
+`;
+const guard='<script>window.SHEET_URL="";Object.defineProperty(window,"localStorage",{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}});window.fetch=()=>Promise.reject(Error("Offline projectile preview"));</script>';
+html=html.replace('<head>','<head><base href="/">'+guard+'<style>body{display:block}.projectile-toolbar{position:relative;z-index:70;max-width:520px;margin:auto;padding:10px;background:#102333;display:grid;gap:7px;border-bottom:1px solid #b6a16d}.projectile-toolbar select{width:100%;font:inherit}.projectile-toolbar>div{display:flex;gap:6px}.projectile-toolbar .btn{flex:1;padding:7px 3px}#app{margin:auto;height:auto;min-height:100vh}</style>').replace('<html lang="th">','<html lang="th" data-skip-web-intro>');
+const bootstrap='window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});';
+if(!html.includes(bootstrap))throw Error('Missing preview bootstrap');
+fs.writeFileSync('build/projectile-effects-preview.html',html.replace(bootstrap,setup));
+console.log('Built local-only projectile preview with real battle cards, hold/reverse/speed controls');
