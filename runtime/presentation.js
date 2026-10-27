@@ -78,6 +78,7 @@ Object.assign(BUILTIN_ART,SoulbeastContent.BUILTIN_ART_additions_2());
 const FEMALE_CLASS_ART=new Set(['archer','bard','dirge','mage','enchanter','biochem','druid','grove','archdruid','summoner']);
 function classPortraitSource(cls,gender){
  if(!CLS[cls])return '';
+ if(cls==='sniper')return gender==='female'?'assets/portraits/divine-archer-female-v2.webp':'assets/portraits/divine-archer-male-v2.webp';
  const original=BUILTIN_ART['cls:'+cls]||BUILTIN_ART['cls:'+baseOf(cls)];
  if(!['male','female'].includes(gender))return original;
  return gender===(FEMALE_CLASS_ART.has(cls)?'female':'male')?original:'assets/portraits/'+cls+'-'+gender+'.webp';

@@ -177,14 +177,14 @@
   },
   {
     "id": "sniper",
-    "name": "สไนเปอร์",
-    "description": "ยิงนัดเดียวจอดสนิท",
+    "name": "เทพธนู",
+    "description": "ผู้เชี่ยวชาญธนู ยิงศรแม่นยำและคริติคอลรุนแรง",
     "parent": "ranger",
     "tier": 2,
-    "art": "assets/media/7da2ab7ea88e953fc31b97d8.webp",
+    "art": "assets/portraits/divine-archer-male-v2.webp",
     "originalGender": "male",
     "newGender": "female",
-    "originalSHA256": "7da2ab7ea88e953fc31b97d8ccb29bdf021e27b8f07b52c0f6d02c62425b8de5"
+    "originalSHA256": "cab8c233c2e2070e3b0d7afdf30414d38f8a55dfe39b72c24685500080242007"
   },
   {
     "id": "wildlord",

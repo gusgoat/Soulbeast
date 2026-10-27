@@ -19,7 +19,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  }
  for(const j of jobs)for(const gender of ['male','female']){
   r(`S.screen='town';S.P.cls='${j.id}';S.P.gender='${gender}';`);
-  const expected=gender===j.originalGender?j.art:'assets/portraits/'+j.id+'-'+gender+'.webp';
+  const expected=gender===j.originalGender?j.art:j.id==='sniper'?'assets/portraits/divine-archer-female-v2.webp':'assets/portraits/'+j.id+'-'+gender+'.webp';
   assert.equal(r(`classPortraitSource('${j.id}','${gender}')`),expected);
   assert(r("portrait('player',64)").includes(expected),j.id+' '+gender);
   assert(r("townNavArt('hero')").includes(expected));
@@ -29,7 +29,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
   assert(r(`unitPortrait({kind:'player',cls:'${j.id}',img:'player'},40)`).includes(j.art));
   assert(r(`portrait('npc:${j.id}',40)`).includes(j.art));
   r('delete S.P.gender;');assert(r("portrait('player',64)").includes(j.art));
-  assert(!r("portrait('player',64)").includes('assets/portraits/'));
+  assert.equal(r(`classPortraitSource('${j.id}')`),j.art);
  }
  // Promotion must retain chosen gender through every edge of the class tree.
  for(const j of jobs.filter(j=>j.parent))for(const gender of ['male','female']){

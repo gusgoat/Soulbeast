@@ -1,14 +1,15 @@
 {
   "id": "sniper",
-  "name": "สไนเปอร์",
-  "description": "ยิงนัดเดียวจอดสนิท",
+  "name": "เทพธนู",
+  "description": "ผู้เชี่ยวชาญธนู ยิงศรแม่นยำและคริติคอลรุนแรง",
   "parent": "ranger",
   "tier": 2,
-  "art": "assets/media/7da2ab7ea88e953fc31b97d8.webp",
+  "art": "assets/portraits/divine-archer-male-v2.webp",
   "originalGender": "male",
   "newGender": "female",
-  "prompt": "Use case: stylized-concept. Create one playable WOMAN counterpart portrait for Soulbeast class sniper (สไนเปอร์), ยิงนัดเดียวจอดสนิท. The supplied reference depicts the existing MALE class design. Make a clearly feminine adult female face and build version of the same profession. Preserve class identity: recognizable clothing colors, armor ornamentation, signature props and magic motifs, rank, hairstyle theme and background atmosphere; adapt clothing into practical fully clothed adventurer attire. Match the detailed painterly Asian fantasy RPG illustration style of the reference.  This is the ARCHER sniper profession: use an ornate long-range crossbow instead of a firearm, keeping the reference palette and aimed pose. Square 1:1 character portrait. Head and upper torso prominent and centered, show enough signature prop to identify class, entire head/hair within safe central 80% for a circular avatar crop. One primary adult character only; spirit/beast motifs behind summoner classes are allowed as in reference. Tasteful heroic expression, detailed face, no lettering, no UI, no frames, no collage. This is a new gender counterpart asset, not a replacement for the original.",
+  "prompt": "Create the female Divine Archer portrait matching approved bow-motion identity, with traditional gold longbow, no firearm, no scope and no crossbow. Full production prompt: outputs/divine-archer-vfx-20261027/prompts.json",
   "mode": "built-in image_gen",
-  "generatedSource": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-df138fa3-b339-43d0-828e-d01280220aef.png",
-  "target": "assets/portraits/sniper-female.webp"
+  "generatedSource": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-5f83857d-2b51-4886-b357-b3f613140919.png",
+  "target": "assets/portraits/divine-archer-female-v2.webp",
+  "previousAudit": "outputs/divine-archer-vfx-20261027/previous-sniper-portrait.json"
 }

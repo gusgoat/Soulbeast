@@ -571,7 +571,7 @@ gladiator:{n:'กลาดิเอเตอร์',w:'axe',em:'🛡️',m:{hp:1
 archer:{n:'นักธนู',w:'bow',em:'🏹',m:{hp:.9,mp:.8,patk:1.15,matk:.7,pdef:.85,mdef:.9,acc:1.3,eva:1.2,spd:1.15,crit:1.5},pas:['eagle'],sk:[[1,'ar_double'],[4,'ar_fire'],[8,'ar_hawk'],[12,'ar_rain'],[17,'ar_ice'],[22,'ar_pierce']],
  d:'ยิงไกล แม่นยำ คริติคอลสูง',pro:'แม่นยำและเร็ว มีทั้งสกิลเดี่ยวและหมู่ ธนูติดสถานะ',con:'HP และป้องกันต่ำ'},
  ranger:{n:'พรานป่า',p:'archer',m:{patk:1.1,acc:1.1},pas:['keen'],sk:[[25,'ra_falcon'],[32,'ra_trap']],d:'นายพรานกับเหยี่ยวคู่ใจ วางกับดัก'},
-  sniper:{n:'สไนเปอร์',p:'ranger',m:{patk:1.1,crit:1.2},pas:['deadly'],sk:[[40,'sn_heart']],d:'ยิงนัดเดียวจอดสนิท'},
+  sniper:{n:'เทพธนู',p:'ranger',w:'bow',m:{patk:1.1,crit:1.2},pas:['deadly'],sk:[[40,'sn_heart']],d:'ผู้เชี่ยวชาญธนู ยิงศรแม่นยำและคริติคอลรุนแรง'},
   wildlord:{n:'นายพรานพงไพร',p:'ranger',m:{spd:1.1},pas:['swift'],sum:2,sk:[[40,'wd_storm']],d:'นำอสูรออกล่าได้ 2 ตัว'},
  bard:{n:'นักกวี',p:'archer',m:{matk:1.5,mp:1.3},pas:['swift'],sk:[[25,'bd_rally'],[32,'bd_lullaby']],d:'ร้องเพลงเสริมพลังทีมและกล่อมศัตรู'},
   maestro:{n:'คีตกวีสวรรค์',p:'bard',m:{mdef:1.1},pas:['healer'],sk:[[40,'ma_heal']],d:'บทเพลงเยียวยาทั้งทีม'},

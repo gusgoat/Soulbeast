@@ -1,0 +1,57 @@
+{
+  "version": 4,
+  "generator": "built-in imagegen",
+  "eligibility": "High-level elemental skills only; named meteors, music and crescent weapon waves keep authored motifs.",
+  "assets": [
+    {
+      "id": "water-high",
+      "path": "assets/vfx/projectiles/v4/water-high.png",
+      "source": "exec-a3e150c1-c9eb-4934-96fe-83d19d18c284.png",
+      "sha256": "651e1b7d8fe50669cedba21ae0f4dd943e7067e76c4bbe7cdbb849a9b12f4641",
+      "transparent": true,
+      "emission": {
+        "x": 0.01,
+        "y": 0.575,
+        "end": 0.99
+      }
+    },
+    {
+      "id": "fire-high",
+      "path": "assets/vfx/projectiles/v4/fire-high.png",
+      "source": "exec-b2898cbe-327c-4358-9add-8c9237c996a9.png",
+      "sha256": "93bba1f2649dbd4d169d2a4450eca1783ff509b9da2399cf71031812a88765af",
+      "transparent": true,
+      "emission": {
+        "x": 0.01,
+        "y": 0.575,
+        "end": 0.99
+      }
+    },
+    {
+      "id": "electric-high",
+      "path": "assets/vfx/projectiles/v4/electric-high.png",
+      "source": "exec-e0f76545-9c7b-4e60-8ae1-ed25c4b9f79b.png",
+      "sha256": "7848685b53b9f1aaed1f2d24e7e1e972942e5518b2f998a91cf99c2b498219bd",
+      "transparent": true,
+      "emission": {
+        "x": 0.03,
+        "y": 0.47,
+        "end": 0.97
+      }
+    },
+    {
+      "id": "wind-high",
+      "path": "assets/vfx/projectiles/v4/wind-high.png",
+      "source": "exec-606c4582-d296-4bfd-bfa0-f442779a9385.png",
+      "sha256": "ecc94205a13c6e08d70b2bed8212ae153524469620fd8efca791e9df5c59ef41",
+      "transparent": true
+    },
+    {
+      "id": "earth-high",
+      "path": "assets/vfx/projectiles/v4/earth-high.png",
+      "source": "exec-1893b622-a8ae-48f0-82c2-53a0fa113939.png",
+      "sha256": "94e74116e3ea686ee5409bd2b92b7ae6e85e335521a8d0b1fe0c7d87358d7c94",
+      "transparent": true
+    }
+  ]
+}

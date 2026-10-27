@@ -17,5 +17,6 @@ const fs=require('fs'),assert=require('assert/strict'),crypto=require('crypto'),
  g.ctx.pickerResponse=response;g.ctx.pickerAction=action=>{actions.push(action);if(action!=='account_list')throw Error('Unexpected per-character call '+action);return response;};
  g.run("ACCOUNT_GAME.user={id:'fixture-owner',email:'fixture@example.invalid',email_confirmed_at:'2026'};ACCOUNT_GAME.mode='list';ACCOUNT_GAME.client={identity:async()=>ACCOUNT_GAME.user,game:async action=>pickerAction(action)};");
  await g.run('handlers.accountCharacters()');assert.deepEqual(actions,['account_list']);assert.equal(g.run('ACCOUNT_GAME.characters.length'),41);assert.equal(g.run('ACCOUNT_GAME.characters[0].cls'),'archmage');assert.equal(g.run('ACCOUNT_GAME.characters[0].gender'),'female');
+ response.characters[0]={...response.characters[0],cls:'ranger',className:'สไนเปอร์'};await g.run('handlers.accountCharacters()');assert.equal(g.run('ACCOUNT_GAME.characters[0].cls'),'sniper','Old class labels must resolve to Divine Archer without full-save loads');assert(actions.every(a=>a==='account_list'));
  await db.close();console.log('PASS 41-character picker: one browser list call, zero engine loads, latest level/class/gender, rename guard, capacity, cross-account/environment isolation, no save/PIN exposure and service-only access');
 })().catch(e=>{console.error(e);process.exitCode=1;});

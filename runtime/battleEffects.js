@@ -66,25 +66,33 @@ const BattleEffects={
   else if(el==='fairy'){asset='beam';kind=tier>=2?'beam':'bolt';tint='hue-rotate(190deg)';}
   else if(el==='rock'||el==='ground'){asset='fire';tint='saturate(.65)';}
   else {asset='beam';kind=tier>=2?'beam':'bolt';}
-  return {asset,kind,tier,scale:1+tier*.35,tint,path:'assets/vfx/projectiles/'+(['shuriken','music','meteor','crescent'].includes(asset)?'v3/':'v2/')+asset+'.png'};
+  const advanced=level>=40||tier>=3||power>=190||Number(sk.mp||0)>=22;
+  const elementAsset={water:'water-high',fire:'fire-high',electric:'electric-high',flying:'wind-high',ground:'earth-high',rock:'earth-high'}[el];
+  // Preserve named music, weapon waves and meteor trajectories; only upgrade elemental spell families.
+  if(advanced&&elementAsset&&!['shuriken','music','crescent','meteor'].includes(asset)){
+   asset=elementAsset;tint='none';kind=family==='arrow'||family==='bullet'?'bolt':el==='flying'?'vortex':el==='ground'||el==='rock'?'eruption':'beam';
+  }
+  return {asset,kind,tier,scale:1+tier*.35,tint,advanced:asset.endsWith('-high'),emission:asset==='water-high'?{x:.01,y:.575,end:.99}:asset==='fire-high'?{x:.01,y:.575,end:.99}:asset==='electric-high'?{x:.03,y:.47,end:.97}:null,path:'assets/vfx/projectiles/'+(asset.endsWith('-high')?'v4/':['shuriken','music','meteor','crescent'].includes(asset)?'v3/':'v2/')+asset+'.png'};
  },
  paintedTravel(L,from,to,p){
-  const art=p.painted,dx=to.x-from.x,dy=to.y-from.y,distance=Math.hypot(dx,dy),beam=art.kind==='beam',vortex=art.kind==='vortex';
+  const art=p.painted,dx=to.x-from.x,dy=to.y-from.y,distance=Math.hypot(dx,dy),beam=art.kind==='beam',vortex=art.kind==='vortex',eruption=art.kind==='eruption';
   const arena=from.node.closest?.('.battle-vitals,.online-combat-board,.demo-arena,.projectile-demo-board'),rect=arena?.getBoundingClientRect();
   const box=rect&&rect.width>0?rect:{left:Math.max(0,Math.min(from.x,to.x)-100),top:Math.max(0,Math.min(from.y,to.y)-100),width:Math.abs(dx)+200,height:Math.abs(dy)+200};
   if(art.kind==='meteor'){from={...from,x:Math.max(box.left+45,Math.min(box.left+box.width-45,to.x-75)),y:box.top+35};}
+  if(eruption)from={...from,x:to.x,y:to.y+(to.size||40)*.45};
   const travelX=to.x-from.x,travelY=to.y-from.y;
   const shell=document.createElement('div');shell.className='battle-fx-owned painted-projectile-clip';shell.setAttribute('aria-hidden','true');Object.assign(shell.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});
   const node=document.createElement('div');node.className='vx battle-fx-owned battle-painted-flight '+(beam?'battle-skill-beam':'battle-projectile')+' painted-'+art.kind;node.dataset.skill=p.id;node.dataset.tier=String(art.tier);node.dataset.asset=art.asset;node.dataset.source=this.currentSource||'';node.dataset.target=this.currentTarget||'';
-  const breadth=Math.min(art.kind==='meteor'?190:vortex?148:beam?115:145,Math.max(art.kind==='meteor'?86:vortex?54:beam?34:42,(from.size||44)*(vortex?1.2:beam?.5:.9))*art.scale);
-  Object.assign(node.style,{left:from.x-box.left+'px',top:from.y-box.top+'px',width:(beam?distance:breadth*(vortex||['meteor','music','crescent','shuriken'].includes(art.asset)?1:1.6))+'px',height:(['meteor','music','crescent','shuriken'].includes(art.asset)?breadth:vortex?breadth*1.35:beam?Math.min(breadth,distance*.5):breadth*.66)+'px'});
+  const breadth=Math.min(eruption?175:art.kind==='meteor'?190:vortex?(art.advanced?165:148):beam?(art.advanced?130:115):145,Math.max(eruption?72:art.kind==='meteor'?86:vortex?54:beam?34:42,(from.size||44)*(vortex?1.2:beam?.5:.9))*art.scale);
+  Object.assign(node.style,{left:from.x-box.left+'px',top:from.y-box.top+'px',width:(eruption?breadth*1.25:beam?distance:breadth*(vortex||['meteor','music','crescent','shuriken'].includes(art.asset)?1:1.6))+'px',height:(eruption?breadth*1.15:['meteor','music','crescent','shuriken'].includes(art.asset)?breadth:vortex?breadth*1.35:beam?Math.min(breadth,distance*.5):breadth*.66)+'px'});
   node.style.setProperty('--c',p.color);node.style.setProperty('--a',p.accent);node.style.setProperty('--angle',Math.atan2(dy,dx)*180/Math.PI+'deg');
-  const image=document.createElement('img');image.src=art.path;image.alt='';image.draggable=false;image.style.filter=art.tint;node.appendChild(image);shell.appendChild(node);L.appendChild(shell);
-  const duration=beam?750:art.kind==='meteor'?850:560,arrival=beam?420:duration,screen=S.screen;let animation,done=false;
+  const image=document.createElement('img');image.src=art.path;image.alt='';image.draggable=false;image.style.filter=art.tint;if(beam&&art.emission){const q=art.emission;image.style.left=(-q.x/(q.end-q.x)*100)+'%';image.style.width=(100/(q.end-q.x))+'%';image.style.top=((.5-q.y)*100)+'%';}node.appendChild(image);shell.appendChild(node);L.appendChild(shell);
+  const duration=eruption?900:beam?750:art.kind==='meteor'?850:560,arrival=eruption?360:beam?420:duration,screen=S.screen;let animation,done=false;
   const cleanup=()=>{if(done)return;done=true;animation?.cancel();shell.remove();this.live.delete(cleanup);};cleanup.stale=()=>S.screen!==screen||!from.node.isConnected||!to.node.isConnected;this.live.add(cleanup);
   const transform=(x,y)=>'translate(calc('+(art.kind==='meteor'?'-80%':'-50%')+' + '+x+'px),calc('+(art.kind==='meteor'?'-80%':'-50%')+' + '+y+'px))'+(vortex||art.kind==='meteor'||art.asset==='music'?'':' rotate(var(--angle))');
   const beamPose='translateY(-50%) rotate(var(--angle))';
-  const frames=beam?[{transform:beamPose,clipPath:'inset(0 100% 0 0)',opacity:1,offset:0},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:1,offset:arrival/duration},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:1,offset:.85},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:0,offset:1}]:[{transform:transform(0,0),opacity:0,offset:0},{opacity:1,offset:.08},{opacity:1,offset:.88},{transform:transform(travelX,travelY),opacity:0,offset:1}];
+  const eruptPose='translate(-50%,-75%)';
+  const frames=eruption?[{transform:eruptPose+' scale(.25)',opacity:0,offset:0},{transform:eruptPose+' scale(1)',opacity:1,offset:.4},{transform:eruptPose+' scale(1.08)',opacity:1,offset:.78},{transform:eruptPose+' scale(1.15)',opacity:0,offset:1}]:beam?[{transform:beamPose,clipPath:'inset(0 100% 0 0)',opacity:1,offset:0},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:1,offset:arrival/duration},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:1,offset:.85},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:0,offset:1}]:[{transform:transform(0,0),opacity:0,offset:0},{opacity:1,offset:.08},{opacity:1,offset:.88},{transform:transform(travelX,travelY),opacity:0,offset:1}];
   if(node.animate){animation=node.animate(frames,{duration,easing:'linear',fill:'both'});animation.onfinish=cleanup;}else node.style.transform=transform(dx,dy);
   this.later(cleanup,duration+80);return arrival;
  },
@@ -162,9 +170,10 @@ const BattleEffects={
   const level=this.skillLevels?.get(p.id)||0;
   if(p.mode!=='melee'&&p.painted?.kind!=='meteor')return;
   if(p.mode==='melee'&&level<45&&!p.legend&&!p.effect&&!p.signature&&!(SK[p.id]?.mp>=15||SK[p.id]?.pw>=190))return;
-  const a=p.painted?.kind==='meteor'?'impact':/hammer|mace|axe|ค้อน|ขวาน|หมัด|กระแทก/.test(p.id+' '+(SK[p.id]?.n||''))?'slam':'melee',size=Math.min(185,Math.max(92,to.size*2.5));
+  const elemental={water:'water-high',fire:'fire-high',electric:'electric-high',flying:'wind-high',ground:'earth-high',rock:'earth-high'}[SK[p.id]?.el];
+  const a=p.painted?.kind==='meteor'?'impact':elemental||(/hammer|mace|axe|ค้อน|ขวาน|หมัด|กระแทก/.test(p.id+' '+(SK[p.id]?.n||''))?'slam':'melee'),size=Math.min(185,Math.max(92,to.size*2.5));
   const arena=to.node.closest?.('.battle-vitals,.online-combat-board,.demo-arena,.projectile-demo-board'),box=arena?.getBoundingClientRect();const shell=document.createElement('div');shell.className='battle-fx-owned painted-projectile-clip';if(box)Object.assign(shell.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});L.appendChild(shell);
-  const n=document.createElement('img');n.className='vx battle-fx-owned painted-impact';n.src='assets/vfx/projectiles/v3/'+a+'.png';n.alt='';n.dataset.skill=p.id;Object.assign(n.style,{left:(to.x-(box?.left||0))+'px',top:(to.y-(box?.top||0))+'px',width:size+'px',height:size+'px'});shell.appendChild(n);
+  const n=document.createElement('img');n.className='vx battle-fx-owned painted-impact';n.src='assets/vfx/projectiles/'+(a.endsWith('-high')?'v4/':'v3/')+a+'.png';n.alt='';n.dataset.skill=p.id;Object.assign(n.style,{left:(to.x-(box?.left||0))+'px',top:(to.y-(box?.top||0))+'px',width:size+'px',height:size+'px'});shell.appendChild(n);
   const pose='translate(-50%,-50%)';let anim;const cleanup=()=>{anim?.cancel();shell.remove();this.live.delete(cleanup);};this.live.add(cleanup);
   anim=n.animate?.([{transform:pose+' scale(.45)',opacity:0},{transform:pose+' scale(1)',opacity:1,offset:.25},{transform:pose+' scale(1.25)',opacity:0}],{duration:650,easing:'ease-out',fill:'both'});if(anim)anim.onfinish=cleanup;this.later(cleanup,700);
  },

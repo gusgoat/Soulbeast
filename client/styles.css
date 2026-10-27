@@ -1048,3 +1048,5 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 .barrier-counter b{position:absolute;right:-1px;bottom:-1px;min-width:10px;height:11px;line-height:11px;font-size:9px;background:#102b20;color:white;border-radius:3px;text-align:center}
 
 .battle-painted-flight{animation:none!important}.battle-painted-flight.painted-beam{transform-origin:0 50%;overflow:hidden}.painted-beam img{animation:painted-current .18s linear infinite alternate}.painted-meteor img,.battle-painted-flight[data-asset="music"] img,.battle-painted-flight[data-asset="shuriken"] img,.battle-painted-flight[data-asset="crescent"] img{object-fit:contain}.painted-impact{position:absolute;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 7px #ffc56b);max-width:40vw;max-height:40vw}
+
+.painted-eruption img{object-fit:contain}.battle-painted-flight.painted-eruption{transform-origin:50% 85%}
