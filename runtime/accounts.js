@@ -6,7 +6,7 @@ const ACCOUNT_GAME=(()=>{
  const root=()=>document.getElementById('app');
  const key=(code=state.code)=>'soulbeast_account_save_v1:'+SB_ENV+':'+state.user.id+':'+code;
  const characterLimit=()=>Math.max(5,Number(state.limit)||5);
- const fullMessage=()=>ct('ช่องตัวละครครบ '+characterLimit()+' ตัวแล้ว','All '+characterLimit()+' character slots are used.','角色栏位已满：'+characterLimit());
+ const fullMessage=()=>ct('ช่องตัวละครครบ {limit} ตัวแล้ว','All {limit} character slots are used.','角色栏位已满：{limit}').replace('{limit}',characterLimit());
  const blank=()=>({screen:'start',ui:{}});
  const ui=()=>{
   if(['playing','create'].includes(state.mode))return false;
