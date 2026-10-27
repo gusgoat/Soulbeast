@@ -84,7 +84,7 @@ async function communitySave(){if(S.battle&&!S.battle.over||GS.busy)throw Error(
 // @soulbeast-end 0577-communitySave
 // @soulbeast-unit 0578-communityApplyData
 
-function communityApplyData(data){if(!data)return;const raw=JSON.parse(data),pin=S.P.cpin,code=ensureCode();if(!raw.P)throw Error('bad data');S.P=raw.P;S.P.code=code;S.P.cpin=pin;normalizePack();initDiscovery();save();GS.lastJson=gsData();}
+function communityApplyData(data,savedAt=S.P?.gsAt){if(!data)return;const raw=JSON.parse(data),pin=S.P.cpin,code=ensureCode();if(!raw.P)throw Error('bad data');S.P=raw.P;S.P.code=code;S.P.cpin=pin;if(Number(savedAt)>0)S.P.gsAt=Number(savedAt);normalizePack();initDiscovery();save();GS.lastJson=gsData();}
 // @soulbeast-end 0578-communityApplyData
 // @soulbeast-unit 0589-communityAvatar
 
