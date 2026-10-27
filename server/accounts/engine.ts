@@ -2117,6 +2117,18 @@ const ambushUnit=unit;unit=function(o){const u=ambushUnit(o);if(u.ambushHits==nu
 const ambushBlock=class10BlockHit;class10BlockHit=function(u,sk,t,damaging){if(damaging&&t.ambushHits>0){t.ambushHits--;blog(t.name+' ซุ่มยิงหลบการโจมตี เหลือ '+t.ambushHits+' ครั้ง');vfx('miss',t.id);return true;}return ambushBlock(u,sk,t,damaging);};
 const ambushEnd=endUnitTurn;endUnitTurn=function(u){if(u)u.ambushHits=0;return ambushEnd(u);};
 
+function applyEquipmentBalance(table){
+ const rank=e=>e.worldLegend?3:e.legend?2:e.craft?1:0;
+ const comparable=(a,b)=>a.slot===b.slot&&(a.slot!=='weapon'||a.wt===b.wt);
+ const all=Object.entries(table).sort((a,b)=>rank(a[1])-rank(b[1])||a[1].lv-b[1].lv||a[0].localeCompare(b[0]));
+ for(const [id,item]of all){const r=rank(item);if(!r)continue;
+  const lower=all.filter(([,e])=>rank(e)<r&&!e.special&&e.lv<=item.lv&&comparable(item,e)).map(([,e])=>e);
+  const margin=r===3?1.12:1.10;
+  for(const key of Object.keys(item.st||{})){if(!(item.st[key]>0))continue;const baseline=Math.max(0,...lower.map(e=>e.st?.[key]||0));if(baseline)item.st[key]=Math.max(item.st[key],Math.ceil(baseline*margin));}
+ }
+}
+applyEquipmentBalance(EQ);
+
 return {dispatch(packet){if(packet?.action==='account_retire_check'){try{const auth=pvpSaveAuth_(packet);if(pvpFindActive_(auth.code)||wbExisting_(auth.code))return {ok:false,error:'finish other battle'};return {ok:true};}catch(e){return {ok:false,error:e.message||String(e)};}}return JSON.parse((packet===null?doGet():doPost({postData:{contents:JSON.stringify(packet)}})).getContent());}};
 }
 

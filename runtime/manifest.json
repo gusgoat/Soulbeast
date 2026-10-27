@@ -267,6 +267,11 @@
       "file": "deathAudio.js",
       "description": "Gendered humanoid death audio at visible defeat",
       "units": 1
+    },
+    "equipmentBalance": {
+      "file": "equipmentBalance.js",
+      "description": "Equipment rarity and level stat floors",
+      "units": 1
     }
   },
   "order": [
@@ -1374,6 +1379,7 @@
     "1103-forestJourney",
     "1104-battleSpeed",
     "1105-beastStories",
+    "1106-equipmentBalance",
     "1107-deathAudio",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
@@ -9465,6 +9471,13 @@
         "Sound.death"
       ],
       "type": "Presentation"
+    },
+    "1106-equipmentBalance": {
+      "module": "equipmentBalance",
+      "names": [
+        "applyEquipmentBalance"
+      ],
+      "type": "Balance"
     }
   },
   "trailer": "\r\n\r\n"

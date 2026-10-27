@@ -1,0 +1,1136 @@
+{
+  "version": 1,
+  "date": "2026-10-27",
+  "scope": "User-requested rarity/level stat correction. Equal-role equipment only; preserve existing adequate stats, IDs, abilities, costs and acquisition.",
+  "changes": [
+    {
+      "id": "lg1_armor",
+      "name": "เสื้อเปลือกไม้โคดามะ",
+      "lv": 6,
+      "before": {
+        "pdef": 6,
+        "mdef": 3,
+        "hp": 24
+      },
+      "after": {
+        "pdef": 11,
+        "mdef": 6,
+        "hp": 40
+      }
+    },
+    {
+      "id": "lg1_gloves",
+      "name": "ถุงมือหางทานุกิ",
+      "lv": 6,
+      "before": {
+        "patk": 3,
+        "acc": 5
+      },
+      "after": {
+        "patk": 6,
+        "acc": 8
+      }
+    },
+    {
+      "id": "lg1_boots",
+      "name": "รองเท้าขนแจ็กคาโลป",
+      "lv": 6,
+      "before": {
+        "spd": 3,
+        "eva": 3
+      },
+      "after": {
+        "spd": 6,
+        "eva": 6
+      }
+    },
+    {
+      "id": "lg1_belt",
+      "name": "เข็มขัดกระดองคัปปะ",
+      "lv": 6,
+      "before": {
+        "hp": 22,
+        "pdef": 3
+      },
+      "after": {
+        "hp": 38,
+        "pdef": 6
+      }
+    },
+    {
+      "id": "lg1_bracelet",
+      "name": "กำไลเปลวไฟวิสป์",
+      "lv": 6,
+      "before": {
+        "matk": 3,
+        "mdef": 3
+      },
+      "after": {
+        "matk": 6,
+        "mdef": 6
+      }
+    },
+    {
+      "id": "lg1_ring",
+      "name": "แหวนรากแมนเดรก",
+      "lv": 6,
+      "before": {
+        "patk": 2,
+        "matk": 2,
+        "acc": 3,
+        "eva": 2
+      },
+      "after": {
+        "patk": 3,
+        "matk": 3,
+        "acc": 6,
+        "eva": 3
+      }
+    },
+    {
+      "id": "lg1_necklace",
+      "name": "สร้อยปีกพิกซี่",
+      "lv": 6,
+      "before": {
+        "mp": 16,
+        "mdef": 5
+      },
+      "after": {
+        "mp": 27,
+        "mdef": 8
+      }
+    },
+    {
+      "id": "lg1_crown",
+      "name": "มงกุฎขนไรจู",
+      "lv": 6,
+      "before": {
+        "matk": 3,
+        "mp": 13,
+        "mdef": 3
+      },
+      "after": {
+        "matk": 6,
+        "mp": 21,
+        "mdef": 6
+      }
+    },
+    {
+      "id": "lg1_weapon_sword",
+      "name": "ดาบจันทร์เสี้ยวราตรี",
+      "lv": 6,
+      "before": {
+        "patk": 12,
+        "acc": 2
+      },
+      "after": {
+        "patk": 13,
+        "acc": 3
+      }
+    },
+    {
+      "id": "lg1_weapon_axe",
+      "name": "ขวานจันทร์เสี้ยวราตรี",
+      "lv": 6,
+      "before": {
+        "patk": 13,
+        "pdef": 4
+      },
+      "after": {
+        "patk": 14,
+        "pdef": 4
+      }
+    },
+    {
+      "id": "lg1_weapon_bow",
+      "name": "ธนูจันทร์เสี้ยวราตรี",
+      "lv": 6,
+      "before": {
+        "patk": 12,
+        "acc": 4,
+        "crit": 1
+      },
+      "after": {
+        "patk": 13,
+        "acc": 4,
+        "crit": 2
+      }
+    },
+    {
+      "id": "lg1_weapon_staff",
+      "name": "คทาจันทร์เสี้ยวราตรี",
+      "lv": 6,
+      "before": {
+        "matk": 12,
+        "mp": 10
+      },
+      "after": {
+        "matk": 13,
+        "mp": 10
+      }
+    },
+    {
+      "id": "lg1_weapon_mace",
+      "name": "ค้อนจันทร์เสี้ยวราตรี",
+      "lv": 6,
+      "before": {
+        "patk": 12,
+        "hp": 18
+      },
+      "after": {
+        "patk": 13,
+        "hp": 19
+      }
+    },
+    {
+      "id": "lg1_weapon_gun",
+      "name": "ปืนจันทร์เสี้ยวราตรี",
+      "lv": 6,
+      "before": {
+        "patk": 12,
+        "acc": 4,
+        "crit": 1
+      },
+      "after": {
+        "patk": 13,
+        "acc": 4,
+        "crit": 2
+      }
+    },
+    {
+      "id": "lg1_weapon_dagger",
+      "name": "มีดสั้นจันทร์เสี้ยวราตรี",
+      "lv": 6,
+      "before": {
+        "patk": 11,
+        "crit": 2,
+        "spd": 1
+      },
+      "after": {
+        "patk": 11,
+        "crit": 3,
+        "spd": 2
+      }
+    },
+    {
+      "id": "lg1_weapon_whip",
+      "name": "แส้จันทร์เสี้ยวราตรี",
+      "lv": 6,
+      "before": {
+        "matk": 11,
+        "mp": 10,
+        "spd": 1
+      },
+      "after": {
+        "matk": 11,
+        "mp": 10,
+        "spd": 2
+      }
+    },
+    {
+      "id": "lg2_ring",
+      "name": "แหวนบังเหียนเคลปี้",
+      "lv": 12,
+      "before": {
+        "patk": 4,
+        "matk": 4,
+        "acc": 8,
+        "eva": 4
+      },
+      "after": {
+        "patk": 5,
+        "matk": 5,
+        "acc": 8,
+        "eva": 5
+      }
+    },
+    {
+      "id": "lg2_necklace",
+      "name": "สร้อยระฆังศาลเจ้า",
+      "lv": 12,
+      "before": {
+        "mp": 38,
+        "mdef": 12
+      },
+      "after": {
+        "mp": 40,
+        "mdef": 13
+      }
+    },
+    {
+      "id": "lg2_weapon_sword",
+      "name": "ดาบจิ้งจอกเพลิง",
+      "lv": 12,
+      "before": {
+        "patk": 20,
+        "acc": 5
+      },
+      "after": {
+        "patk": 21,
+        "acc": 5
+      }
+    },
+    {
+      "id": "lg2_weapon_axe",
+      "name": "ขวานจิ้งจอกเพลิง",
+      "lv": 12,
+      "before": {
+        "patk": 23,
+        "pdef": 7
+      },
+      "after": {
+        "patk": 24,
+        "pdef": 8
+      }
+    },
+    {
+      "id": "lg2_weapon_bow",
+      "name": "ธนูจิ้งจอกเพลิง",
+      "lv": 12,
+      "before": {
+        "patk": 19,
+        "acc": 7,
+        "crit": 2
+      },
+      "after": {
+        "patk": 20,
+        "acc": 8,
+        "crit": 3
+      }
+    },
+    {
+      "id": "lg2_weapon_staff",
+      "name": "คทาจิ้งจอกเพลิง",
+      "lv": 12,
+      "before": {
+        "matk": 20,
+        "mp": 19
+      },
+      "after": {
+        "matk": 21,
+        "mp": 20
+      }
+    },
+    {
+      "id": "lg2_weapon_mace",
+      "name": "ค้อนจิ้งจอกเพลิง",
+      "lv": 12,
+      "before": {
+        "patk": 20,
+        "hp": 36
+      },
+      "after": {
+        "patk": 21,
+        "hp": 37
+      }
+    },
+    {
+      "id": "lg2_weapon_gun",
+      "name": "ปืนจิ้งจอกเพลิง",
+      "lv": 12,
+      "before": {
+        "patk": 20,
+        "acc": 7,
+        "crit": 2
+      },
+      "after": {
+        "patk": 21,
+        "acc": 8,
+        "crit": 3
+      }
+    },
+    {
+      "id": "lg2_weapon_dagger",
+      "name": "มีดสั้นจิ้งจอกเพลิง",
+      "lv": 12,
+      "before": {
+        "patk": 17,
+        "crit": 4,
+        "spd": 2
+      },
+      "after": {
+        "patk": 17,
+        "crit": 4,
+        "spd": 3
+      }
+    },
+    {
+      "id": "lg2_weapon_whip",
+      "name": "แส้จิ้งจอกเพลิง",
+      "lv": 12,
+      "before": {
+        "matk": 17,
+        "mp": 19,
+        "spd": 2
+      },
+      "after": {
+        "matk": 17,
+        "mp": 20,
+        "spd": 3
+      }
+    },
+    {
+      "id": "lg3_crown",
+      "name": "มงกุฎเขามิโนทอร์",
+      "lv": 19,
+      "before": {
+        "matk": 14,
+        "mp": 58,
+        "mdef": 14
+      },
+      "after": {
+        "matk": 16,
+        "mp": 60,
+        "mdef": 16
+      }
+    },
+    {
+      "id": "lg3_weapon_sword",
+      "name": "ดาบฟาโรห์",
+      "lv": 19,
+      "before": {
+        "patk": 32,
+        "acc": 7
+      },
+      "after": {
+        "patk": 37,
+        "acc": 8
+      }
+    },
+    {
+      "id": "lg3_weapon_axe",
+      "name": "ขวานฟาโรห์",
+      "lv": 19,
+      "before": {
+        "patk": 36,
+        "pdef": 11
+      },
+      "after": {
+        "patk": 40,
+        "pdef": 13
+      }
+    },
+    {
+      "id": "lg3_weapon_bow",
+      "name": "ธนูฟาโรห์",
+      "lv": 19,
+      "before": {
+        "patk": 31,
+        "acc": 11,
+        "crit": 4
+      },
+      "after": {
+        "patk": 35,
+        "acc": 13,
+        "crit": 5
+      }
+    },
+    {
+      "id": "lg3_weapon_staff",
+      "name": "คทาฟาโรห์",
+      "lv": 19,
+      "before": {
+        "matk": 32,
+        "mp": 29
+      },
+      "after": {
+        "matk": 37,
+        "mp": 32
+      }
+    },
+    {
+      "id": "lg3_weapon_mace",
+      "name": "ค้อนฟาโรห์",
+      "lv": 19,
+      "before": {
+        "patk": 32,
+        "hp": 54
+      },
+      "after": {
+        "patk": 37,
+        "hp": 60
+      }
+    },
+    {
+      "id": "lg3_weapon_gun",
+      "name": "ปืนฟาโรห์",
+      "lv": 19,
+      "before": {
+        "patk": 32,
+        "acc": 11,
+        "crit": 4
+      },
+      "after": {
+        "patk": 37,
+        "acc": 13,
+        "crit": 5
+      }
+    },
+    {
+      "id": "lg3_weapon_dagger",
+      "name": "มีดสั้นฟาโรห์",
+      "lv": 19,
+      "before": {
+        "patk": 28,
+        "crit": 6,
+        "spd": 4
+      },
+      "after": {
+        "patk": 31,
+        "crit": 7,
+        "spd": 5
+      }
+    },
+    {
+      "id": "lg3_weapon_whip",
+      "name": "แส้ฟาโรห์",
+      "lv": 19,
+      "before": {
+        "matk": 28,
+        "mp": 29,
+        "spd": 4
+      },
+      "after": {
+        "matk": 31,
+        "mp": 32,
+        "spd": 5
+      }
+    },
+    {
+      "id": "lg4_armor",
+      "name": "เกราะเกล็ดพญานาค",
+      "lv": 27,
+      "before": {
+        "pdef": 48,
+        "mdef": 24,
+        "hp": 180
+      },
+      "after": {
+        "pdef": 50,
+        "mdef": 26,
+        "hp": 188
+      }
+    },
+    {
+      "id": "lg4_gloves",
+      "name": "ถุงมือหัวไฮดรา",
+      "lv": 27,
+      "before": {
+        "patk": 24,
+        "acc": 36
+      },
+      "after": {
+        "patk": 26,
+        "acc": 38
+      }
+    },
+    {
+      "id": "lg4_weapon_sword",
+      "name": "ดาบมังกรโบราณ",
+      "lv": 27,
+      "before": {
+        "patk": 48,
+        "acc": 10
+      },
+      "after": {
+        "patk": 49,
+        "acc": 10
+      }
+    },
+    {
+      "id": "lg4_weapon_axe",
+      "name": "ขวานมังกรโบราณ",
+      "lv": 27,
+      "before": {
+        "patk": 53,
+        "pdef": 14
+      },
+      "after": {
+        "patk": 53,
+        "pdef": 15
+      }
+    },
+    {
+      "id": "lg4_weapon_bow",
+      "name": "ธนูมังกรโบราณ",
+      "lv": 27,
+      "before": {
+        "patk": 46,
+        "acc": 14,
+        "crit": 5
+      },
+      "after": {
+        "patk": 47,
+        "acc": 15,
+        "crit": 5
+      }
+    },
+    {
+      "id": "lg4_weapon_staff",
+      "name": "คทามังกรโบราณ",
+      "lv": 27,
+      "before": {
+        "matk": 48,
+        "mp": 38
+      },
+      "after": {
+        "matk": 49,
+        "mp": 39
+      }
+    },
+    {
+      "id": "lg4_weapon_mace",
+      "name": "ค้อนมังกรโบราณ",
+      "lv": 27,
+      "before": {
+        "patk": 48,
+        "hp": 72
+      },
+      "after": {
+        "patk": 49,
+        "hp": 73
+      }
+    },
+    {
+      "id": "lg4_weapon_gun",
+      "name": "ปืนมังกรโบราณ",
+      "lv": 27,
+      "before": {
+        "patk": 48,
+        "acc": 14,
+        "crit": 5
+      },
+      "after": {
+        "patk": 49,
+        "acc": 15,
+        "crit": 5
+      }
+    },
+    {
+      "id": "lg4_weapon_dagger",
+      "name": "มีดสั้นมังกรโบราณ",
+      "lv": 27,
+      "before": {
+        "patk": 41,
+        "crit": 7,
+        "spd": 5
+      },
+      "after": {
+        "patk": 41,
+        "crit": 8,
+        "spd": 5
+      }
+    },
+    {
+      "id": "lg4_weapon_whip",
+      "name": "แส้มังกรโบราณ",
+      "lv": 27,
+      "before": {
+        "matk": 41,
+        "mp": 38,
+        "spd": 5
+      },
+      "after": {
+        "matk": 41,
+        "mp": 39,
+        "spd": 5
+      }
+    },
+    {
+      "id": "lg5_boots",
+      "name": "รองเท้าปีกนกรุค",
+      "lv": 36,
+      "before": {
+        "spd": 35,
+        "eva": 35
+      },
+      "after": {
+        "spd": 37,
+        "eva": 37
+      }
+    },
+    {
+      "id": "lg5_belt",
+      "name": "เข็มขัดเกล็ดโยรมุนกันด์",
+      "lv": 36,
+      "before": {
+        "hp": 246,
+        "pdef": 35
+      },
+      "after": {
+        "hp": 257,
+        "pdef": 37
+      }
+    },
+    {
+      "id": "lg5_weapon_sword",
+      "name": "ดาบแห่งวันสิ้นโลก",
+      "lv": 36,
+      "before": {
+        "patk": 67,
+        "acc": 12
+      },
+      "after": {
+        "patk": 69,
+        "acc": 13
+      }
+    },
+    {
+      "id": "lg5_weapon_axe",
+      "name": "ขวานแห่งวันสิ้นโลก",
+      "lv": 36,
+      "before": {
+        "patk": 74,
+        "pdef": 18
+      },
+      "after": {
+        "patk": 75,
+        "pdef": 19
+      }
+    },
+    {
+      "id": "lg5_weapon_bow",
+      "name": "ธนูแห่งวันสิ้นโลก",
+      "lv": 36,
+      "before": {
+        "patk": 64,
+        "acc": 18,
+        "crit": 6
+      },
+      "after": {
+        "patk": 64,
+        "acc": 19,
+        "crit": 7
+      }
+    },
+    {
+      "id": "lg5_weapon_staff",
+      "name": "คทาแห่งวันสิ้นโลก",
+      "lv": 36,
+      "before": {
+        "matk": 67,
+        "mp": 48
+      },
+      "after": {
+        "matk": 69,
+        "mp": 49
+      }
+    },
+    {
+      "id": "lg5_weapon_mace",
+      "name": "ค้อนแห่งวันสิ้นโลก",
+      "lv": 36,
+      "before": {
+        "patk": 67,
+        "hp": 90
+      },
+      "after": {
+        "patk": 69,
+        "hp": 92
+      }
+    },
+    {
+      "id": "lg5_weapon_gun",
+      "name": "ปืนแห่งวันสิ้นโลก",
+      "lv": 36,
+      "before": {
+        "patk": 67,
+        "acc": 18,
+        "crit": 6
+      },
+      "after": {
+        "patk": 69,
+        "acc": 19,
+        "crit": 7
+      }
+    },
+    {
+      "id": "lg5_weapon_dagger",
+      "name": "มีดสั้นแห่งวันสิ้นโลก",
+      "lv": 36,
+      "before": {
+        "patk": 58,
+        "crit": 10,
+        "spd": 6
+      },
+      "after": {
+        "patk": 59,
+        "crit": 10,
+        "spd": 7
+      }
+    },
+    {
+      "id": "lg5_weapon_whip",
+      "name": "แส้แห่งวันสิ้นโลก",
+      "lv": 36,
+      "before": {
+        "matk": 58,
+        "mp": 48,
+        "spd": 6
+      },
+      "after": {
+        "matk": 59,
+        "mp": 49,
+        "spd": 7
+      }
+    },
+    {
+      "id": "wl_sword",
+      "name": "ดาบสุริยคราส",
+      "lv": 50,
+      "before": {
+        "patk": 81,
+        "acc": 15
+      },
+      "after": {
+        "patk": 100,
+        "acc": 16
+      }
+    },
+    {
+      "id": "wl_axe",
+      "name": "ขวานพิพากษาดารา",
+      "lv": 50,
+      "before": {
+        "patk": 90,
+        "pdef": 22
+      },
+      "after": {
+        "patk": 109,
+        "pdef": 25
+      }
+    },
+    {
+      "id": "wl_bow",
+      "name": "ธนูฉีกฟ้าราตรี",
+      "lv": 50,
+      "before": {
+        "patk": 77,
+        "acc": 22,
+        "crit": 7
+      },
+      "after": {
+        "patk": 95,
+        "acc": 25,
+        "crit": 8
+      }
+    },
+    {
+      "id": "wl_staff",
+      "name": "คทาปฐมจักรวาล",
+      "lv": 50,
+      "before": {
+        "matk": 81,
+        "mp": 58
+      },
+      "after": {
+        "matk": 100,
+        "mp": 65
+      }
+    },
+    {
+      "id": "wl_mace",
+      "name": "ค้อนปราการนิรันดร์",
+      "lv": 50,
+      "before": {
+        "patk": 81,
+        "hp": 109
+      },
+      "after": {
+        "patk": 100,
+        "hp": 121
+      }
+    },
+    {
+      "id": "wl_gun",
+      "name": "ปืนดาวดับสูญ",
+      "lv": 50,
+      "before": {
+        "patk": 81,
+        "acc": 22,
+        "crit": 7
+      },
+      "after": {
+        "patk": 100,
+        "acc": 25,
+        "crit": 8
+      }
+    },
+    {
+      "id": "wl_dagger",
+      "name": "มีดเขี้ยวอนันต์",
+      "lv": 50,
+      "before": {
+        "patk": 70,
+        "crit": 12,
+        "spd": 7
+      },
+      "after": {
+        "patk": 86,
+        "crit": 13,
+        "spd": 8
+      }
+    },
+    {
+      "id": "wl_whip",
+      "name": "แส้พันธสัญญาเทพ",
+      "lv": 50,
+      "before": {
+        "matk": 70,
+        "mp": 58,
+        "spd": 7
+      },
+      "after": {
+        "matk": 86,
+        "mp": 65,
+        "spd": 8
+      }
+    },
+    {
+      "id": "wl_armor",
+      "name": "เกราะจักรพรรดิอเวจี",
+      "lv": 50,
+      "before": {
+        "pdef": 62,
+        "mdef": 31,
+        "hp": 231
+      },
+      "after": {
+        "pdef": 108,
+        "mdef": 54,
+        "hp": 404
+      }
+    },
+    {
+      "id": "wl_gloves",
+      "name": "ถุงมือผู้ท้าทายเทพ",
+      "lv": 50,
+      "before": {
+        "patk": 31,
+        "acc": 46
+      },
+      "after": {
+        "patk": 54,
+        "acc": 81
+      }
+    },
+    {
+      "id": "wl_boots",
+      "name": "รองเท้าก้าวข้ามดวงดาว",
+      "lv": 50,
+      "before": {
+        "spd": 31,
+        "eva": 31
+      },
+      "after": {
+        "spd": 54,
+        "eva": 54
+      }
+    },
+    {
+      "id": "wl_belt",
+      "name": "เข็มขัดแก่นชีวิตอนันต์",
+      "lv": 50,
+      "before": {
+        "hp": 216,
+        "pdef": 31
+      },
+      "after": {
+        "hp": 377,
+        "pdef": 54
+      }
+    },
+    {
+      "id": "wl_bracelet",
+      "name": "กำไลเวทปฐมกาล",
+      "lv": 50,
+      "before": {
+        "matk": 31,
+        "mdef": 31
+      },
+      "after": {
+        "matk": 54,
+        "mdef": 54
+      }
+    },
+    {
+      "id": "wl_ring",
+      "name": "แหวนพันธสัญญาโลก",
+      "lv": 50,
+      "before": {
+        "patk": 15,
+        "matk": 15,
+        "acc": 31,
+        "eva": 15
+      },
+      "after": {
+        "patk": 27,
+        "matk": 27,
+        "acc": 54,
+        "eva": 27
+      }
+    },
+    {
+      "id": "wl_necklace",
+      "name": "สร้อยหัวใจสุริยคราส",
+      "lv": 50,
+      "before": {
+        "mp": 154,
+        "mdef": 46
+      },
+      "after": {
+        "mp": 269,
+        "mdef": 81
+      }
+    },
+    {
+      "id": "wl_crown",
+      "name": "มงกุฎผู้พิชิตนิรันดร์",
+      "lv": 50,
+      "before": {
+        "matk": 31,
+        "mp": 123,
+        "mdef": 31
+      },
+      "after": {
+        "matk": 54,
+        "mp": 216,
+        "mdef": 54
+      }
+    },
+    {
+      "id": "cf_riddle7_weapon_dagger",
+      "name": "มีดสั้นตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "patk": 3
+      },
+      "after": {
+        "patk": 4
+      }
+    },
+    {
+      "id": "cf_riddle7_weapon_whip",
+      "name": "แส้ตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "matk": 3
+      },
+      "after": {
+        "matk": 4
+      }
+    },
+    {
+      "id": "cf_riddle7_armor",
+      "name": "เกราะตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "pdef": 5,
+        "mdef": 2,
+        "hp": 17
+      },
+      "after": {
+        "pdef": 5,
+        "mdef": 3,
+        "hp": 17
+      }
+    },
+    {
+      "id": "cf_riddle7_gloves",
+      "name": "ถุงมือตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "patk": 2,
+        "acc": 3
+      },
+      "after": {
+        "patk": 3,
+        "acc": 4
+      }
+    },
+    {
+      "id": "cf_riddle7_boots",
+      "name": "รองเท้าตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "spd": 2,
+        "eva": 2
+      },
+      "after": {
+        "spd": 3,
+        "eva": 3
+      }
+    },
+    {
+      "id": "cf_riddle7_belt",
+      "name": "เข็มขัดตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "hp": 16,
+        "pdef": 2
+      },
+      "after": {
+        "hp": 16,
+        "pdef": 3
+      }
+    },
+    {
+      "id": "cf_riddle7_bracelet",
+      "name": "กำไลตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "matk": 2,
+        "mdef": 2
+      },
+      "after": {
+        "matk": 3,
+        "mdef": 3
+      }
+    },
+    {
+      "id": "cf_riddle7_ring",
+      "name": "แหวนตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "patk": 1,
+        "matk": 1,
+        "acc": 2,
+        "eva": 1
+      },
+      "after": {
+        "patk": 2,
+        "matk": 2,
+        "acc": 3,
+        "eva": 2
+      }
+    },
+    {
+      "id": "cf_riddle7_necklace",
+      "name": "สร้อยคอตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "mp": 12,
+        "mdef": 3
+      },
+      "after": {
+        "mp": 12,
+        "mdef": 4
+      }
+    },
+    {
+      "id": "cf_riddle7_crown",
+      "name": "มงกุฎตราช่างฝึก",
+      "lv": 1,
+      "before": {
+        "matk": 2,
+        "mp": 9,
+        "mdef": 2
+      },
+      "after": {
+        "matk": 3,
+        "mp": 9,
+        "mdef": 3
+      }
+    }
+  ]
+}
