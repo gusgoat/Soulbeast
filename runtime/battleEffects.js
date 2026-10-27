@@ -161,7 +161,7 @@ const BattleEffects={
   if(!this.skillLevels){this.skillLevels=new Map();for(const c of Object.values(CLS))for(const [level,key]of c.sk||[])this.skillLevels.set(key,Math.max(this.skillLevels.get(key)||0,level));}
   const level=this.skillLevels?.get(p.id)||0;
   if(p.mode!=='melee'&&p.painted?.kind!=='meteor')return;
-  if(p.mode==='melee'&&level<45&&!p.legend&&!p.effect)return;
+  if(p.mode==='melee'&&level<45&&!p.legend&&!p.effect&&!p.signature&&!(SK[p.id]?.mp>=15||SK[p.id]?.pw>=190))return;
   const a=p.painted?.kind==='meteor'?'impact':/hammer|mace|axe|ค้อน|ขวาน|หมัด|กระแทก/.test(p.id+' '+(SK[p.id]?.n||''))?'slam':'melee',size=Math.min(185,Math.max(92,to.size*2.5));
   const arena=to.node.closest?.('.battle-vitals,.online-combat-board,.demo-arena,.projectile-demo-board'),box=arena?.getBoundingClientRect();const shell=document.createElement('div');shell.className='battle-fx-owned painted-projectile-clip';if(box)Object.assign(shell.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});L.appendChild(shell);
   const n=document.createElement('img');n.className='vx battle-fx-owned painted-impact';n.src='assets/vfx/projectiles/v3/'+a+'.png';n.alt='';n.dataset.skill=p.id;Object.assign(n.style,{left:(to.x-(box?.left||0))+'px',top:(to.y-(box?.top||0))+'px',width:size+'px',height:size+'px'});shell.appendChild(n);

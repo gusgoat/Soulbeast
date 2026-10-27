@@ -14,7 +14,7 @@
     "game-data-presentation.7a313b5992cfa63e.js",
     "game-data-secrets.b755c3d1bd3b2d7e.js",
     "game-data-narrative.3437bb33483fc5e0.js",
-    "game-app.5e63b275b5d5083e.js"
+    "game-app.453f2e95ec2725a5.js"
   ],
   "staging": [
     "game-styles.d3ef90d70ac83735.css",
@@ -31,6 +31,6 @@
     "game-data-presentation.7a313b5992cfa63e.js",
     "game-data-secrets.b755c3d1bd3b2d7e.js",
     "game-data-narrative.3437bb33483fc5e0.js",
-    "game-app.c45045495c13b8cf.js"
+    "game-app.ab0647fbe0e52f4e.js"
   ]
 }
