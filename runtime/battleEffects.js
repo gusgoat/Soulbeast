@@ -43,6 +43,7 @@ const BattleEffects={
   return Math.min(5,count);
  },
  // Skill strength changes presentation only. Beginner skills keep their original small projectiles.
+ arcaneAsset(asset){return ['ice-high','dark-high','ghost-high','holy-high','dragon-high','poison-high','psychic-high'].includes(asset);},
  projectileArt(id,sk,{family,mode,legend,effect}){
   if(id==='attack'||mode==='support'||mode==='melee')return null;
   if(!this.skillLevels){this.skillLevels=new Map();for(const c of Object.values(CLS))for(const [level,key]of c.sk||[])this.skillLevels.set(key,Math.max(this.skillLevels.get(key)||0,level));}
@@ -67,12 +68,12 @@ const BattleEffects={
   else if(el==='rock'||el==='ground'){asset='fire';tint='saturate(.65)';}
   else {asset='beam';kind=tier>=2?'beam':'bolt';}
   const advanced=level>=40||tier>=3||power>=190||Number(sk.mp||0)>=22;
-  const elementAsset={water:'water-high',fire:'fire-high',electric:'electric-high',flying:'wind-high',ground:'earth-high',rock:'earth-high'}[el];
+  const elementAsset={water:'water-high',fire:'fire-high',electric:'electric-high',flying:'wind-high',ground:'earth-high',rock:'earth-high',ice:'ice-high',dark:'dark-high',ghost:'ghost-high',fairy:'holy-high',dragon:'dragon-high',poison:'poison-high',psychic:'psychic-high'}[el];
   // Preserve named music, weapon waves and meteor trajectories; only upgrade elemental spell families.
   if(advanced&&elementAsset&&!['shuriken','music','crescent','meteor'].includes(asset)){
    asset=elementAsset;tint='none';kind=family==='arrow'||family==='bullet'?'bolt':el==='flying'?'vortex':el==='ground'||el==='rock'?'eruption':'beam';
   }
-  return {asset,kind,tier,scale:1+tier*.35,tint,advanced:asset.endsWith('-high'),emission:asset==='water-high'?{x:.01,y:.575,end:.99}:asset==='fire-high'?{x:.01,y:.575,end:.99}:asset==='electric-high'?{x:.03,y:.47,end:.97}:null,path:'assets/vfx/projectiles/'+(asset.endsWith('-high')?'v4/':['shuriken','music','meteor','crescent'].includes(asset)?'v3/':'v2/')+asset+'.png'};
+  return {asset,kind,tier,scale:1+tier*.35,tint,advanced:asset.endsWith('-high'),emission:asset==='water-high'?{x:.01,y:.575,end:.99}:asset==='fire-high'?{x:.01,y:.575,end:.99}:asset==='electric-high'?{x:.03,y:.47,end:.97}:this.arcaneAsset(asset)?{x:asset==='holy-high'?.06:asset==='dragon-high'?.03:.02,y:asset==='holy-high'?.52:asset==='ghost-high'?.51:.5,end:.98}:null,path:'assets/vfx/projectiles/'+(this.arcaneAsset(asset)?'v5/':asset.endsWith('-high')?'v4/':['shuriken','music','meteor','crescent'].includes(asset)?'v3/':'v2/')+asset+'.png'};
  },
  paintedTravel(L,from,to,p){
   const art=p.painted,dx=to.x-from.x,dy=to.y-from.y,distance=Math.hypot(dx,dy),beam=art.kind==='beam',vortex=art.kind==='vortex',eruption=art.kind==='eruption';
@@ -170,10 +171,10 @@ const BattleEffects={
   const level=this.skillLevels?.get(p.id)||0;
   if(p.mode!=='melee'&&p.painted?.kind!=='meteor')return;
   if(p.mode==='melee'&&level<45&&!p.legend&&!p.effect&&!p.signature&&!(SK[p.id]?.mp>=15||SK[p.id]?.pw>=190))return;
-  const elemental={water:'water-high',fire:'fire-high',electric:'electric-high',flying:'wind-high',ground:'earth-high',rock:'earth-high'}[SK[p.id]?.el];
+  const elemental={water:'water-high',fire:'fire-high',electric:'electric-high',flying:'wind-high',ground:'earth-high',rock:'earth-high',ice:'ice-high',dark:'dark-high',ghost:'ghost-high',fairy:'holy-high',dragon:'dragon-high',poison:'poison-high',psychic:'psychic-high'}[SK[p.id]?.el];
   const a=p.painted?.kind==='meteor'?'impact':elemental||(/hammer|mace|axe|ค้อน|ขวาน|หมัด|กระแทก/.test(p.id+' '+(SK[p.id]?.n||''))?'slam':'melee'),size=Math.min(185,Math.max(92,to.size*2.5));
   const arena=to.node.closest?.('.battle-vitals,.online-combat-board,.demo-arena,.projectile-demo-board'),box=arena?.getBoundingClientRect();const shell=document.createElement('div');shell.className='battle-fx-owned painted-projectile-clip';if(box)Object.assign(shell.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});L.appendChild(shell);
-  const n=document.createElement('img');n.className='vx battle-fx-owned painted-impact';n.src='assets/vfx/projectiles/'+(a.endsWith('-high')?'v4/':'v3/')+a+'.png';n.alt='';n.dataset.skill=p.id;Object.assign(n.style,{left:(to.x-(box?.left||0))+'px',top:(to.y-(box?.top||0))+'px',width:size+'px',height:size+'px'});shell.appendChild(n);
+  const n=document.createElement('img');n.className='vx battle-fx-owned painted-impact';n.src='assets/vfx/projectiles/'+(this.arcaneAsset(a)?'v5/':a.endsWith('-high')?'v4/':'v3/')+a+'.png';n.alt='';n.dataset.skill=p.id;Object.assign(n.style,{left:(to.x-(box?.left||0))+'px',top:(to.y-(box?.top||0))+'px',width:size+'px',height:size+'px'});shell.appendChild(n);
   const pose='translate(-50%,-50%)';let anim;const cleanup=()=>{anim?.cancel();shell.remove();this.live.delete(cleanup);};this.live.add(cleanup);
   anim=n.animate?.([{transform:pose+' scale(.45)',opacity:0},{transform:pose+' scale(1)',opacity:1,offset:.25},{transform:pose+' scale(1.25)',opacity:0}],{duration:650,easing:'ease-out',fill:'both'});if(anim)anim.onfinish=cleanup;this.later(cleanup,700);
  },

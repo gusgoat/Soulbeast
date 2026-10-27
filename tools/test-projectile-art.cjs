@@ -4,7 +4,7 @@ const manifest=require('../content/projectile-effects-v2.json');assert.equal(man
 for(const a of manifest.assets){const b=fs.readFileSync(a.path);assert.equal(b.subarray(1,4).toString(),'PNG');assert.equal(b[25],6,'PNG must retain alpha: '+a.id);}
 run('Math.random=()=>{throw Error("VFX must not use combat RNG")};');const before=run('JSON.stringify(S)');
 assert.equal(run('BattleEffects.profile("mg_fire").painted'),null);assert.equal(run('BattleEffects.profile("sw_bash").painted'),null);
-for(const [id,asset,kind]of [['ms_mage50','electric-high','beam'],['mg_thunderstorm','storm','vortex'],['gv_storm','storm','vortex'],['f_dragonbreath','fire','beam'],['f_moonbeam','beam','beam'],['am_meteor','meteor','meteor'],['mc_cannon','beam','beam']]){const p=json('BattleEffects.profile('+JSON.stringify(id)+').painted');assert.equal(p.asset,asset,id);assert.equal(p.kind,kind,id);assert(fs.existsSync(p.path));}
+for(const [id,asset,kind]of [['ms_mage50','electric-high','beam'],['mg_thunderstorm','storm','vortex'],['gv_storm','storm','vortex'],['f_dragonbreath','dragon-high','beam'],['f_moonbeam','holy-high','beam'],['am_meteor','meteor','meteor'],['mc_cannon','beam','beam']]){const p=json('BattleEffects.profile('+JSON.stringify(id)+').painted');assert.equal(p.asset,asset,id);assert.equal(p.kind,kind,id);assert(fs.existsSync(p.path));}
 assert(run('BattleEffects.profile("solar_raijaku_s6").painted.scale>BattleEffects.profile("mg_thunderstorm").painted.scale'));
 assert.equal(run('JSON.stringify(S)'),before,'Profiles must not change save or combat state');
 const nodes=[],animations=[];const arena={getBoundingClientRect:()=>({left:15,top:200,width:290,height:400})};

@@ -5,7 +5,7 @@ for(const sex of ['male','female']){
  const path='assets/portraits/divine-archer-'+sex+'-v2.webp';assert(fs.existsSync(path));assert.equal(run(`classPortraitSource('sniper','${sex}')`),path);
  run(`S.P.cls='sniper';S.P.gender='${sex}';S.P.lv=60;`);assert(run("townNavArt('hero')").includes(path));assert(run('bagVitals()').includes(path));
  const actor=JSON.parse(run(`JSON.stringify(CharacterMotion.resolve(playerUnit()))`));assert(actor,'Missing bow motion '+sex);assert.equal(actor.cls,'sniper');
- for(const pose of ['idle','hit','windup','power','melee','meleeEffect'])assert(fs.existsSync(actor.assets[pose]),pose+' '+sex);
+ for(const pose of ['idle','hit','windup','power','threat','melee','meleeEffect'])assert(fs.existsSync(actor.assets[pose]),pose+' '+sex);
 }
 const batch=require('../content/unit-motion-batch50.json');assert(batch.actors.filter(a=>a.cls==='sniper').every(a=>a.meleeWeapon==='bow'&&a.name.includes('เทพธนู')));
 assert.equal(run("classPortraitSource('sniper')"),'assets/portraits/divine-archer-male-v2.webp');assert(run('vClassTree()').includes('เทพธนู'));
@@ -18,4 +18,4 @@ const animations=[];function node(){return {style:{setProperty(){}},dataset:{},i
 g.ctx.document.createElement=node;g.ctx.from={x:50,y:320,size:40,node:node()};g.ctx.to={x:200,y:80,size:40,node:node()};g.ctx.L=node();
 const arrival=run("BattleEffects.travel(L,from,to,BattleEffects.profile('ms_druid50'))");assert.equal(arrival,360);assert(animations.at(-1).frames.every(f=>!f.transform?.includes('rotate')),'Earth must erupt in place');assert.equal(animations.at(-1).options.easing,'linear');
 let source=fs.readFileSync('server/accounts/engine.ts','utf8').replace(/^import .*\r?\n/gm,'').replace('return {dispatch(packet){','return {testRun:code=>eval(code),dispatch(packet){');const ctx=vm.createContext({console,Date,structuredClone,TextEncoder,TextDecoder,Uint8Array,crypto:require('crypto').webcrypto,sha256:()=>'',withSupabase:()=>{},btoa,atob});vm.runInContext(source,ctx);const engine=vm.runInContext('createEngine(createWorkbook({}),{})',ctx);assert.equal(engine.testRun('CLS.sniper.n'),'เทพธนู');assert.equal(engine.testRun("clsWeapon('sniper')"),'bow');
-console.log('PASS Divine Archer stable ID, bow weapon, both portraits and all six motion phases, menus and authoritative name; five advanced elemental PNGs, beginner preservation, authored motifs, RNG/save isolation and stationary earth eruption');
+console.log('PASS Divine Archer stable ID, bow weapon, both portraits and all seven motion assets including threat, menus and authoritative name; five advanced elemental PNGs, beginner preservation, authored motifs, RNG/save isolation and stationary earth eruption');

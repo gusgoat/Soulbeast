@@ -12,6 +12,6 @@
     "test:loading": "node tools/test-online-loading.cjs",
     "test:names": "node tools/test-character-names.cjs",
     "test:stage7": "node tools/client-build.cjs --out build && node tools/test-stage-seven.cjs build/live-index.html && node tools/test-stage-seven.cjs build/staging-index.html && node tools/test-stage-seven-content.cjs && node tools/build-accounts.cjs && node tools/test-stage-seven-rewards-service.cjs && node tools/test-gunner-boss-bounty.cjs && node tools/test-boss-career-passives.cjs && node tools/test-gunner-ambush55.cjs && node tools/test-treant-human-area.cjs",
-    "test:motion": "node tools/test-character-motion-game.cjs && node tools/test-presentation-polish.cjs && node tools/test-forest-journey.cjs && node tools/test-sequence-speed.cjs && node tools/test-projectile-art.cjs && node tools/test-combat-v3.cjs && node tools/test-divine-archer-vfx.cjs"
+    "test:motion": "node tools/test-character-motion-game.cjs && node tools/test-presentation-polish.cjs && node tools/test-forest-journey.cjs && node tools/test-sequence-speed.cjs && node tools/test-projectile-art.cjs && node tools/test-combat-v3.cjs && node tools/test-divine-archer-vfx.cjs && node tools/test-arcane-vfx.cjs"
   }
 }

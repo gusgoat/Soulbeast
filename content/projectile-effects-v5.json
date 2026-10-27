@@ -1,0 +1,105 @@
+{
+  "version": 5,
+  "generator": "built-in imagegen",
+  "eligibility": "Advanced elemental offensive skills only; low-tier and named meteor/music/crescent motifs preserved.",
+  "assets": [
+    {
+      "id": "ice-high",
+      "path": "assets/vfx/projectiles/v5/ice-high.png",
+      "source": "exec-553e3e6f-4e3f-469f-b836-c5f1b99367df.png",
+      "sha256": "779360f103e144a4bbe0312370c263c49713f45432fb7029f9e184648b4d207f",
+      "transparent": true,
+      "width": 960,
+      "height": 377,
+      "emission": {
+        "x": 0.02,
+        "y": 0.5,
+        "end": 0.98
+      }
+    },
+    {
+      "id": "dark-high",
+      "path": "assets/vfx/projectiles/v5/dark-high.png",
+      "source": "exec-5222e427-8e6f-4d17-a32b-e027e0ae318d.png",
+      "sha256": "f3b09ee0204152d549fad0aabcfd79bde422a673569963770efb1c29ff12a977",
+      "transparent": true,
+      "width": 960,
+      "height": 360,
+      "emission": {
+        "x": 0.02,
+        "y": 0.5,
+        "end": 0.98
+      }
+    },
+    {
+      "id": "ghost-high",
+      "path": "assets/vfx/projectiles/v5/ghost-high.png",
+      "source": "exec-3a9c1b4b-2b6b-40d4-a742-884cb2d378f0.png",
+      "sha256": "397ca5198230df723b811ac15a4b065d0f27bef856c32ffe268d0a09fa2a0ede",
+      "transparent": true,
+      "width": 960,
+      "height": 400,
+      "emission": {
+        "x": 0.02,
+        "y": 0.51,
+        "end": 0.98
+      }
+    },
+    {
+      "id": "holy-high",
+      "path": "assets/vfx/projectiles/v5/holy-high.png",
+      "source": "exec-d070aeef-d387-405d-ad33-c38ccb6af6b3.png",
+      "sha256": "2c64371c87b86836e57f8d4332fbbb71fe6af77dfbf766154cb76390a6d591c3",
+      "transparent": true,
+      "width": 960,
+      "height": 411,
+      "emission": {
+        "x": 0.06,
+        "y": 0.52,
+        "end": 0.98
+      }
+    },
+    {
+      "id": "dragon-high",
+      "path": "assets/vfx/projectiles/v5/dragon-high.png",
+      "source": "exec-22aa7ae5-e918-4e81-8013-04bf08021bda.png",
+      "sha256": "1a265f819a70c521a2723d15bd26b3102ea8a25a8b438d548ad4d69f51710ac3",
+      "transparent": true,
+      "width": 960,
+      "height": 404,
+      "emission": {
+        "x": 0.03,
+        "y": 0.5,
+        "end": 0.98
+      }
+    },
+    {
+      "id": "poison-high",
+      "path": "assets/vfx/projectiles/v5/poison-high.png",
+      "source": "exec-552ff7ae-cadc-4fae-9b0c-7e2dfee67a8a.png",
+      "sha256": "3d0d56385fde2dcdf4b2a72fc8abcb9b177b2a2ba23b21a2db9b57ad1664b6c4",
+      "transparent": true,
+      "width": 960,
+      "height": 400,
+      "emission": {
+        "x": 0.02,
+        "y": 0.5,
+        "end": 0.98
+      }
+    },
+    {
+      "id": "psychic-high",
+      "path": "assets/vfx/projectiles/v5/psychic-high.png",
+      "source": "exec-86614a22-4ac0-44a7-aebd-be72ee2ddd39.png",
+      "sha256": "5f478fa80bbbd108c5f87fdaa313e4b0ab7c6f62a28f166f5b47da7317a15dfa",
+      "transparent": true,
+      "width": 960,
+      "height": 400,
+      "emission": {
+        "x": 0.02,
+        "y": 0.5,
+        "end": 0.98
+      }
+    }
+  ]
+}

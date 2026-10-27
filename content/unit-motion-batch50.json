@@ -36,7 +36,8 @@
       },
       "poseAssets": {
         "melee": "assets/beasts/motion/sniper-male-melee-v1.webp",
-        "meleeEffect": "assets/beasts/motion/sniper-male-melee-effect-v1.webp"
+        "meleeEffect": "assets/beasts/motion/sniper-male-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/sniper-male-threat-v1.webp"
       },
       "meleeName": "ฟาดธนูประชิด",
       "meleeMode": "swipe",
@@ -68,7 +69,8 @@
           "Held power compositing checked at293.6/142.8/108.6px"
         ],
         "proof": "../outputs/all-character-motion-20261025/sniper-male-contact.png"
-      }
+      },
+      "threatReason": "User-requested Divine Archer support/intimidation pose, both genders"
     },
     {
       "id": "sniper-female",
@@ -104,7 +106,8 @@
       },
       "poseAssets": {
         "melee": "assets/beasts/motion/sniper-female-melee-v1.webp",
-        "meleeEffect": "assets/beasts/motion/sniper-female-melee-effect-v1.webp"
+        "meleeEffect": "assets/beasts/motion/sniper-female-melee-effect-v1.webp",
+        "threat": "assets/beasts/motion/sniper-female-threat-v1.webp"
       },
       "meleeName": "ฟาดธนูประชิด",
       "meleeMode": "swipe",
@@ -136,7 +139,8 @@
           "Held power compositing checked at293.6/142.8/108.6px"
         ],
         "proof": "../outputs/all-character-motion-20261025/sniper-female-contact.png"
-      }
+      },
+      "threatReason": "User-requested Divine Archer support/intimidation pose, both genders"
     },
     {
       "id": "wildlord-male",
