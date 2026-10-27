@@ -32,7 +32,7 @@ export function accountGateway({command,execute,hash,makeCharacter,syncName=asyn
     out.push(safe(await profile(active,loaded,env,user)));
    }
    const capacity=await command('capacity',user.id,env,{});
-   return {ok:true,email:user.email,characters:out,characterLimit:5,slotsUsed:capacity.used};
+   return {ok:true,email:user.email,characters:out,characterLimit:capacity.limit||5,slotsUsed:capacity.used};
   }
   if(body.action==='account_create'){
    if(!/^[a-f0-9-]{36}$/i.test(body.request_id||''))fail('bad_request_id');
