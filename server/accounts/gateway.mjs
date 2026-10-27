@@ -1,6 +1,6 @@
 // Reuses the current authoritative game engine; every character is authorized before dispatch.
 export function accountGateway({command,execute,hash,makeCharacter,syncName=async()=>{},uuid=()=>crypto.randomUUID()}){
- const safe=c=>({code:c.code,name:c.name,cls:c.class_id,lv:c.level,status:c.status});
+ const safe=c=>({code:c.code,name:c.name,cls:c.class_id,lv:c.level,status:c.status,...(c.class_label?{className:c.class_label}:{}),...(['male','female'].includes(c.gender)?{gender:c.gender}:{})});
  const fail=message=>{throw Error(message);};
  const profile=async(c,result,env,user)=>{
   if(!result?.ok)return c;
@@ -28,8 +28,7 @@ export function accountGateway({command,execute,hash,makeCharacter,syncName=asyn
    const chars=await command('list',user.id,env,{}),out=[];
    for(const c of chars.filter(c=>c.status!=='deleted')){
     const active=await materialize(c,env,user);
-    const loaded=await execute({action:'load',code:c.code,pin:c.engine_pin,_sbRequest:uuid()},env);
-    out.push(safe(await profile(active,loaded,env,user)));
+    out.push(safe(active));
    }
    const capacity=await command('capacity',user.id,env,{});
    return {ok:true,email:user.email,characters:out,characterLimit:capacity.limit||5,slotsUsed:capacity.used};

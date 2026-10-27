@@ -36,4 +36,5 @@ fs.writeFileSync(path.join(out,'index.ts'),core+'\n'+templateCode+'\n'+gateway+'
 fs.copyFileSync(path.join(root,'server/accounts/001-accounts.sql'),path.join(out,'001-accounts.sql'));
 fs.copyFileSync(path.join(root,'server/accounts/002-character-management.sql'),path.join(out,'002-character-management.sql'));
 fs.copyFileSync(path.join(root,'server/accounts/003-character-names.sql'),path.join(out,'003-character-names.sql'));
+for(const file of ['004-test-capacity.sql','005-character-summaries.sql'])fs.copyFileSync(path.join(root,'server/accounts',file),path.join(out,file));
 console.log('Built account gateway with unchanged engine SHA256 '+crypto.createHash('sha256').update(core).digest('hex'));
