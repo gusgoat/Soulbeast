@@ -1,29 +1,33 @@
 // @soulbeast-unit 1102-motionTimeline
 // Presentation queue. Authoritative HP, damage, RNG and saves are never delayed or changed.
 const MotionTimeline={
- until:0,depth:0,previous:new Map(),held:new Map(),away:new Set(),sounding:false,
+ until:0,depth:0,previous:new Map(),held:new Map(),away:new Set(),dead:new Set(),sounding:false,
  active(){return typeof document!=='undefined'&&!!document.querySelector?.('.battle-motion');},
  busy(){return this.active()&&(Date.now()<this.until||VQ.length>0);},
  snapshot(b=BattleEffects.battle()){return new Map([...(b?.allies||[]),...(b?.enemies||[])].map(u=>[String(u.id),{hp:u.hp,mp:u.mp}]));},
- hold(before,b=BattleEffects.battle()){for(const u of [...(b?.allies||[]),...(b?.enemies||[])]){const p=before.get(String(u.id));if(p&&(p.hp!==u.hp||p.mp!==u.mp)&&!this.held.has(String(u.id)))this.held.set(String(u.id),p);}},
+ hold(before,b=BattleEffects.battle()){for(const u of [...(b?.allies||[]),...(b?.enemies||[])]){if(u.hp>0)this.dead.delete(String(u.id));const p=before.get(String(u.id));if(p&&(p.hp!==u.hp||p.mp!==u.mp)&&!this.held.has(String(u.id)))this.held.set(String(u.id),p);}},
  shown(html,u){html=html.replace(/<span class="fx [^"]*">[+-][\d,]+(?: MP)?<\/span>/g,'');const p=this.held.get(String(u.id));if(!p)return html;html=html.replace(bar(u.hp,u.st.hp),bar(p.hp,u.st.hp)).replace(bar(u.mp,u.st.mp,'mp'),bar(p.mp,u.st.mp,'mp'));
   for(const format of [String,fmt]){html=html.replace('HP '+format(u.hp)+'/','HP '+format(p.hp)+'/').replace('MP '+format(u.mp)+'/','MP '+format(p.mp)+'/');}
   if(p.hp>0)html=html.replace('down ','');return html.replace(/<span class="fx [^"]*">[\s\S]*?<\/span>/g,'');
  },
- arrive(id){const p=this.held.get(String(id)),u=BattleEffects.actor(id);this.held.delete(String(id));if(p&&u?.st){render();const a=BattleEffects.anchor(id),delta=u.hp-p.hp;if(a&&delta){const n=document.createElement('span');n.className='motion-damage-number';n.textContent=(delta>0?'+':'')+fmt(delta);n.style.cssText='left:'+a.x+'px;top:'+a.y+'px;color:'+(delta>0?'#9ff0b2':'#ffb0a0');document.getElementById('vfx')?.appendChild(n);CharacterMotion.schedule(()=>n.remove(),1200);}}},
+ revealRemaining(){const defeated=[...this.held].filter(([id,p])=>p.hp>0&&BattleEffects.actor(id)?.hp<=0).map(([id])=>BattleEffects.actor(id));this.held.clear();render();defeated.forEach(u=>this.death(u));},
+ death(u){if(!u||u.hp>0||this.dead.has(String(u.id)))return;this.dead.add(String(u.id));Sound.playDeath(u);},
+ arrive(id){const p=this.held.get(String(id)),u=BattleEffects.actor(id);this.held.delete(String(id));if(p&&u?.st){render();if(p.hp>0&&u.hp<=0)this.death(u);const a=BattleEffects.anchor(id),delta=u.hp-p.hp;if(a&&delta){const n=document.createElement('span');n.className='motion-damage-number';n.textContent=(delta>0?'+':'')+fmt(delta);n.style.cssText='left:'+a.x+'px;top:'+a.y+'px;color:'+(delta>0?'#9ff0b2':'#ffb0a0');document.getElementById('vfx')?.appendChild(n);CharacterMotion.schedule(()=>n.remove(),1200);}}},
  sound(skill,actor,critical=false){this.sounding=true;try{if(critical)timelineExtraSkill.call(ExtraAudio,skill,actor,true);else timelineSkill.call(Sound,skill,actor);}finally{this.sounding=false;}},
  flush(){
   CharacterMotion.sync();if(!VQ.length)return;const events=BattleEffects.enrich(VQ.splice(0).slice(-64)),L=document.getElementById('vfx');if(!L)return;
-  if(CharacterMotion.reduced()){this.held.clear();this.until=0;render();return;}
+  if(CharacterMotion.reduced()){this.until=0;this.revealRemaining();return;}
   const groups=new Map();for(const e of events){const key=e.group+':'+(e.source||e.id);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);}
   let offset=Math.max(0,this.until-Date.now())*BattleSpeed.rate();
   for(const list of groups.values()){
    const cast=list.find(e=>e.k==='cast'||e.k==='charge'),first=list[0],source=cast?.id||first.source,skill=cast?.skill||first.skill||'attack',actor=BattleEffects.actor(source),a=CharacterMotion.resolve(actor),mode=CharacterMotion.mode(skill,actor),targets=list.filter(e=>['hit','miss','heal','buff','debuff'].includes(e.k));
-   const windup=a?(mode==='ranged'?(a.windupDuration||1)*1000:mode==='support'?(a.assets.threat?1800:(a.windupDuration||1)*1000):0):0;
+   const charging=cast?.k==='charge';
+   const windup=charging?(a?.windupDuration||1)*1000:a?(mode==='ranged'?(a.windupDuration||1)*1000:mode==='support'?(a.assets.threat?1800:(a.windupDuration||1)*1000):0):0;
    // Reserve through projectile arrival, all multi-hit impacts and the target's recovery pose.
-   const span=mode==='melee'?2400:windup+2600+targets.length*65;
+   const span=charging?windup+150:mode==='melee'?2400:windup+2600+targets.length*65;
    CharacterMotion.schedule(()=>{
     if(cast)vSpawn(L,'vx-cast',null,cast.c||'#d9b35b',cast.n||SK[skill]?.n);
+    if(charging){CharacterMotion.phase(source,'windup',windup);CharacterMotion.schedule(()=>this.arrive(source),windup);return;}
     if(a&&mode==='support')CharacterMotion.phase(source,a.assets.threat?'threat':'windup',windup);
     if(a&&mode==='ranged')CharacterMotion.phase(source,'windup',windup);
     let contact=0;if(mode==='melee'){const t=targets.find(e=>e.id!==source);contact=t?CharacterMotion.melee(source,t.id):0;if(!contact)CharacterMotion.phase(source,'melee',900);}
@@ -42,7 +46,7 @@ const MotionTimeline={
    offset+=span;
   }
   this.until=Date.now()+BattleSpeed.ms(offset);
-  CharacterMotion.schedule(()=>{if(Date.now()+20<this.until)return;this.held.clear();this.until=0;render();},offset);
+  CharacterMotion.schedule(()=>{if(Date.now()+20<this.until)return;this.until=0;this.revealRemaining();},offset);
  }
 };
 const timelineSkill=Sound.skill,timelineExtraSkill=ExtraAudio.skill;
@@ -57,7 +61,7 @@ battleLater=function(fn,ms){return timelineLater(function wait(){if(MotionTimeli
 const timelineEnd=checkEnd;
 checkEnd=function(...args){if(MotionTimeline.busy())return false;return timelineEnd(...args);};
 const timelineReset=CharacterMotion.reset;
-CharacterMotion.reset=function(){timelineReset.call(this);MotionTimeline.until=0;MotionTimeline.held.clear();MotionTimeline.away.clear();};
+CharacterMotion.reset=function(){timelineReset.call(this);MotionTimeline.until=0;MotionTimeline.held.clear();MotionTimeline.away.clear();MotionTimeline.dead.clear();};
 const timelineSync=CharacterMotion.sync;
 CharacterMotion.sync=function(){timelineSync.call(this);for(const [n]of this.instances)n.classList.toggle('motion-away',MotionTimeline.away.has(n.dataset.motionUnit));};
 CharacterMotion.flush=function(){MotionTimeline.flush();};

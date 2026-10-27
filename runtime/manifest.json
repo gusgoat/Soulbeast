@@ -262,6 +262,11 @@
       "file": "beastStories.js",
       "description": "Read-only beast origins and original short stories",
       "units": 1
+    },
+    "deathAudio": {
+      "file": "deathAudio.js",
+      "description": "Gendered humanoid death audio at visible defeat",
+      "units": 1
     }
   },
   "order": [
@@ -1369,6 +1374,7 @@
     "1103-forestJourney",
     "1104-battleSpeed",
     "1105-beastStories",
+    "1107-deathAudio",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9449,6 +9455,14 @@
         "BEAST_STORIES",
         "BeastStory",
         "vBeastStory"
+      ],
+      "type": "Presentation"
+    },
+    "1107-deathAudio": {
+      "module": "deathAudio",
+      "names": [
+        "Sound.playDeath",
+        "Sound.death"
       ],
       "type": "Presentation"
     }

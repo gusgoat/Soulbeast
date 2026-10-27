@@ -1,0 +1,53 @@
+{
+  "source": "https://quickshare.samsungcloud.com/6HMHXxbGfqVK",
+  "files": [
+    {
+      "gender": "male",
+      "source": "ผู้ผนึกชายตาย1.mp3",
+      "path": "assets/audio/humanoid-death/male-1.mp3",
+      "sha256": "343a31bf6771c96ab9d77ac5d10b562c087e2a128a389edb32584207aec905fd"
+    },
+    {
+      "gender": "male",
+      "source": "ผู้ผนึกชายตาย2.mp3",
+      "path": "assets/audio/humanoid-death/male-2.mp3",
+      "sha256": "340b9fe9841d876f0b8b0064909edd0d72ead6c4e033ad6396e041e33f72f93f"
+    },
+    {
+      "gender": "male",
+      "source": "ผู้ผนึกชายตาย3.mp3",
+      "path": "assets/audio/humanoid-death/male-3.mp3",
+      "sha256": "6f206685f7b0be1d0e1d0b466e0a4da29d93b9bdbd8388cd21605969ae7c994b"
+    },
+    {
+      "gender": "male",
+      "source": "ผู้ผนึกชายตาย4.mp3",
+      "path": "assets/audio/humanoid-death/male-4.mp3",
+      "sha256": "baa857db92e1ec3df181de8a1c0603a044e5c6b0eb407383ca4abc8ecb35c365"
+    },
+    {
+      "gender": "female",
+      "source": "ผู้ผนึกหญิงตาย1.mp3",
+      "path": "assets/audio/humanoid-death/female-1.mp3",
+      "sha256": "c12aecf3f41d7aba21bf83431d62ed19024632fba49d4c58f9af770c3203b49d"
+    },
+    {
+      "gender": "female",
+      "source": "ผู้ผนึกหญิงตาย2.mp3",
+      "path": "assets/audio/humanoid-death/female-2.mp3",
+      "sha256": "cf0d0aa73faab7e5e8d82470d3801b66ed48aaabca082434eefae8c50f9d2748"
+    },
+    {
+      "gender": "female",
+      "source": "ผู้ผนึกหญิงตาย3.mp3",
+      "path": "assets/audio/humanoid-death/female-3.mp3",
+      "sha256": "0826422a315d789d32046822e190363bb838a2738f7b6ac26901bf8ebfa2b164"
+    },
+    {
+      "gender": "female",
+      "source": "ผู้ผนึกหญิงตาย4.mp3",
+      "path": "assets/audio/humanoid-death/female-4.mp3",
+      "sha256": "e0810070b44ac83f22d9d396e475260e22617786a9ad2a72618d08f2c8c83adc"
+    }
+  ]
+}

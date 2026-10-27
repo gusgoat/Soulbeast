@@ -1149,7 +1149,7 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
  if(!free){if(cost&&u.mp<cost){blog(`MP ไม่พอสำหรับ ${sk.n}`);return false}
   if(sk.gc&&u.kind==='player'){const c=sk.gc*u.lv;if(S.P.gold<c){blog('เงินไม่พอ');return false}S.P.gold-=c;blog(`จ่าย ${fmt(c)} เหรียญ`)}
   u.mp-=cost;
-  if(sk.ct){u.charging={id,tid:tgt?tgt.id:null};blog(`${u.name} รวบรวมพลังเตรียมใช้ ${sk.n}!`);fxAdd(u,'ชาร์จ','mp');vfx('charge',u.id);Sound.fx('charge');return true}}
+  if(sk.ct){u.charging={id,tid:tgt?tgt.id:null};blog(`${u.name} รวบรวมพลังเตรียมใช้ ${sk.n}!`);fxAdd(u,'ชาร์จ','mp');vfx('charge',u.id,{skill:id,n:sk.n,el:sk.el});Sound.fx('charge');return true}}
  Sound.skill(id,u);
  if(id!=='attack'&&id!=='rest')vfx('cast',u.id,{skill:id,n:sk.n,el:sk.el,c:sk.t==='heal'?'#7fd08a':!sk.el?'#d9b35b':null});
  const mates=sideOf(u);
