@@ -10,11 +10,11 @@
     "game-data-beasts.c6d0b8a74d4f1896.js",
     "game-data-exploration.6cfcf82495a0e5a0.js",
     "game-data-story.b4ecd56118a196f0.js",
-    "game-data-localization.c1a2cb59a0a229ce.js",
+    "game-data-localization.87d7e426d871d23e.js",
     "game-data-presentation.c8e3c82e4c0874c0.js",
     "game-data-secrets.b755c3d1bd3b2d7e.js",
     "game-data-narrative.3437bb33483fc5e0.js",
-    "game-app.739dc6f43295d229.js"
+    "game-app.ef771f4a56a34b64.js"
   ],
   "staging": [
     "game-styles.1ce222574445a30d.css",
@@ -27,10 +27,10 @@
     "game-data-beasts.c6d0b8a74d4f1896.js",
     "game-data-exploration.6cfcf82495a0e5a0.js",
     "game-data-story.b4ecd56118a196f0.js",
-    "game-data-localization.c1a2cb59a0a229ce.js",
+    "game-data-localization.87d7e426d871d23e.js",
     "game-data-presentation.c8e3c82e4c0874c0.js",
     "game-data-secrets.b755c3d1bd3b2d7e.js",
     "game-data-narrative.3437bb33483fc5e0.js",
-    "game-app.53cb122d057e414b.js"
+    "game-app.e00bba2409b0a9b6.js"
   ]
 }
