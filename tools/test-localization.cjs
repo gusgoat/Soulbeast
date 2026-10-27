@@ -6,6 +6,8 @@ for(const[lang,entries]of Object.entries(dict))for(const[key,value]of Object.ent
 const translate=(s,lang)=>run('translateGameText('+JSON.stringify(s)+','+JSON.stringify(lang)+',false)');
 // Stage 7 ships in Thai first; the explicit text snapshot tracks pending EN/ZH work.
 const pendingThai=new Set(require("../content/stage7-translation-pending.json"));
+// User-supplied fiction is intentionally preserved in its original Thai (lang=th, translate=no).
+(function originalText(v){if(typeof v==='string')pendingThai.add(v);else if(v&&typeof v==='object')Object.values(v).forEach(originalText);})(require('../content/beast-stories.json').species);
 let checked=0;function check(s,where){if(typeof s!=='string'||!thai.test(s)||s==='฿')return;for(const lang of ['en','zh-CN'])assert(!thai.test(translate(s,lang))||pendingThai.has(s),where+' ['+lang+']: '+s);checked++;}
 function walk(value,path){if(typeof value==='string')check(value,path);else if(value&&typeof value==='object')for(const[k,v]of Object.entries(value))walk(v,path+'.'+k);}
 for(const name of run('Object.keys(SoulbeastContent)')){if(/ART|MUSIC|VOICE|PICTURE|SHAPE|TRANSLATION|LANGUAGE/.test(name))continue;walk(JSON.parse(run('JSON.stringify(SoulbeastContent['+JSON.stringify(name)+']())')),name);}

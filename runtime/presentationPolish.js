@@ -20,9 +20,9 @@ const polishRender=render;
 render=function(...args){const result=polishRender(...args);PresentationPolish.enhance();return result;};
 const galleryPortrait=portrait;
 portrait=function(key,size,opts={}){
- const gallery=['hero','team','bag','bestiary'].includes(S.screen)&&!S.battle&&size>=44;
+ const gallery=['hero','team','bag','bestiary','beaststory'].includes(S.screen)&&!S.battle&&size>=44;
  if(!gallery||opts.unk)return galleryPortrait(key,size,opts);
- const bigger=S.screen==='bestiary'?120:Math.min(144,Math.max(72,Math.round(size*1.6))),html=galleryPortrait(key,bigger,opts);
+ const bigger=S.screen==='beaststory'?280:S.screen==='bestiary'?120:Math.min(144,Math.max(72,Math.round(size*1.6))),html=galleryPortrait(key,bigger,opts);
  const u=key==='player'?{cls:S.P.cls,gender:S.P.gender,id:'P'}:key?.startsWith('cls:')?{cls:key.slice(4),gender:opts.gender||S.P.gender}:key?.startsWith('form:')?{form:key.slice(5)}:{sp:key,evo:opts.form||0};
  const a=CharacterMotion.resolve(u);if(!a)return html;
  const layers='<span class="um-aura" aria-hidden="true"></span><span class="um-body"><span class="um-window"><img class="um-art" data-pose="idle" src="'+a.assets.idle+'" alt="" loading="lazy" decoding="async"></span></span>'+(a.identity.particles?'<span class="um-embers" aria-hidden="true">'+Array.from({length:8},(_,i)=>'<i style="--i:'+i+';--um-particle-color:'+a.identity.colors[i%a.identity.colors.length]+'"></i>').join('')+'</span>':'');

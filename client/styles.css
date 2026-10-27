@@ -1050,3 +1050,6 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 .battle-painted-flight{animation:none!important}.battle-painted-flight.painted-beam{transform-origin:0 50%;overflow:hidden}.painted-beam img{animation:painted-current .18s linear infinite alternate}.painted-meteor img,.battle-painted-flight[data-asset="music"] img,.battle-painted-flight[data-asset="shuriken"] img,.battle-painted-flight[data-asset="crescent"] img{object-fit:contain}.painted-impact{position:absolute;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 7px #ffc56b);max-width:40vw;max-height:40vw}
 
 .painted-eruption img{object-fit:contain}.battle-painted-flight.painted-eruption{transform-origin:50% 85%}
+
+/* Beast origins and original stories */
+.beast-story{max-width:680px;margin:0 auto;min-width:0}.beast-story-heading{text-align:center}.beast-story-art{display:flex;justify-content:center;min-width:0}.beast-story-art>.pt{width:min(100%,280px)!important;height:auto!important;aspect-ratio:1;max-width:100%}.beast-story p{margin:0;line-height:1.9;overflow-wrap:anywhere}.beast-story-prose{gap:12px}.beast-story-sources p{margin-top:12px}.beast-story-back{align-self:flex-start}.pet-actions .beast-story-button{flex-basis:100%}
