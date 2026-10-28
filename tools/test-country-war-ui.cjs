@@ -1,0 +1,21 @@
+const assert=require('assert/strict'),fs=require('fs');
+(async()=>{for(const file of ['build/live-index.html','build/staging-index.html']){
+ const g=require('./game-context.cjs')(file),r=g.run;
+ r("window.CW_PREVIEW_MODE=true;Sound.fx=()=>{};toast=()=>{};render=()=>{};save=()=>{};S.screen='start';S.ui.country='';");
+ const old=r('S.P');assert.equal(r('handlers.newgame()'),false);assert.equal(r('S.P'),old,'Missing nation must not create a character');
+ g.ctx.document.getElementById=id=>id==='newCharacterCountry'?{value:'green'}:id==='nm'?{value:'ชื่อทดสอบ'}:null;
+ r('handlers.newgame();S.ui.introSeen=true');assert.equal(r('S.P.country'),'green');assert(r('vStart().includes("newCharacterCountry")'));assert(r('vStart().includes("เลือกแล้วเปลี่ยนประเทศไม่ได้")'));
+ r(`S.P.code='COUNTRYUITEST0001';COUNTRY_WAR.code=S.P.code;S.screen='countrywar';COUNTRY_WAR.data={countries:COUNTRY_WAR_MAP.countries,me:{country:'green',location:'green-capital',used:false,team:[playerUnit()],goldFraction:{n:'1',d:'3'},couponFraction:{n:'1',d:'8'}},map:{locations:[{id:'green-capital',name:'พนาสมุทร',type:'capital',owner:'green',capacity:null,count:1,members:[{code:S.P.code,name:'<script>bad</script>'}]},{id:'green-city-1',name:'คีรีมรกต',type:'city',owner:'green',capacity:16,count:16,members:[]},{id:'red-village-9',name:'ด่านภูผาแดง',type:'village',owner:'red',capacity:4,count:2,members:[{name:'Enemy private identity'}]}]},pool:{cities:4,villages:16,gold:5600,couponEighths:32},members:3,unread:1};COUNTRY_WAR.selected='green-capital';`);
+ let html=r('vCountryWar()');assert(html.includes('&lt;script&gt;bad&lt;/script&gt;'));assert(!html.includes('<script>bad'));assert(html.includes('HP '));assert(html.includes('MP '));assert(html.includes('1/3'));assert(!html.includes('Enemy private identity'));
+ r("COUNTRY_WAR.selected='green-city-1'");html=r('countryLocationView()');assert(/data-a="cwAction"[^>]*disabled/.test(html),'Full destinations must disable movement');
+ r("COUNTRY_WAR.selected='red-village-9'");html=r('countryLocationView()');assert(!html.includes('Enemy private identity'));assert(html.includes('2/4'));
+ r("COUNTRY_WAR.me='';COUNTRY_WAR.data.me.used=true;COUNTRY_WAR.selected='green-city-1'");assert(/data-a="cwAction"[^>]*disabled/.test(r('countryLocationView()')));
+ r(`COUNTRY_WAR.mail=[{id:'cw:mail:test',subject:'รางวัล <img>',from:'ระบบ',at:Date.now(),read:false,week:'2026-11-01',gold:100,coupons:1,pool:{cities:4,villages:16},members:3,goldFraction:{n:'1',d:'3'},couponFraction:{n:'1',d:'8'}}];COUNTRY_WAR.message='cw:mail:test';`);
+ html=r('vMail()');assert(html.includes('รางวัล &lt;img&gt;'));assert(html.includes('โอนรางวัลเข้าบัญชีตัวละครแล้ว'));assert(!html.includes('data-a="mailClaim"'));
+ // A delayed response from another selected character must never paint the new character's private mailbox.
+ r("COUNTRY_WAR.busy=false;COUNTRY_WAR.error='';S.screen='mail';var pendingReply;lbPost=()=>new Promise(resolve=>pendingReply=resolve);var firstCountryRequest=countryCall('mail_list');");
+ assert.equal(r('COUNTRY_WAR.busy'),true);assert.equal(await r("countryCall('mail_list')"),undefined);r("S.P.code='ANOTHERCHAR000001';COUNTRY_WAR.code=S.P.code;COUNTRY_WAR.mail=[];pendingReply({ok:true,messages:[{subject:'private old inbox'}]});");await r('firstCountryRequest');assert.equal(r('COUNTRY_WAR.mail.length'),0);
+ console.log('PASS '+file+': required creation nation, country picker, health roster, full/used action guards, enemy privacy, escaped names/mail, no duplicate reward claim and cross-character async response guard');
+}
+assert(fs.readFileSync('server/country-war/001-weekly-schedule.sql','utf8').includes('59 16 * * 0'));assert(fs.readFileSync('tools/build-accounts.cjs','utf8').includes('SB_COUNTRY_WAR_JOB_SECRET'));console.log('PASS weekly Bangkok schedule and server-only scheduler secret wiring');
+})().catch(e=>{console.error(e);process.exitCode=1});

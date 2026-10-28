@@ -1,0 +1,622 @@
+{
+  "เหมันตคีรี": [
+    "Hemantakhiri",
+    "寒峰"
+  ],
+  "พนาสมุทร": [
+    "Phanasamut",
+    "林海"
+  ],
+  "อัคนีบรรพต": [
+    "Akkhanibanphot",
+    "炎岳"
+  ],
+  "วิมานเกล็ดหิมะ": [
+    "Snowflake Spire",
+    "雪晶城"
+  ],
+  "ศิลาน้ำค้าง": [
+    "Dewstone",
+    "霜露城"
+  ],
+  "ท่าจันทราเหมันต์": [
+    "Wintermoon Harbor",
+    "冬月港"
+  ],
+  "ด่านหมอกเงิน": [
+    "Silvermist Keep",
+    "银雾关"
+  ],
+  "คีรีมรกต": [
+    "Emerald Heights",
+    "翡翠山城"
+  ],
+  "ธารพฤกษา": [
+    "Sylvan Stream",
+    "林溪城"
+  ],
+  "เวียงเมฆไพร": [
+    "Cloudwood Citadel",
+    "云林城"
+  ],
+  "ท่าแก้วสมุทร": [
+    "Seaglass Harbor",
+    "海晶港"
+  ],
+  "ป้อมเพลิงกาฬ": [
+    "Blackflame Keep",
+    "黑焰堡"
+  ],
+  "ศิลาสุริยัน": [
+    "Sunstone",
+    "日岩城"
+  ],
+  "เวียงเถ้าคราม": [
+    "Blueash Citadel",
+    "苍灰城"
+  ],
+  "ท่าอรุณอัคนี": [
+    "Firedawn Harbor",
+    "炎曦港"
+  ],
+  "สนขาว": [
+    "Whitepine",
+    "白松村"
+  ],
+  "ระฆังน้ำแข็ง": [
+    "Icebell",
+    "冰铃村"
+  ],
+  "ธารแก้ว": [
+    "Crystalbrook",
+    "晶溪村"
+  ],
+  "ยอดเมฆา": [
+    "Cloudcrest",
+    "云巅村"
+  ],
+  "ผาผลึก": [
+    "Crystalcliff",
+    "晶崖村"
+  ],
+  "หุบหมอกคราม": [
+    "Bluemist Vale",
+    "苍雾谷"
+  ],
+  "เหมืองดาวเงิน": [
+    "Silverstar Mine",
+    "银星矿村"
+  ],
+  "ดอกเหมันต์": [
+    "Winterbloom",
+    "冬花村"
+  ],
+  "อ่าวจันทร์เย็น": [
+    "Frostmoon Bay",
+    "寒月湾"
+  ],
+  "สะพานหิมะ": [
+    "Snowbridge",
+    "雪桥村"
+  ],
+  "ทุ่งแสงเหนือ": [
+    "Aurora Field",
+    "极光原"
+  ],
+  "หอคอยลมหนาว": [
+    "Winterwind Tower",
+    "寒风塔村"
+  ],
+  "ประตูน้ำค้าง": [
+    "Dewgate",
+    "霜露门"
+  ],
+  "กวางเงิน": [
+    "Silverstag",
+    "银鹿村"
+  ],
+  "หุบสนธยา": [
+    "Twilight Vale",
+    "暮光谷"
+  ],
+  "ตะวันแรก": [
+    "Firstlight",
+    "初阳村"
+  ],
+  "รากสนโบราณ": [
+    "Elderpine Root",
+    "古松根村"
+  ],
+  "ดอยเฟิร์น": [
+    "Fernhill",
+    "蕨丘村"
+  ],
+  "สะพานเถาวัลย์": [
+    "Vinebridge",
+    "藤桥村"
+  ],
+  "น้ำตกเจ็ดม่าน": [
+    "Sevenveil Falls",
+    "七帘瀑村"
+  ],
+  "ลำธารมรกต": [
+    "Emerald Brook",
+    "翠溪村"
+  ],
+  "บึงบัวจันทร์": [
+    "Moonlotus Marsh",
+    "月莲泽"
+  ],
+  "หุบกล้วยไม้": [
+    "Orchid Vale",
+    "兰花谷"
+  ],
+  "ไทรพันปี": [
+    "Millennial Banyan",
+    "千年榕村"
+  ],
+  "ผานกคราม": [
+    "Bluebird Cliff",
+    "青鸟崖"
+  ],
+  "ทุ่งหญ้ารุ่ง": [
+    "Dawnmeadow",
+    "曙草原"
+  ],
+  "วังวารี": [
+    "Watercourt",
+    "碧水村"
+  ],
+  "ป่าแสงหิ่งห้อย": [
+    "Firefly Grove",
+    "流萤林"
+  ],
+  "อ่าวไข่มุก": [
+    "Pearl Bay",
+    "珍珠湾"
+  ],
+  "ทรายแก้ว": [
+    "Crystal Sands",
+    "晶沙村"
+  ],
+  "ปะการังเงิน": [
+    "Silvercoral",
+    "银珊瑚村"
+  ],
+  "เกาะลมอุ่น": [
+    "Warmwind Isle",
+    "暖风岛"
+  ],
+  "ผาถ่านแดง": [
+    "Redcoal Cliff",
+    "赤炭崖"
+  ],
+  "ระฆังเพลิง": [
+    "Firebell",
+    "炎铃村"
+  ],
+  "หุบควันเทา": [
+    "Greysmoke Vale",
+    "灰烟谷"
+  ],
+  "ดอกไม้เถ้าถ่าน": [
+    "Ashblossom",
+    "灰烬花村"
+  ],
+  "เหมืองทับทิม": [
+    "Ruby Mine",
+    "红宝矿村"
+  ],
+  "ธารทองแดง": [
+    "Copperbrook",
+    "铜溪村"
+  ],
+  "ทุ่งสุริยแสง": [
+    "Sunlight Field",
+    "日光原"
+  ],
+  "ศิลาร้อน": [
+    "Hotstone",
+    "热岩村"
+  ],
+  "ด่านภูผาแดง": [
+    "Redmount Pass",
+    "赤峰关"
+  ],
+  "บ่ออำพัน": [
+    "Amberwell",
+    "琥珀井村"
+  ],
+  "สนเพลิง": [
+    "Flamepine",
+    "炎松村"
+  ],
+  "หุบตะวันดับ": [
+    "Sunfall Vale",
+    "落日谷"
+  ],
+  "อ่าวประกายไฟ": [
+    "Ember Bay",
+    "火星湾"
+  ],
+  "ทรายดำ": [
+    "Black Sands",
+    "黑沙村"
+  ],
+  "ประภาคารอรุณ": [
+    "Dawn Lighthouse",
+    "曙光灯塔"
+  ],
+  "ลมทะเลแดง": [
+    "Redsea Breeze",
+    "赤海风村"
+  ],
+  "ยังไม่ได้เลือกประเทศ": [
+    "No country selected",
+    "尚未选择国家"
+  ],
+  "กรุณาเลือกประเทศก่อนสร้างตัวละคร": [
+    "Choose a country before creating your character",
+    "创建角色前请选择国家"
+  ],
+  "กรุณาเลือกประเทศก่อน": [
+    "Choose a country first",
+    "请先选择国家"
+  ],
+  "ประเทศของตัวละครเปลี่ยนไม่ได้": [
+    "Your character's country cannot be changed",
+    "角色所属国家不可更改"
+  ],
+  "ใช้แอคชั่นวันนี้แล้ว เริ่มวันใหม่เวลา 00:00 ไทย": [
+    "Today's action has been used. Resets at midnight Bangkok time",
+    "今日行动已用完，泰国时间零点重置"
+  ],
+  "ปลายทางเต็มแล้ว ไม่ได้ใช้สิทธิ์วันนี้": [
+    "The destination is full. Your daily action was not used",
+    "目的地已满，本次未消耗每日行动"
+  ],
+  "เดินทางได้เฉพาะสถานที่ที่มีเส้นทางเชื่อมโดยตรง": [
+    "Travel is limited to directly connected locations",
+    "只能前往直接相连的地点"
+  ],
+  "ฐานนี้เป็นของฝ่ายตรงข้าม ต้องเลือกโจมตี": [
+    "This is an enemy base. Choose Attack",
+    "这是敌方据点，请选择攻击"
+  ],
+  "โจมตีเมืองหลวงหรือฐานของประเทศตัวเองไม่ได้": [
+    "You cannot attack capitals or your country's bases",
+    "无法攻击首都或本国据点"
+  ],
+  "เปลี่ยนทีมได้เฉพาะที่เมืองหลวง": [
+    "Teams can only be changed at your capital",
+    "只能在首都更换队伍"
+  ],
+  "โหมดนี้ใช้การต่อสู้อัตโนมัติ ห้ามใช้ยาและคำสั่งสกิลเอง": [
+    "Combat is automatic. No potions or manual skill commands",
+    "战斗全自动，禁止药品和手动技能指令"
+  ],
+  "ไม่พบจดหมายนี้": [
+    "Message not found",
+    "未找到邮件"
+  ],
+  "โปรดอัปเดตเซิร์ฟเวอร์สงครามประเทศก่อน": [
+    "Update the country-war server first",
+    "请先更新国战服务器"
+  ],
+  "เศษเงินสะสม": [
+    "Saved coin fraction",
+    "累计金币余数"
+  ],
+  "เศษคูปอง": [
+    "Coupon fraction",
+    "券余数"
+  ],
+  "แผนที่สงคราม": [
+    "War map",
+    "国战地图"
+  ],
+  "ย่อแผนที่": [
+    "Zoom out",
+    "缩小地图"
+  ],
+  "ขยายแผนที่": [
+    "Zoom in",
+    "放大地图"
+  ],
+  "ภูมิประเทศของสามอาณาจักร": [
+    "Terrain of the three kingdoms",
+    "三国地形"
+  ],
+  "ฐานที่มองเห็นได้": [
+    "Visible bases",
+    "可见据点"
+  ],
+  "เมืองหลวง": [
+    "Capital",
+    "首都"
+  ],
+  "หมู่บ้าน": [
+    "Village",
+    "村庄"
+  ],
+  "วงกลมหมู่บ้าน": [
+    "Village circles",
+    "村庄圆点"
+  ],
+  "ลูกศรสีทองคือที่อยู่ของคุณ": [
+    "The gold arrow marks your location",
+    "金色箭头表示你的位置"
+  ],
+  "แสดงฐานของเราและฐานต่างประเทศที่มีเส้นทางติดกับเราเท่านั้น": [
+    "Only our bases and directly adjacent foreign bases are shown",
+    "仅显示本国及直接相邻的外国据点"
+  ],
+  "ทีมและจำนวนอสูรตาม PVP": [
+    "Roster and beast limit follow PVP",
+    "队伍和妖兽数量遵循PVP规则"
+  ],
+  "แยกจากโหมดอื่น": [
+    "Separate from other modes",
+    "与其他模式独立"
+  ],
+  "ใช้ทีม PVP ปัจจุบันและฟื้นพลังที่เมืองหลวง": [
+    "Use current PVP team and recover at the capital",
+    "使用当前PVP队伍并在首都恢复"
+  ],
+  "เปลี่ยนทีมและฟื้นพลังได้เมื่อกลับเมืองหลวง ห้ามใช้ยาในสงคราม": [
+    "Return to the capital to change teams and recover. No potions in war",
+    "返回首都可换队恢复，国战禁用药品"
+  ],
+  "เจ้าของ": [
+    "Owner",
+    "归属"
+  ],
+  "คุณอยู่ที่นี่": [
+    "You are here",
+    "你在此处"
+  ],
+  "ไม่มีผู้ประจำฐาน": [
+    "No residents",
+    "暂无驻守人员"
+  ],
+  "ฝ่ายตรงข้ามเห็นเฉพาะประเทศและจำนวนคน ไม่แสดงรายชื่อ": [
+    "Only the enemy country and population are visible, not names",
+    "仅显示敌方国家和人数，不显示姓名"
+  ],
+  "ฐานเต็ม": [
+    "Base full",
+    "据点已满"
+  ],
+  "เดินทางมาที่นี่": [
+    "Travel here",
+    "前往此处"
+  ],
+  "โจมตีฐานนี้": [
+    "Attack this base",
+    "攻击此据点"
+  ],
+  "ไม่มีเส้นทางตรงจากที่อยู่ปัจจุบัน": [
+    "No direct route from your current location",
+    "与当前位置没有直连道路"
+  ],
+  "สงครามประเทศ": [
+    "Country war",
+    "国战"
+  ],
+  "จดหมายระบบ": [
+    "System mailbox",
+    "系统邮箱"
+  ],
+  "จดหมาย": [
+    "Mail",
+    "邮件"
+  ],
+  "กำลังโหลดข้อมูลสงคราม…": [
+    "Loading war data…",
+    "正在加载国战数据…"
+  ],
+  "เลือกประเทศของตัวละคร": [
+    "Choose your character's country",
+    "选择角色国家"
+  ],
+  "เลือกได้เพียงครั้งเดียว เปลี่ยนประเทศไม่ได้ ตัวละครจะเริ่มที่เมืองหลวง": [
+    "Choose once. Country cannot change. Characters start at the capital",
+    "仅可选择一次且不可更改，角色从首都开始"
+  ],
+  "ใช้แอคชั่นวันนี้แล้ว": [
+    "Today's action used",
+    "今日行动已使用"
+  ],
+  "เหลือ 1 แอคชั่นวันนี้": [
+    "One action available today",
+    "今日剩余一次行动"
+  ],
+  "เปิดทุกวัน": [
+    "Open daily",
+    "每日开放"
+  ],
+  "เริ่มวันใหม่ 00:00 เวลาไทย": [
+    "Resets at midnight Bangkok time",
+    "泰国时间零点重置"
+  ],
+  "อยู่ป้องกันที่เดิม": [
+    "Stay and defend",
+    "原地防守"
+  ],
+  "ตรวจข้อมูล": [
+    "Refresh status",
+    "刷新状态"
+  ],
+  "รายได้ประเทศรายสัปดาห์": [
+    "Weekly country income",
+    "国家每周收入"
+  ],
+  "กองกลาง": [
+    "Shared pool",
+    "公共奖励池"
+  ],
+  "ครอง": [
+    "Owned",
+    "占领"
+  ],
+  "คูปอง": [
+    "Coupons",
+    "券"
+  ],
+  "สมาชิก": [
+    "Members",
+    "成员"
+  ],
+  "ปิดรอบวันอาทิตย์ 23:59 ไทย แบ่งเท่ากันทุกตัวละครในประเทศ โอนอัตโนมัติและแจ้งทางจดหมาย": [
+    "Closes Sunday 23:59 Bangkok time. Split equally among all country characters, deposited automatically with a notification letter",
+    "泰国时间周日23:59结算，平均分给本国所有角色，自动发放并以邮件通知"
+  ],
+  "กติกาสงคราม": [
+    "War rules",
+    "国战规则"
+  ],
+  "หนึ่งแอคชั่นต่อวัน: เดินทางฐานที่ติดกัน โจมตี หรืออยู่ป้องกัน": [
+    "One daily action: move to a connected base, attack, or defend",
+    "每日一次行动：移往相连据点、攻击或防守"
+  ],
+  "หมู่บ้าน 4 คน เมือง 16 คน เมืองหลวงไม่จำกัดและยึดไม่ได้": [
+    "Villages hold 4, cities 16, capitals have no limit and cannot be captured",
+    "村庄容纳4人、城市16人，首都不限且不可占领"
+  ],
+  "สุ่มผู้เล่นฝ่ายละสูงสุด 2 คนพร้อมอสูรตาม PVP": [
+    "Up to two random players per side with PVP beasts",
+    "每方最多随机两名玩家，携带PVP妖兽"
+  ],
+  "สู้หนึ่งคู่ต่อการโจมตี ต้องกำจัดผู้ป้องกันทั้งหมดจึงยึดฐานได้": [
+    "Fight one defender pair per attack. Defeat all defenders to capture the base",
+    "每次攻击一对守军，击败全部守军才能占领"
+  ],
+  "ไม่มีเพื่อนก็โจมตีคนเดียวได้": [
+    "You may attack alone if no ally is available",
+    "没有同伴时可独自攻击"
+  ],
+  "สุ่มมาช่วยหรือป้องกันไม่ตัดสิทธิ์ลงมือของคนนั้น แต่หากตายจะกลับเมืองหลวงและรอวันใหม่": [
+    "Passive assistance or defense does not consume an action. Defeated characters return to the capital and wait until the next day",
+    "被动协助或防守不消耗行动，阵亡角色返回首都并等待次日"
+  ],
+  "ต่อสู้อัตโนมัติเท่านั้น สูงสุด 120 การกระทำแล้วเสมอ": [
+    "Automatic combat only. Draw after 120 actions",
+    "仅自动战斗，120次行动后平局"
+  ],
+  "ห้ามใช้ยา สกิลฮีลใช้ในสนามต่อสู้": [
+    "No potions. Healing skills are available only in combat",
+    "禁止药品，治疗技能仅限战斗中使用"
+  ],
+  "กลับเมืองหลวงหรือเกิดใหม่ฟื้น HP/MP เต็ม": [
+    "Returning to the capital or respawning restores full HP/MP",
+    "返回首都或重生可恢复全部HP/MP"
+  ],
+  "การโจมตีล่าสุด": [
+    "Last attack",
+    "最近攻击"
+  ],
+  "กำลังแสดงการต่อสู้อัตโนมัติ": [
+    "Showing automatic combat",
+    "正在播放自动战斗"
+  ],
+  "ฝ่ายป้องกัน": [
+    "Defenders",
+    "防守方"
+  ],
+  "ฝ่ายโจมตี": [
+    "Attackers",
+    "进攻方"
+  ],
+  "ยึดฐานสำเร็จ": [
+    "Base captured",
+    "据点占领成功"
+  ],
+  "ยังมีผู้ป้องกันอีก": [
+    "Defenders remaining",
+    "剩余守军"
+  ],
+  "ฐานยังไม่เปลี่ยนเจ้าของ": [
+    "Base ownership unchanged",
+    "据点归属未变"
+  ],
+  "ตรวจจดหมาย": [
+    "Check mail",
+    "查看邮件"
+  ],
+  "กำลังตรวจจดหมาย…": [
+    "Checking mail…",
+    "正在检查邮件…"
+  ],
+  "รางวัลรายสัปดาห์จาก": [
+    "Weekly rewards from",
+    "每周奖励来自"
+  ],
+  "แบ่งให้สมาชิก": [
+    "Shared among members",
+    "平均分配给成员"
+  ],
+  "โอนรางวัลเข้าบัญชีตัวละครแล้ว ไม่ต้องกดรับซ้ำ": [
+    "Rewards have been deposited. No claim is needed",
+    "奖励已发至角色账户，无需再次领取"
+  ],
+  "ย้อนกลับกล่องจดหมาย": [
+    "Back to inbox",
+    "返回收件箱"
+  ],
+  "ยังไม่มีจดหมาย": [
+    "No messages yet",
+    "暂无邮件"
+  ],
+  "ออกจากป่าหรือจบการต่อสู้ก่อนเข้าสงครามประเทศ": [
+    "Leave the forest or finish combat before entering country war",
+    "离开森林或结束战斗后才能进入国战"
+  ],
+  "ยืนยันเลือกประเทศ": [
+    "Confirm country choice: ",
+    "确认选择国家："
+  ],
+  "ตัวละครนี้จะเปลี่ยนประเทศไม่ได้": [
+    "This character cannot change countries",
+    "此角色将无法更改国家"
+  ],
+  "เดินทางไป": [
+    "Travel to ",
+    "前往"
+  ],
+  "ใช้แอคชั่นวันนี้ 1 ครั้ง?": [
+    "Use today's action?",
+    "使用今日行动？"
+  ],
+  "อยู่ป้องกันที่เดิมและใช้แอคชั่นวันนี้?": [
+    "Stay and defend using today's action?",
+    "消耗今日行动留守此处？"
+  ],
+  "เลือกแล้วเปลี่ยนประเทศไม่ได้ ใช้ในโหมดสงครามประเทศ": [
+    "The choice is permanent and used in country war",
+    "此选择永久有效，用于国战模式"
+  ],
+  "เลือกประเทศ": [
+    "Choose a country",
+    "选择国家"
+  ],
+  "ใบ": [
+    "tickets",
+    "张"
+  ],
+  "อัตโนมัติ": [
+    "Automatic",
+    "自动"
+  ],
+  "ลองใหม่": [
+    "Retry",
+    "重试"
+  ],
+  "จาก": [
+    "From",
+    "来自"
+  ],
+  "ทุกวัน": [
+    "Daily",
+    "每日"
+  ]
+}

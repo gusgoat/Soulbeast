@@ -21,13 +21,15 @@ const source=fs.readFileSync('build/accounts/index.ts','utf8').replace(/^import 
 const ctx=vm.createContext({console,Headers,Response,Request,TextEncoder,TextDecoder,Uint8Array,Date,structuredClone,crypto:crypto.webcrypto,btoa,atob,sha256:v=>crypto.createHash('sha256').update(v).digest(),withSupabase:(_,f)=>req=>f(req,{supabaseAdmin:db})});vm.runInContext(source,ctx);
 const call=(body,auth=true)=>ctx.handler.fetch(new Request('https://example.invalid/accounts',{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:'Bearer fixture-user-jwt'}:{})},body:JSON.stringify(body)}));
 (async()=>{
- let r=await call({action:'account_list'},false);assert.equal(r.status,401);assert.equal(rows.length,0);
+ let r=await ctx.handler.fetch(new Request('https://example.invalid/accounts',{method:'POST',headers:{'Content-Type':'application/json','x-country-war-job':'not-a-real-secret'},body:'{}'}));assert.equal(r.status,401,'Scheduler requires a separate server secret');
+ r=await call({action:'account_list'},false);assert.equal(r.status,401);assert.equal(rows.length,0);
  authenticated=false;r=await call({action:'account_list'});assert.equal(r.status,401);authenticated=true;
  verified=false;r=await call({action:'account_list'});assert.equal(r.status,403);verified=true;
- const request_id=crypto.randomUUID(),data={P:{name:'ผู้ผนึกใหม่',cls:'mage',gender:'female',lv:60,gold:999999,pets:[{sp:'wisp'}]}};
+ const request_id=crypto.randomUUID(),data={P:{name:'ผู้ผนึกใหม่',cls:'mage',gender:'female',country:'blue',lv:60,gold:999999,pets:[{sp:'wisp'}]}};
  r=await call({action:'account_create',request_id,data});let v=await r.json();assert.equal(r.status,200,JSON.stringify(v));assert(v.ok,JSON.stringify(v));const code=v.character.code;assert(!JSON.stringify(v).includes('engine_pin'));
  const saves=tables.Saves.length;r=await call({action:'account_create',request_id,data});assert.equal((await r.json()).character.code,code);assert.equal(tables.Saves.length,saves);
  r=await call({action:'load',code});v=await r.json();assert(v.ok,JSON.stringify(v));const p=JSON.parse(v.data).P;assert.equal(p.gold,150);assert.equal(p.lv,3);assert.equal(p.gender,'female');assert.equal(p.pets[0].sp,'wisp');assert.equal(p.cpin,undefined);
+ assert.equal(p.country,'blue');assert.equal((await (await call({action:'country_choose',code,country:'red'})).json()).error,'country immutable');assert.equal((await (await call({action:'country_job_tick',code,_internalCountryJob:true})).json()).error,'account_action_not_supported');assert.equal((await (await call({action:'country_retire',code,_countryRetire:true})).json()).error,'account_action_not_supported');
  const oldAt=v.at,updated=JSON.parse(v.data);updated.P.gold=155;
  const saveRequest={action:'save',code,data:JSON.stringify(updated),name:updated.P.name,lv:updated.P.lv,expectedSaveAt:oldAt,_sbRequest:crypto.randomUUID()};
  r=await call(saveRequest);v=await r.json();assert(v.ok,JSON.stringify(v));assert(v.accountSaveAt>oldAt);const freshAt=v.accountSaveAt;

@@ -55,7 +55,7 @@ const ACCOUNT_GAME=(()=>{
  const originalCreate=handlers.newgame;
  const originalStart=vStart;vStart=()=>'<div class="card row"><button class="btn" data-a="accountCharacters">กลับหน้าตัวละคร</button><small>'+esc(state.user?.email||'')+'</small></div>'+(state.error?'<p role="alert">'+esc(state.error)+'</p>':'')+originalStart();
  const originalCinema=cinemaView;cinemaView=intro=>{const html=originalCinema(intro);return intro?html.replace(/<button class="btn full" data-a="introLoad">[^<]*<\/button>/,''):html;};
- handlers.newgame=async()=>{if(state.mode!=='create'||state.busy)return;state.busy=true;state.error='';
+ handlers.newgame=async()=>{if(state.mode!=='create'||state.busy)return;if(!['blue','green','red'].includes(document.getElementById('newCharacterCountry')?.value||S.ui.country)){toast('กรุณาเลือกประเทศก่อนสร้างตัวละคร');return;}state.busy=true;state.error='';
   try{if(!state.draft){originalCreate();state.draft=JSON.parse(gsData());state.request=crypto.randomUUID();}state.mode='creating';ui();
    const r=await state.client.game('account_create',{data:state.draft,request_id:state.request},SB_ENV);state.code=r.character.code;if(!state.characters.some(c=>c.code===state.code))state.characters.push(r.character);const loaded=await state.client.game('load',{code:state.code},SB_ENV);S=JSON.parse(loaded.data);S.P.gsAt=loaded.at;delete S.P.cpin;state.draft=null;state.request=null;state.mode='playing';sbMarkReady(state.code);state.boot({S});save();render();
   }catch(e){state.mode='create';state.error=state.errorText(e);toast(state.error);}finally{state.busy=false;render();}};

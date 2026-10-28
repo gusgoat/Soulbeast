@@ -331,7 +331,7 @@ function render(){
  if(S.screen==='battle'&&!S.battle)S.screen=S.zone?'zone':'town';
  if(S.screen==='zone'&&!S.zone)S.screen='wild';
  if(S.screen==='wild'&&S.zone)S.screen='zone';
- const V={beaststory:vBeastStory,statusbook:vStatusBook,guild:vGuild,guildwar:vGuildWar,elements:vGuideElements,guide:vGuide,bestiary:vGuideBestiary,classes:vGuideClasses,weaponbook:vWeaponBook,gacha:vGacha,friends:vFriends,settings:vSettings,world:vWorld,camp:vCamp,pvp:vPvp,story:vStory,leader:vLeader,forge:vForge,start:vStart,town:vTown,shop:vShop,hospital:vHospital,arena:vArena,wild:vWild,zone:vZone,battle:vBattle,hero:vHero,team:vTeam,bag:vBag}[S.screen]||vTown;
+ const V={countrywar:vCountryWar,mail:vMail,beaststory:vBeastStory,statusbook:vStatusBook,guild:vGuild,guildwar:vGuildWar,elements:vGuideElements,guide:vGuide,bestiary:vGuideBestiary,classes:vGuideClasses,weaponbook:vWeaponBook,gacha:vGacha,friends:vFriends,settings:vSettings,world:vWorld,camp:vCamp,pvp:vPvp,story:vStory,leader:vLeader,forge:vForge,start:vStart,town:vTown,shop:vShop,hospital:vHospital,arena:vArena,wild:vWild,zone:vZone,battle:vBattle,hero:vHero,team:vTeam,bag:vBag}[S.screen]||vTown;
  const P=S.P,inB=S.screen==='battle',start=S.screen==='start'||!S.P;
  const priorMain=app.querySelector('main'),keepScroll=app.dataset.screen===S.screen,mainScroll=keepScroll&&priorMain?priorMain.scrollTop:0;
  const navOn=k=>({town:['statusbook','guild','guildwar','town','shop','hospital','arena','forge','leader','pvp','camp','weaponbook','gacha','friends','guide','bestiary','classes','elements'],wild:['wild','zone'],hero:['hero'],team:['team'],bag:['bag']})[k].includes(S.screen);
@@ -553,7 +553,7 @@ function configuredDefenseReady(){return (CAMP.pets||[]).some(id=>carriedPets().
 // @soulbeast-end 0861-configuredDefenseReady
 // @soulbeast-unit 0868-compactRoom
 
-function compactRoom(mode=S.screen){return mode==='pvp'?PVP.room:mode==='world'?WORLD.room:mode==='camp'?CAMP.room:mode==='guildwar'?GUILD_UI.warRoom:null;}
+function compactRoom(mode=S.screen){return mode==='countrywar'?COUNTRY_WAR.room:mode==='pvp'?PVP.room:mode==='world'?WORLD.room:mode==='camp'?CAMP.room:mode==='guildwar'?GUILD_UI.warRoom:null;}
 // @soulbeast-end 0868-compactRoom
 // @soulbeast-unit 0873-compactButton
 

@@ -437,7 +437,7 @@ let playScreen=null,playBattle=null;
 // @soulbeast-end 0834-playScreen-playBattle
 // @soulbeast-unit 0869-compactBattleReady
 
-function compactBattleReady(mode=S.screen){const r=compactRoom(mode);return !!r?.battle&&(mode==='guildwar'||['active','finished'].includes(r.status));}
+function compactBattleReady(mode=S.screen){const r=compactRoom(mode);return mode!=='countrywar'&&!!r?.battle&&(mode==='guildwar'||['active','finished'].includes(r.status));}
 // @soulbeast-end 0869-compactBattleReady
 // @soulbeast-unit 0933-endBattle
 

@@ -1,0 +1,15 @@
+Country war deployment (additive; preserve Saves, existing ledgers and old website assets)
+
+1. Build the canonical web client, then node tools/build-accounts.cjs.
+2. Deploy build/accounts/index.ts to the existing soulbeast-accounts Edge function using the existing verified-account configuration.
+3. Set a freshly generated server secret SB_COUNTRY_WAR_JOB_SECRET in Edge. Store the identical value in Supabase Vault as soulbeast_country_war_job. Never put it in a browser bundle or this file.
+4. Run server/country-war/001-weekly-schedule.sql. This schedules Sunday 23:59 Asia/Bangkok for test/live separately. If the job is late, the engine settles all missed weeks before the next ownership/member mutation; fractional entitlements and letters are idempotent.
+5. Publish the new hashed client assets, country-war map PNG and account HTML together after the backend is ready. Existing client versions can still save; the server restores their immutable country field automatically.
+6. Verify new-character country selection, legacy first-time choice, daily action, 2-player teams with PVP pets, roster privacy, weekly letters, and exactly-once reward credits in test before live participation.
+
+Storage: existing CAS/receipt transaction stores namespaced cw: rows in GuildState; no new player-save import or destructive migration. Gold uses Camp delta, coupons use CouponCredits. Both are the existing authoritative ledgers, not client-supplied rewards. HP/MP lives in the country's roster snapshot and does not overwrite forest HP.
+Nation is per character. Old characters choose once. New characters choose during creation. All nation members are included in the weekly divisor even if they never enter the war screen.
+Assisting and defending do not spend the passive participant's daily action. Death returns that character with full HP/MP to its capital and spends its daily action. Daily reset is midnight Bangkok.
+Battle is one randomly selected defender pair per daily attack. All surviving defenders must leave through defeat before a base changes hands. Successful attackers enter only if there is capacity. Empty enemy bases are captured without a fabricated battle.
+Pair combat uses the existing PVP team validator and combat calculations, with a 120-action draw limit for the larger two-player sides. No manual command, item, seal or roster switch API is available in combat.
+The preview server tools/serve-country-war-preview.cjs binds only 127.0.0.1 and uses an in-memory workbook. It never calls production services or changes a real character.

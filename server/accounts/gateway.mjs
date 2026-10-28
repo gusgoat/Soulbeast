@@ -36,9 +36,10 @@ export function accountGateway({command,execute,hash,makeCharacter,syncName=asyn
   if(body.action==='account_create'){
    if(!/^[a-f0-9-]{36}$/i.test(body.request_id||''))fail('bad_request_id');
    const P=body.data?.P;
+   if(P?.country!=null&&!['blue','green','red'].includes(P.country))fail('bad_new_character');
    if(!P||!['male','female'].includes(P.gender)||typeof P.name!=='string'||!P.name.trim()||P.name.length>20)fail('bad_new_character');
    // Stats, items, gold and pets are rebuilt from canonical starting templates, never granted from a submitted save.
-   const d=makeCharacter({name:P.name.trim(),cls:P.cls,gender:P.gender,starters:P.pets?.map(p=>p.sp)});
+   const d=makeCharacter({name:P.name.trim(),cls:P.cls,gender:P.gender,country:P.country,starters:P.pets?.map(p=>p.sp)});
    const code=uuid().replaceAll('-','').slice(0,16).toUpperCase(),engine_pin=uuid().replaceAll('-','').slice(0,12);
    // A random collision with any legacy save must never claim or overwrite it.
    const probe=await execute({action:'load',code,pin:engine_pin,_sbRequest:uuid()},env);
@@ -53,14 +54,14 @@ export function accountGateway({command,execute,hash,makeCharacter,syncName=asyn
   const c=await command('get',user.id,env,{code});
   if(body.action==='account_delete'){
    if(body.confirm!==true)fail('delete_confirmation_required');
-   if(c.status==='deleted')return {ok:true,code,deleted:true};
+   if(c.status==='deleted'){await execute({action:'country_retire',code,pin:c.engine_pin,_countryRetire:true},env);return {ok:true,code,deleted:true};}
    const check=await execute({action:'account_retire_check',code,pin:c.engine_pin,_sbRequest:uuid()},env);
    if(!check.ok)fail(check.error||'finish other battle');
-   await command('delete',user.id,env,{code});return {ok:true,code,deleted:true};
+   await command('delete',user.id,env,{code});await execute({action:'country_retire',code,pin:c.engine_pin,_countryRetire:true},env);return {ok:true,code,deleted:true};
   }
   if(c.status==='deleted')fail('character_deleted');
   if(c.status!=='active')fail('character_not_ready');
-  if(body.newPin!=null||body.action==='delete')fail('account_action_not_supported');
+  if(body.newPin!=null||body._countryRetire!=null||body._internalCountryJob!=null||body.action==='country_job_tick'||body.action==='delete')fail('account_action_not_supported');
   const result=await execute({...body,code,pin:c.engine_pin},env);
   if(['camp_profile','load','save'].includes(body.action))await profile(c,result,env,user);
   return result;
