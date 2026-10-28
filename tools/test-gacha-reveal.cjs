@@ -34,7 +34,7 @@ assert.equal(r(`revealAudio.filter(a=>a[0]==='hiss').length`),4);
 assert.equal(r(`revealAudio.filter(a=>a[0]==='tone').length`),0,'ordinary/purple flips have no celebration');
 r(`revealAudio.length=0;GACHA.rewards=[{type:'item',key:'pot',category:'item'},{type:'item',key:'pot',category:'premium'},{type:'gear',key:WORLD_LEGENDS[0],category:'eclipseGear'}];gachaRevealSync();GachaReveal.entryAt=0;handlers.gachaRevealAll();`);
 assert.equal(r(`revealAudio.filter(a=>a[0]==='hiss').length`),3,'Open All plays one whoosh for every remaining card');
-assert.equal(r(`revealAudio.filter(a=>a[0]==='tone').length`),5,'one gold celebration');
+assert.equal(r(`revealAudio.filter(a=>a[0]==='tone').length`),0,'flip sound does not replay the receipt celebration');
 assert.deepEqual(Array.from(r(`revealAudio.filter(a=>a[0]==='hiss').map(a=>a[4])`)),[0,.09,.18]);
 const soundCount=r('revealAudio.length');r('handlers.gachaRevealAll()');assert.equal(r('revealAudio.length'),soundCount,'already-open cards stay silent');
 // Shortcut is inside each art stage and does not reveal reward text ahead of time.
@@ -49,3 +49,17 @@ r('gachaRevealSync()');assert.equal(r('dealFocusFrames.length'),0);
 r(`GACHA.rewards=GACHA.rewards.slice();gachaRevealSync();S.screen='town';while(dealFocusFrames.length)dealFocusFrames.shift()();`);
 assert.equal(r('dealFocusMoves.length'),1,'leaving gacha cancels stale focus');
 console.log('PASS per-card flip sounds, gold/red-only fanfares, in-art shortcut and one-time receipt focus with stale-screen guard');
+
+// Continue only navigates after every face is open and its flip has finished.
+r(`S.screen='gacha';GACHA.busy=false;GACHA.rewards=[{type:'item',key:'pot',category:'item'},{type:'item',key:'pot',category:'item'}];gachaRevealSync();GachaReveal.entryAt=0;GachaReveal.flipUntil=0;const continueMoves=[];document.querySelector=s=>s==='.gacha-machine'?{scrollIntoView:o=>continueMoves.push(o)}:null;`);
+r('handlers.gachaContinue()');assert.equal(r('continueMoves.length'),0);
+r("handlers.gachaRevealOne('0');handlers.gachaContinue()");assert.equal(r('continueMoves.length'),0);
+r("handlers.gachaRevealAll();GachaReveal.flipUntil=Date.now()+650;handlers.gachaContinue()");assert.equal(r('continueMoves.length'),0);
+r('GachaReveal.flipUntil=0;handlers.gachaContinue()');assert.equal(r('continueMoves.length'),1);assert.equal(r('continueMoves[0].block'),'start');
+// Recorded uploaded celebration starts on receipt, once, only gold/red. Flips remain separate.
+r(`const recordedRewards=[];ExtraAudio.play=g=>{if(Sound.enabled)recordedRewards.push(g)};Sound.enabled=true;GachaReveal.celebrated=null;const goldReceipt=[{type:'gear',key:WORLD_LEGENDS[0],category:'eclipseGear'}];gachaReceiptSound(goldReceipt);gachaReceiptSound(goldReceipt);`);
+assert.equal(r('recordedRewards.length'),1);assert.equal(r('recordedRewards[0]'),'specialRewardFx');
+r(`gachaReceiptSound([{type:'pet',key:Object.keys(SP).find(k=>SP[k].solar),category:'solarBeast'}]);`);assert.equal(r('recordedRewards.length'),2);
+r(`gachaReceiptSound([{type:'item',key:'pot',category:'legendGear'}]);gachaReceiptSound([{type:'item',key:'pot',category:'craft'}]);`);assert.equal(r('recordedRewards.length'),2,'purple and blue do not use special recorded celebration');
+r(`Sound.enabled=false;gachaReceiptSound(goldReceipt.slice());`);assert.equal(r('recordedRewards.length'),2);
+console.log('PASS in-art continue guard/flip completion and navigation only; original uploaded celebration once per gold/red receipt, no lower-rarity fanfare');
