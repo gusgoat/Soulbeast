@@ -123,3 +123,6 @@ to{transform:rotateY(180deg)}
 
 /* Keep the shortcut inside the summoning artwork, above the card grid. */
 .gacha-reveal-stage>.gacha-open-all{position:absolute;top:12px;right:12px;z-index:8;min-height:36px;padding:7px 12px;font-size:clamp(11px,3.2vw,15px);box-shadow:0 2px 12px #0009}
+
+/* Crystal icons use a sprite sheet, so contain their square box just like item images. */
+.gacha-face-art>.growth-crystal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:94%!important;width:auto!important;aspect-ratio:1;max-width:94%;max-height:100%;box-sizing:border-box;border:0;border-radius:0;box-shadow:none}

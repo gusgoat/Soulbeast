@@ -1,6 +1,6 @@
 {
   "live": [
-    "game-styles.76940ee577e98c38.css",
+    "game-styles.51344e091f842f4a.css",
     "game-data-registry.5350fd57c39d09dd.js",
     "game-data-elements.cbf3d313854fe0f5.js",
     "game-data-skills.921055310078b41f.js",
@@ -17,7 +17,7 @@
     "game-app.13e057153ca2000a.js"
   ],
   "staging": [
-    "game-styles.76940ee577e98c38.css",
+    "game-styles.51344e091f842f4a.css",
     "game-data-registry.5350fd57c39d09dd.js",
     "game-data-elements.cbf3d313854fe0f5.js",
     "game-data-skills.921055310078b41f.js",
