@@ -16,6 +16,8 @@ assert.equal(call('a','country_choose',{country:'red'}).error,'country immutable
 const loaded=call('a','load'),tamper=JSON.parse(loaded.data);tamper.P.country='red';assert.equal(call('a','save',{data:JSON.stringify(tamper)}).error,'country immutable');delete tamper.P.country;assert(call('a','save',{data:JSON.stringify(tamper)}).ok);assert.equal(JSON.parse(call('a','load').data).P.country,'blue');
 assert.equal(call('a','country_action',{kind:'move',target:'red-capital'}).error,'country adjacent required');
 assert.equal(call('a','country_action',{kind:'move',target:'blue-city-1',item:'pot'}).error,'country automatic only');
+now=Date.parse('2026-10-29T21:59:59+07:00');assert.equal(call('a','mail_list').messages.length,0);
+now+=1000;let daily=call('a','mail_list');assert.equal(daily.messages.length,1);assert.equal(daily.messages[0].kind,'daily');assert.equal(daily.messages[0].gold,280);assert.equal(daily.messages[0].coupons,0);const dailyDelta=daily.account.delta;assert.equal(call('a','mail_list').account.delta,dailyDelta);assert.equal(call('b','mail_list').messages[0].gold,280,'Every country character receives a daily share, without entering the mode');
 v=call('a','country_action',{kind:'move',target:'blue-city-1'});assert(v.ok);assert(v.me.used);assert.equal(v.me.location,'blue-city-1');assert.equal(call('a','country_action',{kind:'defend'}).error,'country daily limit');assert.equal(call('a','country_team').error,'country capital only');
 now+=86400000;v=call('a','country_action',{kind:'move',target:'blue-capital'});assert(v.ok);assert(v.me.team.every(u=>u.hp===u.st.hp&&u.mp===u.st.mp));
 // Set an isolated border scenario, then use real automatic battle code. Four defenders require two daily attacks.
@@ -30,11 +32,34 @@ let gm=read('cw:m:'+ids.g);gm.location='green-village-1';put('cw:m:'+ids.g,gm);f
 assert.equal(call('g','country_action',{kind:'move',target:'green-city-1'}).error,'country base full');assert(!call('g','country_status').me.used);
 // Initialize a prior-period boundary and verify exactly-once payouts, rational carry, private mail and credits.
 for(let i=book.tables.GuildState.length-1;i>0;i--)if(book.tables.GuildState[i][0].startsWith('cw:m:full'))book.tables.GuildState.splice(i,1);
-now=Date.parse('2026-11-01T23:58:59+07:00');assert.equal(call('a','mail_list').messages.length,0);
-now=Date.parse('2026-11-01T23:59:00+07:00');v=call('a','mail_list');assert(v.ok);assert.equal(v.messages.length,1);assert(v.messages[0].delivered);const amount=v.messages[0].gold,coupons=v.messages[0].coupons;assert.equal(amount,2850);assert.equal(coupons,2);assert.equal(v.messages[0].couponFraction.n,'1');assert.equal(v.messages[0].couponFraction.d,'16');
-const campDelta=v.account.delta;assert.equal(call('a','mail_list').account.delta,campDelta);assert.equal(call('a','mail_list').coupons,v.coupons);assert.equal(call('g','mail_read',{mail:v.messages[0].id}).error,'mail not found');assert(call('a','mail_read',{mail:v.messages[0].id}).ok);assert(call('a','mail_list').messages[0].read);
-now+=604800000;v=call('a','mail_list');assert.equal(v.messages.length,2);assert.equal(v.messages[0].couponFraction.n,'1');assert.equal(v.messages[0].couponFraction.d,'8');
+now=Date.parse('2026-10-31T23:59:59+07:00');assert.equal(call('a','mail_list').messages.filter(m=>m.kind==='monthly').length,0);
+now+=1000;let monthly=call('a','mail_list'),award=monthly.messages.find(m=>m.kind==='monthly');assert.equal(award.rank,1);assert.equal(award.coupons,10);assert.equal(award.score,21);assert.equal(call('g','mail_list').messages.find(m=>m.kind==='monthly').coupons,5);assert.equal(call('r','mail_list').messages.find(m=>m.kind==='monthly').gold,1000);
+const monthlyBalance=monthly.coupons;assert.equal(call('a','mail_list').coupons,monthlyBalance);assert.equal(call('a','mail_list').messages.filter(m=>m.kind==='monthly').length,1);
+for(const k of Object.keys(ids)){const m=read('cw:m:'+ids[k]);assert.equal(m.location,m.country+'-capital');assert.equal(m.lastActionDay,'');assert(m.team.every(u=>u.hp===u.st.hp&&u.mp===u.st.mp));}
+assert.equal(read('cw:l:red-village-1').owner,'red');assert.equal(read('cw:season:2026-10').ranks[0].country,'blue');assert.equal(call('a','country_status').season,'2026-11');
+// A new-season conquest also verifies weekly fractional rewards independently of monthly reset.
+put('cw:l:red-village-1',{id:'red-village-1',owner:'blue'});
+now=Date.parse('2026-11-01T23:58:59+07:00');assert.equal(call('a','mail_list').messages.filter(m=>m.kind==='weekly').length,0);
+now=Date.parse('2026-11-01T23:59:00+07:00');v=call('a','mail_list');v.messages=v.messages.filter(m=>m.kind==='weekly');assert(v.ok);assert.equal(v.messages.length,1);assert(v.messages[0].delivered);const amount=v.messages[0].gold,coupons=v.messages[0].coupons;assert.equal(amount,2850);assert.equal(coupons,2);assert.equal(v.messages[0].couponFraction.n,'1');assert.equal(v.messages[0].couponFraction.d,'16');
+const campDelta=v.account.delta;assert.equal(call('a','mail_list').account.delta,campDelta);assert.equal(call('a','mail_list').coupons,v.coupons);assert.equal(call('g','mail_read',{mail:v.messages[0].id}).error,'mail not found');assert(call('a','mail_read',{mail:v.messages[0].id}).ok);assert(call('a','mail_list').messages.find(m=>m.id===v.messages[0].id).read);
+now+=604800000;v=call('a','mail_list');v.messages=v.messages.filter(m=>m.kind==='weekly');assert.equal(v.messages.length,2);assert.equal(v.messages[0].couponFraction.n,'1');assert.equal(v.messages[0].couponFraction.d,'8');
 console.log('PASS permanent nation, legacy-save preservation, daily action, adjacency/capacity, capital heal, PVP roster, actual 2-v-2 automatic combat, two-day conquest, casualties/respawn, helper rights, HP isolation, exact weekly fractional rewards, no duplicate credits and private read-only reward mail.');
+// Smaller formations still execute the same authoritative combat and terrain comes from the base.
+for(const [attackers,defenders]of [[2,1],[1,1]]){
+ const a=read('cw:m:'+ids.a),b=read('cw:m:'+ids.b);a.location='blue-village-9';a.lastActionDay='';a.team.forEach(u=>u.hp=u.st.hp);b.location=attackers===2?a.location:'blue-capital';put('cw:m:'+ids.a,a);put('cw:m:'+ids.b,b);
+ const ownerKey='cw:l:red-village-1';put(ownerKey,{id:'red-village-1',owner:'red'});
+ for(const [i,k]of ['r','r2','r3','r4'].entries()){const m=read('cw:m:'+ids[k]);m.location=i<defenders?'red-village-1':'red-capital';m.team.forEach(u=>{u.hp=1;u.st.hp=1;});put('cw:m:'+ids[k],m);}
+ const result=call('a','country_action',{kind:'attack',target:'red-village-1',terrain:'snow'});assert(result.ok,JSON.stringify(result));assert.equal(result.last.attackers,attackers);assert.equal(result.last.defenders,defenders);assert.equal(result.last.players.length,attackers+defenders);assert.equal(result.last.terrain,'volcano');assert.equal(result.last.battle.terrain,'volcano');
+}
+console.log('PASS daily 22:00 Bangkok boundary, country-wide eligibility, duplicate prevention, actual 2-v-1 and 1-v-1 combat, and authoritative terrain after ownership changes.');
+{
+ const restoreNow=now;now=Date.parse('2026-10-29T12:00:00+07:00');const freshBook=ctx.createWorkbook({}),fresh=p=>ctx.createEngine(freshBook,utilities).dispatch(p),code='MONTHLATEBLUE001';
+ for(const [country,id]of [['blue',code],['green','MONTHLATEGREEN01'],['red','MONTHLATERED0001']]){const state=structuredClone(raw);state.P.country=country;assert(fresh({action:'save',code:id,pin:'123456',data:JSON.stringify(state)}).ok);}
+ freshBook.tables.GuildState.push(['cw:l:red-village-1',JSON.stringify({id:'red-village-1',owner:'blue'})]);
+ now=Date.parse('2026-11-02T08:00:00+07:00');const mails=fresh({action:'mail_list',code,pin:'123456'}).messages;
+ assert.equal(mails.filter(m=>m.kind==='monthly').length,1);assert.equal(mails.find(m=>m.kind==='monthly').score,21);assert.equal(mails.find(m=>m.kind==='weekly').pool.gold,5600,'Late weekly settlement must use reset ownership after the monthly boundary');assert.equal(mails.find(m=>m.kind==='daily'&&m.week==='2026-10-31').gold,570);assert.equal(mails.find(m=>m.kind==='daily'&&m.week==='2026-11-01').gold,560);assert.equal(fresh({action:'mail_list',code,pin:'123456'}).messages.length,mails.length);
+ now=restoreNow;console.log('PASS monthly rank prizes per character, midnight payout/reset, capital respawn/full health, preserved country, duplicate prevention, tied rankings and chronological catch-up across daily/monthly/weekly boundaries.');
+}
 (async()=>{
  // Two separate devices race for the final city slot through the real snapshot/CAS service.
  for(const key of ['race1','race2']){ids[key]=('GREEN'+key.toUpperCase()).padEnd(16,'0');save(key,'green');const m=read('cw:m:'+ids[key]);m.location=key==='race1'?'green-village-1':'green-village-2';put('cw:m:'+ids[key],m);}

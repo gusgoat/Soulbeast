@@ -29,8 +29,18 @@ export function countryWarTopology(data){
    for(const id of owned)for(const next of neighbors.get(id))visible.add(next);
    return {country:viewer.country,locations:[...visible].map(id=>{
     const n=nodes.get(id),own=owned.has(id),people=residents(state,id);
-    return {id,name:n.placeName,type:n.type,owner:owner(state,id),capacity:n.capacity,capturable:n.capturable,count:people.length,...(own?{members:people.filter(m=>m.country===viewer.country).map(m=>({code:m.code,name:m.name}))}:{})};
+    return {id,name:n.placeName,type:n.type,terrain:n.terrain,owner:owner(state,id),capacity:n.capacity,capturable:n.capturable,count:people.length,...(own?{members:people.filter(m=>m.country===viewer.country).map(m=>({code:m.code,name:m.name}))}:{})};
    }),edges:data.edges.filter(e=>visible.has(e.a)&&visible.has(e.b)).map(e=>({a:e.a,b:e.b}))};
+  },
+  monthlyRanks(state){
+   const scores=Object.fromEntries([...countries.keys()].map(id=>[id,{country:id,score:0,villages:0,capitals:0}]));
+   for(const n of nodes.values()){const p=scores[owner(state,n.id)];if(n.type==='village'){p.score++;p.villages++;}if(n.type==='capital'){p.score+=4;p.capitals++;}}
+   const rows=Object.values(scores);return rows.map(p=>({...p,rank:1+rows.filter(q=>q.score>p.score).length})).sort((a,b)=>a.rank-b.rank||a.country.localeCompare(b.country));
+  },
+  dailyPools(state){
+   const pools=Object.fromEntries([...countries.keys()].map(id=>[id,{gold:0,couponEighths:0,villages:0,cities:0}]));
+   for(const n of nodes.values()){const p=pools[owner(state,n.id)];if(!p)throw Error('invalid_country_war_owner');p.gold+=n.type==='city'?100:n.type==='village'?10:0;if(n.type==='city')p.cities++;if(n.type==='village')p.villages++;}
+   return pools;
   },
   weeklyPools(state){
    const pools=Object.fromEntries([...countries.keys()].map(id=>[id,{gold:0,couponEighths:0,villages:0,cities:0}]));

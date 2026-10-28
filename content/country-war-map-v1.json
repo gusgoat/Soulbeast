@@ -6,19 +6,22 @@
       "id": "blue",
       "name": "เหมันตคีรี",
       "color": "#7edbff",
-      "capitalId": "blue-capital"
+      "capitalId": "blue-capital",
+      "flag": "assets/ui/country-war/flag-blue-v1.webp"
     },
     {
       "id": "green",
       "name": "พนาสมุทร",
       "color": "#8ff0a6",
-      "capitalId": "green-capital"
+      "capitalId": "green-capital",
+      "flag": "assets/ui/country-war/flag-green-v1.webp"
     },
     {
       "id": "red",
       "name": "อัคนีบรรพต",
       "color": "#ff947a",
-      "capitalId": "red-capital"
+      "capitalId": "red-capital",
+      "flag": "assets/ui/country-war/flag-red-v1.webp"
     }
   ],
   "nodes": [
@@ -33,7 +36,9 @@
       "capacity": null,
       "capturable": false,
       "weeklyGold": 0,
-      "weeklyCouponEighths": 0
+      "weeklyCouponEighths": 0,
+      "terrain": "snow",
+      "dailyGold": 0
     },
     {
       "id": "blue-city-1",
@@ -47,7 +52,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "snow",
+      "dailyGold": 100
     },
     {
       "id": "blue-city-2",
@@ -61,7 +68,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "snow",
+      "dailyGold": 100
     },
     {
       "id": "blue-city-3",
@@ -75,7 +84,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "snow",
+      "dailyGold": 100
     },
     {
       "id": "blue-city-4",
@@ -89,7 +100,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "snow",
+      "dailyGold": 100
     },
     {
       "id": "green-capital",
@@ -102,7 +115,9 @@
       "capacity": null,
       "capturable": false,
       "weeklyGold": 0,
-      "weeklyCouponEighths": 0
+      "weeklyCouponEighths": 0,
+      "terrain": "mountain",
+      "dailyGold": 0
     },
     {
       "id": "green-city-1",
@@ -116,7 +131,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "mountain",
+      "dailyGold": 100
     },
     {
       "id": "green-city-2",
@@ -130,7 +147,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "forest",
+      "dailyGold": 100
     },
     {
       "id": "green-city-3",
@@ -144,7 +163,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "mountain",
+      "dailyGold": 100
     },
     {
       "id": "green-city-4",
@@ -158,7 +179,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "coast",
+      "dailyGold": 100
     },
     {
       "id": "red-capital",
@@ -171,7 +194,9 @@
       "capacity": null,
       "capturable": false,
       "weeklyGold": 0,
-      "weeklyCouponEighths": 0
+      "weeklyCouponEighths": 0,
+      "terrain": "volcano",
+      "dailyGold": 0
     },
     {
       "id": "red-city-1",
@@ -185,7 +210,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "volcano",
+      "dailyGold": 100
     },
     {
       "id": "red-city-2",
@@ -199,7 +226,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "volcano",
+      "dailyGold": 100
     },
     {
       "id": "red-city-3",
@@ -213,7 +242,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "volcano",
+      "dailyGold": 100
     },
     {
       "id": "red-city-4",
@@ -227,7 +258,9 @@
       "capacity": 16,
       "capturable": true,
       "weeklyGold": 1000,
-      "weeklyCouponEighths": 4
+      "weeklyCouponEighths": 4,
+      "terrain": "coast",
+      "dailyGold": 100
     },
     {
       "id": "blue-village-1",
@@ -241,7 +274,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "green-village-1",
@@ -255,7 +290,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-2",
@@ -269,7 +306,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "green-village-2",
@@ -283,7 +322,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-3",
@@ -297,7 +338,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "green-village-3",
@@ -311,7 +354,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-4",
@@ -325,7 +370,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "green-village-4",
@@ -339,7 +386,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-5",
@@ -353,7 +402,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "green-village-5",
@@ -367,7 +418,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "forest",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-6",
@@ -381,7 +434,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "green-village-6",
@@ -395,7 +450,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "forest",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-7",
@@ -409,7 +466,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "green-village-7",
@@ -423,7 +482,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "forest",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-8",
@@ -437,7 +498,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "green-village-8",
@@ -451,7 +514,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "forest",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-9",
@@ -465,7 +530,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "red-village-1",
@@ -479,7 +546,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-10",
@@ -493,7 +562,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "red-village-2",
@@ -507,7 +578,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-11",
@@ -521,7 +594,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "red-village-3",
@@ -535,7 +610,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-12",
@@ -549,7 +626,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "red-village-4",
@@ -563,7 +642,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-13",
@@ -577,7 +658,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "red-village-5",
@@ -591,7 +674,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-14",
@@ -605,7 +690,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "red-village-6",
@@ -619,7 +706,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-15",
@@ -633,7 +722,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "red-village-7",
@@ -647,7 +738,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "blue-village-16",
@@ -661,7 +754,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10
     },
     {
       "id": "red-village-8",
@@ -675,7 +770,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "green-village-9",
@@ -689,7 +786,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10
     },
     {
       "id": "red-village-9",
@@ -703,7 +802,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "green-village-10",
@@ -717,7 +818,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10
     },
     {
       "id": "red-village-10",
@@ -731,7 +834,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "green-village-11",
@@ -745,7 +850,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10
     },
     {
       "id": "red-village-11",
@@ -759,7 +866,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "green-village-12",
@@ -773,7 +882,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10
     },
     {
       "id": "red-village-12",
@@ -787,7 +898,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10
     },
     {
       "id": "green-village-13",
@@ -801,7 +914,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10
     },
     {
       "id": "red-village-13",
@@ -815,7 +930,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10
     },
     {
       "id": "green-village-14",
@@ -829,7 +946,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10
     },
     {
       "id": "red-village-14",
@@ -843,7 +962,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10
     },
     {
       "id": "green-village-15",
@@ -857,7 +978,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10
     },
     {
       "id": "red-village-15",
@@ -871,7 +994,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10
     },
     {
       "id": "green-village-16",
@@ -885,7 +1010,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10
     },
     {
       "id": "red-village-16",
@@ -899,7 +1026,9 @@
       "capacity": 4,
       "capturable": true,
       "weeklyGold": 100,
-      "weeklyCouponEighths": 1
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10
     }
   ],
   "edges": [

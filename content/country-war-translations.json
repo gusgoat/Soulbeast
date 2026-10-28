@@ -618,5 +618,101 @@
   "ทุกวัน": [
     "Daily",
     "每日"
+  ],
+  "หิมะ": [
+    "Snow",
+    "雪地"
+  ],
+  "ภูเขาไฟ": [
+    "Volcano",
+    "火山"
+  ],
+  "ชายฝั่งและเกาะ": [
+    "Coast and islands",
+    "海岸与岛屿"
+  ],
+  "ภูเขา": [
+    "Mountain",
+    "山地"
+  ],
+  "สงครามอาณาจักร": [
+    "Kingdom War",
+    "王国战争"
+  ],
+  "เลือกอาณาจักร": [
+    "Choose a kingdom",
+    "选择王国"
+  ],
+  "รายได้ประเทศรายวัน": [
+    "Daily kingdom income",
+    "王国每日收入"
+  ],
+  "หมู่บ้านละ 10 เหรียญ · เมืองละ 100 เหรียญ": [
+    "10 gold per village · 100 gold per city",
+    "每村庄10金币 · 每城市100金币"
+  ],
+  "แจกทุกวัน 22:00 ไทย แบ่งเท่ากันทุกตัวละครในประเทศ และสะสมเศษเงิน": [
+    "Paid daily at 22:00 Bangkok, shared equally by every kingdom character; fractions carry over",
+    "每日泰国时间22:00发放，王国所有角色均分并累计零头"
+  ],
+  "รางวัลรายวัน": [
+    "Daily reward",
+    "每日奖励"
+  ],
+  "รางวัลรายสัปดาห์": [
+    "Weekly reward",
+    "每周奖励"
+  ],
+  "สามอาณาจักร · ยึดครองและป้องกันฐาน": [
+    "Three kingdoms · Conquer and defend bases",
+    "三大王国 · 占领并守卫据点"
+  ],
+  "อัตโนมัติพร้อมอสูรตาม PVP": [
+    "Automatic combat with your PVP beasts",
+    "携带PVP兽队自动战斗"
+  ],
+  "บันทึกการต่อสู้": [
+    "Battle log",
+    "战斗记录"
+  ],
+  "เลือกอาชีพที่เหมาะกับคุณ": [
+    "Choose a class that suits you",
+    "选择适合你的职业"
+  ],
+  "อันดับอาณาจักรรายเดือน": [
+    "Monthly kingdom standings",
+    "王国月度排名"
+  ],
+  "หมู่บ้าน 1 คะแนน · เมืองหลวง 4 คะแนน · คะแนนเท่ากันได้อันดับร่วม": [
+    "Village: 1 point · Capital: 4 points · Equal scores share a rank",
+    "村庄1分 · 首都4分 · 同分并列"
+  ],
+  "อันดับ 1: คนละ 10 คูปอง": [
+    "Rank 1: 10 coupons each",
+    "第1名：每角色10张券"
+  ],
+  "อันดับ 2: คนละ 5 คูปอง": [
+    "Rank 2: 5 coupons each",
+    "第2名：每角色5张券"
+  ],
+  "อันดับ 3: คนละ 1,000 เหรียญ": [
+    "Rank 3: 1,000 gold each",
+    "第3名：每角色1000金币"
+  ],
+  "แจกวันที่ 1 เวลา 00:00 ไทย แล้วคืนฐานเดิม ส่งทุกคนกลับเมืองหลวงและฟื้น HP/MP เต็ม เศษรางวัลสะสมยังคงอยู่": [
+    "Paid on the first at 00:00 Bangkok, then bases reset and everyone returns to their capital with full HP/MP. Reward fractions carry over",
+    "每月1日泰国时间00:00发奖，随后重置据点，全员满HP/MP返回首都。奖励零头保留"
+  ],
+  "รางวัลรายเดือน · อันดับ": [
+    "Monthly reward · Rank",
+    "月度奖励 · 排名"
+  ],
+  "คะแนน": [
+    "Points",
+    "积分"
+  ],
+  "รีเซ็ตฐานแล้ว ทุกคนกลับเมืองหลวงพร้อม HP/MP เต็ม": [
+    "Bases reset; everyone returns to the capital with full HP/MP",
+    "据点已重置，全员满HP/MP返回首都"
   ]
 }

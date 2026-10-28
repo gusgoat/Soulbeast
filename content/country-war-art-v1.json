@@ -1,0 +1,128 @@
+[
+  {
+    "key": "flag_blue",
+    "file": "flag-blue-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-0d60f59f-0c56-4734-a8a7-5d6b227583fa.png",
+    "prompt": "Use case: stylized-concept. Create one production game asset: rectangular national flag for a fantasy snowy mountain kingdom Hemantakhiri. Entire image is the flag, landscape 3:2. Rich midnight blue fabric, silver and ice blue heraldic emblem of three snowy mountain peaks crowned by a crystalline snowflake inside an elegant magical summoning circle. Thin silver ornamental border. Symmetrical powerful readable emblem at small size. Luxurious painted fantasy RPG aesthetic, subtle fabric folds, front view, edges fully visible. No words, letters, flagpole, scenery, UI or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/flag-blue-v1.png",
+    "web": "assets/ui/country-war/flag-blue-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  },
+  {
+    "key": "flag_green",
+    "file": "flag-green-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-858cc59e-7b18-4db3-adfe-81ea5e1a5465.png",
+    "prompt": "Use case: stylized-concept. Production fantasy RPG national flag for forest and ocean kingdom Phanasamut. Entire image rectangular emerald green fabric flag 3:2 landscape, straight front view, all edges visible. Central bold golden heraldic ancient tree with canopy and roots flowing into three turquoise ocean waves, inside fine magical summoning circle. Thin gold ornamental border and corner flourishes, subtle cloth folds. Beautiful painted royal fantasy, legible at small sizes. No text, letters, flagpole, scenery or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/flag-green-v1.png",
+    "web": "assets/ui/country-war/flag-green-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  },
+  {
+    "key": "flag_red",
+    "file": "flag-red-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-f7a4d73a-39a3-49ad-a5c6-7ce87433f5da.png",
+    "prompt": "Use case: stylized-concept. Production fantasy RPG national flag for volcanic kingdom Akkhanibanphot. Entire image rectangular deep crimson and black fabric flag 3:2 landscape, straight front view all edges visible. Central bold gold heraldic erupting volcano with a blazing sun above, molten red accent, enclosed in an elegant magical summoning circle. Thin gold ornamental border with sharp flame flourishes at corners, subtle cloth folds. Beautiful royal painted fantasy, legible small. No words, letters, flagpole, scenery or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/flag-red-v1.png",
+    "web": "assets/ui/country-war/flag-red-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  },
+  {
+    "key": "battle_snow",
+    "file": "battle-snow-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-bb9ed4a6-77c2-4dac-b718-e5e77d80e729.png",
+    "prompt": "Use case: stylized-concept. Production Soulbeast fantasy RPG battle background, landscape 3:2. Snow mountain kingdom battlefield: spacious snowy stone courtyard outside a distant ice fortress, towering snowy mountain peaks, frosted pine trees at edges, ancient summoning runes subtly etched in paving. Eye-level slightly elevated view, quiet open central and lower arena for two opposing rows of character cards, background scenery strongest along top and edges. Rich polished painterly realistic high fantasy, blue silver twilight, magical atmospheric depth. No characters, creatures, text, frames, interface or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/battle-snow-v1.png",
+    "web": "assets/ui/country-war/battle-snow-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  },
+  {
+    "key": "battle_volcano",
+    "file": "battle-volcano-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-87ccfdef-a47d-406b-8e4e-bcae0b50ed96.png",
+    "prompt": "Use case: stylized-concept. Production Soulbeast fantasy RPG battle background, landscape 3:2. Volcanic kingdom battlefield: broad intact dark basalt courtyard with subtle summoning runes, distant black and gold fortress and erupting volcano, thin rivers of glowing lava safely along far edges, drifting embers and red clouds. Eye-level slightly elevated view, quiet spacious central and lower arena for two opposing rows of character cards, scenery strongest along top and edges. Rich polished painterly realistic high fantasy, crimson amber black, dramatic atmospheric depth. No characters, creatures, text, frames, interface or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/battle-volcano-v1.png",
+    "web": "assets/ui/country-war/battle-volcano-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  },
+  {
+    "key": "battle_forest",
+    "file": "battle-forest-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-34aca9cf-a908-46c3-8713-73a6e5fb4d86.png",
+    "prompt": "Use case: stylized-concept. Production Soulbeast fantasy RPG battle background, landscape 3:2. Enchanted forest kingdom battlefield: spacious weathered stone clearing with faint magical summoning sigil, emerald ancient trees framing edges, distant elven stone gate, gentle waterfall and mossy rocks behind, tiny fireflies. Eye-level slightly elevated view, quiet open central and lower arena for two opposing rows of character cards; detailed foliage concentrated around edges and top. Rich polished painterly realistic high fantasy, emerald and gold shafts of light, atmospheric depth. No characters, creatures, text, frames, interface or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/battle-forest-v1.png",
+    "web": "assets/ui/country-war/battle-forest-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  },
+  {
+    "key": "battle_coast",
+    "file": "battle-coast-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-35ef8ae5-c02e-47a8-b468-a187be0b24bf.png",
+    "prompt": "Use case: stylized-concept. Production Soulbeast fantasy RPG battle background, landscape 3:2. Coastal island kingdom battlefield: spacious stone harbor terrace on tropical island, calm turquoise ocean beyond low balustrade, distant islands and white gold fantasy port city, palms and carved pillars around edges, subtle summoning rune on paving. Eye-level slightly elevated view, quiet open central and lower arena for two opposing rows of character cards; scenery along top and edges. Rich polished painterly realistic high fantasy, blue turquoise gold sunset, atmospheric depth. No characters, creatures, text, frames, interface or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/battle-coast-v1.png",
+    "web": "assets/ui/country-war/battle-coast-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  },
+  {
+    "key": "battle_mountain",
+    "file": "battle-mountain-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-1bb1d480-4dbe-44e7-a2f1-e7854af4b994.png",
+    "prompt": "Use case: stylized-concept. Production Soulbeast fantasy RPG battle background, landscape 3:2. Mountain pass battlefield: broad gray stone courtyard of a remote cliff fortress above deep valleys, spectacular jagged green gray mountains and suspension bridge beyond, ancient carved pillars along outer edges, faint summoning sigil in paving. Eye-level slightly elevated view, quiet spacious central and lower arena for opposing rows of character cards, strongest scenery top and edges. Rich polished painterly realistic high fantasy, misty blue gray and warm gold light, atmospheric depth. No snow, characters, creatures, text, frames, interface or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/battle-mountain-v1.png",
+    "web": "assets/ui/country-war/battle-mountain-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  },
+  {
+    "key": "activity",
+    "file": "activity-v1.png",
+    "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-c5a587a2-ac3a-4053-8277-c46823be5889.png",
+    "prompt": "Use case: stylized-concept. Production fantasy RPG activity menu banner, panoramic landscape 3:1, no text. Three neighboring magical kingdoms meeting at ancient summoning circle: snowy blue silver fortress and mountains on left, emerald forest and turquoise sea central, crimson black volcanic fortress on right. Three elegant royal standards with simple respective mountain snowflake, tree waves, and volcano sun heraldry. Ornate restrained gold fantasy accents, cinematic painterly realism, rich Soulbeast style. Clear darkened lower central area for later UI title overlay, no actual lettering, characters, UI buttons, card slots or watermark.",
+    "method": "built-in image_gen",
+    "saved": "assets/ui/country-war/activity-v1.png",
+    "web": "assets/ui/country-war/activity-v1.webp",
+    "webEncoding": {
+      "format": "WebP",
+      "quality": 85,
+      "dimensions": "unchanged"
+    }
+  }
+]

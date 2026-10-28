@@ -17,4 +17,13 @@ do $$begin
    ) from unnest(array['test','live']) as envs(environment);
   $job$);
  end if;
+ -- 15:00 UTC = 22:00 Bangkok. Running again is safe through the same CAS ledger.
+ -- Also wake at midnight Bangkok (17:00 UTC); the engine resets only on the first of a month.
+ perform cron.schedule('soulbeast-country-war-daily','0 15,17 * * *',$job$
+  select net.http_post(
+   url:='https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-accounts',
+   headers:=jsonb_build_object('Content-Type','application/json','x-country-war-job',(select decrypted_secret from vault.decrypted_secrets where name='soulbeast_country_war_job')),
+   body:=jsonb_build_object('environment',environment),timeout_milliseconds:=120000
+  ) from unnest(array['test','live']) as envs(environment);
+ $job$);
 end $$;
