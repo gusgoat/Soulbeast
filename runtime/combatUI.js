@@ -15,7 +15,7 @@ function ucard(u,i){const b=B(),fx=b.fx.filter(f=>f.id===u.id).map(f=>`<span cla
 // @soulbeast-unit 0382-vBattle
 
 function vBattle(){const b=B(),u=uById(b.cur),P=S.P;
- const order=b.over?'':`<div class="order portrait-turn-order"><small class="turn-order-label" translate="no">${ct('ลำดับตา:','Turn order:','行动顺序：')}</small><div class="turn-order-list" role="list" aria-label="${ct('ลำดับตา','Turn order','行动顺序')}" translate="no">${[b.cur,...b.queue].filter(Boolean).map(q=>[uById(q.replace('*','')),q.endsWith('*')]).filter(([x])=>x&&x.hp>0).slice(0,9).map(([x,e],i)=>{const current=i===0&&x.id===b.cur,label=x.name+' · '+(x.side==='ally'?ct('ทีมเรา','Our team','我方'):ct('ทีมศัตรู','Enemy team','敌方'))+(current?' · '+ct('กำลังออกตา','Current turn','当前行动'):'')+(e?' · ×2':'');return `<div class="turn-order-entry ${x.side==='ally'?'ally':'enemy'}${current?' current':''}" role="listitem" data-turn-unit="${esc(x.id)}" aria-label="${esc(label)}" title="${esc(label)}" ${current?'aria-current="step"':''}>${unitPortrait(x,32,{own:x.kind==='player'&&x.id==='P'})}${e?'<small class="turn-order-extra" aria-hidden="true">×2</small>':''}</div>`;}).join('')}</div>${b.allies.length>1?`<button class="btn sm" style="min-height:26px;padding:2px 8px;font-size:11px" data-a="bt" data-v="auto:1">อสูรออโต้ ${S.ui.autoPet?'เปิด':'ปิด'}</button>`:''}</div>`;
+ const order=b.over?'':`<div class="order portrait-turn-order"><small class="turn-order-label" translate="no">${ct('ลำดับตา:','Turn order:','行动顺序：')}</small><div class="turn-order-list" role="list" aria-label="${ct('ลำดับตา','Turn order','行动顺序')}" translate="no">${[b.cur,...b.queue].filter(Boolean).map(q=>[uById(q.replace('*','')),q.endsWith('*')]).filter(([x])=>x&&x.hp>0).slice(0,9).map(([x,e],i)=>{const current=i===0&&x.id===b.cur,label=x.name+' · '+(x.side==='ally'?ct('ทีมเรา','Our team','我方'):ct('ทีมศัตรู','Enemy team','敌方'))+(current?' · '+ct('กำลังออกตา','Current turn','当前行动'):'')+(e?' · ×2':'');return `<div class="turn-order-entry ${x.side==='ally'?'ally':'enemy'}${current?' current':''}" role="listitem" data-turn-unit="${esc(x.id)}" aria-label="${esc(label)}" title="${esc(label)}" ${current?'aria-current="step"':''}>${unitPortrait(x,32,{own:x.kind==='player'&&x.id==='P'})}${e?'<small class="turn-order-extra" aria-hidden="true">×2</small>':''}</div>`;}).join('')}</div><b class="battle-round" translate="no">⚔ ${ct('เทิร์น','Turn','回合')} ${b.round}</b></div>`;
  let panel='';
  if(b.over){panel=(b.over.res==='win'&&b.kind==='boss'&&!ZN[b.meta-1].train?storyCard(b.meta,true):'')+`<div class="panel res"><h2 style="${b.over.res==='lose'?'color:var(--bad)':''}">${b.over.title}</h2><div class="lines">${b.over.lines.map(l=>`<div>${l}</div>`).join('')}</div><button class="btn pri full" data-a="bt" data-v="done">ไปต่อ</button></div>`}
  else if(b.menu==='wait'||!u||u.side==='enemy'){panel=`<div class="panel"><p class="sub" style="margin:0;text-align:center">${u?`${esc(u.name)} กำลังเคลื่อนไหว...`:'...'}</p></div>`}
@@ -34,7 +34,7 @@ function vBattle(){const b=B(),u=uById(b.cur),P=S.P;
   else{const canSeal=b.enemies.some(sealable),canFlee=['wild','bandit','traveler'].includes(b.kind);
    panel=`<div class="panel">${head}<div class="acts">${skBtn('attack')}<button class="btn" data-a="bt" data-v="menu:skill">สกิล<small>${u.skills.length-1} ท่า</small></button><button class="btn" data-a="bt" data-v="menu:item">ไอเทม<small>ยา · แก้สถานะ</small></button>
    <button class="btn seal" data-a="bt" data-v="menu:seal" ${canSeal?'':'disabled'}>ผนึก<small>จับอสูร</small></button><button class="btn" data-a="bt" data-v="menu:swap">เรียกอสูร<small>ไม่เสียเทิร์น</small></button><button class="btn" data-a="bt" data-v="flee" ${canFlee?'':'disabled'}>หนี<small>${canFlee?'ลุ้นความเร็ว':'หนีไม่ได้'}</small></button></div></div>`}}
- return `<div class="field battle-enhanced"><div class="battle-toolbar"><b>⚔ เทิร์น ${b.round}</b>${!b.over&&teamAutoAllowed()?`<button class="btn sm ${S.ui.autoTeam?'pri':''}" data-a="teamAuto" aria-pressed="${!!S.ui.autoTeam}">ออโต้ทั้งทีม ${S.ui.autoTeam?'เปิด':'ปิด'}</button>`:''}<small>ออโต้เลือกสกิล · ไม่ใช้ยา/ผนึก · กดปิดเพื่อควบคุมเอง</small></div>${order}${panel}</div>`}
+ return `<div class="field battle-enhanced">${order}${panel}</div>`}
 // @soulbeast-end 0382-vBattle
 // @soulbeast-unit 0830-handlers-battleCommands
 
@@ -59,17 +59,17 @@ handlers.pvpFriend=id=>{if(!BattleSkillTarget.confirm('ally',id))return targetPv
 
 // Presentation only: never advance turns or change battle/save data.
 const BattleCommandFocus={
- battle:null,turn:'',menu:'',pending:'',ticket:0,scrollTop:0,
+ battle:null,turn:'',menu:'',pending:'',ticket:0,
  ready(){const b=B(),u=b&&uById(b.cur);return !!(b&&!b.over&&u?.side==='ally'&&u.hp>0&&!teamAutoUnit(u)&&!['wait','end'].includes(b.menu)&&!(typeof MotionTimeline!=='undefined'&&MotionTimeline.busy()));},
- prepare(){const b=B();this.scrollTop=b===this.battle?(document.querySelector('main')?.scrollTop||0):0;if(b!==this.battle){this.battle=b;this.turn='';this.pending='';this.ticket++;}if(!b)return;
+ prepare(){const b=B();if(b!==this.battle){this.battle=b;this.turn='';this.pending='';this.ticket++;}if(!b)return;
   const key=this.ready()?[b.round,b.cur,b.queue.join(',')].join('|'):'';
   if(key&&key!==this.turn){S.ui.battleCommandsHidden=false;this.pending='commands';}
   else if(!key&&this.turn)this.pending='arena';
   if(key&&this.menu!==b.menu)this.pending='commands';if(BattleSkillTarget.current()&&this.pending==='commands')this.pending='arena';this.menu=b.menu;this.turn=key;
  },
  commit(){this.turn='';this.pending='arena';this.ticket++;this.scroll('arena');},
- scroll(where){const main=document.querySelector('main'),target=main?.querySelector?.(where==='commands'?'#battleCommandBody':'.battle-vitals');if(!main||!target||!main.getBoundingClientRect)return;const delta=target.getBoundingClientRect().top-main.getBoundingClientRect().top-12;main.scrollTop+=delta;},
- sync(){const main=document.querySelector('main'),body=main?.querySelector?.('#battleCommandBody');if(B()&&main&&body&&!body.hidden&&main.getBoundingClientRect){const wanted=main.scrollTop+body.getBoundingClientRect().top-main.getBoundingClientRect().top-12,extra=Math.max(0,wanted-(main.scrollHeight-main.clientHeight));if(extra&&main.style)main.style.paddingBottom=((parseFloat(main.style.paddingBottom)||0)+extra)+'px';main.scrollTop=this.scrollTop;}if(!this.pending)return;const where=this.pending,battle=this.battle,ticket=++this.ticket;this.pending='';
+ scroll(where){const main=document.querySelector('main'),target=main?.querySelector?.(where==='commands'?'.battle-command-dock':'.battle-vitals');if(!main||!target||!main.getBoundingClientRect)return;const viewport=main.getBoundingClientRect(),rect=target.getBoundingClientRect();const delta=where==='commands'?rect.bottom-viewport.bottom+12:rect.top-viewport.top-12;main.scrollTop+=delta;},
+ sync(){if(!this.pending)return;const where=this.pending,battle=this.battle,ticket=++this.ticket;this.pending='';
   (window.requestAnimationFrame||setTimeout)(()=>{if(ticket!==this.ticket||B()!==battle||!battle)return;if(where==='commands'&&(!this.ready()||S.ui.battleCommandsHidden))return;this.scroll(where);});
  }
 };

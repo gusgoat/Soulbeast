@@ -399,3 +399,9 @@
 .battle-target-prompt>div{min-width:0;display:grid;gap:3px}.battle-target-prompt .btn{flex:none}
 #app .battle-vital[data-skill-target="valid"]{outline:2px solid #ffe394!important;outline-offset:2px;cursor:pointer}
 #app .battle-vital[data-skill-target="invalid"]{opacity:.4;cursor:default}
+
+/* Keep the turn row and commands close to the arena; auto controls live only in the dock. */
+#app .battle-enhanced:has([data-battle-card=full]){gap:4px!important}
+#app .battle-enhanced .portrait-turn-order{margin:0;padding:2px 0;gap:6px}
+#app .battle-enhanced .turn-order-list{padding-block:2px 4px}
+#app .battle-round{flex:none;white-space:nowrap;margin-left:auto;color:#efd48f;font-size:clamp(11px,3vw,15px)}
