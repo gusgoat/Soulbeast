@@ -13,27 +13,27 @@
       "artFit": "cover",
       "embers": true,
       "poseAssets": {
-        "idle": "assets/beasts/motion/dragon-cutout-v1.webp",
-        "hit": "assets/beasts/motion/dragon-hit-v1.webp",
-        "windup": "assets/beasts/motion/dragon-windup-v1.webp",
-        "melee": "assets/beasts/motion/dragon-melee-v1.webp",
+        "idle": "assets/motion-repairs/card-preview-v2/dragon-idle-original-eye-v4.png",
+        "hit": "assets/motion-repairs/card-preview-v2/dragon-hit.png",
+        "windup": "assets/motion-repairs/card-preview-v2/dragon-windup.png",
+        "melee": "assets/motion-repairs/card-preview-v2/dragon-melee.png",
         "meleeEffect": "assets/beasts/motion/dragon-melee-effect-v1.webp"
       },
       "powerAsset": "assets/beasts/motion/dragon-fire-realistic-v1.webp",
       "powerDuration": 0.7,
       "windupDuration": 1.1,
       "source": {
-        "x": 70,
-        "y": 40,
+        "x": 86.3,
+        "y": 34.0,
         "angle": 16,
         "width": 125,
         "height": 40,
         "anchor": {
           "pose": "windup",
-          "x": 78,
-          "y": 52,
-          "asset": "assets/beasts/motion/dragon-windup-v1.webp",
-          "sha256": "4bca12733632b7a1b5a8201b73e56a949b7c60e46fed225140bf2926bd08b7a5"
+          "x": 86.3,
+          "y": 34.0,
+          "asset": "assets/motion-repairs/card-preview-v2/dragon-windup.png",
+          "sha256": "dd6eb9a3880600d1502006718ad0d424463b5c2ee5d834fb8c34f391543520cb"
         },
         "cropLeft": 3,
         "effect": {
@@ -47,11 +47,11 @@
       "meleeSource": {
         "pose": "melee",
         "x": 70,
-        "y": 78,
+        "y": 70,
         "width": 120,
         "height": 120,
-        "asset": "assets/beasts/motion/dragon-melee-v1.webp",
-        "sha256": "ef101ca31e652367f9c213876a755e1c276c7449d33e7bb49fe09a1cddc581e4",
+        "asset": "assets/motion-repairs/card-preview-v2/dragon-melee.png",
+        "sha256": "309e815447af0d13d52db290d6823192cff81ba3847ad203e3ac030dd07af8e6",
         "effect": {
           "asset": "assets/beasts/motion/dragon-melee-effect-v1.webp",
           "sha256": "eb0d4b2e16034281e98482c83a74919791ae93552b82654e612d632cf368bee2",
@@ -61,22 +61,14 @@
       },
       "review": {
         "status": "verified",
-        "date": "2026-10-26",
-        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "date": "2026-10-28",
         "checks": [
-          "Existing user-approved artwork reverified visually",
-          "Power linear .75s; original dragon .7s; recovery to idle",
-          "Hit, windup and melee recover; DemonLord threat recovers",
-          "Normalized SHA256-bound origins remain aligned at all three card widths",
-          "Edge contact preserves target recoil visibility",
-          "Particles match identity policy"
+          "Previously generated complete silhouette reused without regenerating identity",
+          "Normalized SHA256-bound anchors updated for canonical battle cards",
+          "Full-body source art reviewed; fit bounds and SHA256 anchors validated",
+          "Canonical game regression suite passed; no gameplay or save field changes"
         ],
-        "proof": "../outputs/all-character-motion-20261025/legacy-dragon-contact.png",
-        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
-        "heldEvidence": [
-          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
-          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
-        ]
+        "proof": "../outputs/fullbody-audit-20261028/dragon-fullbody320.png"
       }
     }
   ]

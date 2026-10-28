@@ -219,18 +219,18 @@
       "assetBase": "assets/portraits/motion/summoner-male",
       "scene": "assets/ui/element-card-scenes/class-summon.webp",
       "source": {
-        "x": 82,
-        "y": 59,
+        "x": 59.6,
+        "y": 20.8,
         "angle": 0,
         "width": 115,
         "height": 115,
         "projection": "camera",
         "anchor": {
           "pose": "windup",
-          "x": 84.042553,
-          "y": 59.574468,
-          "asset": "assets/portraits/motion/summoner-male-windup-v1.webp",
-          "sha256": "f9b71a0d214032132dee1744737a299e0af0b6e4a5d43367bdc223e1907a7705"
+          "x": 59.6,
+          "y": 20.8,
+          "asset": "assets/portraits/motion/summoner-fullbody-v2/windup.png",
+          "sha256": "33dbd3c655056fe7df9a49a98781597d9911efc1367d5a2b0ee9db08b9926832"
         },
         "effect": {
           "asset": "assets/portraits/motion/summoner-male-power-front-v2.webp",
@@ -240,19 +240,22 @@
       },
       "powerAsset": "assets/portraits/motion/summoner-male-power-front-v2.webp",
       "poseAssets": {
-        "melee": "assets/portraits/motion/summoner-male-melee-whip-v2.webp",
-        "meleeEffect": "assets/portraits/motion/summoner-male-melee-whip-effect-v2.webp"
+        "melee": "assets/portraits/motion/summoner-fullbody-v2/melee.png",
+        "meleeEffect": "assets/portraits/motion/summoner-male-melee-whip-effect-v2.webp",
+        "idle": "assets/portraits/motion/summoner-fullbody-v2/idle.png",
+        "windup": "assets/portraits/motion/summoner-fullbody-v2/windup.png",
+        "hit": "assets/portraits/motion/summoner-fullbody-v2/hit.png"
       },
       "meleeName": "ฟาดแซ่",
       "meleeMode": "swipe",
       "meleeSource": {
         "pose": "melee",
-        "x": 79,
-        "y": 85,
+        "x": 91.0,
+        "y": 57.5,
         "width": 110,
         "height": 110,
-        "asset": "assets/portraits/motion/summoner-male-melee-whip-v2.webp",
-        "sha256": "25cae7c44f1db4f62c0e2d5301552e3e1a03e71164c354057f5fef3101da87da",
+        "asset": "assets/portraits/motion/summoner-fullbody-v2/melee.png",
+        "sha256": "3c923e877a7fa192b0c027310d3a1ff0924ea26cc1fc48f157009931c22ff4d7",
         "effect": {
           "asset": "assets/portraits/motion/summoner-male-melee-whip-effect-v2.webp",
           "sha256": "3d926abe0eb2541aa6870ad7e757e2b22dac6dafbf955d3cbc62c963e73e4d0d",
@@ -263,22 +266,16 @@
       "meleeWeapon": "whip",
       "review": {
         "status": "verified",
-        "date": "2026-10-26",
-        "viewport": "390x844 and 320x740 actual innerWidth; held widths293.6/142.8/108.6px",
+        "date": "2026-10-28",
         "checks": [
-          "Existing user-approved artwork reverified visually",
-          "Power linear .75s; original dragon .7s; recovery to idle",
-          "Hit, windup and melee recover; DemonLord threat recovers",
-          "Normalized SHA256-bound origins remain aligned at all three card widths",
-          "Edge contact preserves target recoil visibility",
-          "Particles match identity policy"
+          "Full-body male summoner, all four poses have feet and complete sleeves",
+          "Preserved previous power and whip VFX; recalibrated palm and whip-tip normalized SHA256-bound anchors",
+          "True RGBA alpha in all four PNGs, complete feet/arms/whip",
+          "Windup palm at 59.6%,20.8%; whip tip at 91%,57.5%; hash-locked",
+          "5:3 card fit, source and VFX share coordinate box; no battle or save changes"
         ],
-        "proof": "../outputs/all-character-motion-20261025/legacy-summoner-male-contact.png",
-        "phoneEvidence": "../outputs/all-character-motion-20261025/legacy-final-phone-verification.json",
-        "heldEvidence": [
-          "../outputs/all-character-motion-20261025/legacy-final-held-verification.json",
-          "../outputs/all-character-motion-20261025/legacy-final-small-verification.json"
-        ]
+        "viewport": "390px and 320px actual window.innerWidth",
+        "proof": "../outputs/battle-card-layout-20261028/summoner-fullbody-windup390.png"
       }
     }
   ]

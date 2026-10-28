@@ -10,8 +10,8 @@
       "idleMode": "breathe",
       "background": "water",
       "source": {
-        "x": 94,
-        "y": 41,
+        "x": 94.0,
+        "y": 40.5,
         "angle": 10,
         "width": 125,
         "height": 55,
@@ -20,10 +20,10 @@
         "cropLeft": 1.5,
         "anchor": {
           "pose": "windup",
-          "x": 94,
-          "y": 41,
-          "asset": "assets/beasts/motion/nilmangkorn-windup-v1.webp",
-          "sha256": "bb1eaa28cd854e273c21bf7bd79e363b3b789c7d50b3ea0a78eae8f0229d0a7a"
+          "x": 94.0,
+          "y": 40.5,
+          "asset": "assets/beasts/motion/fullbody-audit-v2/nilmangkorn-windup.png",
+          "sha256": "23340d20c908cf3bfb597b6065c55ba3847cbf5b876c28467b1a5ea0e328f877"
         },
         "effect": {
           "asset": "assets/beasts/motion/nilmangkorn-power-v1.webp",
@@ -33,7 +33,8 @@
       },
       "poseAssets": {
         "melee": "assets/beasts/motion/nilmangkorn-melee-v1.webp",
-        "meleeEffect": "assets/beasts/motion/nilmangkorn-melee-effect-v1.webp"
+        "meleeEffect": "assets/beasts/motion/nilmangkorn-melee-effect-v1.webp",
+        "windup": "assets/beasts/motion/fullbody-audit-v2/nilmangkorn-windup.png"
       },
       "meleeName": "กระแทกกีบคู่",
       "meleeMode": "swipe",
@@ -54,17 +55,13 @@
       },
       "review": {
         "status": "verified",
-        "viewport": "390x844",
+        "date": "2026-10-28",
         "checks": [
-          "identity and anatomy inspected",
-          "actual mouth/palm/trunk and VFX origins",
-          "attack/hit/melee recovery",
-          "visible target at edge contact",
-          "correct elemental palette",
-          "no early-form particles",
-          "real alpha and images load"
-        ],
-        "proof": "../outputs/all-character-motion-20261025/nilmangkorn-contact.png"
+          "Full muzzle, tail and all hooves retained in new preparation sprite",
+          "Existing power VFX and linear travel duration unchanged",
+          "Full-body source art reviewed; fit bounds and SHA256 anchors validated",
+          "Canonical game regression suite passed; no gameplay or save field changes"
+        ]
       }
     },
     {

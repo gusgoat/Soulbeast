@@ -1,0 +1,55 @@
+{
+  "generator": "built-in imagegen",
+  "actor": "summoner-male",
+  "assets": {
+    "idle": {
+      "path": "assets/portraits/motion/summoner-fullbody-v2/idle.png",
+      "sha256": "ed4af816598cdde5c07f60eb3407fb7503cdfc791b3b4cc863cb2a13f0b84312",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-5065a56c-95f0-4024-8beb-49a8fefb79d1.png"
+    },
+    "windup": {
+      "path": "assets/portraits/motion/summoner-fullbody-v2/windup.png",
+      "sha256": "33dbd3c655056fe7df9a49a98781597d9911efc1367d5a2b0ee9db08b9926832",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-887895c0-8644-49fb-b520-7f13f83e7b1c.png"
+    },
+    "hit": {
+      "path": "assets/portraits/motion/summoner-fullbody-v2/hit.png",
+      "sha256": "38e112099c71015ead833853b03fe6038e48eb115277a24bb2eeb8db78cc0d23",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-a12620a2-53d9-42a9-8248-e06b585cd1b8.png"
+    },
+    "melee": {
+      "path": "assets/portraits/motion/summoner-fullbody-v2/melee.png",
+      "sha256": "3c923e877a7fa192b0c027310d3a1ff0924ea26cc1fc48f157009931c22ff4d7",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-d5820ba7-a4e6-4edb-8a1f-60bb8bac3f28.png"
+    }
+  },
+  "powerAnchor": {
+    "pose": "windup",
+    "x": 59.6,
+    "y": 20.8,
+    "asset": "assets/portraits/motion/summoner-fullbody-v2/windup.png",
+    "sha256": "33dbd3c655056fe7df9a49a98781597d9911efc1367d5a2b0ee9db08b9926832"
+  },
+  "meleeAnchor": {
+    "pose": "melee",
+    "x": 91.0,
+    "y": 57.5,
+    "asset": "assets/portraits/motion/summoner-fullbody-v2/melee.png",
+    "sha256": "3c923e877a7fa192b0c027310d3a1ff0924ea26cc1fc48f157009931c22ff4d7"
+  },
+  "prompts": {
+    "idle": "Edit reference into one full-body idle sprite on true transparent alpha. Preserve exact adult male summoner face, white long braided hair, turquoise/gold crown, luxurious white/turquoise/gold embroidered robes, jewelry, spirit dragon orb held between both hands. Extend missing lower garments with matching gold/turquoise boots. Complete crown-to-boots silhouette, all sleeves and hems; square canvas. No scenery, frame, text, extra character or released projectile.",
+    "poseCommon": "First reference: generated full-body idle identity/costume/stature. Second reference: original pose upper-body action. Preserve exact male summoner face, hair, crown, costume and boots, full silhouette. Transparent alpha, complete limbs and feet, square canvas, no background or released projectile.",
+    "windup": "Left hand cradles orb near abdomen, right arm extends toward camera with open palm and a small concentrated cyan light at its center; legs steady, prepared to cast.",
+    "hit": "Recoil backwards with pained determined expression, keep orb in hands, knees slightly flexed, both boots grounded; no enemy or damage overlay.",
+    "melee": "Use original dark braided gold-decorated whip with compact loop on right, front fist gripping handle, other hand balances; no orb, sword or staff. Both legs and boots in a dynamic grounded stance."
+  },
+  "verification": {
+    "viewports": [
+      390,
+      320
+    ],
+    "alpha": "Real transparency, all four PNGs inspected",
+    "anchorProof": "../outputs/battle-card-layout-20261028/summoner-fullbody-alpha-proof.json"
+  }
+}

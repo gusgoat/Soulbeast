@@ -11,6 +11,7 @@ const ForestJourney={
   const zone=S.zone,fork=zone.fork,stage=document.querySelector('.forest-journey');
   if(!stage?.querySelector)return forestJourneyFork(String(index));
   const run={zone,fork,index,stage,sources:[],cancelled:false};this.active=run;
+  stage.scrollIntoView?.({block:'start',behavior:'instant'});
   document.getElementById('app')?.classList.add('forest-walking');stage.setAttribute('aria-busy','true');
   stage.querySelectorAll('button').forEach(b=>b.disabled=true);
   const image=stage.querySelector('.journey-scene'),key=this.sound(zone,fork[index]);
@@ -26,17 +27,25 @@ const ForestJourney={
    frames.push({offset:next,transform:'translate('+((index?-1:1)*(step+1)*3)+'%,0) scale('+(scale+.12)+')'});
   }
   run.animation=image?.animate(reduced?[{opacity:1},{opacity:1}]:frames,{duration:this.duration,easing:'linear',fill:'forwards'});
+  // Travel marker shares the exact scene clock; depth is committed only by finish().
+  const walker=stage.querySelector('.forest-trail-walker'),progress=stage.querySelector('.forest-trail-line>i');
+  const from=Math.max(0,Math.min(ZDEPTH,Number(zone.depth)||0))/ZDEPTH*100,to=Math.min(100,from+100/ZDEPTH);
+  run.walker=walker;walker?.classList?.add('forest-marker-walking');
+  run.markerAnimation=walker?.animate?.([{left:from+'%'},{left:to+'%'}],{duration:this.duration,easing:'linear',fill:'forwards'});
+  run.progressAnimation=progress?.animate?.([{width:from+'%'},{width:to+'%'}],{duration:this.duration,easing:'linear',fill:'forwards'});
+
   if(buffer&&Sound.enabled&&Sound.ctx){const start=Sound.ctx.currentTime;for(let i=0;i<3;i++){const source=Sound.ctx.createBufferSource();source.buffer=buffer;source.connect(audioBus('effects'));source.start(start+i);run.sources.push(source);stage.dataset.scheduledFootsteps=String(run.sources.length);Sound.voices.add(source);source.onended=()=>Sound.voices.delete(source);}}
   run.started=Date.now();stage.dataset.walkDirection=index?'right':'left';stage.dataset.walkStarted=String(run.started);
   run.timer=setTimeout(()=>this.finish(run),this.duration);
  },
  finish(run){if(this.active!==run||run.cancelled)return;const valid=S.zone===run.zone&&S.zone.fork===run.fork&&S.screen==='zone'&&!S.battle;this.cancel();if(!valid)return;this.completing=true;try{forestJourneyFork(String(run.index));}finally{this.completing=false;}},
- cancel(){const run=this.active;this.active=null;if(run){run.cancelled=true;clearTimeout(run.timer);run.animation?.cancel();for(const source of run.sources){try{source.stop();}catch(e){}Sound.voices.delete(source);}run.stage.removeAttribute('aria-busy');run.stage.querySelectorAll('button').forEach(b=>b.disabled=false);}document.getElementById('app')?.classList.remove('forest-walking');}
+ cancel(){const run=this.active;this.active=null;if(run){run.cancelled=true;clearTimeout(run.timer);run.animation?.cancel();run.markerAnimation?.cancel();run.progressAnimation?.cancel();run.walker?.classList?.remove('forest-marker-walking');for(const source of run.sources){try{source.stop();}catch(e){}Sound.voices.delete(source);}run.stage.removeAttribute('aria-busy');run.stage.querySelectorAll('button').forEach(b=>b.disabled=false);}document.getElementById('app')?.classList.remove('forest-walking');}
 };
 const forestJourneyView=vZone;
 vZone=function(){let html=forestJourneyView();if(S.battle||!S.zone?.fork||S.zone.ev)return html;
  html=html.replace(/(<button class="door[^>]*>[\s\S]*?)<small>[\s\S]*?<\/small>(<\/button>)/g,'$1$2');
- html=html.replace('<section class="stack forest-travel-stage">','<section class="stack forest-travel-stage forest-journey"><img class="journey-scene" src="'+ForestJourney.art(S.zone)+'" alt="" fetchpriority="high"><div class="journey-ui">').replace('</section>','</div></section>');return html;
+ const trail=html.match(/<aside class="card stack forest-depth forest-trail-panel">[\s\S]*?<\/aside>/)?.[0]||'';html=html.replace(trail,'');
+ html=html.replace('<section class="stack forest-travel-stage">','<section class="stack forest-travel-stage forest-journey"><img class="journey-scene" src="'+ForestJourney.art(S.zone)+'" alt="" fetchpriority="high">'+trail+'<div class="journey-ui">').replace('</section>','</div></section>');return html;
 };
 const forestJourneyFork=handlers.fork;
 handlers.fork=v=>ForestJourney.begin(Number(v));

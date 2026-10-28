@@ -1,0 +1,122 @@
+.gacha-reveal{display:block!important;text-align:center}
+.gacha-reveal-stage{position:relative;width:100%;isolation:isolate;margin:12px auto 0;overflow:hidden;border-radius:14px;max-width:560px}
+.gacha-scene-art{display:block;width:100%;height:auto}
+.gacha-flip{position:absolute;z-index:2;padding:0;border:0;border-radius:8%;background:transparent;perspective:900px;cursor:pointer;color:#fff;--glow:#dcecff;box-shadow:0 0 5px var(--glow),0 0 12px color-mix(in srgb,var(--glow) 65%,transparent);touch-action:manipulation}
+.gacha-flip:focus-visible{outline:3px solid white;outline-offset:5px}
+.gacha-flip-inner{display:block;width:100%;height:100%;position:relative;transform-style:preserve-3d}
+.gacha-back,.gacha-front{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:8%;overflow:hidden}
+.gacha-back img{width:100%;height:100%;display:block}
+.gacha-front{transform:rotateY(180deg);background:radial-gradient(ellipse at top,#23374e,#080c18);border:1px solid var(--glow);box-sizing:border-box}
+.gacha-flip.is-open .gacha-flip-inner{transform:rotateY(180deg)}
+.gacha-flip.just-open .gacha-flip-inner{animation:gacha-card-flip .65s ease-out both}
+.gacha-front .gacha-result{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;height:100%;margin:0;padding:3px;border:0;border-radius:0;background:transparent;box-sizing:border-box;animation:none;box-shadow:none;min-width:0}
+.gacha-front .gacha-result>b{font-size:clamp(8px,2.6vw,14px);line-height:1.2;max-width:100%;overflow-wrap:anywhere}
+.gacha-front .gacha-result>small{font-size:clamp(6px,1.8vw,10px);line-height:1.1}
+.gacha-front .gacha-result>small:last-child{display:none}
+.gacha-front .gacha-result .pt,.gacha-front .gacha-result .item-art{width:48%!important;height:50%!important;max-width:65px;max-height:65px;flex:0 1 auto}
+.gacha-front .gacha-result img{max-width:100%;max-height:100%;object-fit:contain}
+.gacha-reveal-stage.single .gacha-flip{left:18%;top:39.8%;width:64%;height:20%}
+.gacha-reveal-stage.single .gacha-result>b{font-size:clamp(16px,5vw,24px)}
+.gacha-reveal-stage.single .gacha-result .pt,.gacha-reveal-stage.single .gacha-result .item-art{max-width:110px;max-height:110px}
+.rarity-green{--glow:#69ff8d}
+.rarity-blue{--glow:#51baff}
+.rarity-purple{--glow:#ba68ff}
+.rarity-gold{--glow:#ffd45a}
+.rarity-red{--glow:#ff293e}
+.rarity-purple,.rarity-gold,.rarity-red{animation:gacha-aura 2s ease-in-out infinite alternate}
+.gacha-motes{position:absolute;inset:-10%;pointer-events:none;color:var(--glow);text-shadow:0 0 5px var(--glow);font-size:14px;animation:gacha-dust 2.7s ease-in-out infinite}
+.gacha-motes i{position:absolute;font-style:normal;left:85%;top:60%;animation:gacha-dust 2s infinite reverse}
+.gacha-motes i:nth-child(2){left:15%;top:80%}
+.gacha-motes i:nth-child(3){left:65%;top:5%}
+.rarity-red .gacha-motes i:nth-child(2){color:#09030a;text-shadow:0 0 3px #ff3344}
+.gacha-reveal .row{position:relative;z-index:3}
+.gacha-reveal .gacha-result .pt{overflow:hidden}
+@keyframes gacha-card-flip{from{transform:rotateY(0)}
+to{transform:rotateY(180deg)}
+}
+@keyframes gacha-aura{to{box-shadow:0 0 7px var(--glow),0 0 22px var(--glow)}
+}
+@keyframes gacha-dust{0%,100%{opacity:.2;transform:translateY(4px)}
+50%{opacity:1;transform:translateY(-6px)}
+}
+@media(prefers-reduced-motion:reduce){.gacha-flip,.gacha-motes,.gacha-motes i,.gacha-flip.is-open .gacha-flip-inner{animation:none}
+}
+
+/* Keep reward art visible even when the Thai reward name is long. Full names follow the scene. */
+.gacha-front .gacha-result>b{flex:0 0 auto;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+
+.gacha-front .gacha-result>small{display:none}
+
+.gacha-front .gacha-result>.pt,.gacha-front .gacha-result>.item-art{flex:1 1 0!important;min-height:0!important;max-height:70%!important;width:65%!important;height:65%!important;max-width:70%!important}
+
+.gacha-front .gacha-result>.pt{aspect-ratio:1}
+
+.gacha-opened-list{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;text-align:left;font-size:12px;padding:10px;background:#0c1825}
+
+.gacha-opened-list:empty{display:none}
+.gacha-opened-list p{margin:0}
+
+.gacha-reveal>.row{gap:8px}
+.gacha-reveal>.row .btn{flex:0 0 auto;padding:8px 12px;min-height:40px}
+
+/* Breaking the high rarity seals: expanding magic circle, light rays and flying sparks. */
+.gacha-flip.just-open.rarity-gold,.gacha-flip.just-open.rarity-red{z-index:4}
+.gacha-unseal{position:absolute;inset:-25%;pointer-events:none;z-index:5;animation:gacha-unseal-fade 1.35s ease-out both;color:var(--glow)}
+.gacha-unseal::before{content:"";position:absolute;inset:8%;border:2px solid var(--glow);border-radius:50%;box-shadow:0 0 12px var(--glow),inset 0 0 12px var(--glow);animation:gacha-unseal-ring 1.2s ease-out both}
+.gacha-unseal::after{content:"";position:absolute;inset:-20%;border-radius:50%;background:repeating-conic-gradient(from 0deg,transparent 0deg 22deg,var(--glow) 24deg 26deg,transparent 28deg 45deg);mask-image:radial-gradient(ellipse,#000 0%,transparent 68%);animation:gacha-unseal-rays 1.3s ease-out both}
+.unseal-star{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(32px,12vw,80px);text-shadow:0 0 15px var(--glow),0 0 30px var(--glow);animation:gacha-unseal-star .9s ease-out both}
+.gacha-unseal i{position:absolute;left:50%;top:50%;font-style:normal;font-size:clamp(10px,4vw,22px);text-shadow:0 0 6px var(--glow);--angle:calc(var(--ray)*45deg);animation:gacha-unseal-spark 1.3s ease-out both}
+.rarity-red .gacha-unseal::before{border-style:double;border-width:4px;box-shadow:0 0 12px #ff253e,0 0 22px #09010a,inset 0 0 14px #ff253e}
+.rarity-red .gacha-unseal i:nth-child(even){color:#180511;text-shadow:0 0 4px #ff3344,0 0 10px #ff3344}
+@keyframes gacha-unseal-fade{0%{opacity:0}20%,55%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes gacha-unseal-ring{0%{transform:scale(.3);opacity:0}25%{opacity:1}100%{transform:scale(1.5);opacity:0}}
+@keyframes gacha-unseal-rays{0%{transform:scale(.2) rotate(-12deg);opacity:0}25%{opacity:.8}100%{transform:scale(1.5) rotate(12deg);opacity:0}}
+@keyframes gacha-unseal-star{0%,10%{transform:scale(.1);opacity:0}35%{transform:scale(1);opacity:1}100%{transform:scale(1.7);opacity:0}}
+@keyframes gacha-unseal-spark{0%{transform:rotate(var(--angle)) translateX(0) rotate(calc(-1*var(--angle)));opacity:0}25%{opacity:1}100%{transform:rotate(var(--angle)) translateX(clamp(38px,13vw,85px)) rotate(calc(-1*var(--angle)));opacity:0}}
+@media(prefers-reduced-motion:reduce){.gacha-unseal{display:none}}
+/* The reward face is a 4:3 full-art card, with no portrait medallion. */
+.gacha-reveal-stage .gacha-flip{aspect-ratio:4/3;height:auto!important}
+.gacha-reveal-stage.single .gacha-flip{width:47.4%;left:26.3%}
+.gacha-face-content{display:grid;grid-template-rows:minmax(0,1fr) auto auto;position:absolute;inset:0;padding:3% 4%;gap:2%;box-sizing:border-box;background:radial-gradient(ellipse at 50% 45%,color-mix(in srgb,var(--glow) 20%,#0b1421),#080c15 85%);color:#fff}
+.gacha-face-art{position:relative;display:block;min-height:0;min-width:0;isolation:isolate}
+.gacha-beast-art{position:absolute;inset:0;display:block;overflow:hidden;isolation:isolate;--um-windup-duration:1.6s}
+.gacha-beast-art .um-window{border-radius:0;overflow:visible}
+.gacha-beast-art .um-body{inset:3% 7%;transform-origin:50% 75%}
+.gacha-beast-art .um-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;pointer-events:none}
+.gacha-beast-art .um-aura{inset:0;opacity:.2}
+.gacha-beast-art .um-embers{border-radius:0}
+.gacha-beast-art[data-motion-phase=windup] .um-body{animation-delay:.65s}
+.gacha-face-art>.item-art{position:absolute;inset:3% 15%;width:70%!important;height:94%!important;--item-size:100%!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.gacha-face-art>.item-art>img{width:100%;height:100%;object-fit:contain}
+.gacha-face-name{display:block;min-width:0;font-size:clamp(6px,2.2vw,12px);line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;text-shadow:0 1px 2px #000}
+.gacha-face-type{display:block;font-size:clamp(4px,1.55vw,8px);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;color:#d7c5a6}
+.single .gacha-face-name{font-size:clamp(12px,3.8vw,21px)}
+.single .gacha-face-type{font-size:clamp(8px,2.4vw,12px)}
+@media(prefers-reduced-motion:reduce){.gacha-beast-art .um-body,.gacha-beast-art .um-aura,.gacha-beast-art .um-embers i{animation:none!important}}
+/* Receipt presentation: summon first, then materialize each back in its slot. */
+.is-dealing .gacha-flip{animation:gacha-card-arrive .45s cubic-bezier(.16,.8,.3,1) both;animation-delay:calc(850ms + var(--slot)*90ms - var(--deal-elapsed));pointer-events:none}
+.is-dealing .gacha-flip:disabled{opacity:1;filter:none}
+.gacha-arrival-portal{position:absolute;z-index:3;left:14%;top:62%;width:72%;height:24%;pointer-events:none;animation:gacha-portal 1.4s ease-out both;animation-delay:calc(0ms - var(--deal-elapsed));border-radius:50%;background:radial-gradient(ellipse,#fff9da 0%,#ffd173aa 8%,#82baff44 30%,transparent 70%);mix-blend-mode:screen}
+.gacha-arrival-portal::before,.gacha-arrival-portal::after,.gacha-arrival-portal i{content:"";position:absolute;inset:15%;border:2px solid #ffe5a1;border-radius:50%;box-shadow:0 0 15px #f8b942,inset 0 0 12px #66bbff;transform:rotate(-18deg)}
+.gacha-arrival-portal::after{inset:25% -3%;transform:rotate(18deg);border-color:#82cbff}
+.gacha-arrival-portal i{inset:-130% 35%;border-width:0;background:linear-gradient(transparent,#fff7da,transparent);filter:blur(4px)}
+.gacha-arrival-portal b{position:absolute;inset:-30% 0;display:grid;place-items:center;font-size:clamp(40px,20vw,100px);color:#fff3c2;text-shadow:0 0 20px #ffcc65}
+@keyframes gacha-portal{0%{opacity:0;transform:scale(.2)}25%{opacity:1;transform:scale(.8)}65%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes gacha-card-arrive{0%{opacity:0;transform:translateY(22px) scale(.4);filter:brightness(4) blur(4px)}50%{opacity:1;filter:brightness(2) blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}}
+@media(prefers-reduced-motion:reduce){.gacha-arrival-portal{display:none}.is-dealing .gacha-flip{animation:none;pointer-events:auto}}
+
+
+/* Slot-free scene with centered 2-3-3-2 rows. */
+.gacha-reveal-stage.ten{background:#080f1d}
+.ten>.gacha-scene-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.gacha-card-grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(8px,2.4vw,14px);padding:clamp(90px,28vw,150px) 4% clamp(70px,20vw,110px)}
+.gacha-reveal-stage.ten .gacha-flip{position:relative;left:auto;top:auto;translate:none;width:100%;margin:0;grid-column:span 2}
+.ten .gacha-card-grid>.gacha-flip:nth-child(1),.ten .gacha-card-grid>.gacha-flip:nth-child(9){grid-column:2/span 2}
+.ten .gacha-card-grid>.gacha-flip:nth-child(2),.ten .gacha-card-grid>.gacha-flip:nth-child(10){grid-column:4/span 2}
+.ten .gacha-card-grid>.gacha-flip:nth-child(3),.ten .gacha-card-grid>.gacha-flip:nth-child(6){grid-column:1/span 2}
+.single .gacha-card-grid{display:contents}
+.gacha-reveal-stage.single .gacha-flip{width:80%;left:50%;top:50%;translate:-50% -50%}
+.ten .gacha-face-name{font-size:clamp(8px,2.5vw,14px);line-height:1.15}
+.ten .gacha-face-type{font-size:clamp(6px,1.8vw,10px);line-height:1.15}
+.single .gacha-face-name{font-size:clamp(16px,4.6vw,25px)}
+.single .gacha-face-type{font-size:clamp(10px,2.9vw,15px)}

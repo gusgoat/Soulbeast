@@ -3,6 +3,7 @@
 const CharacterMotion={
  actors:new Map(MOTION_ACTORS.map(a=>[a.id,a])),instances:new Map(),states:new Map(),timers:new Set(),flights:new Set(),observer:null,context:null,
  resolve(u){
+  if((u.sp||u.img)==='demonlord'&&!u.immortalWorld&&u.id!=='worldboss'&&S.screen!=='world'&&B()?.kind!=='world')return this.actors.get('demonlord-story');
   if(u.form)return MOTION_ACTORS.find(a=>a.kind==='transform'&&a.id===u.form);
   const cls=u.cls||(u.img?.startsWith('npc:')?u.img.slice(4):null);
   if(cls){const own=u.id==='P'||(u.kind==='player'&&u.owner!=null&&u.owner===compactRoom()?.me),gender=['male','female'].includes(u.gender)?u.gender:own&&['male','female'].includes(S.P?.gender)?S.P.gender:(FEMALE_CLASS_ART.has(cls)?'female':'male');return MOTION_ACTORS.find(a=>a.kind==='player'&&a.cls===cls&&a.gender===gender);}
@@ -10,7 +11,7 @@ const CharacterMotion={
  },
  attrs(a){const s=a.source,m=a.meleeSource;return `data-motion-actor="${a.id}" data-melee-mode="${a.meleeMode||'swipe'}" data-motion-melee-anchor-x="${m.x}" data-motion-melee-anchor-y="${m.y}" data-motion-anchor-x="${s.anchor.x}" data-motion-anchor-y="${s.anchor.y}" data-motion-anchor-pose="windup" data-art-fit="${a.artFit||'contain'}" data-motion-phase="idle" data-idle-mode="${a.idleMode}" data-power-projection="${s.projection||'side'}"`;},
  styles(a){const s=a.source,m=a.meleeSource;return `--um-melee-origin-x:${(m.effect?.x??50)/100};--um-melee-origin-y:${(m.effect?.y??50)/100};--um-melee-w:${m.width||130}%;--um-melee-h:${m.height||130}%;--um-melee:url('${a.assets.meleeEffect}');--um-power-origin-x:${(s.effectOriginX??50)/100};--um-power-origin-y:${(s.effectOriginY??50)/100};--um-power:url('${a.assets.power}');--um-scene:url('${a.scene}');--um-x:${s.x}%;--um-y:${s.y}%;--um-w:${s.width}%;--um-h:${s.height}%;--um-angle:${s.angle}deg;--um-power-duration:${a.powerDuration||.75}s;--um-windup-duration:${a.windupDuration||1}s;--um-texture-scale:${100/(1-(s.cropLeft||0)/100)}%;`;},
- layers(a){return '<span class="um-aura" aria-hidden="true"></span><span class="um-body"><span class="um-window">'+['idle','hit','windup','melee',...(a.assets.threat?['threat']:[])].map(p=>`<img class="um-art" data-pose="${p}" src="${a.assets[p]}" alt="" decoding="async">`).join('')+'</span><span class="um-power" aria-hidden="true"></span><span class="um-melee-effect" aria-hidden="true"></span></span>'+(a.identity.particles?'<span class="um-embers" aria-hidden="true">'+Array.from({length:8},(_,i)=>`<i style="--i:${i};--um-particle-color:${a.identity.colors[i%a.identity.colors.length]}"></i>`).join('')+'</span>':'');},
+ layers(a){const shadow=a.id.startsWith('demonlord')?'<span class="demon-black-aura" aria-hidden="true"></span><span class="demon-black-motes" aria-hidden="true">'+Array.from({length:12},(_,i)=>'<i style="--mote:'+i+'"></i>').join('')+'</span>':'';return shadow+'<span class="um-aura" aria-hidden="true"></span><span class="um-body"><span class="um-window">'+['idle','hit','windup','melee',...(a.assets.threat?['threat']:[])].map(p=>`<img class="um-art" data-pose="${p}" src="${a.assets[p]}" alt="" decoding="async">`).join('')+'</span><span class="um-power" aria-hidden="true"></span><span class="um-melee-effect" aria-hidden="true"></span></span>'+(a.identity.particles?'<span class="um-embers" aria-hidden="true">'+Array.from({length:8},(_,i)=>`<i style="--i:${i};--um-particle-color:${a.identity.colors[i%a.identity.colors.length]}"></i>`).join('')+'</span>':'');},
  decorate(html,u){
   const a=this.resolve(u);if(!a)return html;
   const art=/<img class="(?:atlas-face|legendary-beast-portrait)"[^>]*>|<span class="mist-beast-art"[^>]*><\/span>/;
@@ -24,8 +25,20 @@ const CharacterMotion={
   const b=BattleEffects.battle(),room=compactRoom(),context=b?(S.screen+':'+(room?.id||b.kind)+':'+(b.meta||'')):null;if(this.context!==context){this.reset();this.context=context;}
   const app=document.getElementById('app');if(!app?.querySelectorAll)return;
   for(const [node,inst]of this.instances)if(!node.isConnected){inst.destroy();this.instances.delete(node);}
-  for(const node of app.querySelectorAll('.battle-motion'))if(!this.instances.has(node)){
+  for(const card of app.querySelectorAll('.battle-vital[data-battle-card=full]')){
+   const meter=card.querySelector('.battle-meter'),icons=card.querySelector('.battle-portrait-elements'),strip=card.querySelector('.battle-effect-strip');
+   if(meter&&icons&&icons.parentElement!==meter)meter.prepend(icons);
+   if(meter&&strip&&strip.parentElement!==meter)meter.append(strip);
+   if(meter&&!strip){const space=document.createElement('span');space.className='battle-effect-strip';space.setAttribute('aria-hidden','true');meter.append(space);}
+  }
+  for(const node of app.querySelectorAll('.battle-motion,.gacha-beast-art'))if(!this.instances.has(node)){
    const inst=new window.SoulbeastUnitMotion(node);this.instances.set(node,inst);
+   if(node.classList.contains('gacha-beast-art')&&node.dataset.revealWindup==='true'&&!this.reduced()){
+    const img=node.querySelector('.um-art[data-pose="windup"]');
+    const prepare=()=>{if(node.isConnected)inst.set('windup');};
+    if(img?.complete&&img.naturalWidth)prepare();else img?.addEventListener('load',prepare,{once:true});
+   }
+
    const st=this.states.get(node.dataset.motionUnit);if(st&&st.until>Date.now()){inst.set(st.phase);node.style.setProperty('--um-elapsed',-((Date.now()-st.start)*BattleSpeed.rate())+'ms');}
   }
  },
@@ -84,7 +97,7 @@ const CharacterMotion={
  start(){if(this.observer||typeof MutationObserver==='undefined')return;const app=document.getElementById('app');if(!app)return;this.observer=new MutationObserver(()=>this.sync());this.observer.observe(app,{childList:true,subtree:true});this.sync();}
 };
 const motionStatusCard=statusBattleCard;
-statusBattleCard=function(html,u){return CharacterMotion.decorate(motionStatusCard(html,u),u);};
+statusBattleCard=function(html,u){const result=CharacterMotion.decorate(motionStatusCard(html,u),u);return /class="[^"]*\bbattle-vital\b/.test(result)?result.replace('<button','<button data-battle-card="full"'):result;};
 flushVfx=function(){CharacterMotion.start();CharacterMotion.flush();};
 const motionRender=render;
 render=function(...args){const result=motionRender(...args);CharacterMotion.start();return result;};

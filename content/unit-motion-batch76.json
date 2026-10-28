@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "scope": "local-game-visuals",
+  "actors": [
+    {
+      "id": "demonlord-story",
+      "form": 0,
+      "level": 60,
+      "name": "จอมมารแห่งปราสาท",
+      "powerName": "à¸ªà¸¸à¸£à¸´à¸¢à¸„à¸£à¸²à¸ªà¸—à¸¡à¸´à¸¬",
+      "idleMode": "breathe",
+      "background": "dark",
+      "scene": "assets/ui/element-card-scenes/class-boss.webp",
+      "source": {
+        "x": 79.5,
+        "y": 18.0,
+        "angle": 0,
+        "width": 125,
+        "height": 125,
+        "projection": "camera",
+        "anchor": {
+          "pose": "windup",
+          "x": 79.5,
+          "y": 18.0,
+          "asset": "assets/beasts/motion/demonlord-story-v1/windup.png",
+          "sha256": "e330633a724faebddabf40fb2c0f89ce94a6297fe90cc78c7d880c7f5ebdd303"
+        },
+        "effect": {
+          "asset": "assets/beasts/motion/demonlord-power-v1.webp",
+          "sha256": "a0e87b6e5c5d8f092dab72c7bd89582652708d70ce22855209b8d30d80663862",
+          "originY": 50
+        }
+      },
+      "poseAssets": {
+        "threat": "assets/beasts/motion/demonlord-story-v1/threat.png",
+        "melee": "assets/beasts/motion/demonlord-story-v1/melee.png",
+        "meleeEffect": "assets/beasts/motion/demonlord-melee-effect-v1.webp",
+        "idle": "assets/beasts/motion/demonlord-story-v1/idle.png",
+        "windup": "assets/beasts/motion/demonlord-story-v1/windup.png",
+        "hit": "assets/beasts/motion/demonlord-story-v1/hit.png",
+        "power": "assets/beasts/motion/demonlord-power-v1.webp"
+      },
+      "meleeSource": {
+        "pose": "melee",
+        "x": 86.5,
+        "y": 31.5,
+        "asset": "assets/beasts/motion/demonlord-story-v1/melee.png",
+        "sha256": "ccc6604763e948ee627a7b06798cf9c1d779d9cbfd08514405dbfdf28d1895b3"
+      },
+      "review": {
+        "status": "verified",
+        "date": "2026-10-28",
+        "reference": "C:/Users/User/Pictures/soulbeast story/ChatGPT Image Oct 26, 2026, 12_36_09 AM.png",
+        "checks": [
+          "Separate full-body story appearance; existing demonlord species/stats/skills/reward IDs preserved",
+          "Full-body source art reviewed; fit bounds and SHA256 anchors validated",
+          "Canonical game regression suite passed; no gameplay or save field changes"
+        ],
+        "proof": "../outputs/fullbody-audit-20261028/story-boss-card-final.png",
+        "viewport": "390 and 320px actual window.innerWidth"
+      },
+      "kind": "story-boss",
+      "species": "demonlord",
+      "assetBase": "assets/beasts/motion/demonlord"
+    }
+  ]
+}

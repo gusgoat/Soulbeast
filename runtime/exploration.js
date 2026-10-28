@@ -196,6 +196,12 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeo
 // @soulbeast-unit 0380-vZone
 
 
+/* Presentation reads depth only; encounters and boss thresholds remain unchanged. */
+function forestTrail(zs,z){
+ const depth=Math.max(0,Math.min(ZDEPTH,Number(zs.depth)||0)),player=CharacterMotion.resolve({id:'P',cls:S.P.cls,gender:S.P.gender}),boss=CharacterMotion.resolve({sp:z.boss.sp,evo:z.boss.form||0});
+ const walker=player?.assets.idle,bossArt=boss?.assets.idle;
+ return `<aside class="card stack forest-depth forest-trail-panel"><div class="row"><span class="grow sub" translate="no">${ct('เส้นทางสู่บอส','Path to the boss','首领之路')}</span><span class="num" translate="no">${depth}/${ZDEPTH} · ${ct('เหลือ','Remaining','剩余')} ${ZDEPTH-depth} ${ct('ก้าว','steps','步')}</span></div><div class="forest-trail" role="img" aria-label="${ct('ก้าวที่','Step','步数')} ${depth}/${ZDEPTH}"><span class="forest-trail-line" aria-hidden="true"><i style="width:${depth/ZDEPTH*100}%"></i></span>${Array.from({length:ZDEPTH},(_,i)=>`<span class="forest-trail-point ${i+1<=depth?'done':''} ${i+1===depth?'now':''}" style="left:${(i+1)/ZDEPTH*100}%" aria-hidden="true"><i></i><small>${i+1}</small></span>`).join('')}<span class="forest-trail-walker" style="left:${depth/ZDEPTH*100}%" aria-hidden="true">${walker?`<img src="${walker}" alt="">`:'♟'}</span><span class="forest-trail-boss" aria-hidden="true">${bossArt?`<img src="${bossArt}" alt="">`:'♟'}<b>?</b></span></div></aside>`;
+}
 function vZone(){const zs=S.zone,z={...ZN[zs.id-1],boss:zs.boss||ZN[zs.id-1].boss},P=S.P;let main='';
  if(zs.ev){const ev=zs.ev,e=EV[ev.type]||{n:'หีบสมบัติ',g:'寶'};let extra='',contLbl='เดินลึกเข้าไปต่อ';
   if(ev.type==='chest'){const c=CHESTS[ev.chest];
@@ -214,7 +220,7 @@ function vZone(){const zs=S.zone,z={...ZN[zs.id-1],boss:zs.boss||ZN[zs.id-1].bos
   <div class="row"><button class="btn" data-a="go" data-v="bag">กระเป๋า</button><button class="btn danger grow" data-a="boss">เข้าสู้บอส</button></div></div>`}
  else main=`<p class="sub" style="margin:0">ทางแยกข้างหน้า เลือกทางที่จะเดินต่อ</p><div class="grid2">${zs.fork.map((d,i)=>{const e=d.h?{g:'?',n:'ทางมืด',d:'มืดจนมองไม่เห็นว่ามีอะไรรออยู่'}:EV[d.k];return `<button class="door ${d.h?'hid':''}" data-a="fork" data-v="${i}">${routePicture(d.k,d.h)}<span class="sub">ทาง${i?'ขวา':'ซ้าย'}</span><span class="door-g">${e.g}</span><b>${e.n}</b><small>${e.d}</small></button>`}).join('')}</div>`;
  return `<div class="stack">${zoneArt(z.id)}${z.train?'<div class="card story-card"><p>ก่อนออกเดินทาง ธาราเทพแนะนำให้ฝึกในป่าเล็กหลังเมือง เรียนรู้จังหวะต่อสู้และดูแลคู่หูของคุณ</p></div>':''}<button class="btn sm seal" data-a="story">อ่านบันทึกการเดินทาง</button><div><h2>${z.n}</h2><span class="sub">อสูร Lv ${z.lv[0]}–${z.lv[1]} · ออกได้เมื่อชนะบอส เจอทางออก หรือพ่ายแพ้</span></div>
- <section class="stack forest-travel-stage"><div class="card stack forest-depth" style="gap:6px"><div class="row"><span class="grow sub">ความลึก</span><span class="num">${Math.min(zs.depth,ZDEPTH)}/${ZDEPTH}</span></div><div class="steps">${Array.from({length:ZDEPTH+1},(_,i)=>`<i class="${i<zs.depth?'done':i===zs.depth?'now':''} ${i===ZDEPTH?'boss':''}"></i>`).join('')}</div></div>
+ <section class="stack forest-travel-stage">${forestTrail(zs,z)}
  ${miniStatus()}${main}</section></div>`}
 // @soulbeast-end 0380-vZone
 // @soulbeast-unit 0454-forestDetail

@@ -142,8 +142,8 @@
       "idleMode": "breathe",
       "background": "fairy",
       "source": {
-        "x": 98.4,
-        "y": 47.6,
+        "x": 98.5,
+        "y": 47.7,
         "angle": 17.5,
         "width": 125,
         "height": 55,
@@ -152,10 +152,10 @@
         "cropLeft": 0,
         "anchor": {
           "pose": "windup",
-          "x": 98.4,
-          "y": 47.6,
-          "asset": "assets/beasts/motion/unicorn-windup-v1.webp",
-          "sha256": "4472d83a36b3e6dac5668d9ec6ef41bd2ece1c3354a924713e3eb8523c1b7ef6"
+          "x": 98.5,
+          "y": 47.7,
+          "asset": "assets/motion-repairs/card-preview-v2/unicorn-windup.png",
+          "sha256": "bbbb54dd0df63bda657242f7759c6390a203d137e61c3ef7ed39ffa6c26b01b1"
         },
         "effect": {
           "asset": "assets/beasts/motion/unicorn-power-v1.webp",
@@ -164,19 +164,20 @@
         }
       },
       "poseAssets": {
-        "melee": "assets/beasts/motion/unicorn-melee-v1.webp",
-        "meleeEffect": "assets/beasts/motion/unicorn-melee-effect-v1.webp"
+        "melee": "assets/motion-repairs/card-preview-v2/unicorn-melee.png",
+        "meleeEffect": "assets/beasts/motion/unicorn-melee-effect-v1.webp",
+        "windup": "assets/motion-repairs/card-preview-v2/unicorn-windup.png"
       },
       "meleeName": "เขาพุ่งยูนิคอร์น",
       "meleeMode": "slam",
       "meleeSource": {
         "pose": "melee",
-        "x": 98.8,
-        "y": 50.8,
+        "x": 98,
+        "y": 51,
         "width": 105,
         "height": 105,
-        "asset": "assets/beasts/motion/unicorn-melee-v1.webp",
-        "sha256": "04e066a2b2e11f9847f485315cd0431009534ec840882a0e91ffc6749ec450cc",
+        "asset": "assets/motion-repairs/card-preview-v2/unicorn-melee.png",
+        "sha256": "a86bb5fb64cc6e9559593dc3b943beb946e7e20f5d9088d6a7a913a56467dad4",
         "effect": {
           "asset": "assets/beasts/motion/unicorn-melee-effect-v1.webp",
           "sha256": "d7903c432b763148a2a9bda1ebf4d627503792f5d9e81b0f9641dae5ff12bef3",
@@ -186,18 +187,13 @@
       },
       "review": {
         "status": "verified",
-        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "date": "2026-10-28",
         "checks": [
-          "identity and four-leg anatomy inspected",
-          "windup inspected before VFX",
-          "mouth/horn and actual VFX origins visually inspected on both widths",
-          "attack/hit/windup/melee recovery",
-          "linear .75s power",
-          "visible target and non-overlapping edge contact on both widths",
-          "real alpha and complete image loads",
-          "no overflow; rare particles present only for Qilin/Unicorn"
-        ],
-        "proof": "../outputs/all-character-motion-20261025/unicorn-contact.png"
+          "Previously generated complete silhouette reused without regenerating identity",
+          "Normalized SHA256-bound anchors updated for canonical battle cards",
+          "Full-body source art reviewed; fit bounds and SHA256 anchors validated",
+          "Canonical game regression suite passed; no gameplay or save field changes"
+        ]
       }
     }
   ]

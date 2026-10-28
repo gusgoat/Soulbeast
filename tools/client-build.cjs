@@ -7,7 +7,7 @@ function build(output,{readFile=file=>fs.readFileSync(file,'utf8'),write=true}={
  const read=rel=>readFile(path.join(repo,rel));
  const config=JSON.parse(read('client/build.json'));
  if(config.version!==1||!Array.isArray(config.contentGroups)||new Set(config.contentGroups).size!==config.contentGroups.length||config.contentGroups.some(g=>!/^[a-z]+$/.test(g)))throw Error('Invalid content group configuration');
- const shell=read('client/shell.html'),styles=['client/styles.css','client/character-motion.css','client/equipment-aura.css'].map(read).join('\n');
+ const shell=read('client/shell.html'),styles=['client/styles.css','client/character-motion.css','client/equipment-aura.css','client/battle-card-layout.css','client/gacha-reveal.css'].map(read).join('\n');
  for(const marker of ['<!-- SOULBEAST_STYLES -->','<!-- SOULBEAST_SCRIPTS -->'])if(shell.split(marker).length!==2)throw Error('Expected exactly one '+marker);
  const registry="'use strict';\nconst SoulbeastContent=Object.create(null);\n";
  const packs=config.contentGroups.map(group=>({group,code:read('content/'+group+'.js')}));

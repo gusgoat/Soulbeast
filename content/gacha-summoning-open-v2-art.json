@@ -1,0 +1,11 @@
+{
+  "tool": "built-in image_gen",
+  "asset": "assets/ui/gacha-reveal-v2/summoning-open.png",
+  "source": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-be8338f6-7045-4b3b-ac86-946982d26f2a.png",
+  "prompt": "Use case: stylized-concept. Create a new production background for SoulBeast fantasy gacha summoning screen. Portrait 9:16 illustration. Luxurious dark epic fantasy, ornate ancient black-and-gold floating castle architecture and towers in clouds, blue ice/lightning energy at left edge and crimson fire energy at right edge, distant floating gothic castle at top center with a golden summoning halo, and a glowing gold/blue/red magic circle on a stone platform near bottom. Rich detailed painterly game key art, matching an elaborate magical summoning mobile RPG. Composition critical: middle 75% of the canvas is an uninterrupted dark navy atmospheric open space with subtle mist and a few tiny embers, suitable for placing ten large UI reward cards in two columns and five rows. Keep the dragon silhouettes/blue spectral wolf at far side edges only, not blocking the central open space; decorative architecture confined to perimeter/top/bottom. NO card slots, NO rectangular frames, NO cards, NO panels, NO boxes, NO interface elements, NO text, NO logo, NO letters, NO watermark. Background must be a complete coherent environment, not an empty flat color. Keep the center sufficiently dark and low contrast to let card art and names remain readable.",
+  "sha256": "fa0d78d011a1a5fa2abdadba9d8bae7c044900e1419598da8846e2a6032536ab",
+  "dimensions": [
+    941,
+    1672
+  ]
+}

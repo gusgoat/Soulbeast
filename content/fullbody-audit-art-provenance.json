@@ -1,0 +1,40 @@
+{
+  "generator": "built-in imagegen",
+  "reference": "C:/Users/User/Pictures/soulbeast story/ChatGPT Image Oct 26, 2026, 12_36_09 AM.png",
+  "commonPrompt": "Exact pale adult male story Demon Lord; red eyes, long black hair, horned gold/black crown, skeletal gold shoulders, black/crimson/gold embroidered robes and shoes. One complete full-body figure, transparent alpha, no frame/scenery/text or weapon added; match the supplied reference.",
+  "posePrompts": {
+    "idle": "Calm sinister regal standing pose, empty hands slightly apart. Entire horns, hem and shoes visible.",
+    "windup": "Right arm extended toward viewer-right, open palm with small contained dark red glow. No released projectile.",
+    "hit": "Recoil slightly backward with tense pained expression, arms defensive; feet grounded and complete robes.",
+    "melee": "Forward step and clawed-hand sweeping/thrusting gesture, balancing other arm. No added weapon.",
+    "threat": "Tall intimidating stance with both arms outward below shoulder height and fierce red-eyed gaze, slight hair/robe flare."
+  },
+  "assets": [
+    {
+      "path": "assets/beasts/motion/demonlord-story-v1/hit.png",
+      "sha256": "e21cac589f2c44638933459063ccb954fe0dbb65db7e5039e796dab366903751"
+    },
+    {
+      "path": "assets/beasts/motion/demonlord-story-v1/idle.png",
+      "sha256": "9a7c66ed0f7c6a922c7aefa24553eec10ba673d97d7419df568559e98c289ace"
+    },
+    {
+      "path": "assets/beasts/motion/demonlord-story-v1/melee.png",
+      "sha256": "ccc6604763e948ee627a7b06798cf9c1d779d9cbfd08514405dbfdf28d1895b3"
+    },
+    {
+      "path": "assets/beasts/motion/demonlord-story-v1/threat.png",
+      "sha256": "0c2c4aa19a613fac87260552aa043fec4422f3ad86557ffa790bf2d41f90177c"
+    },
+    {
+      "path": "assets/beasts/motion/demonlord-story-v1/windup.png",
+      "sha256": "e330633a724faebddabf40fb2c0f89ce94a6297fe90cc78c7d880c7f5ebdd303"
+    },
+    {
+      "path": "assets/beasts/motion/fullbody-audit-v2/nilmangkorn-windup.png",
+      "sha256": "23340d20c908cf3bfb597b6065c55ba3847cbf5b876c28467b1a5ea0e328f877",
+      "generatedSource": "C:/Users/User/.codex/generated_images/01a143a6-96ae-7370-9f3c-7324b3ca06ab/exec-9b2cfe3f-125b-4215-b7c6-69f79a51b3e4.png"
+    }
+  ],
+  "nilmangkornWindupPrompt": "Repair/reframe exact black-scaled gold-maned dragon-horse preparation sprite. Restore complete right muzzle/nose, all four hooves, antler tips and curling tail; transparent alpha, same identity and lifted-leg pose, no released projectile."
+}

@@ -10,6 +10,7 @@ assert.equal(r('JSON.stringify(S)'),saved);
 r('S.screen="bestiary"');
 assert(r('portrait("jackalope",64).includes("--s:120px")'));
 assert(!r('portrait("jackalope",24).includes("gallery-motion")'));
+r('S.screen="team"');assert(r('portrait("jackalope",58).includes("--s:120px")'));assert(r('portrait("jackalope",80).includes("--s:120px")'));
 r('S.screen="weaponbook"');
 assert(r('itemIcon(Object.keys(EQ)[0],44).includes("128")'));
 r('S.screen="zone";const polishUnit=playerUnit();polishUnit.hp=50;MotionTimeline.held.set(String(polishUnit.id),{hp:100,mp:polishUnit.mp});');

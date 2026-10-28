@@ -1,0 +1,392 @@
+/* Shared 5:3 battle cards, using existing artwork and source anchor coordinate space. */
+#app .battle-vital[data-battle-card=full]{display:block!important;position:relative!important;isolation:isolate;aspect-ratio:5/3!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;padding:0!important;overflow:hidden!important;border:0!important;border-radius:4px!important;container-type:inline-size;background:linear-gradient(90deg,#02091300 25%,#020913b0 53%,#020913f2 100%),var(--painted-card-bg) center/cover no-repeat,#07101b!important}
+#app .battle-vital[data-battle-card=full]::after{content:""!important;display:block!important;inset:0!important;border:0!important;border-image:none!important;border-radius:0!important;background:var(--battle-frame-v3,url('assets/ui/battle-frames-v3/frame-white-5x3.png')) center/100% 100% no-repeat!important;filter:none!important;pointer-events:none;z-index:2!important}
+#app .battle-vital[data-battle-card=full]::before,#app .battle-vital[data-battle-card=full]>.unit-frame-corner,#app .battle-vital[data-battle-card=full]>.unit-frame-sprig,#app .battle-vital[data-battle-card=full]>.unit-menu-frame{display:none!important}
+#app .battle-vital[data-battle-card=full]>.battle-face{position:absolute!important;left:var(--card-fit-left,2%)!important;top:var(--card-fit-top,9%)!important;width:var(--card-fit-width,51%)!important;height:auto!important;aspect-ratio:1;max-width:none!important;max-height:none!important;bottom:auto!important;transform:none!important;margin:0!important;z-index:3;overflow:visible!important}
+#app .battle-vital[data-battle-card=full] .pt,.motion-flight[data-battle-card=full] .pt{width:100%!important;height:100%!important;display:block!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important;overflow:visible!important}
+#app .battle-vital[data-battle-card=full] .pt::before,#app .battle-vital[data-battle-card=full] .pt::after{display:none!important}
+#app .battle-vital[data-battle-card=full] :is(.um-window,.um-embers),.motion-flight[data-battle-card=full] :is(.um-window,.um-embers){border-radius:0!important;overflow:visible!important}
+#app .battle-vital[data-battle-card=full] .um-art,.motion-flight[data-battle-card=full] .um-art{inset:0!important;width:100%!important;height:100%!important;border-radius:0!important;object-fit:contain!important}
+#app .battle-vital[data-battle-card=full]>.battle-meter{position:absolute!important;left:52%!important;right:6%!important;top:12%!important;bottom:12%!important;width:auto!important;height:76%!important;min-width:0;display:flex!important;flex-direction:column!important;justify-content:space-between;gap:0!important;margin:0!important;z-index:6;text-shadow:0 1px 3px #000,0 0 5px #000}
+#app .battle-vital[data-battle-card=full] .battle-meter>b{display:flex!important;flex-direction:row!important;align-items:baseline!important;gap:1.8cqw!important;min-width:0;min-height:0!important;height:auto!important;margin:0!important;font-size:clamp(8px,5.4cqw,22px)!important;line-height:1.1!important}
+#app .battle-vital[data-battle-card=full] :is(.battle-unit-name,.online-unit-name){display:block!important;flex:1 1 0!important;min-width:0;min-height:0!important;overflow:hidden!important;text-overflow:ellipsis;white-space:nowrap!important}
+#app .battle-vital[data-battle-card=full] .battle-level{display:block!important;flex:0 0 auto!important;white-space:nowrap;font-size:clamp(7px,4.7cqw,19px)!important;line-height:1.1!important;margin:0!important}
+#app .battle-vital[data-battle-card=full] .battle-meter>small{display:block!important;font-size:clamp(6px,3.85cqw,16px)!important;line-height:1!important;margin:0!important;text-align:right;white-space:nowrap}
+#app .battle-vital[data-battle-card=full] .battle-meter>.bar{display:block!important;width:100%!important;height:2.4cqw!important;margin:0!important;flex-shrink:0}
+#app .battle-vital[data-battle-card=full] .battle-portrait-elements{position:static!important;display:flex!important;flex-wrap:nowrap;justify-content:flex-start;gap:1cqw;margin:0!important}
+#app .battle-vital[data-battle-card=full] .battle-portrait-elements .element-icon{width:9.3cqw!important;height:9.3cqw!important;flex:0 0 9.3cqw!important}
+#app .battle-vital[data-battle-card=full] .battle-meter>.battle-effect-strip{position:static!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));width:100%!important;height:7.1cqw!important;min-height:7.1cqw!important;max-height:7.1cqw!important;gap:.6cqw;margin:0!important;padding:0!important;overflow:visible!important;z-index:7}
+#app .battle-vital[data-battle-card=full] .battle-effect-strip>.battle-effect-icon{width:100%!important;height:7.1cqw!important;min-width:0!important;flex:none!important;box-sizing:border-box;overflow:visible!important}
+#app .battle-vital[data-battle-card=full] .battle-effect-strip img{width:100%;height:100%;object-fit:contain}
+#app .battle-vital[data-battle-card=full] .battle-effect-strip>:nth-child(n+6),#app .battle-vital[data-battle-card=full] .online-unit-status{display:none!important}
+#app .battle-vital[data-battle-card=full] .battle-effect-strip:empty{display:grid!important;height:7.1cqw!important}
+#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .battle-meter>small,#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .battle-portrait-elements{display:none!important}
+#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .battle-meter>b{font-size:clamp(5px,6cqw,10px)!important;gap:1cqw!important}
+#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .battle-level{font-size:clamp(4px,5cqw,9px)!important}
+#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .bar{height:clamp(2px,4.5cqw,6px)!important}
+
+/* Measured original poses */
+#app .battle-vital[data-battle-card=full][data-motion-actor="kappa"]{--card-fit-width:54.1226%;--card-fit-left:-0.1913%;--card-fit-top:4.2812%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wisp"]{--card-fit-width:51.0978%;--card-fit-left:0.5509%;--card-fit-top:7.3353%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mandrake"]{--card-fit-width:50.996%;--card-fit-left:0.504%;--card-fit-top:7.5033%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="summoner-male"]{--card-fit-width:50.2404%;--card-fit-left:0.7196%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jackalope"]{--card-fit-width:50.7937%;--card-fit-left:0.0575%;--card-fit-top:8.0027%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tanuki"]{--card-fit-width:52.2449%;--card-fit-left:0.7857%;--card-fit-top:7.1428%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="raiju"]{--card-fit-width:52.6749%;--card-fit-left:1.3971%;--card-fit-top:6.4472%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="pixie"]{--card-fit-width:50.5929%;--card-fit-left:0.7095%;--card-fit-top:8.1687%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kodama"]{--card-fit-width:50.2947%;--card-fit-left:0.7544%;--card-fit-top:8.1697%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="redcap"]{--card-fit-width:52.2449%;--card-fit-left:-1.3469%;--card-fit-top:6.9728%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kitsune"]{--card-fit-width:52.0325%;--card-fit-left:0.9919%;--card-fit-top:6.9783%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tengu"]{--card-fit-width:50.5929%;--card-fit-left:0.9071%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="griffin"]{--card-fit-width:50.5929%;--card-fit-left:1.3024%;--card-fit-top:7.8393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nilmangkorn"]{--card-fit-width:50.7937%;--card-fit-left:1.3016%;--card-fit-top:8.168%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jorogumo"]{--card-fit-width:50.5929%;--card-fit-left:1.1047%;--card-fit-top:7.8393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="baku"]{--card-fit-width:64.6517%;--card-fit-left:-0.1415%;--card-fit-top:-5.6653%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="harpy"]{--card-fit-width:50.7937%;--card-fit-left:1.2024%;--card-fit-top:7.5067%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kelpie"]{--card-fit-width:52.3517%;--card-fit-left:0.682%;--card-fit-top:6.4588%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nue"]{--card-fit-width:53.5565%;--card-fit-left:0.2448%;--card-fit-top:5.1953%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sphinx"]{--card-fit-width:51.0978%;--card-fit-left:1.3004%;--card-fit-top:8.0007%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="basilisk"]{--card-fit-width:50.7937%;--card-fit-left:0.8056%;--card-fit-top:7.3413%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cerberus"]{--card-fit-width:53.4447%;--card-fit-left:0.7693%;--card-fit-top:5.8977%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="manticore"]{--card-fit-width:52.8926%;--card-fit-left:1.1901%;--card-fit-top:6.095%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="yeti"]{--card-fit-width:50.5929%;--card-fit-left:0.3083%;--card-fit-top:8.004%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="golem"]{--card-fit-width:51.4056%;--card-fit-left:1.1988%;--card-fit-top:7.3293%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="minotaur"]{--card-fit-width:50.5929%;--card-fit-left:0.6107%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mummy"]{--card-fit-width:51.927%;--card-fit-left:-1.6369%;--card-fit-top:6.812%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="scarab"]{--card-fit-width:50.5929%;--card-fit-left:1.3024%;--card-fit-top:7.8393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dragon-young"]{--card-fit-width:52.6749%;--card-fit-left:0.8827%;--card-fit-top:6.2757%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="naga"]{--card-fit-width:51.0978%;--card-fit-left:0.8014%;--card-fit-top:8.167%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="hydra"]{--card-fit-width:50.5929%;--card-fit-left:1.0059%;--card-fit-top:7.8393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thunderbird"]{--card-fit-width:50.8946%;--card-fit-left:1.003%;--card-fit-top:8.002%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gargoyle"]{--card-fit-width:50.3937%;--card-fit-left:1.4016%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jiangshi"]{--card-fit-width:50.2947%;--card-fit-left:1.1071%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="banshee"]{--card-fit-width:51.3026%;--card-fit-left:-0.002%;--card-fit-top:6.9973%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="behemoth"]{--card-fit-width:50.7937%;--card-fit-left:0.3056%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ifrit"]{--card-fit-width:50.8946%;--card-fit-left:-1.2366%;--card-fit-top:7.6707%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nidhogg"]{--card-fit-width:51.6129%;--card-fit-left:0.8952%;--card-fit-top:6.1492%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jormungandr"]{--card-fit-width:52.2449%;--card-fit-left:0.5816%;--card-fit-top:6.2925%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="chimera"]{--card-fit-width:51.7172%;--card-fit-left:0.8939%;--card-fit-top:6.9865%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ammit"]{--card-fit-width:62.3654%;--card-fit-left:1.1346%;--card-fit-top:-3.3923%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="qilin"]{--card-fit-width:52.1385%;--card-fit-left:0.5835%;--card-fit-top:7.1453%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="unicorn"]{--card-fit-width:53.3333%;--card-fit-left:0.777%;--card-fit-top:6.7708%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="pegasus"]{--card-fit-width:50.7937%;--card-fit-left:1.004%;--card-fit-top:8.0027%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="erawan"]{--card-fit-width:51.8219%;--card-fit-left:0.8927%;--card-fit-top:7.1525%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="baihu"]{--card-fit-width:54.4681%;--card-fit-left:0.5426%;--card-fit-top:3.9007%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="lamassu"]{--card-fit-width:52.459%;--card-fit-left:0.5779%;--card-fit-top:6.9672%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="fenrir"]{--card-fit-width:55.6522%;--card-fit-left:1.2826%;--card-fit-top:2.8985%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kraken"]{--card-fit-width:53.2225%;--card-fit-left:0.7723%;--card-fit-top:4.8683%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="phoenix"]{--card-fit-width:50.996%;--card-fit-left:0.8028%;--card-fit-top:7.6693%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="garuda"]{--card-fit-width:50.996%;--card-fit-left:0.4044%;--card-fit-top:7.3373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nekomata"]{--card-fit-width:52.1385%;--card-fit-left:0.7872%;--card-fit-top:6.127%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="amabie"]{--card-fit-width:51.0978%;--card-fit-left:-0.1976%;--card-fit-top:7.169%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kinnaree"]{--card-fit-width:50.0%;--card-fit-left:1.0117%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="salamander"]{--card-fit-width:61.6867%;--card-fit-left:0.7771%;--card-fit-top:-3.1125%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cyclops"]{--card-fit-width:51.6129%;--card-fit-left:-0.2601%;--card-fit-top:6.8212%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wendigo"]{--card-fit-width:50.4931%;--card-fit-left:0.359%;--card-fit-top:7.8402%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bunyip"]{--card-fit-width:50.7937%;--card-fit-left:1.004%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wyvern"]{--card-fit-width:53.2225%;--card-fit-left:0.9802%;--card-fit-top:7.1205%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="roc"]{--card-fit-width:53.112%;--card-fit-left:1.0851%;--card-fit-top:7.8147%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="rajasi"]{--card-fit-width:52.0325%;--card-fit-left:0.3821%;--card-fit-top:7.317%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="moon-tortoise"]{--card-fit-width:57.1429%;--card-fit-left:1.3884%;--card-fit-top:1.4508%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="iron-armadillo"]{--card-fit-width:50.4931%;--card-fit-left:-0.2327%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="moss-treant"]{--card-fit-width:50.6931%;--card-fit-left:0.703%;--card-fit-top:7.8383%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="coral-crab"]{--card-fit-width:53.5565%;--card-fit-left:0.454%;--card-fit-top:5.1953%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="obsidian-rhino"]{--card-fit-width:53.8947%;--card-fit-left:0.9737%;--card-fit-top:5.3508%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="glacier-bear"]{--card-fit-width:50.7937%;--card-fit-left:-0.8849%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thunder-gorilla"]{--card-fit-width:52.0325%;--card-fit-left:-0.0244%;--card-fit-top:6.9783%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bastion-golem"]{--card-fit-width:50.7937%;--card-fit-left:0.5536%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jade-bull"]{--card-fit-width:50.996%;--card-fit-left:-0.0458%;--card-fit-top:7.5033%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="abyss-turtle"]{--card-fit-width:56.1404%;--card-fit-left:0.8421%;--card-fit-top:3.0337%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="lunar-stag"]{--card-fit-width:53.112%;--card-fit-left:0.5664%;--card-fit-top:6.6045%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thorn-queen"]{--card-fit-width:50.4931%;--card-fit-left:0.5069%;--card-fit-top:8.0047%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mist-serpent"]{--card-fit-width:50.996%;--card-fit-left:-0.992%;--card-fit-top:7.3373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="crow-emperor"]{--card-fit-width:50.7937%;--card-fit-left:0.8056%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sand-colossus"]{--card-fit-width:52.1385%;--card-fit-left:-0.7312%;--card-fit-top:7.315%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="scorpion-pharaoh"]{--card-fit-width:53.7815%;--card-fit-left:-1.416%;--card-fit-top:5.007%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="storm-wyvern"]{--card-fit-width:55.6522%;--card-fit-left:0.7391%;--card-fit-top:3.442%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="frost-lich"]{--card-fit-width:53.112%;--card-fit-left:-1.4378%;--card-fit-top:5.9128%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="fallen-seraph"]{--card-fit-width:52.1385%;--card-fit-left:-0.1293%;--card-fit-top:7.315%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sun-devourer"]{--card-fit-width:53.0021%;--card-fit-left:-0.881%;--card-fit-top:5.4003%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="vampire-queen"]{--card-fit-width:50.1961%;--card-fit-left:0.4608%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="abyss-emperor"]{--card-fit-width:52.5667%;--card-fit-left:-0.5914%;--card-fit-top:6.28%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="goblin"]{--card-fit-width:55.4113%;--card-fit-left:0.526%;--card-fit-top:4.7258%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="silver-fox"]{--card-fit-width:57.2707%;--card-fit-left:-0.9609%;--card-fit-top:1.622%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="moon-cat"]{--card-fit-width:55.0538%;--card-fit-left:-0.4355%;--card-fit-top:3.853%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="eagle"]{--card-fit-width:53.8947%;--card-fit-left:-0.6053%;--card-fit-top:6.0527%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mermaid"]{--card-fit-width:53.6688%;--card-fit-left:-1.3061%;--card-fit-top:4.3152%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="crocodile"]{--card-fit-width:54.7009%;--card-fit-left:0.4316%;--card-fit-top:3.5257%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="night-horse"]{--card-fit-width:52.459%;--card-fit-left:-1.2541%;--card-fit-top:6.9672%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="desert-witch"]{--card-fit-width:55.0538%;--card-fit-left:-1.7258%;--card-fit-top:4.5698%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mummy-king"]{--card-fit-width:51.7172%;--card-fit-left:0.1919%;--card-fit-top:7.4915%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ice-wolf"]{--card-fit-width:55.0538%;--card-fit-left:0.9624%;--card-fit-top:3.6738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="fire-imp"]{--card-fit-width:52.8926%;--card-fit-left:-1.686%;--card-fit-top:5.5785%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="stone-lion"]{--card-fit-width:53.4447%;--card-fit-left:-2.4969%;--card-fit-top:6.0717%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="celestial-deer"]{--card-fit-width:52.8926%;--card-fit-left:-1.3926%;--card-fit-top:6.4393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="storm-drake"]{--card-fit-width:51.8219%;--card-fit-left:0.083%;--card-fit-top:6.1403%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demon-knight"]{--card-fit-width:53.0021%;--card-fit-left:-1.2774%;--card-fit-top:6.608%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="zombie"]{--card-fit-width:52.2449%;--card-fit-left:-2.1122%;--card-fit-top:7.313%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="void-mantis"]{--card-fit-width:51.6129%;--card-fit-left:-0.1089%;--card-fit-top:6.4852%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jade-moon-hare"]{--card-fit-width:51.6129%;--card-fit-left:-1.3185%;--card-fit-top:7.1573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tempest-lynx"]{--card-fit-width:51.6129%;--card-fit-left:0.6935%;--card-fit-top:6.8212%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bloom-jade-mare"]{--card-fit-width:52.2449%;--card-fit-left:0.2755%;--card-fit-top:6.6327%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="obsidian-scarab"]{--card-fit-width:51.3026%;--card-fit-left:0.6984%;--card-fit-top:7.3313%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="aurora-whale"]{--card-fit-width:53.0021%;--card-fit-left:0.1542%;--card-fit-top:5.2277%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ember-jackal"]{--card-fit-width:52.7835%;--card-fit-left:-0.2526%;--card-fit-top:5.5842%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="prism-owl"]{--card-fit-width:55.0538%;--card-fit-left:-0.1129%;--card-fit-top:3.4947%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dusk-panther"]{--card-fit-width:54.7009%;--card-fit-left:0.4316%;--card-fit-top:2.9915%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="primordial-ouroboros"]{--card-fit-width:51.5091%;--card-fit-left:0.8964%;--card-fit-top:7.8303%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dawn-valkyrie"]{--card-fit-width:51.6129%;--card-fit-left:0.1895%;--card-fit-top:7.1573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="astral-dragon"]{--card-fit-width:56.0175%;--card-fit-left:-0.36%;--card-fit-top:2.4982%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cosmic-tortoise"]{--card-fit-width:55.2916%;--card-fit-left:0.8521%;--card-fit-top:3.6537%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-sovereign"]{--card-fit-width:53.8947%;--card-fit-left:0.0263%;--card-fit-top:5.1755%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="infinite-sea-serpent"]{--card-fit-width:52.459%;--card-fit-left:-0.6516%;--card-fit-top:6.455%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="void-phoenix"]{--card-fit-width:51.927%;--card-fit-left:-0.5213%;--card-fit-top:6.305%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="eclipse-wolf"]{--card-fit-width:52.3517%;--card-fit-left:0.1708%;--card-fit-top:5.9475%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="aegis-dragon"]{--card-fit-width:55.7734%;--card-fit-left:0.4107%;--card-fit-top:2.7052%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tricephalos"]{--card-fit-width:59.2593%;--card-fit-left:-0.1204%;--card-fit-top:-0.1543%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="aurorion"]{--card-fit-width:55.7734%;--card-fit-left:-2.9662%;--card-fit-top:1.979%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="abyssarch"]{--card-fit-width:53.4447%;--card-fit-left:-0.4833%;--card-fit-top:4.8538%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="selestia"]{--card-fit-width:51.6129%;--card-fit-left:-0.4113%;--card-fit-top:7.6613%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="aerelion"]{--card-fit-width:51.0978%;--card-fit-left:0.1018%;--card-fit-top:7.5017%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="myriapod"]{--card-fit-width:52.5667%;--card-fit-left:-1.2074%;--card-fit-top:6.6222%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="yggwarden"]{--card-fit-width:53.3333%;--card-fit-left:-1.2396%;--card-fit-top:6.0763%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-pentadrake"]{--card-fit-width:65.3169%;--card-fit-left:-0.5412%;--card-fit-top:-4.9623%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-mortivar"]{--card-fit-width:54.2373%;--card-fit-left:-1.2542%;--card-fit-top:5.1553%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-aureolith"]{--card-fit-width:54.2373%;--card-fit-left:0.7585%;--card-fit-top:5.685%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-heliotheon"]{--card-fit-width:52.3517%;--card-fit-left:-0.3405%;--card-fit-top:6.7997%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-ferroth"]{--card-fit-width:54.818%;--card-fit-left:-0.9625%;--card-fit-top:4.4075%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-cryostag"]{--card-fit-width:53.7815%;--card-fit-left:-2.2038%;--card-fit-top:5.7073%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-raijaku"]{--card-fit-width:54.0084%;--card-fit-left:-0.2932%;--card-fit-top:4.4655%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-thalassyr"]{--card-fit-width:51.7172%;--card-fit-left:-0.8687%;--card-fit-top:6.4815%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kappa-warrior"]{--card-fit-width:56.5121%;--card-fit-left:-1.149%;--card-fit-top:2.2627%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kappa-king"]{--card-fit-width:51.7172%;--card-fit-left:-0.2121%;--card-fit-top:7.1548%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wisp-ghostfire"]{--card-fit-width:58.4475%;--card-fit-left:-0.8973%;--card-fit-top:1.484%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wisp-death-lantern"]{--card-fit-width:51.8219%;--card-fit-left:-0.417%;--card-fit-top:6.1403%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mandrake-screamer"]{--card-fit-width:51.3026%;--card-fit-left:-1.3547%;--card-fit-top:6.9973%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mandrake-queen"]{--card-fit-width:51.4056%;--card-fit-left:-0.4056%;--card-fit-top:7.162%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tanuki-shifter"]{--card-fit-width:61.244%;--card-fit-left:-3.7632%;--card-fit-top:-0.0398%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tanuki-thousand"]{--card-fit-width:52.6749%;--card-fit-left:-0.4918%;--card-fit-top:7.3045%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="raiju-thunder"]{--card-fit-width:56.5121%;--card-fit-left:-0.3764%;--card-fit-top:2.2627%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="raiju-deity"]{--card-fit-width:51.3026%;--card-fit-left:-0.3026%;--card-fit-top:7.3313%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="pixie-flower"]{--card-fit-width:52.6749%;--card-fit-left:-1.7778%;--card-fit-top:5.7613%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="pixie-titania"]{--card-fit-width:52.6749%;--card-fit-left:-1.9835%;--card-fit-top:6.1043%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kodama-ancient"]{--card-fit-width:51.4056%;--card-fit-left:-0.2048%;--card-fit-top:7.3293%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kodama-sacred"]{--card-fit-width:51.6129%;--card-fit-left:-0.2097%;--card-fit-top:6.9892%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="redcap-coldblood"]{--card-fit-width:54.4681%;--card-fit-left:-3.6277%;--card-fit-top:4.2553%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="redcap-king"]{--card-fit-width:52.6749%;--card-fit-left:-0.9033%;--card-fit-top:6.1043%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kitsune-six"]{--card-fit-width:53.7815%;--card-fit-left:-1.2059%;--card-fit-top:5.7073%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tengu-karasu"]{--card-fit-width:52.5667%;--card-fit-left:-0.4887%;--card-fit-top:5.4243%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tengu-dai"]{--card-fit-width:52.0325%;--card-fit-left:-0.126%;--card-fit-top:6.6395%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="griffin-war"]{--card-fit-width:60.6635%;--card-fit-left:-1.2251%;--card-fit-top:-1.1453%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="griffin-king"]{--card-fit-width:61.5385%;--card-fit-left:-2.4663%;--card-fit-top:-2.0833%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nilmangkorn-war"]{--card-fit-width:52.8926%;--card-fit-left:-1.2727%;--card-fit-top:6.2672%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nilmangkorn-royal"]{--card-fit-width:52.1385%;--card-fit-left:-0.1711%;--card-fit-top:6.6362%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kitsune-nine"]{--card-fit-width:53.112%;--card-fit-left:0.2552%;--card-fit-top:5.9128%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jorogumo-maiden"]{--card-fit-width:52.0325%;--card-fit-left:0.8902%;--card-fit-top:7.6558%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jorogumo-queen"]{--card-fit-width:50.8946%;--card-fit-left:0.6054%;--card-fit-top:7.6707%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kelpie-haunt"]{--card-fit-width:53.112%;--card-fit-left:-1.749%;--card-fit-top:6.2587%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kelpie-spirit"]{--card-fit-width:52.459%;--card-fit-left:-1.4078%;--card-fit-top:6.2842%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nue-dark"]{--card-fit-width:56.5121%;--card-fit-left:-1.9216%;--card-fit-top:2.2627%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nue-king"]{--card-fit-width:57.9186%;--card-fit-left:-1.3281%;--card-fit-top:2.1117%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="basilisk-stone"]{--card-fit-width:52.0325%;--card-fit-left:-1.439%;--card-fit-top:6.809%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="basilisk-king"]{--card-fit-width:53.4447%;--card-fit-left:-1.214%;--card-fit-top:5.7237%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cerberus-orthros"]{--card-fit-width:56.5121%;--card-fit-left:-0.7075%;--card-fit-top:2.0787%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cerberus-final"]{--card-fit-width:55.4113%;--card-fit-left:-0.9892%;--card-fit-top:3.2828%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="yeti-mountain"]{--card-fit-width:54.7009%;--card-fit-left:-2.7393%;--card-fit-top:3.5257%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="yeti-king"]{--card-fit-width:51.7172%;--card-fit-left:-0.3131%;--card-fit-top:7.66%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="golem-steel"]{--card-fit-width:54.1226%;--card-fit-left:-1.3256%;--card-fit-top:4.4573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="golem-adamant"]{--card-fit-width:51.6129%;--card-fit-left:-1.0665%;--card-fit-top:7.1573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="scarab-gold"]{--card-fit-width:53.4447%;--card-fit-left:0.4562%;--card-fit-top:4.158%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="scarab-khepri"]{--card-fit-width:51.927%;--card-fit-left:0.283%;--card-fit-top:6.474%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dragon-young-evolved"]{--card-fit-width:56.1404%;--card-fit-left:-0.0351%;--card-fit-top:3.0337%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="naga-king"]{--card-fit-width:54.3524%;--card-fit-left:-1.8132%;--card-fit-top:5.1487%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="naga-great"]{--card-fit-width:53.112%;--card-fit-left:-0.8859%;--card-fit-top:5.74%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thunderbird-storm"]{--card-fit-width:53.7815%;--card-fit-left:-0.1807%;--card-fit-top:5.3572%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thunderbird-lord"]{--card-fit-width:51.6129%;--card-fit-left:0.6935%;--card-fit-top:6.9892%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gargoyle-stone"]{--card-fit-width:51.927%;--card-fit-left:0.5872%;--card-fit-top:6.643%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gargoyle-demon"]{--card-fit-width:51.0978%;--card-fit-left:1.1008%;--card-fit-top:7.3353%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jiangshi-century"]{--card-fit-width:53.7815%;--card-fit-left:-2.2038%;--card-fit-top:5.3572%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jiangshi-king"]{--card-fit-width:53.3333%;--card-fit-left:-1.6042%;--card-fit-top:6.4237%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nekomata-evolved"]{--card-fit-width:59.9532%;--card-fit-left:-6.4941%;--card-fit-top:-0.8392%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="amabie-seer"]{--card-fit-width:52.459%;--card-fit-left:-1.459%;--card-fit-top:7.138%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kinnaree-queen"]{--card-fit-width:52.0325%;--card-fit-left:-0.0163%;--card-fit-top:7.1477%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="salamander-lord"]{--card-fit-width:63.2099%;--card-fit-left:-0.8457%;--card-fit-top:-2.9835%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cyclops-smith"]{--card-fit-width:53.0021%;--card-fit-left:-2.0021%;--card-fit-top:6.263%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wendigo-hungry"]{--card-fit-width:51.3026%;--card-fit-left:-0.4028%;--card-fit-top:7.1643%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bunyip-death"]{--card-fit-width:57.9186%;--card-fit-left:0.1425%;--card-fit-top:1.169%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wyvern-storm"]{--card-fit-width:54.9356%;--card-fit-left:-0.8605%;--card-fit-top:3.8627%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="roc-king"]{--card-fit-width:52.3517%;--card-fit-left:0.3753%;--card-fit-top:6.7997%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="rajasi-gold"]{--card-fit-width:55.0538%;--card-fit-left:-1.7258%;--card-fit-top:4.2115%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="swordsman-male"]{--card-fit-width:53.9504%;--card-fit-left:-1.1074%;--card-fit-top:5.5682%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="swordsman-female"]{--card-fit-width:53.1813%;--card-fit-left:-0.9735%;--card-fit-top:5.5957%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="samurai-male"]{--card-fit-width:54.0621%;--card-fit-left:-2.087%;--card-fit-top:5.7402%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="samurai-female"]{--card-fit-width:52.1198%;--card-fit-left:-0.2635%;--card-fit-top:15.485%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kensei-male"]{--card-fit-width:52.5392%;--card-fit-left:-0.4235%;--card-fit-top:6.6448%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kensei-female"]{--card-fit-width:52.4337%;--card-fit-left:-0.9458%;--card-fit-top:6.6467%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="shogun-male"]{--card-fit-width:54.4%;--card-fit-left:-0.5938%;--card-fit-top:5.7292%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="shogun-female"]{--card-fit-width:52.224%;--card-fit-left:-0.826%;--card-fit-top:15.3133%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="spellblade-male"]{--card-fit-width:54.4%;--card-fit-left:-0.4875%;--card-fit-top:3.9583%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="spellblade-female"]{--card-fit-width:54.7421%;--card-fit-left:-2.2075%;--card-fit-top:4.1143%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sbsummon-male"]{--card-fit-width:53.0732%;--card-fit-left:-0.6585%;--card-fit-top:6.1178%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sbsummon-female"]{--card-fit-width:51.6047%;--card-fit-left:-0.004%;--card-fit-top:15.8293%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sbwar-male"]{--card-fit-width:54.1743%;--card-fit-left:-0.6929%;--card-fit-top:4.8548%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sbwar-female"]{--card-fit-width:53.5082%;--card-fit-left:-0.3586%;--card-fit-top:5.4098%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gladiator-male"]{--card-fit-width:55.5574%;--card-fit-left:-2.7011%;--card-fit-top:3.1595%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gladiator-female"]{--card-fit-width:53.0732%;--card-fit-left:-0.8476%;--card-fit-top:5.7723%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="paladin-male"]{--card-fit-width:52.8583%;--card-fit-left:-0.997%;--card-fit-top:5.9515%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="paladin-female"]{--card-fit-width:52.1198%;--card-fit-left:0.1946%;--card-fit-top:15.485%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="templar-male"]{--card-fit-width:52.6452%;--card-fit-left:-0.4395%;--card-fit-top:6.3003%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="templar-female"]{--card-fit-width:52.224%;--card-fit-left:-0.53%;--card-fit-top:6.82%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="eternal-male"]{--card-fit-width:53.7284%;--card-fit-left:-0.5741%;--card-fit-top:5.5762%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="eternal-female"]{--card-fit-width:53.5082%;--card-fit-left:-0.9109%;--card-fit-top:5.2357%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="berserker-male"]{--card-fit-width:52.3287%;--card-fit-left:-0.1132%;--card-fit-top:6.8187%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="berserker-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.5139%;--card-fit-top:15.8263%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="warlord-male"]{--card-fit-width:56.8889%;--card-fit-left:0.2222%;--card-fit-top:1.3888%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="warlord-female"]{--card-fit-width:55.0886%;--card-fit-left:-0.2911%;--card-fit-top:3.7342%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bloodwar-male"]{--card-fit-width:56.8889%;--card-fit-left:-0.5556%;--card-fit-top:2.1297%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bloodwar-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.6175%;--card-fit-top:15.656%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archer-male"]{--card-fit-width:53.6181%;--card-fit-left:-1.3039%;--card-fit-top:6.4528%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archer-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.8688%;--card-fit-top:15.6573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ranger-male"]{--card-fit-width:52.5392%;--card-fit-left:-1.9115%;--card-fit-top:7.158%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ranger-female"]{--card-fit-width:52.4337%;--card-fit-left:-1.2922%;--card-fit-top:6.8173%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sniper-male"]{--card-fit-width:52.6452%;--card-fit-left:-1.6079%;--card-fit-top:6.4718%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sniper-female"]{--card-fit-width:53.0732%;--card-fit-left:-1.0549%;--card-fit-top:6.4633%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wildlord-male"]{--card-fit-width:53.8392%;--card-fit-left:-1.7608%;--card-fit-top:5.9227%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wildlord-female"]{--card-fit-width:52.0159%;--card-fit-left:-1.9382%;--card-fit-top:15.8253%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bard-male"]{--card-fit-width:52.7515%;--card-fit-left:-1.2515%;--card-fit-top:5.9545%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bard-female"]{--card-fit-width:53.6181%;--card-fit-left:-2.1181%;--card-fit-top:6.2782%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="maestro-male"]{--card-fit-width:53.0732%;--card-fit-left:-1.1585%;--card-fit-top:5.9452%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="maestro-female"]{--card-fit-width:52.8583%;--card-fit-left:-0.8583%;--card-fit-top:14.4407%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dirge-male"]{--card-fit-width:57.0131%;--card-fit-left:-2.786%;--card-fit-top:3.9738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dirge-female"]{--card-fit-width:53.9504%;--card-fit-left:-2.2397%;--card-fit-top:5.7438%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mage-male"]{--card-fit-width:52.4337%;--card-fit-left:-0.4217%;--card-fit-top:6.8173%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mage-female"]{--card-fit-width:60.5847%;--card-fit-left:-3.6148%;--card-fit-top:-1.572%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sage-male"]{--card-fit-width:52.1198%;--card-fit-left:-0.4162%;--card-fit-top:15.485%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sage-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.2112%;--card-fit-top:15.8253%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archmage-male"]{--card-fit-width:52.6452%;--card-fit-left:-0.6825%;--card-fit-top:6.129%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archmage-female"]{--card-fit-width:51.8095%;--card-fit-left:0.1458%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="elementalist-male"]{--card-fit-width:52.6452%;--card-fit-left:-1.248%;--card-fit-top:6.3003%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="elementalist-female"]{--card-fit-width:53.1813%;--card-fit-left:-0.9022%;--card-fit-top:6.115%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="warlock-male"]{--card-fit-width:53.2898%;--card-fit-left:-0.8531%;--card-fit-top:5.0715%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="warlock-female"]{--card-fit-width:52.224%;--card-fit-left:-0.775%;--card-fit-top:6.99%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="necro-male"]{--card-fit-width:52.224%;--card-fit-left:-0.224%;--card-fit-top:15.3133%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="necro-female"]{--card-fit-width:52.5392%;--card-fit-left:-0.6801%;--card-fit-top:6.4738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="enchanter-male"]{--card-fit-width:53.1813%;--card-fit-left:-1.4216%;--card-fit-top:5.942%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="enchanter-female"]{--card-fit-width:52.4337%;--card-fit-left:0.2831%;--card-fit-top:6.988%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="merchant-male"]{--card-fit-width:53.0732%;--card-fit-left:-0.6921%;--card-fit-top:6.2907%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="merchant-female"]{--card-fit-width:51.8095%;--card-fit-left:-0.3095%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="blacksmith-male"]{--card-fit-width:52.224%;--card-fit-left:-0.979%;--card-fit-top:6.82%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="blacksmith-female"]{--card-fit-width:52.6452%;--card-fit-left:-0.9395%;--card-fit-top:6.129%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mastersmith-male"]{--card-fit-width:52.5392%;--card-fit-left:-0.7445%;--card-fit-top:6.4738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mastersmith-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.7167%;--card-fit-top:15.6573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mechanic-male"]{--card-fit-width:54.5136%;--card-fit-left:-1.2359%;--card-fit-top:4.3058%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mechanic-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.4125%;--card-fit-top:15.6573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="alchemist-male"]{--card-fit-width:53.9504%;--card-fit-left:-1.2128%;--card-fit-top:5.0413%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="alchemist-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.262%;--card-fit-top:15.3173%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="biochem-male"]{--card-fit-width:52.224%;--card-fit-left:-0.265%;--card-fit-top:15.3133%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="biochem-female"]{--card-fit-width:53.0732%;--card-fit-left:-0.5549%;--card-fit-top:5.7723%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="goldalch-male"]{--card-fit-width:51.8095%;--card-fit-left:-0.2589%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="goldalch-female"]{--card-fit-width:51.7069%;--card-fit-left:0.3941%;--card-fit-top:15.8283%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gunner-male"]{--card-fit-width:53.3988%;--card-fit-left:-1.638%;--card-fit-top:5.588%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gunner-female"]{--card-fit-width:53.1813%;--card-fit-left:-1.1619%;--card-fit-top:5.942%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="marksman-male"]{--card-fit-width:51.9125%;--card-fit-left:-0.1083%;--card-fit-top:15.8263%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="marksman-female"]{--card-fit-width:52.0159%;--card-fit-left:-1.2271%;--card-fit-top:15.4867%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gunsaint-male"]{--card-fit-width:52.1198%;--card-fit-left:-0.3144%;--card-fit-top:15.485%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gunsaint-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.666%;--card-fit-top:15.6573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bounty-male"]{--card-fit-width:52.224%;--card-fit-left:-0.775%;--card-fit-top:15.4833%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bounty-female"]{--card-fit-width:52.1198%;--card-fit-left:-0.518%;--card-fit-top:6.991%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="artillery-male"]{--card-fit-width:52.3287%;--card-fit-left:-0.8287%;--card-fit-top:15.3113%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="artillery-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.6175%;--card-fit-top:15.4867%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cannoneer-male"]{--card-fit-width:52.4337%;--card-fit-left:-0.1265%;--card-fit-top:6.4758%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cannoneer-female"]{--card-fit-width:52.4337%;--card-fit-left:-0.5753%;--card-fit-top:6.6467%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demolisher-male"]{--card-fit-width:51.8095%;--card-fit-left:-0.8155%;--card-fit-top:15.6587%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demolisher-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.8688%;--card-fit-top:15.8263%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="druid-male"]{--card-fit-width:52.8583%;--card-fit-left:-1.3067%;--card-fit-top:5.7793%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="druid-female"]{--card-fit-width:52.5392%;--card-fit-left:-0.7827%;--card-fit-top:6.4738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="feral-male"]{--card-fit-width:53.1813%;--card-fit-left:-0.6426%;--card-fit-top:6.4613%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="feral-female"]{--card-fit-width:52.1198%;--card-fit-left:-0.5689%;--card-fit-top:15.1457%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wildgod-male"]{--card-fit-width:52.6452%;--card-fit-left:-0.631%;--card-fit-top:6.3003%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wildgod-female"]{--card-fit-width:51.9125%;--card-fit-left:-1.3757%;--card-fit-top:15.9953%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="packlord-male"]{--card-fit-width:53.6181%;--card-fit-left:-2.1181%;--card-fit-top:5.9292%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="packlord-female"]{--card-fit-width:52.224%;--card-fit-left:-0.52%;--card-fit-top:6.82%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="grove-male"]{--card-fit-width:51.8095%;--card-fit-left:-0.2143%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="grove-female"]{--card-fit-width:52.8583%;--card-fit-left:-0.7551%;--card-fit-top:5.9515%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archdruid-male"]{--card-fit-width:52.224%;--card-fit-left:-0.673%;--card-fit-top:15.4833%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archdruid-female"]{--card-fit-width:52.0159%;--card-fit-left:0.1873%;--card-fit-top:15.4867%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="stormcaller-male"]{--card-fit-width:52.224%;--card-fit-left:-0.469%;--card-fit-top:15.3133%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="stormcaller-female"]{--card-fit-width:52.3287%;--card-fit-left:-0.2265%;--card-fit-top:15.3113%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thief-male"]{--card-fit-width:52.7515%;--card-fit-left:-0.9939%;--card-fit-top:6.298%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thief-female"]{--card-fit-width:52.4337%;--card-fit-left:-2.1627%;--card-fit-top:6.4758%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="rogue-male"]{--card-fit-width:52.7515%;--card-fit-left:-1.7152%;--card-fit-top:6.4697%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="rogue-female"]{--card-fit-width:52.224%;--card-fit-left:-1.54%;--card-fit-top:15.1433%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="masterthief-male"]{--card-fit-width:52.224%;--card-fit-left:-2.05%;--card-fit-top:15.4833%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="masterthief-female"]{--card-fit-width:52.0159%;--card-fit-left:-1.2779%;--card-fit-top:15.656%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="trickster-male"]{--card-fit-width:52.5392%;--card-fit-left:-1.0392%;--card-fit-top:6.8158%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="trickster-female"]{--card-fit-width:51.8095%;--card-fit-left:-1.0179%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="assassin-male"]{--card-fit-width:52.3287%;--card-fit-left:-2.4128%;--card-fit-top:15.3113%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="assassin-female"]{--card-fit-width:52.7515%;--card-fit-left:-1.1636%;--card-fit-top:6.9848%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ninja-male"]{--card-fit-width:53.2898%;--card-fit-left:-1.6857%;--card-fit-top:6.2857%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ninja-female"]{--card-fit-width:51.7069%;--card-fit-left:-0.6109%;--card-fit-top:15.8283%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ronin-male"]{--card-fit-width:53.6181%;--card-fit-left:-1.961%;--card-fit-top:5.7547%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ronin-female"]{--card-fit-width:52.1198%;--card-fit-left:-1.485%;--card-fit-top:15.3153%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="summoner-female"]{--card-fit-width:53.6181%;--card-fit-left:-0.9897%;--card-fit-top:5.7547%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tamer-male"]{--card-fit-width:52.4337%;--card-fit-left:-0.4337%;--card-fit-top:6.8173%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tamer-female"]{--card-fit-width:53.5082%;--card-fit-left:-0.5676%;--card-fit-top:5.0615%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="beastking-male"]{--card-fit-width:54.8571%;--card-fit-left:0.4643%;--card-fit-top:5.0%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="beastking-female"]{--card-fit-width:52.7515%;--card-fit-left:-1.097%;--card-fit-top:14.6162%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sealmaster-male"]{--card-fit-width:54.2869%;--card-fit-left:-0.5904%;--card-fit-top:4.8493%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sealmaster-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.0159%;--card-fit-top:15.656%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="soullink-male"]{--card-fit-width:53.8392%;--card-fit-left:-0.1567%;--card-fit-top:5.3968%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="soullink-female"]{--card-fit-width:53.0732%;--card-fit-left:-0.0366%;--card-fit-top:5.7723%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="soulsage-male"]{--card-fit-width:52.3287%;--card-fit-left:-0.6353%;--card-fit-top:6.8187%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="soulsage-female"]{--card-fit-width:52.1198%;--card-fit-left:-0.2216%;--card-fit-top:15.6547%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="spiritlord-male"]{--card-fit-width:57.7699%;--card-fit-left:-0.1283%;--card-fit-top:0.7302%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="spiritlord-female"]{--card-fit-width:52.9655%;--card-fit-left:-0.0345%;--card-fit-top:6.2932%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wolf"]{--card-fit-width:57.9186%;--card-fit-left:0.4819%;--card-fit-top:1.7345%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bear"]{--card-fit-width:56.0175%;--card-fit-left:-2.9934%;--card-fit-top:3.2275%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="hawk"]{--card-fit-width:55.1724%;--card-fit-left:-1.4095%;--card-fit-top:4.5618%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="treant"]{--card-fit-width:54.0084%;--card-fit-left:-1.5316%;--card-fit-top:4.8172%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="saber"]{--card-fit-width:57.5281%;--card-fit-left:-0.6348%;--card-fit-top:2.1535%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gdragon"]{--card-fit-width:52.8926%;--card-fit-left:-0.6694%;--card-fit-top:6.956%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="moon"]{--card-fit-width:51.927%;--card-fit-left:-1.8398%;--card-fit-top:6.305%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demonlord"]{--card-fit-width:50.0%;--card-fit-left:1.5%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dragon"]{--card-fit-width:51.5201%;--card-fit-left:-0.5612%;--card-fit-top:7.0323%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demonlord-story"]{--card-fit-width:50.4831%;--card-fit-left:0.9364%;--card-fit-top:8.3333%}
+/* End measured original poses */
+/* Authored thin summoning frames. */
+#app .battle-vital[data-battle-card=full]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-white-5x3.png');border:0!important;border-radius:4px!important}
+#app .battle-vital[data-battle-card=full][data-card-rarity="common"][data-beast-frame="one"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-white-5x3.png')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="common"][data-beast-frame="two"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-green-5x3.png')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="common"][data-beast-frame="three"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-blue-5x3.png')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="rare"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-purple-5x3.png')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="legendary"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-gold-5x3.png')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="solar"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-red-5x3.png')}
+#app .battle-vital[data-battle-card=full]:is([data-card-rarity="soulkeeper"],[data-card-rarity="boss"]){--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-black-5x3.png')}
+#app .battle-vital[data-battle-card=full]::after{content:""!important;display:block!important;inset:0!important;border:0!important;border-image:none!important;border-radius:0!important;background:var(--battle-frame-v3) center/100% 100% no-repeat!important;filter:none!important;pointer-events:none;z-index:2!important}
+#app .battle-vital[data-battle-card=full]::before,body[data-card-demo] #app .battle-vital>.unit-frame-corner,body[data-card-demo] #app .battle-vital>.unit-frame-sprig,body[data-card-demo] #app .battle-vital>.unit-menu-frame{display:none!important}
+
+/* Black mist and soot attach to the portrait, below combat information. */
+[data-motion-actor^=demonlord] .demon-black-aura{position:absolute;inset:-3% -7%;z-index:1;pointer-events:none;border-radius:48%;background:radial-gradient(ellipse at 45% 63%,#000 10%,#020105e6 36%,#15131cc2 52%,#71707c38 62%,transparent 73%);filter:blur(2px);animation:demon-black-mist 3.6s ease-in-out infinite alternate}
+[data-motion-actor^=demonlord] .um-aura{display:none!important}
+[data-motion-actor^=demonlord] .demon-black-motes{position:absolute;inset:0;z-index:4;pointer-events:none}
+.demon-black-motes>i{position:absolute;left:calc(8% + mod(var(--mote) * 29,83) * 1%);top:84%;width:clamp(2px,2.7cqw,5px);height:clamp(2px,2.7cqw,5px);border-radius:45% 60% 35% 55%;background:#030205;box-shadow:0 0 2px 1px #aaa2b45c,0 0 7px 3px #000b;opacity:0;animation:demon-soot-rise calc(2.6s + var(--mote) * .09s) linear infinite;animation-delay:calc(var(--mote) * -.34s)}
+@keyframes demon-black-mist{from{transform:scale(.92) translateY(2%);opacity:.65}to{transform:scale(1.08) translateY(-2%);opacity:.95}}
+@keyframes demon-soot-rise{0%{opacity:0;transform:translate(0,0) scale(.6)}20%{opacity:.95}75%{opacity:.8}100%{opacity:0;transform:translate(calc((var(--mote) - 5) * 1px),-65px) scale(.25)}}
+[data-motion-actor^=demonlord] .demon-black-aura{inset:-8% -12%;background:radial-gradient(ellipse at 45% 59%,#000 12%,#010103f2 39%,#08070be6 51%,#69636d80 60%,#09070ca6 66%,transparent 75%);filter:blur(3px)}
+
+/* Formations scale the same composition instead of changing card proportions. */
+#app .battle-side-units:has(>.battle-vital[data-battle-card=full]:only-child),#app .standard-arena .online-unit-grid:has(>.battle-vital[data-battle-card=full]:only-child){grid-template-columns:minmax(0,1fr)!important}
+#app .battle-vital[data-battle-card=full]:is(.selected,:focus-visible){outline:2px solid #e9ce86;outline-offset:0}
+#app .battle-vital[data-battle-card=full].acting{box-shadow:0 0 7px #efd58b88}
+#app[data-screen=world] .world-arena .online-combat-board{overflow:auto!important;min-height:0}
+#app[data-screen=world] .world-arena .online-combat-scroll{display:flex!important;flex-direction:column;flex:none!important;min-height:min-content;gap:14px;overflow:visible!important}
+#app[data-screen=world] .world-arena .online-combat-side{flex:none!important;min-height:auto!important}
+#app[data-screen=world] .world-arena .online-unit-grid{flex:none!important;grid-auto-rows:auto!important;grid-template-rows:none!important;gap:calc(8px / 3)!important;align-items:start!important}
+#app[data-screen=world] .world-arena .opponent-side .online-unit-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+#app[data-screen=world] .world-arena .our-side .online-unit-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#app[data-screen=world] .world-arena .battle-vital[data-battle-card=full]{grid-column:auto!important;grid-row:auto!important;align-self:start!important}
+#app[data-screen=world] .world-arena .world-empty-position{height:auto!important;max-height:none!important;aspect-ratio:5/3}
+@media(prefers-reduced-motion:reduce){.demon-black-aura,.demon-black-motes>i{animation:none!important}}
+/* Let tall formations scroll in normal flow rather than sit beneath the command dock. */
+#app .battle-vitals:has([data-battle-card=full]){position:relative!important;top:auto!important}
+#app .battle-enhanced:has([data-battle-card=full]) .battle-command-dock{position:relative!important;bottom:auto!important}

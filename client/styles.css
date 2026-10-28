@@ -1055,3 +1055,45 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 .beast-story{max-width:680px;margin:0 auto;min-width:0}.beast-story-heading{text-align:center}.beast-story-art{display:flex;justify-content:center;min-width:0}.beast-story-art>.pt{width:min(100%,280px)!important;height:auto!important;aspect-ratio:1;max-width:100%}.beast-story p{margin:0;line-height:1.9;overflow-wrap:anywhere}.beast-story-prose{gap:12px}.beast-story-sources p{margin-top:12px}.beast-story-back{align-self:flex-start}.pet-actions .beast-story-button{flex-basis:100%}
 /* Forest clips preserve the entire portrait frame and keep controls above safe areas. */
 .forest-story-video{position:fixed;inset:0;z-index:11000;background:#000;color:#fff;isolation:isolate;display:grid;place-items:center}.forest-story-video video{width:100%;height:100%;max-height:100dvh;object-fit:contain;background:#000}.forest-video-controls{position:absolute;z-index:2;top:0;left:0;right:0;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 14px max(12px,env(safe-area-inset-left));background:linear-gradient(#000e,#0007,transparent);display:grid;gap:8px}.forest-video-controls>span{font-size:13px;text-shadow:0 1px 4px #000}.forest-video-controls>div{display:flex;justify-content:flex-end;gap:8px}.forest-video-controls .btn{min-height:44px;white-space:nowrap;background:#10202ee8;color:#ffe6a8;border-color:#d5b567aa}.forest-video-controls [hidden]{display:none}.forest-video-controls small:empty{display:none}
+
+/* Character menu summary: free-standing animated art, scoped to this one portrait. */
+.card.unit-frame[data-hero-summary]>.pt{border:0;border-radius:0;box-shadow:none;background:transparent}
+.card.unit-frame[data-hero-summary]>.pt::before,.card.unit-frame[data-hero-summary]>.pt::after{display:none}
+.card.unit-frame[data-hero-summary]>.pt .um-window{border-radius:0}
+.card.unit-frame[data-hero-summary]>.pt .um-embers{border-radius:0}
+
+/* Center the character above its name and summary in the hero menu. */
+.card.unit-frame[data-hero-summary]{flex-direction:column;align-items:center;gap:12px;text-align:center}
+.card.unit-frame[data-hero-summary]>.pt{width:clamp(220px,68vw,330px);height:clamp(250px,78vw,380px);max-width:100%}
+.card.unit-frame[data-hero-summary]>.grow{width:100%;min-width:0!important;flex:none}
+.card.unit-frame[data-hero-summary]>.grow h2{margin:0 0 8px}
+.card.unit-frame[data-hero-summary]>.grow>.row{justify-content:center}
+
+/* Feather only light/particles; keep the character silhouette sharp and intact. */
+.card.unit-frame[data-hero-summary]>.pt{overflow:visible!important}
+.card.unit-frame[data-hero-summary]>.pt .um-aura{inset:0;filter:blur(8px);mask-image:radial-gradient(ellipse at 50% 55%,#000 20%,#000c 40%,#0006 60%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse at 50% 55%,#000 20%,#000c 40%,#0006 60%,transparent 80%)}
+.card.unit-frame[data-hero-summary]>.pt .um-embers{mask-image:linear-gradient(transparent,#000 14%,#000 82%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 14%,#000 82%,transparent)}
+
+/* Ten milestones plus the entrance (depth zero), read directly from forest depth. */
+.forest-journey .forest-trail-panel{width:96%;gap:0!important}
+.forest-trail{position:relative;min-height:76px;margin:6px 44px 2px 12px;isolation:isolate}
+.forest-trail-line{position:absolute;left:0;right:0;top:48px;height:3px;background:#b5bcca55;border-radius:3px}
+.forest-trail-line>i{display:block;height:100%;background:linear-gradient(90deg,#7dcab5,#f9df91);box-shadow:0 0 5px #eac76c;border-radius:3px}
+.forest-trail-point{position:absolute;top:44px;translate:-50% 0;display:grid;justify-items:center;gap:4px}
+.forest-trail-point>i{display:block;width:10px;height:10px;box-sizing:border-box;border:1px solid #bdc4ce;background:#233343;border-radius:50%}
+.forest-trail-point.done>i{background:#edcd80;border-color:#fff0b6;box-shadow:0 0 5px #d9b55d88}
+.forest-trail-point.now>i{outline:2px solid #f9e4ac55;outline-offset:2px}
+.forest-trail-point>small{font-size:9px;color:#c4ced6;line-height:1}
+.forest-trail-walker{position:absolute;top:0;translate:-50% 0;width:38px;height:48px;z-index:3;pointer-events:none}
+.forest-trail-walker>img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 3px #ffe8ac);animation:um-breathe 4s ease-in-out infinite;transform-origin:50% 100%}
+.forest-trail-boss{position:absolute;right:-48px;top:0;width:34px;height:43px;z-index:2}
+.forest-trail-boss>img{width:100%;height:100%;object-fit:contain;filter:brightness(0) drop-shadow(0 0 2px #b4c2dc);opacity:.9}
+.forest-trail-boss>b{position:absolute;left:40%;top:22%;color:#d6dfeb;font-size:16px;text-shadow:0 0 3px #000}
+@media(prefers-reduced-motion:reduce){.forest-trail-walker>img{animation:none}}
+
+/* The milestone strip stays above the fading route controls while walking. */
+.forest-journey>.forest-trail-panel{position:relative;z-index:2;margin:0 auto 12px}
+.forest-journey>.journey-ui{min-height:calc(min(720px,100dvh - 190px) - 125px)}
+.forest-marker-walking>img{animation:forest-marker-step 1s ease-in-out 3!important;transform-origin:50% 100%}
+@keyframes forest-marker-step{0%,100%{transform:translateY(0) rotate(-2deg)}25%{transform:translateY(-4px) rotate(3deg)}50%{transform:translateY(0) rotate(2deg)}75%{transform:translateY(-4px) rotate(-3deg)}}
+@media(prefers-reduced-motion:reduce){.forest-marker-walking>img{animation:none!important}}

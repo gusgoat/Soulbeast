@@ -1,0 +1,3 @@
+const assert=require('node:assert/strict');const{run:r}=require('./game-context.cjs')('build/live-index.html');const before=r('JSON.stringify(S.P)');
+for(const depth of [0,1,4,9,10]){const html=r(`forestTrail({depth:${depth}},ZN[0])`);assert.equal((html.match(/class="forest-trail-point /g)||[]).length,10);assert.equal((html.match(/class="forest-trail-point done/g)||[]).length,depth);assert(html.includes(`left:${depth*10}%`));assert(html.includes(`${depth}/10`));assert(html.includes('forest-trail-boss'));assert(!html.includes('>'+r('ZN[0].boss.n')+'<'));}
+assert.equal(r('JSON.stringify(S.P)'),before);console.log('PASS ten milestones, entrance zero and boss depth ten, marker position, remaining steps, hidden boss label, no player mutation');

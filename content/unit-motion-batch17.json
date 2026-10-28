@@ -10,8 +10,8 @@
       "idleMode": "float",
       "background": "fire",
       "source": {
-        "x": 92,
-        "y": 52.5,
+        "x": 87.9,
+        "y": 52.1,
         "angle": 25,
         "width": 125,
         "height": 55,
@@ -20,10 +20,10 @@
         "cropLeft": 0,
         "anchor": {
           "pose": "windup",
-          "x": 92,
-          "y": 52.5,
-          "asset": "assets/beasts/motion/phoenix-windup-v1.webp",
-          "sha256": "203c6517a594ed4f39b721dde1605fa148ac7dbece436356667a590b77362412"
+          "x": 87.9,
+          "y": 52.1,
+          "asset": "assets/motion-repairs/card-preview-v2/phoenix-windup.png",
+          "sha256": "254765f96e1b7674a74362c7744ee901221c0704ab38c11ec901e65726274f48"
         },
         "effect": {
           "asset": "assets/beasts/motion/phoenix-power-v1.webp",
@@ -33,7 +33,8 @@
       },
       "poseAssets": {
         "melee": "assets/beasts/motion/phoenix-melee-v1.webp",
-        "meleeEffect": "assets/beasts/motion/phoenix-melee-effect-v1.webp"
+        "meleeEffect": "assets/beasts/motion/phoenix-melee-effect-v1.webp",
+        "windup": "assets/motion-repairs/card-preview-v2/phoenix-windup.png"
       },
       "meleeName": "กรงเล็บฟีนิกซ์",
       "meleeMode": "swipe",
@@ -54,18 +55,13 @@
       },
       "review": {
         "status": "verified",
-        "viewport": "390x844 and320x740 (actual DOM widths verified)",
+        "date": "2026-10-28",
         "checks": [
-          "identity/anatomy inspected",
-          "windup inspected before power",
-          "actual beak/palm/mouth and VFX origins inspected on both widths",
-          "attack/hit/windup/melee recovery",
-          "linear .75s power",
-          "visible target and non-overlapping edge contact on both widths",
-          "real alpha and complete image loads",
-          "no horizontal overflow; rare final-form particles only"
-        ],
-        "proof": "../outputs/all-character-motion-20261025/phoenix-contact.png"
+          "Previously generated complete silhouette reused without regenerating identity",
+          "Normalized SHA256-bound anchors updated for canonical battle cards",
+          "Full-body source art reviewed; fit bounds and SHA256 anchors validated",
+          "Canonical game regression suite passed; no gameplay or save field changes"
+        ]
       }
     },
     {
