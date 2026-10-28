@@ -390,3 +390,7 @@
 /* Let tall formations scroll in normal flow rather than sit beneath the command dock. */
 #app .battle-vitals:has([data-battle-card=full]){position:relative!important;top:auto!important}
 #app .battle-enhanced:has([data-battle-card=full]) .battle-command-dock{position:relative!important;bottom:auto!important}
+
+/* A little more breathing room between opposing teams; keep card sizes unchanged. */
+#app .battle-vitals:has([data-battle-card=full])>.battle-side-summary+.battle-side-summary,
+#app .battle-scenery .online-combat-side+.online-combat-side{margin-top:8px}

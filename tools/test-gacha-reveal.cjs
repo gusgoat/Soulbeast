@@ -28,3 +28,24 @@ r('gachaRevealSync()');assert.equal(r('GachaReveal.entryAt'),entryAt,'rerender m
 r('GachaReveal.entryAt=Date.now()-5000');assert(!r('gachaRevealScene()').includes('gacha-arrival-portal'));r(`handlers.gachaRevealOne('0')`);assert.equal(r('GachaReveal.opened.size'),1);
 r(`GACHA.rewards=GACHA.rewards.slice();window.matchMedia=()=>({matches:true});gachaRevealSync();`);assert.equal(r('gachaDealing()'),false,'reduced motion opens immediately');
 console.log('PASS summoning precedes cards, early taps blocked, receipt timing preserved across render, ready/skip states');
+// Each card gets a flip sound, including Open All; only gold/red get fanfare notes.
+r(`Sound.enabled=true;revealAudio.length=0;gachaRevealSound(['item','gear','premium','legendGear'].map(category=>({type:'item',category})));`);
+assert.equal(r(`revealAudio.filter(a=>a[0]==='hiss').length`),4);
+assert.equal(r(`revealAudio.filter(a=>a[0]==='tone').length`),0,'ordinary/purple flips have no celebration');
+r(`revealAudio.length=0;GACHA.rewards=[{type:'item',key:'pot',category:'item'},{type:'item',key:'pot',category:'premium'},{type:'gear',key:WORLD_LEGENDS[0],category:'eclipseGear'}];gachaRevealSync();GachaReveal.entryAt=0;handlers.gachaRevealAll();`);
+assert.equal(r(`revealAudio.filter(a=>a[0]==='hiss').length`),3,'Open All plays one whoosh for every remaining card');
+assert.equal(r(`revealAudio.filter(a=>a[0]==='tone').length`),5,'one gold celebration');
+assert.deepEqual(Array.from(r(`revealAudio.filter(a=>a[0]==='hiss').map(a=>a[4])`)),[0,.09,.18]);
+const soundCount=r('revealAudio.length');r('handlers.gachaRevealAll()');assert.equal(r('revealAudio.length'),soundCount,'already-open cards stay silent');
+// Shortcut is inside each art stage and does not reveal reward text ahead of time.
+r(`GACHA.rewards=[{type:'item',key:'pot',category:'item'}];`);html=r('gachaRevealScene()');
+assert(html.indexOf('gacha-open-all')>html.indexOf('class="gacha-reveal-stage'));
+assert(html.indexOf('gacha-open-all')<html.indexOf('class="gacha-card-grid'));
+assert.equal((html.match(/data-a="gachaRevealAll"/g)||[]).length,1);
+// Focus once per new receipt, never again on card flips or unrelated renders.
+r(`const dealFocusFrames=[],dealFocusMoves=[];window.requestAnimationFrame=fn=>dealFocusFrames.push(fn);document.querySelector=selector=>selector==='.gacha-reveal-stage'?{scrollIntoView:o=>dealFocusMoves.push(o)}:null;S.screen='gacha';GACHA.rewards=GACHA.rewards.slice();gachaRevealSync();while(dealFocusFrames.length)dealFocusFrames.shift()();`);
+assert.equal(r('dealFocusMoves.length'),1);assert.equal(r('dealFocusMoves[0].block'),'start');
+r('gachaRevealSync()');assert.equal(r('dealFocusFrames.length'),0);
+r(`GACHA.rewards=GACHA.rewards.slice();gachaRevealSync();S.screen='town';while(dealFocusFrames.length)dealFocusFrames.shift()();`);
+assert.equal(r('dealFocusMoves.length'),1,'leaving gacha cancels stale focus');
+console.log('PASS per-card flip sounds, gold/red-only fanfares, in-art shortcut and one-time receipt focus with stale-screen guard');

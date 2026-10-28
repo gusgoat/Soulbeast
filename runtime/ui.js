@@ -464,7 +464,7 @@ const releaseRender=render;
 // @soulbeast-end 0638-releaseRender
 // @soulbeast-unit 0639-render
 
-render=function(){releaseRender();if(S.screen==='gacha'&&!GACHA.busy&&GACHA.rewards.length&&ReleaseGacha.revealed!==GACHA.rewards){ReleaseGacha.revealed=GACHA.rewards;document.querySelector('.gacha-congratulations,.gacha-results')?.scrollIntoView?.({block:'start',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}};
+render=function(){releaseRender();if(S.screen==='gacha'&&!GACHA.busy&&GACHA.rewards.length&&ReleaseGacha.revealed!==GACHA.rewards){ReleaseGacha.revealed=GACHA.rewards;document.querySelector('.gacha-reveal-stage,.gacha-congratulations,.gacha-results')?.scrollIntoView?.({block:'start',behavior:'instant'});}};
 // @soulbeast-end 0639-render
 // @soulbeast-unit 0646-vGuideElements
 
