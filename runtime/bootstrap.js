@@ -9,7 +9,7 @@ function boot(data){if(data&&data.S){S=data.S;try{const t=localStorage.getItem(S
  if(S.zone&&!S.zone.fork&&!S.zone.ev&&S.zone.depth<ZDEPTH&&!S.battle)newFork();
  const resume=()=>{render();cloudInit();if(S.screen==='world')wbCall(WORLD.roomId?'wb_poll':'wb_status');if(S.screen==='pvp')pvpSchedule();
  const b=S.battle;if(b&&!b.over){const u=b.cur&&uById(b.cur);if(!u||u.side==='enemy'||b.menu==='wait'){if(u&&u.side==='ally'&&!teamAutoUnit(u)){b.menu='main';render()}else battleLater(u?aiAct:advance,600)}}};
- if(!WEB_INTRO.open(resume))resume();}
+ if(!WEB_INTRO.open(resume,!!data?.accountEntry,!!data?.accountEntry))resume();}
 // @soulbeast-end 0491-boot
 // @soulbeast-unit 1076-ExpressionStatement
 

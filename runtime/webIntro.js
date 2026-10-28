@@ -4,15 +4,15 @@ const WEB_INTRO={
  key:'sealbeast_web_intro_v1',active:false,seenThisPage:false,resume:null,root:null,video:null,
  busyGame(){return !!(S.zone||S.battle||PVP.token||['waiting','lobby','active'].includes(PVP.room?.status)||WORLD.roomId||CAMP.roomId||GUILD_UI.warRoom?.replaying);},
  seen(){try{return this.seenThisPage||localStorage.getItem(this.key)==='seen';}catch{return this.seenThisPage;}},
- canOpen(replay=false){return !this.active&&!this.busyGame()&&(replay||!document.documentElement?.hasAttribute('data-skip-web-intro'))&&(replay||!this.seen());},
- open(resume,replay=false){
+ canOpen(replay=false,entry=false){return !this.active&&(entry||!this.busyGame())&&(replay||!document.documentElement?.hasAttribute('data-skip-web-intro'))&&(replay||!this.seen());},
+ open(resume,replay=false,entry=false){
   const app=document.getElementById('app');
-  if(!this.canOpen(replay)||typeof app?.appendChild!=='function')return false;
+  if(!this.canOpen(replay,entry)||typeof app?.appendChild!=='function')return false;
   const root=document.createElement('section');root.className='web-intro';root.id='webIntro';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','วิดีโอแนะนำ Soulbeast');
-  root.innerHTML='<div class="web-intro-top"><span>SOULBEAST · แนะนำเกม</span><button type="button" class="btn web-intro-skip">ข้ามอินโทร ›</button></div><video id="webIntroVideo" class="web-intro-video" autoplay muted playsinline controls preload="metadata" poster="assets/video/soulbeast-intro-v2.webp" aria-label="วิดีโอแนะนำเกม Soulbeast"><source src="assets/video/soulbeast-intro-v2.mp4" type="video/mp4"></video><div class="web-intro-actions"><button type="button" class="btn web-intro-play" hidden>เล่นอินโทร</button><button type="button" class="btn web-intro-sound" aria-pressed="false">เปิดเสียง</button><small>กดข้ามเพื่อเข้าสู่เกมได้ทันที</small></div>';
+  root.innerHTML='<div class="web-intro-top"><span>SOULBEAST · แนะนำเกม</span><button type="button" class="btn web-intro-skip">ข้ามอินโทร ›</button></div><video id="webIntroVideo" class="web-intro-video" autoplay playsinline controls preload="metadata" poster="assets/video/soulbeast-intro-v2.webp" aria-label="วิดีโอแนะนำเกม Soulbeast"><source src="assets/video/soulbeast-intro-v2.mp4" type="video/mp4"></video><div class="web-intro-actions"><button type="button" class="btn web-intro-play" hidden>เล่นอินโทร</button><button type="button" class="btn web-intro-sound" aria-pressed="false">เปิดเสียง</button><small>กดข้ามเพื่อเข้าสู่เกมได้ทันที</small></div>';
   this.active=true;this.resume=resume;this.root=root;Sound.mute();Tutorial.clear();app.replaceChildren(root);
   const video=this.video=root.querySelector('video'),play=root.querySelector('.web-intro-play'),sound=root.querySelector('.web-intro-sound');
-  video.muted=true;video.volume=Math.max(0,Math.min(1,Sound.volume));
+  video.muted=!Sound.enabled;sound.textContent=video.muted?'เปิดเสียง':'ปิดเสียง';sound.setAttribute('aria-pressed',String(!video.muted));video.volume=Math.max(0,Math.min(1,Sound.volume));
   const attempt=()=>{try{const promise=video.play();if(promise?.catch)promise.catch(()=>{if(this.active&&this.video===video)play.hidden=false;});}catch{play.hidden=false;}};
   root.querySelector('.web-intro-skip').addEventListener('click',()=>this.finish());
   play.addEventListener('click',attempt);

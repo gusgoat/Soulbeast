@@ -97,7 +97,7 @@ const ACCOUNT_GAME=(()=>{
  const originalBoot=boot;boot=()=>{S=blank();state.busy=true;ui();(async()=>{try{const m=await import('./client/account-client.mjs');state.errorText=m.accountError;state.client=m.connectAccounts(()=>{if(!state.busy)task(async()=>{if(state.client.sessions.read()){const user=await state.client.identity();if(user.id===state.user?.id)return;S=blank();state.code='';state.user=null;await list();}else{S=blank();state.code='';state.user=null;state.mode='login';}});});
     const hash=location.hash; if(hash){history.replaceState(null,'',location.pathname+location.search);await state.client.acceptCallback(hash);}
     if(state.client.sessions.read()){if(state.client.recovery){state.user=await state.client.identity();state.mode='recovery';}else {await list();if(new URLSearchParams(location.search).get('create')==='1'&&state.slotsUsed<characterLimit())beginCreate();}}
-   }catch(e){state.error=state.errorText?.(e)||'ระบบบัญชียังไม่พร้อม กรุณาลองใหม่อีกครั้ง';}finally{state.busy=false;}ui();})();};state.boot=data=>{state.initial=data.S;try{return originalBoot({});}finally{state.initial=null;}};
+   }catch(e){state.error=state.errorText?.(e)||'ระบบบัญชียังไม่พร้อม กรุณาลองใหม่อีกครั้ง';}finally{state.busy=false;}ui();})();};state.boot=data=>{state.initial=data.S;try{return originalBoot({accountEntry:true});}finally{state.initial=null;}};
  return state;
 })();
 // @soulbeast-end 1091-playerAccounts

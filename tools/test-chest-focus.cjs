@@ -1,0 +1,15 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const source=fs.readFileSync('runtime/ui.js','utf8').split('// @soulbeast-unit 0835-render')[1].split('// @soulbeast-end 0835-render')[0];
+const frames=[],picked=[];let opened=0;
+const main={scrollTop:0,clientHeight:700,scrollHeight:1600,style:{},classList:{toggle(){}},getBoundingClientRect:()=>({top:0,bottom:700}),querySelector:s=>{picked.push(s);return {getBoundingClientRect:()=>({top:800-main.scrollTop,bottom:(s==='[data-a=cont]'?1350:1100)-main.scrollTop})}}};
+const S={screen:'zone',ui:{},zone:{id:1,depth:5,ev:{type:'chest',opened:false}}};
+const ctx={S,playScreen:'zone',playBattle:undefined,playRender(){},BattleCommandFocus:{prepare(){},sync(){}},isBossDoorScene:()=>false,document:{querySelector:()=>main},window:{requestAnimationFrame:fn=>frames.push(fn)},setTimeout};vm.createContext(ctx);vm.runInContext(source,ctx);
+const render=()=>{ctx.render();while(frames.length)frames.shift()()};
+render();assert.equal(main.scrollTop,416);assert.equal(picked.at(-1),'[data-a=openchest]');assert.equal(S.zone.ev.opened,false,'Scrolling never opens or awards chest');
+main.scrollTop=100;render();assert.equal(main.scrollTop,100,'Unrelated rerender preserves user scroll');
+S.zone.ev.opened=true;render();assert.equal(main.scrollTop,666);assert.equal(picked.at(-1),'[data-a=cont]');
+main.scrollTop=200;render();assert.equal(main.scrollTop,200);
+S.zone.depth++;S.zone.ev={type:'chest',opened:false};ctx.render();S.screen='town';while(frames.length)frames.shift()();assert.equal(main.scrollTop,200,'Queued focus cannot move another screen');
+assert(fs.readFileSync('runtime/accounts.js','utf8').includes('originalBoot({accountEntry:true})'));
+assert(fs.readFileSync('runtime/bootstrap.js','utf8').includes('WEB_INTRO.open(resume,!!data?.accountEntry,!!data?.accountEntry)'));
+console.log('PASS chest encounter/open-result focus, manual-only opening, stable rerenders, stale-screen guard and account entry hook');
