@@ -19,6 +19,7 @@ function vBattle(){const b=B(),u=uById(b.cur),P=S.P;
  let panel='';
  if(b.over){panel=(b.over.res==='win'&&b.kind==='boss'&&!ZN[b.meta-1].train?storyCard(b.meta,true):'')+`<div class="panel res"><h2 style="${b.over.res==='lose'?'color:var(--bad)':''}">${b.over.title}</h2><div class="lines">${b.over.lines.map(l=>`<div>${l}</div>`).join('')}</div><button class="btn pri full" data-a="bt" data-v="done">ไปต่อ</button></div>`}
  else if(b.menu==='wait'||!u||u.side==='enemy'){panel=`<div class="panel"><p class="sub" style="margin:0;text-align:center">${u?`${esc(u.name)} กำลังเคลื่อนไหว...`:'...'}</p></div>`}
+ else if(BattleSkillTarget.current())panel='<div class="panel">'+BattleSkillTarget.banner()+'</div>';
  else{const t=curTarget(),al=curAlly(),head=`<div class="row wrap" style="gap:4px 10px"><b class="grow">ตาของ ${esc(u.name)}</b><span class="sub">เป้า: ${t?esc(t.name):'-'}${t?` · โดน ${Math.round(hitChance(u,t))}%`:''}${b.allies.length>1?` · ฝ่ายเรา: ${esc(al.name)}`:''}</span></div>`,back=`<button class="btn" data-a="bt" data-v="menu:main">ย้อนกลับ</button>`;
   const skBtn=id=>{const s=SK[id],off=['p','m','h','auto','status','debuff'].includes(s.t),m=off&&t&&!s.all?attackMultiplier(u,s,t):1,stab=s.el&&(u.stab.includes(s.el)||u.types.includes(s.el));
    const c=costOf(u,s),cd=cooldownOf(u,id),dis=cd>0||(c&&u.mp<c)||(s.gc&&P.gold<s.gc*u.lv);
@@ -37,6 +38,25 @@ function vBattle(){const b=B(),u=uById(b.cur),P=S.P;
 // @soulbeast-end 0382-vBattle
 // @soulbeast-unit 0830-handlers-battleCommands
 
+// Pending choices are UI-only. No MP, cooldown, save or turn mutation until a target is tapped.
+const BattleSkillTarget={pending:null,confirming:null,
+ side(sk){if(!sk||sk.all||sk.rt||sk.summon)return '';if(['heal','buff'].includes(sk.t))return sk.tg==='ally'?'ally':'';return ['p','m','h','auto','status','debuff'].includes(sk.t)?'enemy':'';},
+ context(){if(S.screen==='pvp'){const r=PVP.room,b=r?.battle,u=b&&[...b.allies,...b.enemies].find(x=>x.id===b.cur);return r?.status==='active'&&!r.replaying&&!PVP.busy&&!PVP.pending&&u?.owner===r.me?{mode:'pvp',b,u,key:r.id+':'+r.rev+':'+b.cur}:null;}if(S.screen!=='battle')return null;const b=B(),u=b&&uById(b.cur);return b&&!b.over&&u?.side==='ally'&&u.hp>0&&!teamAutoUnit(u)&&!['wait','end'].includes(b.menu)?{mode:'local',b,u,key:[b.round,b.cur,b.queue.join(',')].join('|')}:null;},
+ current(){const p=this.pending,c=this.context();if(!p)return null;if(!c||p.mode!==c.mode||p.key!==c.key||(c.mode==='local'&&p.b!==c.b)){this.pending=null;return null;}return p;},
+ valid(u,side){const p=this.current(),c=this.context();if(!p||!c||p.side!==side||!u)return false;const sk=pvpSkill(p.skill,c.mode==='pvp');if(side==='ally')return u.hp>0||!!(sk.rev&&u.kind!=='player');if(u.hp<=0||class10Invisible(u))return false;const foes=[...c.b.allies,...c.b.enemies].filter(x=>x.side!==c.u.side),forced=foes.find(x=>x.hp>0&&x.taunt>0&&!class10Invisible(x));return !forced||forced.id===u.id;},
+ begin(id){if(this.confirming===id)return false;const c=this.context(),sk=pvpSkill(id,c?.mode==='pvp'),side=this.side(sk);if(!c||!side)return false;if(costOf(c.u,sk)>c.u.mp||cooldownOf(c.u,id)>0)return false;this.pending={...c,skill:id,side};if(c.mode==='local')BattleCommandFocus.pending='arena';render();if(c.mode==='pvp')this.focusOnline();return true;},
+ confirm(side,value){const p=this.current(),c=this.context();if(!p||!c)return false;const units=c.mode==='local'?(side==='enemy'?c.b.enemies:c.b.allies):[...c.b.enemies,...c.b.allies].filter(u=>side==='enemy'?u.side!==c.u.side:u.side===c.u.side),u=c.mode==='local'?units[Number(value)]:units.find(u=>u.id===value);if(!this.valid(u,side))return true;this.pending=null;this.confirming=p.skill;try{if(c.mode==='local'){if(side==='enemy')c.b.target=Number(value);else c.b.atarget=Number(value);battleAction('sk:'+p.skill);}else{if(side==='enemy')PVP.target=value;else PVP.friend=value;handlers.pvpMove(p.skill);}}finally{this.confirming=null;}return true;},
+ cancel(){const c=this.context();this.pending=null;if(c?.mode==='local')BattleCommandFocus.pending='commands';render();},
+ attrs(u,side){return this.current()?' data-skill-target="'+(this.valid(u,side)?'valid':'invalid')+'"'+(this.valid(u,side)?'':' disabled')+' ':'';},
+ banner(){const p=this.current();return p?'<div class="battle-target-prompt" role="status"><div><b>'+esc(SK[p.skill]?.n||p.skill)+'</b><span>'+(p.side==='enemy'?ct('แตะการ์ดศัตรูเพื่อใช้สกิล','Tap an enemy to use this skill','点击敌方卡牌施放技能'):ct('แตะการ์ดฝ่ายเราเพื่อใช้สกิล','Tap an ally to use this skill','点击友方卡牌施放技能'))+'</span></div><button class="btn sm" data-a="battleTargetCancel">'+ct('ยกเลิก','Cancel','取消')+'</button></div>':'';},
+ focusOnline(){const board=document.querySelector('.online-combat-scroll'),side=board?.querySelector?.(this.pending?.side==='ally'?'.our-side':'.opponent-side');if(board&&side)board.scrollTop+=side.getBoundingClientRect().top-board.getBoundingClientRect().top;}
+};
+handlers.battleTargetCancel=()=>BattleSkillTarget.cancel();
+const targetPvpMove=handlers.pvpMove,targetPvpEnemy=handlers.pvpTarget,targetPvpAlly=handlers.pvpFriend;
+handlers.pvpMove=id=>{if(!BattleSkillTarget.begin(id))return targetPvpMove(id);};
+handlers.pvpTarget=id=>{if(!BattleSkillTarget.confirm('enemy',id))return targetPvpEnemy(id);};
+handlers.pvpFriend=id=>{if(!BattleSkillTarget.confirm('ally',id))return targetPvpAlly(id);};
+
 // Presentation only: never advance turns or change battle/save data.
 const BattleCommandFocus={
  battle:null,turn:'',menu:'',pending:'',ticket:0,scrollTop:0,
@@ -45,7 +65,7 @@ const BattleCommandFocus={
   const key=this.ready()?[b.round,b.cur,b.queue.join(',')].join('|'):'';
   if(key&&key!==this.turn){S.ui.battleCommandsHidden=false;this.pending='commands';}
   else if(!key&&this.turn)this.pending='arena';
-  if(key&&this.menu!==b.menu)this.pending='commands';this.menu=b.menu;this.turn=key;
+  if(key&&this.menu!==b.menu)this.pending='commands';if(BattleSkillTarget.current()&&this.pending==='commands')this.pending='arena';this.menu=b.menu;this.turn=key;
  },
  commit(){this.turn='';this.pending='arena';this.ticket++;this.scroll('arena');},
  scroll(where){const main=document.querySelector('main'),target=main?.querySelector?.(where==='commands'?'#battleCommandBody':'.battle-vitals');if(!main||!target||!main.getBoundingClientRect)return;const delta=target.getBoundingClientRect().top-main.getBoundingClientRect().top-12;main.scrollTop+=delta;},

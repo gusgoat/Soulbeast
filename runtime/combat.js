@@ -314,8 +314,8 @@ function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,line
 
 
 function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
- if(k==='target'){const i=+a;if(b.enemies[i]&&b.enemies[i].hp>0){b.target=i;render()}return}
- if(k==='ally'){b.atarget=+a;render();return}
+ if(k==='target'){if(BattleSkillTarget.confirm('enemy',a))return;const i=+a;if(b.enemies[i]&&b.enemies[i].hp>0){b.target=i;render()}return}
+ if(k==='ally'){if(BattleSkillTarget.confirm('ally',a))return;b.atarget=+a;render();return}
  if(k==='auto'){S.ui.autoPet=!S.ui.autoPet;const u=uById(b.cur);render();if(S.ui.autoPet&&u&&u.kind==='pet'&&b.menu!=='wait'&&b.menu!=='end'){b.menu='wait';battleLater(aiAct,300)}return}
  if(k==='done'){const res=b.over.res,kind=b.kind;S.battle=null;
   if(res==='lose'){S.zone=null;S.screen='hospital'}
@@ -324,8 +324,8 @@ function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
   else{S.screen='zone';if(S.zone){if(S.zone.after){S.zone.ev=S.zone.after;S.zone.after=null;S.zone.fork=null}else newFork()}}
   save();render();return}
  if(b.menu==='wait'||b.menu==='end')return;const u=uById(b.cur);if(!u)return;
- if(k==='menu'){b.menu=a;render();return}
- if(k==='sk'){const sk=SK[a];if(costOf(u,sk)>u.mp){toast('MP ไม่พอ');return}if(sk.gc&&S.P.gold<sk.gc*u.lv){toast('เงินไม่พอ');return}if(!act(u,a,curTarget(),curAlly()))return;BattleCommandFocus.commit();after();return}
+ if(k==='menu'){BattleSkillTarget.pending=null;b.menu=a;render();return}
+ if(k==='sk'){const sk=SK[a];if(costOf(u,sk)>u.mp){toast('MP ไม่พอ');return}if(sk.gc&&S.P.gold<sk.gc*u.lv){toast('เงินไม่พอ');return}if(BattleSkillTarget.begin(a))return;if(!act(u,a,curTarget(),curAlly()))return;BattleCommandFocus.commit();after();return}
  if(k==='item'){const it=CON[a];if(!it||it.petExp||!(S.P.items[a]>0))return;const tgt=curAlly();if(!potionUseful(it,tgt,tgt.st)){toast('พลังเต็มแล้ว ใช้ยานี้ไม่จำเป็น');return}
   if(it.rev){if(tgt.hp>0||tgt.kind==='player'){toast('เลือกอสูรที่หมดสติก่อน (แตะการ์ดฝ่ายเรา)');return}Sound.fx('revive');tgt.hp=Math.round(tgt.st.hp*it.rev);tgt.status=retainedBattleAilments(tgt);blog(`${tgt.name} ฟื้นคืนสติ`)}
   else if(tgt.hp<=0){toast('เป้าหมายหมดสติ ใช้ธูปเรียกวิญญาณก่อน');return}
@@ -427,8 +427,8 @@ vBattle=function(){let html=playBattleBase();const b=B();if(!b)return html;
  html=html.replace(/data-u=/g,'data-detail-u=');
  if(!b.over){const start=html.lastIndexOf('<div class="panel">');if(start>=0){const hidden=!!S.ui.battleCommandsHidden,controls='<div class="battle-command-controls">'+(teamAutoAllowed()?'<button class="btn sm '+(S.ui.autoTeam?'pri':'')+'" data-a="teamAuto" aria-pressed="'+!!S.ui.autoTeam+'">ออโต้ทีม '+(S.ui.autoTeam?'เปิด':'ปิด')+'</button>':'')+(b.allies.length>1?'<button class="btn sm" data-a="bt" data-v="auto:1" aria-pressed="'+!!S.ui.autoPet+'">อสูรออโต้ '+(S.ui.autoPet?'เปิด':'ปิด')+'</button>':'')+'<button class="btn sm" data-a="battleCommands" aria-expanded="'+!hidden+'" aria-controls="battleCommandBody">'+(hidden?'แสดงคำสั่ง':'ซ่อนคำสั่ง')+'</button></div>';html=html.slice(0,start)+'<section class="battle-command-dock"><div id="battleCommandBody" class="battle-command-body" '+(hidden?'hidden':'')+'>'+html.slice(start,-6)+'</div>'+controls+'</section></div>';}}
 
- const side=(units,enemy)=>'<section class="battle-side-summary"><small>'+(enemy?'ศัตรู':'ทีมเรา')+'</small><div class="battle-side-units">'+units.map((u,i)=>statusBattleCard('<button class="battle-vital '+(u.hp<=0?'down ':'')+(b.cur===u.id?'acting ':'')+((enemy?b.target:b.atarget)===i?'selected':'')+'" data-a="bt" data-v="'+(enemy?'target:':'ally:')+i+'"><span class="battle-face" data-u="'+esc(u.id)+'">'+portrait(u.img||u.sp,28,{form:u.evo||0})+'</span><div class="battle-meter"><b><span class="battle-unit-name">'+esc(u.name)+'</span><small class="battle-level">Lv '+esc(u.lv)+'</small></b>'+bar(u.hp,u.st.hp)+'<small>HP '+u.hp+'/'+u.st.hp+'</small>'+bar(u.mp,u.st.mp,'mp')+'<small>MP '+u.mp+'/'+u.st.mp+'</small></div>'+(b.fx||[]).filter(f=>f.id===u.id).map(f=>'<span class="fx '+esc(f.c)+'">'+esc(f.t)+'</span>').join('')+'</button>',u)).join('')+'</div></section>';
- const overview='<div class="battle-vitals battle-scenery"'+BattleScenery.attributes(b)+'>'+BattleScenery.decoration(b)+side(b.enemies,true)+side(b.allies,false)+'</div>';
+ const side=(units,enemy)=>'<section class="battle-side-summary"><small>'+(enemy?'ศัตรู':'ทีมเรา')+'</small><div class="battle-side-units">'+units.map((u,i)=>statusBattleCard('<button class="battle-vital '+(u.hp<=0?'down ':'')+(b.cur===u.id?'acting ':'')+((enemy?b.target:b.atarget)===i?'selected':'')+'" data-a="bt" data-v="'+(enemy?'target:':'ally:')+i+'"'+BattleSkillTarget.attrs(u,enemy?'enemy':'ally')+'><span class="battle-face" data-u="'+esc(u.id)+'">'+portrait(u.img||u.sp,28,{form:u.evo||0})+'</span><div class="battle-meter"><b><span class="battle-unit-name">'+esc(u.name)+'</span><small class="battle-level">Lv '+esc(u.lv)+'</small></b>'+bar(u.hp,u.st.hp)+'<small>HP '+u.hp+'/'+u.st.hp+'</small>'+bar(u.mp,u.st.mp,'mp')+'<small>MP '+u.mp+'/'+u.st.mp+'</small></div>'+(b.fx||[]).filter(f=>f.id===u.id).map(f=>'<span class="fx '+esc(f.c)+'">'+esc(f.t)+'</span>').join('')+'</button>',u)).join('')+'</div></section>';
+ const overview='<div class="battle-vitals battle-scenery"'+BattleScenery.attributes(b)+'>'+BattleScenery.decoration(b)+BattleSkillTarget.banner()+side(b.enemies,true)+side(b.allies,false)+'</div>';
  return html.replace('<div class="field battle-enhanced">','<div class="field battle-enhanced">'+overview);
 };
 // @soulbeast-end 0832-vBattle
