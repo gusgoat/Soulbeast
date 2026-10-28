@@ -325,20 +325,20 @@ function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
   save();render();return}
  if(b.menu==='wait'||b.menu==='end')return;const u=uById(b.cur);if(!u)return;
  if(k==='menu'){b.menu=a;render();return}
- if(k==='sk'){const sk=SK[a];if(costOf(u,sk)>u.mp){toast('MP ไม่พอ');return}if(sk.gc&&S.P.gold<sk.gc*u.lv){toast('เงินไม่พอ');return}if(!act(u,a,curTarget(),curAlly()))return;after();return}
+ if(k==='sk'){const sk=SK[a];if(costOf(u,sk)>u.mp){toast('MP ไม่พอ');return}if(sk.gc&&S.P.gold<sk.gc*u.lv){toast('เงินไม่พอ');return}if(!act(u,a,curTarget(),curAlly()))return;BattleCommandFocus.commit();after();return}
  if(k==='item'){const it=CON[a];if(!it||it.petExp||!(S.P.items[a]>0))return;const tgt=curAlly();if(!potionUseful(it,tgt,tgt.st)){toast('พลังเต็มแล้ว ใช้ยานี้ไม่จำเป็น');return}
   if(it.rev){if(tgt.hp>0||tgt.kind==='player'){toast('เลือกอสูรที่หมดสติก่อน (แตะการ์ดฝ่ายเรา)');return}Sound.fx('revive');tgt.hp=Math.round(tgt.st.hp*it.rev);tgt.status=retainedBattleAilments(tgt);blog(`${tgt.name} ฟื้นคืนสติ`)}
   else if(tgt.hp<=0){toast('เป้าหมายหมดสติ ใช้ธูปเรียกวิญญาณก่อน');return}
   else if(it.cure){const has=it.cure.filter(x=>tgt.status[x]);if(!has.length){toast(`${tgt.name} ไม่มีสถานะที่ยานี้รักษาได้`);return}has.forEach(x=>delete tgt.status[x]);blog(`ใช้ ${it.n} กับ ${tgt.name} หายจาก${has.map(x=>STS[x].n).join(' ')}`);fxAdd(tgt,'หาย','good')}
   else{if(it.hp)heal(tgt,taleRecoveryAmount(it,'hp'));if(it.mp){tgt.mp=Math.min(tgt.st.mp,tgt.mp+taleRecoveryAmount(it,'mp'));fxAdd(tgt,'+'+it.mp+' MP','mp')}blog(`ใช้ ${it.n} กับ ${tgt.name}`)}
-  ExtraAudio.play(it.cure?'heal':'drink');vfx('heal',tgt.id);S.P.items[a]--;after();return}
+  ExtraAudio.play(it.cure?'heal':'drink');vfx('heal',tgt.id);S.P.items[a]--;BattleCommandFocus.commit();after();return}
  if(k==='seal'){const it=CON[a],t=curTarget();if(!(S.P.items[a]>0)||!t)return;if(!sealable(t)){toast('ผนึกเป้าหมายนี้ไม่ได้');return}if(S.P.pets.length>=MAXPETS){toast('ผนึกเต็มแล้ว ปล่อยอสูรบางตัวก่อน');return}
   S.P.items[a]--;ExtraAudio.play('seal');vfx('buff',t.id,{c:'#6dcfc1'});const ch=sealChance(t,it.seal);blog(`คุณขว้าง${it.n}ใส่ ${t.name}...`);
   if(Math.random()<ch){const p=mkPet(t.sp,t.lv,t.evo);const s=calcPet(p);p.hp=Math.max(1,Math.round(s.hp*t.hp/t.st.hp));p.mp=s.mp;S.P.pets.push(p);if(S.P.carried.length<carryLimit())S.P.carried.push(p.uid);else blog(petName(p)+' ถูกส่งไปพักที่ค่าย กระเป๋าเต็มแล้ว');S.P.caught[t.sp]=1;
    if(S.P.carried.includes(p.uid)&&S.P.party.length<clsSum(S.P.cls))S.P.party.push(p.uid);
    ExtraAudio.play('quest');t.captured=true;t.hp=0;fxAdd(t,'ผนึก!','good');blog(`สำเร็จ! ${petName(p)} ถูกผนึกแล้ว`)}
   else{ExtraAudio.play('miss');fxAdd(t,'หลุด','muted');blog(`ผนึกแตก! ${t.name} ดิ้นหลุดออกมา`)}
-  after();return}
+  BattleCommandFocus.commit();after();return}
  if(k==='swap'){if(b.over||u.side!=='ally'||u.hp<=0)return;const p=petBy(+a);if(!p||p.hp<=0||!S.P.carried.includes(p.uid)||b.allies.some(x=>x.uid===p.uid))return;
   const pets=b.allies.filter(x=>x.kind==='pet'&&x.hp>0),dead=b.allies.findIndex(x=>x.hp<=0&&x.kind!=='player'),sel=b.allies[b.atarget];let slot;
   if(dead>=0)slot=dead;
@@ -351,7 +351,7 @@ function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
   if(!b.used.includes(p.uid))b.used.push(p.uid);
   S.P.party=b.allies.filter(x=>x.kind==='pet').map(x=>x.uid);blog(`เรียก ${petName(p)} ออกจากผนึก!`);b.menu='main';render();return;}
  if(k==='flee'){if(!['wild','bandit','traveler'].includes(b.kind)){toast('หนีไม่ได้ในการต่อสู้นี้');return}const es=b.enemies.filter(e=>e.hp>0);const avg=es.reduce((s,e)=>s+eff(e,'spd'),0)/es.length;
-  if(Math.random()<clamp(.5+(eff(u,'spd')-avg)*.03,.2,.92)){endBattle('flee');render()}else{blog('หนีไม่สำเร็จ!');after()}return}
+  BattleCommandFocus.commit();if(Math.random()<clamp(.5+(eff(u,'spd')-avg)*.03,.2,.92)){endBattle('flee');render()}else{blog('หนีไม่สำเร็จ!');after()}return}
 }
 // @soulbeast-end 0293-battleAction
 // @soulbeast-unit 0349-allFull

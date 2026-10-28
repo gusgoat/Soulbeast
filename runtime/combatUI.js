@@ -37,7 +37,23 @@ function vBattle(){const b=B(),u=uById(b.cur),P=S.P;
 // @soulbeast-end 0382-vBattle
 // @soulbeast-unit 0830-handlers-battleCommands
 
-handlers.battleCommands=function(){S.ui.battleCommandsHidden=!S.ui.battleCommandsHidden;render();};
+// Presentation only: never advance turns or change battle/save data.
+const BattleCommandFocus={
+ battle:null,turn:'',menu:'',pending:'',ticket:0,scrollTop:0,
+ ready(){const b=B(),u=b&&uById(b.cur);return !!(b&&!b.over&&u?.side==='ally'&&u.hp>0&&!teamAutoUnit(u)&&!['wait','end'].includes(b.menu)&&!(typeof MotionTimeline!=='undefined'&&MotionTimeline.busy()));},
+ prepare(){const b=B();this.scrollTop=b===this.battle?(document.querySelector('main')?.scrollTop||0):0;if(b!==this.battle){this.battle=b;this.turn='';this.pending='';this.ticket++;}if(!b)return;
+  const key=this.ready()?[b.round,b.cur,b.queue.join(',')].join('|'):'';
+  if(key&&key!==this.turn){S.ui.battleCommandsHidden=false;this.pending='commands';}
+  else if(!key&&this.turn)this.pending='arena';
+  if(key&&this.menu!==b.menu)this.pending='commands';this.menu=b.menu;this.turn=key;
+ },
+ commit(){this.turn='';this.pending='arena';this.ticket++;this.scroll('arena');},
+ scroll(where){const main=document.querySelector('main'),target=main?.querySelector?.(where==='commands'?'#battleCommandBody':'.battle-vitals');if(!main||!target||!main.getBoundingClientRect)return;const delta=target.getBoundingClientRect().top-main.getBoundingClientRect().top-12;main.scrollTop+=delta;},
+ sync(){const main=document.querySelector('main'),body=main?.querySelector?.('#battleCommandBody');if(B()&&main&&body&&!body.hidden&&main.getBoundingClientRect){const wanted=main.scrollTop+body.getBoundingClientRect().top-main.getBoundingClientRect().top-12,extra=Math.max(0,wanted-(main.scrollHeight-main.clientHeight));if(extra&&main.style)main.style.paddingBottom=((parseFloat(main.style.paddingBottom)||0)+extra)+'px';main.scrollTop=this.scrollTop;}if(!this.pending)return;const where=this.pending,battle=this.battle,ticket=++this.ticket;this.pending='';
+  (window.requestAnimationFrame||setTimeout)(()=>{if(ticket!==this.ticket||B()!==battle||!battle)return;if(where==='commands'&&(!this.ready()||S.ui.battleCommandsHidden))return;this.scroll(where);});
+ }
+};
+handlers.battleCommands=function(){S.ui.battleCommandsHidden=!S.ui.battleCommandsHidden;BattleCommandFocus.ticket++;if(!S.ui.battleCommandsHidden)BattleCommandFocus.pending='commands';render();};
 // @soulbeast-end 0830-handlers-battleCommands
 // @soulbeast-unit 0876-compactPvpCommands
 
