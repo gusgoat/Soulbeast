@@ -3,3 +3,6 @@
 #app .cw-arena .battle-vital[data-battle-card=full]::after{position:absolute!important}#app .cw-arena .online-unit-grid{gap:8px;grid-auto-rows:auto;flex:none}#app .cw-arena .online-combat-side{flex:none;gap:5px}.cw-battle>header h3{margin-bottom:5px}.cw-battle>header small{display:block}#app[data-screen=countrywar] main>.stack>.row>h2{font-size:22px}
 .cw-monthly .cw-flag{width:48px;height:auto}.cw-battle~.card .cw-flag{width:48px;height:auto}
 .cw-dead{padding:12px;border:1px solid #b96362;border-radius:8px;background:#45232ac7;color:#ffe0d8}
+.player-country-hero{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:2px 0 10px;color:#f0d596;font-size:14px}.player-country-hero .cw-flag{width:48px;height:32px;flex:none}
+
+.top .player-country-top{display:inline-block;width:18px;height:12px;line-height:0;margin-left:6px;vertical-align:-2px}.top .player-country-top .cw-flag{position:static;display:block;width:18px;height:12px;transform:none;object-fit:contain;border-radius:2px;box-shadow:0 1px 3px #0008}

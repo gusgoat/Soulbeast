@@ -3,6 +3,7 @@ const COUNTRY_WAR_MAP={"version":1,"timezone":"Asia/Bangkok","countries":[{"id":
 const COUNTRY_WAR={code:'',data:null,busy:false,error:'',selected:'',zoom:1,pending:null,mail:[],message:'',room:null,replaySerial:0,mailChecked:'',mapLeft:0,mapTop:0};
 function countryName(id){return COUNTRY_WAR_MAP.countries.find(c=>c.id===id)?.name||'ยังไม่ได้เลือกประเทศ';}
 function countryFlag(id,cls=''){const c=COUNTRY_WAR_MAP.countries.find(c=>c.id===id);return c?'<img class="cw-flag '+cls+'" src="'+c.flag+'" alt="'+esc(c.name)+'" width="96" height="64">':'';}
+function countryPlayerFlag(place){const id=S.P?.country,c=COUNTRY_WAR_MAP.countries.find(c=>c.id===id);if(!c)return '';return '<span class="player-country player-country-'+(place==='top'?'top':'hero')+'" data-country="'+id+'" title="'+esc(c.name)+'">'+countryFlag(id)+(place==='hero'?'<span>'+esc(c.name)+'</span>':'')+'</span>';}
 function countryTerrain(id){return ({snow:'หิมะ',volcano:'ภูเขาไฟ',forest:'ป่า',coast:'ชายฝั่งและเกาะ',mountain:'ภูเขา'})[id]||id;}
 function countryChoices(action){return COUNTRY_WAR_MAP.countries.map(c=>'<button class="btn cw-country-choice" data-a="'+action+'" data-v="'+c.id+'" aria-pressed="'+(S.ui.country===c.id)+'" '+(COUNTRY_WAR.busy?'disabled':'')+'>'+countryFlag(c.id)+'<b>'+esc(c.name)+'</b></button>').join('');}
 function countryPlace(id){return COUNTRY_WAR_MAP.nodes.find(n=>n.id===id)?.placeName||id;}
