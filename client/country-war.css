@@ -7,3 +7,5 @@
 .player-country-hero{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:2px 0 10px;color:#f0d596;font-size:14px}.player-country-hero .cw-flag{width:48px;height:32px;flex:none}
 
 .top .player-country-top{display:inline-block;width:18px;height:12px;line-height:0;margin-left:6px;vertical-align:-2px}.top .player-country-top .cw-flag{position:static;display:block;width:18px;height:12px;transform:none;object-fit:contain;border-radius:2px;box-shadow:0 1px 3px #0008}
+
+.activity-pet-picker{min-width:0}.activity-pet-picker legend{max-width:100%}.activity-pet-picker .cw-pet-choice{min-width:0}

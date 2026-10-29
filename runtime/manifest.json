@@ -287,6 +287,11 @@
       "file": "forestStoryLimit.js",
       "description": "One persisted story selection per forest expedition",
       "units": 1
+    },
+    "activityPets": {
+      "file": "activityPets.js",
+      "description": "Shared activity portrait and level beast selection",
+      "units": 1
     }
   },
   "order": [
@@ -1399,6 +1404,7 @@
     "1108-forestVideo",
     "1109-countryWar",
     "1110-forestStoryLimit",
+    "1111-activityPets",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9518,6 +9524,13 @@
         "ForestStoryRun"
       ],
       "type": "ForestStoryPolicy"
+    },
+    "1111-activityPets": {
+      "module": "activityPets",
+      "names": [
+        "ActivityPets"
+      ],
+      "type": "ActivityPets"
     }
   },
   "trailer": "\r\n\r\n"

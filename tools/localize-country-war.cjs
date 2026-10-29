@@ -22,7 +22,8 @@ Object.assign(terms,{
 });
 fs.writeFileSync('content/country-war-translations.json',JSON.stringify(terms,null,2)+'\n');
 const literals=new Set();const ast=acorn.parse(fs.readFileSync('runtime/countryWar.js','utf8'),{ecmaVersion:'latest'});
-function visit(n,onlyCreation=false){if(!n||typeof n!=='object')return;const s=n.type==='Literal'?n.value:n.type==='TemplateElement'?n.value.cooked:null;if(typeof s==='string'&&/[ก-๙]/.test(s)&&(!onlyCreation||s.includes('เลือกอาชีพที่เหมาะกับคุณ')))literals.add(s);for(const v of Object.values(n))if(Array.isArray(v))v.forEach(x=>visit(x,onlyCreation));else if(v&&typeof v==='object')visit(v,onlyCreation);}visit(ast);visit(acorn.parse(fs.readFileSync('runtime/ui.js','utf8'),{ecmaVersion:'latest'}),true);
+function visit(n,onlyCreation=false){if(!n||typeof n!=='object')return;const s=n.type==='Literal'?n.value:n.type==='TemplateElement'?n.value.cooked:null;if(typeof s==='string'&&/[ก-๙]/.test(s)&&(!onlyCreation||s.includes('เลือกอาชีพที่เหมาะกับคุณ')))literals.add(s);for(const v of Object.values(n))if(Array.isArray(v))v.forEach(x=>visit(x,onlyCreation));else if(v&&typeof v==='object')visit(v,onlyCreation);}visit(ast);visit(acorn.parse(fs.readFileSync('runtime/activityPets.js','utf8'),{ecmaVersion:'latest'}));visit(acorn.parse(fs.readFileSync('runtime/ui.js','utf8'),{ecmaVersion:'latest'}),true);
+literals.add('เลือกอสูรที่พกติดตัวตามจำนวนที่อาชีพใช้ได้');literals.add('เลือกอสูรเข้าร่วมบอสโลก');
 const missing=[];for(const s of literals)for(const [i,lang]of ['en','zh-CN'].entries()){
  let t=s;for(const [th,pair]of Object.entries(terms).sort((a,b)=>b[0].length-a[0].length))t=t.split(th).join(pair[i]);
  t=g.run('translateGameText('+JSON.stringify(t)+','+JSON.stringify(lang)+',false)');if(/[ก-๙]/.test(t))missing.push({s,lang,t});else extra[lang][s]=t;

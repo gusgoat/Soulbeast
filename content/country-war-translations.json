@@ -894,5 +894,33 @@
   "ปิดรอบวันอาทิตย์ 23:59 ไทย แบ่งเท่ากันเฉพาะผู้ใช้แอคชั่นในรอบนั้น โอนอัตโนมัติและแจ้งทางจดหมาย": [
     "Closes Sunday at 23:59 Bangkok. Shared equally only by characters who spent an action during the period; credited automatically with mail notification.",
     "每周日泰国时间23:59结算，仅限本周期消耗过行动的角色均分，自动到账并发送邮件。"
+  ],
+  "เลือกจากอสูรที่พกติดตัว ไม่เปลี่ยนทีมเดินป่า": [
+    "Choose carried beasts without changing the forest party",
+    "选择携带的兽，不更改森林队伍"
+  ],
+  "แตะตัวที่เลือกเพื่อยกเลิก เมื่อครบจำนวน แตะตัวใหม่จะแทนตัวที่เลือกก่อนสุด": [
+    "Tap a selected beast to remove it. At the limit, a new choice replaces the oldest selection.",
+    "点击已选兽可取消；达到上限后，新选择将替换最早选择的兽。"
+  ],
+  "เลือกอสูรเข้าร่วมบอสโลก": [
+    "Choose world boss beasts",
+    "选择世界首领参战兽"
+  ],
+  "เลือกอสูรประลอง PVP": [
+    "Choose PVP beasts",
+    "选择PVP参战兽"
+  ],
+  "เลือกอสูรโจมตีสงครามกิล": [
+    "Choose guild war attack beasts",
+    "选择公会战进攻兽"
+  ],
+  "ใช้สิทธิ์สงครามกิลรอบนี้สุ่มคู่ต่อสู้และต่อสู้อัตโนมัติ ยืนยันหรือไม่?": [
+    "Use this round’s guild war entry to match an opponent and fight automatically. Confirm?",
+    "使用本轮公会战次数匹配对手并自动战斗，确认吗？"
+  ],
+  "เลือกอสูรที่พกติดตัวตามจำนวนที่อาชีพใช้ได้": [
+    "Choose carried beasts within your class limit",
+    "请按职业上限选择携带的兽"
   ]
 }
