@@ -993,7 +993,7 @@ function gainExp(o,amt,isP){const lines=[];o.exp+=amt;
 function loseExp(o,frac){const l=Math.floor(need(o.lv)*frac),lost=Math.min(o.exp,l);o.exp-=lost;return lost}
 
 /* Expansion data: additive IDs keep all existing saves and arena indices valid. */
-const JOB_FOCUS={swordsman:['patk','acc'],gladiator:['pdef','mdef'],archer:['patk','acc'],mage:['matk','mp'],merchant:['hp','patk'],gunner:['patk','crit'],druid:['hp','matk'],thief:['spd','crit'],summoner:['mp','mdef']};
+const JOB_FOCUS={swordsman:['patk','acc'],gladiator:['hp','pdef','mdef'],archer:['patk','acc'],mage:['matk','mp'],merchant:['hp','patk'],gunner:['patk','crit'],druid:['hp','matk'],thief:['spd','crit'],summoner:['mp','mdef']};
 function focusFor(cls){const own=CLS[cls].focus;if(own)return own;const keys=Object.keys(CLS[cls].m).filter(k=>!['hp','mp','eva'].includes(k)).sort((a,b)=>(CLS[cls].m[b]||1)-(CLS[cls].m[a]||1));return tierOf(cls)>0&&keys.length>=2?keys.slice(0,2):JOB_FOCUS[baseOf(cls)]}
 function focusBonus(cls,k){return focusFor(cls).includes(k)?[.10,.20,.30][Math.min(2,tierOf(cls))]:0}
 Object.assign(SK,{
