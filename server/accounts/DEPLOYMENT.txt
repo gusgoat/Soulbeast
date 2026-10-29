@@ -1,0 +1,40 @@
+Live web account release
+
+Official entry: accounts.html (verified email account, compiled SB_ENV=live).
+The public /Soulbeast/ and /Soulbeast/index.html routes redirect there while preserving query/hash.
+accounts-staging.html remains SB_ENV=test. Android internal builds still use the test entry; this does not publish Google Play.
+
+Build:
+  node tools/client-build.cjs --out build
+  Refresh canonical root outputs using the existing client build convention.
+  node tools/prepare-account-stage.cjs
+This emits both account bundles and accounts.html, accounts-staging.html, accounts-preview.html.
+Never replace the real account entry with the generic PIN-based live shell.
+
+One-time selected-character promotion:
+  server/accounts/006-promote-selected.sql runs inside a transaction with a reviewed
+  pg_temp.sb_promote_selection and a unique soulbeast.promotion_batch.
+  Always dry-run with ROLLBACK first. It refuses owner/name/class mismatches,
+  existing destination records, shared identity conflicts, active fights and repeat batches.
+  It takes a service-only database backup of both engine worlds and selected ownership records.
+  Test rows stay unchanged. Exact saves, wallets, receipt history and individual progress copy;
+  shared guilds, kingdom territories, online rooms and other players do not copy.
+  Credit cursors are mapped to the destination table to avoid duplicate coupon grants.
+  Kingdom membership starts in the character's own capital when first joining the live activity.
+
+  server/accounts/007-world-capacity.sql gives the live world five slots per account,
+  independent of test characters. Existing test capacity overrides remain test-only.
+  Both SQL operations preserve service-only RPC access and existing RLS protections.
+
+Authentication redirect URL must include:
+  https://gusgoat.github.io/Soulbeast/accounts.html
+Keep the existing accounts-staging.html allowlist entry for testing.
+Production shop and email-return navigation use the real account entry.
+Payment provider enablement, prices and credentials are not altered by this release.
+
+Verification:
+  npm test
+  npm run test:accounts
+  npm run test:production
+  Public root redirect + account ownership list + save load, without spending any game action.
+  Preserve accounts-before-20261028.html and older hashed assets for rollback.
