@@ -2,7 +2,7 @@
 const fs=require('fs'),path=require('path'),crypto=require('crypto'),cp=require('child_process');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'mobile/www');
 cp.execFileSync(process.execPath,[path.join(root,'tools/prepare-account-stage.cjs')],{cwd:root});
-const html=fs.readFileSync(path.join(root,'accounts-staging.html'),'utf8');
+const html=fs.readFileSync(path.join(root,'accounts.html'),'utf8');
 const scripts=[...html.matchAll(/(?:src|href)="\.\/((?:game-[^"]+\.(?:js|css)))"/g)].map(x=>x[1]);
 fs.mkdirSync(out,{recursive:true});
 for(const f of scripts)fs.copyFileSync(path.join(root,f),path.join(out,f));
@@ -19,6 +19,6 @@ esbuild.buildSync({entryPoints:[path.join(root,'mobile/native-entry.mjs')],outfi
 // Fail closed on leftovers from a prior build; never package extra files silently.
 const allowed=new Set([...scripts,'index.html','native-entry.js',...clientFiles.map(f=>'client/'+f),'content/billing-channels.json']);
 for(const f of fs.readdirSync(out,{recursive:true}).filter(f=>fs.statSync(path.join(out,f)).isFile())){const p=f.replaceAll('\\','/');if(!p.startsWith('assets/')&&!allowed.has(p))throw Error('Unapproved mobile asset: '+p);}
-const inventory={version:1,environment:'test',platform:'android',billing:'google_play',purchasesEnabled:JSON.parse(fs.readFileSync(path.join(root,'content/billing-channels.json'),'utf8')).android.purchasesEnabled,files:[...allowed].map(p=>({path:p,sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(out,p))).digest('hex')}))};
+const inventory={version:1,environment:'live',platform:'android',billing:'google_play',purchasesEnabled:JSON.parse(fs.readFileSync(path.join(root,'content/billing-channels.json'),'utf8')).android.purchasesEnabled,files:[...allowed].map(p=>({path:p,sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(out,p))).digest('hex')}))};
 fs.writeFileSync(path.join(root,'build/mobile-manifest.json'),JSON.stringify(inventory,null,2));
-console.log('Prepared Android internal bundle: test accounts, local art/audio, server-gated production Play billing; no admin/Stripe pages');
+console.log('Prepared Android internal bundle: live accounts, local art/audio, server-gated production Play billing; no admin/Stripe pages');

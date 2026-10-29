@@ -5,9 +5,9 @@ assert.equal(config.plugins.SystemBars.insetsHandling,'native');assert.equal(con
 assert(html.includes('viewport-fit=contain'));assert(!html.includes('viewport-fit=cover'),'Native WebView must not pass through behind Android system bars on recent WebView versions');
 assert(fs.readFileSync('mobile/android/app/src/main/res/values/styles.xml','utf8').includes('name="android:windowBackground">#09131e'));
 assert(html.includes('window.SOULBEAST_ACCOUNTS=true'));assert(html.includes('soulbeast-accounts'));assert(html.includes('native-entry.js'));assert(!html.includes('accounts-preview.js'));assert(!html.includes('topup-test'));
-const app=[...html.matchAll(/src="\.\/(game-app\.[^"]+)"/g)][0]?.[1];assert(app);const code=fs.readFileSync(path.join(out,app),'utf8');assert(code.includes("const SB_ENV='test';"));assert(code.includes('save_conflict'));assert(code.includes('ACCOUNT_GAME'));
+const app=[...html.matchAll(/src="\.\/(game-app\.[^"]+)"/g)][0]?.[1];assert(app);const code=fs.readFileSync(path.join(out,app),'utf8');assert(code.includes("const SB_ENV='live';"));assert(code.includes('save_conflict'));assert(code.includes('ACCOUNT_GAME'));
 for(const p of ['admin.html','admin.js','topup-test.html','topup-test.js','server','private','client/accounts-preview.js'])assert(!fs.existsSync(path.join(out,p)),'Forbidden packaged file '+p);
 const gradle=fs.readFileSync('mobile/android/app/build.gradle','utf8');assert(gradle.includes('"BILLING_ENABLED", "true"'));assert(gradle.includes('billing:9.1.0'));
 const manifest=fs.readFileSync('mobile/android/app/src/main/AndroidManifest.xml','utf8');assert(manifest.includes('android:allowBackup="false"'));assert(manifest.includes('android:usesCleartextTraffic="false"'));
 for(const asset of ['assets/ui/soulbeast-logo.webp','client/account-client.mjs','client/billing-client.mjs','content/billing-channels.json'])assert(fs.existsSync(path.join(out,asset)));
-console.log('PASS Android package: test-only accounts, local assets, native shell, HTTPS, no remote server URL, no admin/Stripe/QA files and server-gated production billing');
+console.log('PASS Android package: live accounts, local assets, native shell, HTTPS, no remote server URL, no admin/Stripe/QA files and server-gated production billing');
