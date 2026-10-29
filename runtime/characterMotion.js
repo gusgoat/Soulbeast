@@ -47,7 +47,7 @@ const CharacterMotion={
   for(const [node,inst]of this.instances)if(node.dataset.motionUnit===String(id)){node.style.setProperty('--um-elapsed','0ms');inst.set(phase);}
   this.schedule(()=>{if(this.states.get(String(id))!==st)return;this.states.delete(String(id));for(const [n,i]of this.instances)if(n.dataset.motionUnit===String(id)){n.style.setProperty('--um-elapsed','0ms');i.set('idle');}},duration);
  },
- mode(skill,u){const sk=SK[skill]||{};if(['buff','heal','rest','revert','form','summon','debuff','status'].includes(sk.t)||sk.summon)return 'support';if(skill==='attack')return 'melee';return BattleEffects.profile(skill,u).mode==='melee'?'melee':'ranged';},
+ mode(skill,u){const sk=SK[skill]||{};if(['buff','heal','rest','revert','form','summon','debuff','status'].includes(sk.t)||sk.summon)return 'support';if(skill==='attack')return 'melee';const profile=BattleEffects.profile(skill,u);return profile.painted?.asset==='crescent'?'blade':profile.mode==='melee'?'melee':'ranged';},
  landed(e){return e.k==='hit'&&e.motionLanded!==false&&!e.miss&&!e.blocked&&!e.immune;},
  emission(from){const card=from?.node.closest?.('.battle-motion'),body=card?.querySelector('.um-body');if(!body)return from;const r=body.getBoundingClientRect(),css=getComputedStyle(card);return {...from,x:r.left+r.width*parseFloat(css.getPropertyValue('--um-x'))/100,y:r.top+r.height*parseFloat(css.getPropertyValue('--um-y'))/100};},
  contact(from,to){
@@ -82,12 +82,14 @@ const CharacterMotion={
     if(cast)vSpawn(L,'vx-cast',null,cast.c||'#d9b35b',cast.n||SK[skill]?.n);
     const targets=list.filter(e=>['hit','miss','heal','buff','debuff'].includes(e.k));let release=0,arrival=0;
     if(a&&mode==='support'){const threat=!!a.assets.threat;this.phase(source,threat?'threat':'windup',threat?1800:(a.windupDuration||1)*1000);release=200;}
+    // Weapon waves swing in place, then launch; never use the generic casting/power pose.
+    else if(a&&mode==='blade'){this.phase(source,'melee',900);release=300;}
     else if(a&&mode==='ranged'){release=(a.windupDuration||1)*1000;this.phase(source,'windup',release);this.schedule(()=>this.phase(source,'power',(a.powerDuration||.75)*1000),release);}
     else if(a&&mode==='melee'){const target=targets.find(e=>e.id!==source);arrival=target?this.melee(source,target.id):0;if(!arrival)this.phase(source,'melee',900);}
     const seen=new Map();for(const e of targets){const n=seen.get(e.id)||0;seen.set(e.id,n+1);
      this.schedule(()=>{
       const to=BattleEffects.anchor(e.id),from=BattleEffects.anchor(source),p=BattleEffects.profile(skill,actor);if(!to)return;
-      let flight=0;if(mode==='ranged'&&from&&e.id!==source&&!n)flight=BattleEffects.travel(L,this.emission(from),to,p.mode==='melee'?{...p,mode:'projectile'}:p);
+      let flight=0;if((mode==='ranged'||mode==='blade')&&from&&e.id!==source&&!n)flight=BattleEffects.travel(L,this.emission(from),to,p.mode==='melee'?{...p,mode:'projectile'}:p);
       this.schedule(()=>{const current=BattleEffects.anchor(e.id);if(!current)return;if(this.landed(e))this.phase(e.id,'hit',1500);if(e.k==='miss')BattleEffects.spawn(L,'target',current.x,current.y,{...p,color:'#9a97ab'});else BattleEffects.impact(L,e,current,p);},flight+n*65);
      },release+arrival);
     }

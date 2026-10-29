@@ -22,13 +22,14 @@ const MotionTimeline={
   for(const list of groups.values()){
    const cast=list.find(e=>e.k==='cast'||e.k==='charge'),first=list[0],source=cast?.id||first.source,skill=cast?.skill||first.skill||'attack',actor=BattleEffects.actor(source),a=CharacterMotion.resolve(actor),mode=CharacterMotion.mode(skill,actor),targets=list.filter(e=>['hit','miss','heal','buff','debuff'].includes(e.k));
    const charging=cast?.k==='charge';
-   const windup=charging?(a?.windupDuration||1)*1000:a?(mode==='ranged'?(a.windupDuration||1)*1000:mode==='support'?(a.assets.threat?1800:(a.windupDuration||1)*1000):0):0;
+   const windup=charging?(a?.windupDuration||1)*1000:a?(mode==='blade'?300:mode==='ranged'?(a.windupDuration||1)*1000:mode==='support'?(a.assets.threat?1800:(a.windupDuration||1)*1000):0):0;
    // Reserve through projectile arrival, all multi-hit impacts and the target's recovery pose.
    const span=charging?windup+150:mode==='melee'?2400:windup+2600+targets.length*65;
    CharacterMotion.schedule(()=>{
     if(cast)vSpawn(L,'vx-cast',null,cast.c||'#d9b35b',cast.n||SK[skill]?.n);
     if(charging){CharacterMotion.phase(source,'windup',windup);CharacterMotion.schedule(()=>this.arrive(source),windup);return;}
     if(a&&mode==='support')CharacterMotion.phase(source,a.assets.threat?'threat':'windup',windup);
+    if(a&&mode==='blade')CharacterMotion.phase(source,'melee',900);
     if(a&&mode==='ranged')CharacterMotion.phase(source,'windup',windup);
     let contact=0;if(mode==='melee'){const t=targets.find(e=>e.id!==source);contact=t?CharacterMotion.melee(source,t.id):0;if(!contact)CharacterMotion.phase(source,'melee',900);}
     CharacterMotion.schedule(()=>{

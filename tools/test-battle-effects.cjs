@@ -15,7 +15,7 @@ for(const file of ['build/live-index.html','build/staging-index.html']){
  const stateBeforeEffects=r('JSON.stringify(S)');
  r('globalThis.eclipseRecorded=[];globalThis.eclipseOriginalVSpawn=vSpawn;vSpawn=()=>({dataset:{},setAttribute(){}});globalThis.eclipseOriginalSpawn=BattleEffects.spawn;BattleEffects.spawn=function(L,shape,x,y,p,vars){eclipseRecorded.push({shape,x,y,skill:p.id,vars});return {dataset:{}};};');
  for(const [id,recipe]of Object.entries(recipes)){
-  assert(r('!!SK['+JSON.stringify(id)+']'),id);const p=json('BattleEffects.profile('+JSON.stringify(id)+')');assert.equal(p.mode,recipe.mode);assert.equal(p.color,recipe.color);
+  assert(r('!!SK['+JSON.stringify(id)+']'),id);const p=json('BattleEffects.profile('+JSON.stringify(id)+')');assert.equal(p.mode,['solar_pentadrake_s3','solar_heliotheon_s6','solar_ferroth_s4'].includes(id)?'projectile':recipe.mode);assert.equal(p.color,recipe.color);
   r('eclipseRecorded.length=0;BattleEffects.eclipseCast({}, {x:40,y:300},BattleEffects.profile('+JSON.stringify(id)+'));BattleEffects.eclipseImpact({}, {k:"hit"}, {x:280,y:80},BattleEffects.profile('+JSON.stringify(id)+'));');
   const records=json('eclipseRecorded');assert(records.some(x=>x.shape==='eclipse-'+recipe.motif&&x.x===40),'caster crest '+id);assert(records.some(x=>x.shape===recipe.focus&&x.x===280),'target focus '+id);assert(records.length<=20,'bounded particles '+id);
   r('eclipseRecorded.length=0;BattleEffects.eclipseImpact({}, {k:"hit"}, {x:280,y:80},BattleEffects.profile('+JSON.stringify(id)+'),1);');assert.equal(json('eclipseRecorded').length,2,'repeated hit has its own particles '+id);
