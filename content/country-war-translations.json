@@ -842,5 +842,41 @@
   "แบ่งให้ผู้มีสิทธิ์": [
     "Shared by eligible participants",
     "由合资格参与者均分"
+  ],
+  "เลือกอสูรเข้าร่วมสงคราม": [
+    "Choose war beasts",
+    "选择参战兽"
+  ],
+  "ยืนยันทีมสงคราม": [
+    "Confirm war team",
+    "确认战争队伍"
+  ],
+  "ใช้เฉพาะทีมสงคราม ไม่เปลี่ยนทีมเดินป่า": [
+    "War team only; your exploration party stays unchanged",
+    "仅用于战争队伍，不改变探索队伍"
+  ],
+  "เลือกจากอสูรที่พกติดตัว · ยืนยันแล้วฟื้น HP/MP ที่เมืองหลวง ไม่ใช้แอคชั่นวันนี้": [
+    "Choose carried beasts. Confirm to restore HP/MP at the capital without spending today’s action",
+    "选择随身兽，确认后在首都恢复HP/MP，不消耗今日行动"
+  ],
+  "ไม่มีอสูรที่พกติดตัว": [
+    "No carried beasts",
+    "没有随身兽"
+  ],
+  "รายการอสูรไม่ถูกต้อง กรุณาเลือกใหม่": [
+    "Invalid beast selection; please choose again",
+    "兽选择无效，请重新选择"
+  ],
+  "ไม่พบอสูรที่เลือก": [
+    "Selected beast not found",
+    "未找到所选兽"
+  ],
+  "เลือกได้เฉพาะอสูรที่พกติดตัว": [
+    "Only carried beasts can be selected",
+    "只能选择随身兽"
+  ],
+  "เลือกอสูรเกินจำนวนที่อาชีพใช้ได้": [
+    "Too many beasts for this class",
+    "所选兽超过职业上限"
   ]
 }

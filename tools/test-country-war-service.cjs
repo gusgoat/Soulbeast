@@ -16,6 +16,18 @@ function world(){
 }
 function guardRows(w,count){const base=w.member('a');for(let i=0;i<count;i++){const code='FAKEGUARD'+String(i).padStart(7,'0');w.put('cw:m:'+code,{...structuredClone(base),code,name:'ผู้ป้องกัน '+i,location:'blue-capital',capitalGuard:true,capitalWounded:true,slotSince:now,lastParticipation:now});}}
 {
+ const w=world();w.save('selector','blue');w.call('selector','country_status');
+ const saved=JSON.parse(w.call('selector','load').data),pet=saved.P.pets[0],alternate={...structuredClone(pet),uid:9981},camp={...structuredClone(pet),uid:9982};
+ saved.P.pets.push(alternate,camp);saved.P.carried.push(alternate.uid);assert(w.call('selector','save',{data:JSON.stringify(saved)}).ok);
+ const before=w.member('selector').lastActionDay,forest=JSON.parse(w.call('selector','load').data).P;
+ let result=w.call('selector','country_team',{petIds:[alternate.uid]});assert(result.ok,JSON.stringify(result));assert.equal(result.me.team.find(u=>u.kind==='pet').uid,alternate.uid);assert.equal(w.member('selector').lastActionDay,before);
+ const after=JSON.parse(w.call('selector','load').data).P;assert.deepEqual(after.party,forest.party);assert.equal(after.hp,forest.hp);assert.equal(after.mp,forest.mp);
+ for(const [ids,error]of [[[alternate.uid,alternate.uid],'country bad pets'],[['9981'],'country bad pets'],[[999999],'pet at camp'],[[camp.uid],'pet at camp'],[[pet.uid,alternate.uid],'too many pets']])assert.equal(w.call('selector','country_team',{petIds:ids}).error,error);
+ assert(w.call('selector','country_team',{petIds:[]}).ok,'Solo hero remains supported');
+ assert(w.call('selector','country_action',{kind:'move',target:'blue-city-1'}).ok);assert.equal(w.call('selector','country_team',{petIds:[alternate.uid]}).error,'country capital only');
+ console.log('PASS direct war pet selection: authoritative UID/ownership/carried/cap validation, no daily action or forest roster/HP change, hero-only and capital-only restrictions');
+}
+{
  const w=world();for(const [k,n]of [['a','blue'],['b','blue'],['c','blue'],['g','green'],['r','red']])w.save(k,n);
  let v=w.call('a','country_status');assert(v.ok);assert.equal(v.me.country,'blue');assert.equal(v.map.locations.length,37);assert.equal(v.map.locations.find(n=>n.id==='blue-capital').count,0,'Reserves do not occupy guard slots');assert(!JSON.stringify(v.map).includes(w.id('r')));
  assert.equal(w.call('a','country_choose',{country:'red'}).error,'country immutable');const old=JSON.parse(w.call('a','load').data);old.P.country='red';assert.equal(w.call('a','save',{data:JSON.stringify(old)}).error,'country immutable');delete old.P.country;assert(w.call('a','save',{data:JSON.stringify(old)}).ok);assert.equal(JSON.parse(w.call('a','load').data).P.country,'blue');
