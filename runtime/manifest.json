@@ -282,6 +282,11 @@
       "file": "countryWar.js",
       "description": "Country war and system mail",
       "units": 1
+    },
+    "forestStoryLimit": {
+      "file": "forestStoryLimit.js",
+      "description": "One persisted story selection per forest expedition",
+      "units": 1
     }
   },
   "order": [
@@ -1393,6 +1398,7 @@
     "1107-deathAudio",
     "1108-forestVideo",
     "1109-countryWar",
+    "1110-forestStoryLimit",
     "1076-ExpressionStatement",
     "1077-ExpressionStatement"
   ],
@@ -9505,6 +9511,13 @@
         "COUNTRY_WAR_MAP"
       ],
       "type": "CountryWar"
+    },
+    "1110-forestStoryLimit": {
+      "module": "forestStoryLimit",
+      "names": [
+        "ForestStoryRun"
+      ],
+      "type": "ForestStoryPolicy"
     }
   },
   "trailer": "\r\n\r\n"
