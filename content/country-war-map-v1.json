@@ -33,12 +33,13 @@
       "placeName": "เหมันตคีรี",
       "x": 0.212,
       "y": 0.205,
-      "capacity": null,
-      "capturable": false,
-      "weeklyGold": 0,
-      "weeklyCouponEighths": 0,
+      "capacity": 32,
+      "capturable": true,
+      "weeklyGold": 4000,
+      "weeklyCouponEighths": 8,
       "terrain": "snow",
-      "dailyGold": 0
+      "dailyGold": 1000,
+      "monthlyScore": 16
     },
     {
       "id": "blue-city-1",
@@ -54,7 +55,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "snow",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "blue-city-2",
@@ -70,7 +72,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "snow",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "blue-city-3",
@@ -86,7 +89,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "snow",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "blue-city-4",
@@ -102,7 +106,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "snow",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "green-capital",
@@ -112,12 +117,13 @@
       "placeName": "พนาสมุทร",
       "x": 0.695,
       "y": 0.414,
-      "capacity": null,
-      "capturable": false,
-      "weeklyGold": 0,
-      "weeklyCouponEighths": 0,
+      "capacity": 32,
+      "capturable": true,
+      "weeklyGold": 4000,
+      "weeklyCouponEighths": 8,
       "terrain": "mountain",
-      "dailyGold": 0
+      "dailyGold": 1000,
+      "monthlyScore": 16
     },
     {
       "id": "green-city-1",
@@ -133,7 +139,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "mountain",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "green-city-2",
@@ -149,7 +156,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "forest",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "green-city-3",
@@ -165,7 +173,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "mountain",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "green-city-4",
@@ -181,7 +190,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "coast",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "red-capital",
@@ -191,12 +201,13 @@
       "placeName": "อัคนีบรรพต",
       "x": 0.325,
       "y": 0.605,
-      "capacity": null,
-      "capturable": false,
-      "weeklyGold": 0,
-      "weeklyCouponEighths": 0,
+      "capacity": 32,
+      "capturable": true,
+      "weeklyGold": 4000,
+      "weeklyCouponEighths": 8,
       "terrain": "volcano",
-      "dailyGold": 0
+      "dailyGold": 1000,
+      "monthlyScore": 16
     },
     {
       "id": "red-city-1",
@@ -212,7 +223,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "volcano",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "red-city-2",
@@ -228,7 +240,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "volcano",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "red-city-3",
@@ -244,7 +257,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "volcano",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "red-city-4",
@@ -260,7 +274,8 @@
       "weeklyGold": 1000,
       "weeklyCouponEighths": 4,
       "terrain": "coast",
-      "dailyGold": 100
+      "dailyGold": 100,
+      "monthlyScore": 4
     },
     {
       "id": "blue-village-1",
@@ -276,7 +291,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-1",
@@ -292,7 +308,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "mountain",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-2",
@@ -308,7 +325,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-2",
@@ -324,7 +342,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "mountain",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-3",
@@ -340,7 +359,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-3",
@@ -356,7 +376,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "mountain",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-4",
@@ -372,7 +393,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-4",
@@ -388,7 +410,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "mountain",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-5",
@@ -404,7 +427,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-5",
@@ -420,7 +444,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "forest",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-6",
@@ -436,7 +461,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-6",
@@ -452,7 +478,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "forest",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-7",
@@ -468,7 +495,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-7",
@@ -484,7 +512,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "forest",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-8",
@@ -500,7 +529,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-8",
@@ -516,7 +546,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "forest",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-9",
@@ -532,7 +563,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-1",
@@ -548,7 +580,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-10",
@@ -564,7 +597,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-2",
@@ -580,7 +614,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-11",
@@ -596,7 +631,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-3",
@@ -612,7 +648,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-12",
@@ -628,7 +665,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-4",
@@ -644,7 +682,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-13",
@@ -660,7 +699,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-5",
@@ -676,7 +716,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-14",
@@ -692,7 +733,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-6",
@@ -708,7 +750,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-15",
@@ -724,7 +767,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-7",
@@ -740,7 +784,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "blue-village-16",
@@ -756,7 +801,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "snow",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-8",
@@ -772,7 +818,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-9",
@@ -788,7 +835,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "mountain",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-9",
@@ -804,7 +852,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-10",
@@ -820,7 +869,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "mountain",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-10",
@@ -836,7 +886,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-11",
@@ -852,7 +903,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "mountain",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-11",
@@ -868,7 +920,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-12",
@@ -884,7 +937,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "mountain",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-12",
@@ -900,7 +954,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "volcano",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-13",
@@ -916,7 +971,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "coast",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-13",
@@ -932,7 +988,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "coast",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-14",
@@ -948,7 +1005,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "coast",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-14",
@@ -964,7 +1022,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "coast",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-15",
@@ -980,7 +1039,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "coast",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-15",
@@ -996,7 +1056,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "coast",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "green-village-16",
@@ -1012,7 +1073,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "coast",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     },
     {
       "id": "red-village-16",
@@ -1028,7 +1090,8 @@
       "weeklyGold": 100,
       "weeklyCouponEighths": 1,
       "terrain": "coast",
-      "dailyGold": 10
+      "dailyGold": 10,
+      "monthlyScore": 1
     }
   ],
   "edges": [

@@ -5,7 +5,9 @@ for(const n of map.nodes){
  const city=n.type==='city'?n:map.nodes.find(c=>c.type==='city'&&map.edges.some(e=>e.a===n.id&&e.b===c.id||e.b===n.id&&e.a===c.id));
  const group=city?.number||0;
  n.terrain=n.country==='blue'?'snow':n.country==='green'?(group===4?'coast':group===1||group===3?'mountain':'forest'):(group===4?'coast':'volcano');
- n.dailyGold=n.type==='city'?100:n.type==='village'?10:0;
+ n.dailyGold=n.type==='capital'?1000:n.type==='city'?100:10;
+ if(n.type==='capital'){n.capacity=32;n.capturable=true;n.weeklyGold=4000;n.weeklyCouponEighths=8;}
+ n.monthlyScore=n.type==='capital'?16:n.type==='city'?4:1;
 }
 fs.writeFileSync(file,JSON.stringify(map,null,2)+'\n');
 const runtime='runtime/countryWar.js';let s=fs.readFileSync(runtime,'utf8');

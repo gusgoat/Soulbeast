@@ -714,5 +714,133 @@
   "รีเซ็ตฐานแล้ว ทุกคนกลับเมืองหลวงพร้อม HP/MP เต็ม": [
     "Bases reset; everyone returns to the capital with full HP/MP",
     "据点已重置，全员满HP/MP返回首都"
+  ],
+  "เสียชีวิตแล้ว รอเกิดใหม่วันถัดไป เวลา 00:00 ไทย": [
+    "Defeated. Respawn tomorrow at 00:00 Bangkok",
+    "已阵亡，次日泰国时间00:00重生"
+  ],
+  "สล็อตป้องกันเมืองหลวงเต็ม 32 คนแล้ว ยังไม่ใช้แอคชั่นวันนี้": [
+    "All 32 capital guard slots are full. Your daily action was not spent",
+    "首都32个防守位已满，未消耗今日行动"
+  ],
+  "ผู้ลงป้องกันเมืองหลวงเปลี่ยนทีมเพื่อฟื้นพลังไม่ได้ ต้องรอเกิดใหม่": [
+    "Capital guards cannot switch teams to heal; wait for respawn",
+    "首都防守者不可换队回血，请等待重生"
+  ],
+  "เสียชีวิตแล้ว · รอเกิดใหม่": [
+    "Defeated · Respawn at",
+    "已阵亡 · 重生时间"
+  ],
+  "วันนี้ทำแอคชั่นไม่ได้": [
+    "No actions today",
+    "今日无法行动"
+  ],
+  "ลงป้องกันเมืองหลวงแล้ว: ไม่ฟื้นพลังที่เมืองหลวงและเปลี่ยนทีมไม่ได้จนกว่าจะตายแล้วเกิดใหม่": [
+    "Capital guard duty: capital healing and team changes stay locked until defeat and respawn",
+    "已加入首都防守：直至阵亡重生前，首都治疗与换队均锁定"
+  ],
+  "พักเมืองหลวงโดยไม่ใช้สล็อตป้องกัน · HP/MP ฟื้นเต็ม": [
+    "Capital reserve, no guard slot · HP/MP fully restored",
+    "首都待命，不占防守位 · HP/MP全满"
+  ],
+  "สล็อตป้องกันเมืองหลวง": [
+    "Capital guard slots",
+    "首都防守位"
+  ],
+  "ผู้ที่พักรอไม่ใช้สล็อต": [
+    "Reserves do not occupy slots",
+    "待命人员不占防守位"
+  ],
+  "เดินทางไปพักเมืองหลวง": [
+    "Travel to the capital reserve",
+    "前往首都待命"
+  ],
+  "หมู่บ้าน 1 คะแนน · เมือง 4 คะแนน · เมืองหลวง 16 คะแนน · คะแนนเท่ากันได้อันดับร่วม": [
+    "Village: 1 point · City: 4 points · Capital: 16 points · Equal scores share a rank",
+    "村庄1分 · 城市4分 · 首都16分 · 同分并列"
+  ],
+  "เฉพาะผู้เข้าร่วมในเดือนนั้น · แจกวันที่ 1 เวลา 00:00 ไทย แล้วคืนฐานเดิม ส่งทุกคนกลับเมืองหลวงและคืนสล็อตป้องกันทั้งหมด เศษรางวัลสะสมยังคงอยู่": [
+    "Only participants that month · Paid on the first at 00:00 Bangkok, then bases reset, everyone returns to their capital and all guard slots reopen. Reward fractions carry over",
+    "仅限当月参与者 · 每月1日泰国时间00:00发奖，随后重置据点，全员返回首都并清空防守位。奖励零头保留"
+  ],
+  "รอเกิดวันถัดไป": [
+    "Waiting to respawn tomorrow",
+    "等待次日重生"
+  ],
+  "ป้องกันเมืองหลวงต่อวันนี้": [
+    "Defend the capital today",
+    "今日继续防守首都"
+  ],
+  "ลงทะเบียนป้องกันเมืองหลวง": [
+    "Register as a capital guard",
+    "登记首都防守"
+  ],
+  "สิทธิ์รางวัลของคุณ": [
+    "Your reward eligibility",
+    "你的奖励资格"
+  ],
+  "รายวัน:": [
+    "Daily:",
+    "每日："
+  ],
+  "รายสัปดาห์:": [
+    "Weekly:",
+    "每周："
+  ],
+  "รายเดือน:": [
+    "Monthly:",
+    "每月："
+  ],
+  "ยังไม่มีสิทธิ์": [
+    "Not yet eligible",
+    "暂未获得资格"
+  ],
+  "มีสิทธิ์": [
+    "Eligible",
+    "有资格"
+  ],
+  "เข้าโหมด ลงมือ หรือมีสล็อตป้องกันอย่างน้อยหนึ่งครั้งในรอบนั้นจึงได้รางวัล การอยู่ในประเทศเฉย ๆ หรือเปิดจดหมายไม่นับ": [
+    "Enter the mode, take action, or occupy a defense slot at least once during the period to qualify. Nationality alone and reading mail do not count",
+    "结算期内至少进入模式、行动或占据一次防守位才有奖励。仅属该国或阅读邮件不计入"
+  ],
+  "หมู่บ้านละ 10 · เมืองละ 100 · เมืองหลวงละ 1,000 เหรียญ": [
+    "Village: 10 · City: 100 · Capital: 1,000 gold",
+    "村庄10 · 城市100 · 首都1000金币"
+  ],
+  "ผู้มีสิทธิ์": [
+    "Eligible participants",
+    "有资格参与者"
+  ],
+  "แจกทุกวัน 22:00 ไทย แบ่งเฉพาะผู้มีสิทธิ์ในรอบ 22:00 ก่อนหน้าถึง 22:00 วันนี้ และสะสมเศษเงิน": [
+    "Paid daily at 22:00 Bangkok, shared by eligible participants since the previous 22:00. Gold fractions carry over",
+    "每日泰国时间22:00结算，仅由上次22:00起的合资格参与者均分，金币零头累计"
+  ],
+  "หมู่บ้าน: 100 เหรียญ + 1/8 คูปอง · เมือง: 1,000 เหรียญ + 1/2 คูปอง · เมืองหลวง: 4,000 เหรียญ + 1 คูปอง": [
+    "Village: 100 gold + 1/8 coupon · City: 1,000 gold + 1/2 coupon · Capital: 4,000 gold + 1 coupon",
+    "村庄100金币+1/8张券 · 城市1000金币+1/2张券 · 首都4000金币+1张券"
+  ],
+  "ปิดรอบวันอาทิตย์ 23:59 ไทย แบ่งเท่ากันเฉพาะผู้เข้าร่วมในรอบนั้น โอนอัตโนมัติและแจ้งทางจดหมาย": [
+    "Closes Sunday at 23:59 Bangkok. Shared equally by eligible participants in that period, credited automatically with system mail",
+    "周日泰国时间23:59结算，仅合资格参与者均分，自动入账并发送系统邮件"
+  ],
+  "หนึ่งแอคชั่นต่อวัน: เดินทางฐานที่ติดกัน โจมตี หรืออยู่ป้องกัน · หมู่บ้าน 4 คน เมือง 16 คน เมืองหลวงมีสล็อตผู้ป้องกัน 32 คน ลงทะเบียนก่อนได้ก่อน ทุกฐานรวมถึงเมืองหลวงยึดได้": [
+    "One action per day: move to an adjacent base, attack or defend. Villages hold 4, cities 16, capitals 32 registered guards, first come first served. Every base including capitals can be captured",
+    "每日一次行动：移动至相邻据点、攻击或防守。村庄4人，城市16人，首都32个防守位，先到先得。首都在内所有据点均可占领"
+  ],
+  "สุ่มผู้เล่นฝ่ายละสูงสุด 2 คนพร้อมอสูรตาม PVP · สู้หนึ่งคู่ต่อการโจมตี ต้องกำจัดผู้ป้องกันทั้งหมดจึงยึดฐานได้ · ไม่มีเพื่อนก็โจมตีคนเดียวได้ · ผู้พักรอเมืองหลวงไม่ถูกสุ่มเป็นผู้ป้องกัน": [
+    "Up to two random players per side with PVP beasts. One defender pair per attack; defeat all defenders to capture. Solo attacks are allowed. Capital reserves are never selected as defenders",
+    "双方各随机最多两位玩家及PVP兽队。每次攻击一组守军，全部击败后占领。可单独进攻，首都待命人员不会被选作守军"
+  ],
+  "เสียชีวิตจากทุกสาเหตุ: หลุดสล็อตทันที วันนี้ทำอะไรไม่ได้ เกิดใหม่เมืองหลวงเต็ม HP/MP วันถัดไป 00:00 ไทย · ผู้ป้องกันเมืองหลวงไม่ฟื้นพลังและเปลี่ยนทีมไม่ได้จนกว่าจะตายแล้วเกิดใหม่ · ผู้พักรอที่ไม่ลงป้องกันฟื้นเต็ม": [
+    "Defeat from any cause releases the slot immediately and locks actions for the day. Respawn at the home capital with full HP/MP at 00:00 Bangkok tomorrow. Capital guards cannot heal there or change teams until defeat and respawn. Unregistered reserves fully recover",
+    "任何原因阵亡立即释放防守位，当日无法行动，次日泰国时间00:00在本国首都满HP/MP重生。首都守军在阵亡重生前不能在首都治疗或换队；未登记待命者可恢复全满"
+  ],
+  "ลงป้องกันเมืองหลวง ใช้สล็อตและแอคชั่นวันนี้ หลังลงทะเบียนจะไม่ฟื้นพลังจนกว่าจะตายแล้วเกิดใหม่ ยืนยันหรือไม่?": [
+    "Register for a capital guard slot and spend today’s action? Capital healing remains locked until defeat and respawn",
+    "登记首都防守并消耗今日行动？登记后直至阵亡重生前，首都治疗锁定"
+  ],
+  "แบ่งให้ผู้มีสิทธิ์": [
+    "Shared by eligible participants",
+    "由合资格参与者均分"
   ]
 }

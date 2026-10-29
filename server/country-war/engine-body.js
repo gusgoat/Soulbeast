@@ -13,6 +13,24 @@ function cwMembers(){return guildRows_('cw:m:').filter(m=>!m.retired);}
 function cwState(){return {members:Object.fromEntries(cwMembers().map(m=>[m.code,m])),locations:Object.fromEntries(guildRows_('cw:l:').map(l=>[l.id,l]))};}
 function cwMember(code){return guildRead_('cw:m:'+code);}
 function cwPut(m){return guildWrite_('cw:m:'+m.code,m);}
+function cwRecord(m,at=Date.now()){m.lastParticipation=at;}
+function cwOpenSlot(m,at=Date.now()){m.slotSince=at;cwRecord(m,at);}
+function cwCloseSlot(m,at=Date.now()){if(m.slotSince!=null||m.capitalGuard||cwNodes.get(m.location)?.type!=='capital')m.lastOccupiedAt=at;m.slotSince=null;}
+function cwEligible(m,start,end){return m.joinedAt<end&&((m.lastParticipation>=start&&m.lastParticipation<end)||(m.lastOccupiedAt>=start&&m.lastOccupiedAt<end)||(m.slotSince!=null&&m.slotSince<end));}
+function cwDie(m,at=Date.now()){
+ cwCloseSlot(m,at);cwRecord(m,at);m.capitalGuard=false;m.capitalWounded=false;m.location=cwCountries.get(m.country).capitalId;
+ const d=new Date(at+25200000);m.deadUntil=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()+1)-25200000;m.diedAt=at;m.lastActionDay=new Date(at+25200000).toISOString().slice(0,10);
+ const hero=m.team.find(u=>u.kind==='player');if(hero)hero.hp=0;
+}
+function cwSyncLives(){
+ const now=Date.now();for(const m of cwMembers()){const before=JSON.stringify(m);
+  if(m.rulesVersion!==2){m.rulesVersion=2;m.capitalGuard=false;if(!m.deadUntil&&cwNodes.get(m.location)?.type!=='capital')m.slotSince=now;}
+  if(m.deadUntil&&m.deadUntil<=now){m.deadUntil=null;m.capitalGuard=false;m.capitalWounded=false;m.location=cwCountries.get(m.country).capitalId;cwFullHeal(m);}
+  else if(!m.deadUntil&&m.team.find(u=>u.kind==='player')?.hp<=0)cwDie(m);
+  else if(!m.deadUntil&&cwNodes.get(m.location)?.type==='capital'&&!m.capitalGuard&&!m.capitalWounded)cwFullHeal(m);
+  if(before!==JSON.stringify(m))cwPut(m);
+ }
+}
 function cwRational(old,numerator,denominator){
  let a=BigInt(old?.n||0),b=BigInt(old?.d||1);a=a*BigInt(denominator)+BigInt(numerator)*b;b*=BigInt(denominator);
  const whole=a/b;a%=b;let x=a,y=b;while(y){const r=x%y;x=y;y=r;}const g=x||1n;
@@ -24,7 +42,7 @@ function cwDailyCutoff(now=Date.now()){
 }
 function cwPayPool(kind,cutoff,state,pools){
  const period=new Date(cutoff+25200000).toISOString().slice(0,10);
- for(const c of CW_RULES.countries){const members=Object.values(state.members).filter(m=>m.country===c.id&&m.joinedAt<=cutoff),pool=pools[c.id],count=members.length;if(!count)continue;
+ for(const c of CW_RULES.countries){const members=Object.values(state.members).filter(m=>m.country===c.id&&cwEligible(m,cutoff-(kind==='daily'?86400000:604800000),cutoff)),pool=pools[c.id],count=members.length;if(!count)continue;
   for(const m of members){const id='cw:mail:'+m.code+':'+(kind==='weekly'?'':kind+':')+period;if(guildRead_(id))continue;
    const gold=cwRational(m.goldFraction,pool.gold,count),coupons=cwRational(m.couponFraction,pool.couponEighths,8*count);
    m.goldFraction=gold.balance;m.couponFraction=coupons.balance;cwPut(m);
@@ -39,7 +57,7 @@ function cwNextMonth(cutoff){const d=new Date(cutoff+25200000);return Date.UTC(d
 function cwMonthly(cutoff,state){
  const ranks=cwTopology.monthlyRanks(state),period=new Date(cutoff-1+25200000).toISOString().slice(0,7),snapshot='cw:season:'+period;
  if(guildRead_(snapshot))return;
- for(const m of Object.values(state.members).filter(m=>m.joinedAt<=cutoff)){
+ for(const m of Object.values(state.members).filter(m=>cwEligible(m,cwMonthCutoff(cutoff-1),cutoff))){
   const standing=ranks.find(r=>r.country===m.country),rank=standing.rank,gold=rank===3?1000:0,coupons=rank===1?10:rank===2?5:0,id='cw:mail:'+m.code+':monthly:'+period;
   if(guildRead_(id))continue;
   if(gold){const account=campState_(m.code);account.delta+=gold;campWrite_(account);}
@@ -49,11 +67,11 @@ function cwMonthly(cutoff,state){
  // Reward receipts, ownership reset and roster reset commit together through the existing CAS transaction.
  guildWrite_(snapshot,{period,at:cutoff,ranks,locations:state.locations});
  for(const n of CW_RULES.nodes)guildWrite_('cw:l:'+n.id,{id:n.id,owner:n.country});
- for(const m of cwMembers()){m.location=cwCountries.get(m.country).capitalId;m.lastActionDay='';m.lastAction='';m.lastResult='';cwFullHeal(m);cwPut(m);}
+ for(const m of cwMembers()){cwCloseSlot(m,cutoff-1);m.location=cwCountries.get(m.country).capitalId;m.capitalGuard=false;m.capitalWounded=false;m.deadUntil=null;m.lastActionDay='';m.lastAction='';m.lastResult='';cwFullHeal(m);cwPut(m);}
 }
 function cwTick(){
  const now=Date.now(),last=cwLastCutoff(now),daily=cwDailyCutoff(now);let meta=guildRead_('cw:meta');
- if(!meta){guildWrite_('cw:meta',{settledThrough:last,dailyThrough:daily,monthThrough:cwMonthCutoff(now)});return;}
+ if(!meta){guildWrite_('cw:meta',{settledThrough:last,dailyThrough:daily,monthThrough:cwMonthCutoff(now)});cwSyncLives();return;}
  // Existing weekly installations start daily rewards from upgrade, without retroactive credits.
  if(meta.dailyThrough==null){meta.dailyThrough=daily;guildWrite_('cw:meta',meta);}
  if(meta.monthThrough==null){meta.monthThrough=cwMonthCutoff(now);guildWrite_('cw:meta',meta);}
@@ -63,24 +81,27 @@ function cwTick(){
   else{cwPayPool('weekly',cutoff,state,cwTopology.weeklyPools(state));meta.settledThrough=cutoff;}
   guildWrite_('cw:meta',meta);
  }
+ cwSyncLives();
 }
 function cwCreateMember(code,P,country){
  if(!cwCountries.has(country))pvpFail_('country required');const old=cwMember(code);if(old){if(old.country!==country)pvpFail_('country immutable');return old;}
- const snapshot=pvpTeam_(cwClone(P),0);snapshot.team[0].gender=P.gender;const m={code,name:P.name,country,location:cwCountries.get(country).capitalId,joinedAt:Date.now(),lastActionDay:'',team:snapshot.team,goldFraction:{n:'0',d:'1'},couponFraction:{n:'0',d:'1'}};return cwPut(m);
+ const snapshot=pvpTeam_(cwClone(P),0);snapshot.team[0].gender=P.gender;const m={code,name:P.name,country,location:cwCountries.get(country).capitalId,joinedAt:Date.now(),lastActionDay:'',rulesVersion:2,capitalGuard:false,deadUntil:null,team:snapshot.team,goldFraction:{n:'0',d:'1'},couponFraction:{n:'0',d:'1'}};return cwPut(m);
 }
 function cwFullHeal(m){for(const u of m.team){u.hp=u.st.hp;u.mp=u.st.mp;}return m;}
-function cwOwner(state,id){return cwNodes.get(id)?.type==='capital'?cwNodes.get(id).country:state.locations[id]?.owner||cwNodes.get(id)?.country;}
-function cwResidents(state,id){return Object.values(state.members).filter(m=>m.location===id);}
-function cwAlive(m){return m.team.some(u=>u.hp>0);}
+function cwOwner(state,id){return state.locations[id]?.owner||cwNodes.get(id)?.country;}
+function cwResidents(state,id){return Object.values(state.members).filter(m=>m.location===id&&!m.deadUntil&&(cwNodes.get(id)?.type!=='capital'||m.capitalGuard));}
+function cwAlive(m){return !m.deadUntil&&m.team.find(u=>u.kind==='player')?.hp>0;}
 function cwShuffle(rows){const a=rows.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function cwMailView(code){return guildRows_('cw:mail:'+code+':').sort((a,b)=>b.at-a.at).slice(0,200).map(({code,...m})=>m);}
+function cwParticipation(m){const now=Date.now();return {daily:cwEligible(m,cwDailyCutoff(now),cwDailyCutoff(now)+86400000),weekly:cwEligible(m,cwLastCutoff(now),cwLastCutoff(now)+604800000),monthly:cwEligible(m,cwMonthCutoff(now),cwNextMonth(cwMonthCutoff(now)))};}
 function cwView(code){
  const m=cwMember(code),state=cwState();
  const coupons=communitySyncCredits_(code).coupons;
- return {ok:true,countryWarVersion:1,season:new Date(cwMonthCutoff()+25200000).toISOString().slice(0,7),ranks:cwTopology.monthlyRanks(state),countries:CW_RULES.countries,day:campDate_(),nextReset:new Date(Date.parse(campDate_()+'T00:00:00+07:00')+86400000).toISOString(),me:m?{country:m.country,location:m.location,used:m.lastActionDay===campDate_(),team:m.team.map(u=>({id:u.id,name:u.name,kind:u.kind,sp:u.sp,evo:u.evo,cls:u.cls,gender:u.gender,lv:u.lv,hp:u.hp,mp:u.mp,st:{hp:u.st.hp,mp:u.st.mp}})),goldFraction:m.goldFraction,couponFraction:m.couponFraction}:null,map:m?cwTopology.view(state,m):null,dailyPool:m?cwTopology.dailyPools(state)[m.country]:null,pool:m?cwTopology.weeklyPools(state)[m.country]:null,members:m?Object.values(state.members).filter(x=>x.country===m.country).length:0,last:m?.lastResult?guildRead_('cw:result:'+m.lastResult+':'+code):null,unread:cwMailView(code).filter(x=>!x.read).length,coupons,account:campAccount_(code)};
+ return {ok:true,countryWarVersion:2,season:new Date(cwMonthCutoff()+25200000).toISOString().slice(0,7),ranks:cwTopology.monthlyRanks(state),countries:CW_RULES.countries,day:campDate_(),nextReset:new Date(Date.parse(campDate_()+'T00:00:00+07:00')+86400000).toISOString(),me:m?{country:m.country,location:m.location,used:!!m.deadUntil||m.lastActionDay===campDate_(),deadUntil:m.deadUntil||null,capitalGuard:!!m.capitalGuard,capitalHealingLocked:!!m.capitalWounded,eligibility:cwParticipation(m),team:m.team.map(u=>({id:u.id,name:u.name,kind:u.kind,sp:u.sp,evo:u.evo,cls:u.cls,gender:u.gender,lv:u.lv,hp:u.hp,mp:u.mp,st:{hp:u.st.hp,mp:u.st.mp}})),goldFraction:m.goldFraction,couponFraction:m.couponFraction}:null,map:m?cwTopology.view(state,m):null,dailyPool:m?cwTopology.dailyPools(state)[m.country]:null,pool:m?cwTopology.weeklyPools(state)[m.country]:null,members:m?Object.values(state.members).filter(x=>x.country===m.country).length:0,eligibleMembers:m?Object.fromEntries(['daily','weekly','monthly'].map(kind=>[kind,Object.values(state.members).filter(x=>x.country===m.country&&cwParticipation(x)[kind]).length])):null,last:m?.lastResult?guildRead_('cw:result:'+m.lastResult+':'+code):null,unread:cwMailView(code).filter(x=>!x.read).length,coupons,account:campAccount_(code)};
 }
 function cwCombat(attackers,defenders,target){
  const sides=[attackers,defenders],allies=[],enemies=[],players=[];
+ for(const m of [...attackers,...defenders])cwRecord(m);
  sides.forEach((members,side)=>members.forEach(m=>{const owner=players.length;players.push({code:m.code,name:m.name,country:m.country});for(const original of m.team){const u=cwClone(original);u._countrySlot=original.id;u.id='cw'+owner+'_'+original.id;u.owner=owner;u.side=side?'enemy':'ally';u.buffs=[];u.status={};u.cooldowns={};u.taunt=0;(side?enemies:allies).push(u);}}));
  const b={kind:'pvp',countryWar:true,terrain:cwNodes.get(target)?.terrain||'forest',allies,enemies,round:0,turns:0,queue:[],cur:null,log:['สงครามประเทศ · '+attackers.length+' VS '+defenders.length+' · อัตโนมัติ พร้อมอสูรตาม PVP'],fx:[],effects:[]};
  const room={id:'CW'+pvpId_().slice(0,14),status:'active',target,terrain:b.terrain,attackers:attackers.length,defenders:defenders.length,players,battle:b,me:0,winner:-1,reason:'เสมอ: ครบ 120 การกระทำ',rev:1};S={P:{gold:0},battle:b};replayInit_(room);
@@ -96,7 +117,7 @@ function cwCombat(attackers,defenders,target){
  const aliveA=b.allies.some(u=>u.hp>0),aliveD=b.enemies.some(u=>u.hp>0);room.winner=aliveA&&!aliveD?0:aliveD&&!aliveA?1:-1;room.reason=room.winner===0?'ฝ่ายโจมตีชนะคู่ป้องกัน':room.winner===1?'ฝ่ายป้องกันรักษาฐานไว้ได้':'เสมอ: ไม่มีการยึดฐาน';room.status='finished';
  // Persist only HP/MP of original roster units. Summons, buffs and enemy identities stay out of the public map.
  for(const m of [...attackers,...defenders]){const seat=players.findIndex(p=>p.code===m.code),units=[...b.allies,...b.enemies,...(b.retiredUnits||[])].filter(u=>u.owner===seat&&!u.temporary);for(const base of m.team){const u=units.find(x=>x._countrySlot===base.id);if(u){base.hp=Math.max(0,Math.min(base.st.hp,u.hp));base.mp=Math.max(0,Math.min(base.st.mp,u.mp));}}
-  if(m.team.find(u=>u.kind==='player')?.hp<=0){m.location=cwCountries.get(m.country).capitalId;m.lastActionDay=campDate_();cwFullHeal(m);}cwPut(m);
+  if(m.team.find(u=>u.kind==='player')?.hp<=0)cwDie(m);cwPut(m);
  }
  delete room._replayUnits;delete room._balanceKnown;return room;
 }
@@ -105,24 +126,25 @@ function cwDispatch(d){
   const auth=pvpSaveAuth_(d),code=auth.code;if(d.action==='country_retire'&&d._countryRetire===true){cwTick();const retired=cwMember(code);if(retired){retired.retired=true;retired.retiredAt=Date.now();cwPut(retired);}return {ok:true};}communityAllowed_(code);cwTick();let m=cwMember(code);
   if(d.action==='mail_list')return {ok:true,messages:cwMailView(code),account:campAccount_(code),coupons:communitySyncCredits_(code).coupons};
   if(d.action==='mail_read'){const id=String(d.mail||''),mail=guildRead_(id);if(!mail||mail.code!==code||!id.startsWith('cw:mail:'+code+':'))pvpFail_('mail not found');mail.read=true;guildWrite_(id,mail);return {ok:true,messages:cwMailView(code)};}
-  if(d.action==='country_choose'){if(m){if(m.country!==d.country)pvpFail_('country immutable');}else m=cwCreateMember(code,auth.P,String(d.country));return cwView(code);}
-  if(d.action==='country_status')return cwView(code);
+  if(d.action==='country_choose'){if(m){if(m.country!==d.country)pvpFail_('country immutable');}else m=cwCreateMember(code,auth.P,String(d.country));if(!m.deadUntil){cwRecord(m);cwPut(m);}return cwView(code);}
+  if(d.action==='country_status'){if(m&&!m.deadUntil){cwRecord(m);cwPut(m);}return cwView(code);}
   if(!m)pvpFail_('country required');
+  if(m.deadUntil)pvpFail_('country dead until tomorrow');
   if(d.item!=null||d.useItem!=null||d.skill!=null||d.hp!=null||d.mp!=null||d.team!=null)pvpFail_('country automatic only');
-  if(d.action==='country_team'){if(m.location!==cwCountries.get(m.country).capitalId)pvpFail_('country capital only');const team=pvpTeam_(cwClone(auth.P),0);team.team[0].gender=auth.P.gender;m.team=team.team;m.name=auth.P.name;cwPut(m);return cwView(code);}
+  if(d.action==='country_team'){if(cwNodes.get(m.location)?.type!=='capital')pvpFail_('country capital only');if(m.capitalGuard||m.capitalWounded)pvpFail_('country guard healing locked');const team=pvpTeam_(cwClone(auth.P),0);team.team[0].gender=auth.P.gender;m.team=team.team;m.name=auth.P.name;cwRecord(m);cwPut(m);return cwView(code);}
   if(d.action!=='country_action')pvpFail_('bad country action');
   if(m.lastActionDay===campDate_())pvpFail_('country daily limit');
   const state=cwState(),origin=m.location,target=String(d.target||''),kind=String(d.kind||'');
-  if(kind==='defend'){m.lastActionDay=campDate_();m.lastAction='defend';cwPut(m);return cwView(code);}
+  if(kind==='defend'){if(cwOwner(state,origin)!==m.country)pvpFail_('country enemy base');if(cwNodes.get(origin)?.type==='capital'&&!m.capitalGuard){if(!cwTopology.hasRoom(state,origin))pvpFail_('country guard full');m.capitalGuard=true;m.capitalWounded=true;cwOpenSlot(m);}else if(m.slotSince==null)cwOpenSlot(m);cwRecord(m);m.lastActionDay=campDate_();m.lastAction='defend';cwPut(m);return cwView(code);}
   if(!['move','attack'].includes(kind)||!cwTopology.adjacent(origin,target))pvpFail_('country adjacent required');
   const friendly=cwOwner(state,target)===m.country;
-  if(kind==='move'){if(!friendly)pvpFail_('country enemy base');if(!cwTopology.hasRoom(state,target))pvpFail_('country base full');m.location=target;m.lastActionDay=campDate_();m.lastAction='move';if(target===cwCountries.get(m.country).capitalId)cwFullHeal(m);cwPut(m);return cwView(code);}
+  if(kind==='move'){if(!friendly)pvpFail_('country enemy base');if(cwNodes.get(target)?.type!=='capital'&&!cwTopology.hasRoom(state,target))pvpFail_('country base full');cwCloseSlot(m);m.capitalGuard=false;m.location=target;m.lastActionDay=campDate_();m.lastAction='move';cwRecord(m);if(cwNodes.get(target)?.type==='capital'){if(!m.capitalWounded)cwFullHeal(m);}else cwOpenSlot(m);cwPut(m);return cwView(code);}
   if(friendly||!cwTopology.canCapture(target))pvpFail_('country target protected');
   const helper=cwShuffle(cwResidents(state,origin).filter(x=>x.code!==code&&x.country===m.country&&cwAlive(x)))[0],attackers=[m,...(helper?[helper]:[])],defenders=cwShuffle(cwResidents(state,target).filter(x=>x.country!==m.country&&cwAlive(x))).slice(0,2);
-  m.lastActionDay=campDate_();m.lastAction='attack';cwPut(m);
+  cwRecord(m);m.lastActionDay=campDate_();m.lastAction='attack';cwPut(m);
   let room=defenders.length?cwCombat(attackers,defenders,target):null;
   const after=cwState(),remaining=cwResidents(after,target).filter(x=>x.country!==m.country&&cwAlive(x));let captured=false;
-  if(!remaining.length&&(!room||room.winner===0)){guildWrite_('cw:l:'+target,{id:target,owner:m.country});captured=true;for(const actor of attackers){const current=cwMember(actor.code);if(current.location===origin&&cwTopology.hasRoom(cwState(),target)){current.location=target;cwPut(current);}}}
+  if(!remaining.length&&(!room||room.winner===0)){guildWrite_('cw:l:'+target,{id:target,owner:m.country});captured=true;for(const actor of attackers){const current=cwMember(actor.code);if(cwAlive(current)&&current.location===origin&&cwTopology.hasRoom(cwState(),target)){cwCloseSlot(current);current.location=target;current.capitalGuard=cwNodes.get(target)?.type==='capital';if(current.capitalGuard)current.capitalWounded=true;cwOpenSlot(current);cwPut(current);}}}
   if(!room)room={id:'CW'+pvpId_().slice(0,14),status:'finished',players:attackers.map(x=>({name:x.name,country:x.country})),winner:0,reason:'ยึดฐานว่างสำเร็จ',battle:null};
   room.captured=captured;room.target=target;room.remaining=remaining.length;
   // Only participants can fetch their own combat receipt; enemy map rosters remain anonymous.
