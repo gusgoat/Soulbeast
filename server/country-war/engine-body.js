@@ -14,9 +14,10 @@ function cwState(){return {members:Object.fromEntries(cwMembers().map(m=>[m.code
 function cwMember(code){return guildRead_('cw:m:'+code);}
 function cwPut(m){return guildWrite_('cw:m:'+m.code,m);}
 function cwRecord(m,at=Date.now()){m.lastParticipation=at;}
+function cwSpentAction(m){m.lastSpentActionAt=Date.now();cwRecord(m);}
 function cwOpenSlot(m,at=Date.now()){m.slotSince=at;cwRecord(m,at);}
 function cwCloseSlot(m,at=Date.now()){if(m.slotSince!=null||m.capitalGuard||cwNodes.get(m.location)?.type!=='capital')m.lastOccupiedAt=at;m.slotSince=null;}
-function cwEligible(m,start,end){return m.joinedAt<end&&((m.lastParticipation>=start&&m.lastParticipation<end)||(m.lastOccupiedAt>=start&&m.lastOccupiedAt<end)||(m.slotSince!=null&&m.slotSince<end));}
+function cwEligible(m,start,end){return m.joinedAt<end&&Number.isFinite(m.lastSpentActionAt)&&m.lastSpentActionAt>=start&&m.lastSpentActionAt<end;}
 function cwDie(m,at=Date.now()){
  cwCloseSlot(m,at);cwRecord(m,at);m.capitalGuard=false;m.capitalWounded=false;m.location=cwCountries.get(m.country).capitalId;
  const d=new Date(at+25200000);m.deadUntil=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()+1)-25200000;m.diedAt=at;m.lastActionDay=new Date(at+25200000).toISOString().slice(0,10);
@@ -135,13 +136,13 @@ function cwDispatch(d){
   if(d.action!=='country_action')pvpFail_('bad country action');
   if(m.lastActionDay===campDate_())pvpFail_('country daily limit');
   const state=cwState(),origin=m.location,target=String(d.target||''),kind=String(d.kind||'');
-  if(kind==='defend'){if(cwOwner(state,origin)!==m.country)pvpFail_('country enemy base');if(cwNodes.get(origin)?.type==='capital'&&!m.capitalGuard){if(!cwTopology.hasRoom(state,origin))pvpFail_('country guard full');m.capitalGuard=true;m.capitalWounded=true;cwOpenSlot(m);}else if(m.slotSince==null)cwOpenSlot(m);cwRecord(m);m.lastActionDay=campDate_();m.lastAction='defend';cwPut(m);return cwView(code);}
+  if(kind==='defend'){if(cwOwner(state,origin)!==m.country)pvpFail_('country enemy base');if(cwNodes.get(origin)?.type==='capital'&&!m.capitalGuard){if(!cwTopology.hasRoom(state,origin))pvpFail_('country guard full');m.capitalGuard=true;m.capitalWounded=true;cwOpenSlot(m);}else if(m.slotSince==null)cwOpenSlot(m);cwRecord(m);m.lastActionDay=campDate_();m.lastAction='defend';cwSpentAction(m);cwPut(m);return cwView(code);}
   if(!['move','attack'].includes(kind)||!cwTopology.adjacent(origin,target))pvpFail_('country adjacent required');
   const friendly=cwOwner(state,target)===m.country;
-  if(kind==='move'){if(!friendly)pvpFail_('country enemy base');if(cwNodes.get(target)?.type!=='capital'&&!cwTopology.hasRoom(state,target))pvpFail_('country base full');cwCloseSlot(m);m.capitalGuard=false;m.location=target;m.lastActionDay=campDate_();m.lastAction='move';cwRecord(m);if(cwNodes.get(target)?.type==='capital'){if(!m.capitalWounded)cwFullHeal(m);}else cwOpenSlot(m);cwPut(m);return cwView(code);}
+  if(kind==='move'){if(!friendly)pvpFail_('country enemy base');if(cwNodes.get(target)?.type!=='capital'&&!cwTopology.hasRoom(state,target))pvpFail_('country base full');cwCloseSlot(m);m.capitalGuard=false;m.location=target;m.lastActionDay=campDate_();m.lastAction='move';cwSpentAction(m);if(cwNodes.get(target)?.type==='capital'){if(!m.capitalWounded)cwFullHeal(m);}else cwOpenSlot(m);cwPut(m);return cwView(code);}
   if(friendly||!cwTopology.canCapture(target))pvpFail_('country target protected');
   const helper=cwShuffle(cwResidents(state,origin).filter(x=>x.code!==code&&x.country===m.country&&cwAlive(x)))[0],attackers=[m,...(helper?[helper]:[])],defenders=cwShuffle(cwResidents(state,target).filter(x=>x.country!==m.country&&cwAlive(x))).slice(0,2);
-  cwRecord(m);m.lastActionDay=campDate_();m.lastAction='attack';cwPut(m);
+  cwRecord(m);m.lastActionDay=campDate_();m.lastAction='attack';cwSpentAction(m);cwPut(m);
   let room=defenders.length?cwCombat(attackers,defenders,target):null;
   const after=cwState(),remaining=cwResidents(after,target).filter(x=>x.country!==m.country&&cwAlive(x));let captured=false;
   if(!remaining.length&&(!room||room.winner===0)){guildWrite_('cw:l:'+target,{id:target,owner:m.country});captured=true;for(const actor of attackers){const current=cwMember(actor.code);if(cwAlive(current)&&current.location===origin&&cwTopology.hasRoom(cwState(),target)){cwCloseSlot(current);current.location=target;current.capitalGuard=cwNodes.get(target)?.type==='capital';if(current.capitalGuard)current.capitalWounded=true;cwOpenSlot(current);cwPut(current);}}}

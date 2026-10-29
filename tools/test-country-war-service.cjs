@@ -16,6 +16,23 @@ function world(){
 }
 function guardRows(w,count){const base=w.member('a');for(let i=0;i<count;i++){const code='FAKEGUARD'+String(i).padStart(7,'0');w.put('cw:m:'+code,{...structuredClone(base),code,name:'ผู้ป้องกัน '+i,location:'blue-capital',capitalGuard:true,capitalWounded:true,slotSince:now,lastParticipation:now});}}
 {
+ const w=world();w.save('a','blue');w.save('h','blue');w.save('d','red');
+ for(const k of ['a','h','d'])w.call(k,'country_status');w.place('a','blue-city-1');w.place('h','blue-city-1');w.place('d','blue-village-1');w.put('cw:l:blue-village-1',{id:'blue-village-1',owner:'red'});
+ assert.equal(w.call('a','country_action',{kind:'move',target:'red-capital'}).error,'country adjacent required');assert.equal(w.member('a').lastSpentActionAt,undefined,'Rejected action earns no eligibility');
+ assert(w.call('a','country_action',{kind:'attack',target:'blue-village-1'}).ok);assert.equal(w.member('a').lastSpentActionAt,now);
+ for(const k of ['h','d']){assert.equal(w.member(k).lastSpentActionAt,undefined,'Passive combat/death/slot changes cannot fabricate a spent action');assert.equal(w.call(k,'country_status').me.eligibility.monthly,false);}
+ console.log('PASS only the active attacker earns eligibility; automatic helper, defender, casualties and rejected actions do not');
+}
+{
+ const w=world();w.save('a','blue');w.save('b','blue');w.call('a','country_status');w.call('b','country_status');
+ at('2026-10-29T22:00:00');assert(w.call('a','country_action',{kind:'defend'}).ok);assert.equal(w.mails('a').filter(m=>m.kind==='daily').length,0,'Action exactly at cutoff belongs to the next reward period');
+ at('2026-10-30T22:00:00');assert.equal(w.mails('a').find(m=>m.kind==='daily').gold,1560);
+ at('2026-11-01T23:59:00');assert(w.call('b','country_action',{kind:'defend'}).ok);assert.equal(w.mails('b').length,0,'Neither the previous weekly nor previous monthly period includes a later action');
+ at('2026-11-08T23:59:00');assert.equal(w.mails('b').find(m=>m.kind==='weekly').gold,9600);assert.equal(w.mails('b').find(m=>m.kind==='weekly').coupons,5);
+ assert.equal(w.mails('a').filter(m=>m.kind==='weekly').length,1,'Last week action and continuous guard occupancy do not renew rights');
+ console.log('PASS exact daily/weekly cutoffs, cross-month action preservation, separate reward windows and no passive renewal');
+}
+{
  const w=world();w.save('selector','blue');w.call('selector','country_status');
  const saved=JSON.parse(w.call('selector','load').data),pet=saved.P.pets[0],alternate={...structuredClone(pet),uid:9981},camp={...structuredClone(pet),uid:9982};
  saved.P.pets.push(alternate,camp);saved.P.carried.push(alternate.uid);assert(w.call('selector','save',{data:JSON.stringify(saved)}).ok);
@@ -32,17 +49,17 @@ function guardRows(w,count){const base=w.member('a');for(let i=0;i<count;i++){co
  let v=w.call('a','country_status');assert(v.ok);assert.equal(v.me.country,'blue');assert.equal(v.map.locations.length,37);assert.equal(v.map.locations.find(n=>n.id==='blue-capital').count,0,'Reserves do not occupy guard slots');assert(!JSON.stringify(v.map).includes(w.id('r')));
  assert.equal(w.call('a','country_choose',{country:'red'}).error,'country immutable');const old=JSON.parse(w.call('a','load').data);old.P.country='red';assert.equal(w.call('a','save',{data:JSON.stringify(old)}).error,'country immutable');delete old.P.country;assert(w.call('a','save',{data:JSON.stringify(old)}).ok);assert.equal(JSON.parse(w.call('a','load').data).P.country,'blue');
  assert.equal(w.call('a','country_action',{kind:'move',target:'red-capital'}).error,'country adjacent required');assert.equal(w.call('a','country_action',{kind:'move',target:'blue-city-1',item:'pot'}).error,'country automatic only');
- assert(w.call('c','country_action',{kind:'move',target:'blue-city-1'}).ok);
+ assert.deepEqual(JSON.parse(JSON.stringify(v.me.eligibility)),{daily:false,weekly:false,monthly:false});assert(w.call('a','country_team').ok);assert.equal(w.call('a','country_status').me.eligibility.monthly,false);assert(w.call('a','country_action',{kind:'defend'}).ok);assert(w.call('c','country_action',{kind:'move',target:'blue-city-1'}).ok);
  at('2026-10-29T21:59:59');assert.equal(w.mails('a').length,0);at('2026-10-29T22:00:00');v=w.call('a','mail_list');assert.equal(v.messages[0].gold,780);assert.equal(v.messages[0].members,2);assert.equal(v.messages[0].pool.capitals,1);assert.equal(w.mails('c')[0].gold,780);assert.equal(w.mails('b').length,0,'Nation membership alone gives no reward');const delta=v.account.delta;assert.equal(w.call('a','mail_list').account.delta,delta);assert.equal(w.call('g','mail_read',{mail:v.messages[0].id}).error,'mail not found');
- at('2026-10-31T22:00:00');const cDaily=w.mails('c').find(m=>m.kind==='daily'&&m.week==='2026-10-31');assert.equal(cDaily.gold,1560,'An offline occupant remains eligible; inactive reserve excluded');assert.equal(w.mails('a').filter(m=>m.kind==='daily').length,1,'Mail reads do not renew participation');
+ at('2026-10-31T22:00:00');const cDaily=w.mails('c').find(m=>m.kind==='daily'&&m.week==='2026-10-31');assert.equal(cDaily,undefined,'Offline occupancy without a new spent action does not qualify for another daily period');assert.equal(w.mails('a').filter(m=>m.kind==='daily').length,1,'Mail reads do not renew participation');
  at('2026-11-01T00:00:00');assert.equal(w.mails('a').find(m=>m.kind==='monthly').coupons,10);assert.equal(w.mails('c').find(m=>m.kind==='monthly').coupons,10);assert.equal(w.mails('b').length,0);assert.equal(w.member('c').location,'blue-capital');assert.equal(w.member('c').slotSince,null);assert(!w.member('c').capitalGuard);
  at('2026-11-01T23:59:00');v=w.call('a','mail_list');const weekly=v.messages.find(m=>m.kind==='weekly');assert.equal(weekly.gold,4800);assert.equal(weekly.coupons,2);assert.equal(weekly.couponFraction.n,'1');assert.equal(weekly.couponFraction.d,'2');assert.equal(w.mails('b').length,0);
  at('2026-11-08T23:59:00');assert.equal(w.mails('a').filter(m=>m.kind==='weekly').length,1,'Last-week entry cannot earn an inactive week');assert.equal(w.mails('c').filter(m=>m.kind==='weekly').length,1,'Season reset must not silently enroll capital reserves');
- console.log('PASS permanent nations, privacy, action validation, daily 22:00 boundary, capital pools, eligible-only divisor, offline slots, inactive exclusions across day/week/month, fractional carry, private mail and no duplicate credits.');
+ console.log('PASS permanent nations, privacy, action validation, daily 22:00 boundary, capital pools, action-only divisor, idle slots excluded, inactive exclusions across day/week/month, fractional carry, private mail and no duplicate credits.');
 }
 {
  const w=world();for(const [k,n]of [['a','blue'],['b','blue'],['g','green'],['r','red']])w.save(k,n);
- for(const k of ['a','g','r'])w.call(k,'country_status');w.put('cw:l:red-city-1',{id:'red-city-1',owner:'blue'});w.put('cw:l:red-village-1',{id:'red-village-1',owner:'blue'});
+ for(const k of ['a','g','r']){w.call(k,'country_status');assert(w.call(k,'country_action',{kind:'defend'}).ok);}w.put('cw:l:red-city-1',{id:'red-city-1',owner:'blue'});w.put('cw:l:red-village-1',{id:'red-village-1',owner:'blue'});
  at('2026-11-02T08:00:00');const mails=w.mails('a'),monthly=mails.find(m=>m.kind==='monthly');assert.equal(monthly.score,53);assert.equal(monthly.rank,1);assert.equal(monthly.coupons,10);assert.equal(w.mails('g').find(m=>m.kind==='monthly').coupons,5);assert.equal(w.mails('r').find(m=>m.kind==='monthly').gold,1000);assert.equal(w.mails('b').length,0);
  assert.equal(w.read('cw:l:red-city-1').owner,'red');assert.equal(w.read('cw:season:2026-10').ranks[0].score,53);assert.equal(w.call('a','country_status').season,'2026-11');assert.equal(mails.find(m=>m.kind==='weekly').pool.gold,9600,'Late settlement must reset ownership before the next weekly reward');const count=mails.length;assert.equal(w.mails('a').length,count);assert(w.member('a').team.every(u=>u.hp===u.st.hp&&u.mp===u.st.mp));
  console.log('PASS village/city/capital 1/4/16 scores, eligible-only per-person monthly prizes, atomic monthly reset, archived standings, and chronological catch-up over daily/monthly/weekly boundaries.');

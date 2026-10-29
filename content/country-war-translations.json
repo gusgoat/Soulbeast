@@ -878,5 +878,21 @@
   "เลือกอสูรเกินจำนวนที่อาชีพใช้ได้": [
     "Too many beasts for this class",
     "所选兽超过职业上限"
+  ],
+  "ต้องใช้แอคชั่นสำเร็จอย่างน้อย 1 ครั้งในช่วงรางวัลนั้น: เดินทาง โจมตี หรือกดป้องกัน การเข้าโหมด เปลี่ยนทีม อยู่ในสล็อต หรือถูกสุ่มช่วยรบไม่นับ": [
+    "Spend at least one action during that reward period: move, attack or choose defend. Viewing the mode, changing teams, holding a slot and automatic assistance do not count.",
+    "奖励周期内须成功消耗至少一次行动：移动、攻击或主动防守。进入模式、换队、占据防守位及自动助战均不计入。"
+  ],
+  "เฉพาะผู้ใช้แอคชั่นในเดือนนั้น · แจกวันที่ 1 เวลา 00:00 ไทย แล้วคืนฐานเดิม ส่งทุกคนกลับเมืองหลวงและคืนสล็อตป้องกันทั้งหมด เศษรางวัลสะสมยังคงอยู่": [
+    "Only characters who spent an action that month qualify. Paid on the first at 00:00 Bangkok, then bases and defense slots reset and everyone returns to the capital. Reward fractions carry over.",
+    "仅限当月消耗过行动的角色。每月1日泰国时间00:00发奖，随后重置据点与防守位，所有人返回首都，保留奖励零头。"
+  ],
+  "แจกทุกวัน 22:00 ไทย แบ่งเฉพาะผู้ใช้แอคชั่นในรอบ 22:00 ก่อนหน้าถึง 22:00 วันนี้ และสะสมเศษเงิน": [
+    "Paid daily at 22:00 Bangkok, shared only by characters who spent an action since the previous 22:00 cutoff. Gold fractions carry over.",
+    "每日泰国时间22:00发放，仅在上次22:00至本次22:00之间消耗过行动的角色均分，累计金币零头。"
+  ],
+  "ปิดรอบวันอาทิตย์ 23:59 ไทย แบ่งเท่ากันเฉพาะผู้ใช้แอคชั่นในรอบนั้น โอนอัตโนมัติและแจ้งทางจดหมาย": [
+    "Closes Sunday at 23:59 Bangkok. Shared equally only by characters who spent an action during the period; credited automatically with mail notification.",
+    "每周日泰国时间23:59结算，仅限本周期消耗过行动的角色均分，自动到账并发送邮件。"
   ]
 }
