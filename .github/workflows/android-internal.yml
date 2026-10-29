@@ -43,7 +43,12 @@ jobs:
         working-directory: mobile/android
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon :app:assembleDebug :app:bundleRelease :app:lintRelease
+          ./gradlew --no-daemon :app:assembleDebug
+      - name: Prepare verified install-time media pack
+        run: node tools/prepare-android-asset-pack.cjs
+      - name: Build Play bundle and lint
+        working-directory: mobile/android
+        run: ./gradlew --no-daemon :app:bundleRelease :app:lintRelease
       - name: Mark unsigned bundle and verify package
         run: |
           echo "Bundle built without an upload key. NOT ready for Play upload until signed." > build/AAB-SIGNING-REQUIRED.txt
@@ -56,6 +61,26 @@ jobs:
             build/mobile-manifest.json
             build/AAB-SIGNING-REQUIRED.txt
             mobile/android/app/build/reports/lint-results-release.html
+          retention-days: 14
+          if-no-files-found: error
+      - name: Split large bundle for transport without changing AAB bytes
+        run: |
+          mkdir -p build/aab-parts
+          sha256sum mobile/android/app/build/outputs/bundle/release/app-release.aab > build/aab-parts/aab-sha256.txt
+          split -b 350M -d mobile/android/app/build/outputs/bundle/release/app-release.aab build/aab-parts/app-release.aab.part-
+      - uses: actions/upload-artifact@v4
+        with:
+          name: soulbeast-aab-part-0-${{ github.sha }}
+          path: |
+            build/aab-parts/app-release.aab.part-00
+            build/aab-parts/aab-sha256.txt
+            build/android-asset-pack.json
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: soulbeast-aab-part-1-${{ github.sha }}
+          path: build/aab-parts/app-release.aab.part-01
           retention-days: 14
           if-no-files-found: error
       - uses: actions/upload-artifact@v4

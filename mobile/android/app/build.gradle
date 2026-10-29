@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    assetPacks = [":gameassets"]
     namespace = "io.github.gusgoat.soulbeast.internal"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
