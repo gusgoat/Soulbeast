@@ -13,7 +13,8 @@
     "device joystick placement",
     "collapsible walking HUD",
     "symbolic minimaps",
-    "compact scrollable place lists"
+    "compact scrollable place lists",
+    "generated gold and teal walking UI artwork"
   ],
-  "revision": "touch-layout-20261103"
+  "revision": "gold-teal-20261103"
 }

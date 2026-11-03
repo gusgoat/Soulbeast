@@ -1,0 +1,18 @@
+/* Generated PNG artwork is decorative; original controls retain their hit areas. */
+#joystick{border:0!important;background:transparent!important;box-shadow:none!important;isolation:isolate}
+#joystick::before{content:'';position:absolute;inset:0!important;border:0!important;border-radius:0!important;background:url('/Soulbeast/assets/ui/walk-skin-20261103/joystick-base.png.webp') center/100% 100% no-repeat;opacity:.78;pointer-events:none;z-index:-1}
+#joystick .tick,#joystick>i{display:none!important}
+#joystick #stick,html[data-walk-kind=dungeon] #joystick>b{background:transparent url('/Soulbeast/assets/ui/walk-skin-20261103/joystick-knob.png.webp') center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;font-size:0!important;color:transparent!important;filter:drop-shadow(0 3px 4px #0008)}
+#joystick.active::before{opacity:.95}
+.actions #interact{border:0!important;background:transparent url('/Soulbeast/assets/ui/walk-skin-20261103/explore-button.png.webp') center/100% 100% no-repeat!important;box-shadow:none!important;padding:14px!important;color:#ffedbc;text-shadow:0 1px 3px #000;font-size:11px;line-height:1.35}
+.actions #interact>span{font-size:16px;line-height:18px}
+.actions #interact:disabled{opacity:.58}
+.actions #interact:not(:disabled){filter:drop-shadow(0 0 5px #4bd6d355)}
+.actions #interact:active{filter:brightness(1.2)}
+.map::after{content:'';position:absolute;left:-9%;top:0;width:118%;aspect-ratio:1;transform:translateY(-7.63%);background:url('/Soulbeast/assets/ui/walk-skin-20261103/minimap-frame.png.webp') center/100% 100% no-repeat;pointer-events:none;z-index:2;filter:drop-shadow(0 2px 2px #0008)}
+.map canvas{position:relative;border:0!important;box-shadow:none!important}
+.map #area{margin-top:13px}
+/* Quiet opaque backgrounds underneath the existing logo, text and icons. */
+#app>.top{background:#102532 url('/Soulbeast/assets/ui/walk-skin-20261103/menu-top.png.webp') center/100% 100% no-repeat!important}
+#app>.bottom{background:#0c1c29 url('/Soulbeast/assets/ui/walk-skin-20261103/menu-bottom.png.webp') center/100% 100% no-repeat!important}
+body[data-edge=top]{background:#102532 url('/Soulbeast/assets/ui/walk-skin-20261103/menu-top.png.webp') center/100% 100% no-repeat!important}
