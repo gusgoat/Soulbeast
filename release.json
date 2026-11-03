@@ -32,7 +32,10 @@
     "162 location-specific settlement props with safe NPC approach space",
     "animated cloth, sleeping cats, dogs, sweepers, roof birds and forge smoke",
     "7 dungeon floors with grounded side niches and themed landmarks",
-    "single vampire throne and ordered crypt coffin rows"
+    "single vampire throne and ordered crypt coffin rows",
+    "gold story-quest frames and main-first quest journals",
+    "Lv25 capital-officer dungeon conquest quests",
+    "all seal types reject enemy-owned beasts and boss minions"
   ],
-  "revision": "living-world-20261103"
+  "revision": "main-story-20261103"
 }
