@@ -27,12 +27,16 @@ function create(data,nav){
  // Cache current distances and shoreline polygons, rather than rebuilding world geometry per frame.
  const currents=rivers.map(r=>{let length=0;const segments=r.points.slice(1).map((b,i)=>{const a=r.points[i],len=dist(a,b),start=length;length+=len;return {a,b,len,start}});const banks=[-1,1].map(side=>r.points.map((p,i)=>{const a=r.points[Math.max(0,i-1)],b=r.points[Math.min(r.points.length-1,i+1)],len=dist(a,b);return {x:p.x-(b.y-a.y)*F/len*(r.width/2-5)*side,y:p.y+(b.x-a.x)/len*(r.width/2-5)*side/F}}));return {...r,segments,length,outline:[...banks[0],...banks[1].reverse()]}});
  let flowPattern=null,flowTexture=null;
- function drawFlow(c,sx,sy,z,time,texture){
+ function drawFlow(c,sx,sy,z,time,texture,viewport){
   // The overview uses the cached terrain; detail animation is only needed close up.
   if(z<.15)return;
+    const pixelRatio=c.getTransform?.()?.a||1,vw=viewport?.width||c.canvas.width/pixelRatio,vh=viewport?.height||c.canvas.height/pixelRatio;
+    const intersects=points=>{let left=Infinity,right=-Infinity,top=Infinity,bottom=-Infinity;for(const p of points){left=Math.min(left,p.x);right=Math.max(right,p.x);top=Math.min(top,p.y);bottom=Math.max(bottom,p.y)}return sx(right)>-40&&sx(left)<vw+40&&sy(bottom)>-40&&sy(top)<vh+40};
+    const visibleCurrents=currents.filter(r=>intersects(r.outline)),visibleLakes=lakes.filter(l=>intersects(l.points));
+    if(!visibleCurrents.length&&!visibleLakes.length)return;
   c.save();c.lineCap='round';
   const outline=new Path2D();
-  for(const points of [...currents.map(r=>r.outline),...lakes.map(l=>l.points)]){
+  for(const points of [...visibleCurrents.map(r=>r.outline),...visibleLakes.map(l=>l.points)]){
    let area=0;for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length];area+=a.x*b.y-b.x*a.y}
    const ordered=area<0?[...points].reverse():points;
    ordered.forEach((p,i)=>i?outline.lineTo(sx(p.x),sy(p.y)):outline.moveTo(sx(p.x),sy(p.y)));outline.closePath();
@@ -50,22 +54,22 @@ function create(data,nav){
    // Two differently paced layers keep the surface from looking like a sliding photograph.
    for(const layer of [{scale:.38,x:-11,y:8,alpha:.36},{scale:.52,x:-5,y:13,alpha:.14}]){
     flowPattern.setTransform(new DOMMatrix().translate(time*layer.x,time*layer.y).scale(layer.scale));
-    c.globalAlpha=layer.alpha;c.fillStyle=flowPattern;c.fillRect(0,0,data.width,data.height*F);
+    c.globalAlpha=layer.alpha;c.fillStyle=flowPattern;c.fillRect(-sx(0)/z,-sy(0)/z,vw/z,vh/z);
    }c.restore();
   }
-  for(const r of currents){
+  for(const r of visibleCurrents){
    const count=Math.ceil(r.length/32);
    for(let i=0;i<count;i++){
     const travel=(i*37.73+time*(25+i%5*2))%r.length,seg=r.segments.find(s=>travel<=s.start+s.len)||r.segments.at(-1),t=(travel-seg.start)/seg.len;
     const dx=(seg.b.x-seg.a.x)/seg.len,dy=(seg.b.y-seg.a.y)*F/seg.len,offset=Math.sin(i*12.9898)*r.width*.37;
     const x=seg.a.x+(seg.b.x-seg.a.x)*t-dy*offset,y=seg.a.y+(seg.b.y-seg.a.y)*t+dx*offset/F;
-    const X=sx(x),Y=sy(y);if(X<-30||Y<-30||X>c.canvas.clientWidth+30||Y>c.canvas.clientHeight+30)continue;
+    const X=sx(x),Y=sy(y);if(X<-30||Y<-30||X>vw+30||Y>vh+30)continue;
     const pulse=.5+.5*Math.sin(time*1.5+i*2.4),len=7+i%4*3;
     c.strokeStyle=`rgba(195,235,240,${.11+pulse*.25})`;c.lineWidth=(.7+pulse*.65)*z;
     c.beginPath();c.moveTo(X-dx*len*z,Y-dy*len*z);c.quadraticCurveTo(X-dy*3*z,Y+dx*3*z,X+dx*len*z,Y+dy*len*z);c.stroke();
    }
   }
-  for(let j=0;j<lakes.length;j++){const l=lakes[j],center=l.points.reduce((a,p)=>({x:a.x+p.x/l.points.length,y:a.y+p.y/l.points.length}),{x:0,y:0});
+  for(let j=0;j<visibleLakes.length;j++){const l=visibleLakes[j],center=l.points.reduce((a,p)=>({x:a.x+p.x/l.points.length,y:a.y+p.y/l.points.length}),{x:0,y:0});
    for(let i=0;i<9;i++){const phase=(time*.15+i/9)%1,x=center.x+Math.sin(i*7.4)*160,y=center.y+Math.cos(i*5.9)*150;c.beginPath();c.ellipse(sx(x),sy(y),(12+phase*38)*z,(4+phase*13)*z,.15,0,Math.PI*2);c.strokeStyle=`rgba(194,230,235,${Math.sin(phase*Math.PI)*.14})`;c.lineWidth=z;c.stroke()}
   }c.restore();
  }

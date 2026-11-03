@@ -35,7 +35,10 @@
     "single vampire throne and ordered crypt coffin rows",
     "gold story-quest frames and main-first quest journals",
     "Lv25 capital-officer dungeon conquest quests",
-    "all seal types reject enemy-owned beasts and boss minions"
+    "all seal types reject enemy-owned beasts and boss minions",
+    "viewport-indexed country scenery and tiled terrain background",
+    "cached minimaps and quest markers with bounded water animation",
+    "small cached flag and nameplate rasters"
   ],
-  "revision": "main-story-20261103"
+  "revision": "country-smooth-20261103"
 }
