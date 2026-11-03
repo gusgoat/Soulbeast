@@ -1,0 +1,28 @@
+/* Decorative raster frames never capture input or cover dialogue content. */
+:is(#townDialog,#walkPeerDialog,#fusionDialog,#worldAtlas,.quest-art-view,.mapCard,.dialogCard,.joystick-edit-panel){box-sizing:border-box;border:12px solid transparent!important;border-image:url('/Soulbeast/assets/ui/dialogue-20261103/dialog-frame.png.webp') 100 stretch!important;border-radius:0!important;background:#102b36 url('/Soulbeast/assets/ui/dialogue-20261103/dialog-background.png.webp') center/cover no-repeat!important;color:#f4e5c2;box-shadow:0 12px 50px #0008}
+:is(#townDialog,#walkPeerDialog,#fusionDialog,.quest-art-view,.mapCard,.dialogCard)::backdrop{background:#020d17c4}
+#townDialog{padding:18px!important;max-height:calc(100dvh - 32px)!important;scrollbar-gutter:stable;touch-action:pan-y}
+.npc-dialog-intro{display:grid;grid-template-columns:minmax(0,1fr) clamp(90px,30vw,160px);gap:10px;align-items:center;margin:5px 0 14px;min-height:150px}
+.npc-dialog-copy{min-width:0}.npc-dialog-copy #dialogTitle{font-size:clamp(19px,4.6vw,25px);line-height:1.45;margin:8px 0;overflow-wrap:anywhere}
+.npc-dialog-copy #dialogText{font-size:13px;line-height:1.8;margin:8px 0;overflow-wrap:anywhere}
+.npc-dialog-speaker{margin:0;align-self:end;text-align:center;pointer-events:none;min-width:0}
+.npc-dialog-speaker img{display:block;width:100%;height:clamp(140px,25vh,230px);object-fit:contain;object-position:center bottom;filter:drop-shadow(0 4px 5px #0008)}
+.npc-dialog-speaker figcaption{font:10px/1.5 Tahoma;color:#e5cf92;margin:4px 0;overflow-wrap:anywhere}
+:is(#dialogChoices,#walkPeerDialog,#fusionDialog,.quest-art-view,.mapCard,.dialogCard,.joystick-edit-panel) button:not(.quest-close):not(.fusion-beast-choice),#closeDialog,#dialogChoices>a,.country-route,#worldAtlas .atlas-controls button,#worldAtlas .atlas-quest-row,#atlasForestList button{border:0!important;border-radius:7px;background:transparent url('/Soulbeast/assets/ui/dialogue-20261103/dialog-button.png.webp') center/100% 160% no-repeat!important;color:#ffebba!important;padding:12px 20px!important;min-height:44px;line-height:1.5;text-shadow:0 1px 2px #000;touch-action:pan-y;box-shadow:none!important}
+#dialogChoices>a{display:block;text-decoration:none;text-align:center}
+:is(#townDialog,#walkPeerDialog,#fusionDialog,.quest-art-view,.mapCard,.dialogCard) button:disabled{opacity:.5}
+#townDialog .quest-entry,#atlasInfo,#atlasObjectives,#atlasForestList,.walk-joystick-preview{background-color:#0b2431!important;border-color:#b09a65}
+#townDialog .quest-entry{border:8px solid transparent;border-image:url('/Soulbeast/assets/ui/dialogue-20261103/dialog-frame.png.webp') 100 stretch;background-image:url('/Soulbeast/assets/ui/dialogue-20261103/dialog-background.png.webp');background-size:cover;border-radius:0;padding:12px}
+#worldAtlas .atlas-header{background:#102b36 url('/Soulbeast/assets/ui/dialogue-20261103/dialog-background.png.webp') center/cover}
+body.dialogue-menu main>:is(section,article):not(#packs),body.dialogue-lobby .card,body.dialogue-menu #couponItems{border:10px solid transparent!important;border-image:url('/Soulbeast/assets/ui/dialogue-20261103/dialog-frame.png.webp') 100 stretch!important;border-radius:0;background:#102b36 url('/Soulbeast/assets/ui/dialogue-20261103/dialog-background.png.webp') center/cover!important}
+body.dialogue-menu button:not(.coupon-pack-button),body.dialogue-lobby footer :is(button,a),body.dialogue-lobby .card button{background:transparent url('/Soulbeast/assets/ui/dialogue-20261103/dialog-button.png.webp') center/100% 160% no-repeat!important;border:0!important;padding:12px 20px;color:#ffebba}
+/* Added gameplay panels in the legacy menu use the same PNG materials. */
+#walkStatLesson,[aria-label='ตั้งค่าจอยสติ๊ก'],[data-dungeon-bag-friend],.npc-service-banner{background:#102b36 url('/Soulbeast/assets/ui/dialogue-20261103/dialog-background.png.webp') center/cover!important;border:10px solid transparent!important;border-image:url('/Soulbeast/assets/ui/dialogue-20261103/dialog-frame.png.webp') 100 stretch!important;border-radius:0!important}
+.npc-service-banner{display:grid;grid-template-columns:minmax(0,1fr) clamp(90px,30vw,160px);align-items:center;gap:10px;padding:10px 15px;color:#f6e4b7;margin-bottom:14px}
+.npc-service-banner h3{font-size:18px;line-height:1.5;margin:6px 0}.npc-service-banner small{color:#d4c38e}.npc-service-banner img{width:100%;height:145px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 3px 4px #0008)}
+.quest-close,#atlasClose,#walkPeerDialog header button{border:0!important;background:transparent url('/Soulbeast/assets/ui/walk-skin-20261103/explore-button.png.webp') center/100% 100% no-repeat!important;color:#ffe7ac!important}
+body.dialogue-lobby .card.selected{outline:2px solid #7ce3d1;outline-offset:2px}
+@media(max-width:420px){#townDialog{padding:12px!important;border-width:9px!important}.npc-dialog-intro{gap:7px;grid-template-columns:minmax(0,1fr) 30vw}.npc-dialog-speaker img{height:160px}.npc-dialog-copy #dialogText{font-size:12px}.places-list #dialogChoices button{padding:9px 15px!important}.quest-close{right:-2px;top:-3px}.npc-dialog-copy #dialogTitle{padding-right:0!important}}
+@media(max-height:480px){.npc-dialog-speaker img{height:130px}.npc-dialog-intro{min-height:110px}.npc-dialog-copy #dialogText{font-size:12px}#townDialog{max-height:94dvh!important}}
+
+body.dialogue-lobby main>header,body.dialogue-menu main>header{border:10px solid transparent;border-image:url('/Soulbeast/assets/ui/dialogue-20261103/dialog-frame.png.webp') 100 stretch;border-radius:0}

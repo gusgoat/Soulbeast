@@ -14,7 +14,8 @@
     "collapsible walking HUD",
     "symbolic minimaps",
     "compact scrollable place lists",
-    "generated gold and teal walking UI artwork"
+    "generated gold and teal walking UI artwork",
+    "contextual NPC portraits and PNG dialogue interface"
   ],
-  "revision": "gold-teal-20261103"
+  "revision": "npc-dialogue-20261103"
 }
