@@ -1,9 +1,9 @@
 (function(scope){'use strict';
 const F=.64;
-function create(data,nav,count=40,options={}){
+function create(data,nav,count=50,options={}){
  let seed=options.seed??102930;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
  const actors=[];
- function allowed(x,y){const capital=data.cities?.find(c=>c.type==='capital');if(data.countryId==='green'&&capital&&nav.distance({x,y},capital)<1400)return false;if(!nav.walkable(x,y)||nav.nearest({x,y}).distance<(options.minRoadDistance??120)||options.allowed&&!options.allowed(x,y))return false;return !nav.places.some(s=>{const city=s.type!=='forest',width=s.type==='capital'?490:city?375:310;return Math.abs(x-s.x)<width/2+65&&y>s.y-(city?940:600)&&y<s.y+240})}
+ function allowed(x,y){const capital=data.cities?.find(c=>c.type==='capital');if((data.cities||[]).concat(data.villages||[]).some(s=>nav.distance({x,y},s)<(s.type==='capital'?1400:s.type==='city'?850:620)))return false;if(!nav.walkable(x,y)||nav.nearest({x,y}).distance<(options.minRoadDistance??0)||options.allowed&&!options.allowed(x,y))return false;return !nav.places.some(s=>{const city=s.type!=='forest',width=s.type==='capital'?490:city?375:310;return Math.abs(x-s.x)<width/2+65&&y>s.y-(city?940:600)&&y<s.y+240})}
  function clear(a,b){const steps=Math.max(1,Math.ceil(nav.distance(a,b)/12));for(let i=0;i<=steps;i++)if(!allowed(a.x+(b.x-a.x)*i/steps,a.y+(b.y-a.y)*i/steps))return false;return true}
  function spawn(x,y){if(!allowed(x,y)||actors.some(a=>nav.distance(a,{x,y})<(options.minSpacing??140)))return false;actors.push({x,y,home:{x,y},speed:.84*(58+random()*30),goal:null,wait:random()*1.5,phase:random()*8,facing:1,moving:false,walked:0});return true}
  // Keep several wanderers visible from the first snowy clearing; spread the rest through the country.

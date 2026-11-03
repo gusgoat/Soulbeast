@@ -20,7 +20,13 @@
     "reference-matched sharp half-body portraits in reserved bottom-right dialogue slots",
     "original forest artwork and discovered-beast entrance previews",
     "scoped forest-preview cleanup before NPC dialogue",
-    "PNG right-side controls and player nameplates"
+    "PNG right-side controls and player nameplates",
+    "three separate quest journal pages",
+    "six generated class-tier nameplates and permanent 100-coupon premium set",
+    "50 settlement-safe shadows per country",
+    "player-relative country enemy levels",
+    "54 themed roadside scenery placements",
+    "compact PNG HUD separators and pictogram buttons"
   ],
-  "revision": "forest-preview-20261103"
+  "revision": "world-polish-20261103"
 }

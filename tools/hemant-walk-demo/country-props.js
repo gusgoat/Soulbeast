@@ -1,0 +1,4 @@
+(function(g){'use strict';
+function create(data,nav,excluded=[]){let seed=19034+({blue:1,green:2,red:3}[data.countryId]||0);const random=()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296},props=[];for(let tries=0;props.length<18&&tries<12000;tries++){const point={x:650+random()*(data.width-1300),y:900+random()*(data.height-1500)},road=nav.nearest(point).distance;if(road<200||road>310||!nav.walkable(point.x,point.y)||nav.places.some(p=>nav.distance(p,point)<700)||excluded.some(p=>nav.distance(p,point)<230)||props.some(p=>nav.distance(p,point)<520))continue;const type=props.length%2?'statue':'ruin';props.push({...point,kind:'countryProp',art:'prop-'+type,w:type==='ruin'?210:160})}return props}
+const api={create};g.CountryProps=api;if(typeof module!=='undefined')module.exports=api;
+})(typeof window==='undefined'?globalThis:window);

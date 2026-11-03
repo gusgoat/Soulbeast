@@ -20,3 +20,23 @@ body[data-edge=top]{background:#102532 url('/Soulbeast/assets/ui/walk-skin-20261
 .tools>button,.tools>a,.walk-audio-toggle,.walk-hud-toggle,aside>.peer-list-button{border:0!important;background:transparent url('/Soulbeast/assets/ui/walk-skin-20261103/explore-button.png.webp') center/110% 110% no-repeat!important;box-shadow:none!important;filter:drop-shadow(0 2px 3px #0006);color:#ffe6a7}
 .tools>a{display:grid;place-items:center;text-decoration:none}
 .tools>button:focus-visible,.tools>a:focus-visible,.walk-hud-toggle:focus-visible{outline:2px solid #9be3dc;outline-offset:2px}
+
+/* Keep the logo complete while eliminating the empty strip below the top seam. */
+body[data-edge=top] .brand-seam{inset:60px 0 auto!important;height:12px!important;background:transparent!important}
+body[data-edge=top] .brand-seam img{top:-27px!important;width:116px!important;height:39px!important}
+body[data-edge=top] .top::after{bottom:-2px!important;height:14px!important}
+.top::after,.bottom::before{background-image:url('/Soulbeast/assets/ui/world-polish-20261103/hud-separator.png.webp')!important;background-size:100% 100%!important}
+.tools #mapToggle,.tools .country-link{background-image:url('/Soulbeast/assets/ui/world-polish-20261103/icon-map.png.webp')!important;font-size:0!important}
+.tools #places{background-image:url('/Soulbeast/assets/ui/world-polish-20261103/icon-menu.png.webp')!important;font-size:0!important}
+.tools #weather,.tools #snowToggle{background-image:url('/Soulbeast/assets/ui/world-polish-20261103/icon-activity.png.webp')!important;font-size:0!important}
+.tools .peer-list-button,aside>.peer-list-button{background-image:url('/Soulbeast/assets/ui/world-polish-20261103/icon-player.png.webp')!important;font-size:0!important}
+.walk-audio-toggle{background-image:url('/Soulbeast/assets/ui/world-polish-20261103/icon-sound.png.webp')!important;font-size:0!important}
+.walk-audio-toggle[aria-pressed=true]{filter:grayscale(1) brightness(.7)}
+.actions #interact{background-image:url('/Soulbeast/assets/ui/world-polish-20261103/icon-explore.png.webp')!important;padding:38px 12px 12px!important;font-size:10px!important}
+.actions #interact>span{font-size:0!important;line-height:0!important}
+
+.actions #interact{height:98px!important;background-size:76px 76px!important;background-position:center top!important;padding:74px 0 0!important;line-height:12px!important;vertical-align:bottom;color:#fff1be!important;text-shadow:0 1px 3px #000,0 0 4px #000}
+
+.top::after,.bottom::before{background-size:100% 800%!important;background-position:center!important;height:14px!important}
+
+body[data-edge=top] .top::after{top:60px!important;bottom:auto!important;height:12px!important;background-size:100% 600%!important}
