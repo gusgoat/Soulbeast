@@ -73,7 +73,8 @@ export function connectOnlineWalk() {
   }, await client.sessions.token());
  }
 
- return {flush, heartbeat, invitations};
+ const social = (action, extra = {}) => client.game(action, {...extra, code: context.code}, context.environment);
+ return {flush, heartbeat, invitations, social};
 }
 
 export function mountDungeonInvitations(connection, peers) {
