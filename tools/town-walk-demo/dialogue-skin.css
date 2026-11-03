@@ -26,3 +26,5 @@ body.dialogue-lobby .card.selected{outline:2px solid #7ce3d1;outline-offset:2px}
 @media(max-height:480px){.npc-dialog-speaker img{height:130px}.npc-dialog-intro{min-height:110px}.npc-dialog-copy #dialogText{font-size:12px}#townDialog{max-height:94dvh!important}}
 
 body.dialogue-lobby main>header,body.dialogue-menu main>header{border:10px solid transparent;border-image:url('/Soulbeast/assets/ui/dialogue-20261103/dialog-frame.png.webp') 100 stretch;border-radius:0}
+
+.npc-dialog-speaker .npc-atlas-portrait,.npc-service-banner .npc-atlas-portrait{display:block;width:100%;aspect-ratio:1;min-height:0;height:auto;background-repeat:no-repeat;filter:drop-shadow(0 4px 5px #0008)}
