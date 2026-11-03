@@ -3624,7 +3624,15 @@ async function cloudLoad(){if(CLOUD.st!=='ready'||CLOUD.busy)return;CLOUD.busy=1
  CLOUD.busy=0;render()}
 /* ---- leaderboard (shared rows: everyone reads, each player writes only their own) ---- */
 /* ---- leaderboard on เซิร์ฟเวอร์ออนไลน์ (ระบบออนไลน์ web app; URL set in index.html) ---- */
+const WALK_ONLINE=!!sessionStorage.getItem('soulbeast-online-walk-v1');
 const SHEET_URL=String(window.SHEET_URL||'').trim();
+async function walkAccountPost(packet){
+ const {action,pin,cpin,...extra}=packet;
+ try{
+  const {connectOnlineWalk}=await import('../../client/online-walk.mjs');
+  return await connectOnlineWalk().social(action,extra);
+ }catch(error){return {ok:false,error:error.message};}
+}
 const LB={rows:null,busy:0,lastKey:'',lastAt:0,err:''};
 const LBTAB={score:{n:'คะแนนสะสม',v:r=>fmt(r.score||0)+' คะแนน',k:r=>r.score||0},lv:{n:'เลเวล',v:r=>`Lv ${r.level}`,k:r=>r.level*1e9+(r.exp||0)},
  zone:{n:'ด่านไกลสุด',v:r=>r.clears?`ปราบจอมมาร ${r.clears} ครั้ง`:(r.zoneName||`ด่าน ${r.zone}`),k:r=>(r.clears||0)*1e6+(r.zone||0)*1e3+r.level},
@@ -3635,7 +3643,7 @@ function pid(){const P=S.P;if(!P.pid){const a=new Uint8Array(12);try{crypto.getR
 function lbEntry(){const P=S.P,zm=clamp(P.zoneMax,1,6),seen=Object.keys(P.seen).filter(k=>SP[k]&&!SP[k].noseal).length;
  return {score:S.P.score||0,profile:'',gender:P.gender,id:pid(),name:String(P.name).slice(0,20),cls:P.cls,clsName:CLS[P.cls].n,lv:P.lv,exp:P.exp,zone:zm,zoneName:ZN[zm-1].n,seen,caught:Object.keys(P.caught).filter(k=>SP[k]).length,legend:Object.keys(P.legend||{}).length,clear:P.cleared||0}}
 async function sheetRequest(options){const c=new AbortController(),timer=setTimeout(()=>c.abort(),25000);try{const r=await fetch(SHEET_URL, {...options,signal:c.signal});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(!j||typeof j.ok!=='boolean')throw new Error('Invalid response');return j}finally{clearTimeout(timer)}}
-async function lbPost(body){return sheetRequest({method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})}
+async function lbPost(body){if(WALK_ONLINE&&/^(country_|camp_|wb_|guild_|tower_)/.test(body.action))return walkAccountPost(body);return sheetRequest({method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})}
 async function lbSubmit(force){if(!SHEET_URL||!S.P||S.P.lbOff)return;
  if(LB.pending){await LB.pending;if(!force)return;if(!S.P||S.P.lbOff)return}
  const e=lbEntry(),key=JSON.stringify(e);
@@ -4463,7 +4471,7 @@ const communityBaseLbPost=lbPost;
 lbPost=async function(body){return communityBaseLbPost(body.id&&!body.code&&S.P?{...body,...communityAuth()}:body);};
 const communityBaseSheetError=sheetError;
 sheetError=function(r){return ['gacha stale','account banned','clear count jump'].includes(r?.error)?communityError(r.error):communityBaseSheetError(r);};
-setInterval(()=>{if(!S.P||!SHEET_URL||document.hidden||COMMUNITY.busy||GACHA.busy||ONLINE_UI.count)return;if(COMMUNITY.code&&COMMUNITY.code!==ensureCode()){COMMUNITY.friends=[];COMMUNITY.online=[];COMMUNITY.incoming=null;COMMUNITY.ready=false;}communityCall();if(!S.zone&&!S.battle&&Date.now()-GS.lastAt>120000)gsSave(false);},60000);
+setInterval(()=>{if(WALK_ONLINE||!S.P||!SHEET_URL||document.hidden||COMMUNITY.busy||GACHA.busy||ONLINE_UI.count)return;if(COMMUNITY.code&&COMMUNITY.code!==ensureCode()){COMMUNITY.friends=[];COMMUNITY.online=[];COMMUNITY.incoming=null;COMMUNITY.ready=false;}communityCall();if(!S.zone&&!S.battle&&Date.now()-GS.lastAt>120000)gsSave(false);},60000);
 
 /* Presentation only: server receipts, odds, inventory and save schema remain unchanged. */
 const ReleaseGacha={charging:null,
@@ -4549,7 +4557,7 @@ function worldIntentKey(){return 'soulbeast_supabase_test_world_intent_'+ensureC
 function worldReadIntent(){try{const p=JSON.parse(localStorage.getItem(worldIntentKey())||'null');return p?.endpoint===SHEET_URL&&['wb_create','wb_join','wb_leave','wb_start'].includes(p.action)?p:null;}catch(e){return null;}}
 function worldSaveIntent(intent){try{if(intent)localStorage.setItem(worldIntentKey(),JSON.stringify(intent));else localStorage.removeItem(worldIntentKey());}catch(e){}}
 wbCall=async function(action,extra={}){
- const foreground=action!=='wb_poll';if(!S.P||!SHEET_URL||WORLD.room?.replaying&&action!=='wb_leave')return;
+ const foreground=action!=='wb_poll';if(!S.P||(!SHEET_URL&&!WALK_ONLINE)||WORLD.room?.replaying&&action!=='wb_leave')return;
  if(foreground&&WORLD_NET.foreground||!foreground&&WORLD_NET.current)return;
  if(foreground)WORLD_NET.foreground=true;
  const task=async()=>{const prior=WORLD.room;WORLD.busy=true;WORLD.error='';if(foreground)render();let intent=worldReadIntent(),effective=action;
@@ -4718,7 +4726,7 @@ worldApply=function(P,a){const previous=P.worldApplied?.loot||{};guildWorldApply
 
 const GUILD_UI={busy:false,data:null,error:'',request:null,confirm:null,flag:'fenrir',search:'',page:0,warRoom:null,warFinal:null,replaySerial:0};
 function guildError(m){return ({'camp pets selection':'เลือกอสูรที่พกติดตัวตามจำนวนที่อาชีพใช้ได้','guild already member':'คุณอยู่ในกิลแล้ว','guild full':'สมาชิกกิลครบ 20 คนแล้ว','guild not found':'ไม่พบกิล','guild leader required':'เฉพาะหัวหน้ากิลเท่านั้น','guild bad member':'สมาชิกไม่ถูกต้อง','guild transfer first':'โอนหัวหน้ากิลก่อนออก','guild immutable rules':'ชื่อและธงกิลเปลี่ยนไม่ได้ ต้องสมัครและรอหัวหน้าอนุมัติ','guild bad flag':'กรุณาเลือกรูปอสูรในเกม','guild bad name':'ชื่อกิลต้องยาว 2–24 ตัวอักษร','guild name exists':'ชื่อกิลนี้ถูกใช้แล้ว','guild application missing':'ใบสมัครนี้ไม่มีแล้ว','guild reward unavailable':'ไม่พบรางวัลนี้','guild war saturday':'สงครามกิลเปิดเฉพาะวันเสาร์ เวลาไทย','guild war level':'โจมตีได้เฉพาะกิลที่เลเวลต่างไม่เกิน 1','guild war bad target':'เลือกกิลฝ่ายตรงข้าม','guild war empty':'กิลเป้าหมายยังไม่มีสมาชิกที่ลงทะเบียนทีมตั้งรับ','defense required':'ต้องลงทะเบียนทีมตั้งรับก่อนโจมตี','camp pets selection':'เลือกอสูรจากกระเป๋าตามจำนวนที่อาชีพใช้ได้','guild required':'ต้องเป็นสมาชิกกิลก่อน','not enough coupons':'ต้องใช้คูปอง 10 ใบ'})[m]||pvpError(m);}
-async function guildRequest(action='guild_sync',extra={},retry=false){if(GUILD_UI.busy)return;GUILD_UI.busy=true;GUILD_UI.error='';render();try{if(!retry&&action!=='guild_sync')await communitySave();const packet=retry?GUILD_UI.request:{action,...communityAuth(),...extra,_sbRequest:crypto.randomUUID()};if(!packet)return;GUILD_UI.request=packet;const r=await lbPost(packet);if(!r.ok){GUILD_UI.request=null;throw Error(r.error);}GUILD_UI.data=r;if(r.defense){CAMP.pets=r.defense.pets;CAMP.guardPicks=null;}GUILD_UI.request=null;applyAccount(r.account);GACHA.coupons=r.coupons;if(r.warRoom)guildPlayWar(r.warRoom);}catch(e){GUILD_UI.error=guildError(e.message);}finally{GUILD_UI.busy=false;if(['guild','guildwar'].includes(S.screen))render();}}
+async function guildRequest(action='guild_sync',extra={},retry=false){if(GUILD_UI.busy)return;GUILD_UI.busy=true;GUILD_UI.error='';render();try{if(!WALK_ONLINE&&!retry&&action!=='guild_sync')await communitySave();const packet=retry?GUILD_UI.request:{action,...communityAuth(),...extra,_sbRequest:crypto.randomUUID()};if(!packet)return;GUILD_UI.request=packet;const r=await lbPost(packet);if(!r.ok){GUILD_UI.request=null;throw Error(r.error);}GUILD_UI.data=r;if(r.defense){CAMP.pets=r.defense.pets;CAMP.guardPicks=null;}GUILD_UI.request=null;applyAccount(r.account);GACHA.coupons=r.coupons;if(r.warRoom)guildPlayWar(r.warRoom);}catch(e){GUILD_UI.error=guildError(e.message);}finally{GUILD_UI.busy=false;if(['guild','guildwar'].includes(S.screen))render();}}
 const guildGoBase=handlers.go;handlers.go=function(v){const result=guildGoBase(v);if(['guild','guildwar'].includes(v))return guildRequest();return result;};
 function guildMenuTile(war=false){return '<button class="card row" data-a="go" data-v="'+(war?'guildwar':'guild')+'" style="width:100%;text-align:left"><img src="assets/ui/'+(war?'guild-war.webp':'guild-menu.webp')+'" alt="" width="76" height="76" style="border-radius:12px"><span><b>'+(war?'สงครามกิล':'กิลและคะแนนกิจกรรม')+'</b><small style="display:block">'+(war?'ทุกวันเสาร์ · โจมตีได้คนละครั้ง':'สมาชิก 20 คน · สมัครและรอหัวหน้าอนุมัติ')+'</small></span></button>';}
 const guildTownBase=vTown;vTown=function(){return '<div class="stack" style="margin-bottom:14px">'+guildMenuTile()+guildMenuTile(true)+'</div>'+guildTownBase();};
@@ -7397,7 +7405,7 @@ if(params.get('rest')==='sacred-well'&&dungeonFloor?.rest&&!previewEncounter){S.
 /* Inside the existing game bootstrap: original war UI, combat and rewards. */
 if(screen==='countrywar'){
  window.CW_PREVIEW_MODE=true;window.CW_PHYSICAL_CONTEXT=window.walkWar.visit(params.get('visit'));
- lbPost=async packet=>{const result=await window.walkWarEngine.dispatch(S.P,packet);if(result.ok&&packet.action==='country_action'){const target=packet.target||packet.id;if(packet.kind==='defend'&&/-village-|-city-|-capital/.test(result.me?.location||''))questEmit('defend');if(packet.kind==='attack'&&String(target).includes('-village-')&&result.map?.locations?.some(n=>n.id===target&&n.owner===S.P.country))questEmit('captureVillage')}if(result.me?.country){S.P.country=result.me.country;save()}if(result.countryWarVersion){window.walkWar.update(result);parent.postMessage({type:'walk-war-updated'},location.origin)}return result};
+ lbPost=async packet=>{const result=WALK_ONLINE?await walkAccountPost(packet):await window.walkWarEngine.dispatch(S.P,packet);if(result.ok&&packet.action==='country_action'){const target=packet.target||packet.id;if(packet.kind==='defend'&&/-village-|-city-|-capital/.test(result.me?.location||''))questEmit('defend');if(packet.kind==='attack'&&String(target).includes('-village-')&&result.map?.locations?.some(n=>n.id===target&&n.owner===S.P.country))questEmit('captureVillage')}if(result.me?.country){S.P.country=result.me.country;save()}if(result.countryWarVersion){window.walkWar.update(result);parent.postMessage({type:'walk-war-updated'},location.origin)}return result};
  countryReset();COUNTRY_WAR.selected=params.get('target')||'';COUNTRY_WAR.data=null;
  countryCall('country_status').then(()=>{if(params.get('target'))COUNTRY_WAR.selected=params.get('target');render()});
 }
@@ -7465,9 +7473,8 @@ handlers.useFusion=()=>{if(params.get('walkScene')!=='country'||S.battle&&!S.bat
 const fusionBuy=handlers.buy;handlers.buy=function(id){if(id==='fusionSeal')return toast('ซื้อผนึกรวมร่างด้วยคูปองจากร้านคูปองเท่านั้น');return fusionBuy(id)};
 
 /* Local same-machine friend list and the original turn-based PVP client. */
-const localSocialPost=lbPost;lbPost=function(packet){if(sessionStorage.getItem('soulbeast-online-walk-v1')&&/^(social_sync|friend_|pvp_)/.test(packet.action)){
- const {action,cpin,pin,...extra}=packet;
- return import('../../client/online-walk.mjs').then(m=>m.connectOnlineWalk().social(action,extra)).catch(error=>({ok:false,error:error.message}));
+const localSocialPost=lbPost;lbPost=function(packet){if(sessionStorage.getItem('soulbeast-online-walk-v1')&&/^(social_sync|friend_|pvp_|camp_|wb_|guild_|tower_)/.test(packet.action)){
+ return walkAccountPost(packet);
 }return ['social_sync','friend_add','friend_remove','pvp_create','pvp_join','pvp_resume','pvp_poll','pvp_ready','pvp_move','pvp_auto','pvp_leave','camp_list','camp_register','camp_begin','camp_poll','camp_move','camp_leave'].includes(packet.action)?window.walkSocialEngine.dispatch(S.P,packet).then(result=>{if(result.ok&&result.walkCampAccount){const a=result.walkCampAccount,previous=S.P.walkCamp||{};S.P.gold+=(Number(a.delta)||0)-(Number(previous.delta)||0);S.P.score=(S.P.score||0)+(Number(a.scoreDelta)||0)-(Number(previous.scoreDelta)||0);S.P.walkCamp={delta:Number(a.delta)||0,scoreDelta:Number(a.scoreDelta)||0};save()}return result}):localSocialPost(packet)};
 communityCall=async function(action='social_sync',extra={}){if(COMMUNITY.busy||!S.P)return;COMMUNITY.busy=true;COMMUNITY.error='';try{const online=sessionStorage.getItem('soulbeast-online-walk-v1');
 const r=online?await (await import('../../client/online-walk.mjs')).connectOnlineWalk().social(action,extra):await window.walkSocialEngine.dispatch(S.P,{action,...extra});if(!r.ok)throw Error(r.error);Object.assign(COMMUNITY,{friends:r.friends||[],online:r.online||[],incoming:r.incoming||null,serverTime:r.serverTime,ready:true,code:ensureCode()});if(online&&r.match&&!communityBattleBusy()){
@@ -7488,7 +7495,7 @@ if(params.get('localDuel')==='1'){
  if(stored?.host===host&&stored.result?.room&&stored.result?.token){PVP.code=ensureCode();PVP.pending=null;S.screen='pvp';pvpReceive(stored.result);pvpSchedule();pvpRequest({action:'pvp_poll'},true)}else{S.screen='friends';render();communityCall()}
 }
 
-const walkCampView=vCamp;vCamp=function(){if(S.P.lv<10)return '<section class="card stack"><h2>จู่โจมค่าย</h2><p>ปลดล็อกเมื่อผู้ผนึกเลเวล 10</p><button class="btn" data-a="go" data-v="town">กลับฉากเดิน</button></section>';return (configuredDefenseReady()?'<p class="sub" role="status">ลงทะเบียนอสูรเฝ้าค่ายแล้ว · '+CAMP.pets.length+' ตัว</p>':'')+'<p class="sub">ค่ายทดสอบบนเครื่องนี้ · ใช้กติกาจู่โจมเดิม พร้อมค่ายจำลอง Lv 10</p>'+walkCampView()};
+const walkCampView=vCamp;vCamp=function(){if(S.P.lv<10)return '<section class="card stack"><h2>จู่โจมค่าย</h2><p>ปลดล็อกเมื่อผู้ผนึกเลเวล 10</p><button class="btn" data-a="go" data-v="town">กลับฉากเดิน</button></section>';return (configuredDefenseReady()?'<p class="sub" role="status">ลงทะเบียนอสูรเฝ้าค่ายแล้ว · '+CAMP.pets.length+' ตัว</p>':'')+(WALK_ONLINE?'':'<p class="sub">ค่ายทดสอบบนเครื่องนี้ · ใช้กติกาจู่โจมเดิม พร้อมค่ายจำลอง Lv 10</p>')+walkCampView()};
 if(S.screen==='camp'&&S.P.lv>=10)campCall('camp_list');else if(S.screen==='camp')render();
 
 const localCampCall=campCall;campCall=async function(action,extra={}){const result=await localCampCall(action,extra);if(result?.ok&&action==='camp_register')toast('ตั้งอสูรเฝ้าค่ายแล้ว');if(result?.room?.status==='finished'&&result.room.winner===0){const seen=S.P.walkCampWins||=[];if(!seen.includes(result.room.id)){seen.push(result.room.id);if(seen.length>100)seen.shift();questEmit('activity',{target:'camp'});save()}}return result};
