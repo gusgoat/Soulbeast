@@ -42,7 +42,8 @@
     "cached town and dungeon minimap terrain with correct door and secret updates",
     "viewport-indexed dungeon props and rivers, reusable water and lava textures",
     "bounded animation atlases and explicit scene canvas cleanup",
-    "shared original hourglass loading artwork for maps, menus and atlas with retry recovery"
+    "shared original hourglass loading artwork for maps, menus and atlas with retry recovery",
+    "15 illustrated NPC service buttons reusing original town artwork"
   ],
-  "revision": "loading-art-20261103"
+  "revision": "legacy-service-art-20261103"
 }
