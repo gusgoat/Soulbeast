@@ -38,7 +38,10 @@
     "all seal types reject enemy-owned beasts and boss minions",
     "viewport-indexed country scenery and tiled terrain background",
     "cached minimaps and quest markers with bounded water animation",
-    "small cached flag and nameplate rasters"
+    "small cached flag and nameplate rasters",
+    "cached town and dungeon minimap terrain with correct door and secret updates",
+    "viewport-indexed dungeon props and rivers, reusable water and lava textures",
+    "bounded animation atlases and explicit scene canvas cleanup"
   ],
-  "revision": "country-smooth-20261103"
+  "revision": "all-scenes-smooth-20261103"
 }
