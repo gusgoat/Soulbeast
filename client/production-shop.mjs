@@ -1,0 +1,61 @@
+import {withLoading} from './online-loading.mjs';
+export const PAYMENT_ENDPOINT='https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-payments';
+const KEY='sb_publishable_-m9RbNVXYhaKjUZYSGGdMQ_rrkCuEL6';
+const words={
+ title:['คูปอง Soulbeast','Soulbeast coupons','Soulbeast兑换券'],
+ unavailable:['ยังไม่เปิดรับชำระเงินจริง กรุณาลองภายหลัง','Real-money purchases are not open yet. Please try later.','真实付款尚未开放，请稍后再试。'],
+ received:['ตรวจสอบและส่งคูปองแล้ว','Payment verified; coupons delivered.','付款已核验，兑换券已发放。'],
+ pending:['กำลังรอผลชำระเงิน ยังไม่มีการส่งคูปอง','Payment pending; coupons have not been delivered yet.','付款待确认，尚未发放兑换券。'],
+ failed:['รายการยังไม่สำเร็จ กรุณาตรวจรายการเดิมก่อนซื้อซ้ำ','Payment is incomplete. Check the existing order before buying again.','交易未完成，重新购买前请检查原订单。'],
+ review:['มีรายการคืนเงินที่ต้องตรวจสอบ กรุณาติดต่อ Line @soulbeast','A refunded purchase needs review. Contact Line @soulbeast.','退款交易需要审核，请联系Line @soulbeast。'],
+ terms:['ชำระครั้งเดียว ไม่มีต่ออายุอัตโนมัติ · โปรโมชั่นใช้ร่วมเว็บและแอป · ตรวจอัตราสุ่มในหน้ากาชาก่อนซื้อ','One-time purchases, no automatic renewal. Promotions are shared across web and app. Review gacha rates before buying.','一次性购买，无自动续费。网页与应用共享首购资格，购买前请查看扭蛋概率。'],
+ loading:['กำลังโหลดร้านคูปอง…','Loading the coupon shop…','正在加载兑换券商店…'],processing:['กำลังดำเนินการซื้อและตรวจคูปอง…','Processing your purchase and checking coupons…','正在处理购买并核验兑换券…'],checking:['กำลังตรวจรายการและยอดคูปอง…','Checking orders and coupon balance…','正在核验订单与兑换券余额…'],refresh:['ตรวจรายการ','Check orders','检查订单'],close:['ปิด','Close','关闭'],buy:['ซื้อ','Buy','购买'],
+ promotions:['โปรโมชั่นครั้งแรก','First-purchase offers','首购优惠'],regular:['แพ็กปกติ','Regular packs','常规礼包'],once:['ซื้อได้ครั้งเดียวต่อบัญชี','Once per game account','每个游戏账户限购一次'],repeat:['ซื้อซ้ำได้','Repeat purchases allowed','可重复购买'],
+ used:['ใช้สิทธิ์แล้วหรือมีรายการค้าง','Used or pending','已使用或有待处理订单'],
+ reserved:['กำลังสร้างรายการ','Creating order','创建订单中'],open:['รอชำระเงิน','Awaiting payment','等待付款'],credited:['ส่งคูปองแล้ว','Coupons delivered','已发放兑换券'],refunded:['ปรับสิทธิ์จากการคืนเงินแล้ว','Refund entitlement adjusted','已调整退款权益'],disputed:['กำลังตรวจข้อโต้แย้ง','Payment dispute under review','付款争议审核中'],expired:['ยกเลิกหรือหมดอายุ','Cancelled or expired','已取消或过期'],
+ history:['ประวัติการซื้อ','Purchase history','购买记录'],recipient:['ผู้รับคูปอง','Recipient','接收角色'],
+ support:['ติดต่อเรื่องการซื้อ/คืนเงิน: Line @soulbeast พร้อมเลขรายการ ไม่ต้องส่งรหัสผ่าน','Purchase/refund support: Line @soulbeast. Include the order ID, never your password.','购买/退款支持：Line @soulbeast。请提供订单号，勿发送密码。']
+};
+export const shopText=(key,lang='th')=>words[key]?.[lang==='en'?1:lang==='zh-CN'?2:0]||key;
+export const couponCount=(count,lang='th')=>lang==='en'?`${count} coupons`:lang==='zh-CN'?`${count}张兑换券`:`${count} คูปอง`;
+export function couponArtwork(count){return [5,10,50,100,200].includes(count)?`./assets/shop/coupons-${count}.png`:'';}
+export const couponPrice=(amountSatang,lang='th')=>new Intl.NumberFormat(lang==='en'?'en-US':lang==='zh-CN'?'zh-CN':'th-TH',{style:'currency',currency:'THB',maximumFractionDigits:2,minimumFractionDigits:0}).format(amountSatang/100);
+export function paymentApi(client,fetcher=fetch){return async(action,body={})=>{
+ const send=async force=>fetcher(PAYMENT_ENDPOINT,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',...(action==='catalog'?{}:{Authorization:'Bearer '+await client.sessions.token(force)})},body:JSON.stringify({action,...body}),signal:AbortSignal.timeout(60000)});
+ let r=await send(false);if(r.status===401&&action!=='catalog')r=await send(true);const v=await r.json();if(!r.ok||!v.ok)throw Error(v.error||'payment_service_unavailable');return v;
+};}
+export async function openProductionPlayShop({client,code,native,config,notify,onUpdated=()=>{},lang=document.documentElement.lang}){
+ const t=k=>shopText(k,lang),api=paymentApi(client),caps=await native.getCapabilities();
+ if(!config.android.purchasesEnabled||!caps.enabled){notify(t('unavailable'));return;}
+ const catalog=await api('catalog');if(!catalog.enabled.google_play||catalog.mode!=='production'||catalog.packageName!==caps.packageName){notify(t('unavailable'));return;}
+ const state=await api('status');if(state.debt){notify(t('review'));return;}
+ if(!state.characters.some(c=>c.code===code))throw Error('character_not_owned');
+ const recover=async()=>{for(const p of (await native.getPurchases()).purchases||[])if(p.orderId&&p.purchaseToken){try{await api('verify',{order_id:p.orderId,purchaseToken:p.purchaseToken});}catch{/* Unrelated account/test tokens cannot grant this account. */}}await onUpdated();};
+ await recover();
+ const products=(await native.getProducts({productIds:catalog.packs.map(p=>p.productId)})).products||[];
+ const dialog=document.createElement('dialog');dialog.className='production-shop';const header=document.createElement('h2');header.textContent=t('title');dialog.append(header);const recipient=document.createElement('p');recipient.textContent=t('recipient')+': '+state.characters.find(c=>c.code===code).name;dialog.append(recipient);
+ const terms=document.createElement('p');terms.textContent=t('terms');dialog.append(terms);const status=document.createElement('p');status.setAttribute('role','status');dialog.append(status);
+ const history=document.createElement('details'),summary=document.createElement('summary'),historyRows=document.createElement('div');summary.textContent=t('history');history.append(summary,historyRows);
+ let busy=false;
+ const run=async(label,task)=>{if(busy)return;busy=true;return withLoading(dialog,t(label),async()=>{try{await update();await task();}catch{status.textContent=t('failed');}finally{busy=false;try{await update();}catch{status.textContent=t('failed');}}});};
+ const update=async()=>{
+  const state=await api('status');const character=state.characters.find(c=>c.code===code);if(character)recipient.textContent=t('recipient')+': '+character.name;historyRows.replaceChildren();for(const o of state.orders){const row=document.createElement('p');row.textContent=o.pack_id+' · '+t(o.status)+' · '+o.id;historyRows.append(row);}
+  for(const b of dialog.querySelectorAll('[data-pack]')){const pack=catalog.packs.find(p=>p.id===b.dataset.pack),used=pack.promotion&&state.orders.some(o=>o.pack_id===pack.id&&o.status!=='expired');b.disabled=busy||state.debt>0||used;b.closest('article').querySelector('.coupon-pack-state').textContent=used?t('used'):'';}
+ };
+ for(const promotion of [true,false]){const section=document.createElement('section');section.className='coupon-pack-section';const heading=document.createElement('h3');heading.textContent=t(promotion?'promotions':'regular');const grid=document.createElement('div');grid.className='coupon-pack-grid';section.append(heading,grid);
+ for(const pack of catalog.packs.filter(p=>p.promotion===promotion)){const product=products.find(p=>p.id===pack.productId);if(!product)continue;
+  const card=document.createElement('article');card.className='coupon-pack';const b=document.createElement('button');b.className='coupon-pack-button';b.dataset.pack=pack.id;b.setAttribute('aria-label',t('buy')+' '+couponCount(pack.coupons,lang)+' · '+product.formattedPrice+' · '+t(promotion?'once':'repeat'));
+  const img=document.createElement('img');img.src=couponArtwork(pack.coupons);img.alt='';img.width=512;img.height=512;img.decoding='async';b.append(img);
+  const caption=document.createElement('div');caption.className='coupon-pack-caption';const count=document.createElement('strong');count.textContent=couponCount(pack.coupons,lang);const price=document.createElement('span');price.className='coupon-pack-price';price.textContent=product.formattedPrice;const rule=document.createElement('small');rule.textContent=t(promotion?'once':'repeat');const packState=document.createElement('small');packState.className='coupon-pack-state';caption.append(count,price,rule,packState);card.append(b,caption);grid.append(card);
+  b.onclick=()=>run('processing',async()=>{
+   const {order}=await api('create',{pack_id:pack.id,code,request_id:crypto.randomUUID()});
+   const p=await native.purchase({productId:order.productId,obfuscatedAccountId:order.accountHash,obfuscatedProfileId:order.id});
+   // Even pending tokens are persisted by the verified server for background recovery.
+   const r=p.purchaseToken?await api('verify',{order_id:order.id,purchaseToken:p.purchaseToken}):{pending:true};
+   status.textContent=t(r.credited?'received':r.order?.status==='refunded'?'review':'pending');await onUpdated();
+  });
+ }if(grid.childElementCount)dialog.append(section);}
+ const refresh=document.createElement('button');refresh.className='btn';refresh.textContent=t('refresh');refresh.onclick=()=>run('checking',async()=>{await recover();status.textContent=t('refresh');});dialog.append(refresh,history);
+ const support=document.createElement('p');support.textContent=t('support');dialog.append(support);
+ const close=document.createElement('button');close.className='btn production-shop-close';close.textContent=t('close');close.onclick=()=>dialog.close();dialog.append(close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);await update();dialog.showModal();
+}
