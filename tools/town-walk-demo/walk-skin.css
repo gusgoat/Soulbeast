@@ -16,3 +16,7 @@
 #app>.top{background:#102532 url('/Soulbeast/assets/ui/walk-skin-20261103/menu-top.png.webp') center/100% 100% no-repeat!important}
 #app>.bottom{background:#0c1c29 url('/Soulbeast/assets/ui/walk-skin-20261103/menu-bottom.png.webp') center/100% 100% no-repeat!important}
 body[data-edge=top]{background:#102532 url('/Soulbeast/assets/ui/walk-skin-20261103/menu-top.png.webp') center/100% 100% no-repeat!important}
+/* Reuse the quiet PNG button face so every right-side control has a matching frame. */
+.tools>button,.tools>a,.walk-audio-toggle,.walk-hud-toggle,aside>.peer-list-button{border:0!important;background:transparent url('/Soulbeast/assets/ui/walk-skin-20261103/explore-button.png.webp') center/110% 110% no-repeat!important;box-shadow:none!important;filter:drop-shadow(0 2px 3px #0006);color:#ffe6a7}
+.tools>a{display:grid;place-items:center;text-decoration:none}
+.tools>button:focus-visible,.tools>a:focus-visible,.walk-hud-toggle:focus-visible{outline:2px solid #9be3dc;outline-offset:2px}
