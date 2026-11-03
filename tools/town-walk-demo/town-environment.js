@@ -7,7 +7,7 @@ const lamps=[{x:810,y:965},{x:1130,y:965},{x:810,y:1185},{x:1130,y:1185},{x:370,
 function makeGround(g,sites,size,F,width=size){
  if(window.townTheme.profile?.village){window.villageLayout.makeGround(g,sites,size,F,width,images);return}
  const lawn=g.createPattern(window.townTheme.winter?images.snow:images.grass,'repeat');lawn.setTransform(new DOMMatrix().scale(.27));const stone=g.createPattern(images.paving,'repeat');stone.setTransform(new DOMMatrix().scale(.25));
- g.fillStyle=lawn;g.fillRect(0,0,width,size*F);g.lineCap='round';g.lineJoin='round';
+ g.fillStyle=lawn;g.fillRect(0,0,width,size*F);window.LivingEnvironment?.patches(g,width,size,window.townTheme.id,window.LivingEnvironment.hash(window.townTheme.profile?.id||'capital'),28);g.lineCap='round';g.lineJoin='round';
  function road(a,b,width){for(const [extra,color]of [[12,'#92937e'],[0,stone]]){g.lineWidth=width+extra;g.strokeStyle=color;g.beginPath();g.moveTo(a[0],a[1]*F);g.lineTo(b[0],b[1]*F);g.stroke()}}
  road([970,510],[970,1870],115);road([40,1030],[2410,1030],110);road([470,700],[1510,700],85);road([490,700],[490,1540],85);road([1440,560],[1440,1430],85);road([490,1450],[1440,1450],80);
  road([1770,700],[2150,700],85);road([1960,700],[1960,1690],85);road([1440,1450],[2150,1450],80);

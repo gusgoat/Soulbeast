@@ -21,8 +21,9 @@ function create(data,nav){
  const trunks=trees.map(o=>({kind:'tree',x:o.x,y:o.y*F,rx:o.w*.12+PLAYER_RADIUS,ry:o.w*.07+PLAYER_RADIUS}));
  const buckets=new Map(),CELL=256;
  for(const o of [...rocks,...trunks]){const box=o.points?{left:Math.min(...o.points.map(p=>p.x))-PLAYER_RADIUS,right:Math.max(...o.points.map(p=>p.x))+PLAYER_RADIUS,top:Math.min(...o.points.map(p=>p.y))-PLAYER_RADIUS,bottom:Math.max(...o.points.map(p=>p.y))+PLAYER_RADIUS}:{left:o.x-o.rx,right:o.x+o.rx,top:o.y-o.ry,bottom:o.y+o.ry};for(let x=Math.floor(box.left/CELL);x<=Math.floor(box.right/CELL);x++)for(let y=Math.floor(box.top/CELL);y<=Math.floor(box.bottom/CELL);y++){const key=x+','+y;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o)}}
- function hit(x,y){if(!insideEnclosure(x,y))return 'mountain';if(water.hit(x,y))return 'water';const py=y*F,list=buckets.get(Math.floor(x/CELL)+','+Math.floor(py/CELL))||[];for(const o of list){if(o.kind==='tree'){if(((x-o.x)/o.rx)**2+((py-o.y)/o.ry)**2<1)return o.kind}else if(inside(x,py,o.points)||o.points.some((a,i)=>segmentDistance(x,py,a,o.points[(i+1)%o.points.length])<PLAYER_RADIUS))return o.kind}return null}
- return {trees,mountains,rocks,trunks,border,water,insideEnclosure,hit,blocked:(x,y)=>!!hit(x,y)};
+ function hit(x,y){if(!insideEnclosure(x,y))return 'mountain';if(water.hit(x,y))return 'water';const py=y*F,list=buckets.get(Math.floor(x/CELL)+','+Math.floor(py/CELL))||[];for(const o of list){if(o.kind==='tree'||o.kind==='scenery'){if(((x-o.x)/o.rx)**2+((py-o.y)/o.ry)**2<1)return o.kind}else if(inside(x,py,o.points)||o.points.some((a,i)=>segmentDistance(x,py,a,o.points[(i+1)%o.points.length])<PLAYER_RADIUS))return o.kind}return null}
+ function addScenery(props){for(const p of props){const o={kind:'scenery',x:p.x,y:p.y*F,rx:Math.min(26,p.w*.18)+PLAYER_RADIUS,ry:Math.min(18,p.w*.1)+PLAYER_RADIUS};for(let x=Math.floor((o.x-o.rx)/CELL);x<=Math.floor((o.x+o.rx)/CELL);x++)for(let y=Math.floor((o.y-o.ry)/CELL);y<=Math.floor((o.y+o.ry)/CELL);y++){const key=x+','+y;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o)}}}
+ return {addScenery,trees,mountains,rocks,trunks,border,water,insideEnclosure,hit,blocked:(x,y)=>!!hit(x,y)};
 }
 const api={create,inside,PLAYER_RADIUS};scope.hemantTerrain=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

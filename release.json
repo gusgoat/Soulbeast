@@ -26,7 +26,13 @@
     "50 settlement-safe shadows per country",
     "player-relative country enemy levels",
     "54 themed roadside scenery placements",
-    "compact PNG HUD separators and pictogram buttons"
+    "compact PNG HUD separators and pictogram buttons",
+    "56 generated environment PNG assets with mobile WebP exports",
+    "5 tree silhouettes per country and textured biome ground patches",
+    "162 location-specific settlement props with safe NPC approach space",
+    "animated cloth, sleeping cats, dogs, sweepers, roof birds and forge smoke",
+    "7 dungeon floors with grounded side niches and themed landmarks",
+    "single vampire throne and ordered crypt coffin rows"
   ],
-  "revision": "world-polish-20261103"
+  "revision": "living-world-20261103"
 }
