@@ -16,7 +16,8 @@
     "compact scrollable place lists",
     "generated gold and teal walking UI artwork",
     "contextual NPC portraits and PNG dialogue interface",
-    "shared exact map NPC appearance in service and dialogue portraits"
+    "shared exact map NPC appearance in service and dialogue portraits",
+    "reference-matched sharp half-body portraits in reserved bottom-right dialogue slots"
   ],
-  "revision": "npc-map-match-20261103"
+  "revision": "npc-bust-20261103"
 }

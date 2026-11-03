@@ -28,3 +28,20 @@ body.dialogue-lobby .card.selected{outline:2px solid #7ce3d1;outline-offset:2px}
 body.dialogue-lobby main>header,body.dialogue-menu main>header{border:10px solid transparent;border-image:url('/Soulbeast/assets/ui/dialogue-20261103/dialog-frame.png.webp') 100 stretch;border-radius:0}
 
 .npc-dialog-speaker .npc-atlas-portrait,.npc-service-banner .npc-atlas-portrait{display:block;width:100%;aspect-ratio:1;min-height:0;height:auto;background-repeat:no-repeat;filter:drop-shadow(0 4px 5px #0008)}
+
+/* The speaker occupies a reserved bottom-right slot, never an overlay over choices. */
+#townDialog.has-npc-speaker[open]{display:flex;flex-direction:column;overflow:hidden!important}
+#townDialog.has-npc-speaker>:is(small,h2,p,.quest-close-bar){flex-shrink:0}
+#townDialog.has-npc-speaker #dialogTitle{font-size:clamp(20px,4.6vw,25px);line-height:1.4;margin:10px 0}
+#townDialog.has-npc-speaker #dialogText{font-size:13px;line-height:1.7;margin:6px 0 12px}
+#townDialog.has-npc-speaker #dialogChoices{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:3px 3px 8px}
+.npc-dialog-footer{flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr) clamp(105px,30vw,155px);align-items:end;gap:12px;margin-top:10px}
+.npc-dialog-footer #closeDialog{position:static!important;margin:0!important;width:100%;font-size:12px;align-self:end}
+.npc-dialog-footer .npc-dialog-speaker{margin:0;min-width:0;align-self:end}
+.npc-dialog-footer .npc-dialog-speaker>img{display:block;width:100%;height:165px;object-fit:contain;object-position:center bottom}
+.npc-existing-bust{display:block;position:relative;width:100%;height:165px;overflow:hidden}
+.npc-existing-bust img{display:block!important;width:150%!important;max-width:none!important;height:auto!important;margin-left:-25%;object-fit:initial!important;filter:none!important}
+.npc-service-banner{align-items:end}.npc-service-banner>img{height:165px;object-position:center bottom}
+@media(max-height:600px){.npc-dialog-footer .npc-dialog-speaker>img,.npc-existing-bust{height:130px}.npc-dialog-footer{margin-top:6px}.npc-dialog-footer figcaption{font-size:9px}.npc-service-banner>img{height:140px}}
+
+.npc-dialog-footer{grid-template-columns:minmax(0,1fr) clamp(120px,38vw,185px)}.npc-dialog-footer .npc-dialog-speaker>img,.npc-existing-bust{height:190px}.npc-dialog-footer .npc-dialog-speaker>img{object-position:right bottom}@media(max-height:600px){.npc-dialog-footer .npc-dialog-speaker>img,.npc-existing-bust{height:145px}}
