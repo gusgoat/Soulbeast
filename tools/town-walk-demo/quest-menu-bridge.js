@@ -1,0 +1,29 @@
+/* Runs inside the real menu bootstrap; events come from successful game operations. */
+const questEngine=window.WalkQuestEngine,questList=window.WorldQuestData.quests;
+function questEmit(type,extra={}){questEngine.emit(S.P,questList,{id:crypto.randomUUID(),type,place:params.get('city')||S.P.country+'-capital',country:params.get('country')||S.P.country,...extra});save()}
+const questSave=save;save=function(){questSave();parent.postMessage({type:'walk-player-saved'},location.origin)};
+if(!S.P.tutorial)S.P.tutorial={v:1,enabled:true,done:{},active:null,firstBoss:false};
+// Old menu navigation lessons are replaced by the capital quests, combat lessons remain.
+for(const id of ['stats','forest','training','fork','hospital','shop','equip','forge','tower','raid','guild','promotion','world','guildwar'])S.P.tutorial.done[id]=true;
+if(!['skills','capture','captureIntro','battleIntro','elements'].includes(S.P.tutorial.active))S.P.tutorial.active=null;
+const questCanPromote=canPromote;canPromote=function(p){const level=tierOf(p.cls)===0?25:40;return questCanPromote(p)&&!!p.worldQuests?.completed?.[p.country+'-capital:promotion'+level]};
+const questHero=vHero;vHero=function(){return questHero()+((S.P.lv>=25&&tierOf(S.P.cls)<2&&!canPromote(S.P))?'<p class="card">ต้องผ่านบททดสอบเลื่อนอาชีพจากผู้ประสานงานเมืองหลวงก่อนเลือกอาชีพขั้นต่อไป</p>':'')};
+for(const id of ['heal','buy','craft','bt']){const original=handlers[id];if(!original)continue;handlers[id]=function(v,...args){const gold=S.P.gold,owned=S.P.owned?.length||0,items=JSON.stringify(S.P.items),hp=S.P.hp,pets=new Set(S.P.pets.map(p=>p.uid));const out=original.call(this,v,...args);const after=()=>{if(id==='heal'&&(S.P.hp>hp||S.P.gold<gold))questEmit('heal',{target:'hospital'});if(id==='craft'&&(S.P.owned?.length||0)>owned)questEmit('craft');if(id==='buy'&&CON[v]?.seal&&JSON.stringify(S.P.items)!==items&&S.P.gold<gold)questEmit('buySeal');for(const pet of S.P.pets)if(!pets.has(pet.uid)&&SP[pet.sp]?.rare)questEmit('captureRare',{zone:S.zone?.id})};if(out?.then)return out.then(r=>{after();return r});after();return out}}
+const questEnd=endBattle;endBattle=function(res){const b=B(),kind=b?.kind,zone=S.zone?.id,wasOver=!!b?.over;const out=questEnd(res);if(!wasOver&&res==='win'&&b?.walkActivity)questEmit('activity',{target:b.walkActivity});if(!wasOver&&res==='win'&&kind==='boss'&&zone)questEmit('boss',{zone});return out};
+const questStart=startBattle;startBattle=function(...args){const out=questStart(...args);if(B()?.towerRun)questEmit('activity',{target:'arena'});return out};
+// Search events are offered within the forest only after making progress, never from the quest log.
+const searchEvents={'lost-person':{zone:7,depth:2,title:'เสียงเรียกจากริมทาง',text:'นักสำรวจบาดเจ็บอยู่หลังพุ่มไม้ เขายืนยันชื่อในประกาศคนหาย คุณทำแผลและพาเขากลับไปยังจุดพักหน้าป่า',choice:'ช่วยพานักสำรวจกลับจุดพัก'},'moon-gem':{zone:1,depth:3,title:'ประกายใต้รากไม้',text:'แสงจันทร์สะท้อนอัญมณีที่มีตราพ่อค้าอยู่ใต้รากไม้ คุณตรวจตราสัญลักษณ์ตรงกับจดหมายที่ได้รับมา',choice:'เก็บอัญมณีส่งคืนเจ้าของ'}};
+function questSearchUI(){
+ document.getElementById('walkQuestSearch')?.remove();if(!S.zone||S.battle&&!S.battle.over)return;
+ const state=questEngine.state(S.P),entries=Object.entries(searchEvents).filter(([id,e])=>S.zone.id===e.zone&&S.zone.depth>=e.depth&&questList.some(q=>{const a=state.accepted[q.id];return a&&questEngine.steps(S.P,q)[a.step]?.target===id})).map(([id,e])=>({...e,id}));
+ for(const q of questList){const a=state.accepted[q.id],o=a&&questEngine.steps(S.P,q)[a.step];if(o?.type==='forestSearch'&&o.target?.startsWith('npc-')&&o.zone===S.zone.id&&S.zone.depth>=(o.depth||2))entries.push({id:o.target,zone:o.zone,title:q.title,text:q.story,choice:'ตรวจเบาะแสและบันทึกหลักฐานให้ '+window.WorldQuestData.npcs[q.place][q.npc],quest:q})}
+ if(!entries.length)return;const box=document.createElement('section');box.id='walkQuestSearch';box.className='card stack';
+ for(const e of entries){const title=document.createElement('h3');title.textContent=e.title;const text=document.createElement('p');text.textContent=e.text;const button=document.createElement('button');button.className='quest-answer';button.textContent=e.choice;button.onclick=()=>{questEmit('forestSearch',{zone:e.zone,target:e.id});render()};box.append(title);if(e.quest){const frame=document.createElement('div');frame.className='quest-story-window';const im=document.createElement('img');im.src=e.quest.art;im.alt=e.quest.sceneCaptions.join(' → ');im.style.top=e.quest.sceneRow?'-100%':'0';frame.append(im);box.append(frame)}box.append(text,button)}document.querySelector('main')?.prepend(box)
+}
+const questRender=render;render=function(...args){const result=questRender(...args);questSearchUI();return result};
+// The local preview supplies real practice encounters for normally online-only activities.
+if(screen==='world'){const addPractice=()=>{if(document.getElementById('walkActivityPractice')||S.battle)return;const b=document.createElement('button');b.id='walkActivityPractice';b.className='btn';b.textContent='ทดสอบ'+(screen==='camp'?'จู่โจมค่าย':'โจมตีบอสโลก')+'กับคู่ต่อสู้จำลอง';b.onclick=()=>{const enemy=wildUnit(screen==='camp'?ZN.find(z=>z.id===7).sp[0]:'salamander',S.P.lv,0);startBattle([enemy],'wild',7);B().walkActivity=screen;render()};document.querySelector('main')?.prepend(b)};const prior=render;render=function(...a){const r=prior(...a);addPractice();return r}}
+questEmit('visit',{target:screen});save();render();
+
+// The quest footer returns to the same shared journal used by both walking scenes.
+document.addEventListener('click',e=>{if(!e.target.closest?.('nav.bottom [data-a="taleBook"]')||S.battle&&!S.battle.over)return;e.preventDefault();e.stopImmediatePropagation();if(S.zone)return toast('ทำภารกิจในป่าให้เสร็จก่อนกลับฉากเดิน');save();parent.postMessage({type:'town-open-quests'},location.origin)},true);

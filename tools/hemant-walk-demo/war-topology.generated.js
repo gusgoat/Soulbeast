@@ -1,0 +1,1584 @@
+(function(){
+// Shared map rules only. No browser-provided membership, ownership or health is trusted here.
+function countryWarTopology(data){
+ const countries=new Map(data.countries.map(c=>[c.id,c])),nodes=new Map(data.nodes.map(n=>[n.id,n])),neighbors=new Map(data.nodes.map(n=>[n.id,new Set()]));
+ if(countries.size!==3||nodes.size!==63)throw Error('invalid_country_war_map');
+ for(const e of data.edges){if(!nodes.has(e.a)||!nodes.has(e.b)||e.a===e.b||neighbors.get(e.a).has(e.b))throw Error('invalid_country_war_route');neighbors.get(e.a).add(e.b);neighbors.get(e.b).add(e.a);}
+ for(const c of countries.values()){
+  const group=[...nodes.values()].filter(n=>n.country===c.id),capital=nodes.get(c.capitalId);
+  if(group.filter(n=>n.type==='capital').length!==1||group.filter(n=>n.type==='city').length!==4||group.filter(n=>n.type==='village').length!==16||capital?.country!==c.id||capital?.type!=='capital')throw Error('invalid_country_war_country');
+ }
+ for(const n of nodes.values()){
+  if(!countries.has(n.country)||!['capital','city','village'].includes(n.type))throw Error('invalid_country_war_location');
+  const adjacent=[...neighbors.get(n.id)].map(id=>nodes.get(id));
+  if(n.type==='capital'&&(n.capacity!==32||!n.capturable||adjacent.length!==4||adjacent.some(x=>x.type!=='city'||x.country!==n.country)))throw Error('invalid_country_war_capital');
+  if(n.type==='city'&&(n.capacity!==16||!n.capturable||adjacent.length!==5||adjacent.filter(x=>x.type==='village'&&x.country===n.country).length!==4||adjacent.filter(x=>x.type==='capital'&&x.country===n.country).length!==1))throw Error('invalid_country_war_city');
+  if(n.type==='village'&&(n.capacity!==4||!n.capturable||adjacent.length!==2||adjacent.filter(x=>x.type==='city'&&x.country===n.country).length!==1||adjacent.filter(x=>x.type==='village'&&x.country!==n.country).length!==1))throw Error('invalid_country_war_village');
+ }
+ const ownerOf=(state,id)=>state.locations?.[id]?.owner||nodes.get(id)?.country;
+ const owner=ownerOf;
+ function attackRequirement(state,country,id){
+  const n=nodes.get(id);if(!n)return {allowed:false,required:0,held:0,total:0};
+  const childType=n.type==='capital'?'city':n.type==='city'?'village':null;
+  const children=childType?[...neighbors.get(id)].map(key=>nodes.get(key)).filter(x=>x.type===childType&&x.country===n.country):[];
+  const held=children.filter(x=>owner(state,x.id)===country).length,required=childType?2:0,frontier=[...neighbors.get(id)].filter(key=>owner(state,key)===country);
+  return {allowed:owner(state,id)!==country&&n.capturable&&held>=required&&frontier.length>0,required,held,total:children.length,childType,connected:frontier.length>0,frontier};
+ }
+ const residents=(state,id)=>Object.values(state.members||{}).filter(m=>m.location===id&&!m.deadUntil&&(nodes.get(id)?.type!=='capital'||m.capitalGuard));
+ return {
+  adjacent:(a,b)=>neighbors.get(a)?.has(b)===true,
+  capacity:id=>nodes.get(id)?.capacity,
+  canCapture:id=>nodes.get(id)?.capturable===true,
+  attackRequirement,
+  canEnter:(state,country,id)=>nodes.has(id)&&owner(state,id)===country,
+  hasRoom(state,id,count=1){if(!nodes.has(id)||!Number.isSafeInteger(count)||count<0)return false;const cap=nodes.get(id).capacity;return cap===null||residents(state,id).length+count<=cap;},
+  // All targets expose public ownership/counts; private rosters remain own-country only.
+  view(state,viewer){
+   if(!countries.has(viewer.country))throw Error('country_required');
+   const owned=new Set([...nodes.keys()].filter(id=>owner(state,id)===viewer.country)),visible=new Set(nodes.keys());
+   for(const id of owned)for(const next of neighbors.get(id))visible.add(next);
+   // A character may be waiting in its occupied home capital after respawning.
+   if(nodes.has(viewer.location)){visible.add(viewer.location);for(const next of neighbors.get(viewer.location))visible.add(next);}
+   return {country:viewer.country,locations:[...visible].map(id=>{
+    const n=nodes.get(id),own=owned.has(id),people=residents(state,id);
+    return {id,name:n.placeName,type:n.type,terrain:n.terrain,owner:owner(state,id),capacity:n.capacity,capturable:n.capturable,count:people.length,attack:attackRequirement(state,viewer.country,id),...(own?{members:people.filter(m=>m.country===viewer.country).map(m=>({code:m.code,name:m.name}))}:{})};
+   }),edges:data.edges.filter(e=>visible.has(e.a)&&visible.has(e.b)).map(e=>({a:e.a,b:e.b}))};
+  },
+  monthlyRanks(state){
+   const scores=Object.fromEntries([...countries.keys()].map(id=>[id,{country:id,score:0,villages:0,cities:0,capitals:0}]));
+   for(const n of nodes.values()){const p=scores[owner(state,n.id)];if(n.type==='village'){p.score++;p.villages++;}if(n.type==='city'){p.score+=4;p.cities++;}if(n.type==='capital'){p.score+=16;p.capitals++;}}
+   const rows=Object.values(scores);return rows.map(p=>({...p,rank:1+rows.filter(q=>q.score>p.score).length})).sort((a,b)=>a.rank-b.rank||a.country.localeCompare(b.country));
+  },
+  dailyPools(state){
+   const pools=Object.fromEntries([...countries.keys()].map(id=>[id,{gold:0,couponEighths:0,villages:0,cities:0,capitals:0}]));
+   for(const n of nodes.values()){const p=pools[owner(state,n.id)];if(!p)throw Error('invalid_country_war_owner');p.gold+=n.type==='capital'?1000:n.type==='city'?100:10;if(n.type==='capital')p.capitals++;if(n.type==='city')p.cities++;if(n.type==='village')p.villages++;}
+   return pools;
+  },
+  weeklyPools(state){
+   const pools=Object.fromEntries([...countries.keys()].map(id=>[id,{gold:0,couponEighths:0,villages:0,cities:0,capitals:0}]));
+   for(const n of nodes.values()){const p=pools[owner(state,n.id)];if(!p)throw Error('invalid_country_war_owner');p.gold+=n.weeklyGold;p.couponEighths+=n.weeklyCouponEighths;if(n.type==='capital')p.capitals++;if(n.type==='city')p.cities++;if(n.type==='village')p.villages++;}
+   return pools;
+  }
+ };
+}
+
+window.walkWarTopology=countryWarTopology({
+  "version": 1,
+  "timezone": "Asia/Bangkok",
+  "countries": [
+    {
+      "id": "blue",
+      "name": "เหมันตคีรี",
+      "color": "#7edbff",
+      "capitalId": "blue-capital",
+      "flag": "assets/ui/country-war/flag-blue-v1.webp"
+    },
+    {
+      "id": "green",
+      "name": "พนาสมุทร",
+      "color": "#8ff0a6",
+      "capitalId": "green-capital",
+      "flag": "assets/ui/country-war/flag-green-v1.webp"
+    },
+    {
+      "id": "red",
+      "name": "อัคนีบรรพต",
+      "color": "#ff947a",
+      "capitalId": "red-capital",
+      "flag": "assets/ui/country-war/flag-red-v1.webp"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "blue-capital",
+      "country": "blue",
+      "type": "capital",
+      "name": "เหมันตคีรี · เมืองหลวง",
+      "placeName": "เหมันตคีรี",
+      "x": 0.212,
+      "y": 0.205,
+      "capacity": 32,
+      "capturable": true,
+      "weeklyGold": 4000,
+      "weeklyCouponEighths": 8,
+      "terrain": "snow",
+      "dailyGold": 1000,
+      "monthlyScore": 16
+    },
+    {
+      "id": "blue-city-1",
+      "country": "blue",
+      "type": "city",
+      "name": "เหมันตคีรี · เมืองวิมานเกล็ดหิมะ",
+      "placeName": "วิมานเกล็ดหิมะ",
+      "number": 1,
+      "x": 0.32,
+      "y": 0.12,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "snow",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "blue-city-2",
+      "country": "blue",
+      "type": "city",
+      "name": "เหมันตคีรี · เมืองศิลาน้ำค้าง",
+      "placeName": "ศิลาน้ำค้าง",
+      "number": 2,
+      "x": 0.425,
+      "y": 0.23,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "snow",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "blue-city-3",
+      "country": "blue",
+      "type": "city",
+      "name": "เหมันตคีรี · เมืองท่าจันทราเหมันต์",
+      "placeName": "ท่าจันทราเหมันต์",
+      "number": 3,
+      "x": 0.215,
+      "y": 0.24,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "snow",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "blue-city-4",
+      "country": "blue",
+      "type": "city",
+      "name": "เหมันตคีรี · เมืองด่านหมอกเงิน",
+      "placeName": "ด่านหมอกเงิน",
+      "number": 4,
+      "x": 0.355,
+      "y": 0.29,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "snow",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "green-capital",
+      "country": "green",
+      "type": "capital",
+      "name": "พนาสมุทร · เมืองหลวง",
+      "placeName": "พนาสมุทร",
+      "x": 0.695,
+      "y": 0.414,
+      "capacity": 32,
+      "capturable": true,
+      "weeklyGold": 4000,
+      "weeklyCouponEighths": 8,
+      "terrain": "mountain",
+      "dailyGold": 1000,
+      "monthlyScore": 16
+    },
+    {
+      "id": "green-city-1",
+      "country": "green",
+      "type": "city",
+      "name": "พนาสมุทร · เมืองคีรีมรกต",
+      "placeName": "คีรีมรกต",
+      "number": 1,
+      "x": 0.615,
+      "y": 0.17,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "mountain",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "green-city-2",
+      "country": "green",
+      "type": "city",
+      "name": "พนาสมุทร · เมืองธารพฤกษา",
+      "placeName": "ธารพฤกษา",
+      "number": 2,
+      "x": 0.64,
+      "y": 0.315,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "forest",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "green-city-3",
+      "country": "green",
+      "type": "city",
+      "name": "พนาสมุทร · เมืองเวียงเมฆไพร",
+      "placeName": "เวียงเมฆไพร",
+      "number": 3,
+      "x": 0.68,
+      "y": 0.55,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "mountain",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "green-city-4",
+      "country": "green",
+      "type": "city",
+      "name": "พนาสมุทร · เมืองท่าแก้วสมุทร",
+      "placeName": "ท่าแก้วสมุทร",
+      "number": 4,
+      "x": 0.735,
+      "y": 0.705,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "coast",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "red-capital",
+      "country": "red",
+      "type": "capital",
+      "name": "อัคนีบรรพต · เมืองหลวง",
+      "placeName": "อัคนีบรรพต",
+      "x": 0.325,
+      "y": 0.605,
+      "capacity": 32,
+      "capturable": true,
+      "weeklyGold": 4000,
+      "weeklyCouponEighths": 8,
+      "terrain": "volcano",
+      "dailyGold": 1000,
+      "monthlyScore": 16
+    },
+    {
+      "id": "red-city-1",
+      "country": "red",
+      "type": "city",
+      "name": "อัคนีบรรพต · เมืองป้อมเพลิงกาฬ",
+      "placeName": "ป้อมเพลิงกาฬ",
+      "number": 1,
+      "x": 0.235,
+      "y": 0.415,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "volcano",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "red-city-2",
+      "country": "red",
+      "type": "city",
+      "name": "อัคนีบรรพต · เมืองศิลาสุริยัน",
+      "placeName": "ศิลาสุริยัน",
+      "number": 2,
+      "x": 0.39,
+      "y": 0.495,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "volcano",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "red-city-3",
+      "country": "red",
+      "type": "city",
+      "name": "อัคนีบรรพต · เมืองเวียงเถ้าคราม",
+      "placeName": "เวียงเถ้าคราม",
+      "number": 3,
+      "x": 0.46,
+      "y": 0.61,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "volcano",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "red-city-4",
+      "country": "red",
+      "type": "city",
+      "name": "อัคนีบรรพต · เมืองท่าอรุณอัคนี",
+      "placeName": "ท่าอรุณอัคนี",
+      "number": 4,
+      "x": 0.44,
+      "y": 0.78,
+      "capacity": 16,
+      "capturable": true,
+      "weeklyGold": 1000,
+      "weeklyCouponEighths": 4,
+      "terrain": "coast",
+      "dailyGold": 100,
+      "monthlyScore": 4
+    },
+    {
+      "id": "blue-village-1",
+      "country": "blue",
+      "type": "village",
+      "number": 1,
+      "name": "เหมันตคีรี · หมู่บ้านสนขาว",
+      "placeName": "สนขาว",
+      "x": 0.507,
+      "y": 0.13,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-1",
+      "country": "green",
+      "type": "village",
+      "number": 1,
+      "name": "พนาสมุทร · หมู่บ้านรากสนโบราณ",
+      "placeName": "รากสนโบราณ",
+      "x": 0.55,
+      "y": 0.13,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-2",
+      "country": "blue",
+      "type": "village",
+      "number": 2,
+      "name": "เหมันตคีรี · หมู่บ้านระฆังน้ำแข็ง",
+      "placeName": "ระฆังน้ำแข็ง",
+      "x": 0.495,
+      "y": 0.17,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-2",
+      "country": "green",
+      "type": "village",
+      "number": 2,
+      "name": "พนาสมุทร · หมู่บ้านดอยเฟิร์น",
+      "placeName": "ดอยเฟิร์น",
+      "x": 0.545,
+      "y": 0.17,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-3",
+      "country": "blue",
+      "type": "village",
+      "number": 3,
+      "name": "เหมันตคีรี · หมู่บ้านธารแก้ว",
+      "placeName": "ธารแก้ว",
+      "x": 0.49,
+      "y": 0.21,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-3",
+      "country": "green",
+      "type": "village",
+      "number": 3,
+      "name": "พนาสมุทร · หมู่บ้านสะพานเถาวัลย์",
+      "placeName": "สะพานเถาวัลย์",
+      "x": 0.54,
+      "y": 0.21,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-4",
+      "country": "blue",
+      "type": "village",
+      "number": 4,
+      "name": "เหมันตคีรี · หมู่บ้านยอดเมฆา",
+      "placeName": "ยอดเมฆา",
+      "x": 0.485,
+      "y": 0.25,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-4",
+      "country": "green",
+      "type": "village",
+      "number": 4,
+      "name": "พนาสมุทร · หมู่บ้านน้ำตกเจ็ดม่าน",
+      "placeName": "น้ำตกเจ็ดม่าน",
+      "x": 0.535,
+      "y": 0.25,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-5",
+      "country": "blue",
+      "type": "village",
+      "number": 5,
+      "name": "เหมันตคีรี · หมู่บ้านผาผลึก",
+      "placeName": "ผาผลึก",
+      "x": 0.474,
+      "y": 0.29,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-5",
+      "country": "green",
+      "type": "village",
+      "number": 5,
+      "name": "พนาสมุทร · หมู่บ้านลำธารมรกต",
+      "placeName": "ลำธารมรกต",
+      "x": 0.525,
+      "y": 0.29,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "forest",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-6",
+      "country": "blue",
+      "type": "village",
+      "number": 6,
+      "name": "เหมันตคีรี · หมู่บ้านหุบหมอกคราม",
+      "placeName": "หุบหมอกคราม",
+      "x": 0.466,
+      "y": 0.325,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-6",
+      "country": "green",
+      "type": "village",
+      "number": 6,
+      "name": "พนาสมุทร · หมู่บ้านบึงบัวจันทร์",
+      "placeName": "บึงบัวจันทร์",
+      "x": 0.518,
+      "y": 0.325,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "forest",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-7",
+      "country": "blue",
+      "type": "village",
+      "number": 7,
+      "name": "เหมันตคีรี · หมู่บ้านเหมืองดาวเงิน",
+      "placeName": "เหมืองดาวเงิน",
+      "x": 0.453,
+      "y": 0.36,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-7",
+      "country": "green",
+      "type": "village",
+      "number": 7,
+      "name": "พนาสมุทร · หมู่บ้านหุบกล้วยไม้",
+      "placeName": "หุบกล้วยไม้",
+      "x": 0.507,
+      "y": 0.36,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "forest",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-8",
+      "country": "blue",
+      "type": "village",
+      "number": 8,
+      "name": "เหมันตคีรี · หมู่บ้านดอกเหมันต์",
+      "placeName": "ดอกเหมันต์",
+      "x": 0.445,
+      "y": 0.395,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-8",
+      "country": "green",
+      "type": "village",
+      "number": 8,
+      "name": "พนาสมุทร · หมู่บ้านไทรพันปี",
+      "placeName": "ไทรพันปี",
+      "x": 0.493,
+      "y": 0.395,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "forest",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-9",
+      "country": "blue",
+      "type": "village",
+      "number": 9,
+      "name": "เหมันตคีรี · หมู่บ้านอ่าวจันทร์เย็น",
+      "placeName": "อ่าวจันทร์เย็น",
+      "x": 0.16,
+      "y": 0.275,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-1",
+      "country": "red",
+      "type": "village",
+      "number": 1,
+      "name": "อัคนีบรรพต · หมู่บ้านผาถ่านแดง",
+      "placeName": "ผาถ่านแดง",
+      "x": 0.16,
+      "y": 0.325,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-10",
+      "country": "blue",
+      "type": "village",
+      "number": 10,
+      "name": "เหมันตคีรี · หมู่บ้านสะพานหิมะ",
+      "placeName": "สะพานหิมะ",
+      "x": 0.2,
+      "y": 0.285,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-2",
+      "country": "red",
+      "type": "village",
+      "number": 2,
+      "name": "อัคนีบรรพต · หมู่บ้านระฆังเพลิง",
+      "placeName": "ระฆังเพลิง",
+      "x": 0.2,
+      "y": 0.335,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-11",
+      "country": "blue",
+      "type": "village",
+      "number": 11,
+      "name": "เหมันตคีรี · หมู่บ้านทุ่งแสงเหนือ",
+      "placeName": "ทุ่งแสงเหนือ",
+      "x": 0.24,
+      "y": 0.305,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-3",
+      "country": "red",
+      "type": "village",
+      "number": 3,
+      "name": "อัคนีบรรพต · หมู่บ้านหุบควันเทา",
+      "placeName": "หุบควันเทา",
+      "x": 0.24,
+      "y": 0.355,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-12",
+      "country": "blue",
+      "type": "village",
+      "number": 12,
+      "name": "เหมันตคีรี · หมู่บ้านหอคอยลมหนาว",
+      "placeName": "หอคอยลมหนาว",
+      "x": 0.28,
+      "y": 0.325,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-4",
+      "country": "red",
+      "type": "village",
+      "number": 4,
+      "name": "อัคนีบรรพต · หมู่บ้านดอกไม้เถ้าถ่าน",
+      "placeName": "ดอกไม้เถ้าถ่าน",
+      "x": 0.28,
+      "y": 0.375,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-13",
+      "country": "blue",
+      "type": "village",
+      "number": 13,
+      "name": "เหมันตคีรี · หมู่บ้านประตูน้ำค้าง",
+      "placeName": "ประตูน้ำค้าง",
+      "x": 0.32,
+      "y": 0.345,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-5",
+      "country": "red",
+      "type": "village",
+      "number": 5,
+      "name": "อัคนีบรรพต · หมู่บ้านเหมืองทับทิม",
+      "placeName": "เหมืองทับทิม",
+      "x": 0.32,
+      "y": 0.395,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-14",
+      "country": "blue",
+      "type": "village",
+      "number": 14,
+      "name": "เหมันตคีรี · หมู่บ้านกวางเงิน",
+      "placeName": "กวางเงิน",
+      "x": 0.36,
+      "y": 0.365,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-6",
+      "country": "red",
+      "type": "village",
+      "number": 6,
+      "name": "อัคนีบรรพต · หมู่บ้านธารทองแดง",
+      "placeName": "ธารทองแดง",
+      "x": 0.36,
+      "y": 0.415,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-15",
+      "country": "blue",
+      "type": "village",
+      "number": 15,
+      "name": "เหมันตคีรี · หมู่บ้านหุบสนธยา",
+      "placeName": "หุบสนธยา",
+      "x": 0.4,
+      "y": 0.385,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-7",
+      "country": "red",
+      "type": "village",
+      "number": 7,
+      "name": "อัคนีบรรพต · หมู่บ้านทุ่งสุริยแสง",
+      "placeName": "ทุ่งสุริยแสง",
+      "x": 0.4,
+      "y": 0.435,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "blue-village-16",
+      "country": "blue",
+      "type": "village",
+      "number": 16,
+      "name": "เหมันตคีรี · หมู่บ้านตะวันแรก",
+      "placeName": "ตะวันแรก",
+      "x": 0.427,
+      "y": 0.413,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "snow",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-8",
+      "country": "red",
+      "type": "village",
+      "number": 8,
+      "name": "อัคนีบรรพต · หมู่บ้านศิลาร้อน",
+      "placeName": "ศิลาร้อน",
+      "x": 0.444,
+      "y": 0.457,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-9",
+      "country": "green",
+      "type": "village",
+      "number": 9,
+      "name": "พนาสมุทร · หมู่บ้านผานกคราม",
+      "placeName": "ผานกคราม",
+      "x": 0.505,
+      "y": 0.465,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-9",
+      "country": "red",
+      "type": "village",
+      "number": 9,
+      "name": "อัคนีบรรพต · หมู่บ้านด่านภูผาแดง",
+      "placeName": "ด่านภูผาแดง",
+      "x": 0.466,
+      "y": 0.49,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-10",
+      "country": "green",
+      "type": "village",
+      "number": 10,
+      "name": "พนาสมุทร · หมู่บ้านทุ่งหญ้ารุ่ง",
+      "placeName": "ทุ่งหญ้ารุ่ง",
+      "x": 0.525,
+      "y": 0.5,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-10",
+      "country": "red",
+      "type": "village",
+      "number": 10,
+      "name": "อัคนีบรรพต · หมู่บ้านบ่ออำพัน",
+      "placeName": "บ่ออำพัน",
+      "x": 0.485,
+      "y": 0.525,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-11",
+      "country": "green",
+      "type": "village",
+      "number": 11,
+      "name": "พนาสมุทร · หมู่บ้านวังวารี",
+      "placeName": "วังวารี",
+      "x": 0.545,
+      "y": 0.54,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-11",
+      "country": "red",
+      "type": "village",
+      "number": 11,
+      "name": "อัคนีบรรพต · หมู่บ้านสนเพลิง",
+      "placeName": "สนเพลิง",
+      "x": 0.505,
+      "y": 0.565,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-12",
+      "country": "green",
+      "type": "village",
+      "number": 12,
+      "name": "พนาสมุทร · หมู่บ้านป่าแสงหิ่งห้อย",
+      "placeName": "ป่าแสงหิ่งห้อย",
+      "x": 0.565,
+      "y": 0.58,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "mountain",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-12",
+      "country": "red",
+      "type": "village",
+      "number": 12,
+      "name": "อัคนีบรรพต · หมู่บ้านหุบตะวันดับ",
+      "placeName": "หุบตะวันดับ",
+      "x": 0.525,
+      "y": 0.605,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "volcano",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-13",
+      "country": "green",
+      "type": "village",
+      "number": 13,
+      "name": "พนาสมุทร · หมู่บ้านอ่าวไข่มุก",
+      "placeName": "อ่าวไข่มุก",
+      "x": 0.585,
+      "y": 0.62,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-13",
+      "country": "red",
+      "type": "village",
+      "number": 13,
+      "name": "อัคนีบรรพต · หมู่บ้านอ่าวประกายไฟ",
+      "placeName": "อ่าวประกายไฟ",
+      "x": 0.545,
+      "y": 0.645,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-14",
+      "country": "green",
+      "type": "village",
+      "number": 14,
+      "name": "พนาสมุทร · หมู่บ้านทรายแก้ว",
+      "placeName": "ทรายแก้ว",
+      "x": 0.605,
+      "y": 0.66,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-14",
+      "country": "red",
+      "type": "village",
+      "number": 14,
+      "name": "อัคนีบรรพต · หมู่บ้านทรายดำ",
+      "placeName": "ทรายดำ",
+      "x": 0.565,
+      "y": 0.685,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-15",
+      "country": "green",
+      "type": "village",
+      "number": 15,
+      "name": "พนาสมุทร · หมู่บ้านปะการังเงิน",
+      "placeName": "ปะการังเงิน",
+      "x": 0.615,
+      "y": 0.7,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-15",
+      "country": "red",
+      "type": "village",
+      "number": 15,
+      "name": "อัคนีบรรพต · หมู่บ้านประภาคารอรุณ",
+      "placeName": "ประภาคารอรุณ",
+      "x": 0.575,
+      "y": 0.725,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "green-village-16",
+      "country": "green",
+      "type": "village",
+      "number": 16,
+      "name": "พนาสมุทร · หมู่บ้านเกาะลมอุ่น",
+      "placeName": "เกาะลมอุ่น",
+      "x": 0.615,
+      "y": 0.74,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    },
+    {
+      "id": "red-village-16",
+      "country": "red",
+      "type": "village",
+      "number": 16,
+      "name": "อัคนีบรรพต · หมู่บ้านลมทะเลแดง",
+      "placeName": "ลมทะเลแดง",
+      "x": 0.575,
+      "y": 0.765,
+      "capacity": 4,
+      "capturable": true,
+      "weeklyGold": 100,
+      "weeklyCouponEighths": 1,
+      "terrain": "coast",
+      "dailyGold": 10,
+      "monthlyScore": 1
+    }
+  ],
+  "edges": [
+    {
+      "a": "blue-capital",
+      "b": "blue-city-1",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-capital",
+      "b": "blue-city-2",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-capital",
+      "b": "blue-city-3",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-capital",
+      "b": "blue-city-4",
+      "type": "domestic"
+    },
+    {
+      "a": "green-capital",
+      "b": "green-city-1",
+      "type": "domestic"
+    },
+    {
+      "a": "green-capital",
+      "b": "green-city-2",
+      "type": "domestic"
+    },
+    {
+      "a": "green-capital",
+      "b": "green-city-3",
+      "type": "domestic"
+    },
+    {
+      "a": "green-capital",
+      "b": "green-city-4",
+      "type": "domestic"
+    },
+    {
+      "a": "red-capital",
+      "b": "red-city-1",
+      "type": "domestic"
+    },
+    {
+      "a": "red-capital",
+      "b": "red-city-2",
+      "type": "domestic"
+    },
+    {
+      "a": "red-capital",
+      "b": "red-city-3",
+      "type": "domestic"
+    },
+    {
+      "a": "red-capital",
+      "b": "red-city-4",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-city-1",
+      "b": "blue-village-1",
+      "type": "domestic"
+    },
+    {
+      "a": "green-city-1",
+      "b": "green-village-1",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-1",
+      "b": "green-village-1",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-1",
+      "b": "blue-village-2",
+      "type": "domestic"
+    },
+    {
+      "a": "green-city-1",
+      "b": "green-village-2",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-2",
+      "b": "green-village-2",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-1",
+      "b": "blue-village-3",
+      "type": "domestic"
+    },
+    {
+      "a": "green-city-1",
+      "b": "green-village-3",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-3",
+      "b": "green-village-3",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-1",
+      "b": "blue-village-4",
+      "type": "domestic"
+    },
+    {
+      "a": "green-city-1",
+      "b": "green-village-4",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-4",
+      "b": "green-village-4",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-2",
+      "b": "blue-village-5",
+      "type": "domestic"
+    },
+    {
+      "a": "green-city-2",
+      "b": "green-village-5",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-5",
+      "b": "green-village-5",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-2",
+      "b": "blue-village-6",
+      "type": "domestic"
+    },
+    {
+      "a": "green-city-2",
+      "b": "green-village-6",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-6",
+      "b": "green-village-6",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-2",
+      "b": "blue-village-7",
+      "type": "domestic"
+    },
+    {
+      "a": "green-city-2",
+      "b": "green-village-7",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-7",
+      "b": "green-village-7",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-2",
+      "b": "blue-village-8",
+      "type": "domestic"
+    },
+    {
+      "a": "green-city-2",
+      "b": "green-village-8",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-8",
+      "b": "green-village-8",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-3",
+      "b": "blue-village-9",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-1",
+      "b": "red-village-1",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-9",
+      "b": "red-village-1",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-3",
+      "b": "blue-village-10",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-1",
+      "b": "red-village-2",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-10",
+      "b": "red-village-2",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-3",
+      "b": "blue-village-11",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-1",
+      "b": "red-village-3",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-11",
+      "b": "red-village-3",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-3",
+      "b": "blue-village-12",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-1",
+      "b": "red-village-4",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-12",
+      "b": "red-village-4",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-4",
+      "b": "blue-village-13",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-2",
+      "b": "red-village-5",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-13",
+      "b": "red-village-5",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-4",
+      "b": "blue-village-14",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-2",
+      "b": "red-village-6",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-14",
+      "b": "red-village-6",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-4",
+      "b": "blue-village-15",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-2",
+      "b": "red-village-7",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-15",
+      "b": "red-village-7",
+      "type": "border"
+    },
+    {
+      "a": "blue-city-4",
+      "b": "blue-village-16",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-2",
+      "b": "red-village-8",
+      "type": "domestic"
+    },
+    {
+      "a": "blue-village-16",
+      "b": "red-village-8",
+      "type": "border"
+    },
+    {
+      "a": "green-city-3",
+      "b": "green-village-9",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-3",
+      "b": "red-village-9",
+      "type": "domestic"
+    },
+    {
+      "a": "green-village-9",
+      "b": "red-village-9",
+      "type": "border"
+    },
+    {
+      "a": "green-city-3",
+      "b": "green-village-10",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-3",
+      "b": "red-village-10",
+      "type": "domestic"
+    },
+    {
+      "a": "green-village-10",
+      "b": "red-village-10",
+      "type": "border"
+    },
+    {
+      "a": "green-city-3",
+      "b": "green-village-11",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-3",
+      "b": "red-village-11",
+      "type": "domestic"
+    },
+    {
+      "a": "green-village-11",
+      "b": "red-village-11",
+      "type": "border"
+    },
+    {
+      "a": "green-city-3",
+      "b": "green-village-12",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-3",
+      "b": "red-village-12",
+      "type": "domestic"
+    },
+    {
+      "a": "green-village-12",
+      "b": "red-village-12",
+      "type": "border"
+    },
+    {
+      "a": "green-city-4",
+      "b": "green-village-13",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-4",
+      "b": "red-village-13",
+      "type": "domestic"
+    },
+    {
+      "a": "green-village-13",
+      "b": "red-village-13",
+      "type": "border"
+    },
+    {
+      "a": "green-city-4",
+      "b": "green-village-14",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-4",
+      "b": "red-village-14",
+      "type": "domestic"
+    },
+    {
+      "a": "green-village-14",
+      "b": "red-village-14",
+      "type": "border"
+    },
+    {
+      "a": "green-city-4",
+      "b": "green-village-15",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-4",
+      "b": "red-village-15",
+      "type": "domestic"
+    },
+    {
+      "a": "green-village-15",
+      "b": "red-village-15",
+      "type": "border"
+    },
+    {
+      "a": "green-city-4",
+      "b": "green-village-16",
+      "type": "domestic"
+    },
+    {
+      "a": "red-city-4",
+      "b": "red-village-16",
+      "type": "domestic"
+    },
+    {
+      "a": "green-village-16",
+      "b": "red-village-16",
+      "type": "border"
+    }
+  ]
+}
+);})();

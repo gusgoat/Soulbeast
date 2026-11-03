@@ -1,0 +1,12 @@
+CON.teleportScroll={n:'ใบเทเลพอร์ต',d:'วาร์ปไปเมือง/หมู่บ้านล่าสุดที่เคยเข้า หรือเมืองหลวงประเทศตัวเอง · ใช้ไม่ได้ระหว่างต่อสู้หรืออยู่ในป่า',price:30,lv:1};
+ITEM_ART.teleportScroll='assets/world-quests/teleport-scroll-v1.png.webp';
+function walkTeleportBlocked(){return !!S.zone||!!(S.battle&&!S.battle.over)}
+handlers.useTeleport=()=>{if(S.screen!=='bag'||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;S.ui.walkTeleport=true;render();document.querySelector('main')?.scrollTo(0,0)};
+handlers.cancelTeleport=()=>{S.ui.walkTeleport=false;render()};
+handlers.confirmTeleport=choice=>{if(!S.ui.walkTeleport||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;const destination=choice==='capital'?S.P.country+'-capital':choice==='last'?S.P.walkLastSettlement:null;if(!destination||!window.walkWar.canEnter(destination))return toast('ยังเดินทางเข้าพื้นที่นี้ไม่ได้');S.P.items.teleportScroll--;S.ui.walkTeleport=false;save();parent.postMessage({type:'walk-teleport',destination},location.origin)};
+CON.teleportScroll.bagAction='useTeleport';CON.teleportScroll.bagDisabled=walkTeleportBlocked;
+const teleportBag=vBag;vBag=function(){let h=teleportBag();if(S.ui.walkTeleport){const last=S.P.walkLastSettlement,lastName=last&&window.townProfiles.get(last)?.name;h='<section class="card stack" role="dialog" aria-label="เลือกปลายทางเทเลพอร์ต"><h3>เลือกปลายทาง · ใช้ใบเทเลพอร์ต 1 ชิ้น</h3>'+itemIcon('teleportScroll',80)+'<button class="btn" data-a="confirmTeleport" data-v="last" '+(!last||!window.walkWar.canEnter(last)?'disabled':'')+'>เมือง/หมู่บ้านล่าสุด · '+esc(lastName||'ยังไม่มี')+'</button><button class="btn" data-a="confirmTeleport" data-v="capital" '+(!window.walkWar.canEnter(S.P.country+'-capital')?'disabled':'')+'>เมืองหลวงประเทศตัวเอง</button><button class="btn" data-a="cancelTeleport">ยกเลิก</button></section>'+h}return h};
+// Normal shop buys call handlers.buy; no discounted country/class pricing for this item.
+const teleportBuy=handlers.buy;handlers.buy=function(id){if(id!=='teleportScroll')return teleportBuy(id);if(S.zone||S.P.gold<30)return toast('เหรียญไม่พอ หรือยังอยู่ในป่า');S.P.gold-=30;S.P.items.teleportScroll=(S.P.items.teleportScroll||0)+1;ExtraAudio.play('buy');save();render();toast('ซื้อใบเทเลพอร์ตแล้ว')};
+CON.teleportScroll.fixedPrice=30;
+const teleportUse=handlers.use;handlers.use=function(v){if(String(v).split(':')[0]==='teleportScroll')return handlers.useTeleport();return teleportUse(v)};

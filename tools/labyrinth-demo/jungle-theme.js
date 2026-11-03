@@ -1,0 +1,13 @@
+(function(scope){'use strict';
+const root='/Soulbeast/assets/dungeon-jungle-v1/',assets=Object.fromEntries(['floor','tree-1','tree-2','tree-3','tree-4','bush-1','bush-2'].map(k=>[k,root+k+'-v1.webp']));
+function decorate(data){const props=[],wet=new Set(data.river.map(p=>Math.floor(p.x/data.cell)+','+Math.floor(p.y/data.cell)));
+ for(let y=1;y<data.rows-1;y++)for(let x=1;x<data.cols-1;x++){if(data.grid[y][x]!==0||wet.has(x+','+y))continue;const h=(x*73856093^y*19349663)>>>0,edge=[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>data.grid[y+dy]?.[x+dx]===1);if(!edge&&h%8)continue;const p=data.center(x,y);if(h%3!==0)props.push({...p,name:'tree-'+(1+h%4),size:230+h%61});if(h%2===0)props.push({...p,x:p.x+43,y:p.y+24,name:'bush-'+(1+(h>>>3)%2),size:105+h%42});if(h%11===0)props.push({...p,x:p.x-45,y:p.y+32,name:'rock',size:110});if(h%13===0)props.push({...p,x:p.x+48,y:p.y+38,name:'mushrooms',size:78});if(h%9===0)props.push({...p,name:'vines',size:170})}
+ for(const room of data.rooms)for(let x=room.x0;x<=room.x1;x+=2)props.push({...data.center(x,room.y0),y:room.y0*data.cell+24,name:'tree-'+(1+x%4),size:260});
+ for(const p of data.cells){const h=(p.cx*127+p.cy*991)%83;if(h===0)props.push({...p,x:p.x-62,name:'mushrooms',size:70});if(h===4)props.push({...p,x:p.x+66,name:'bush-'+(1+p.cx%2),size:85})}
+ return props;
+}
+function paintWall(c,data,x,y){const px=x*data.cell,py=y*data.cell*data.flatten,w=data.cell,h=data.cell*data.flatten;c.fillStyle='#153d24';c.fillRect(px,py,w,h);for(let i=0;i<9;i++){const n=(x*127+y*89+i*47)%101;c.fillStyle=['#1c4b2b','#285e35','#214f30'][n%3];c.beginPath();c.ellipse(px+(n%3+.4)*w/3,py+(Math.floor(n/3)%3+.3)*h/3,w*.24,h*.28,(n%7)*.1,0,Math.PI*2);c.fill()}c.strokeStyle='#102d1bbb';c.lineWidth=8;for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]])if(data.grid[y+dy]?.[x+dx]===1){c.beginPath();if(dx){const a=dx>0?px+w:px;c.moveTo(a,py);c.lineTo(a,py+h)}else{const a=dy>0?py+h:py;c.moveTo(px,a);c.lineTo(px+w,a)}c.stroke()}}
+function vines(c,x,y,size,time){c.save();c.lineCap='round';c.strokeStyle='#315b2b';c.lineWidth=3;for(let i=0;i<3;i++){const bx=x+(i-1)*size*.22,by=y-size*.84;c.beginPath();c.moveTo(bx,by);c.bezierCurveTo(bx-18,by+size*.25,bx+20,by+size*.5,bx-4,y-12);c.stroke();c.fillStyle=i%2?'#5d8d39':'#377542';for(let j=0;j<5;j++){c.beginPath();c.ellipse(bx+Math.sin(j*2+i)*9,by+j*size*.14,6,3,j%2?-.6:.6,0,Math.PI*2);c.fill()}}c.restore()}
+function alpha(p,player,flatten){return p.name.startsWith('tree-')&&Math.abs(player.x-p.x)<p.size*.46&&player.y<p.y&&player.y>p.y-p.size/flatten?.4:1}
+const api={assets,decorate,paintWall,vines,alpha};scope.JungleTheme=api;if(typeof module!=='undefined')module.exports=api;
+})(typeof window==='undefined'?globalThis:window);

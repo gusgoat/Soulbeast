@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Soulbeast · ทดลองจอมือถือ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="toolbar">
+    <div class="brand"><img src="../../assets/ui/soulbeast-logo-v2.webp" alt="Soulbeast"><div><h1>ทดลองจอมือถือ</h1><p>เล่นเกมจริงบนคอม · คลิกในจอแล้วใช้เมาส์ลากจอย หรือ WASD</p></div></div>
+    <div class="controls">
+      <label>ขนาดจอ<select id="device" aria-label="ขนาดจอ"><option value="390,844">มือถือ 390 × 844</option><option value="360,740">มือถือเล็ก 360 × 740</option><option value="412,915">มือถือใหญ่ 412 × 915</option><option value="768,1024">แท็บเล็ต 768 × 1024</option></select></label>
+      <button id="rotate" type="button">↻ หมุนจอ</button>
+      <label>ขนาดแสดงผล<select id="zoom" aria-label="ขนาดแสดงผล"><option value="fit">พอดีหน้าต่าง</option><option value="1">100%</option><option value="1.25">125%</option></select></label>
+      <button id="fusionTest" type="button">✦ ทดลองรวมร่าง</button>
+      <button id="fullscreen" type="button">⛶ เต็มหน้าต่าง</button>
+    </div>
+  </header>
+  <main>
+    <div id="fusionTestNotice" hidden><span>ตัวละครทดสอบรวมร่าง · อสูรครบ 7 ตัว · ผนึกพร้อมใช้ · แยกจากเซฟตัวจริง</span><button id="returnPlayer" type="button">กลับไปเล่นตัวละครเดิม</button></div>
+    <section class="stage" id="stage" aria-label="หน้าจอมือถือจำลอง">
+      <div id="deviceSlot"><div class="phone" id="phone"><iframe id="game" title="เกม Soulbeast ในจอมือถือ" src="../town-walk-demo/start.html" allow="autoplay; fullscreen" allowfullscreen></iframe></div></div>
+    </section>
+    <footer>
+      <div class="location"><span class="live"></span><strong id="dimensions">390 × 844</strong><span id="scene">หน้าเลือกตัวละคร</span></div>
+      <label class="shortcut">ทางลัดทดสอบฉาก<select id="route" aria-label="ทางลัดทดสอบฉาก"><option value="">เลือกฉาก…</option><option value="start">หน้าเลือกตัวละคร</option><option value="town">เมืองหลวงประเทศตัวเอง</option><option value="country">แผนที่ประเทศตัวเอง</option><option value="fusion">ทดลองรวมร่าง · อสูรครบ 7 ตัว</option><optgroup label="มหาวงกตดันเจี้ยน"><option value="floor1">ชั้น 1 · เหมือง</option><option value="floor2">ชั้น 2 · ทะเลทราย</option><option value="floor3">ชั้น 3 · ป่าดงดิบ</option><option value="floor4">ชั้น 4 · หิมะ</option><option value="floor5">ชั้น 5 · ปราสาท</option><option value="floor6">ชั้น 6 · เหมืองลึก</option><option value="floor7">ชั้น 7 · ภูเขาไฟ</option></optgroup></select></label>
+      <p class="note">จำลองขนาดพื้นที่เกมและการควบคุม · ยังไม่ใช่การวัดความเร็วของมือถือจริง</p>
+      <button id="exitPresentation" type="button">แสดงเครื่องมือ · Esc</button>
+    </footer>
+  </main>
+  <script src="../hemant-walk-demo/fusion-rules.js?v=portrait-picker-20261103"></script><script src="fusion-fixture.js"></script><script src="fusion-playtest.js"></script><script src="preview.js?v=mobile-fusion-20261103"></script>
+</body>
+</html>

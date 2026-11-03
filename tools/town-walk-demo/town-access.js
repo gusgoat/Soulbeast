@@ -1,0 +1,1 @@
+(()=>{'use strict';const id=window.townProfiles.get(new URLSearchParams(location.search).get('city')).id;window.walkTownAccess=window.walkWar.canEnter(id);if(!window.walkWar.playerCountry()){location.replace('start.html');return}if(!window.walkTownAccess)location.replace('../hemant-walk-demo/index.html?country='+id.split('-')[0]+'&from='+id+'&blocked=1')})();

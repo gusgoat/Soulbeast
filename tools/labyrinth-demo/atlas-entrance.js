@@ -1,0 +1,1 @@
+(()=>{const d=window.WalkAtlasData;if(!d)return;const m=d.models.red;d.nodes.push({id:'seven-floor-dungeon',name:'มหาวงกตดันเจี้ยน 7 ชั้น',country:'red',type:'dungeon',x:m.x.a*1104+m.x.b,y:m.y.a*7704+m.y.b})})();

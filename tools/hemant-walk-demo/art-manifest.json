@@ -1,0 +1,27 @@
+[
+  {
+    "id": "snow",
+    "prompt": "Use case: stylized-concept. Production seamless square ground texture for a painted high fantasy 2.5D RPG snowy country. Direct overhead flat ground only, fine ivory white powder snow, delicate pale blue wind-swept mottling, tiny icy sparkles and subtle packed grains. Calm uniform illumination. No objects, trees, rocks, tracks, footprints, shadows, borders, text or horizon. Seamlessly tileable all four edges. Fill entire canvas.",
+    "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-56a5b188-bb23-4c6a-9264-e156b545b5c6.png.webp"
+  },
+  {
+    "id": "pine",
+    "prompt": "Use case: stylized-concept. Production isolated environment sprite for a painterly realistic high fantasy 2.5D RPG. ONE beautiful tall blue-green spruce tree thickly laden with ivory snow, a few visible dark branches and short trunk, soft blue shadow only immediately at base. Elevated orthographic camera looking down at 35 degrees, no perspective convergence, full object visible with 8 percent margin. Ground contact bottom center. Rich detailed hand-painted game art, silver-blue light, not cartoon. True transparent background. No scenery, floor tile, text or other trees.",
+    "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-58c84cc1-2802-4277-8c91-0b389f8284b7.png.webp"
+  },
+  {
+    "id": "mountain",
+    "prompt": "Use case: stylized-concept. Production isolated mountain massif environment sprite for a polished hand-painted high fantasy 2.5D RPG country map. THREE connected rugged rocky snowy mountain peaks as one compact cluster, icy blue-grey cliffs white snow caps, dark crevasses, low mist only inside silhouette. Elevated orthographic 35-degree down camera, full object visible generous margin, wide landscape silhouette. Realistic painterly game asset, true transparent background, no sky, ground rectangle, trees, buildings, text.",
+    "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-9fd00a7f-9e1b-44c5-b3ab-3931a34d1148.png.webp"
+  },
+  {
+    "id": "cities",
+    "prompt": "Use case: stylized-concept. Production sprite atlas of SIX ISOLATED miniature settlements for snowy high fantasy RPG world. Exact 3 columns by 2 rows EQUAL cells in square canvas. Every sprite strictly contained in its own cell, wide TRANSPARENT gutters at least 12 percent each cell, no pixel from another object touching cell boundaries. Elevated orthographic 35-degree camera, consistent scale, beautiful detailed painterly realistic art, silver and navy roofs, warm gold lanterns, snow. Row1 col1 grand walled capital with crystalline palace; row1 col2 elegant snowflake-spired hillside town; row1 col3 sturdy grey stone ice quarry town. Row2 col1 small coastal harbor town with two wooden boats and frozen dock; row2 col2 fortified border gate town in silver mist; row2 col3 tiny road signpost with blue banners. All buildings fully visible, transparent background, no scenery outside each icon, no ground squares, text, labels, letters, gridlines or watermark.",
+    "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-2cef6754-deb5-48d3-9447-3b2826366eaf.png.webp"
+  },
+  {
+    "id": "forests",
+    "prompt": "Use case: stylized-concept. Production transparent sprite atlas for EIGHT isolated magical dungeon entrance landmarks in a snowy high fantasy country. Exact 4 columns by 2 rows EQUAL cells, entire canvas landscape ratio 2:1. Each sprite strictly INSIDE its cell with 15 percent transparent margin on every side, no crossing cell boundaries. All share elevated orthographic 35 degree camera, polished realistic painterly RPG art, snow covered bases, ivory-blue icy palette with restrained magic. Row1: 1 tiny snowy training grove with wooden target, 2 moonlit grove entrance with glowing crescent stone, 3 misty frozen red shrine arch with bell, 4 golden ancient tomb doorway half buried in snow. Row2: 5 mountain cave with dragon-shaped stone head, 6 broken celestial pillars with levitating blue crystal, 7 black gothic demon fortress doorway with dim violet light, 8 dark thorn forest gate with broken chains and cyan souls. Full objects visible with generous transparent gutters, clean isolated cutouts, no scenery backgrounds, no text or grid lines.",
+    "source": "C:\\Users\\User\\.codex\\generated_images\\01a143a6-96ae-7370-9f3c-7324b3ca06ab\\exec-53d22f42-f60c-4472-87c4-5a9032b622a4.png.webp"
+  }
+]

@@ -1,0 +1,40 @@
+(function(scope){'use strict';
+const COLS=41,ROWS=57,CELL=180,F=.64;
+function create(seed=20261102,options={}){const floor=options.floor||1,desert=floor===2,jungle=floor===3,later=floor>=4;let n=seed>>>0;const random=()=>((n=(n*1664525+1013904223)>>>0)/4294967296),grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));
+ const rooms=[{id:'entrance',name:'โถงปากเหมือง',x0:17,x1:23,y0:51,y1:55,ring:[16,50,24,56],door:[19,50],anchor:[20,54]}, {id:'boss',bossEntrance:true,name:'ห้องเวนดิโกหิวโหย',x0:15,x1:25,y0:1,y1:7,ring:[14,0,26,8],door:[19,8],anchor:[20,5]}, {id:'mini',name:'บ่อน้ำศักดิ์สิทธิ์',x0:1,x1:7,y0:25,y1:31,ring:[0,24,8,32],door:[8,29],anchor:[4,28],secret:true}, {id:'treasure',name:'คลังสมบัติผู้คุมเหมือง',x0:23,x1:25,y0:2,y1:4,ring:[22,1,26,5],door:[22,3],anchor:[24,3],lockedByBoss:true}];
+ if(desert){rooms[0].name='โถงซากวิหาร';rooms[1].name='ห้องเคอร์เบอรัส';rooms[2]={id:'mini',name:'บ่อน้ำศักดิ์สิทธิ์',x0:33,x1:39,y0:31,y1:37,ring:[32,30,40,38],door:[32,35],anchor:[36,34],secret:true};rooms[3].name='คลังสมบัติวิหารทราย'}
+ if(jungle){rooms[0].name='โถงรากไม้โบราณ';rooms[1].name='ลานมังกรตะวันตก';rooms[2]={id:'mini',name:'บ่อน้ำศักดิ์สิทธิ์พงไพร',x0:1,x1:7,y0:13,y1:19,ring:[0,12,8,20],door:[8,17],anchor:[4,16],secret:true};rooms[3].name='คลังสมบัติพงไพร'}
+ if(later){const well={4:[33,21,32,25,36,24],5:[1,33,8,37,4,36],6:[33,13,32,17,36,16],7:[1,21,8,25,4,24]}[floor];rooms[0].name='โถงทางเข้าชั้น '+floor;rooms[1].name='ห้อง'+({4:'ลิชน้ำแข็ง',5:'ราชินีแวมไพร์',6:'ไตรเซฟาลอส',7:'เพนทาไพโรส'}[floor]);rooms[2]={id:'mini',name:'บ่อน้ำศักดิ์สิทธิ์',x0:well[0],x1:well[0]+6,y0:well[1],y1:well[1]+6,ring:[well[0]-1,well[1]-1,well[0]+7,well[1]+7],door:[well[2],well[3]],anchor:[well[4],well[5]],secret:true};rooms[3].name='คลังสมบัติชั้น '+floor}
+ const reserved=(x,y)=>(!later&&x>=32&&x<=38&&y>=12&&y<=18)||rooms.some(r=>x>=r.ring[0]&&x<=r.ring[2]&&y>=r.ring[1]&&y<=r.ring[3]);
+ const eligible=(x,y)=>x>0&&y>0&&x<COLS-1&&y<ROWS-1&&!reserved(x,y);const stack=[[19,49]],visited=new Set(['19,49']);grid[49][19]=1;
+ while(stack.length){const [x,y]=stack.at(-1),opts=[[2,0],[-2,0],[0,2],[0,-2]].map(([dx,dy])=>[x+dx,y+dy]).filter(([a,b])=>eligible(a,b)&&!visited.has(a+','+b));if(!opts.length){stack.pop();continue}const [a,b]=opts[Math.floor(random()*opts.length)];grid[(y+b)/2][(x+a)/2]=grid[b][a]=1;visited.add(a+','+b);stack.push([a,b])}
+ let loops=0;for(let tries=0;tries<2000&&loops<25;tries++){const x=1+Math.floor(random()*(COLS-2)),y=1+Math.floor(random()*(ROWS-2));if(reserved(x,y)||grid[y][x]||x%2===y%2)continue;const pair=x%2===0?[[x-1,y],[x+1,y]]:[[x,y-1],[x,y+1]];if(pair.every(([a,b])=>eligible(a,b)&&grid[b][a])){grid[y][x]=1;loops++}}
+ for(const r of rooms){if(r.lockedByBoss)for(let y=r.ring[1];y<=r.ring[3];y++)for(let x=r.ring[0];x<=r.ring[2];x++)grid[y][x]=0;for(let y=r.y0;y<=r.y1;y++)for(let x=r.x0;x<=r.x1;x++)grid[y][x]=1;grid[r.door[1]][r.door[0]]=r.bossEntrance||r.secret||r.lockedByBoss?2:1;r.x=(r.anchor[0]+.5)*CELL;r.y=(r.anchor[1]+.5)*CELL;r.gate={x:(r.door[0]+.5)*CELL,y:(r.door[1]+.5)*CELL}}
+ // Replace the former remote vault with ordinary narrow branches, preserving the rest of the maze seed/layout.
+ if(!later){for(let x=32;x<=37;x++)grid[15][x]=1;for(let y=12;y<=18;y++)grid[y][35]=1;}
+ const center=(x,y)=>({x:(x+.5)*CELL,y:(y+.5)*CELL});const cells=[];for(let y=1;y<ROWS-1;y++)for(let x=1;x<COLS-1;x++)if(grid[y][x]===1&&!rooms.some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1))cells.push({cx:x,cy:y,...center(x,y)});
+ const roomAt=p=>[...rooms].reverse().find(r=>p.x/CELL>=r.x0&&p.x/CELL<r.x1+1&&p.y/CELL>=r.y0&&p.y/CELL<r.y1+1);
+ const deadEnds=cells.filter(c=>[[1,0],[-1,0],[0,1],[0,-1]].filter(([a,b])=>grid[c.cy+b]?.[c.cx+a]===1).length===1).sort((a,b)=>((a.cx*923+a.cy*2017)%10007)-((b.cx*923+b.cy*2017)%10007));const chosen=[];
+ for(const cell of [...deadEnds,...cells]){if(chosen.length===10)break;if(cell.cy>48||chosen.some(c=>Math.hypot(c.cx-cell.cx,c.cy-cell.cy)<4))continue;chosen.push(cell)}
+ const chests=chosen.map((c,i)=>({...c,id:'mine-f1-small-'+i,name:'หีบสมบัติเหมือง',big:false}));chests.push({...center(24,3),id:'mine-f1-grand',name:'มหาหีบคลังอัญมณี',big:true,room:'treasure'});
+ // A subterranean stream follows solid-wall cells, so it never blocks a legal passage.
+ const wallSet=new Set();for(let y=1;y<ROWS-1;y++)for(let x=1;x<COLS-1;x++)if(grid[y][x]===0&&!reserved(x,y))wallSet.add(x+','+y);
+ const dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]];let largest=[];
+ while(wallSet.size){const q=[[...wallSet][0].split(',').map(Number)];wallSet.delete(q[0].join(','));for(let i=0;i<q.length;i++)for(const [dx,dy]of dirs){const p=[q[i][0]+dx,q[i][1]+dy],k=p.join(',');if(wallSet.delete(k))q.push(p)}if(q.length>largest.length)largest=q}
+ const component=new Set(largest.map(p=>p.join(','))),start=largest.reduce((a,b)=>a[1]<b[1]?a:b),end=largest.reduce((a,b)=>a[1]>b[1]?a:b),queue=[start],seen=new Map([[start.join(','),null]]);
+ for(let i=0;i<queue.length;i++){const p=queue[i];if(p.join(',')===end.join(','))break;for(const [dx,dy]of dirs){const q=[p[0]+dx,p[1]+dy],k=q.join(',');if(component.has(k)&&!seen.has(k)){seen.set(k,p);queue.push(q)}}}
+ const river=[];for(let p=end;p;p=seen.get(p.join(',')))river.unshift(center(...p));
+ const prefixes={4:'snow-f4',5:'castle-f5',6:'deep-mine-f6',7:'lava-f7'};if(later)for(const c of chests){c.id=c.id.replace('mine-f1',prefixes[floor]);c.name=c.big?'มหาหีบชั้น '+floor:'หีบสมบัติชั้น '+floor}
+ if(jungle)for(const c of chests){c.id=c.id.replace('mine-f1','jungle-f3');c.name=c.big?'มหาหีบพงไพรโบราณ':'หีบสมบัติพงไพร'}
+ if(desert)for(const c of chests){c.id=c.id.replace('mine-f1','desert-f2');c.name=c.big?'มหาหีบคลังวิหารทราย':'หีบสมบัติกลางทะเลทราย'}
+ return {id:later?({4:'snow-floor-4',5:'castle-floor-5',6:'deep-mine-floor-6',7:'lava-floor-7'}[floor]):jungle?'jungle-floor-3':desert?'desert-floor-2':'mine-floor-1',name:later?'มหาวงกต · ชั้น '+floor:jungle?'มหาเขาวงกต · ป่าดงดิบรากอารยธรรม':desert?'มหาเขาวงกต · ทะเลทรายซากอารยธรรม':'มหาเขาวงกต · เหมืองสายแร่',bossModel:later?({4:'frost-lich',5:'vampire-queen',6:'tricephalos',7:'pentapyros'}[floor]):jungle?'western-dragon':desert?'cerberus':'wendigo',floor,totalFloors:7,cols:COLS,rows:ROWS,cell:CELL,width:COLS*CELL,height:ROWS*CELL,flatten:F,grid,rooms,cells,chests,river:desert||floor===4||floor===5?[]:river,loops,spawn:center(20,53),exit:center(20,55),stairs:center(20,2),boss:center(20,5),mini:later?{x:rooms[2].x,y:rooms[2].y}:jungle?center(4,16):desert?center(36,34):center(4,28),roomAt,center};
+}
+function navigation(data,state={}){const {cell,grid}=data,rooms=data.rooms;const open=(x,y)=>grid[y]?.[x]===1||grid[y]?.[x]===2&&rooms.some(r=>r.door[0]===x&&r.door[1]===y&&(r.bossEntrance&&state.bossDoorOpen||r.secret&&state.discovered?.[r.id]||r.lockedByBoss&&state.bossCleared&&state.treasureDoorOpen));
+ function walkable(x,y,radius=22){return [[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]].every(([dx,dy])=>open(Math.floor((x+dx)/cell),Math.floor((y+dy)/cell)))}
+ const distance=(a,b)=>Math.hypot(a.x-b.x,(a.y-b.y)*F);
+ function clear(a,b){const steps=Math.max(1,Math.ceil(distance(a,b)/18));for(let i=0;i<=steps;i++)if(!walkable(a.x+(b.x-a.x)*i/steps,a.y+(b.y-a.y)*i/steps))return false;return true}
+ function pathBetween(a,b){const A=[Math.floor(a.x/cell),Math.floor(a.y/cell)],B=[Math.floor(b.x/cell),Math.floor(b.y/cell)];if(!open(...A)||!open(...B))return [];if(clear(a,b))return [{x:b.x,y:b.y}];const queue=[A],prev=new Map([[A.join(','),null]]);for(let i=0;i<queue.length;i++){const p=queue[i];if(p[0]===B[0]&&p[1]===B[1]){const out=[{x:b.x,y:b.y}];for(let q=p;prev.get(q.join(','));q=prev.get(q.join(',')))out.unshift(data.center(...q));return out}for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const x=p[0]+dx,y=p[1]+dy,k=x+','+y;if(!open(x,y)||prev.has(k))continue;prev.set(k,p);queue.push([x,y])}}return []}
+ return {walkable,distance,clear,pathBetween,places:[],nearest:()=>({distance:Infinity}),roomAt:data.roomAt};
+}
+const api={create,navigation,COLS,ROWS,CELL,F};scope.MineLabyrinth=api;if(typeof module!=='undefined')module.exports=api;
+})(typeof window==='undefined'?globalThis:window);
