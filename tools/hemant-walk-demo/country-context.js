@@ -3,7 +3,7 @@ const q=new URLSearchParams(location.search),inferred=(q.get('from')||'').split(
 if(window.walkCountries[id])window.hemantMap=window.walkCountries[id];
 const data=window.hemantMap;data.countryId||='blue';
 window.walkForestPolicy.apply(data);
-document.documentElement.dataset.country=data.countryId;document.querySelector('#loading p').textContent='กำลังเปิดเส้นทางสู่'+data.country+'…';document.querySelector('#loading span').textContent=data.countryId==='blue'?'❄':data.countryId==='green'?'✦':'✶';
+document.documentElement.dataset.country=data.countryId;window.WalkLoading.message('loading','กำลังเปิดเส้นทางสู่'+data.country+'…');
 document.title='Soulbeast · ประเทศ'+data.country;
 document.querySelector('.location h1').textContent=data.country;
 document.querySelector('.location>span').textContent='✦ '+({blue:'HEMANTAKHIRI',green:'PHANASAMUT',red:'AKKHANIBANPHOT'}[data.countryId])+' ✦';

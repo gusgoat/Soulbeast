@@ -1,0 +1,10 @@
+.walk-loading{position:fixed!important;inset:0!important;z-index:2147482000!important;display:grid!important;place-items:center!important;padding:22px!important;background:radial-gradient(ellipse at 50% 40%,#173c50,#06101beF 72%)!important;color:#f6e5bd!important;font:14px Tahoma,sans-serif;text-align:center;box-sizing:border-box}
+#loading[hidden],#walkLoadingOverlay[hidden],.walk-loading[hidden]{display:none!important}
+.walk-loading-card{width:min(340px,100%);display:grid;justify-items:center;gap:15px;padding:24px 18px;border:1px solid #b49c6466;border-radius:18px;background:#071521b8;box-shadow:0 12px 42px #0005}
+.walk-loading-art{display:block;width:min(190px,52vw);height:auto;aspect-ratio:1;object-fit:contain;animation:walk-load-breathe 2.4s ease-in-out infinite}
+.walk-loading-title{margin:0;font-size:16px;line-height:1.65;color:#ffe6aa;overflow-wrap:anywhere}
+.walk-loading-note{margin:0;font-size:12px;line-height:1.7;color:#b9cbd5}
+.walk-loading-progress{width:min(210px,90%);height:4px;border-radius:5px;background:#394c5855;overflow:hidden}.walk-loading-progress i{display:block;width:45%;height:100%;background:linear-gradient(90deg,transparent,#65dcf1,#e6c677,transparent);animation:walk-load-progress 1.8s ease-in-out infinite}
+.walk-loading-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}.walk-loading-actions button{font:inherit;color:#ffe6aa;border:1px solid #ad935e;border-radius:8px;background:#193746;padding:9px 15px;cursor:pointer;min-height:40px}.walk-loading-actions button:hover{background:#244c5c}
+@keyframes walk-load-breathe{50%{transform:scale(1.025);opacity:.83}}@keyframes walk-load-progress{from{transform:translateX(-110%)}to{transform:translateX(330%)}}
+@media(prefers-reduced-motion:reduce){.walk-loading-art,.walk-loading-progress i{animation:none}}

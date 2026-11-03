@@ -41,7 +41,8 @@
     "small cached flag and nameplate rasters",
     "cached town and dungeon minimap terrain with correct door and secret updates",
     "viewport-indexed dungeon props and rivers, reusable water and lava textures",
-    "bounded animation atlases and explicit scene canvas cleanup"
+    "bounded animation atlases and explicit scene canvas cleanup",
+    "shared original hourglass loading artwork for maps, menus and atlas with retry recovery"
   ],
-  "revision": "all-scenes-smooth-20261103"
+  "revision": "loading-art-20261103"
 }
