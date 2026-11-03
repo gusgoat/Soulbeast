@@ -43,7 +43,9 @@
     "viewport-indexed dungeon props and rivers, reusable water and lava textures",
     "bounded animation atlases and explicit scene canvas cleanup",
     "shared original hourglass loading artwork for maps, menus and atlas with retry recovery",
-    "15 illustrated NPC service buttons reusing original town artwork"
+    "15 illustrated NPC service buttons reusing original town artwork",
+    "30 rare beast eight-direction sprite sets: 26 generated sheets and 4 reused model animations",
+    "lazy-loaded rare boss sprite gallery with direction controls and transparent PNG downloads"
   ],
-  "revision": "legacy-service-art-20261103"
+  "revision": "rare-beast-walk-20261103"
 }
