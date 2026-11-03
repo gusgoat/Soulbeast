@@ -5,3 +5,5 @@ html[data-walk-kind=dungeon] body>header{top:calc(var(--walk-top) + 10px)!import
 @media(max-height:480px){.map{width:80px}.map canvas{width:80px!important;height:80px!important}.map-legend,.map #area{display:none!important}.tools{top:calc(var(--walk-top) + 105px)!important}}
 
 html[data-walk-kind=dungeon] .joystick-on-right #action{left:14px!important;right:auto!important}
+
+html[data-walk-kind=dungeon] #guide{position:absolute;left:0;top:70px;width:30px;height:30px;padding:3px;font-size:13px}
