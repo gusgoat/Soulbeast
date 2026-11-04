@@ -1,23 +1,25 @@
 import {partyMenu} from './online-party-menu.mjs?v=solo-ui-2';
-import {partyArt} from './online-party-art.mjs?v=solo-ui-2';
+import {partyArt} from './online-party-art.mjs?v=shared-shell-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
 import {mountPartyVitals} from './online-party-view.mjs';
 import {partyRunController} from './online-party-controller.mjs?v=battle-close-4';
-const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
+const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
 const localWorld=localPartyWorld();let trapPlacements=[];
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
 let nextPulse=0,nextContact=0,heartbeatTimer;
+$('action').hidden=false;$('action').disabled=true;$('action').textContent='สำรวจ / เปิดประตู';
 const asset=value=>{try{const u=new URL(String(value).replace(/^\//,''),base);return u.origin===base.origin?u.href:null;}catch{return null;}};
 let portraits={};void fetch(new URL('party-portraits.json',import.meta.url)).then(r=>r.json()).then(v=>{portraits=v;if(controller?.state?.battle)drawBattle(controller.state.battle);}).catch(()=>{});
 function portrait(unit){const key=unit.sp||unit.img;if(unit.cls&&!unit.sp)return sealerSpriteCatalog[unit.cls]?.[unit.gender==='male'?'male':'female']?.portrait;return portraits[key+':'+(unit.evo||0)]||portraits[key]||(String(key).includes('/')?key:null);}
 function picture(value){const src=asset(value);if(!src)return null;if(!images.has(src)){const im=new Image();im.src=src;images.set(src,im);}const im=images.get(src);return im.complete&&im.naturalWidth?im:null;}
-function notice(text){$('notice').textContent=text;}
-function freeze(){ready=false;keys.clear();$('interact').disabled=true;}
+let noticeTimer;
+function notice(text){const toast=$('toast');toast.textContent=text;toast.style.opacity=1;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>toast.style.opacity=0,4000);}
+function freeze(){ready=false;keys.clear();$('action').disabled=true;}
 function offerReturn(city,automatic=false){
  $('leaveParty').hidden=true;$('retry').hidden=true;
  const button=$('returnHome');button.hidden=false;
@@ -70,7 +72,7 @@ function drawBattle(run){
  shownBattle=run;$('battle').hidden=false;sendBattle();
 }
 const view={
- loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
+ loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
  vitals:members=>vitals.update(members),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);menus.update(me);},
  world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
@@ -89,6 +91,7 @@ const view={
  }
 };
 function failure(error){
+ $('loading').hidden=true;
  if(!$('battle').hidden){
   const errorBox=$('battleError');errorBox.hidden=false;
   errorBox.textContent='อัปเดตการต่อสู้ไม่สำเร็จ ('+String(error.code||error.message||'network')+') · ระบบจะลองเชื่อมต่ออีกครั้ง';
@@ -116,7 +119,7 @@ try{
   $('battleError').hidden=true;
   if(!position&&member?.position)position={...member.position};
   if(state.battle?.status==='active'&&nextPulse!==Infinity)nextPulse=Math.min(nextPulse,performance.now()+750);
-  ready=!!position;$('retry').hidden=true;$('interact').disabled=!ready;
+  ready=!!position;if(ready)window.WalkLoading.ready();$('retry').hidden=true;$('action').disabled=!ready;
   notice(state.battle?.status==='active'?'เลือกคำสั่งภายใน 12 วินาที · หากไม่เลือกจะเปิดอัตโนมัติ':'WASD / ลูกศร หรือปุ่มเดิน');
  }});
  $('leaveParty').onclick=async()=>{
@@ -128,7 +131,7 @@ try{
   }finally{button.disabled=false;}
  };
  $('retry').onclick=()=>void controller.refresh();
- $('interact').onclick=()=>{
+ $('action').onclick=()=>{
   if(menus.open||!ready||controller.busy||!position)return;
   const confirmed=position;if(!confirmed)return;
   const near=p=>nav.distance(confirmed,p)<210;
@@ -150,7 +153,7 @@ try{
  },100);
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
-  if(!menus.open&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
+  if(!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
@@ -183,40 +186,58 @@ try{
 }catch(error){failure(error);}
 const moveKeys=new Set(['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight']);
 addEventListener('keydown',e=>{if(!menus.open&&moveKeys.has(e.key)){e.preventDefault();keys.add(e.key);}});addEventListener('keyup',e=>keys.delete(e.key));
-for(const button of document.querySelectorAll('#pad button')){const key=button.dataset.dx?(Number(button.dataset.dx)<0?'ArrowLeft':'ArrowRight'):(Number(button.dataset.dy)<0?'ArrowUp':'ArrowDown');
- button.onpointerdown=e=>{button.setPointerCapture(e.pointerId);keys.add(key);};button.onpointerup=button.onpointercancel=()=>keys.delete(key);}
 addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();freeze();}else void controller?.refresh();});
 addEventListener('pagehide',()=>{freeze();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();void controller?.close();});
 function render(){
  const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,1.5);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#07131c';ctx.fillRect(0,0,w,h);
- if(!maze||!position)return;const scale=.6,F=maze.flatten;
+ if(!maze||!position)return;
  const focus=camera||position;
  const screen=p=>({x:w/2+(p.x-focus.x)*scale,y:h/2+(p.y-focus.y)*scale*F});
  visuals.draw(ctx,w,h,focus,{...position,dir:selfDir,phase:selfPhase,moving:selfMoving},me,peers,world,localWorld,controller?.state?.chestClaims,traps,performance.now()/1000);
 }
 
 // Cache static maze pixels; only markers refresh at 5 Hz.
-let miniMaze=null,miniBase=null,miniAt=0;
+const miniLayers=new WeakMap();let miniAt=0;
 function renderMinimap(){
  if(!maze||!position||performance.now()-miniAt<200)return;miniAt=performance.now();
- const target=$('partyMini'),c=target.getContext('2d'),pad=12,W=target.width,H=target.height-42;
- const sx=(W-pad*2)/maze.width,sy=(H-pad*2)/maze.height;
- if(miniMaze!==maze){
-  miniMaze=maze;miniBase=document.createElement('canvas');miniBase.width=W;miniBase.height=target.height;
-  const b=miniBase.getContext('2d');b.fillStyle='#06131e';b.fillRect(0,0,W,target.height);
-  b.fillStyle='#9a9279';for(let y=0;y<maze.rows;y++)for(let x=0;x<maze.cols;x++)if(maze.grid[y][x])b.fillRect(pad+x*maze.cell*sx,pad+y*maze.cell*sy,maze.cell*sx,maze.cell*sy);
- }
- c.drawImage(miniBase,0,0);
- function mark(p,text,color){if(!p)return;c.font='bold 15px Tahoma';c.textAlign='center';c.lineWidth=3;c.strokeStyle='#06131e';c.strokeText(text,pad+p.x*sx,pad+p.y*sy+5);c.fillStyle=color;c.fillText(text,pad+p.x*sx,pad+p.y*sy+5);}
- mark(maze.rooms.find(r=>r.id==='boss').gate,'B',world.doorOpen?'#7cf5b6':'#ff6868');
- mark(maze.stairs,'↑','#fff');mark(maze.exit,'↓','#fff');
- for(const peer of peers.values())if(peer.member.exploring!==false)mark(peer,'●','#78cfff');
- mark(position,'▲','#fff16a');
- c.textAlign='left';c.font='12px Tahoma';c.fillStyle='#fff16a';c.fillText('▲ คุณ   ● เพื่อน',8,H+17);
- c.fillStyle='#ff9292';c.fillText('B ห้องบอส   ↑ ชั้นถัดไป',8,H+34);
+ drawMinimap($('mini'));
+ if(!$('mapPanel').hidden)drawMinimap($('atlas'));
 }
-$('miniToggle').onclick=()=>{const b=$('miniToggle'),expanded=b.classList.toggle('expanded');b.setAttribute('aria-expanded',String(expanded));b.setAttribute('aria-label',expanded?'ย่อแผนที่ดันเจี้ยน':'ขยายแผนที่ดันเจี้ยน');b.querySelector('span').textContent=expanded?'แตะเพื่อย่อแผนที่':'แผนที่ · แตะขยาย';};
+function drawMinimap(target){
+ const c=target.getContext('2d'),sx=target.width/maze.width,sy=target.height/maze.height;
+ const key=JSON.stringify([world.doorOpen,world.boss==='defeated']);
+ let cached=miniLayers.get(target);
+ if(cached?.maze!==maze||cached.key!==key){
+  const canvas=document.createElement('canvas');canvas.width=target.width;canvas.height=target.height;
+  const layer=canvas.getContext('2d');layer.fillStyle=config.theme==='jungle'?'#102d1c':config.theme==='desert'?'#332218':'#071018';layer.fillRect(0,0,canvas.width,canvas.height);
+  layer.fillStyle=config.theme==='jungle'?'#a3aa6b':config.theme==='desert'?'#c19a60':'#526771';
+  for(let y=0;y<maze.rows;y++)for(let x=0;x<maze.cols;x++){
+   if(world.boss!=='defeated'&&maze.rooms.some(r=>r.lockedByBoss&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1))continue;
+   if(maze.grid[y][x]===1||maze.grid[y][x]===2&&maze.rooms.some(r=>r.door[0]===x&&r.door[1]===y&&(r.bossEntrance&&world.doorOpen||r.lockedByBoss&&world.boss==='defeated')))layer.fillRect(x*maze.cell*sx,y*maze.cell*sy,maze.cell*sx+.2,maze.cell*sy+.2);
+  }
+  layer.strokeStyle='#2592a3';layer.lineWidth=Math.max(1,canvas.width/300);layer.beginPath();maze.river.forEach((p,i)=>i?layer.lineTo(p.x*sx,p.y*sy):layer.moveTo(p.x*sx,p.y*sy));layer.stroke();
+  cached={maze,key,canvas};miniLayers.set(target,cached);
+ }
+ c.drawImage(cached.canvas,0,0);
+ const mark=(p,kind,color,size)=>WalkMapSymbols.draw(c,kind,p.x*sx,p.y*sy,size,color);
+ mark(maze.exit,'gate','#82d6b6',10);mark(maze.stairs,'gate',world.boss==='defeated'?'#88ffdf':'#bf9d65',10);
+ if(world.boss!=='defeated')mark(maze.boss,'boss','#e99d6a',12);
+ if(config.rest)mark(maze.mini,'well','#72ffe7',10);
+ for(const chest of maze.chests)if((!chest.room||world.boss==='defeated')&&!controller.state?.chestClaims?.[chest.id]&&nav.distance(chest,position)<650)mark(chest,'chest','#eac779',target.id==='mini'?7:12);
+ for(const peer of peers.values())if(peer.member.exploring!==false)mark(peer,'person','#78deed',12);
+ mark(position,'person','#fff3a0',14);
+}
+function showMap(open){$('mapPanel').hidden=!open;keys.clear();miniAt=0;renderMinimap();}
+$('mapButton').onclick=()=>showMap(true);
+$('closeMap').onclick=()=>showMap(false);
+$('guide').onclick=()=>notice('เดินสำรวจพร้อมเพื่อน · กด E เพื่อสำรวจ · กด M เพื่อเปิดแผนที่');
+addEventListener('keydown',event=>{
+ if(menus.open||!$('battle').hidden||event.repeat)return;
+ if(event.key.toLowerCase()==='m')showMap($('mapPanel').hidden);
+ if(event.key==='Escape'&&!$('mapPanel').hidden)showMap(false);
+ if(event.key.toLowerCase()==='e'&&$('mapPanel').hidden)$('action').click();
+});
 
-const stick=$('joystick'),knob=stick.querySelector('span');
+const stick=$('joystick'),knob=stick.querySelector('b');
 function stickMove(e){const r=stick.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,d=Math.hypot(x,y),limit=r.width*.28,ratio=d?Math.min(1,limit/d):0;knob.style.transform=`translate(${x*ratio}px,${y*ratio}px)`;keys.clear();if(d>8){if(x/d>.35)keys.add('ArrowRight');if(x/d<-.35)keys.add('ArrowLeft');if(y/d>.35)keys.add('ArrowDown');if(y/d<-.35)keys.add('ArrowUp');}}
 stick.onpointerdown=e=>{stick.setPointerCapture(e.pointerId);stickMove(e);};stick.onpointermove=e=>{if(stick.hasPointerCapture(e.pointerId))stickMove(e);};stick.onpointerup=stick.onpointercancel=()=>{keys.clear();knob.style.transform='';};

@@ -1,38 +1,11 @@
-:root{color-scheme:dark;font-family:Tahoma,sans-serif;color:#f4dfaa;background:#06131e}*{box-sizing:border-box}body{margin:0;overflow:hidden}#map{display:block;width:100vw;height:100dvh}header{position:fixed;top:0;left:0;right:0;padding:10px 14px;background:#071b2ee8;border-bottom:1px solid #af8e53;font-size:13px}#progress{margin-top:4px;font-size:11px}button{color:#f4dfaa;border:1px solid #b99b62;border-radius:10px;background:#12313f;padding:12px;font:inherit;touch-action:none}button:disabled{opacity:.4}#notice{position:fixed;top:65px;right:8px;max-width:55vw;background:#06131eea;border-radius:8px;padding:8px;font-size:12px}#retry{position:fixed;right:8px;top:125px}#controls{position:fixed;bottom:max(16px,env(safe-area-inset-bottom));left:12px;right:12px;display:flex;align-items:end;justify-content:space-between;gap:12px}#pad{display:grid;grid-template-columns:repeat(3,44px);gap:4px}#pad button:first-child{grid-column:2}#pad button:nth-child(2){grid-column:1}#interact{max-width:42vw}#battle{position:fixed;inset:65px 8px 8px;overflow:auto;background:#071827f5;border:1px solid #b99b62;border-radius:12px;padding:12px;z-index:20}#battle h2{font-size:17px}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:12px 0}.card{border:1px solid #a88d53;border-radius:8px;padding:5px;font-size:10px;min-width:0}.card img{width:100%;height:64px;object-fit:contain}.card strong{display:block;overflow-wrap:anywhere}.card meter{width:100%;height:9px;display:block}#battleLog{font-size:12px;white-space:pre-line}#dismiss{width:100%}[hidden]{display:none!important}
-#partyCommands{display:grid;gap:8px;margin:12px 0}#partyCommands select{width:100%;min-height:44px;background:#12313f;color:#f4dfaa;border:1px solid #b99b62;border-radius:8px;padding:8px;font:inherit}#partyCommands button{touch-action:manipulation}#turnDeadline{margin:4px 0;color:#ffe39a}
-#returnHome{position:fixed;top:140px;left:50%;transform:translateX(-50%);z-index:30}
-
-header{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:8px}#progress{grid-column:1}#leaveParty{grid-column:2;grid-row:1 / span 2;align-self:center;padding:6px 9px;font-size:11px;min-height:36px}
-
-#miniToggle{position:fixed;right:8px;top:100px;width:124px;padding:5px;z-index:13;background:#06131eed;border:2px solid #b99b62}#partyMini{display:block;width:100%;height:auto}#miniToggle span{font-size:10px;display:block}#miniToggle.expanded{top:90px;right:50%;transform:translateX(50%);width:min(80vw,320px);max-height:calc(100dvh - 190px);overflow:auto;z-index:18}#notice{max-width:55vw;top:72px}
-
-/* Existing SoulBeast skin, local rendering only. */
-header{background:linear-gradient(100deg,#061b29f5,#123d45e8);border-image:linear-gradient(90deg,#6a4b22,#f7dc8b,#785020) 1;box-shadow:0 3px 12px #0008}
-#pad{display:none}#joystick{width:138px;height:138px;position:relative;touch-action:none;background:url('../../assets/ui/walk-skin-20261103/joystick-base.png.webp') center/contain no-repeat}#joystick span{position:absolute;inset:34%;background:url('../../assets/ui/walk-skin-20261103/joystick-knob.png.webp') center/contain no-repeat;pointer-events:none}
-#interact{width:110px;height:110px;border:0;border-radius:50%;padding:25px 12px;background:url('../../assets/ui/walk-skin-20261103/explore-button.png.webp') center/contain no-repeat;text-shadow:0 2px 3px #000;font-size:12px}
-#notice{top:auto;bottom:170px;left:50%;right:auto;transform:translateX(-50%);max-width:88vw;font-size:11px;pointer-events:none}
-#battle{background:linear-gradient(#061725e8,#061725f5),url('../../assets/dungeon-mine-v1/floor.webp') center/cover;box-shadow:inset 0 0 24px #baa26025,0 0 20px #0009}
-.card{background:linear-gradient(145deg,#233d50,#071623);border-color:#d3b877}.card img{height:95px}#battleLog{background:#03111bc9;padding:10px;border-radius:8px}
-
-:root{--walk-top:66px}#partyTop{position:fixed;top:0;left:0;right:0;height:66px;background:linear-gradient(110deg,#102c3c,#06131e);border-bottom:2px solid #b99b62;display:flex;align-items:center;gap:9px;padding:7px 12px;z-index:14;font-size:12px}#partyHeroFlag{width:32px;height:24px;object-fit:contain}#partyTop meter{display:block;width:100px;height:7px}#partyTop meter::-webkit-meter-optimum-value{background:#51cb83}#partyHeroMp::-webkit-meter-optimum-value{background:#54b9ef!important}.partyLogo{width:110px;height:42px;object-fit:contain;margin-left:auto}header{top:66px;z-index:13}#miniToggle{top:146px;width:104px}#miniToggle.expanded{top:132px}#controls{bottom:88px}#notice{bottom:235px}#battle{top:132px;bottom:76px}#partyBottom{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-around;height:calc(70px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:linear-gradient(#173344,#071622);border-top:2px solid #b99b62;z-index:22}#partyBottom button{border:0;background:none;display:grid;place-items:center;gap:4px;padding:4px;font-size:12px;min-height:56px}#partyBottom img{width:30px;height:30px;object-fit:contain}#partyMenu{position:fixed;inset:70px 6px 76px;background:#081d2bf7;border:2px solid #b99b62;border-radius:12px;padding:16px;z-index:23;overflow:auto;overscroll-behavior:contain}#partyMenuClose{position:sticky;top:0;float:right;font-size:22px;z-index:2}#partyMenu h2{font-size:21px;padding-right:40px}#partyMenu button{touch-action:manipulation}#partyMenu select{max-width:100%;width:100%;padding:12px;background:#153342;color:#ffe7af}.inventory-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px;margin:10px 0;background:linear-gradient(130deg,#203c4c,#0b1c29);border:1px solid #ac8a50;border-radius:9px}.inventory-row strong{flex:1;min-width:120px}.inventory-row img{width:60px;height:65px;object-fit:contain}.inventory-row small{flex-basis:100%;color:#c5dcdf}.inventory-row input{width:24px;height:24px}#partyMenuStatus{color:#ffdb91;font-size:13px}#retry{top:130px;z-index:18}
-
-/* Same HUD frames and menu artwork used on the country map. */
-:root{--walk-top:84px}
-.party-hud{position:fixed;left:0;width:100%;border:0;z-index:24;background:transparent}
-#hudTop{top:0;height:84px}#hudBottom{bottom:0;height:calc(84px + env(safe-area-inset-bottom))}
-header{top:84px}#miniToggle{top:158px}#miniToggle.expanded{top:148px}
-#controls{bottom:calc(94px + env(safe-area-inset-bottom))}
-#battle{top:148px;bottom:calc(84px + env(safe-area-inset-bottom))}
-#partyMenu{inset:84px 0 calc(84px + env(safe-area-inset-bottom));border:0;border-radius:0;background:linear-gradient(#122130,#0b1724);z-index:23}
-#partyAuxMenu{width:100%;height:calc(100% - 55px);border:0;background:#0b1724}
-#partyMenu .inventory-row{border:12px solid transparent;border-image:url('../../assets/ui/menu-theme/frame-panel.png.webp') 48 fill stretch;background:linear-gradient(#07132288,#071322e8),var(--party-panel) center/cover}
-#partyMenu[data-tab=bag]{--party-panel:url('../../assets/ui/menu-portrait/panel-inventory.webp')}
-#partyMenu[data-tab=hero]{--party-panel:url('../../assets/ui/menu-portrait/panel-equipment.webp')}
-#partyMenu[data-tab=team]{--party-panel:url('../../assets/ui/menu-portrait/panel-retinue.webp')}
-#partyMenu button{border:8px solid transparent;border-image:url('../../assets/ui/menu-theme/frame-button.png.webp') 28 fill stretch;background:#122638}
-#townDialog{width:min(92vw,540px);max-height:82dvh;overflow:auto;color:#ffe6b2;background:#0c2333;border:1px solid #c5a364;border-radius:14px}
-#townDialog::backdrop{background:#050d18b5}
-
-#battle{inset:84px 0 calc(84px + env(safe-area-inset-bottom));padding:0;border:0;border-radius:0;overflow:hidden;background:#0b1724}
-#partyBattleFrame{display:block;width:100%;height:100%;border:0}
+/* Party-only overlays layered on the shared solo dungeon shell. */
+#leaveParty{font-size:12px;padding:6px 10px}
+#retry,#returnHome{position:fixed;top:135px;left:50%;transform:translateX(-50%);z-index:18}
+#battle,#partyMenu{position:fixed;inset:84px 0 calc(84px + env(safe-area-inset-bottom));z-index:8;background:#0b1724;overflow:auto}
+#partyBattleFrame,#partyAuxMenu{display:block;width:100%;height:100%;border:0}
+#partyMenu{padding:10px}#partyAuxMenu{height:calc(100% - 85px)}
+#partyMenuClose{float:right}#partyMenuTitle{margin:4px 0 8px}
+#partyMenuStatus:empty,#partyMenuBody{display:none}
 #battleError{position:absolute;bottom:0;left:0;right:0;margin:0;padding:8px;background:#29151e;color:#ffd7c1}
+#action:disabled{opacity:.5}
+[hidden]{display:none!important}

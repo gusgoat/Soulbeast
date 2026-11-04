@@ -23,7 +23,7 @@ function render(){
  if(size>=2){const rule=partyRules(size);$('requirements').textContent=`ต่อชั้น: อสูรเงา ${rule.shadows} ตัว · โจรป่า ${rule.bandits} ตัว · พลังบอสและสมุน ×${rule.bossMultiplier.toFixed(1)}`;}
  else $('requirements').textContent='รอผู้ผนึกอีกอย่างน้อย 1 คน';
 }
-function resume(){stopped=true;clearInterval(timer);location.assign('online-party-run.html?room='+encodeURIComponent(room.id));}
+function resume(){stopped=true;clearInterval(timer);location.assign('index.html?room='+encodeURIComponent(room.id));}
 async function update(action='status',extra={}){
  if(busy||stopped)return;busy=true;render();
  try{
