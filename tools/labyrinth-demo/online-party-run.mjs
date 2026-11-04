@@ -1,10 +1,12 @@
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
-import {mountPartyVitals} from './online-party-view.mjs';
+import {mountPartyVitals,remotePartyMotion} from './online-party-view.mjs';
 import {partyRunController} from './online-party-controller.mjs?v=smooth-walk-3';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
-let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),timer,frameId,ready=false,seenBattle='';
+const enemyMotion=remotePartyMotion({delay:320,maxPrediction:0});
+let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
+let nextPulse=0,nextContact=0;
 const asset=value=>{try{const u=new URL(String(value).replace(/^\//,''),base);return u.origin===base.origin?u.href:null;}catch{return null;}};
 function picture(value){const src=asset(value);if(!src)return null;if(!images.has(src)){const im=new Image();im.src=src;images.set(src,im);}const im=images.get(src);return im.complete&&im.naturalWidth?im:null;}
 function notice(text){$('notice').textContent=text;}
@@ -65,10 +67,15 @@ function drawBattle(run){
  $('dismiss').onclick=()=>{seenBattle=run.id;$('battle').hidden=true;};
 }
 const view={
- loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});peers.clear();position=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
+ loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});peers.clear();enemyMotion.clear();position=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
  vitals:members=>vitals.update(members),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);},
  world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
+  const now=performance.now();
+  for(const [id,enemy] of Object.entries(world.enemies||{})){
+   if(enemy.state==='roaming'&&enemy.position)enemyMotion.receive(id,enemy.position,now);
+   else enemyMotion.remove(id);
+  }
   $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
  stopSolo(){keys.clear();$('battle').hidden=true;},enterBoss(){keys.clear();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
@@ -121,20 +128,26 @@ try{
   else if(near(maze.stairs)&&world.boss==='defeated')void controller.command('nextFloor');
   else notice('เดินเข้าใกล้หีบ บ่อน้ำ ประตูห้องบอส หรือประตูชั้นถัดไป');
  };
- void controller.refresh();timer=setInterval(()=>{if(!document.hidden&&ready)void controller.pulse();},250);
+ void controller.refresh();
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
+  if(!document.hidden&&ready&&!controller.busy&&now>=nextPulse){
+   nextPulse=now+250;
+   void controller.pulse();
+  }
   if(ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0;
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
-    if(me?.position&&nav.distance(me.position,point)<=90&&nav.clear(position,point)&&controller.move(point,position))position=point;}
+    if(me?.position&&nav.distance(me.position,point)<=135&&nav.clear(position,point)&&controller.move(point,position))position=point;}
    controller.broadcast({...position,dir:(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8},moving,false);
    const confirmed=me?.position;
-   if(!controller.busy&&confirmed){const target=Object.entries(world.enemies||{}).find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
-    if(target)void controller.command('claim',{enemy:target[0]});
-    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,world.bossPosition||maze.boss)<65&&nav.clear(confirmed,world.bossPosition||maze.boss))void controller.command('bossContact');}
+   if(!controller.busy&&confirmed&&now>=nextContact){const target=Object.entries(world.enemies||{}).find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
+    if(target){nextContact=now+500;void controller.command('claim',{enemy:target[0]});}
+    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,world.bossPosition||maze.boss)<65&&nav.clear(confirmed,world.bossPosition||maze.boss)){
+     nextContact=now+500;void controller.command('bossContact');
+    }}
   }
   scene.frame();render();frameId=requestAnimationFrame(frame);
  }
@@ -145,7 +158,7 @@ addEventListener('keydown',e=>{if(moveKeys.has(e.key)){e.preventDefault();keys.a
 for(const button of document.querySelectorAll('#pad button')){const key=button.dataset.dx?(Number(button.dataset.dx)<0?'ArrowLeft':'ArrowRight'):(Number(button.dataset.dy)<0?'ArrowUp':'ArrowDown');
  button.onpointerdown=e=>{button.setPointerCapture(e.pointerId);keys.add(key);};button.onpointerup=button.onpointercancel=()=>keys.delete(key);}
 addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();freeze();}else void controller?.refresh();});
-addEventListener('pagehide',()=>{freeze();clearInterval(timer);cancelAnimationFrame(frameId);vitals.remove();void controller?.close();});
+addEventListener('pagehide',()=>{freeze();cancelAnimationFrame(frameId);vitals.remove();void controller?.close();});
 function render(){
  const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,1.5);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#07131c';ctx.fillRect(0,0,w,h);
  if(!maze||!position)return;const scale=.6,F=maze.flatten;
@@ -157,7 +170,8 @@ function render(){
  }
  function token(p,color,label,img,size=32){const at=screen(p);if(at.x< -100||at.y< -100||at.x>w+100||at.y>h+100)return;const im=img&&picture(img);if(im)ctx.drawImage(im,at.x-size/2,at.y-size,size,size);else{ctx.fillStyle=color;ctx.beginPath();ctx.arc(at.x,at.y,10,0,Math.PI*2);ctx.fill();}ctx.font='11px Tahoma';ctx.textAlign='center';ctx.fillStyle='#fff3d4';ctx.fillText(label||'',at.x,at.y-size-4);}
  for(const t of traps){if(t.state==='spent'&&!t.burst)continue;const at=screen(t);ctx.strokeStyle=({blast:'#ffb354',poison:'#73ee6d',fire:'#ff5d37',electric:'#db82ff',ice:'#7bdfff'})[t.type];ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(at.x,at.y,290*scale,290*scale*F,0,0,Math.PI*2);ctx.stroke();}
- for(const e of Object.values(world.enemies||{}))if(e.state==='roaming'&&e.position)token(e.position,e.kind==='bandit'?'#d08059':'#9c76e8',e.kind==='bandit'?'โจรป่า':'อสูรเงา');
+ const now=performance.now();
+ for(const [id,e] of Object.entries(world.enemies||{}))if(e.state==='roaming'&&e.position)token(enemyMotion.position(id,now)||e.position,e.kind==='bandit'?'#d08059':'#9c76e8',e.kind==='bandit'?'โจรป่า':'อสูรเงา');
  if(world.boss!=='defeated')token(world.bossPosition||maze.boss,'#ee574d',config.bossName,config.bossArt,90);
  const gate=maze.rooms.find(r=>r.id==='boss').gate;token(gate,'#dfbf73',world.doorOpen?'ประตูเปิด':'ห้องบอส');token(maze.stairs,'#91d5e8','ชั้นถัดไป');
  token(maze.mini,'#8de6ec','บ่อน้ำศักดิ์สิทธิ์');
