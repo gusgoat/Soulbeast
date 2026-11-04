@@ -1,7 +1,7 @@
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs';
+import {partyRunController} from './online-party-controller.mjs?v=smooth-walk-1';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),timer,frameId,ready=false,seenBattle='';
@@ -90,12 +90,21 @@ try{
  connection=connectDungeonParty();const roomId=new URL(location.href).searchParams.get('room');
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
  const scene=partyScene({code:connection.code,roomId,view});
- controller=partyRunController({connection,roomId,scene,openMotion:partyMotion,onError:failure,onState:state=>{
+ controller=partyRunController({connection,roomId,scene,openMotion:partyMotion,onError:failure,onState:(state,queued=[])=>{
   clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
-  // Reconcile only when the request lane is drained; never retain unconfirmed teleports.
   position=member?.position?{...member.position}:null;
+  // Keep steps taken while the request was in flight, checking them again from
+  // the confirmed position in case the server stopped us at a wall.
+  if(position&&nav){
+   let valid=0;
+   for(const point of queued){
+    if(!nav.clear(position,point))break;
+    position={...point};valid++;
+   }
+   queued.length=valid;
+  }
   ready=!!position;$('retry').hidden=true;$('interact').disabled=!ready;
   notice(state.battle?.status==='active'?'เลือกคำสั่งภายใน 12 วินาที · หากไม่เลือกจะเปิดอัตโนมัติ':'WASD / ลูกศร หรือปุ่มเดิน');
  }});
@@ -114,12 +123,12 @@ try{
  void controller.refresh();timer=setInterval(()=>{if(!document.hidden&&ready)void controller.pulse();},250);
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
-  if(ready&&position&&nav&&controller.state?.battle?.status!=='active'&&!controller.busy){
+  if(ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0;
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
-    if(nav.clear(position,point)){position=point;controller.move(point);}}
+    if(nav.clear(position,point)&&controller.move(point,position))position=point;}
    controller.broadcast({...position,dir:(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8},moving,false);
    if(!controller.busy){const target=Object.entries(world.enemies||{}).find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(position,e.position)<38);
     if(target)void controller.command('claim',{enemy:target[0]});

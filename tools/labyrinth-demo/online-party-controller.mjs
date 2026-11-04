@@ -19,7 +19,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    if(closed){await created.close();return;}motion=created;motionKey=key;
   }
   if(next.battle?.status==='active')path=[];
-  onState(next);
+  onState(next,path);
  }
  async function lane(work){
   if(busy||closed)return false;busy=true;
@@ -29,7 +29,16 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
  return {
   refresh:()=>lane(refresh),
   // Renderer supplies traversed points, not an arbitrary end-point through walls.
-  move(point){if(!closed&&snapshot&&!snapshot.departure&&snapshot.state==='active'&&snapshot.battle?.status!=='active'&&path.length<16)path.push({x:point.x,y:point.y});},
+  move(point,previous){
+   if(closed||!snapshot||snapshot.departure||snapshot.state!=='active'||snapshot.battle?.status==='active')return false;
+   const start=path.at(-2),last=path.at(-1);
+   if(start&&last&&previous&&last.x===previous.x&&last.y===previous.y){
+    const ax=last.x-start.x,ay=last.y-start.y,bx=point.x-last.x,by=point.y-last.y;
+    if(Math.abs(ax*by-ay*bx)<1e-6&&ax*bx+ay*by>0){path[path.length-1]=point;return true;}
+   }
+   if(path.length>=16)return false;
+   path.push({x:point.x,y:point.y});return true;
+  },
   broadcast(position,moving,running){if(!closed&&snapshot?.state==='active'&&snapshot.battle?.status!=='active')motion?.send(position,moving,running);},
   pulse:()=>lane(async()=>{
    if(!snapshot)return refresh();
