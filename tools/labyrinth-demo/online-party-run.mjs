@@ -1,5 +1,5 @@
 import {partyMenu} from './online-party-menu.mjs?v=party-menus-1';
-import {partyArt} from './online-party-art.mjs?v=normal-art-1';
+import {partyArt} from './online-party-art.mjs?v=solo-scenery-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=local-explore-1';
