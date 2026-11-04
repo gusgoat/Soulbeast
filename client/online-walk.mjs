@@ -1,4 +1,4 @@
-import {connectAccounts} from './account-client.mjs?v=activity-session-20261104';
+import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=walk-realtime-test-1';
 
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
@@ -105,7 +105,14 @@ export function connectOnlineWalk(accountStorage) {
  const socialTarget = async peer => client.request('/rest/v1/rpc/sb_walk_social_target', {
   p_env: context.environment, p_code: context.code, p_peer: peer
  }, await client.sessions.token());
- return {flush, heartbeat, invitations, social, socialTarget};
+ const walkRealtimeTest = context.environment==='test' && new URLSearchParams(location.search).get('realtimeWalk')==='1';
+ const openWalkRealtime = async () => {
+  const {connectWalkRealtime}=await import('./walk-realtime-test.mjs?v=1');
+  return connectWalkRealtime({...accountRealtimeConfig,token:()=>client.sessions.token(),
+   identity:async()=>client.request('/rest/v1/rpc/sb_walk_test_identity',{p_code:context.code},await client.sessions.token())
+  });
+ };
+ return {flush, heartbeat, invitations, social, socialTarget, walkRealtimeTest, openWalkRealtime};
 }
 
 export function mountDungeonInvitations(connection, peers) {
