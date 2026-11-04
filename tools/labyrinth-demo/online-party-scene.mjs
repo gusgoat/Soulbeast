@@ -14,7 +14,7 @@ export function partyScene({code,roomId,view,clock=()=>performance.now()}){
   if(next.departure){
    departed=true;battle.reset();motion.clear();roster.clear();
    await view.stopSolo({award:false,interrupted:[]});
-   await view.respawn(next.departure.destination);return;
+   await view.respawn(next.departure.destination,next.departure.reason);return;
   }
   if(next.revision===revision)return;
   if(!Array.isArray(next.members)||!next.members.some(m=>m.code===code))return;

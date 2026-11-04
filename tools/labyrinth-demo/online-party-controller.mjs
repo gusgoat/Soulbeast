@@ -56,7 +56,10 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   command:(action,data={})=>lane(async()=>{
    // Interactions use confirmed positions. Keep pending walking in the pulse
    // queue, including when a target moves away before the action arrives.
-   try{await connection.run(roomId,action,{...data,requestId:crypto.randomUUID()});}
+   try{
+    const result=await connection.run(roomId,action,{...data,requestId:crypto.randomUUID()});
+    if(action==='leave'){await refresh(result);return;}
+   }
    catch(error){
     if(['enemy_out_of_reach','boss_out_of_reach','enemy_unavailable','door_out_of_reach','stairs_out_of_reach','chest_out_of_reach','spring_out_of_reach'].includes(error.message)){
      await refresh();return;

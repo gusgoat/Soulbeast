@@ -1,7 +1,7 @@
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
-import {partyScene} from './online-party-scene.mjs?v=local-motion-1';
+import {partyScene} from './online-party-scene.mjs?v=party-exit-1';
 import {mountPartyVitals,remotePartyMotion} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=local-motion-1';
+import {partyRunController} from './online-party-controller.mjs?v=party-exit-1';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const enemyMotion=remotePartyMotion({delay:180,maxPrediction:600});
@@ -13,6 +13,7 @@ function picture(value){const src=asset(value);if(!src)return null;if(!images.ha
 function notice(text){$('notice').textContent=text;}
 function freeze(){ready=false;keys.clear();$('interact').disabled=true;}
 function offerReturn(city,automatic=false){
+ $('leaveParty').hidden=true;$('retry').hidden=true;
  const button=$('returnHome');button.hidden=false;
  button.onclick=async()=>{
   if(button.disabled)return;button.disabled=true;
@@ -80,7 +81,7 @@ const view={
   $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
  stopSolo(){keys.clear();$('battle').hidden=true;},enterBoss(){keys.clear();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
- respawn(destination){freeze();notice('พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
+ respawn(destination,reason){freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
   // Navigation is restricted to our own town page; never use a server-supplied URL.
   const city=typeof destination==='string'?destination:destination?.city;
   offerReturn(city,true);},
@@ -89,6 +90,10 @@ const view={
  }
 };
 function failure(error){
+ if(['party_unavailable','party_not_member'].includes(error.message)){
+  freeze();$('battle').hidden=true;notice('ห้องปาร์ตี้สิ้นสุดแล้วหรือคุณออกจากห้องแล้ว');
+  offerReturn();return;
+ }
  if(['not_your_turn','stale_turn','invalid_skill','invalid_target','invalid_auto_mode'].includes(error.message)){
   notice('คำสั่งใช้ไม่ได้หรือเทิร์นเปลี่ยนแล้ว · เลือกคำสั่งใหม่');return;
  }
@@ -116,6 +121,14 @@ try{
   ready=!!position;$('retry').hidden=true;$('interact').disabled=!ready;
   notice(state.battle?.status==='active'?'เลือกคำสั่งภายใน 12 วินาที · หากไม่เลือกจะเปิดอัตโนมัติ':'WASD / ลูกศร หรือปุ่มเดิน');
  }});
+ $('leaveParty').onclick=async()=>{
+  if(!window.confirm('ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับเมืองหลวงหรือไม่?'))return;
+  const button=$('leaveParty');button.disabled=true;
+  try{
+   while(controller.busy)await new Promise(resolve=>setTimeout(resolve,50));
+   if(!button.hidden)await controller.command('leave');
+  }finally{button.disabled=false;}
+ };
  $('retry').onclick=()=>void controller.refresh();
  $('interact').onclick=()=>{
   if(!ready||controller.busy||!position)return;
