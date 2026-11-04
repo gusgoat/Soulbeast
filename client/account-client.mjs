@@ -36,8 +36,8 @@ export class AccountClient{
  }
  async logout(){try{await this.request('/auth/v1/logout?scope=local',{},await this.sessions.token());}catch{}finally{this.sessions.save(null);this.user=null;this.onChange();}}
 }
-export function connectAccounts(onChange){
- let storage,legacy;try{storage=localStorage;legacy=sessionStorage;}catch{}
+export function connectAccounts(onChange, accountStorage){
+ let storage,legacy;try{storage=accountStorage??localStorage;legacy=sessionStorage;}catch{}
  const client=new AccountClient({storage,legacy,onChange,lock:fn=>navigator.locks?.request?navigator.locks.request(STORE+'-refresh',fn):fn()});
  window.addEventListener('storage',e=>{if(e.key===STORE)onChange();});return client;
 }

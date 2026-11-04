@@ -15,10 +15,10 @@ export function enterOnlineWalk(state, environment, owner) {
  location.assign('./tools/town-walk-demo/index.html?city=' + country + '-capital');
 }
 
-export function connectOnlineWalk() {
+export function connectOnlineWalk(accountStorage) {
  const context = JSON.parse(sessionStorage.getItem(contextKey) || 'null');
  if (!context) return null;
- const client = connectAccounts(() => {});
+ const client = connectAccounts(() => {}, accountStorage);
  let pending = null;
  const lock = task => navigator.locks?.request('soulbeast-walk-save:' + context.code, task) ?? task();
  function syncRevision() {
@@ -48,7 +48,7 @@ export function connectOnlineWalk() {
     context.snapshot = snapshot;
     const accountSnapshot = {...snapshot, P: {...snapshot.P, gsAt: context.revision}};
     if (context.owner) {
-     try { localStorage.setItem('soulbeast_account_save_v1:' + context.environment + ':' + context.owner + ':' + context.code, JSON.stringify(accountSnapshot)); } catch {}
+     try { (accountStorage ?? localStorage).setItem('soulbeast_account_save_v1:' + context.environment + ':' + context.owner + ':' + context.code, JSON.stringify(accountSnapshot)); } catch {}
     }
     delete context.request;
     sessionStorage.setItem(contextKey, JSON.stringify(context));
