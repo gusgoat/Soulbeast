@@ -65,7 +65,7 @@ export function connectOnlineWalk(accountStorage) {
   return strict ? pending : pending.catch(() => {});
  }
 
- let appearanceKey='', appearanceAt=0, nextAppearanceAttempt=0;
+ let appearanceKey='', appearanceAt=0, nextAppearanceAttempt=0, appearancePending=null;
  async function heartbeat(scene, position, moving, running) {
   const rows=await client.request('/rest/v1/rpc/sb_walk_heartbeat', {
    p_env: context.environment, p_code: context.code, p_scene: scene,
@@ -73,9 +73,15 @@ export function connectOnlineWalk(accountStorage) {
    p_moving: !!moving, p_running: !!running
   }, await client.sessions.token());
   const p=JSON.parse(sessionStorage.getItem(playerKey)||'null');
-  const signature=JSON.stringify([p?.walkFusion||null,p?.entitlements,p?.carried,p?.party]);
-  if(Date.now()>=nextAppearanceAttempt&&(signature!==appearanceKey||Date.now()-appearanceAt>60000)){
-   try{await client.request('/rest/v1/rpc/sb_walk_appearance',{p_env:context.environment,p_code:context.code,p_fusion:p?.walkFusion||null},await client.sessions.token());appearanceKey=signature;appearanceAt=Date.now();nextAppearanceAttempt=0;}catch(error){console.warn('Appearance sync failed',error.code||error.message);appearanceAt=Date.now();nextAppearanceAttempt=Date.now()+10000;}
+  const signature=JSON.stringify([p?.walkFusion||null,p?.entitlements,p?.carried,p?.party,p?.pets?.map(v=>[v.uid,v.sp])]);
+  if(!appearancePending&&Date.now()>=nextAppearanceAttempt&&(signature!==appearanceKey||Date.now()-appearanceAt>60000)){
+   appearancePending=(async()=>{
+    // Persist changed carried beasts before the server validates the requested appearance.
+    if(signature!==appearanceKey)await flush(true);
+    const result=await client.request('/rest/v1/rpc/sb_walk_appearance',{p_env:context.environment,p_code:context.code,p_fusion:p?.walkFusion||null},await client.sessions.token());
+    if((result?.walkFusion||null)!==(p?.walkFusion||null)){nextAppearanceAttempt=Date.now()+3000;return;}
+    appearanceKey=signature;appearanceAt=Date.now();nextAppearanceAttempt=0;
+   })().catch(error=>{console.warn('Appearance sync failed',error.code||error.message);nextAppearanceAttempt=Date.now()+10000;}).finally(()=>{appearancePending=null;});
   }
   return rows;
  }
