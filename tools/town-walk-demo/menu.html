@@ -7069,12 +7069,12 @@ async function countryCall(action,extra={},silent=false){
 function countryConfirm(action,extra,message){COUNTRY_WAR.pending={action,extra,message};render();document.querySelector('main')?.scrollTo(0,0);}
 function countryPending(){const p=COUNTRY_WAR.pending;return p?'<section class="card stack" role="alert"><b>'+esc(p.message)+'</b><div class="row"><button class="btn pri grow" data-a="cwConfirm" '+(COUNTRY_WAR.busy?'disabled':'')+'>ยืนยัน</button><button class="btn" data-a="cwCancel">ยกเลิก</button></div></section>':'';}
 function countryFractions(m){const f=x=>x&&x.n!=='0'?esc(x.n)+'/'+esc(x.d):'0';return 'เศษเงินสะสม '+f(m.goldFraction)+' เหรียญ · เศษคูปอง '+f(m.couponFraction)+' ใบ';}
-function countryMapView(){
- const d=COUNTRY_WAR.data,locations=d?.map?.locations||[],visible=new Map(locations.map(n=>[n.id,n])),points=new Map(COUNTRY_WAR_MAP.nodes.map(n=>[n.id,n]));
- const edges=COUNTRY_WAR_MAP.edges.filter(e=>visible.has(e.a)&&visible.has(e.b)).map(e=>{const a=points.get(e.a),b=points.get(e.b);return '<line x1="'+a.x*1536+'" y1="'+a.y*1024+'" x2="'+b.x*1536+'" y2="'+b.y*1024+'" class="cw-route '+e.type+' '+([e.a,e.b].includes(COUNTRY_WAR.selected)?'selected':'')+'"/>';}).join('');
- const nodes=locations.map(n=>{const p=points.get(n.id),color=COUNTRY_WAR_MAP.countries.find(c=>c.id===n.owner)?.color||'#ccc',selected=n.id===COUNTRY_WAR.selected,me=n.id===d.me.location,symbol=n.type==='capital'?'★':n.type==='city'?'◆':String(p.number).padStart(2,'0');return '<g class="cw-node '+n.type+' '+(selected?'selected ':'')+(me?'cw-here':'')+'" transform="translate('+p.x*1536+' '+p.y*1024+')" style="--cw:'+color+'" data-a="cwSelect" data-v="'+n.id+'" tabindex="0" role="button" aria-label="'+esc(n.name+' · '+countryName(n.owner)+' · '+n.count+' คน')+'" aria-pressed="'+selected+'"'+(me?' aria-current="location"':'')+'><title>'+esc(n.name+' · '+n.count+' คน')+'</title><image href="assets/ui/country-war/flag-'+n.owner+'-v1.webp" x="12" y="-35" width="34" height="23"/><circle r="'+(n.type==='capital'?25:n.type==='city'?20:14)+'"/><text>'+symbol+'</text>'+'</g>';}).join('');
- const here=points.get(d.me?.location),actor=CharacterMotion.resolve({id:'P',kind:'player',cls:S.P.cls,gender:S.P.gender}),art=actor?.assets?.idle||classPortraitSource(S.P.cls,S.P.gender),below=here&&here.y*1024<200,marker=here?'<g class="cw-player-marker" transform="translate('+here.x*1536+' '+here.y*1024+')" aria-hidden="true"><ellipse class="cw-location-halo" rx="46" ry="25"/><image class="cw-player-art" href="'+esc(art)+'" x="-60" y="'+(below?20:-157)+'" width="120" height="148" preserveAspectRatio="xMidYMax meet"/><rect class="cw-location-label" x="-98" y="'+(below?168:-192)+'" width="196" height="35" rx="17"/><text class="cw-location-caption" y="'+(below?185:-174)+'" translate="no">'+ct('ตำแหน่งสงคราม','War position','战争驻地')+'</text></g>':'';
- return '<div class="row"><b class="grow">แผนที่สงคราม</b><button class="btn sm" data-a="cwZoom" data-v="-1" aria-label="ย่อแผนที่">−</button><span>'+Math.round(COUNTRY_WAR.zoom*100)+'%</span><button class="btn sm" data-a="cwZoom" data-v="1" aria-label="ขยายแผนที่">+</button></div><div class="cw-map-viewport"><div class="cw-map" style="width:'+COUNTRY_WAR.zoom*100+'%"><img src="assets/ui/country-war-map-v1.png.webp" alt="ภูมิประเทศของสามอาณาจักร" width="1536" height="1024"><svg viewBox="0 0 1536 1024" role="group" aria-label="ฐานที่มองเห็นได้">'+edges+nodes+marker+'</svg></div></div><small class="sub">★ เมืองหลวง · ◆ เมือง · วงกลมหมู่บ้าน · รูปผู้ผนึกและฐานสีทองคือตำแหน่งสงครามของคุณ<br>โจมตีได้เมื่อเดินถึงเป้าหมายที่ติดพื้นที่ของประเทศเรา โดยไม่อิงจุดลงป้องกัน · เมืองต้องยึดหมู่บ้านที่เชื่อมอยู่ 2/4 · เมืองหลวงต้องยึดเมือง 2/4</small>';
+function countryMapView(destinations=null,action='cwSelect',selection=COUNTRY_WAR.selected){
+ const d=COUNTRY_WAR.data,locations=destinations??d?.map?.locations??[],visible=new Map(locations.map(n=>[n.id,n])),points=new Map(COUNTRY_WAR_MAP.nodes.map(n=>[n.id,n]));
+ const edges=COUNTRY_WAR_MAP.edges.filter(e=>visible.has(e.a)&&visible.has(e.b)).map(e=>{const a=points.get(e.a),b=points.get(e.b);return '<line x1="'+a.x*1536+'" y1="'+a.y*1024+'" x2="'+b.x*1536+'" y2="'+b.y*1024+'" class="cw-route '+e.type+' '+([e.a,e.b].includes(selection)?'selected':'')+'"/>';}).join('');
+ const nodes=locations.map(n=>{const p=points.get(n.id),color=COUNTRY_WAR_MAP.countries.find(c=>c.id===n.owner)?.color||'#ccc',selected=n.id===selection,me=n.id===d?.me?.location,symbol=n.type==='capital'?'★':n.type==='city'?'◆':String(p.number).padStart(2,'0');return '<g class="cw-node '+n.type+' '+(selected?'selected ':'')+(me?'cw-here':'')+'" transform="translate('+p.x*1536+' '+p.y*1024+')" style="--cw:'+color+'" data-a="'+action+'" data-v="'+n.id+'" tabindex="0" role="button" aria-label="'+esc(n.name+' · '+countryName(n.owner)+' · '+n.count+' คน')+'" aria-pressed="'+selected+'"'+(me?' aria-current="location"':'')+'><title>'+esc(n.name+' · '+n.count+' คน')+'</title><image href="assets/ui/country-war/flag-'+n.owner+'-v1.webp" x="12" y="-35" width="34" height="23"/><circle r="'+(n.type==='capital'?25:n.type==='city'?20:14)+'"/><text>'+symbol+'</text>'+'</g>';}).join('');
+ const here=points.get(d?.me?.location),actor=CharacterMotion.resolve({id:'P',kind:'player',cls:S.P.cls,gender:S.P.gender}),art=actor?.assets?.idle||classPortraitSource(S.P.cls,S.P.gender),below=here&&here.y*1024<200,marker=here?'<g class="cw-player-marker" transform="translate('+here.x*1536+' '+here.y*1024+')" aria-hidden="true"><ellipse class="cw-location-halo" rx="46" ry="25"/><image class="cw-player-art" href="'+esc(art)+'" x="-60" y="'+(below?20:-157)+'" width="120" height="148" preserveAspectRatio="xMidYMax meet"/><rect class="cw-location-label" x="-98" y="'+(below?168:-192)+'" width="196" height="35" rx="17"/><text class="cw-location-caption" y="'+(below?185:-174)+'" translate="no">'+ct('ตำแหน่งสงคราม','War position','战争驻地')+'</text></g>':'';
+ return '<div class="row"><b class="grow">แผนที่สงคราม</b><button class="btn sm" data-a="cwZoom" data-v="-1" aria-label="ย่อแผนที่">−</button><span>'+Math.round(COUNTRY_WAR.zoom*100)+'%</span><button class="btn sm" data-a="cwZoom" data-v="1" aria-label="ขยายแผนที่">+</button></div><div class="cw-map-viewport"><div class="cw-map" style="width:'+COUNTRY_WAR.zoom*100+'%"><img src="assets/ui/country-war-map-v1.png.webp" alt="ภูมิประเทศของสามอาณาจักร" width="1536" height="1024"><svg viewBox="0 0 1536 1024" role="group" aria-label="ฐานที่มองเห็นได้">'+edges+nodes+marker+'</svg></div></div>'+(destinations?'':'<small class="sub">★ เมืองหลวง · ◆ เมือง · วงกลมหมู่บ้าน · รูปผู้ผนึกและฐานสีทองคือตำแหน่งสงครามของคุณ<br>โจมตีได้เมื่อเดินถึงเป้าหมายที่ติดพื้นที่ของประเทศเรา โดยไม่อิงจุดลงป้องกัน · เมืองต้องยึดหมู่บ้านที่เชื่อมอยู่ 2/4 · เมืองหลวงต้องยึดเมือง 2/4</small>');
 }
 function countryCanEditTeam(){const m=COUNTRY_WAR.data?.me;return !!m&&!COUNTRY_WAR.busy&&!m.deadUntil&&!m.capitalGuard&&!m.capitalHealingLocked&&(COUNTRY_WAR_MAP.nodes.find(n=>n.id===m.location)?.type==='capital'||!m.team.some(u=>u.kind==='pet'));}
 function countryTeamPicker(){
@@ -7305,14 +7305,55 @@ BattleSkillTarget.confirm=function(side,value){const p=this.current();if(!p?.sea
 const walkBattleAction=battleAction;battleAction=function(v){const b=B(),[action,item]=String(v).split(':');if(action==='auto'){if(S.P.lv<10)return toast('ต่อสู้อัตโนมัติปลดล็อกเลเวล 10');const r=walkBattleAction(v);walkStoreBattlePrefs();return r}if(action==='seal'&&!walkSealConfirmed){const c=BattleSkillTarget.context();if(!c||c.u.kind!=='player'||!CON[item]?.seal||!(S.P.items[item]>0)||!b.enemies.some(sealable))return;BattleSkillTarget.pending={...c,sealItem:item,side:'enemy'};BattleCommandFocus.pending='arena';render();return}return walkBattleAction(v)};
 const walkBattleView=vBattle;vBattle=function(){const item=CON.teleportScroll;let h;try{delete CON.teleportScroll;h=walkBattleView()}finally{if(item)CON.teleportScroll=item}if(B()?.enemies.some(sealable))h=h.replace(/(data-v="seal:[^"]*"\s*)disabled/g,'$1');if(S.P.lv<10&&!B()?.over)h+='<small class="sub" data-auto-unlock>ต่อสู้อัตโนมัติปลดล็อกเลเวล 10</small>';return h};
 
-CON.teleportScroll={n:'ใบเทเลพอร์ต',d:'วาร์ปไปเมือง/หมู่บ้านล่าสุดที่เคยเข้า หรือเมืองหลวงประเทศตัวเอง · ใช้ไม่ได้ระหว่างต่อสู้หรืออยู่ในป่า',price:30,lv:1};
+CON.teleportScroll={n:'ใบเทเลพอร์ต',d:'วาร์ปไปเมืองหลวง เมือง หรือหมู่บ้านที่อาณาจักรของคุณครอบครอง · ใช้ไม่ได้ระหว่างต่อสู้หรืออยู่ในป่า',price:30,lv:1};
 ITEM_ART.teleportScroll='assets/world-quests/teleport-scroll-v1.png.webp';
 function walkTeleportBlocked(){return !!S.zone||!!(S.battle&&!S.battle.over)}
-handlers.useTeleport=()=>{if(S.screen!=='bag'||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;S.ui.walkTeleport=true;render();document.querySelector('main')?.scrollTo(0,0)};
-handlers.cancelTeleport=()=>{S.ui.walkTeleport=false;render()};
-handlers.confirmTeleport=choice=>{if(!S.ui.walkTeleport||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;const destination=choice==='capital'?S.P.country+'-capital':choice==='last'?S.P.walkLastSettlement:null;if(!destination||!window.walkWar.canEnter(destination))return toast('ยังเดินทางเข้าพื้นที่นี้ไม่ได้');S.P.items.teleportScroll--;S.ui.walkTeleport=false;save();parent.postMessage({type:'walk-teleport',destination},location.origin)};
+let teleportView=null, teleportDestination='', teleportBusy=false;
+async function loadTeleportTerritory(){
+ const packet={action:'country_status',code:S.P.code,pin:S.P.cpin||''};
+ const view=WALK_ONLINE?await walkAccountPost(packet):await window.walkWarEngine.dispatch(S.P,packet);
+ if(!view?.ok||!Array.isArray(view.map?.locations))throw Error('ตรวจสอบพื้นที่ที่ครอบครองไม่ได้ กรุณาลองใหม่');
+ window.walkWar.update(view);
+ return view;
+}
+function teleportLocations(){
+ return (teleportView?.map.locations||[]).filter(n=>n.owner===S.P.country&&Object.hasOwn(window.townProfiles.profiles,n.id));
+}
+handlers.useTeleport=async()=>{
+ if(S.screen!=='bag'||teleportBusy||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;
+ teleportBusy=true;
+ try{
+  teleportView=await loadTeleportTerritory();
+  if(S.screen!=='bag'||walkTeleportBlocked())return;
+  teleportDestination='';S.ui.walkTeleport=true;
+  document.querySelector('main')?.scrollTo(0,0);
+ }catch(e){toast(e.message);}finally{teleportBusy=false;render();}
+};
+handlers.cancelTeleport=()=>{if(!teleportBusy){S.ui.walkTeleport=false;render();}};
+handlers.selectTeleport=id=>{if(!teleportBusy&&teleportLocations().some(n=>n.id===id)){teleportDestination=id;render();}};
+handlers.confirmTeleport=async()=>{
+ if(S.screen!=='bag'||!S.ui.walkTeleport||teleportBusy||walkTeleportBlocked()||!(S.P.items.teleportScroll>0)||!teleportDestination)return;
+ const destination=teleportDestination;
+ teleportBusy=true;render();
+ try{
+  teleportView=await loadTeleportTerritory();
+  if(S.screen!=='bag'||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;
+  if(!teleportLocations().some(n=>n.id===destination)){teleportDestination='';toast('อาณาจักรของคุณไม่ได้ครอบครองปลายทางนี้แล้ว');return;}
+  S.P.items.teleportScroll--;S.ui.walkTeleport=false;save();
+  parent.postMessage({type:'walk-teleport',destination},location.origin);
+ }catch(e){toast(e.message);}finally{teleportBusy=false;render();}
+};
 CON.teleportScroll.bagAction='useTeleport';CON.teleportScroll.bagDisabled=walkTeleportBlocked;
-const teleportBag=vBag;vBag=function(){let h=teleportBag();if(S.ui.walkTeleport){const last=S.P.walkLastSettlement,lastName=last&&window.townProfiles.get(last)?.name;h='<section class="card stack" role="dialog" aria-label="เลือกปลายทางเทเลพอร์ต"><h3>เลือกปลายทาง · ใช้ใบเทเลพอร์ต 1 ชิ้น</h3>'+itemIcon('teleportScroll',80)+'<button class="btn" data-a="confirmTeleport" data-v="last" '+(!last||!window.walkWar.canEnter(last)?'disabled':'')+'>เมือง/หมู่บ้านล่าสุด · '+esc(lastName||'ยังไม่มี')+'</button><button class="btn" data-a="confirmTeleport" data-v="capital" '+(!window.walkWar.canEnter(S.P.country+'-capital')?'disabled':'')+'>เมืองหลวงประเทศตัวเอง</button><button class="btn" data-a="cancelTeleport">ยกเลิก</button></section>'+h}return h};
+const teleportBag=vBag;
+vBag=function(){
+ if(!S.ui.walkTeleport||!teleportView)return teleportBag();
+ const locations=teleportLocations(),selected=locations.find(n=>n.id===teleportDestination);
+ return '<section class="card stack" aria-label="เลือกปลายทางเทเลพอร์ต"><h3>เลือกปลายทาง · ใช้ใบเทเลพอร์ต 1 ใบ</h3>'
+  +countryMapView(locations,'selectTeleport',teleportDestination)
+  +(selected?'<p>ปลายทาง · '+esc(selected.name)+'</p>':'<p>'+(locations.length?'แตะพื้นที่บนแผนที่ หรือเลือกจากรายชื่อด้านล่าง':'ไม่มีพื้นที่ที่สามารถเทเลพอร์ตไปได้')+'</p>')
+  +'<button class="btn pri" data-a="confirmTeleport" '+(!selected||teleportBusy?'disabled':'')+'>ยืนยันเทเลพอร์ต</button> <button class="btn" data-a="cancelTeleport" '+(teleportBusy?'disabled':'')+'>ยกเลิก</button>'
+  +'<div class="row wrap">'+locations.map(n=>'<button class="btn sm" data-a="selectTeleport" data-v="'+esc(n.id)+'" aria-pressed="'+(n.id===teleportDestination)+'">'+esc(n.name)+'</button>').join('')+'</div></section>';
+};
 // Normal shop buys call handlers.buy; no discounted country/class pricing for this item.
 const teleportBuy=handlers.buy;handlers.buy=function(id){if(id!=='teleportScroll')return teleportBuy(id);if(S.zone||S.P.gold<30)return toast('เหรียญไม่พอ หรือยังอยู่ในป่า');S.P.gold-=30;S.P.items.teleportScroll=(S.P.items.teleportScroll||0)+1;ExtraAudio.play('buy');save();render();toast('ซื้อใบเทเลพอร์ตแล้ว')};
 CON.teleportScroll.fixedPrice=30;
