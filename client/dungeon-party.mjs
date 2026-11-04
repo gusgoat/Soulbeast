@@ -4,9 +4,18 @@ export function connectDungeonParty({storage=localStorage,session=sessionStorage
  const context=JSON.parse(session.getItem('soulbeast-online-walk-v1')||'null');
  if(!context?.code)throw Error('login_required');
  const client=connectAccounts(()=>{},storage);
- const call=async(action,{room=null,ready=null}={})=>client.request('/rest/v1/rpc/sb_dungeon_party_command',{
-  p_env:context.environment,p_code:context.code,p_action:action,p_room:room,p_ready:ready
- },await client.sessions.token());
+ async function call(action,{room=null,ready=null,joinCode=null}={}){
+  const rpc=joinCode?'sb_dungeon_party_join':'sb_dungeon_party_command';
+  const actor={p_env:context.environment,p_code:context.code};
+  const body=joinCode?{...actor,p_join_code:joinCode}:{...actor,p_action:action,p_room:room,p_ready:ready};
+  const response=await fetch(accountRealtimeConfig.url+'/rest/v1/rpc/'+rpc,{
+   method:'POST',headers:{apikey:accountRealtimeConfig.key,Authorization:'Bearer '+await client.sessions.token(),
+    'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(15000)
+  });
+  const result=await response.json();
+  if(!response.ok)throw Object.assign(Error(result.message||result.error||'party_request_failed'),{status:response.status});
+  return result;
+ }
  const run=async(room,action,data={})=>{
   const response=await client.request('/functions/v1/soulbeast-dungeon-party',{
    code:context.code,environment:context.environment,room,action,data

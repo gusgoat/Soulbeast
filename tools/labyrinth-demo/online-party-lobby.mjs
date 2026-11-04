@@ -1,4 +1,4 @@
-import {connectDungeonParty,partySessionKey} from '../../client/dungeon-party.mjs';
+import {connectDungeonParty,partySessionKey} from '../../client/dungeon-party.mjs?v=short-code-1';
 import {partyRules} from './online-party-rules.mjs';
 const $=id=>document.getElementById(id);
 const errors={login_required:'กรุณาเข้าสู่ระบบออนไลน์ก่อน',party_full:'ห้องนี้มีผู้ผนึกครบ 4 คนแล้ว',
@@ -9,7 +9,8 @@ const errors={login_required:'กรุณาเข้าสู่ระบบ�
 let connection,room=null,busy=false,timer,stopped=false;
 function render(){
  $('joinPanel').hidden=!!room;$('roomPanel').hidden=!room;if(!room)return;
- $('roomId').textContent=room.id;$('count').textContent=room.members.length+'/4';$('members').replaceChildren();
+ $('roomId').textContent=room.joinCode||'…';$('copy').disabled=!room.joinCode;
+ $('count').textContent=room.members.length+'/4';$('members').replaceChildren();
  for(const m of room.members){const row=document.createElement('li');row.dataset.ready=String(m.ready&&m.online);
   row.textContent=`${m.name} · Lv ${m.level}${m.code===room.host?' · หัวหน้าห้อง':''} · ${!m.online?'ขาดการเชื่อมต่อ':m.ready?'พร้อมแล้ว':'ยังไม่พร้อม'}`;$('members').append(row);}
  const me=room.members.find(m=>m.code===connection.code);$('ready').textContent=me?.ready?'ยกเลิกพร้อม':'ยืนยันพร้อม';
@@ -35,15 +36,18 @@ async function update(action='status',extra={}){
   if(action==='status'&&['party_unavailable','party_not_member'].includes(error.message)){
    room=null;sessionStorage.removeItem(partySessionKey);
   }
-  $('status').textContent=errors[error.message]||'เชื่อมต่อห้องไม่สำเร็จ กรุณาลองอีกครั้ง';
+  $('status').textContent=errors[error.message]||errors[error.code]||
+   (error.status===401?'กรุณาเข้าสู่ระบบเกมใหม่':error.status===403?'บัญชีนี้ไม่มีสิทธิ์ใช้ตัวละครที่เลือก กรุณาเข้าเกมใหม่':'เชื่อมต่อห้องไม่สำเร็จ กรุณาลองอีกครั้ง');
  }
  finally{busy=false;render();}
 }
 $('create').onclick=()=>update('create');$('join').onclick=()=>{const id=$('roomCode').value.trim();
- if(!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)){$('status').textContent='กรุณาใส่รหัสห้องให้ครบ';return;}update('join',{room:id});};
+ if(/^[a-f0-9]{8}$/i.test(id)){void update('join',{joinCode:id.toUpperCase()});return;}
+ if(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)){void update('join',{room:id});return;}
+ $('status').textContent='กรุณาใส่รหัสห้อง 8 ตัวตามที่หัวหน้าห้องส่งให้';};
 $('ready').onclick=()=>update('ready',{ready:!room.members.find(m=>m.code===connection.code)?.ready});
 $('start').onclick=()=>update('start');$('leave').onclick=()=>update('leave');
-$('copy').onclick=async()=>{try{await navigator.clipboard.writeText(room.id);$('status').textContent='คัดลอกรหัสห้องแล้ว';}catch{$('status').textContent='เลือกและคัดลอกรหัสห้องด้านบนได้เลย';}};
+$('copy').onclick=async()=>{if(!room?.joinCode)return;try{await navigator.clipboard.writeText(room.joinCode);$('status').textContent='คัดลอกรหัสห้องแล้ว';}catch{$('status').textContent='เลือกและคัดลอกรหัสห้องด้านบนได้เลย';}};
 try{connection=connectDungeonParty();const saved=JSON.parse(sessionStorage.getItem(partySessionKey)||'null');
  if(saved?.code===connection.code){room={id:saved.id,members:[],state:'waiting'};void update();}
  timer=setInterval(()=>{if(room&&!document.hidden)void update();},5000);
