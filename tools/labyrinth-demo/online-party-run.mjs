@@ -2,7 +2,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=local-explore-1';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=battle-isolated-3';
+import {partyRunController} from './online-party-controller.mjs?v=battle-close-4';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const localWorld=localPartyWorld();let trapPlacements=[];
@@ -55,7 +55,8 @@ function battleControls(run){
 }
 function drawBattle(run){
  if(!run){$('battle').hidden=true;return;}
- if(run.status!=='active'&&seenBattle===run.id)return;
+ if(run.kind==='solo'&&run.status!=='active'){seenBattle=run.id;$('battle').hidden=true;keys.clear();return;}
+ if(run.status!=='active'&&seenBattle===run.id){$('battle').hidden=true;return;}
  $('battle').hidden=false;$('dismiss').hidden=run.status==='active';
  $('battle').querySelector('h2').textContent=run.status==='active'?(run.kind==='solo'?'ต่อสู้เดี่ยว · รอบ ':'ต่อสู้บอสปาร์ตี้ · รอบ ')+(run.battle?.round||1):run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้';
  battleControls(run);
@@ -111,6 +112,9 @@ try{
   clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
+  // Reconcile the overlay even if the scene already consumed this revision.
+  drawBattle(state.battle);
+  if(state.battle?.status!=='active')$('battleError')?.remove();
   if(!position&&member?.position)position={...member.position};
   if(state.battle?.status==='active'&&nextPulse!==Infinity)nextPulse=Math.min(nextPulse,performance.now()+750);
   ready=!!position;$('retry').hidden=true;$('interact').disabled=!ready;
