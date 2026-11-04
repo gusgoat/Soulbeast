@@ -7436,8 +7436,6 @@ function questSearchUI(){
  for(const e of entries){const title=document.createElement('h3');title.textContent=e.title;const text=document.createElement('p');text.textContent=e.text;const button=document.createElement('button');button.className='quest-answer';button.textContent=e.choice;button.onclick=()=>{questEmit('forestSearch',{zone:e.zone,target:e.id});render()};box.append(title);if(e.quest){const frame=document.createElement('div');frame.className='quest-story-window';const im=document.createElement('img');im.src=e.quest.art;im.alt=e.quest.sceneCaptions.join(' → ');im.style.top=e.quest.sceneRow?'-100%':'0';frame.append(im);box.append(frame)}box.append(text,button)}document.querySelector('main')?.prepend(box)
 }
 const questRender=render;render=function(...args){const result=questRender(...args);questSearchUI();return result};
-// The local preview supplies real practice encounters for normally online-only activities.
-if(screen==='world'){const addPractice=()=>{if(document.getElementById('walkActivityPractice')||S.battle)return;const b=document.createElement('button');b.id='walkActivityPractice';b.className='btn';b.textContent='ทดสอบ'+(screen==='camp'?'จู่โจมค่าย':'โจมตีบอสโลก')+'กับคู่ต่อสู้จำลอง';b.onclick=()=>{const enemy=wildUnit(screen==='camp'?ZN.find(z=>z.id===7).sp[0]:'salamander',S.P.lv,0);startBattle([enemy],'wild',7);B().walkActivity=screen;render()};document.querySelector('main')?.prepend(b)};const prior=render;render=function(...a){const r=prior(...a);addPractice();return r}}
 questEmit('visit',{target:screen});save();render();
 
 // The quest footer returns to the same shared journal used by both walking scenes.
@@ -7537,8 +7535,13 @@ if(S.screen==='settings')render();
 
 /* Keep the selected service NPC visible while using that service; never in combat. */
 function mountServiceSpeaker(){
- const main=document.querySelector('main');if(!main||S.battle||S.zone||S.screen!==params.get('screen'))return;
- const npc=window.NpcDialogue?.resolve(params.get('speaker'),params.get('city'));if(!npc||document.getElementById('serviceSpeaker'))return;
+ const banner=document.getElementById('serviceSpeaker');
+ if(S.battle||S.zone||S.screen!==params.get('screen')||(S.screen==='world'&&compactBattleReady('world'))){
+  banner?.remove();
+  return;
+ }
+ const main=document.querySelector('main');if(!main||banner)return;
+ const npc=window.NpcDialogue?.resolve(params.get('speaker'),params.get('city'));if(!npc)return;
  const card=document.createElement('section'),copy=document.createElement('div'),label=document.createElement('small'),name=document.createElement('h3'),art=window.NpcDialogue.createArt(npc);card.id='serviceSpeaker';card.className='npc-service-banner';label.textContent='กำลังสนทนากับ';name.textContent=npc.name;copy.append(label,name);card.append(copy,art);main.append(card);
 }
 const serviceSpeakerRender=render;render=function(...args){const r=serviceSpeakerRender(...args);mountServiceSpeaker();return r};mountServiceSpeaker();
