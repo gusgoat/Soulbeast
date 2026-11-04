@@ -1,8 +1,8 @@
 // A single request lane prevents old movement/solo responses overtaking a boss transition.
-export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{}}){
+export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},localExploration=false,getPosition=()=>null}){
  let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null;
  async function refresh(next){
-  next??=await connection.run(roomId,'status');
+  next??=await connection.run(roomId,'status',localExploration?{localExploration:true}:{});
   if(closed)return;
   if(!next||next.id!==roomId)throw Error('invalid_party_snapshot');
   if(snapshot&&next.revision<snapshot.revision)return;
@@ -31,6 +31,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   // Renderer supplies traversed points, not an arbitrary end-point through walls.
   move(point,previous){
    if(closed||!snapshot||snapshot.departure||snapshot.state!=='active'||snapshot.battle?.status==='active')return false;
+   if(localExploration)return true;
    const start=path.at(-2),last=path.at(-1);
    if(start&&last&&previous&&last.x===previous.x&&last.y===previous.y){
     const ax=last.x-start.x,ay=last.y-start.y,bx=point.x-last.x,by=point.y-last.y;
@@ -44,6 +45,10 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   pulse:()=>lane(async()=>{
    if(!snapshot)return refresh();
    if(snapshot.departure||snapshot.state==='closed')return;
+   if(localExploration){
+    const position=snapshot.battle?.status==='active'?null:getPosition();
+    await refresh(await connection.run(roomId,'pulse',{localExploration:true,floor:snapshot.floor,...(position?{position}:{})}));return;
+   }
    const start=snapshot.members.find(member=>member.code===connection.code)?.position;
    const movement=path.length?{floor:snapshot.floor,seq:++seq,path:path.splice(0,16)}:null;
    const next=await connection.run(roomId,'pulse',movement?{movement}:{});
@@ -57,11 +62,11 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    // Interactions use confirmed positions. Keep pending walking in the pulse
    // queue, including when a target moves away before the action arrives.
    try{
-    const result=await connection.run(roomId,action,{...data,requestId:crypto.randomUUID()});
+    const result=await connection.run(roomId,action,{...(localExploration?{floor:snapshot.floor,position:getPosition()}:{}),...data,requestId:data.requestId||crypto.randomUUID()});
     if(action==='leave'){await refresh(result);return;}
    }
    catch(error){
-    if(['enemy_out_of_reach','boss_out_of_reach','enemy_unavailable','door_out_of_reach','stairs_out_of_reach','chest_out_of_reach','spring_out_of_reach'].includes(error.message)){
+    if(['trap_unavailable','trap_out_of_reach','enemy_out_of_reach','boss_out_of_reach','enemy_unavailable','door_out_of_reach','stairs_out_of_reach','chest_out_of_reach','spring_out_of_reach'].includes(error.message)){
      await refresh();return;
     }
     throw error;

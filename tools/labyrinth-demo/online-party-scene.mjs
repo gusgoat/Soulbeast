@@ -50,7 +50,7 @@ export function partyScene({code,roomId,view,clock=()=>performance.now()}){
     if(position)view.peer(member,position);
    }
    // Anchor the visual timer once; packet jitter cannot restart the effect.
-   view.traps((snapshot.dungeon?.traps||[]).map(t=>{
+   if(!snapshot.localExploration)view.traps((snapshot.dungeon?.traps||[]).map(t=>{
     const elapsed=time-trapDeadlines.get(t.id);
     return {...t,remaining:Math.max(0,-elapsed/1000),burst:elapsed>=0?Math.max(0,1-elapsed/800):0};
    }));

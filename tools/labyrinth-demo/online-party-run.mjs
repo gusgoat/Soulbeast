@@ -1,10 +1,11 @@
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
-import {partyScene} from './online-party-scene.mjs?v=party-exit-1';
-import {mountPartyVitals,remotePartyMotion} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=party-exit-1';
+import {partyScene} from './online-party-scene.mjs';
+import {localPartyWorld} from './online-party-local.mjs?v=local-explore-1';
+import {mountPartyVitals} from './online-party-view.mjs';
+import {partyRunController} from './online-party-controller.mjs';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
-const enemyMotion=remotePartyMotion({delay:180,maxPrediction:600});
+const localWorld=localPartyWorld();let trapPlacements=[];
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
 let nextPulse=0,nextContact=0;
@@ -69,16 +70,14 @@ function drawBattle(run){
  $('dismiss').onclick=()=>{seenBattle=run.id;$('battle').hidden=true;};
 }
 const view={
- loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});peers.clear();enemyMotion.clear();position=null;camera=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
+ loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
  vitals:members=>vitals.update(members),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);},
  world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
-  const now=performance.now();
-  for(const [id,enemy] of Object.entries(world.enemies||{})){
-   if(enemy.state==='roaming'&&enemy.position)enemyMotion.receive(id,{...enemy.position,moving:enemy.moving},now);
-   else enemyMotion.remove(id);
-  }
-  $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
+  localWorld.receive(world,connection.code,performance.now());
+  if(!trapPlacements.length)trapPlacements=DungeonTraps.create(maze,nav,{}, {seed:config.seed+71371,count:35}).list;
+
+  $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · กับดักเหลือ ${trapPlacements.length-(world.traps||[]).filter(t=>t.state==='spent').length} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
  stopSolo(){keys.clear();$('battle').hidden=true;},enterBoss(){keys.clear();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
  respawn(destination,reason){freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
@@ -94,30 +93,21 @@ function failure(error){
   freeze();$('battle').hidden=true;notice('ห้องปาร์ตี้สิ้นสุดแล้วหรือคุณออกจากห้องแล้ว');
   offerReturn();return;
  }
+ if(['trap_not_due','trap_unavailable','trap_out_of_reach','movement_wrong_floor'].includes(error.message))return;
  if(['not_your_turn','stale_turn','invalid_skill','invalid_target','invalid_auto_mode'].includes(error.message)){
   notice('คำสั่งใช้ไม่ได้หรือเทิร์นเปลี่ยนแล้ว · เลือกคำสั่งใหม่');return;
  }
- freeze();$('retry').hidden=false;notice(error.message==='login_required'?'กรุณาเข้าสู่ระบบออนไลน์ก่อน':'เชื่อมต่อปาร์ตี้ไม่ได้ · หยุดเดินชั่วคราว กดเชื่อมต่ออีกครั้ง');
+ if(error.message==='login_required')freeze();$('retry').hidden=false;notice(error.message==='login_required'?'กรุณาเข้าสู่ระบบออนไลน์ก่อน':'กำลังเชื่อมต่อปาร์ตี้ใหม่ · เดินต่อได้ รอยืนยันกิจกรรม');
 }
 try{
  connection=connectDungeonParty();const roomId=new URL(location.href).searchParams.get('room');
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
  const scene=partyScene({code:connection.code,roomId,view});
- controller=partyRunController({connection,roomId,scene,openMotion:partyMotion,onError:failure,onState:(state,queued=[])=>{
+ controller=partyRunController({connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
   clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
-  position=member?.position?{...member.position}:null;
-  // Keep steps taken while the request was in flight, checking them again from
-  // the confirmed position in case the server stopped us at a wall.
-  if(position&&nav){
-   let valid=0;
-   for(const point of queued){
-    if(!nav.clear(position,point))break;
-    position={...point};valid++;
-   }
-   queued.length=valid;
-  }
+  if(!position&&member?.position)position={...member.position};
   ready=!!position;$('retry').hidden=true;$('interact').disabled=!ready;
   notice(state.battle?.status==='active'?'เลือกคำสั่งภายใน 12 วินาที · หากไม่เลือกจะเปิดอัตโนมัติ':'WASD / ลูกศร หรือปุ่มเดิน');
  }});
@@ -132,7 +122,7 @@ try{
  $('retry').onclick=()=>void controller.refresh();
  $('interact').onclick=()=>{
   if(!ready||controller.busy||!position)return;
-  const confirmed=me?.position;if(!confirmed)return;
+  const confirmed=position;if(!confirmed)return;
   const near=p=>nav.distance(confirmed,p)<210;
   const door=maze.rooms.find(r=>r.id==='boss').gate;
   const chest=maze.chests.find(c=>!controller.state?.chestClaims?.[c.id]&&nav.distance(confirmed,c)<145&&nav.clear(confirmed,c));
@@ -146,7 +136,7 @@ try{
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
   if(!document.hidden&&ready&&!controller.busy&&now>=nextPulse){
-   nextPulse=now+250;
+   nextPulse=now+(controller.state?.hasActiveBattles?750:5000);
    void controller.pulse();
   }
   if(ready&&position&&nav&&controller.state?.battle?.status!=='active'){
@@ -156,11 +146,18 @@ try{
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
     if(nav.clear(position,point)&&controller.move(point,position))position=point;}
    controller.broadcast({...position,dir:(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8},moving,false);
-   const confirmed=me?.position;
-   if(!controller.busy&&confirmed&&now>=nextContact){const target=Object.entries(world.enemies||{}).find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
-    if(target){nextContact=now+500;void controller.command('claim',{enemy:target[0]});}
-    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,world.bossPosition||maze.boss)<65&&nav.clear(confirmed,world.bossPosition||maze.boss)){
-     nextContact=now+500;void controller.command('bossContact');
+   localWorld.update(dt,position,nav,world,maze.boss,now);
+   localWorld.trigger(trapPlacements,position,nav,now);
+   traps=[...localWorld.effects.values()];
+   const trapRequest=localWorld.request();
+   if(trapRequest&&!controller.busy&&now>=nextContact){
+    nextContact=now+750;void controller.command(trapRequest.action,{trap:trapRequest.trap,position:trapRequest.position});
+   }
+   const confirmed=position;
+   if(!controller.busy&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
+    if(target){nextContact=now+500;void controller.command('claim',{enemy:target[0],enemyPosition:{...target[1].position}});}
+    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,localWorld.boss||world.bossPosition||maze.boss)<65&&nav.clear(confirmed,localWorld.boss||world.bossPosition||maze.boss)){
+     nextContact=now+500;void controller.command('bossContact',{enemyPosition:{...(localWorld.boss||maze.boss)}});
     }}
   }
   if(position){
@@ -194,16 +191,11 @@ function render(){
   const radius=t.burst?290*(1-.45*t.burst):290;
   ctx.globalAlpha=t.burst||.7;ctx.strokeStyle=({blast:'#ffb354',poison:'#73ee6d',fire:'#ff5d37',electric:'#db82ff',ice:'#7bdfff'})[t.type];
   ctx.lineWidth=t.burst?3+6*t.burst:3;ctx.beginPath();ctx.ellipse(at.x,at.y,radius*scale,radius*scale*F,0,0,Math.PI*2);ctx.stroke();ctx.restore();}
- const now=performance.now();
- for(const [id,e] of Object.entries(world.enemies||{}))if(e.state==='roaming'&&e.position){
-  const animated=enemyMotion.position(id,now);
-  const visible=animated&&nav.clear(e.position,animated)?animated:e.position;
-  token(visible,e.kind==='bandit'?'#d08059':'#9c76e8',e.kind==='bandit'?'โจรป่า':'อสูรเงา');
- }
- if(world.boss!=='defeated')token(world.bossPosition||maze.boss,'#ee574d',config.bossName,config.bossArt,90);
+ for(const e of localWorld.enemies.values())token(e.position,e.kind==='bandit'?'#d08059':'#9c76e8',e.kind==='bandit'?'โจรป่า':'อสูรเงา');
+ if(world.boss!=='defeated')token(localWorld.boss||world.bossPosition||maze.boss,'#ee574d',config.bossName,config.bossArt,90);
  const gate=maze.rooms.find(r=>r.id==='boss').gate;token(gate,'#dfbf73',world.doorOpen?'ประตูเปิด':'ห้องบอส');token(maze.stairs,'#91d5e8','ชั้นถัดไป');
  token(maze.mini,'#8de6ec','บ่อน้ำศักดิ์สิทธิ์');
  for(const chest of maze.chests)token(chest,controller.state?.chestClaims?.[chest.id]?'#777':'#e2b654',controller.state?.chestClaims?.[chest.id]?'เปิดแล้ว':chest.big?'หีบบอส':'หีบสมบัติ');
  for(const peer of peers.values())if(peer.member.exploring!==false)token(peer,'#85c8e4',peer.member.name,peer.member.avatar);
- if(me?.exploring!==false)token(focus,'#efda8a',me?.name,me?.avatar);
+ if(me?.exploring!==false)token(position,'#efda8a',me?.name,me?.avatar);
 }
