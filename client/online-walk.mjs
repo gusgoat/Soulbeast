@@ -76,8 +76,8 @@ export function connectOnlineWalk(accountStorage) {
   const signature=JSON.stringify([p?.walkFusion||null,p?.entitlements,p?.carried,p?.party,p?.pets?.map(v=>[v.uid,v.sp])]);
   if(!appearancePending&&Date.now()>=nextAppearanceAttempt&&(signature!==appearanceKey||Date.now()-appearanceAt>60000)){
    appearancePending=(async()=>{
-    // Persist changed carried beasts before the server validates the requested appearance.
-    if(signature!==appearanceKey)await flush(true);
+    // Appearance is validated against server ownership independently of full-save revisions.
+    // A save conflict must not prevent owned cosmetic forms from reaching other players.
     const result=await client.request('/rest/v1/rpc/sb_walk_appearance',{p_env:context.environment,p_code:context.code,p_fusion:p?.walkFusion||null},await client.sessions.token());
     if((result?.walkFusion||null)!==(p?.walkFusion||null)){nextAppearanceAttempt=Date.now()+3000;return;}
     appearanceKey=signature;appearanceAt=Date.now();nextAppearanceAttempt=0;
