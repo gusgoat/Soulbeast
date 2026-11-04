@@ -6,7 +6,7 @@ import {mountPartyVitals} from './online-party-view.mjs';
 import {partyRunController} from './online-party-controller.mjs?v=battle-close-4';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
-const visuals=partyArt();let selfDir=2,selfPhase=0,selfMoving=false;
+const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
 const localWorld=localPartyWorld();let trapPlacements=[];
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
@@ -158,10 +158,10 @@ try{
   if(ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
-   const length=Math.hypot(dx,dy),moving=length>0;selfMoving=moving;if(moving){selfDir=(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
+   const length=Math.hypot(dx,dy),moving=length>0;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
     if(nav.clear(position,point)&&controller.move(point,position))position=point;}
-   controller.broadcast({...position,dir:(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8},moving,false);
+   controller.broadcast({...position,dir:selfDir},moving,false);
    localWorld.update(dt,position,nav,world,maze.boss,now);
    localWorld.trigger(trapPlacements,position,nav,now);
    traps=[...localWorld.effects.values()];
