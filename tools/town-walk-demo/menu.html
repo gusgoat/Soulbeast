@@ -4359,13 +4359,7 @@ function weaponRarityLabel(it){return WEAPON_RARITY[it?.craft?'crafted':it?.worl
 const weaponBaseItemExtra=itemExtra;
 itemExtra=function(it){const extra=weaponBaseItemExtra(it);return it?.slot==='weapon'&&(it.craft||it.legend)?` · <span class="weapon-rarity-label weapon-label-${it.craft?'crafted':it.worldLegend?'eclipse':'legendary'}" translate="no">${weaponRarityLabel(it)}</span>`+extra:extra;};
 function weaponText(th,en,zh){return typeof GAME_LANGUAGE==='undefined'||GAME_LANGUAGE==='th'?th:GAME_LANGUAGE==='zh-CN'?zh:en;}
-const weaponBaseBag=vBag;
-vBag=function(){
- const ids=[...new Set(S.P.owned)].filter(id=>WEAPON_ART[id]);
- if(!ids.length)return weaponBaseBag();
- const card=`<div class="card stack"><div class="row"><h3 class="grow" translate="no">${weaponText('อาวุธหายากในกระเป๋า','Rare Weapons in Your Bag','背包中的稀有武器')}</h3><button class="btn sm" data-a="weaponEquipment" translate="no">${weaponText('หน้าสวมใส่','Equipment','装备')}</button></div><div class="lst">${ids.map(id=>{const it=EQ[id],a=WEAPON_ART[id],count=S.P.owned.filter(k=>k===id).length;return `<div class="row">${itemIcon(id,52)}<div class="grow"><b>${esc(it.n)}${count>1?' ×'+count:''}</b><div class="sub"><span class="weapon-rarity-label weapon-label-${a.rarity}" translate="no">${weaponRarityLabel(it)}</span> · Lv ${it.lv}</div></div></div>`}).join('')}</div></div>`;
- return weaponBaseBag().replace('</h2>','</h2>'+card);
-};
+// Rare weapon inventory is managed on the equipment screen.
 handlers.weaponEquipment=()=>{S.ui.hero='gear';go('hero');};
 // Keep the player's own name intact in the bag's vitals panel as well.
 const weaponBaseBagVitals=bagVitals;
