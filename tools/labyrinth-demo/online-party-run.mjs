@@ -35,7 +35,7 @@ function offerReturn(city,automatic=false){
  if(automatic)void button.onclick();
 }
 const menus=partyMenu({canOpen:()=>ready&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{keys.clear();selfMoving=false;}});
-let clockOffset=0, shownBattle=null, battleFrameReady=false;
+let clockOffset=0, shownBattle=null, battleFrameReady=false, soloFinishTimer;
 const battleFrame=$('partyBattleFrame');
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
@@ -59,17 +59,25 @@ addEventListener('message',event=>{
  }
 });
 function drawBattle(run){
- if(!run||(run.status!=='active'&&(run.kind==='solo'||seenBattle===run.id))){
+ const continuing=shownBattle?.id===run?.id;
+ if(!run||(run.status!=='active'&&(seenBattle===run.id||(run.kind==='solo'&&!continuing)))){
+  clearTimeout(soloFinishTimer);soloFinishTimer=null;
   shownBattle=null;$('battle').hidden=true;$('battleError').hidden=true;
   if(run?.kind==='solo'){seenBattle=run.id;keys.clear();}
   return;
  }
  if(menus.open)menus.close();
  if(shownBattle?.id!==run.id){
+  clearTimeout(soloFinishTimer);soloFinishTimer=null;
   battleFrameReady=false;
-  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-solo-ui-2&partyBattle=shared-battle-2&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-battle-effects-1&partyBattle=shared-battle-effects-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
  }
  shownBattle=run;$('battle').hidden=false;sendBattle();
+ if(run.kind==='solo'&&run.status!=='active'&&!soloFinishTimer){
+  soloFinishTimer=setTimeout(()=>{
+   seenBattle=run.id;drawBattle(null);window.focus();
+  },run.battle?.effects?.length?2500:500);
+ }
 }
 const view={
  loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},

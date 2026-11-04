@@ -7630,7 +7630,7 @@ const serviceSpeakerRender=render;render=function(...args){const r=serviceSpeake
 if(S.screen==='arena'&&!TOWER_UI.ready)void towerStatus();
 if(['guild','guildwar'].includes(S.screen)&&!GUILD_UI.data)void guildRequest();
 if(params.has('partyBattle')&&parent!==window){
- let state, selectedEnemy, selectedAlly, turnKey, showSkills=false, hideCommands=false;
+ let state, selectedEnemy, selectedAlly, turnKey, showSkills=false, hideCommands=false, effectTurn=0;
  const app=document.getElementById('app');
  const soloRender=render;
  const scenery=BattleScenery.resolve;
@@ -7707,7 +7707,21 @@ if(params.has('partyBattle')&&parent!==window){
   if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='party-battle-state'||!event.data.run?.battle)return;
   const next=event.data,w=next.run.waiting,key=JSON.stringify([next.run.id,w?.actor,w?.turn]);
   if(key!==turnKey){showSkills=false;turnKey=key;}
+  if(state?.run.id!==next.run.id)effectTurn=0;
+  const battle=next.run.battle,turn=battle.turns;
+  const effects=Number.isSafeInteger(turn)&&turn>effectTurn&&Array.isArray(battle.effects)&&battle.effects.length?battle.effects.slice(-32):[];
+  if(effects.length){
+   effectTurn=turn;
+   VQ.push(...BattleEffects.enrich(effects,battle.cur));
+  }
   state=next;draw();
+  if(effects.length){
+   const cast=effects.find(e=>e.k==='cast'||e.k==='charge'),hit=effects.find(e=>e.k==='hit');
+   const actor=BattleEffects.actor(cast?.source||cast?.id||hit?.source||battle.cur);
+   if(cast?.k==='charge')Sound.fx('charge');
+   else if(hit?.crit)ExtraAudio.skill(hit.skill||cast?.skill||'attack',actor,true);
+   else if(cast||hit)Sound.skill(cast?.skill||hit?.skill||'attack',actor);
+  }
  });
  parent.postMessage({type:'party-battle-ready'},location.origin);
 }
