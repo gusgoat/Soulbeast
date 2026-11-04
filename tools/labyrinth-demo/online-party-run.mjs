@@ -66,12 +66,15 @@ function drawBattle(run){
  if(menus.open)menus.close();
  $('battle').hidden=false;$('dismiss').hidden=run.status==='active';
  $('battle').querySelector('h2').textContent=run.status==='active'?(run.kind==='solo'?'ต่อสู้เดี่ยว · รอบ ':'ต่อสู้บอสปาร์ตี้ · รอบ ')+(run.battle?.round||1):run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้';
+ const scene = run.kind==='boss'?'boss':({2:'desert',3:'forest'}[config?.floor]||'forest');
+ const background = asset(config?.battleArt||`assets/ui/battle-scenes/${scene}-v2.webp`);
+ $('partyBattlefield').style.backgroundImage=`linear-gradient(#06131e40,#06131eb0),url("${background}")`;
  battleControls(run);
  for(const side of ['allies','enemies']){$(side).replaceChildren();for(const unit of run.battle?.[side]||[]){
-  const card=document.createElement('div');card.className='card';
+  const card=document.createElement('div');card.className='card';card.dataset.frame=unit.boss?'gold':side==='enemies'?'red':'blue';card.classList.toggle('fallen',unit.hp<=0);card.classList.toggle('acting',unit.id===run.battle.cur);
   const raw=portrait(unit),src=raw&&(raw.startsWith(base.pathname)&&base.pathname!=='/'?new URL(raw,base).href:asset(raw));if(src){const image=document.createElement('img');image.src=src;image.alt='';card.append(image);}
   const name=document.createElement('strong');name.textContent=(unit.name||unit.cls||'ผู้ผนึก')+' · Lv '+(unit.lv||1);card.append(name);
-  for(const stat of ['hp','mp']){const meter=document.createElement('meter');meter.max=Math.max(1,unit.st?.[stat]||1);meter.value=unit[stat]||0;meter.setAttribute('aria-label',stat.toUpperCase());card.append(meter);}
+  for(const stat of ['hp','mp']){const meter=document.createElement('meter');meter.max=Math.max(1,unit.st?.[stat]||1);meter.value=unit[stat]||0;meter.setAttribute('aria-label',stat.toUpperCase());meter.className=stat;card.append(meter);}
   $(side).append(card);
  }}
  $('battleLog').textContent=(run.battle?.log||[]).slice(-4).map(x=>typeof x==='string'?x:x.text||'').join('\n');
