@@ -36,7 +36,8 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
     const ax=last.x-start.x,ay=last.y-start.y,bx=point.x-last.x,by=point.y-last.y;
     if(Math.abs(ax*by-ay*bx)<1e-6&&ax*bx+ay*by>0){path[path.length-1]=point;return true;}
    }
-   if(path.length>=16)return false;
+   // The wire limit is per request, not per local input buffer.
+   if(path.length>=128)return false;
    path.push({x:point.x,y:point.y});return true;
   },
   broadcast(position,moving,running){if(!closed&&snapshot?.state==='active'&&snapshot.battle?.status!=='active')motion?.send(position,moving,running);},

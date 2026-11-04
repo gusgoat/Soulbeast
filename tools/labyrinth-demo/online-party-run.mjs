@@ -1,10 +1,11 @@
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
-import {partyScene} from './online-party-scene.mjs';
+import {partyScene} from './online-party-scene.mjs?v=local-motion-1';
 import {mountPartyVitals,remotePartyMotion} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=smooth-walk-3';
+import {partyRunController} from './online-party-controller.mjs?v=local-motion-1';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
-const enemyMotion=remotePartyMotion({delay:320,maxPrediction:0});
+const enemyMotion=remotePartyMotion({delay:180,maxPrediction:600});
+let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
 let nextPulse=0,nextContact=0;
 const asset=value=>{try{const u=new URL(String(value).replace(/^\//,''),base);return u.origin===base.origin?u.href:null;}catch{return null;}};
@@ -67,13 +68,13 @@ function drawBattle(run){
  $('dismiss').onclick=()=>{seenBattle=run.id;$('battle').hidden=true;};
 }
 const view={
- loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});peers.clear();enemyMotion.clear();position=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
+ loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});peers.clear();enemyMotion.clear();position=null;camera=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
  vitals:members=>vitals.update(members),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);},
  world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
   const now=performance.now();
   for(const [id,enemy] of Object.entries(world.enemies||{})){
-   if(enemy.state==='roaming'&&enemy.position)enemyMotion.receive(id,enemy.position,now);
+   if(enemy.state==='roaming'&&enemy.position)enemyMotion.receive(id,{...enemy.position,moving:enemy.moving},now);
    else enemyMotion.remove(id);
   }
   $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
@@ -140,7 +141,7 @@ try{
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0;
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
-    if(me?.position&&nav.distance(me.position,point)<=180&&nav.clear(position,point)&&controller.move(point,position))position=point;}
+    if(nav.clear(position,point)&&controller.move(point,position))position=point;}
    controller.broadcast({...position,dir:(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8},moving,false);
    const confirmed=me?.position;
    if(!controller.busy&&confirmed&&now>=nextContact){const target=Object.entries(world.enemies||{}).find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
@@ -148,6 +149,12 @@ try{
     else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,world.bossPosition||maze.boss)<65&&nav.clear(confirmed,world.bossPosition||maze.boss)){
      nextContact=now+500;void controller.command('bossContact');
     }}
+  }
+  if(position){
+   if(!camera)camera={...position};
+   const follow=1-Math.exp(-dt*24);
+   camera.x+=(position.x-camera.x)*follow;
+   camera.y+=(position.y-camera.y)*follow;
   }
   scene.frame();render();frameId=requestAnimationFrame(frame);
  }
@@ -162,20 +169,28 @@ addEventListener('pagehide',()=>{freeze();cancelAnimationFrame(frameId);vitals.r
 function render(){
  const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,1.5);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#07131c';ctx.fillRect(0,0,w,h);
  if(!maze||!position)return;const scale=.6,F=maze.flatten;
- const screen=p=>({x:w/2+(p.x-position.x)*scale,y:h/2+(p.y-position.y)*scale*F});
+ const focus=camera||position;
+ const screen=p=>({x:w/2+(p.x-focus.x)*scale,y:h/2+(p.y-focus.y)*scale*F});
  const palettes={mine:['#223344','#62616b'],desert:['#59432e','#cbb482'],jungle:['#15392c','#71824b'],snow:['#416275','#d5e8ee'],castle:['#261d35','#615364'],lava:['#321d22','#8e4934']},colors=palettes[config.theme];
- const rx=Math.ceil(w/scale/maze.cell/2)+1,ry=Math.ceil(h/scale/F/maze.cell/2)+1,cx=Math.floor(position.x/maze.cell),cy=Math.floor(position.y/maze.cell);
+ const rx=Math.ceil(w/scale/maze.cell/2)+1,ry=Math.ceil(h/scale/F/maze.cell/2)+1,cx=Math.floor(focus.x/maze.cell),cy=Math.floor(focus.y/maze.cell);
  for(let y=Math.max(0,cy-ry);y<=Math.min(maze.rows-1,cy+ry);y++)for(let x=Math.max(0,cx-rx);x<=Math.min(maze.cols-1,cx+rx);x++){
   const p=screen({x:x*maze.cell,y:y*maze.cell});ctx.fillStyle=colors[maze.grid[y][x]?1:0];ctx.fillRect(p.x,p.y,maze.cell*scale+1,maze.cell*scale*F+1);
  }
  function token(p,color,label,img,size=32){const at=screen(p);if(at.x< -100||at.y< -100||at.x>w+100||at.y>h+100)return;const im=img&&picture(img);if(im)ctx.drawImage(im,at.x-size/2,at.y-size,size,size);else{ctx.fillStyle=color;ctx.beginPath();ctx.arc(at.x,at.y,10,0,Math.PI*2);ctx.fill();}ctx.font='11px Tahoma';ctx.textAlign='center';ctx.fillStyle='#fff3d4';ctx.fillText(label||'',at.x,at.y-size-4);}
- for(const t of traps){if(t.state==='spent'&&!t.burst)continue;const at=screen(t);ctx.strokeStyle=({blast:'#ffb354',poison:'#73ee6d',fire:'#ff5d37',electric:'#db82ff',ice:'#7bdfff'})[t.type];ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(at.x,at.y,290*scale,290*scale*F,0,0,Math.PI*2);ctx.stroke();}
+ for(const t of traps){if(!t.remaining&&!t.burst)continue;const at=screen(t);ctx.save();
+  const radius=t.burst?290*(1-.45*t.burst):290;
+  ctx.globalAlpha=t.burst||.7;ctx.strokeStyle=({blast:'#ffb354',poison:'#73ee6d',fire:'#ff5d37',electric:'#db82ff',ice:'#7bdfff'})[t.type];
+  ctx.lineWidth=t.burst?3+6*t.burst:3;ctx.beginPath();ctx.ellipse(at.x,at.y,radius*scale,radius*scale*F,0,0,Math.PI*2);ctx.stroke();ctx.restore();}
  const now=performance.now();
- for(const [id,e] of Object.entries(world.enemies||{}))if(e.state==='roaming'&&e.position)token(enemyMotion.position(id,now)||e.position,e.kind==='bandit'?'#d08059':'#9c76e8',e.kind==='bandit'?'โจรป่า':'อสูรเงา');
+ for(const [id,e] of Object.entries(world.enemies||{}))if(e.state==='roaming'&&e.position){
+  const animated=enemyMotion.position(id,now);
+  const visible=animated&&nav.clear(e.position,animated)?animated:e.position;
+  token(visible,e.kind==='bandit'?'#d08059':'#9c76e8',e.kind==='bandit'?'โจรป่า':'อสูรเงา');
+ }
  if(world.boss!=='defeated')token(world.bossPosition||maze.boss,'#ee574d',config.bossName,config.bossArt,90);
  const gate=maze.rooms.find(r=>r.id==='boss').gate;token(gate,'#dfbf73',world.doorOpen?'ประตูเปิด':'ห้องบอส');token(maze.stairs,'#91d5e8','ชั้นถัดไป');
  token(maze.mini,'#8de6ec','บ่อน้ำศักดิ์สิทธิ์');
  for(const chest of maze.chests)token(chest,controller.state?.chestClaims?.[chest.id]?'#777':'#e2b654',controller.state?.chestClaims?.[chest.id]?'เปิดแล้ว':chest.big?'หีบบอส':'หีบสมบัติ');
  for(const peer of peers.values())if(peer.member.exploring!==false)token(peer,'#85c8e4',peer.member.name,peer.member.avatar);
- if(me?.exploring!==false)token(position,'#efda8a',me?.name,me?.avatar);
+ if(me?.exploring!==false)token(focus,'#efda8a',me?.name,me?.avatar);
 }

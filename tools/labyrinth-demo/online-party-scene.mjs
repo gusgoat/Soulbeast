@@ -6,11 +6,11 @@ import {remotePartyMotion} from './online-party-view.mjs';
 export function partyScene({code,roomId,view,clock=()=>performance.now()}){
  const motion=remotePartyMotion(),battle=partyBattleTransition({code,
   stopSolo:options=>view.stopSolo(options),enterBoss:options=>view.enterBoss(options)});
- let revision=-1,snapshot=null,serverOffset=0,departed=false,closed=false,roster=new Set(),queue=Promise.resolve();
+ const trapDeadlines=new Map();
+ let revision=-1,snapshot=null,departed=false,closed=false,roster=new Set(),queue=Promise.resolve();
  async function receiveState(next){
   if(closed||departed||next?.id!==roomId||!Number.isSafeInteger(next.revision)||next.revision<revision)return;
   if(!Number.isFinite(next.serverTime))return;
-  serverOffset=next.serverTime-clock();
   if(next.departure){
    departed=true;battle.reset();motion.clear();roster.clear();
    await view.stopSolo({award:false,interrupted:[]});
@@ -19,12 +19,16 @@ export function partyScene({code,roomId,view,clock=()=>performance.now()}){
   if(next.revision===revision)return;
   if(!Array.isArray(next.members)||!next.members.some(m=>m.code===code))return;
   const first=!snapshot,floorChanged=snapshot&&snapshot.floor!==next.floor;
-  if(floorChanged){battle.reset();motion.clear();}
+  if(floorChanged){battle.reset();motion.clear();trapDeadlines.clear();}
   const nextRoster=new Set(next.members.map(m=>m.code));
   for(const old of roster)if(!nextRoster.has(old))motion.remove(old);
   if(first||floorChanged)await view.loadFloor(next.floor);
   if(closed)return;
   roster=nextRoster;revision=next.revision;snapshot=structuredClone(next);
+  const receivedAt=clock();
+  for(const trap of next.dungeon?.traps||[]){
+   if(!trapDeadlines.has(trap.id))trapDeadlines.set(trap.id,receivedAt+trap.explodeAt-next.serverTime);
+  }
   view.vitals(next.members);
   view.roster?.(next.members);
   view.world(next.dungeon);
@@ -40,15 +44,16 @@ export function partyScene({code,roomId,view,clock=()=>performance.now()}){
   },
   frame(){
    if(!snapshot||closed||departed)return;
-   const time=clock(),serverNow=time+serverOffset;
+   const time=clock();
    for(const member of snapshot.members){if(member.code===code)continue;
     const position=motion.position(member.code,time)||member.position;
     if(position)view.peer(member,position);
    }
-   // Each client draws the same deadline, not an independent two-second timer.
-   view.traps((snapshot.dungeon?.traps||[]).map(t=>({...t,
-    remaining:Math.max(0,(t.explodeAt-serverNow)/1000),
-    burst:t.explodeAt<=serverNow?Math.max(0,1-(serverNow-t.explodeAt)/800):0})));
+   // Anchor the visual timer once; packet jitter cannot restart the effect.
+   view.traps((snapshot.dungeon?.traps||[]).map(t=>{
+    const elapsed=time-trapDeadlines.get(t.id);
+    return {...t,remaining:Math.max(0,-elapsed/1000),burst:elapsed>=0?Math.max(0,1-elapsed/800):0};
+   }));
   },
   beginSolo:id=>battle.beginSolo(id),isCurrent:ticket=>battle.isCurrent(ticket),
   close(){closed=true;battle.reset();motion.clear();roster.clear();}
