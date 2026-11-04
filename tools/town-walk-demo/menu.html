@@ -7241,17 +7241,15 @@ Music.sync=function(...args){const result=walkMusicSync.apply(this,args);documen
 walkUnlockAudio();
 window.DungeonRewardEquipment.register(EQ,typeof WEAPON_ART==='undefined'?null:WEAPON_ART);save=()=>{};gsSave=async()=>{};lbSubmit=async()=>{};S={"ver":6,"screen":"town","ui":{},"zone":null,"battle":null,"P":{"name":"ทดสอบ","cls":"swordsman","gender":"male","lv":3,"exp":0,"gold":150,"pts":{},"free":10,"eq":{"weapon":"wp_sword0"},"owned":[],"items":{"pot":5,"seal1":5,"eth":2,"antidote":1,"calm":1},"parts":{},"pets":[{"uid":1,"sp":"mandrake","lv":3,"form":0,"exp":0,"pts":{},"free":6,"hp":64,"mp":32}],"party":[1],"legend":{},"zoneMax":1,"arena":{},"seen":{"mandrake":1},"caught":{"mandrake":1},"uid":2,"hp":83,"mp":25,"carried":[1],"packVersion":1,"seenForms":{"mandrake":[0]},"discoveryVersion":1,"code":"CHECKTEST2345"}};Tutorial.clear();S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.P.forestAutoIntroduced=true;S.zone=null;
 const allowed=['shop','guild','countrywar','leader','pvp','world','camp','hospital','arena','forge','wild','gacha','guide','story','replay','hero','team','bag','mail','friends','settings'];if(new URLSearchParams(location.search).get('partyAux')==='1'){
- const style=document.createElement('style');
- style.textContent='#app>.top,#app>.bottom,#app>.brand-seam{display:none!important} #app>main{padding-top:0!important;padding-bottom:0!important}';
- document.head.append(style);
  document.addEventListener('click',event=>{
   const control=event.target.closest('[data-a]');
   if(!control)return;
   const action=control.dataset.a, screen=control.dataset.v;
   if(action==='go'&&['mail','friends','settings'].includes(screen))return;
-  if(action!=='go'&&!/^(reset|doreset|gs|cwEnter|friendDuel|pvp)/i.test(action))return;
+  if(action!=='go'&&!/^(reset|doreset|gs|cwEnter|friendDuel|pvp|couponShop)/i.test(action))return;
   event.preventDefault();event.stopImmediatePropagation();
   if(action==='go'&&screen==='town')parent.postMessage({type:'town-return'},location.origin);
+  else if(action==='couponShop'||(action==='go'&&['hero','team','bag'].includes(screen)))parent.postMessage({type:'party-menu-open',screen:action==='couponShop'?'coupon':screen},location.origin);
   else toast('ออกจากดันเจี้ยนก่อนใช้คำสั่งนี้');
  },true);
 }
@@ -7621,11 +7619,7 @@ if(['guild','guildwar'].includes(S.screen)&&!GUILD_UI.data)void guildRequest();
 if(params.has('partyBattle')&&parent!==window){
  let state, selectedEnemy, selectedAlly, turnKey, showSkills=false, hideCommands=false;
  const app=document.getElementById('app');
- const main=document.createElement('main');
- main.className='play-battle';app.dataset.screen='battle';app.replaceChildren(main);
- const style=document.createElement('style');
- style.textContent='#app{height:100dvh;min-height:0}#app>main{padding:8px!important;min-height:0;overflow:auto}.party-turn-note{margin:0 0 8px}';
- document.head.append(style);
+ const soloRender=render;
  const scenery=BattleScenery.resolve;
  BattleScenery.resolve=function(b,...args){
   const scene=scenery.call(this,b,...args),floor=dungeonFloor;
@@ -7635,19 +7629,22 @@ if(params.has('partyBattle')&&parent!==window){
  };
  function draw(){
   if(!state)return;
-  const {run,code,auto,clockOffset}=state,b=run.battle,w=run.waiting;
+  const {run,code,auto,clockOffset,member}=state,b=run.battle,w=run.waiting;
   const own=w?.ownerCode===code, active=run.status==='active';
-  const oldScroll=main.scrollTop;
+  const oldScroll=app.querySelector('main')?.scrollTop||0;
   const enemy=b.enemies.findIndex(u=>u.id===selectedEnemy&&u.hp>0);
   const ally=b.allies.findIndex(u=>u.id===selectedAlly);
   const displayUnit=u=>({pas:[],types:SP[u.sp]?.t||[],stab:[],skills:[],buffs:[],status:{},cooldowns:{},...u,
    img:u.cls&&!u.sp?'cls:'+u.cls:u.img||u.sp});
-  S.battle={...b,allies:b.allies.map(displayUnit),enemies:b.enemies.map(displayUnit),kind:'dungeonParty',meta:dungeonFloor?.battleZone||(dungeonFloor?.floor===2?3:1),
+  S.battle=Object.assign(S.battle?.partyRunId===run.id?S.battle:{},{...b,partyRunId:run.id,allies:b.allies.map(displayUnit),enemies:b.enemies.map(displayUnit),kind:'dungeonParty',meta:dungeonFloor?.battleZone||(dungeonFloor?.floor===2?3:1),
    queue:b.queue||[],fx:[],menu:'wait',target:enemy<0?b.enemies.findIndex(u=>u.hp>0):enemy,
    atarget:ally<0?Math.max(0,b.allies.findIndex(u=>u.id===w?.actor)):ally,
-   over:active?null:{res:run.result,title:run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้',lines:[]}};
+   over:active?null:{res:run.result,title:run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้',lines:[]}});
   S.ui.battleCommandsHidden=hideCommands;
-  main.innerHTML=vBattle();
+  S.screen='battle';
+  if(member)Object.assign(S.P,{name:member.name,cls:member.cls,gender:member.gender,country:member.country,lv:member.level});
+  soloRender();
+  const main=app.querySelector('main');
   if(active){
    const body=main.querySelector('#battleCommandBody .panel');
    const controls=main.querySelector('.battle-command-controls');
@@ -7674,7 +7671,7 @@ if(params.has('partyBattle')&&parent!==window){
  const send=(type,extra={})=>parent.postMessage({type,battle:state.run.id,...extra},location.origin);
  document.addEventListener('click',event=>{
   const button=event.target.closest('button');
-  if(!main.contains(button))return;
+  if(!app.contains(button))return;
   event.preventDefault();event.stopImmediatePropagation();
   if(!state||button.disabled)return;
   const action=button.dataset.a,value=button.dataset.v;
@@ -7683,6 +7680,7 @@ if(params.has('partyBattle')&&parent!==window){
   if(run.status!=='active')return;
   if(action==='partyAuto'){send('party-battle-auto',{enabled:!state.auto});return;}
   if(action==='battleCommands'){hideCommands=!hideCommands;draw();return;}
+  if(action==='battleDetails'||action==='battleSpeed'){handlers[action]();return;}
   if(w?.ownerCode!==code)return;
   if(action==='partySkills'){showSkills=!showSkills;draw();return;}
   if(action==='bt'&&value?.startsWith('target:')){selectedEnemy=run.battle.enemies[Number(value.split(':')[1])]?.id;draw();return;}
@@ -7706,9 +7704,6 @@ if(params.has('partyInventory')&&parent!==window){
  const viewActions=new Set(['herotab','teamtab','petview','packFilter','bagtab','detail']);
  let current=null,capacity=1,sending=false;
  const send=(type,extra={})=>parent.postMessage({type,...extra},location.origin);
- const css=document.createElement('style');
- css.textContent='#app>.top,#app>.bottom,#app>.brand-seam{display:none!important} #app>main{padding-top:0!important;padding-bottom:0!important}';
- document.head.append(css);
  const soloRender=render;
  render=function(){if(current)soloRender();};
  save=()=>{};
@@ -7720,6 +7715,9 @@ if(params.has('partyInventory')&&parent!==window){
   if(current&&(viewActions.has(action)||(action==='go'&&allowedTabs.has(value))))return;
   event.preventDefault();event.stopImmediatePropagation();
   if(action==='go'&&value==='town'){send('town-return');return;}
+  if(action==='couponShop'||(action==='go'&&['mail','friends','settings'].includes(value))){
+   send('party-menu-open',{screen:action==='couponShop'?'coupon':value});return;
+  }
   if(!current||sending||control.disabled)return;
   let command;
   if(action==='equip')command={op:'equip',id:value};

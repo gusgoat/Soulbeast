@@ -1,11 +1,10 @@
 /* Party-only overlays layered on the shared solo dungeon shell. */
 #leaveParty{font-size:12px;padding:6px 10px}
 #retry,#returnHome{position:fixed;top:135px;left:50%;transform:translateX(-50%);z-index:18}
-#battle,#partyMenu{position:fixed;inset:84px 0 calc(84px + env(safe-area-inset-bottom));z-index:8;background:#0b1724;overflow:auto}
-#partyBattleFrame,#partyAuxMenu{display:block;width:100%;height:100%;border:0}
-#partyMenu{padding:10px}#partyAuxMenu{height:calc(100% - 85px)}
-#partyMenuClose{float:right}#partyMenuTitle{margin:4px 0 8px}
-#partyMenuStatus:empty,#partyMenuBody{display:none}
+#battle{position:absolute;inset:0;z-index:21;background:#07131e}
+#partyBattleFrame{display:block;width:100%;height:100%;border:0}
+.party-menu-feedback{position:absolute;z-index:1;inset:auto 12px max(85px,env(safe-area-inset-bottom));padding:10px;background:#102535;color:#fff0ca;border:1px solid #a98954;border-radius:8px}
+.party-menu-feedback button{margin:5px}
 #battleError{position:absolute;bottom:0;left:0;right:0;margin:0;padding:8px;background:#29151e;color:#ffd7c1}
 #action:disabled{opacity:.5}
 [hidden]{display:none!important}

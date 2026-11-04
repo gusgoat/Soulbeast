@@ -1,4 +1,4 @@
-import {partyMenu} from './online-party-menu.mjs?v=solo-ui-2';
+import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
 import {partyArt} from './online-party-art.mjs?v=shared-shell-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
@@ -34,13 +34,13 @@ function offerReturn(city,automatic=false){
  };
  if(automatic)void button.onclick();
 }
-const menus=partyMenu({canOpen:()=>ready&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),picture:p=>{const v=portrait(p);return v?asset(v):null;},onOpen:()=>{keys.clear();selfMoving=false;}});
+const menus=partyMenu({canOpen:()=>ready&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{keys.clear();selfMoving=false;}});
 let clockOffset=0, shownBattle=null, battleFrameReady=false;
 const battleFrame=$('partyBattleFrame');
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
  battleFrame.contentWindow.postMessage({type:'party-battle-state',run:shownBattle,code:connection.code,
-  auto:!!controller?.state?.autoPlayers?.[connection.code],clockOffset},location.origin);
+  auto:!!controller?.state?.autoPlayers?.[connection.code],clockOffset,member:me},location.origin);
 }
 addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==battleFrame.contentWindow)return;
@@ -67,7 +67,7 @@ function drawBattle(run){
  if(menus.open)menus.close();
  if(shownBattle?.id!==run.id){
   battleFrameReady=false;
-  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&partyBattle=shared-battle-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-solo-ui-2&partyBattle=shared-battle-2&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
  }
  shownBattle=run;$('battle').hidden=false;sendBattle();
 }
