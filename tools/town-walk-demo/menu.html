@@ -7546,6 +7546,7 @@ function mountServiceSpeaker(){
 }
 const serviceSpeakerRender=render;render=function(...args){const r=serviceSpeakerRender(...args);mountServiceSpeaker();return r};mountServiceSpeaker();
 if(S.screen==='arena'&&!TOWER_UI.ready)void towerStatus();
+if(['guild','guildwar'].includes(S.screen)&&!GUILD_UI.data)void guildRequest();
 }
 
 </script></body>
