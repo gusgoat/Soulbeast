@@ -1,7 +1,7 @@
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=smooth-walk-2';
+import {partyRunController} from './online-party-controller.mjs?v=smooth-walk-3';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),timer,frameId,ready=false,seenBattle='';
@@ -111,11 +111,12 @@ try{
  $('retry').onclick=()=>void controller.refresh();
  $('interact').onclick=()=>{
   if(!ready||controller.busy||!position)return;
-  const near=p=>nav.distance(position,p)<210;
+  const confirmed=me?.position;if(!confirmed)return;
+  const near=p=>nav.distance(confirmed,p)<210;
   const door=maze.rooms.find(r=>r.id==='boss').gate;
-  const chest=maze.chests.find(c=>!controller.state?.chestClaims?.[c.id]&&nav.distance(position,c)<145&&nav.clear(position,c));
+  const chest=maze.chests.find(c=>!controller.state?.chestClaims?.[c.id]&&nav.distance(confirmed,c)<145&&nav.clear(confirmed,c));
   if(chest)void controller.command('chest',{chest:chest.id});
-  else if(nav.distance(position,maze.mini)<180&&nav.clear(position,maze.mini))void controller.command('heal');
+  else if(nav.distance(confirmed,maze.mini)<180&&nav.clear(confirmed,maze.mini))void controller.command('heal');
   else if(near(door)&&!world.doorOpen)void controller.command('openDoor');
   else if(near(maze.stairs)&&world.boss==='defeated')void controller.command('nextFloor');
   else notice('เดินเข้าใกล้หีบ บ่อน้ำ ประตูห้องบอส หรือประตูชั้นถัดไป');
@@ -128,11 +129,12 @@ try{
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0;
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
-    if(nav.clear(position,point)&&controller.move(point,position))position=point;}
+    if(me?.position&&nav.distance(me.position,point)<=90&&nav.clear(position,point)&&controller.move(point,position))position=point;}
    controller.broadcast({...position,dir:(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8},moving,false);
-   if(!controller.busy){const target=Object.entries(world.enemies||{}).find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(position,e.position)<38);
+   const confirmed=me?.position;
+   if(!controller.busy&&confirmed){const target=Object.entries(world.enemies||{}).find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
     if(target)void controller.command('claim',{enemy:target[0]});
-    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(position,world.bossPosition||maze.boss)<65)void controller.command('bossContact');}
+    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,world.bossPosition||maze.boss)<65&&nav.clear(confirmed,world.bossPosition||maze.boss))void controller.command('bossContact');}
   }
   scene.frame();render();frameId=requestAnimationFrame(frame);
  }

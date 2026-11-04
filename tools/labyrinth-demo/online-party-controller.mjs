@@ -53,9 +53,16 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    await refresh(next);
   }),
   command:(action,data={})=>lane(async()=>{
-   // Flush accepted walking before the contact check. Failed contact is safe to retry.
-   if(path.length){const points=path.splice(0,16);await connection.run(roomId,'move',{floor:snapshot.floor,seq:++seq,path:points});}
-   await connection.run(roomId,action,{...data,requestId:crypto.randomUUID()});await refresh();
+   // Interactions use confirmed positions. Keep pending walking in the pulse
+   // queue, including when a target moves away before the action arrives.
+   try{await connection.run(roomId,action,{...data,requestId:crypto.randomUUID()});}
+   catch(error){
+    if(['enemy_out_of_reach','boss_out_of_reach','enemy_unavailable','door_out_of_reach','stairs_out_of_reach','chest_out_of_reach','spring_out_of_reach'].includes(error.message)){
+     await refresh();return;
+    }
+    throw error;
+   }
+   await refresh();
   }),
   get state(){return snapshot;},get busy(){return busy;},
   async close(){closed=true;path=[];scene.close();await motion?.close();motion=null;}
