@@ -19,11 +19,17 @@ export function localPartyWorld(){
   }
  }
  function step(actor,target,speed,dt,nav){
+  actor.moving=false;
   const distance=nav.distance(actor.position,target);
   if(distance<1)return;
   const ratio=Math.min(1,speed*dt/distance);
   const p={x:actor.position.x+(target.x-actor.position.x)*ratio,y:actor.position.y+(target.y-actor.position.y)*ratio};
-  if(nav.clear(actor.position,p))actor.position=p;
+  if(nav.clear(actor.position,p)){
+   const dx=p.x-actor.position.x;
+   if(Math.abs(dx)>.01)actor.facing=dx<0?-1:1;
+   actor.moving=true;actor.phase=(actor.phase||0)+dt*speed/70*9;
+   actor.position=p;
+  }
  }
  function update(dt,position,nav,world,spawn,now){
   for(const actor of enemies.values()){

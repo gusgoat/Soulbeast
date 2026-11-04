@@ -7701,6 +7701,50 @@ if(params.has('partyBattle')&&parent!==window){
  parent.postMessage({type:'party-battle-ready'},location.origin);
 }
 
+if(params.has('partyInventory')&&parent!==window){
+ const allowedTabs=new Set(['hero','team','bag']);
+ const viewActions=new Set(['herotab','teamtab','petview','packFilter','bagtab','detail']);
+ let current=null,capacity=1,sending=false;
+ const send=(type,extra={})=>parent.postMessage({type,...extra},location.origin);
+ const css=document.createElement('style');
+ css.textContent='#app>.top,#app>.bottom,#app>.brand-seam{display:none!important} #app>main{padding-top:0!important;padding-bottom:0!important}';
+ document.head.append(css);
+ const soloRender=render;
+ render=function(){if(current)soloRender();};
+ save=()=>{};
+ document.querySelector('main')?.replaceChildren();
+ document.addEventListener('click',event=>{
+  const control=event.target.closest('[data-a]');
+  if(!control)return;
+  const action=control.dataset.a,value=control.dataset.v||'';
+  if(current&&(viewActions.has(action)||(action==='go'&&allowedTabs.has(value))))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  if(action==='go'&&value==='town'){send('town-return');return;}
+  if(!current||sending||control.disabled)return;
+  let command;
+  if(action==='equip')command={op:'equip',id:value};
+  if(action==='unequip')command={op:'unequip',slot:value};
+  if(action==='use'){const [id,target]=value.split(':');command={op:'use',id,target:target==='P'?'P':Number(target)};}
+  if(action==='partytoggle'){
+   const uid=Number(value),ids=[...S.P.party];
+   if(!S.P.carried.includes(uid)){toast('กลับเมืองก่อนนำอสูรจากค่าย');return;}
+   if(ids.includes(uid))ids.splice(ids.indexOf(uid),1);
+   else{if(ids.length>=capacity)ids.shift();ids.push(uid);}
+   if(!ids.length){toast('ต้องมีอสูรในทีมอย่างน้อย 1 ตัว');return;}
+   command={op:'team',ids};
+  }
+  if(!command){toast('คำสั่งนี้ใช้ได้เมื่อออกจากดันเจี้ยน');return;}
+  sending=true;send('party-inventory-command',{command});
+ },true);
+ addEventListener('message',event=>{
+  if(event.source!==parent||event.origin!==location.origin)return;
+  if(event.data?.type==='party-inventory-idle'){sending=false;return;}
+  if(event.data?.type!=='party-inventory-state'||!event.data.player)return;
+  current=event.data.player;capacity=event.data.capacity||1;
+  S.P={...S.P,...current};S.battle=null;S.zone=null;render();
+ });
+ send('party-inventory-ready');
+}
 }
 
 </script></body>

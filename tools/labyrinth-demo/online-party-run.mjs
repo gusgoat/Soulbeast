@@ -1,8 +1,8 @@
-import {partyMenu} from './online-party-menu.mjs?v=country-hud-1';
-import {partyArt} from './online-party-art.mjs?v=solo-scenery-1';
+import {partyMenu} from './online-party-menu.mjs?v=solo-ui-2';
+import {partyArt} from './online-party-art.mjs?v=solo-ui-2';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
-import {localPartyWorld} from './online-party-local.mjs?v=local-explore-1';
+import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
 import {mountPartyVitals} from './online-party-view.mjs';
 import {partyRunController} from './online-party-controller.mjs?v=battle-close-4';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
