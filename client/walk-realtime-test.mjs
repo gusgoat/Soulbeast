@@ -1,10 +1,10 @@
-export async function connectWalkRealtime({url, key, token, identity}) {
+export async function connectWalkRealtime({url, key, token, identity, environment='test'}) {
  const {createClient} = await import('https://esm.sh/@supabase/supabase-js@2.76.1');
  const supabase = createClient(url, key, {accessToken:token});
  await supabase.realtime.setAuth();
  let scene, publisher, generation=0, sequence=0, lastSent=0, lastMotion='', authAt=Date.now();
  const subscribers=new Map();
- const topic=id=>'sb-walk:test:'+scene+':'+id;
+ const topic=id=>'sb-walk:'+environment+':'+scene+':'+id;
  const open=id=>supabase.channel(topic(id),{config:{private:true,broadcast:{self:false}}});
  const close=channel=>void supabase.removeChannel(channel).catch(()=>{});
  function reset(){
