@@ -1,3 +1,4 @@
+import {partyArt} from './online-party-art.mjs?v=normal-art-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=local-explore-1';
@@ -5,11 +6,14 @@ import {mountPartyVitals} from './online-party-view.mjs';
 import {partyRunController} from './online-party-controller.mjs?v=battle-close-4';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
+const visuals=partyArt();let selfDir=2,selfPhase=0,selfMoving=false;
 const localWorld=localPartyWorld();let trapPlacements=[];
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
 let nextPulse=0,nextContact=0,heartbeatTimer;
 const asset=value=>{try{const u=new URL(String(value).replace(/^\//,''),base);return u.origin===base.origin?u.href:null;}catch{return null;}};
+let portraits={};void fetch(new URL('party-portraits.json',import.meta.url)).then(r=>r.json()).then(v=>{portraits=v;if(controller?.state?.battle)drawBattle(controller.state.battle);}).catch(()=>{});
+function portrait(unit){const key=unit.sp||unit.img;if(unit.cls&&!unit.sp)return sealerSpriteCatalog[unit.cls]?.[unit.gender==='male'?'male':'female']?.portrait;return portraits[key+':'+(unit.evo||0)]||portraits[key]||(String(key).includes('/')?key:null);}
 function picture(value){const src=asset(value);if(!src)return null;if(!images.has(src)){const im=new Image();im.src=src;images.set(src,im);}const im=images.get(src);return im.complete&&im.naturalWidth?im:null;}
 function notice(text){$('notice').textContent=text;}
 function freeze(){ready=false;keys.clear();$('interact').disabled=true;}
@@ -62,7 +66,7 @@ function drawBattle(run){
  battleControls(run);
  for(const side of ['allies','enemies']){$(side).replaceChildren();for(const unit of run.battle?.[side]||[]){
   const card=document.createElement('div');card.className='card';
-  const src=unit.img&&asset(unit.img);if(src){const image=document.createElement('img');image.src=src;image.alt='';card.append(image);}
+  const raw=portrait(unit),src=raw&&(raw.startsWith(base.pathname)&&base.pathname!=='/'?new URL(raw,base).href:asset(raw));if(src){const image=document.createElement('img');image.src=src;image.alt='';card.append(image);}
   const name=document.createElement('strong');name.textContent=(unit.name||unit.cls||'ผู้ผนึก')+' · Lv '+(unit.lv||1);card.append(name);
   for(const stat of ['hp','mp']){const meter=document.createElement('meter');meter.max=Math.max(1,unit.st?.[stat]||1);meter.value=unit[stat]||0;meter.setAttribute('aria-label',stat.toUpperCase());card.append(meter);}
   $(side).append(card);
@@ -71,7 +75,7 @@ function drawBattle(run){
  $('dismiss').onclick=()=>{seenBattle=run.id;$('battle').hidden=true;};
 }
 const view={
- loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
+ loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
  vitals:members=>vitals.update(members),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);},
  world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
@@ -154,7 +158,7 @@ try{
   if(ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
-   const length=Math.hypot(dx,dy),moving=length>0;
+   const length=Math.hypot(dx,dy),moving=length>0;selfMoving=moving;if(moving){selfDir=(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
     if(nav.clear(position,point)&&controller.move(point,position))position=point;}
    controller.broadcast({...position,dir:(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8},moving,false);
@@ -193,23 +197,7 @@ function render(){
  if(!maze||!position)return;const scale=.6,F=maze.flatten;
  const focus=camera||position;
  const screen=p=>({x:w/2+(p.x-focus.x)*scale,y:h/2+(p.y-focus.y)*scale*F});
- const palettes={mine:['#223344','#62616b'],desert:['#59432e','#cbb482'],jungle:['#15392c','#71824b'],snow:['#416275','#d5e8ee'],castle:['#261d35','#615364'],lava:['#321d22','#8e4934']},colors=palettes[config.theme];
- const rx=Math.ceil(w/scale/maze.cell/2)+1,ry=Math.ceil(h/scale/F/maze.cell/2)+1,cx=Math.floor(focus.x/maze.cell),cy=Math.floor(focus.y/maze.cell);
- for(let y=Math.max(0,cy-ry);y<=Math.min(maze.rows-1,cy+ry);y++)for(let x=Math.max(0,cx-rx);x<=Math.min(maze.cols-1,cx+rx);x++){
-  const p=screen({x:x*maze.cell,y:y*maze.cell});ctx.fillStyle=colors[maze.grid[y][x]?1:0];ctx.fillRect(p.x,p.y,maze.cell*scale+1,maze.cell*scale*F+1);
- }
- function token(p,color,label,img,size=32){const at=screen(p);if(at.x< -100||at.y< -100||at.x>w+100||at.y>h+100)return;const im=img&&picture(img);if(im)ctx.drawImage(im,at.x-size/2,at.y-size,size,size);else{ctx.fillStyle=color;ctx.beginPath();ctx.arc(at.x,at.y,10,0,Math.PI*2);ctx.fill();}ctx.font='11px Tahoma';ctx.textAlign='center';ctx.fillStyle='#fff3d4';ctx.fillText(label||'',at.x,at.y-size-4);}
- for(const t of traps){if(!t.remaining&&!t.burst)continue;const at=screen(t);ctx.save();
-  const radius=t.burst?290*(1-.45*t.burst):290;
-  ctx.globalAlpha=t.burst||.7;ctx.strokeStyle=({blast:'#ffb354',poison:'#73ee6d',fire:'#ff5d37',electric:'#db82ff',ice:'#7bdfff'})[t.type];
-  ctx.lineWidth=t.burst?3+6*t.burst:3;ctx.beginPath();ctx.ellipse(at.x,at.y,radius*scale,radius*scale*F,0,0,Math.PI*2);ctx.stroke();ctx.restore();}
- for(const e of localWorld.enemies.values())token(e.position,e.kind==='bandit'?'#d08059':'#9c76e8',e.kind==='bandit'?'โจรป่า':'อสูรเงา');
- if(world.boss!=='defeated')token(localWorld.boss||world.bossPosition||maze.boss,'#ee574d',config.bossName,config.bossArt,90);
- const gate=maze.rooms.find(r=>r.id==='boss').gate;token(gate,'#dfbf73',world.doorOpen?'ประตูเปิด':'ห้องบอส');token(maze.stairs,'#91d5e8','ชั้นถัดไป');
- token(maze.mini,'#8de6ec','บ่อน้ำศักดิ์สิทธิ์');
- for(const chest of maze.chests)token(chest,controller.state?.chestClaims?.[chest.id]?'#777':'#e2b654',controller.state?.chestClaims?.[chest.id]?'เปิดแล้ว':chest.big?'หีบบอส':'หีบสมบัติ');
- for(const peer of peers.values())if(peer.member.exploring!==false)token(peer,'#85c8e4',peer.member.name,peer.member.avatar);
- if(me?.exploring!==false)token(position,'#efda8a',me?.name,me?.avatar);
+ visuals.draw(ctx,w,h,focus,{...position,dir:selfDir,phase:selfPhase,moving:selfMoving},me,peers,world,localWorld,controller?.state?.chestClaims,traps,performance.now()/1000);
 }
 
 // Cache static maze pixels; only markers refresh at 5 Hz.
@@ -233,3 +221,7 @@ function renderMinimap(){
  c.fillStyle='#ff9292';c.fillText('B ห้องบอส   ↑ ชั้นถัดไป',8,H+34);
 }
 $('miniToggle').onclick=()=>{const b=$('miniToggle'),expanded=b.classList.toggle('expanded');b.setAttribute('aria-expanded',String(expanded));b.setAttribute('aria-label',expanded?'ย่อแผนที่ดันเจี้ยน':'ขยายแผนที่ดันเจี้ยน');b.querySelector('span').textContent=expanded?'แตะเพื่อย่อแผนที่':'แผนที่ · แตะขยาย';};
+
+const stick=$('joystick'),knob=stick.querySelector('span');
+function stickMove(e){const r=stick.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,d=Math.hypot(x,y),limit=r.width*.28,ratio=d?Math.min(1,limit/d):0;knob.style.transform=`translate(${x*ratio}px,${y*ratio}px)`;keys.clear();if(d>8){if(x/d>.35)keys.add('ArrowRight');if(x/d<-.35)keys.add('ArrowLeft');if(y/d>.35)keys.add('ArrowDown');if(y/d<-.35)keys.add('ArrowUp');}}
+stick.onpointerdown=e=>{stick.setPointerCapture(e.pointerId);stickMove(e);};stick.onpointermove=e=>{if(stick.hasPointerCapture(e.pointerId))stickMove(e);};stick.onpointerup=stick.onpointercancel=()=>{keys.clear();knob.style.transform='';};

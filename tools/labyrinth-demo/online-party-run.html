@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>SoulBeast · ดันเจี้ยนปาร์ตี้</title><link rel="stylesheet" href="online-party-run.css?v=party-minimap-1"></head>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>SoulBeast · ดันเจี้ยนปาร์ตี้</title><link rel="stylesheet" href="online-party-run.css?v=normal-art-1"></head>
 <body><canvas id="map" aria-label="แผนที่ดันเจี้ยนปาร์ตี้"></canvas>
 <header><strong id="title">ดันเจี้ยนปาร์ตี้</strong><div id="progress"></div><button id="leaveParty" type="button">ออกจากดันเจี้ยน</button></header>
 <div id="notice" role="status">กำลังเชื่อมต่อห้องปาร์ตี้…</div>
 <button id="retry" hidden>เชื่อมต่ออีกครั้ง</button>
 <button id="returnHome" hidden>กลับเมืองหลวง</button>
 <button id="miniToggle" aria-label="ขยายแผนที่ดันเจี้ยน" aria-expanded="false"><canvas id="partyMini" width="246" height="342"></canvas><span>แผนที่ · แตะขยาย</span></button>
-<nav id="controls"><div id="pad"><button data-dy="-1" aria-label="เดินขึ้น">▲</button><button data-dx="-1" aria-label="เดินซ้าย">◀</button><button data-dy="1" aria-label="เดินลง">▼</button><button data-dx="1" aria-label="เดินขวา">▶</button></div><button id="interact" disabled>สำรวจ / เปิดประตู</button></nav>
+<nav id="controls"><div id="joystick" role="group" aria-label="จอยสติ๊กเดิน"><span></span></div><div id="pad"><button data-dy="-1" aria-label="เดินขึ้น">▲</button><button data-dx="-1" aria-label="เดินซ้าย">◀</button><button data-dy="1" aria-label="เดินลง">▼</button><button data-dx="1" aria-label="เดินขวา">▶</button></div><button id="interact" disabled>สำรวจ / เปิดประตู</button></nav>
 <section id="battle" hidden aria-label="การต่อสู้ปาร์ตี้"><h2>การต่อสู้ปาร์ตี้</h2><div id="enemies" class="cards"></div><div id="allies" class="cards"></div><p id="battleLog"></p><button id="dismiss" hidden>กลับไปเดินต่อ</button></section>
-<script src="progression.js"></script><script src="floors.js"></script><script src="maze.js"></script><script src="traps.js"></script><script type="module" src="online-party-run.mjs?v=party-minimap-1"></script></body></html>
+<script src="progression.js"></script><script src="floors.js"></script><script src="maze.js"></script><script src="traps.js"></script><script src="../hemant-walk-demo/render-budget.js"></script><script src="../town-walk-demo/sealer-sprite-catalog.js"></script><script src="../town-walk-demo/sealer-sprites.js"></script><script src="boss-sprites.js"></script><script src="jungle-theme.js"></script><script src="castle-furnishings.js"></script><script src="extended-themes.js"></script><script type="module" src="online-party-run.mjs?v=normal-art-1"></script></body></html>
