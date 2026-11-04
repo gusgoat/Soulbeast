@@ -108,7 +108,7 @@ export function connectOnlineWalk(accountStorage) {
 export function mountDungeonInvitations(connection, peers) {
  const button = document.createElement('button');
  button.textContent = 'ทีมดันเจี้ยน';
- button.style.cssText = 'position:fixed;bottom:76px;right:12px;z-index:90;padding:9px;color:#fff0be;background:#162d3c;border:1px solid #b89860;border-radius:8px';
+ button.style.cssText = 'position:fixed;bottom:calc(var(--walk-bottom, 0px) + 14px);right:58px;z-index:90;padding:9px;color:#fff0be;background:#162d3c;border:1px solid #b89860;border-radius:8px';
  const dialog = document.createElement('dialog');
  dialog.style.cssText = 'width:min(90vw,420px);max-height:75vh;overflow:auto;color:#eee1be;background:#102633;border:1px solid #bd9e65;border-radius:12px;padding:16px';
  document.body.append(button, dialog);
