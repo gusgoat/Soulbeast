@@ -65,12 +65,19 @@ export function connectOnlineWalk(accountStorage) {
   return strict ? pending : pending.catch(() => {});
  }
 
+ let appearanceKey='', appearanceAt=0, nextAppearanceAttempt=0;
  async function heartbeat(scene, position, moving, running) {
-  return client.request('/rest/v1/rpc/sb_walk_heartbeat', {
+  const rows=await client.request('/rest/v1/rpc/sb_walk_heartbeat', {
    p_env: context.environment, p_code: context.code, p_scene: scene,
    p_x: position.x, p_y: position.y, p_direction: position.dir || 0,
    p_moving: !!moving, p_running: !!running
   }, await client.sessions.token());
+  const p=JSON.parse(sessionStorage.getItem(playerKey)||'null');
+  const signature=JSON.stringify([p?.walkFusion||null,p?.entitlements,p?.carried,p?.party]);
+  if(Date.now()>=nextAppearanceAttempt&&(signature!==appearanceKey||Date.now()-appearanceAt>60000)){
+   try{await client.request('/rest/v1/rpc/sb_walk_appearance',{p_env:context.environment,p_code:context.code,p_fusion:p?.walkFusion||null},await client.sessions.token());appearanceKey=signature;appearanceAt=Date.now();nextAppearanceAttempt=0;}catch(error){console.warn('Appearance sync failed',error.code||error.message);appearanceAt=Date.now();nextAppearanceAttempt=Date.now()+10000;}
+  }
+  return rows;
  }
 
  async function invitations(action, {target = null, invite = null} = {}) {
