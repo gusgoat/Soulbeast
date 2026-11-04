@@ -8,8 +8,13 @@ const errors={login_required:'กรุณาเข้าสู่ระบบ�
  party_started:'ห้องนี้เริ่มดันเจี้ยนแล้ว',party_size:'ต้องมีสมาชิกอย่างน้อย 2 คน',
  one_character_per_account:'หนึ่งบัญชีเข้าร่วมได้หนึ่งตัวละคร',party_run_active:'ปาร์ตี้เริ่มเดินทางแล้ว'};
 let connection,walkSave,room=null,busy=false,timer,stopped=false,checked=false;
+const feedback=$('status').parentElement;
+const lobbyAnchor=$('joinPanel');
 function render(){
- $('joinPanel').hidden=!!room||!checked;$('create').disabled=$('join').disabled=busy;$('roomPanel').hidden=!room;if(!room)return;
+ $('joinPanel').hidden=!!room||!checked;$('create').disabled=$('join').disabled=busy;$('roomPanel').hidden=!room;
+ if(room&&feedback.parentElement!==$('roomPanel'))$('requirements').after(feedback);
+ if(!room&&feedback.parentElement!==lobbyAnchor.parentElement)lobbyAnchor.before(feedback);
+ if(!room)return;
  $('roomId').textContent=room.joinCode||'…';$('copy').disabled=!room.joinCode;
  $('count').textContent=room.members.length+'/4';$('members').replaceChildren();
  for(const m of room.members){const row=document.createElement('li');row.dataset.ready=String(m.ready&&m.online);
@@ -29,10 +34,12 @@ async function update(action='status',extra={}){
  let saving=false;
  try{
   let refreshFailed=false;
-  const wasWaiting=room?.state==='waiting';
+  const wasWaiting=room?.state==='waiting',wasChecked=checked;
   let result;
   if(action==='start'||(action==='ready'&&extra.ready)){
-   saving=true;await walkSave.flush(true);saving=false;
+   saving=true;$('status').textContent='กำลังบันทึกตัวละคร…';
+   await walkSave.flush(true);saving=false;
+   $('status').textContent=action==='ready'?'กำลังยืนยันพร้อม…':'กำลังเริ่มดันเจี้ยน…';
   }
   if(action==='leave'&&room?.state==='active'){
    await connection.run(room.id,'leave');
@@ -48,14 +55,15 @@ async function update(action='status',extra={}){
   checked=true;
   if(result.left){room=null;sessionStorage.removeItem(partySessionKey);}
   else {room=result;sessionStorage.setItem(partySessionKey,JSON.stringify({id:room.id,code:connection.code}));}
-  $('status').textContent=room?.state==='active'?'พบปาร์ตี้เดิม · กลับเข้าดันเจี้ยนหรือออกจากห้องได้':action==='leave'?(refreshFailed?'ออกจากห้องแล้ว · โหลดเซฟล่าสุดไม่สำเร็จ กรุณาเข้าเกมใหม่':'ออกจากห้องแล้ว'):'';
+  if(action!=='status'||!room||room.state==='active'||!$('status').textContent||!wasChecked)$('status').textContent=room?.state==='active'?'พบปาร์ตี้เดิม · กลับเข้าดันเจี้ยนหรือออกจากห้องได้':action==='leave'?(refreshFailed?'ออกจากห้องแล้ว · โหลดเซฟล่าสุดไม่สำเร็จ กรุณาเข้าเกมใหม่':'ออกจากห้องแล้ว'):'';
   if(room?.state==='active'&&wasWaiting)resume();
  }catch(error){
   if(action==='status'&&['party_unavailable','party_not_member'].includes(error.message)){
    room=null;sessionStorage.removeItem(partySessionKey);
   }
+  if(action==='status'&&room&&$('status').textContent)return;
   $('status').textContent=errors[error.message]||errors[error.code]||
-   (saving?'บันทึกตัวละครก่อนเริ่มดันเจี้ยนไม่สำเร็จ กรุณาลองอีกครั้ง':error.status===401?'กรุณาเข้าสู่ระบบเกมใหม่':error.status===403?'บัญชีนี้ไม่มีสิทธิ์ใช้ตัวละครที่เลือก กรุณาเข้าเกมใหม่':action==='create'?'เซิร์ฟเวอร์สร้างห้องไม่สำเร็จ กรุณาลองอีกครั้ง':'เชื่อมต่อห้องไม่สำเร็จ กรุณาลองอีกครั้ง');
+   (saving?'บันทึกตัวละครก่อนเริ่มดันเจี้ยนไม่สำเร็จ กรุณาลองอีกครั้ง':error.status===401?'กรุณาเข้าสู่ระบบเกมใหม่':error.status===403?'บัญชีนี้ไม่มีสิทธิ์ใช้ตัวละครที่เลือก กรุณาเข้าเกมใหม่':action==='ready'?'ยืนยันพร้อมไม่สำเร็จ กรุณาลองอีกครั้ง':action==='create'?'เซิร์ฟเวอร์สร้างห้องไม่สำเร็จ กรุณาลองอีกครั้ง':'เชื่อมต่อห้องไม่สำเร็จ กรุณาลองอีกครั้ง');
  }
  finally{busy=false;render();}
 }
