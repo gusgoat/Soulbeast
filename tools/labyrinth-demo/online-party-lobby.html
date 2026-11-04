@@ -1,15 +1,17 @@
 <!doctype html>
-<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Soulbeast · ห้องปาร์ตี้ดันเจี้ยน</title><link rel="stylesheet" href="online-party-lobby.css"></head>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Soulbeast · ห้องปาร์ตี้ดันเจี้ยน</title><link rel="stylesheet" href="online-party-lobby.css?v=mobile-lobby-1"></head>
 <body><main>
-<a href="lobby.html">กลับไปเลือกโหมด</a><h1>ปาร์ตี้มหาวงกต</h1>
-<p>ผู้ผนึก 2–4 คน · เดินอิสระ · เลือกพลังเองหรือเปิดอัตโนมัติ<br>หากไม่เลือกคำสั่งใน 12 วินาที ระบบจะเปิดอัตโนมัติให้ผู้เล่นคนนั้น</p>
-<section id="joinPanel"><button id="create">สร้างห้องปาร์ตี้</button>
-<label for="roomCode">รหัสห้องจากหัวหน้าปาร์ตี้</label><input id="roomCode" placeholder="รหัส 8 ตัว" autocomplete="off" spellcheck="false">
-<button id="join">เข้าร่วมห้อง</button></section>
+<a class="back" href="lobby.html">‹ กลับไปเลือกโหมด</a>
+<header class="intro"><img src="../../assets/ui/soulbeast-logo-v2.webp" alt="SoulBeast"><h1>ปาร์ตี้มหาวงกต</h1><p>รวมทีมผู้ผนึก 2–4 คน</p></header>
+<div class="feedback"><p id="status" role="status" aria-live="polite">กำลังตรวจสอบห้องปาร์ตี้…</p><button id="retryLobby" type="button" hidden>ลองอีกครั้ง</button></div>
+<div id="joinPanel" hidden>
+<section aria-labelledby="createTitle"><h2 id="createTitle">สร้างปาร์ตี้</h2><p>สร้างห้องแล้วส่งรหัสให้เพื่อน</p><button id="create" class="primary" type="button">สร้างห้องปาร์ตี้</button></section>
+<section aria-labelledby="joinTitle"><h2 id="joinTitle">เข้าร่วมปาร์ตี้</h2><form id="joinForm"><label for="roomCode">รหัสห้องจากหัวหน้าปาร์ตี้</label><input id="roomCode" placeholder="รหัส 8 ตัว" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="36" enterkeyhint="go" required><button id="join" type="submit">เข้าร่วมห้อง</button></form></section>
+</div>
 <section id="roomPanel" hidden><h2>สมาชิกปาร์ตี้ <span id="count"></span></h2>
-<p>รหัสห้อง: <code id="roomId"></code></p><button id="copy">คัดลอกรหัสห้อง</button>
+<div class="room-code"><span>รหัสห้อง <code id="roomId"></code></span><button id="copy" type="button">คัดลอก</button></div>
 <ul id="members"></ul><p id="requirements"></p>
 <div class="actions"><button id="ready">ยืนยันพร้อม</button><button id="start" disabled>เริ่มดันเจี้ยน</button><button id="resume" hidden>กลับเข้าดันเจี้ยน</button><button id="leave">ออกจากห้อง</button></div></section>
-<p id="status" role="status" aria-live="polite"></p>
-</main><script type="module" src="online-party-lobby.mjs?v=inventory-save-1"></script></body></html>
+
+</main><script type="module" src="online-party-lobby.mjs?v=mobile-lobby-1"></script></body></html>

@@ -7,9 +7,9 @@ const errors={login_required:'กรุณาเข้าสู่ระบบ�
  save_conflict:'เซฟตัวละครมีการเปลี่ยนแปลง กรุณาเข้าเกมใหม่ก่อนเริ่มปาร์ตี้',party_already_active:'ตัวละครนี้อยู่ในปาร์ตี้แล้ว',party_unavailable:'ห้องปิดหรือหมดเวลาแล้ว',
  party_started:'ห้องนี้เริ่มดันเจี้ยนแล้ว',party_size:'ต้องมีสมาชิกอย่างน้อย 2 คน',
  one_character_per_account:'หนึ่งบัญชีเข้าร่วมได้หนึ่งตัวละคร',party_run_active:'ปาร์ตี้เริ่มเดินทางแล้ว'};
-let connection,walkSave,room=null,busy=false,timer,stopped=false;
+let connection,walkSave,room=null,busy=false,timer,stopped=false,checked=false;
 function render(){
- $('joinPanel').hidden=!!room;$('roomPanel').hidden=!room;if(!room)return;
+ $('joinPanel').hidden=!!room||!checked;$('create').disabled=$('join').disabled=busy;$('roomPanel').hidden=!room;if(!room)return;
  $('roomId').textContent=room.joinCode||'…';$('copy').disabled=!room.joinCode;
  $('count').textContent=room.members.length+'/4';$('members').replaceChildren();
  for(const m of room.members){const row=document.createElement('li');row.dataset.ready=String(m.ready&&m.online);
@@ -25,7 +25,7 @@ function render(){
 }
 function resume(){stopped=true;clearInterval(timer);location.assign('index.html?room='+encodeURIComponent(room.id));}
 async function update(action='status',extra={}){
- if(busy||stopped)return;busy=true;render();
+ if(busy||stopped)return;busy=true;$('retryLobby').hidden=true;render();
  try{
   let refreshFailed=false;
   const wasWaiting=room?.state==='waiting';
@@ -42,6 +42,7 @@ async function update(action='status',extra={}){
     result=await connection.call('status');
    }
   }
+  checked=true;
   if(result.left){room=null;sessionStorage.removeItem(partySessionKey);}
   else {room=result;sessionStorage.setItem(partySessionKey,JSON.stringify({id:room.id,code:connection.code}));}
   $('status').textContent=room?.state==='active'?'พบปาร์ตี้เดิม · กลับเข้าดันเจี้ยนหรือออกจากห้องได้':action==='leave'?(refreshFailed?'ออกจากห้องแล้ว · โหลดเซฟล่าสุดไม่สำเร็จ กรุณาเข้าเกมใหม่':'ออกจากห้องแล้ว'):'';
@@ -55,7 +56,7 @@ async function update(action='status',extra={}){
  }
  finally{busy=false;render();}
 }
-$('create').onclick=()=>update('create');$('join').onclick=()=>{const id=$('roomCode').value.trim();
+$('create').onclick=()=>update('create');$('retryLobby').onclick=()=>update();$('joinForm').onsubmit=event=>{event.preventDefault();const id=$('roomCode').value.trim();
  if(/^[a-f0-9]{8}$/i.test(id)){void update('join',{joinCode:id.toUpperCase()});return;}
  if(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)){void update('join',{room:id});return;}
  $('status').textContent='กรุณาใส่รหัสห้อง 8 ตัวตามที่หัวหน้าห้องส่งให้';};
@@ -66,3 +67,4 @@ try{connection=connectDungeonParty();walkSave=connectOnlineWalk();void update();
  timer=setInterval(()=>{if(room&&!document.hidden)void update();},5000);
 }catch{$('status').textContent=errors.login_required;$('create').disabled=$('join').disabled=true;}
 addEventListener('pagehide',()=>{stopped=true;clearInterval(timer);});
+addEventListener('pageshow',event=>{if(event.persisted)location.reload();});
