@@ -5,9 +5,9 @@ const $=id=>document.getElementById(id);
 const errors={login_required:'กรุณาเข้าสู่ระบบออนไลน์ก่อน',party_full:'ห้องนี้มีผู้ผนึกครบ 4 คนแล้ว',
  party_not_ready:'สมาชิกต้องออนไลน์และกดพร้อมทุกคน',party_host_only:'เฉพาะหัวหน้าห้องเท่านั้นที่เริ่มได้',
  save_conflict:'เซฟตัวละครมีการเปลี่ยนแปลง กรุณาเข้าเกมใหม่ก่อนเริ่มปาร์ตี้',party_already_active:'ตัวละครนี้อยู่ในปาร์ตี้แล้ว',party_unavailable:'ห้องปิดหรือหมดเวลาแล้ว',
- party_started:'ห้องนี้เริ่มดันเจี้ยนแล้ว',party_size:'ต้องมีสมาชิกอย่างน้อย 2 คน',
+ ready_not_confirmed:'เซิร์ฟเวอร์ยังไม่ยืนยันสถานะพร้อม กรุณากดอีกครั้ง',party_started:'ห้องนี้เริ่มดันเจี้ยนแล้ว',party_size:'ต้องมีสมาชิกอย่างน้อย 2 คน',
  one_character_per_account:'หนึ่งบัญชีเข้าร่วมได้หนึ่งตัวละคร',party_run_active:'ปาร์ตี้เริ่มเดินทางแล้ว'};
-let connection,walkSave,room=null,busy=false,timer,stopped=false,checked=false;
+let connection,walkSave,room=null,busy=false,timer,stopped=false,checked=false,polling=false,actionVersion=0;
 const feedback=$('status').parentElement;
 const lobbyAnchor=$('joinPanel');
 function render(){
@@ -30,7 +30,7 @@ function render(){
 }
 function resume(){stopped=true;clearInterval(timer);location.assign('index.html?room='+encodeURIComponent(room.id));}
 async function update(action='status',extra={}){
- if(busy||stopped)return;busy=true;$('retryLobby').hidden=true;render();
+ if(busy||stopped)return;actionVersion++;busy=true;$('retryLobby').hidden=true;render();
  let saving=false;
  try{
   let refreshFailed=false;
@@ -52,6 +52,9 @@ async function update(action='status',extra={}){
     result=await connection.call('status');
    }
   }
+  if(action==='ready'&&result.members?.find(m=>m.code===connection.code)?.ready!==extra.ready){
+   throw Error('ready_not_confirmed');
+  }
   checked=true;
   if(result.left){room=null;sessionStorage.removeItem(partySessionKey);}
   else {room=result;sessionStorage.setItem(partySessionKey,JSON.stringify({id:room.id,code:connection.code}));}
@@ -67,6 +70,22 @@ async function update(action='status',extra={}){
  }
  finally{busy=false;render();}
 }
+// A background refresh must never disable the ready button or overwrite a newer action.
+async function pollRoom(){
+ if(!room||busy||stopped||polling||document.hidden)return;
+ const id=room.id,version=actionVersion;
+ polling=true;
+ try{
+  const latest=await connection.call('status',{room:id});
+  if(stopped||busy||version!==actionVersion||room?.id!==id)return;
+  if(latest.left){void update();return;}
+  const wasWaiting=room.state==='waiting';
+  room=latest;render();
+  if(wasWaiting&&room.state==='active')resume();
+ }catch(error){
+  if(!stopped&&!busy&&version===actionVersion&&['party_unavailable','party_not_member'].includes(error.message))void update();
+ }finally{polling=false;}
+}
 $('create').onclick=()=>update('create');$('retryLobby').onclick=()=>update();$('joinForm').onsubmit=event=>{event.preventDefault();const id=$('roomCode').value.trim();
  if(/^[a-f0-9]{8}$/i.test(id)){void update('join',{joinCode:id.toUpperCase()});return;}
  if(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)){void update('join',{room:id});return;}
@@ -75,7 +94,7 @@ $('ready').onclick=()=>update('ready',{ready:!room.members.find(m=>m.code===conn
 $('start').onclick=()=>update('start');$('leave').onclick=()=>{if(room?.state!=='active'||window.confirm('ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?'))void update('leave');};$('resume').onclick=resume;
 $('copy').onclick=async()=>{if(!room?.joinCode)return;try{await navigator.clipboard.writeText(room.joinCode);$('status').textContent='คัดลอกรหัสห้องแล้ว';}catch{$('status').textContent='เลือกและคัดลอกรหัสห้องด้านบนได้เลย';}};
 try{connection=connectDungeonParty();walkSave=connectOnlineWalk();void update();
- timer=setInterval(()=>{if(room&&!document.hidden)void update();},5000);
+ timer=setInterval(pollRoom,5000);
 }catch{$('status').textContent=errors.login_required;$('create').disabled=$('join').disabled=true;}
 addEventListener('pagehide',()=>{stopped=true;clearInterval(timer);});
 addEventListener('pageshow',event=>{if(event.persisted)location.reload();});
