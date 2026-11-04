@@ -1,7 +1,7 @@
 /* Local-machine preview transport. BroadcastChannel is intentionally not an online server. */
 (()=>{'use strict';const key='soulbeast-walk-preview-player-v1',peers=new Map(),channel=new BroadcastChannel('soulbeast-walk-presence-v1'),session=crypto.randomUUID();let locationId='',lastSend=0,lastState=null;function raster(im,w,h){const tile=document.createElement('canvas');tile.width=w;tile.height=h;tile.getContext('2d').drawImage(im,0,0,w,h);im.raster=tile}
 let online=null;const onlineMode=!!sessionStorage.getItem('soulbeast-online-walk-v1');
-if(onlineMode)import('../../client/online-walk.mjs?v=peer-fusion-3').then(m=>{online=m.connectOnlineWalk();if(online){m.mountDungeonInvitations(online,peers);setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
+if(onlineMode)import('../../client/online-walk.mjs?v=inventory-save-1').then(m=>{online=m.connectOnlineWalk();if(online){m.mountDungeonInvitations(online,peers);setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
 const flags={};for(const id of ['blue','green','red']){const im=new Image();im.onload=()=>raster(im,64,42);im.src=new URL('../../assets/ui/country-war/flag-'+id+'-v1.webp',document.currentScript.src).href;flags[id]=im}
 let playerRaw,playerCache;function player(){try{const raw=sessionStorage.getItem(key);if(raw!==playerRaw){playerRaw=raw;playerCache=JSON.parse(raw||'null')}return playerCache}catch{return null}}
 const frames={};

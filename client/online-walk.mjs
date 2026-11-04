@@ -62,7 +62,17 @@ export function connectOnlineWalk(accountStorage) {
  function flush(strict = false) {
   if (stopped) return strict ? Promise.reject(Error('save_conflict')) : Promise.resolve();
   pending ??= lock(saveWalk).finally(() => { pending = null; });
-  return strict ? pending : pending.catch(() => {});
+  if(!strict)return pending.catch(()=>{});
+  // An autosave already in flight may contain the inventory before a purchase.
+  return pending.then(()=>lock(async()=>{
+   while(true){
+    syncRevision();
+    const player=JSON.parse(sessionStorage.getItem(playerKey)||'null');
+    if(player?.code!==context.code)throw Error('character_not_owned');
+    if(!context.request&&JSON.stringify(player)===JSON.stringify(context.snapshot.P))return;
+    await saveWalk();
+   }
+  }));
  }
 
  let appearanceKey='', appearanceAt=0, nextAppearanceAttempt=0, appearancePending=null;

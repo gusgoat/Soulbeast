@@ -1,12 +1,13 @@
+import {connectOnlineWalk} from '../../client/online-walk.mjs?v=inventory-save-1';
 import {connectDungeonParty,partySessionKey} from '../../client/dungeon-party.mjs?v=short-code-1';
 import {partyRules} from './online-party-rules.mjs';
 const $=id=>document.getElementById(id);
 const errors={login_required:'กรุณาเข้าสู่ระบบออนไลน์ก่อน',party_full:'ห้องนี้มีผู้ผนึกครบ 4 คนแล้ว',
  party_not_ready:'สมาชิกต้องออนไลน์และกดพร้อมทุกคน',party_host_only:'เฉพาะหัวหน้าห้องเท่านั้นที่เริ่มได้',
- party_already_active:'ตัวละครนี้อยู่ในปาร์ตี้แล้ว',party_unavailable:'ห้องปิดหรือหมดเวลาแล้ว',
+ save_conflict:'เซฟตัวละครมีการเปลี่ยนแปลง กรุณาเข้าเกมใหม่ก่อนเริ่มปาร์ตี้',party_already_active:'ตัวละครนี้อยู่ในปาร์ตี้แล้ว',party_unavailable:'ห้องปิดหรือหมดเวลาแล้ว',
  party_started:'ห้องนี้เริ่มดันเจี้ยนแล้ว',party_size:'ต้องมีสมาชิกอย่างน้อย 2 คน',
  one_character_per_account:'หนึ่งบัญชีเข้าร่วมได้หนึ่งตัวละคร',party_run_active:'ปาร์ตี้เริ่มเดินทางแล้ว'};
-let connection,room=null,busy=false,timer,stopped=false;
+let connection,walkSave,room=null,busy=false,timer,stopped=false;
 function render(){
  $('joinPanel').hidden=!!room;$('roomPanel').hidden=!room;if(!room)return;
  $('roomId').textContent=room.joinCode||'…';$('copy').disabled=!room.joinCode;
@@ -29,6 +30,7 @@ async function update(action='status',extra={}){
   let refreshFailed=false;
   const wasWaiting=room?.state==='waiting';
   let result;
+  if(['create','join','start'].includes(action)||(action==='ready'&&extra.ready))await walkSave.flush(true);
   if(action==='leave'&&room?.state==='active'){
    await connection.run(room.id,'leave');
    result={left:true};
@@ -60,7 +62,7 @@ $('create').onclick=()=>update('create');$('join').onclick=()=>{const id=$('room
 $('ready').onclick=()=>update('ready',{ready:!room.members.find(m=>m.code===connection.code)?.ready});
 $('start').onclick=()=>update('start');$('leave').onclick=()=>{if(room?.state!=='active'||window.confirm('ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?'))void update('leave');};$('resume').onclick=resume;
 $('copy').onclick=async()=>{if(!room?.joinCode)return;try{await navigator.clipboard.writeText(room.joinCode);$('status').textContent='คัดลอกรหัสห้องแล้ว';}catch{$('status').textContent='เลือกและคัดลอกรหัสห้องด้านบนได้เลย';}};
-try{connection=connectDungeonParty();void update();
+try{connection=connectDungeonParty();walkSave=connectOnlineWalk();void update();
  timer=setInterval(()=>{if(room&&!document.hidden)void update();},5000);
 }catch{$('status').textContent=errors.login_required;$('create').disabled=$('join').disabled=true;}
 addEventListener('pagehide',()=>{stopped=true;clearInterval(timer);});

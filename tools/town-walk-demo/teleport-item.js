@@ -32,7 +32,12 @@ handlers.confirmTeleport=async()=>{
   teleportView=await loadTeleportTerritory();
   if(S.screen!=='bag'||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;
   if(!teleportLocations().some(n=>n.id===destination)){teleportDestination='';toast('อาณาจักรของคุณไม่ได้ครอบครองปลายทางนี้แล้ว');return;}
-  S.P.items.teleportScroll--;S.ui.walkTeleport=false;save();
+  S.P.items.teleportScroll--;save();
+  if(WALK_ONLINE){
+   try{await (await getWalkAccountConnection()).flush(true);}
+   catch{S.P.items.teleportScroll++;save();throw Error('ยังบันทึกการใช้ใบเทเลพอร์ตไม่ได้ กรุณาลองใหม่');}
+  }
+  S.ui.walkTeleport=false;
   parent.postMessage({type:'walk-teleport',destination},location.origin);
  }catch(e){toast(e.message);}finally{teleportBusy=false;render();}
 };
