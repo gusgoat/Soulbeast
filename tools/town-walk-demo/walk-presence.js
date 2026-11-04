@@ -7,10 +7,30 @@ let playerRaw,playerCache;function player(){try{const raw=sessionStorage.getItem
 const frames={};
 function label(c,x,y,p){if(!p)return;const name=String(p.name||p.n||'ผู้ผนึก').slice(0,30),cls=window.sealerSpriteCatalog?.[p.cls]?.name||p.cls||'ผู้ผนึก',premium=window.WalkNameplates?.owned(p),src=window.WalkNameplates?.asset(p);if(src&&!frames[src]){frames[src]=new Image();const skin=frames[src];skin.onload=()=>raster(skin,660,152);skin.src=src}const im=frames[src];c.save();c.font='12px Tahoma';c.textAlign='center';const text=name,sub=cls+' · Lv '+p.lv,w=Math.max(220,Math.min(330,Math.max(c.measureText(text).width,c.measureText(sub).width)+100)),h=premium?76:64;c.fillStyle='#091b2ce8';if(im?.naturalWidth)c.drawImage(im.raster||im,x-w/2,y-h+12,w,h);else{c.fillRect(x-w/2+20,y-40,w-40,40);c.strokeStyle='#d5c18a';c.strokeRect(x-w/2+20,y-40,w-40,40)}const flag=flags[p.country];if(flag?.naturalWidth)c.drawImage(flag.raster||flag,x-10,y-49,20,13);c.fillStyle='#fff0c0';c.shadowColor='#000';c.shadowBlur=3;c.fillText(text,x,y-27,w-100);c.font='11px Tahoma';c.fillText(sub,x,y-13,w-100);c.restore();return w}
 channel.onmessage=({data:d})=>{if(onlineMode||!d||d.session===session)return;if(d.type==='leave'){peers.get(d.session)?.sprite.release();peers.delete(d.session);return}if(d.type==='hello'){if(lastState)channel.postMessage(lastState);return}if(d.type!=='position'||typeof d.place!=='string'||!Number.isFinite(d.x)||!Number.isFinite(d.y)||!window.sealerSpriteCatalog?.[d.player?.cls])return;if(d.player?.socialId&&d.player.socialId===window.walkSocial?.publicId)return;if(d.place!==locationId){peers.get(d.session)?.sprite.release();peers.delete(d.session);return}let p=peers.get(d.session);if(!p){p={sprite:window.sealerSprites.create(),x:d.x,y:d.y};peers.set(d.session,p)}Object.assign(p,{targetX:d.x,targetY:d.y,dir:d.dir,moving:!!d.moving,running:!!d.running,player:d.player,seen:performance.now()});p.sprite.sync(d.player).catch(()=>{})};
-let nextHeartbeat=0,heartbeatPending=false;
-function syncPeers(place,p,moving,running){const now=performance.now();if(!online||heartbeatPending||now<nextHeartbeat||place.startsWith('mine'))return;nextHeartbeat=now+600;heartbeatPending=true;online.heartbeat(place.includes(':')?place:'town:'+place,p,moving,running).then(rows=>{if(place!==locationId)return;const ids=new Set(rows.map(row=>row.id));for(const [id,peer] of peers)if(!ids.has(id)){peer.sprite.release();peers.delete(id);}const seen=performance.now();for(const row of rows){if(!window.sealerSpriteCatalog?.[row.cls])continue;let peer=peers.get(row.id);if(!peer){peer={sprite:window.sealerSprites.create(),x:row.x,y:row.y};peers.set(row.id,peer);}Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,player:row,seen});peer.sprite.sync(row).catch(()=>{});}}).catch(()=>{nextHeartbeat=performance.now()+3000;}).finally(()=>{heartbeatPending=false;});}
+let nextHeartbeat=0,heartbeatPending=false,lastDraw=0;
+function samplePeer(peer,row,seen){
+ const sameDirection=peer.dir===row.dir&&peer.running===row.running;
+ const elapsed=seen-(peer.sampleAt??seen);
+ const dx=row.x-(peer.targetX??row.x),dy=row.y-(peer.targetY??row.y);
+ if(!row.moving||!sameDirection||elapsed>1500||Math.hypot(dx,dy)>400){
+  peer.vx=peer.vy=0;
+ }else if(elapsed>=100&&(dx||dy)){
+  peer.vx=dx/elapsed;
+  peer.vy=dy/elapsed;
+ }
+ if(!row.moving||dx||dy||!sameDirection||peer.sampleAt==null)peer.sampleAt=seen;
+}
+function advancePeer(peer,now,dt){
+ const ahead=peer.moving?Math.min(550,Math.max(0,now-peer.sampleAt)+120):0;
+ const x=peer.targetX+(peer.vx||0)*ahead,y=peer.targetY+(peer.vy||0)*ahead;
+ const blend=1-Math.exp(-dt/90);
+ if(Math.hypot(x-peer.x,y-peer.y)>400){peer.x=x;peer.y=y;return;}
+ peer.x+=(x-peer.x)*blend;
+ peer.y+=(y-peer.y)*blend;
+}
+function syncPeers(place,p,moving,running){const now=performance.now();if(!online||heartbeatPending||now<nextHeartbeat||place.startsWith('mine'))return;nextHeartbeat=now+600;heartbeatPending=true;online.heartbeat(place.includes(':')?place:'town:'+place,p,moving,running).then(rows=>{if(place!==locationId)return;const ids=new Set(rows.map(row=>row.id));for(const [id,peer] of peers)if(!ids.has(id)){peer.sprite.release();peers.delete(id);}const seen=performance.now();for(const row of rows){if(!window.sealerSpriteCatalog?.[row.cls])continue;let peer=peers.get(row.id);if(!peer){peer={sprite:window.sealerSprites.create(),x:row.x,y:row.y};peers.set(row.id,peer);}samplePeer(peer,row,seen);Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,player:row,seen});peer.sprite.sync(row).catch(()=>{});}}).catch(()=>{nextHeartbeat=performance.now()+3000;}).finally(()=>{heartbeatPending=false;});}
 function tick(place,p,moving,running){window.walkSocial?.tick();window.DungeonPartyPresence?.publish();locationId=place;const now=performance.now();for(const [id,v]of peers)if(now-v.seen>5000){v.sprite.release();peers.delete(id)}if(onlineMode){syncPeers(place,p,moving,running);return;}if(now-lastSend<150)return;lastSend=now;const me=player();if(!me)return;lastState={type:'position',session,place,x:p.x,y:p.y,dir:p.dir,moving,running,player:{name:me.name||me.n,cls:me.cls,gender:me.gender,lv:me.lv,country:me.country,entitlements:{premiumNameplates:window.WalkNameplates?.owned(me)||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}
-function draw(c,sx,sy,scale,phase){for(const p of peers.values()){p.x+=(p.targetX-p.x)*.24;p.y+=(p.targetY-p.y)*.24;p.hitbox={x:sx(p.x),y:sy(p.y),scale};p.sprite.draw(c,sx(p.x),sy(p.y),156*scale,p.dir,phase,p.moving,p.running);p.hitbox.labelWidth=label(c,sx(p.x),sy(p.y)-154*scale,p.player)}}
+function draw(c,sx,sy,scale,phase){const now=performance.now(),dt=lastDraw?Math.min(now-lastDraw,100):16;lastDraw=now;for(const p of peers.values()){if(onlineMode)advancePeer(p,now,dt);else{p.x+=(p.targetX-p.x)*.24;p.y+=(p.targetY-p.y)*.24;}p.hitbox={x:sx(p.x),y:sy(p.y),scale};p.sprite.draw(c,sx(p.x),sy(p.y),156*scale,p.dir,phase,p.moving,p.running);p.hitbox.labelWidth=label(c,sx(p.x),sy(p.y)-154*scale,p.player)}}
 setInterval(()=>{const now=performance.now();if(lastState&&now-lastSend>900){window.walkSocial?.tick();lastSend=now;lastState={...lastState,moving:false,running:false,player:{...lastState.player,entitlements:{premiumNameplates:window.WalkNameplates?.owned(player())||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}},1000);
 addEventListener('pagehide',()=>channel.postMessage({type:'leave',session}));channel.postMessage({type:'hello',session});window.walkPresence={tick,draw,label,player,peers,session};
 })();
