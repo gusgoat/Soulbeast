@@ -20,21 +20,26 @@ export function connectOnlineWalk() {
  if (!context) return null;
  const client = connectAccounts(() => {});
  let pending = null;
- let committed = JSON.stringify(context.snapshot.P);
+ const lock = task => navigator.locks?.request('soulbeast-walk-save:' + context.code, task) ?? task();
+ function syncRevision() {
+  const latest = JSON.parse(sessionStorage.getItem(contextKey) || 'null');
+  if (!latest || latest.code !== context.code || latest.environment !== context.environment || latest.owner !== context.owner) throw Error('login_required');
+  Object.assign(context, latest);
+  if (!latest.request) delete context.request;
+ }
  let stopped = false;
 
- async function flush() {
-  if (stopped || pending) return pending;
+ async function saveWalk() {
+  syncRevision();
   const player = JSON.parse(sessionStorage.getItem(playerKey) || 'null');
   if (player?.code !== context.code) return;
   const serialized = JSON.stringify(player);
-  if (serialized === committed && !context.request) return;
+  if (serialized === JSON.stringify(context.snapshot.P) && !context.request) return;
   const request = context.request || {serialized, id: crypto.randomUUID()};
   const snapshot = {...context.snapshot, P: JSON.parse(request.serialized)};
   context.request = request;
   sessionStorage.setItem(contextKey, JSON.stringify(context));
-  pending = (async () => {
-   try {
+  try {
     const response = await client.game('save', {
      code: context.code, expectedSaveAt: context.revision,
      data: JSON.stringify(snapshot), _sbRequest: request.id
@@ -46,16 +51,18 @@ export function connectOnlineWalk() {
      try { localStorage.setItem('soulbeast_account_save_v1:' + context.environment + ':' + context.owner + ':' + context.code, JSON.stringify(accountSnapshot)); } catch {}
     }
     delete context.request;
-    committed = request.serialized;
     sessionStorage.setItem(contextKey, JSON.stringify(context));
    } catch (error) {
     if (error.code === 'save_conflict' || error.status === 401 || error.code === 'character_not_owned') stopped = true;
     window.dispatchEvent(new CustomEvent('online-walk-save-error', {detail: error.code || error.message}));
-   } finally {
-    pending = null;
-   }
-  })();
-  return pending;
+    throw error;
+  }
+ }
+
+ function flush(strict = false) {
+  if (stopped) return strict ? Promise.reject(Error('save_conflict')) : Promise.resolve();
+  pending ??= lock(saveWalk).finally(() => { pending = null; });
+  return strict ? pending : pending.catch(() => {});
  }
 
  async function heartbeat(scene, position, moving, running) {
@@ -73,7 +80,19 @@ export function connectOnlineWalk() {
   }, await client.sessions.token());
  }
 
- const social = (action, extra = {}) => client.game(action, {...extra, code: context.code}, context.environment);
+ const send = (action, extra) => client.game(action, {...extra, code: context.code}, context.environment);
+ const social = (action, extra = {}) => {
+  if (!action.startsWith('tower_') || action === 'tower_status') return send(action, extra);
+  return lock(async () => {
+   await saveWalk();
+   const result = await send(action, extra);
+   if (result.accountSaveAt) {
+    context.revision = result.accountSaveAt;
+    sessionStorage.setItem(contextKey, JSON.stringify(context));
+   }
+   return result;
+  });
+ };
  return {flush, heartbeat, invitations, social};
 }
 
