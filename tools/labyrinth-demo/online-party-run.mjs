@@ -1,7 +1,7 @@
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=smooth-walk-1';
+import {partyRunController} from './online-party-controller.mjs?v=smooth-walk-2';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),timer,frameId,ready=false,seenBattle='';

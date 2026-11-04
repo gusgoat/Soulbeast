@@ -43,16 +43,41 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   pulse:()=>lane(async()=>{
    if(!snapshot)return refresh();
    if(snapshot.departure||snapshot.state==='closed')return;
-   const data={};
-   if(path.length){const points=path;path=[];data.movement={floor:snapshot.floor,seq:++seq,path:points};}
-   await refresh(await connection.run(roomId,'pulse',data));
+   const start=snapshot.members.find(member=>member.code===connection.code)?.position;
+   const movement=path.length?{floor:snapshot.floor,seq:++seq,path:path.splice(0,16)}:null;
+   const next=await connection.run(roomId,'pulse',movement?{movement}:{});
+   if(movement&&next.floor===movement.floor&&next.movementSeq===movement.seq&&next.battle?.status!=='active'){
+    const confirmed=next.members?.find(member=>member.code===connection.code)?.position;
+    path=remainingSteps(start,movement.path,confirmed).concat(path);
+   }
+   await refresh(next);
   }),
   command:(action,data={})=>lane(async()=>{
    // Flush accepted walking before the contact check. Failed contact is safe to retry.
-   if(path.length){const points=path;path=[];await connection.run(roomId,'move',{floor:snapshot.floor,seq:++seq,path:points});}
+   if(path.length){const points=path.splice(0,16);await connection.run(roomId,'move',{floor:snapshot.floor,seq:++seq,path:points});}
    await connection.run(roomId,action,{...data,requestId:crypto.randomUUID()});await refresh();
   }),
   get state(){return snapshot;},get busy(){return busy;},
   async close(){closed=true;path=[];scene.close();await motion?.close();motion=null;}
  };
+}
+
+// The server can accept a packet but stop halfway through a step when its
+// movement budget runs out. Retain only the unconfirmed suffix of that path.
+export function remainingSteps(start,points,confirmed){
+ if(!start||!confirmed)return [];
+ const end=points.at(-1);
+ if(end&&Math.hypot(end.x-confirmed.x,end.y-confirmed.y)<.001)return [];
+ for(let i=0;i<points.length;i++){
+  const target=points[i],dx=target.x-start.x,dy=target.y-start.y;
+  const lengthSquared=dx*dx+dy*dy;
+  if(lengthSquared>0){
+   const progress=((confirmed.x-start.x)*dx+(confirmed.y-start.y)*dy)/lengthSquared;
+   if(progress>=0&&progress<=1&&Math.hypot(confirmed.x-start.x-progress*dx,confirmed.y-start.y-progress*dy)<.001){
+    return points.slice(progress>=1?i+1:i);
+   }
+  }
+  start=target;
+ }
+ return [];
 }
