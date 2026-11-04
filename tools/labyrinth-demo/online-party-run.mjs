@@ -1,3 +1,4 @@
+import {partyMenu} from './online-party-menu.mjs?v=party-menus-1';
 import {partyArt} from './online-party-art.mjs?v=normal-art-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
@@ -31,6 +32,7 @@ function offerReturn(city,automatic=false){
  };
  if(automatic)void button.onclick();
 }
+const menus=partyMenu({request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),picture:p=>{const v=portrait(p);return v?asset(v):null;},onOpen:()=>{keys.clear();selfMoving=false;}});
 let commandKey='',clockOffset=0;
 function battleControls(run){
  let box=$('partyCommands');if(!box){box=document.createElement('div');box.id='partyCommands';$('battleLog').before(box);}
@@ -61,6 +63,7 @@ function drawBattle(run){
  if(!run){$('battle').hidden=true;return;}
  if(run.kind==='solo'&&run.status!=='active'){seenBattle=run.id;$('battle').hidden=true;keys.clear();return;}
  if(run.status!=='active'&&seenBattle===run.id){$('battle').hidden=true;return;}
+ if(menus.open)menus.close();
  $('battle').hidden=false;$('dismiss').hidden=run.status==='active';
  $('battle').querySelector('h2').textContent=run.status==='active'?(run.kind==='solo'?'ต่อสู้เดี่ยว · รอบ ':'ต่อสู้บอสปาร์ตี้ · รอบ ')+(run.battle?.round||1):run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้';
  battleControls(run);
@@ -77,7 +80,7 @@ function drawBattle(run){
 const view={
  loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
  vitals:members=>vitals.update(members),
- roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);},
+ roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);menus.update(me);},
  world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
   localWorld.receive(world,connection.code,performance.now());
   if(!trapPlacements.length)trapPlacements=DungeonTraps.create(maze,nav,{}, {seed:config.seed+71371,count:35}).list;
@@ -134,7 +137,7 @@ try{
  };
  $('retry').onclick=()=>void controller.refresh();
  $('interact').onclick=()=>{
-  if(!ready||controller.busy||!position)return;
+  if(menus.open||!ready||controller.busy||!position)return;
   const confirmed=position;if(!confirmed)return;
   const near=p=>nav.distance(confirmed,p)<210;
   const door=maze.rooms.find(r=>r.id==='boss').gate;
@@ -155,7 +158,7 @@ try{
  },100);
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
-  if(ready&&position&&nav&&controller.state?.battle?.status!=='active'){
+  if(!menus.open&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
@@ -187,7 +190,7 @@ try{
  frameId=requestAnimationFrame(frame);
 }catch(error){failure(error);}
 const moveKeys=new Set(['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight']);
-addEventListener('keydown',e=>{if(moveKeys.has(e.key)){e.preventDefault();keys.add(e.key);}});addEventListener('keyup',e=>keys.delete(e.key));
+addEventListener('keydown',e=>{if(!menus.open&&moveKeys.has(e.key)){e.preventDefault();keys.add(e.key);}});addEventListener('keyup',e=>keys.delete(e.key));
 for(const button of document.querySelectorAll('#pad button')){const key=button.dataset.dx?(Number(button.dataset.dx)<0?'ArrowLeft':'ArrowRight'):(Number(button.dataset.dy)<0?'ArrowUp':'ArrowDown');
  button.onpointerdown=e=>{button.setPointerCapture(e.pointerId);keys.add(key);};button.onpointerup=button.onpointercancel=()=>keys.delete(key);}
 addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();freeze();}else void controller?.refresh();});
