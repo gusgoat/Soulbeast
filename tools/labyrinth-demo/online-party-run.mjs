@@ -2,7 +2,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=local-explore-1';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=battle-lane-2';
+import {partyRunController} from './online-party-controller.mjs?v=battle-isolated-3';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const localWorld=localPartyWorld();let trapPlacements=[];
@@ -108,7 +108,7 @@ try{
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
  const scene=partyScene({code:connection.code,roomId,view});
  controller=partyRunController({connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
-  clockOffset=state.serverTime-Date.now();$('battleError')?.remove();
+  clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
   if(!position&&member?.position)position={...member.position};

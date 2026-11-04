@@ -46,7 +46,13 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    if(!snapshot)return refresh();
    if(snapshot.departure||snapshot.state==='closed')return;
    if(localExploration){
-    const position=snapshot.battle?.status==='active'?null:getPosition();
+    // Advance my encounter directly. A failing unrelated solo battle must not
+    // roll back this player's turn through the room-wide pulse transaction.
+    if(snapshot.battle?.status==='active'){
+     await connection.run(roomId,'tick',{battle:snapshot.battle.id});
+     await refresh();return;
+    }
+    const position=getPosition();
     await refresh(await connection.run(roomId,'pulse',{localExploration:true,floor:snapshot.floor,...(position?{position}:{})}));return;
    }
    const start=snapshot.members.find(member=>member.code===connection.code)?.position;
