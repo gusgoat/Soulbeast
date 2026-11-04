@@ -33,52 +33,41 @@ function offerReturn(city,automatic=false){
  if(automatic)void button.onclick();
 }
 const menus=partyMenu({canOpen:()=>ready&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),picture:p=>{const v=portrait(p);return v?asset(v):null;},onOpen:()=>{keys.clear();selfMoving=false;}});
-let commandKey='',clockOffset=0;
-function battleControls(run){
- let box=$('partyCommands');if(!box){box=document.createElement('div');box.id='partyCommands';$('battleLog').before(box);}
- const w=run.waiting,key=JSON.stringify([run.id,run.status,w?.actor,w?.turn]);
- if(key!==commandKey){commandKey=key;box.replaceChildren();
-  if(run.status!=='active')return;
-  const mode=document.createElement('button');mode.textContent='เปิด / ปิดอัตโนมัติ';
-  mode.onclick=()=>void controller.command('battleAuto',{battle:run.id,enabled:!controller.state?.autoPlayers?.[connection.code]});box.append(mode);
-  const label=document.createElement('p');label.id='turnDeadline';box.append(label);
-  if(w?.ownerCode===connection.code){
-   const skill=document.createElement('select');skill.setAttribute('aria-label','เลือกพลัง');
-   for(const choice of w.choices){const option=new Option(choice.name+' · MP '+choice.mp,choice.id);option.disabled=choice.disabled;skill.add(option);}
-   skill.value=w.choices.find(choice=>!choice.disabled)?.id||'rest';
-   const target=document.createElement('select');target.setAttribute('aria-label','เป้าหมายศัตรู');
-   for(const u of run.battle.enemies.filter(u=>u.hp>0))target.add(new Option(u.name,u.id));
-   const friend=document.createElement('select');friend.setAttribute('aria-label','เป้าหมายฝ่ายเรา');
-   for(const u of run.battle.allies)friend.add(new Option(u.name+(u.hp<=0?' (หมดสติ)':''),u.id));
-   const send=document.createElement('button');send.textContent='ยืนยันคำสั่ง';
-   send.onclick=()=>void controller.command('battleCommand',{battle:run.id,actor:w.actor,turn:w.turn,skill:skill.value,target:target.value,friend:friend.value});
-   box.append(skill,target,friend,send);
-  }
- }
- const label=$('turnDeadline');if(label)label.textContent=w?
-  (w.ownerCode===connection.code?'ตาของคุณ':'รอเพื่อนเลือกคำสั่ง')+' · '+Math.max(0,Math.ceil((w.deadline-Date.now()-clockOffset)/1000))+' วินาที':
-  'กำลังดำเนินเทิร์น · '+(controller?.state?.autoPlayers?.[connection.code]?'คุณเปิดอัตโนมัติ':'คุณเลือกคำสั่งเอง');
+let clockOffset=0, shownBattle=null, battleFrameReady=false;
+const battleFrame=$('partyBattleFrame');
+function sendBattle(){
+ if(!shownBattle||!battleFrameReady)return;
+ battleFrame.contentWindow.postMessage({type:'party-battle-state',run:shownBattle,code:connection.code,
+  auto:!!controller?.state?.autoPlayers?.[connection.code],clockOffset},location.origin);
 }
+addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.source!==battleFrame.contentWindow)return;
+ const message=event.data;
+ if(message?.type==='party-battle-ready'){battleFrameReady=true;sendBattle();return;}
+ if(!shownBattle||$('battle').hidden||message?.battle!==shownBattle.id)return;
+ if(message.type==='party-battle-done'&&shownBattle.status!=='active'){
+  seenBattle=shownBattle.id;drawBattle(null);window.focus();return;
+ }
+ if(shownBattle.status!=='active')return;
+ if(message.type==='party-battle-auto')void controller.command('battleAuto',{battle:shownBattle.id,enabled:!!message.enabled});
+ if(message.type==='party-battle-command'){
+  const turn=shownBattle.waiting;
+  if(turn?.ownerCode!==connection.code||message.turn!==turn.turn||message.actor!==turn.actor)return;
+  void controller.command('battleCommand',{battle:shownBattle.id,actor:turn.actor,turn:turn.turn,skill:message.skill,target:message.target,friend:message.friend});
+ }
+});
 function drawBattle(run){
- if(!run){$('battle').hidden=true;return;}
- if(run.kind==='solo'&&run.status!=='active'){seenBattle=run.id;$('battle').hidden=true;keys.clear();return;}
- if(run.status!=='active'&&seenBattle===run.id){$('battle').hidden=true;return;}
+ if(!run||(run.status!=='active'&&(run.kind==='solo'||seenBattle===run.id))){
+  shownBattle=null;$('battle').hidden=true;$('battleError').hidden=true;
+  if(run?.kind==='solo'){seenBattle=run.id;keys.clear();}
+  return;
+ }
  if(menus.open)menus.close();
- $('battle').hidden=false;$('dismiss').hidden=run.status==='active';
- $('battle').querySelector('h2').textContent=run.status==='active'?(run.kind==='solo'?'ต่อสู้เดี่ยว · รอบ ':'ต่อสู้บอสปาร์ตี้ · รอบ ')+(run.battle?.round||1):run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้';
- const scene = run.kind==='boss'?'boss':({2:'desert',3:'forest'}[config?.floor]||'forest');
- const background = asset(config?.battleArt||`assets/ui/battle-scenes/${scene}-v2.webp`);
- $('partyBattlefield').style.backgroundImage=`linear-gradient(#06131e40,#06131eb0),url("${background}")`;
- battleControls(run);
- for(const side of ['allies','enemies']){$(side).replaceChildren();for(const unit of run.battle?.[side]||[]){
-  const card=document.createElement('div');card.className='card';card.dataset.frame=unit.boss?'gold':side==='enemies'?'red':'blue';card.classList.toggle('fallen',unit.hp<=0);card.classList.toggle('acting',unit.id===run.battle.cur);
-  const raw=portrait(unit),src=raw&&(raw.startsWith(base.pathname)&&base.pathname!=='/'?new URL(raw,base).href:asset(raw));if(src){const image=document.createElement('img');image.src=src;image.alt='';card.append(image);}
-  const name=document.createElement('strong');name.textContent=(unit.name||unit.cls||'ผู้ผนึก')+' · Lv '+(unit.lv||1);card.append(name);
-  for(const stat of ['hp','mp']){const meter=document.createElement('meter');meter.max=Math.max(1,unit.st?.[stat]||1);meter.value=unit[stat]||0;meter.setAttribute('aria-label',stat.toUpperCase());meter.className=stat;card.append(meter);}
-  $(side).append(card);
- }}
- $('battleLog').textContent=(run.battle?.log||[]).slice(-4).map(x=>typeof x==='string'?x:x.text||'').join('\n');
- $('dismiss').onclick=()=>{seenBattle=run.id;$('battle').hidden=true;};
+ if(shownBattle?.id!==run.id){
+  battleFrameReady=false;
+  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&partyBattle=shared-battle-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+ }
+ shownBattle=run;$('battle').hidden=false;sendBattle();
 }
 const view={
  loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;$('title').textContent=`ชั้น ${floor} · ${config.name}`;},
@@ -101,7 +90,7 @@ const view={
 };
 function failure(error){
  if(!$('battle').hidden){
-  let errorBox=$('battleError');if(!errorBox){errorBox=document.createElement('p');errorBox.id='battleError';errorBox.setAttribute('role','status');$('battleLog').after(errorBox);}
+  const errorBox=$('battleError');errorBox.hidden=false;
   errorBox.textContent='อัปเดตการต่อสู้ไม่สำเร็จ ('+String(error.code||error.message||'network')+') · ระบบจะลองเชื่อมต่ออีกครั้ง';
  }
  if(['party_unavailable','party_not_member'].includes(error.message)){
@@ -124,7 +113,7 @@ try{
   const member=state.members.find(m=>m.code===connection.code);
   // Reconcile the overlay even if the scene already consumed this revision.
   drawBattle(state.battle);
-  if(state.battle?.status!=='active')$('battleError')?.remove();
+  $('battleError').hidden=true;
   if(!position&&member?.position)position={...member.position};
   if(state.battle?.status==='active'&&nextPulse!==Infinity)nextPulse=Math.min(nextPulse,performance.now()+750);
   ready=!!position;$('retry').hidden=true;$('interact').disabled=!ready;

@@ -16,24 +16,6 @@ header{background:linear-gradient(100deg,#061b29f5,#123d45e8);border-image:linea
 
 :root{--walk-top:66px}#partyTop{position:fixed;top:0;left:0;right:0;height:66px;background:linear-gradient(110deg,#102c3c,#06131e);border-bottom:2px solid #b99b62;display:flex;align-items:center;gap:9px;padding:7px 12px;z-index:14;font-size:12px}#partyHeroFlag{width:32px;height:24px;object-fit:contain}#partyTop meter{display:block;width:100px;height:7px}#partyTop meter::-webkit-meter-optimum-value{background:#51cb83}#partyHeroMp::-webkit-meter-optimum-value{background:#54b9ef!important}.partyLogo{width:110px;height:42px;object-fit:contain;margin-left:auto}header{top:66px;z-index:13}#miniToggle{top:146px;width:104px}#miniToggle.expanded{top:132px}#controls{bottom:88px}#notice{bottom:235px}#battle{top:132px;bottom:76px}#partyBottom{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-around;height:calc(70px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:linear-gradient(#173344,#071622);border-top:2px solid #b99b62;z-index:22}#partyBottom button{border:0;background:none;display:grid;place-items:center;gap:4px;padding:4px;font-size:12px;min-height:56px}#partyBottom img{width:30px;height:30px;object-fit:contain}#partyMenu{position:fixed;inset:70px 6px 76px;background:#081d2bf7;border:2px solid #b99b62;border-radius:12px;padding:16px;z-index:23;overflow:auto;overscroll-behavior:contain}#partyMenuClose{position:sticky;top:0;float:right;font-size:22px;z-index:2}#partyMenu h2{font-size:21px;padding-right:40px}#partyMenu button{touch-action:manipulation}#partyMenu select{max-width:100%;width:100%;padding:12px;background:#153342;color:#ffe7af}.inventory-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px;margin:10px 0;background:linear-gradient(130deg,#203c4c,#0b1c29);border:1px solid #ac8a50;border-radius:9px}.inventory-row strong{flex:1;min-width:120px}.inventory-row img{width:60px;height:65px;object-fit:contain}.inventory-row small{flex-basis:100%;color:#c5dcdf}.inventory-row input{width:24px;height:24px}#partyMenuStatus{color:#ffdb91;font-size:13px}#retry{top:130px;z-index:18}
 
-/* Reuse the classic battlefield paintings and full combat card frames. */
-#battle{background:#081622}
-#partyBattlefield{background-position:center;background-size:cover;border:1px solid #bc9956;border-radius:14px;padding:8px;box-shadow:inset 0 0 22px #000a}
-.party-battle-side h3{margin:3px 4px 7px;font-size:12px;color:#ffe0a0;text-shadow:0 1px 4px #000}
-.party-battle-side+.party-battle-side{border-top:1px solid #d4aa6666;padding-top:8px}
-#partyBattlefield .cards{margin:0 0 8px;grid-template-columns:repeat(auto-fit,minmax(min(100%,105px),1fr));gap:6px}
-#partyBattlefield .card{position:relative;min-height:105px;border:0;border-radius:0;padding:8px 10px;background:#081525dd}
-#partyBattlefield .card::after{content:"";position:absolute;inset:0;background:var(--party-card-frame) center/100% 100% no-repeat;pointer-events:none}
-#partyBattlefield [data-frame=blue]{--party-card-frame:url('../../assets/ui/battle-frames-v2/frame-blue-5x3.png.webp')}
-#partyBattlefield [data-frame=red]{--party-card-frame:url('../../assets/ui/battle-frames-v2/frame-red-5x3.png.webp')}
-#partyBattlefield [data-frame=gold]{--party-card-frame:url('../../assets/ui/battle-frames-v2/frame-gold-5x3.png.webp')}
-#partyBattlefield .card img{height:72px;object-fit:contain}
-#partyBattlefield .card.acting{box-shadow:inset 0 0 15px #ffce58,0 0 8px #ffce58}
-#partyBattlefield .card.fallen{filter:grayscale(1);opacity:.65}
-#partyBattlefield meter.hp{accent-color:#51cb83}
-#partyBattlefield meter.mp{accent-color:#54b9ef}
-#partyBattlefield meter.mp::-webkit-meter-optimum-value{background:#54b9ef}
-
 /* Same HUD frames and menu artwork used on the country map. */
 :root{--walk-top:84px}
 .party-hud{position:fixed;left:0;width:100%;border:0;z-index:24;background:transparent}
@@ -50,3 +32,7 @@ header{top:84px}#miniToggle{top:158px}#miniToggle.expanded{top:148px}
 #partyMenu button{border:8px solid transparent;border-image:url('../../assets/ui/menu-theme/frame-button.png.webp') 28 fill stretch;background:#122638}
 #townDialog{width:min(92vw,540px);max-height:82dvh;overflow:auto;color:#ffe6b2;background:#0c2333;border:1px solid #c5a364;border-radius:14px}
 #townDialog::backdrop{background:#050d18b5}
+
+#battle{inset:84px 0 calc(84px + env(safe-area-inset-bottom));padding:0;border:0;border-radius:0;overflow:hidden;background:#0b1724}
+#partyBattleFrame{display:block;width:100%;height:100%;border:0}
+#battleError{position:absolute;bottom:0;left:0;right:0;margin:0;padding:8px;background:#29151e;color:#ffd7c1}
