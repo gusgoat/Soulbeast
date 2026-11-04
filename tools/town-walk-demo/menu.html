@@ -7321,6 +7321,13 @@ const walkBattleView=vBattle;vBattle=function(){const item=CON.teleportScroll;le
 CON.teleportScroll={n:'ใบเทเลพอร์ต',d:'วาร์ปไปเมืองหลวง เมือง หรือหมู่บ้านที่อาณาจักรของคุณครอบครอง · ใช้ไม่ได้ระหว่างต่อสู้หรืออยู่ในป่า',price:30,lv:1};
 ITEM_ART.teleportScroll='assets/world-quests/teleport-scroll-v1.png.webp';
 function walkTeleportBlocked(){return !!S.zone||!!(S.battle&&!S.battle.over)}
+function teleportSaveError(error){
+ const reason=error.code||error.message;
+ if(reason==='save_conflict'||reason==='gacha stale')return 'เซฟออนไลน์ของตัวละครเปลี่ยนแล้ว กรุณากลับหน้าเลือกตัวละครและเข้าเกมใหม่ก่อนเทเลพอร์ต';
+ if(reason==='login_required'||reason==='character_not_owned'||error.status===401)return 'กรุณาเข้าสู่ระบบและเลือกตัวละครอีกครั้งก่อนเทเลพอร์ต';
+ if(reason==='party_run_active'||reason==='tower locked'||reason==='finish other battle')return 'กรุณาจบกิจกรรมที่ค้างอยู่ก่อนเทเลพอร์ต';
+ return 'ยังบันทึกการใช้ใบเทเลพอร์ตไม่ได้ กรุณาลองใหม่';
+}
 let teleportView=null, teleportDestination='', teleportBusy=false;
 async function loadTeleportTerritory(){
  const packet={action:'country_status',code:S.P.code,pin:S.P.cpin||''};
@@ -7352,10 +7359,16 @@ handlers.confirmTeleport=async()=>{
   teleportView=await loadTeleportTerritory();
   if(S.screen!=='bag'||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;
   if(!teleportLocations().some(n=>n.id===destination)){teleportDestination='';toast('อาณาจักรของคุณไม่ได้ครอบครองปลายทางนี้แล้ว');return;}
-  S.P.items.teleportScroll--;save();
+  const online=WALK_ONLINE?await getWalkAccountConnection():null;
   if(WALK_ONLINE){
-   try{await (await getWalkAccountConnection()).flush(true);}
-   catch{S.P.items.teleportScroll++;save();throw Error('ยังบันทึกการใช้ใบเทเลพอร์ตไม่ได้ กรุณาลองใหม่');}
+   try{await online.flush(true);}
+   catch(error){throw Error(teleportSaveError(error));}
+  }
+  if(S.screen!=='bag'||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;
+  S.P.items.teleportScroll--;save();
+  if(online){
+   try{await online.flush(true);}
+   catch(error){S.P.items.teleportScroll++;save();throw Error(teleportSaveError(error));}
   }
   S.ui.walkTeleport=false;
   parent.postMessage({type:'walk-teleport',destination},location.origin);
