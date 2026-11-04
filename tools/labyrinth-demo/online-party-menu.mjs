@@ -1,9 +1,10 @@
 // Private inventory requests only when a menu opens; never part of motion broadcasts.
-export function partyMenu({request,refresh,picture,onOpen}){
- const $=id=>document.getElementById(id),panel=$('partyMenu'),body=$('partyMenuBody');let tab='bag',data=null,busy=false,pending=null,generation=0;
+export function partyMenu({request,refresh,picture,onOpen,canOpen}){
+ const $=id=>document.getElementById(id),panel=$('partyMenu'),body=$('partyMenuBody');const aux=$('partyAuxMenu'),quest=$('townDialog'),hud=[$('hudTop'),$('hudBottom')];let member=null;
+ let tab='bag',data=null,busy=false,pending=null,generation=0;
  const el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;};
  const button=(text,fn,disabled=false)=>{const b=el('button',text);b.disabled=disabled;b.onclick=fn;return b;};
- function close(){generation++;panel.hidden=true;onOpen(false);window.focus();}
+ function close(){generation++;panel.hidden=true;if(quest.open)quest.close();if(!aux.hidden){aux.hidden=true;aux.removeAttribute('src');}onOpen(false);window.focus();}
  function row(name,image){const r=el('article');r.className='inventory-row';if(image){const i=el('img');i.src=image;i.alt='';i.onerror=()=>i.remove();r.append(i);}r.append(el('strong',name));body.append(r);return r;}
  function draw(){body.replaceChildren();if(!data)return;const d=data;
   $('partyMenuTitle').textContent=tab==='bag'?'กระเป๋าเดินทาง':tab==='team'?'อสูรร่วมต่อสู้':'ตัวละครและอุปกรณ์';
@@ -23,10 +24,34 @@ export function partyMenu({request,refresh,picture,onOpen}){
    body.append(el('h3','อุปกรณ์ในกระเป๋า'));for(const g of d.owned){const r=row(g.n+' · Lv '+g.lv);r.append(el('small',Object.entries(g.st||{}).map(([k,v])=>k+' +'+v).join(' · ')),button('สวมใส่',()=>act({op:'equip',id:g.id}),busy||d.lv<g.lv||d.equipment.some(x=>x.id===g.id)));}
   }
  }
- async function load(){const gen=generation;$('partyMenuStatus').textContent='กำลังโหลดข้อมูล…';try{const result=await request({});if(gen!==generation)return;data=result;draw();$('partyMenuStatus').textContent='';}catch(e){if(gen===generation)$('partyMenuStatus').textContent='โหลดไม่สำเร็จ · '+e.message;}}
+ async function load(){const gen=generation;$('partyMenuStatus').textContent='กำลังโหลดข้อมูล…';try{const result=await request({});if(gen!==generation)return;data=result;syncHud();draw();$('partyMenuStatus').textContent='';}catch(e){if(gen===generation)$('partyMenuStatus').textContent='โหลดไม่สำเร็จ · '+e.message;}}
  async function act(command){if(busy)return;busy=true;pending??={...command,requestId:crypto.randomUUID()};draw();$('partyMenuStatus').textContent='กำลังบันทึก…';try{await request(pending);pending=null;await refresh();await load();}catch(e){$('partyMenuStatus').textContent=e.message==='invalid_inventory_action'?'ใช้ไม่ได้: ตรวจจำนวนยา พลังชีวิต เลเวล หรือจำนวนอสูรในทีม':e.message==='already_fighting'?'เริ่มต่อสู้แล้ว กรุณาจัดการหลังจบการต่อสู้':'เชื่อมต่อไม่สำเร็จ กดทำรายการอีกครั้งเพื่อตรวจรายการเดิม';if(['invalid_inventory_action','already_fighting'].includes(e.message))pending=null;}finally{busy=false;draw();}}
  $('partyMenuClose').onclick=close;$('menuReload').onclick=()=>void load();
- for(const b of document.querySelectorAll('[data-party-menu]'))b.onclick=()=>{tab=b.dataset.partyMenu;generation++;panel.hidden=false;onOpen(true);body.replaceChildren();void load();};
- $('walkMenu').onclick=close;
- return {close,get open(){return !panel.hidden;},update(m){if(!m)return;$('partyHeroName').textContent=m.name+' · Lv '+m.level;$('partyHeroHp').max=m.maxHp||1;$('partyHeroHp').value=m.hp;$('partyHeroMp').max=m.maxMp||1;$('partyHeroMp').value=m.mp;const flag=$('partyHeroFlag');flag.src=new URL('../../assets/ui/country-war/flag-'+(['blue','red','green'].includes(m.country)?m.country:'blue')+'-v1.webp',import.meta.url);}};
+ const titles={hero:'ตัวละคร',team:'อสูร',bag:'กระเป๋า',friends:'เพื่อน',mail:'จดหมาย',settings:'ตั้งค่า',coupon:'ร้านคูปอง'};
+ const inventoryTabs=new Set(['hero','team','bag']);
+ function syncHud(){if(!member)return;for(const frame of hud)frame.contentWindow?.postMessage({type:'party-hud-state',member,gold:data?.gold},location.origin);}
+ for(const frame of hud)frame.addEventListener('load',syncHud);
+ function open(screen){
+  if(!canOpen()||busy)return;
+  close();
+  if(screen==='quests'){window.townQuests.show(true);onOpen(true);return;}
+  if(!Object.hasOwn(titles,screen))return;
+  tab=screen;generation++;panel.hidden=false;panel.dataset.tab=tab;onOpen(true);
+  $('partyMenuTitle').textContent=titles[tab];$('partyMenuStatus').textContent='';
+  const inventory=inventoryTabs.has(tab);
+  body.hidden=!inventory;$('menuReload').hidden=!inventory;aux.hidden=inventory;
+  if(inventory){body.replaceChildren();void load();return;}
+  const country=['blue','green','red'].includes(member?.country)?member.country:'blue';
+  aux.src=tab==='coupon'?'../town-walk-demo/coupon.html':`../town-walk-demo/menu.html?partyAux=1&screen=${tab}&dungeon=party&country=${country}&city=${country}-capital`;
+ }
+ quest.addEventListener('close',()=>onOpen(false));
+ addEventListener('message',event=>{
+  if(event.origin!==location.origin)return;
+  if(hud.some(frame=>frame.contentWindow===event.source)&&event.data?.type==='walk-menu')open(event.data.screen);
+  if(event.source===aux.contentWindow&&!aux.hidden){
+   if(event.data?.type==='town-return')close();
+   if(event.data?.type==='town-open-quests')open('quests');
+  }
+ });
+ return {close,get open(){return !panel.hidden||quest.open;},update(m){member=m;syncHud();}};
 }

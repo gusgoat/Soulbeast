@@ -33,3 +33,20 @@ header{background:linear-gradient(100deg,#061b29f5,#123d45e8);border-image:linea
 #partyBattlefield meter.hp{accent-color:#51cb83}
 #partyBattlefield meter.mp{accent-color:#54b9ef}
 #partyBattlefield meter.mp::-webkit-meter-optimum-value{background:#54b9ef}
+
+/* Same HUD frames and menu artwork used on the country map. */
+:root{--walk-top:84px}
+.party-hud{position:fixed;left:0;width:100%;border:0;z-index:24;background:transparent}
+#hudTop{top:0;height:84px}#hudBottom{bottom:0;height:calc(84px + env(safe-area-inset-bottom))}
+header{top:84px}#miniToggle{top:158px}#miniToggle.expanded{top:148px}
+#controls{bottom:calc(94px + env(safe-area-inset-bottom))}
+#battle{top:148px;bottom:calc(84px + env(safe-area-inset-bottom))}
+#partyMenu{inset:84px 0 calc(84px + env(safe-area-inset-bottom));border:0;border-radius:0;background:linear-gradient(#122130,#0b1724);z-index:23}
+#partyAuxMenu{width:100%;height:calc(100% - 55px);border:0;background:#0b1724}
+#partyMenu .inventory-row{border:12px solid transparent;border-image:url('../../assets/ui/menu-theme/frame-panel.png.webp') 48 fill stretch;background:linear-gradient(#07132288,#071322e8),var(--party-panel) center/cover}
+#partyMenu[data-tab=bag]{--party-panel:url('../../assets/ui/menu-portrait/panel-inventory.webp')}
+#partyMenu[data-tab=hero]{--party-panel:url('../../assets/ui/menu-portrait/panel-equipment.webp')}
+#partyMenu[data-tab=team]{--party-panel:url('../../assets/ui/menu-portrait/panel-retinue.webp')}
+#partyMenu button{border:8px solid transparent;border-image:url('../../assets/ui/menu-theme/frame-button.png.webp') 28 fill stretch;background:#122638}
+#townDialog{width:min(92vw,540px);max-height:82dvh;overflow:auto;color:#ffe6b2;background:#0c2333;border:1px solid #c5a364;border-radius:14px}
+#townDialog::backdrop{background:#050d18b5}

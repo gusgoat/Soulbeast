@@ -1,4 +1,4 @@
-import {partyMenu} from './online-party-menu.mjs?v=party-menus-1';
+import {partyMenu} from './online-party-menu.mjs?v=country-hud-1';
 import {partyArt} from './online-party-art.mjs?v=solo-scenery-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
@@ -32,7 +32,7 @@ function offerReturn(city,automatic=false){
  };
  if(automatic)void button.onclick();
 }
-const menus=partyMenu({request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),picture:p=>{const v=portrait(p);return v?asset(v):null;},onOpen:()=>{keys.clear();selfMoving=false;}});
+const menus=partyMenu({canOpen:()=>ready&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),picture:p=>{const v=portrait(p);return v?asset(v):null;},onOpen:()=>{keys.clear();selfMoving=false;}});
 let commandKey='',clockOffset=0;
 function battleControls(run){
  let box=$('partyCommands');if(!box){box=document.createElement('div');box.id='partyCommands';$('battleLog').before(box);}

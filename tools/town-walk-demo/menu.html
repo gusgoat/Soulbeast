@@ -7240,7 +7240,22 @@ Music.sync=function(...args){const result=walkMusicSync.apply(this,args);documen
 // Try immediately when the browser already permits audio; gestures retry if needed.
 walkUnlockAudio();
 window.DungeonRewardEquipment.register(EQ,typeof WEAPON_ART==='undefined'?null:WEAPON_ART);save=()=>{};gsSave=async()=>{};lbSubmit=async()=>{};S={"ver":6,"screen":"town","ui":{},"zone":null,"battle":null,"P":{"name":"ทดสอบ","cls":"swordsman","gender":"male","lv":3,"exp":0,"gold":150,"pts":{},"free":10,"eq":{"weapon":"wp_sword0"},"owned":[],"items":{"pot":5,"seal1":5,"eth":2,"antidote":1,"calm":1},"parts":{},"pets":[{"uid":1,"sp":"mandrake","lv":3,"form":0,"exp":0,"pts":{},"free":6,"hp":64,"mp":32}],"party":[1],"legend":{},"zoneMax":1,"arena":{},"seen":{"mandrake":1},"caught":{"mandrake":1},"uid":2,"hp":83,"mp":25,"carried":[1],"packVersion":1,"seenForms":{"mandrake":[0]},"discoveryVersion":1,"code":"CHECKTEST2345"}};Tutorial.clear();S.P.hp=pStats().hp;S.P.mp=pStats().mp;S.P.forestAutoIntroduced=true;S.zone=null;
-const allowed=['shop','guild','countrywar','leader','pvp','world','camp','hospital','arena','forge','wild','gacha','guide','story','replay','hero','team','bag','mail','friends','settings'];const params=new URLSearchParams(location.search),screen=params.get('screen'),previewZone=Number(params.get('zone'));S.screen=screen==='chat'?'friends':screen==='replay'?'story':allowed.includes(screen)?screen:'shop';render();
+const allowed=['shop','guild','countrywar','leader','pvp','world','camp','hospital','arena','forge','wild','gacha','guide','story','replay','hero','team','bag','mail','friends','settings'];if(new URLSearchParams(location.search).get('partyAux')==='1'){
+ const style=document.createElement('style');
+ style.textContent='#app>.top,#app>.bottom,#app>.brand-seam{display:none!important} #app>main{padding-top:0!important;padding-bottom:0!important}';
+ document.head.append(style);
+ document.addEventListener('click',event=>{
+  const control=event.target.closest('[data-a]');
+  if(!control)return;
+  const action=control.dataset.a, screen=control.dataset.v;
+  if(action==='go'&&['mail','friends','settings'].includes(screen))return;
+  if(action!=='go'&&!/^(reset|doreset|gs|cwEnter|friendDuel|pvp)/i.test(action))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  if(action==='go'&&screen==='town')parent.postMessage({type:'town-return'},location.origin);
+  else toast('ออกจากดันเจี้ยนก่อนใช้คำสั่งนี้');
+ },true);
+}
+const params=new URLSearchParams(location.search),screen=params.get('screen'),previewZone=Number(params.get('zone'));S.screen=screen==='chat'?'friends':screen==='replay'?'story':allowed.includes(screen)?screen:'shop';render();
 const walkLegacyBar=document.createElement('div');walkLegacyBar.style='position:sticky;top:0;z-index:99999;background:#153d34;color:#ecdfb6;padding:12px;font:12px Tahoma';const back=document.createElement('button');back.textContent='← กลับฉากเดิน';back.style='padding:9px;background:#305747;border:1px solid #baa46d;color:#fff0c4;border-radius:8px';back.onclick=()=>parent.postMessage({type:'town-return'},location.origin);walkLegacyBar.append(back);/* Detached legacy return control: the footer owns navigation. */
 document.addEventListener('click',e=>{if(e.target.closest('[data-a="go"][data-v="town"]')){e.preventDefault();e.stopImmediatePropagation();if(params.get('localDuel')==='1'&&PVP.room&&['waiting','lobby','active'].includes(PVP.room.status)){toast('ออกจากห้องประลองก่อนกลับฉากเดิน');return}if(S.zone){toast('ออกจากป่าไม่ได้จนกว่าจะชนะบอสหรือพ่ายแพ้');return}save();parent.postMessage({type:'town-return'},location.origin)}},true);/* Inserted into the isolated game's lexical scope. Purchases use its normal gold/item flow. */
 CON.beastRepellent={n:'เครื่องหอมไล่อสูร',d:'ป้องกันเงาอสูรวิ่งเข้าหาผู้ผนึกบนแผนที่ประเทศ 10 นาที หากเข้าไปชนเองยังเกิดการต่อสู้ · ใช้จากกระเป๋า · ไม่ป้องกันโจรป่า',price:150,lv:1};
