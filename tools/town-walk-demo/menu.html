@@ -7540,7 +7540,7 @@ if(S.screen==='settings')render();
 /* Keep the selected service NPC visible while using that service; never in combat. */
 function mountServiceSpeaker(){
  const banner=document.getElementById('serviceSpeaker');
- if(S.battle||S.zone||S.screen!==params.get('screen')||(S.screen==='world'&&compactBattleReady('world'))){
+ if(S.battle||S.zone||S.screen!==params.get('screen')||(['world','camp'].includes(S.screen)&&compactBattleReady(S.screen))){
   banner?.remove();
   return;
  }
