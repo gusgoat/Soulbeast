@@ -9,7 +9,7 @@ export async function connectWalkRealtime({url, key, token, identity}) {
  const close=channel=>void supabase.removeChannel(channel).catch(()=>{});
  function reset(){
   generation++;
-  if(publisher)close(publisher.channel);
+  if(publisher?.channel)close(publisher.channel);
   publisher=null;
   for(const channel of subscribers.values())close(channel);
   subscribers.clear();
@@ -47,5 +47,5 @@ export async function connectWalkRealtime({url, key, token, identity}) {
    moving:!!moving,running:!!running,seq:++sequence
   }}).catch(()=>{});
  }
- return {update,send,reset};
+ return {update,send,reset,get ready(){return publisher?.ready===true;}};
 }

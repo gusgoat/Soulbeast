@@ -107,7 +107,7 @@ export function connectOnlineWalk(accountStorage) {
  }, await client.sessions.token());
  const walkRealtimeTest = context.environment==='test' && new URLSearchParams(location.search).get('realtimeWalk')==='1';
  const openWalkRealtime = async () => {
-  const {connectWalkRealtime}=await import('./walk-realtime-test.mjs?v=1');
+  const {connectWalkRealtime}=await import('./walk-realtime-test.mjs?v=2');
   return connectWalkRealtime({...accountRealtimeConfig,token:()=>client.sessions.token(),
    identity:async()=>client.request('/rest/v1/rpc/sb_walk_test_identity',{p_code:context.code},await client.sessions.token())
   });

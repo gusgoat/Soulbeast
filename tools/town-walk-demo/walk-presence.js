@@ -1,7 +1,7 @@
 /* Local-machine preview transport. BroadcastChannel is intentionally not an online server. */
 (()=>{'use strict';const key='soulbeast-walk-preview-player-v1',peers=new Map(),channel=new BroadcastChannel('soulbeast-walk-presence-v1'),session=crypto.randomUUID();let locationId='',lastSend=0,lastState=null;function raster(im,w,h){const tile=document.createElement('canvas');tile.width=w;tile.height=h;tile.getContext('2d').drawImage(im,0,0,w,h);im.raster=tile}
 let online=null;const onlineMode=!!sessionStorage.getItem('soulbeast-online-walk-v1');
-if(onlineMode)import('../../client/online-walk.mjs?v=walk-realtime-test-1').then(m=>{online=m.connectOnlineWalk();if(online){m.mountDungeonInvitations(online,peers);setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
+if(onlineMode)import('../../client/online-walk.mjs?v=walk-realtime-test-2').then(m=>{online=m.connectOnlineWalk();if(online){m.mountDungeonInvitations(online,peers);setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
 const flags={};for(const id of ['blue','green','red']){const im=new Image();im.onload=()=>raster(im,64,42);im.src=new URL('../../assets/ui/country-war/flag-'+id+'-v1.webp',document.currentScript.src).href;flags[id]=im}
 let playerRaw,playerCache;function player(){try{const raw=sessionStorage.getItem(key);if(raw!==playerRaw){playerRaw=raw;playerCache=JSON.parse(raw||'null')}return playerCache}catch{return null}}
 const frames={};
@@ -23,12 +23,22 @@ function samplePeer(peer,row,seen){
 function advancePeer(peer,now,dt){
  const ahead=peer.moving?Math.min(550,Math.max(0,now-peer.sampleAt)+120):0;
  const x=peer.targetX+(peer.vx||0)*ahead,y=peer.targetY+(peer.vy||0)*ahead;
- const blend=1-Math.exp(-dt/90);
+ const smoothing=now<(peer.quickUntil||0)?55:90;
+ const blend=1-Math.exp(-dt/smoothing);
  if(Math.hypot(x-peer.x,y-peer.y)>400){peer.x=x;peer.y=y;return;}
  peer.x+=(x-peer.x)*blend;
  peer.y+=(y-peer.y)*blend;
 }
-let realtime,realtimeLoading=false;
+let realtime,realtimeLoading=false,realtimeFailed=false,lastRealtimePeerAt=-Infinity;
+const realtimeStatus=document.getElementById('walkRealtimeStatus');
+function showRealtimeStatus(now){
+ if(!realtimeStatus||!online?.walkRealtimeTest)return;
+ const label=realtime?.ready
+  ? now-lastRealtimePeerAt<2000?'WebSocket · รับตำแหน่งเพื่อนแล้ว':'WebSocket · รอเพื่อนขยับ'
+  : realtimeFailed?'ใช้ระบบเดิม · WebSocket เชื่อมต่อไม่ได้':'กำลังเชื่อมต่อ WebSocket · ใช้ระบบเดิม';
+ if(realtimeStatus.textContent!==label)realtimeStatus.textContent=label;
+ realtimeStatus.hidden=false;
+}
 function receiveRealtime(id,row){
  const peer=peers.get(id);
  if(!peer||!row||!Number.isSafeInteger(row.seq)||row.seq<1||
@@ -37,6 +47,8 @@ function receiveRealtime(id,row){
     typeof row.moving!=='boolean'||typeof row.running!=='boolean')return;
  const now=performance.now();
  if(row.seq<=(peer.realtimeSeq||0)&&now-(peer.realtimeAt||0)<1600)return;
+ if(peer.moving!==row.moving||peer.running!==row.running||peer.dir!==row.dir)peer.quickUntil=now+220;
+ lastRealtimePeerAt=now;
  samplePeer(peer,row,now);
  Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,realtimeAt:now,realtimeSeq:row.seq});
 }
@@ -45,11 +57,11 @@ function syncPeers(place,p,moving,running){const now=performance.now();if(!onlin
   if(realtime)realtime.update(place,ids,receiveRealtime);
   else if(!realtimeLoading){
    realtimeLoading=true;
-   online.openWalkRealtime().then(connection=>{realtime=connection;}).catch(console.warn);
+   online.openWalkRealtime().then(connection=>{realtime=connection;}).catch(()=>{realtimeFailed=true;});
   }
  }
  for(const [id,peer] of peers)if(!ids.has(id)){peer.sprite.release();peers.delete(id);}const seen=performance.now();for(const row of rows){if(!window.sealerSpriteCatalog?.[row.cls])continue;let peer=peers.get(row.id);if(!peer){peer={sprite:window.sealerSprites.create(),x:row.x,y:row.y};peers.set(row.id,peer);}if(seen-(peer.realtimeAt??-Infinity)<750){Object.assign(peer,{player:row,seen});continue;}samplePeer(peer,row,seen);Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,player:row,seen});peer.sprite.sync(row).catch(()=>{});}}).catch(()=>{nextHeartbeat=performance.now()+3000;}).finally(()=>{heartbeatPending=false;});}
-function tick(place,p,moving,running){window.walkSocial?.tick();window.DungeonPartyPresence?.publish();if(locationId!==place&&realtime)realtime.reset();locationId=place;const now=performance.now();for(const [id,v]of peers)if(now-v.seen>5000){v.sprite.release();peers.delete(id)}if(onlineMode){realtime?.send(place,p,moving,running);syncPeers(place,p,moving,running);return;}if(now-lastSend<150)return;lastSend=now;const me=player();if(!me)return;lastState={type:'position',session,place,x:p.x,y:p.y,dir:p.dir,moving,running,player:{name:me.name||me.n,cls:me.cls,gender:me.gender,lv:me.lv,country:me.country,entitlements:{premiumNameplates:window.WalkNameplates?.owned(me)||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}
+function tick(place,p,moving,running){window.walkSocial?.tick();window.DungeonPartyPresence?.publish();if(locationId!==place&&realtime){realtime.reset();lastRealtimePeerAt=-Infinity;}locationId=place;const now=performance.now();for(const [id,v]of peers)if(now-v.seen>5000){v.sprite.release();peers.delete(id)}if(onlineMode){showRealtimeStatus(now);realtime?.send(place,p,moving,running);syncPeers(place,p,moving,running);return;}if(now-lastSend<150)return;lastSend=now;const me=player();if(!me)return;lastState={type:'position',session,place,x:p.x,y:p.y,dir:p.dir,moving,running,player:{name:me.name||me.n,cls:me.cls,gender:me.gender,lv:me.lv,country:me.country,entitlements:{premiumNameplates:window.WalkNameplates?.owned(me)||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}
 function draw(c,sx,sy,scale,phase){const now=performance.now(),dt=lastDraw?Math.min(now-lastDraw,100):16;lastDraw=now;for(const p of peers.values()){if(onlineMode)advancePeer(p,now,dt);else{p.x+=(p.targetX-p.x)*.24;p.y+=(p.targetY-p.y)*.24;}p.hitbox={x:sx(p.x),y:sy(p.y),scale};p.sprite.draw(c,sx(p.x),sy(p.y),156*scale,p.dir,phase,p.moving,p.running);p.hitbox.labelWidth=label(c,sx(p.x),sy(p.y)-154*scale,p.player)}}
 setInterval(()=>{const now=performance.now();if(lastState&&now-lastSend>900){window.walkSocial?.tick();lastSend=now;lastState={...lastState,moving:false,running:false,player:{...lastState.player,entitlements:{premiumNameplates:window.WalkNameplates?.owned(player())||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}},1000);
 addEventListener('pagehide',()=>channel.postMessage({type:'leave',session}));channel.postMessage({type:'hello',session});window.walkPresence={tick,draw,label,player,peers,session};
