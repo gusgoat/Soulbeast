@@ -1,4 +1,4 @@
-import {connectAccounts} from './account-client.mjs';
+import {connectAccounts} from './account-client.mjs?v=activity-session-20261104';
 
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
