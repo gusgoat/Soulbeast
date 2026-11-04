@@ -14,24 +14,36 @@ function render(){
  for(const m of room.members){const row=document.createElement('li');row.dataset.ready=String(m.ready&&m.online);
   row.textContent=`${m.name} · Lv ${m.level}${m.code===room.host?' · หัวหน้าห้อง':''} · ${!m.online?'ขาดการเชื่อมต่อ':m.ready?'พร้อมแล้ว':'ยังไม่พร้อม'}`;$('members').append(row);}
  const me=room.members.find(m=>m.code===connection.code);$('ready').textContent=me?.ready?'ยกเลิกพร้อม':'ยืนยันพร้อม';
- $('ready').disabled=busy||room.state!=='waiting';$('leave').disabled=busy||room.state!=='waiting';
- $('start').hidden=room.host!==connection.code;
+ $('ready').hidden=room.state!=='waiting';$('ready').disabled=busy;$('leave').disabled=busy;
+ $('resume').hidden=room.state!=='active';$('resume').disabled=busy;
+ $('start').hidden=room.host!==connection.code||room.state!=='waiting';
  $('start').disabled=busy||room.state!=='waiting'||room.members.length<2||!room.members.every(m=>m.ready&&m.online);
  const size=room.startedSize||room.members.length;
  if(size>=2){const rule=partyRules(size);$('requirements').textContent=`ต่อชั้น: อสูรเงา ${rule.shadows} ตัว · โจรป่า ${rule.bandits} ตัว · พลังบอสและสมุน ×${rule.bossMultiplier.toFixed(1)}`;}
  else $('requirements').textContent='รอผู้ผนึกอีกอย่างน้อย 1 คน';
 }
+function resume(){stopped=true;clearInterval(timer);location.assign('online-party-run.html?room='+encodeURIComponent(room.id));}
 async function update(action='status',extra={}){
  if(busy||stopped)return;busy=true;render();
  try{
-  const result=await connection.call(action,{room:room?.id,...extra});
+  let refreshFailed=false;
+  const wasWaiting=room?.state==='waiting';
+  let result;
+  if(action==='leave'&&room?.state==='active'){
+   await connection.run(room.id,'leave');
+   result={left:true};
+   try{await connection.restoreWalk();}catch{refreshFailed=true;}
+  }else{
+   try{result=await connection.call(action,{room:room?.id,...extra});}
+   catch(error){
+    if(error.message!=='party_already_active')throw error;
+    result=await connection.call('status');
+   }
+  }
   if(result.left){room=null;sessionStorage.removeItem(partySessionKey);}
   else {room=result;sessionStorage.setItem(partySessionKey,JSON.stringify({id:room.id,code:connection.code}));}
-  $('status').textContent=room?.state==='active'?'ทุกคนพร้อมแล้ว กำลังเข้าสู่ดันเจี้ยน…':'';
-  if(room?.state==='active'){
-   // Dedicated party runtime; never enter the legacy local simulation as an online team.
-   stopped=true;clearInterval(timer);location.assign('online-party-run.html?room='+encodeURIComponent(room.id));
-  }
+  $('status').textContent=room?.state==='active'?'พบปาร์ตี้เดิม · กลับเข้าดันเจี้ยนหรือออกจากห้องได้':action==='leave'?(refreshFailed?'ออกจากห้องแล้ว · โหลดเซฟล่าสุดไม่สำเร็จ กรุณาเข้าเกมใหม่':'ออกจากห้องแล้ว'):'';
+  if(room?.state==='active'&&wasWaiting)resume();
  }catch(error){
   if(action==='status'&&['party_unavailable','party_not_member'].includes(error.message)){
    room=null;sessionStorage.removeItem(partySessionKey);
@@ -46,10 +58,9 @@ $('create').onclick=()=>update('create');$('join').onclick=()=>{const id=$('room
  if(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)){void update('join',{room:id});return;}
  $('status').textContent='กรุณาใส่รหัสห้อง 8 ตัวตามที่หัวหน้าห้องส่งให้';};
 $('ready').onclick=()=>update('ready',{ready:!room.members.find(m=>m.code===connection.code)?.ready});
-$('start').onclick=()=>update('start');$('leave').onclick=()=>update('leave');
+$('start').onclick=()=>update('start');$('leave').onclick=()=>{if(room?.state!=='active'||window.confirm('ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?'))void update('leave');};$('resume').onclick=resume;
 $('copy').onclick=async()=>{if(!room?.joinCode)return;try{await navigator.clipboard.writeText(room.joinCode);$('status').textContent='คัดลอกรหัสห้องแล้ว';}catch{$('status').textContent='เลือกและคัดลอกรหัสห้องด้านบนได้เลย';}};
-try{connection=connectDungeonParty();const saved=JSON.parse(sessionStorage.getItem(partySessionKey)||'null');
- if(saved?.code===connection.code){room={id:saved.id,members:[],state:'waiting'};void update();}
+try{connection=connectDungeonParty();void update();
  timer=setInterval(()=>{if(room&&!document.hidden)void update();},5000);
 }catch{$('status').textContent=errors.login_required;$('create').disabled=$('join').disabled=true;}
 addEventListener('pagehide',()=>{stopped=true;clearInterval(timer);});
