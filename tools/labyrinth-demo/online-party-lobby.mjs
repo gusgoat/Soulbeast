@@ -26,11 +26,14 @@ function render(){
 function resume(){stopped=true;clearInterval(timer);location.assign('index.html?room='+encodeURIComponent(room.id));}
 async function update(action='status',extra={}){
  if(busy||stopped)return;busy=true;$('retryLobby').hidden=true;render();
+ let saving=false;
  try{
   let refreshFailed=false;
   const wasWaiting=room?.state==='waiting';
   let result;
-  if(['create','join','start'].includes(action)||(action==='ready'&&extra.ready))await walkSave.flush(true);
+  if(action==='start'||(action==='ready'&&extra.ready)){
+   saving=true;await walkSave.flush(true);saving=false;
+  }
   if(action==='leave'&&room?.state==='active'){
    await connection.run(room.id,'leave');
    result={left:true};
@@ -52,7 +55,7 @@ async function update(action='status',extra={}){
    room=null;sessionStorage.removeItem(partySessionKey);
   }
   $('status').textContent=errors[error.message]||errors[error.code]||
-   (error.status===401?'กรุณาเข้าสู่ระบบเกมใหม่':error.status===403?'บัญชีนี้ไม่มีสิทธิ์ใช้ตัวละครที่เลือก กรุณาเข้าเกมใหม่':'เชื่อมต่อห้องไม่สำเร็จ กรุณาลองอีกครั้ง');
+   (saving?'บันทึกตัวละครก่อนเริ่มดันเจี้ยนไม่สำเร็จ กรุณาลองอีกครั้ง':error.status===401?'กรุณาเข้าสู่ระบบเกมใหม่':error.status===403?'บัญชีนี้ไม่มีสิทธิ์ใช้ตัวละครที่เลือก กรุณาเข้าเกมใหม่':action==='create'?'เซิร์ฟเวอร์สร้างห้องไม่สำเร็จ กรุณาลองอีกครั้ง':'เชื่อมต่อห้องไม่สำเร็จ กรุณาลองอีกครั้ง');
  }
  finally{busy=false;render();}
 }
