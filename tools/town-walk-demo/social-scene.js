@@ -36,9 +36,11 @@ async function onlineProfile(id,p){
   if(!dialog.open)return;
   title(p.name||'ผู้ผนึก');
   if(!target){text('ยังยืนยันบัญชีของผู้เล่นนี้ไม่ได้');button('กลับไปเดินต่อ',close);return;}
-  const isFriend=result.friends.some(player=>player.id===target);
-  const run=async(action)=>{try{if(!valid(id)||await conn.socialTarget(id)!==target)return notice('ผู้เล่นออกจากพื้นที่แล้ว');await social(action,{target});if(action==='friend_add')return onlineProfile(id,p);notice('ส่งคำท้าประลองแล้ว · ผู้รับเปิดเมนูเพื่อนเพื่อตอบรับ');}catch(e){notice('ดำเนินการไม่สำเร็จ · '+e.message);}};
-  button(isFriend?'เป็นเพื่อนแล้ว':'เพิ่มเพื่อน',()=>run('friend_add'),isFriend);
+  const isFriend=result.friends.some(player=>player.id===target),incoming=result.friendRequests?.incoming?.some(player=>player.id===target),outgoing=result.friendRequests?.outgoing?.some(player=>player.id===target);
+  const run=async(action)=>{try{if(!valid(id)||await conn.socialTarget(id)!==target)return notice('ผู้เล่นออกจากพื้นที่แล้ว');await social(action,{target});if(action!=='friend_challenge')return onlineProfile(id,p);notice('ส่งคำท้าประลองแล้ว · ผู้รับเปิดเมนูเพื่อนเพื่อตอบรับ');}catch(e){notice('ดำเนินการไม่สำเร็จ · '+e.message);}};
+  button(isFriend?'เป็นเพื่อนแล้ว':incoming?'ยอมรับคำขอเป็นเพื่อน':outgoing?'ส่งคำขอแล้ว · รอการยอมรับ':'ส่งคำขอเป็นเพื่อน',()=>run(incoming?'friend_request_accept':'friend_add'),isFriend||(!incoming&&outgoing));
+  if(!isFriend&&incoming)button('ปฏิเสธคำขอ',()=>run('friend_request_decline'));
+  if(!isFriend&&outgoing)button('ยกเลิกคำขอ',()=>run('friend_request_cancel'));
   button(isFriend?'ชวน PVP':'ชวน PVP · เพิ่มเพื่อนก่อน',()=>run('friend_challenge'),!isFriend);
   button('กลับไปเดินต่อ',close);
  }catch(e){if(dialog.open)notice('โหลดรายชื่อออนไลน์ไม่สำเร็จ · '+e.message);}
