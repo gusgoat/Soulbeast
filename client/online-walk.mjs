@@ -102,7 +102,10 @@ export function connectOnlineWalk(accountStorage) {
    return result;
   });
  };
- return {flush, heartbeat, invitations, social};
+ const socialTarget = async peer => client.request('/rest/v1/rpc/sb_walk_social_target', {
+  p_env: context.environment, p_code: context.code, p_peer: peer
+ }, await client.sessions.token());
+ return {flush, heartbeat, invitations, social, socialTarget};
 }
 
 export function mountDungeonInvitations(connection, peers) {
