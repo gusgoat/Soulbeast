@@ -2,13 +2,13 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=local-explore-1';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs';
+import {partyRunController} from './online-party-controller.mjs?v=battle-lane-2';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const localWorld=localPartyWorld();let trapPlacements=[];
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
-let nextPulse=0,nextContact=0;
+let nextPulse=0,nextContact=0,heartbeatTimer;
 const asset=value=>{try{const u=new URL(String(value).replace(/^\//,''),base);return u.origin===base.origin?u.href:null;}catch{return null;}};
 function picture(value){const src=asset(value);if(!src)return null;if(!images.has(src)){const im=new Image();im.src=src;images.set(src,im);}const im=images.get(src);return im.complete&&im.naturalWidth?im:null;}
 function notice(text){$('notice').textContent=text;}
@@ -57,7 +57,7 @@ function drawBattle(run){
  if(!run){$('battle').hidden=true;return;}
  if(run.status!=='active'&&seenBattle===run.id)return;
  $('battle').hidden=false;$('dismiss').hidden=run.status==='active';
- $('battle').querySelector('h2').textContent=run.status==='active'?'ต่อสู้ปาร์ตี้ · รอบ '+(run.battle?.round||1):run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้';
+ $('battle').querySelector('h2').textContent=run.status==='active'?(run.kind==='solo'?'ต่อสู้เดี่ยว · รอบ ':'ต่อสู้บอสปาร์ตี้ · รอบ ')+(run.battle?.round||1):run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้';
  battleControls(run);
  for(const side of ['allies','enemies']){$(side).replaceChildren();for(const unit of run.battle?.[side]||[]){
   const card=document.createElement('div');card.className='card';
@@ -89,6 +89,10 @@ const view={
  }
 };
 function failure(error){
+ if(!$('battle').hidden){
+  let errorBox=$('battleError');if(!errorBox){errorBox=document.createElement('p');errorBox.id='battleError';errorBox.setAttribute('role','status');$('battleLog').after(errorBox);}
+  errorBox.textContent='อัปเดตการต่อสู้ไม่สำเร็จ ('+String(error.code||error.message||'network')+') · ระบบจะลองเชื่อมต่ออีกครั้ง';
+ }
  if(['party_unavailable','party_not_member'].includes(error.message)){
   freeze();$('battle').hidden=true;notice('ห้องปาร์ตี้สิ้นสุดแล้วหรือคุณออกจากห้องแล้ว');
   offerReturn();return;
@@ -104,10 +108,11 @@ try{
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
  const scene=partyScene({code:connection.code,roomId,view});
  controller=partyRunController({connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
-  clockOffset=state.serverTime-Date.now();
+  clockOffset=state.serverTime-Date.now();$('battleError')?.remove();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
   if(!position&&member?.position)position={...member.position};
+  if(state.battle?.status==='active'&&nextPulse!==Infinity)nextPulse=Math.min(nextPulse,performance.now()+750);
   ready=!!position;$('retry').hidden=true;$('interact').disabled=!ready;
   notice(state.battle?.status==='active'?'เลือกคำสั่งภายใน 12 วินาที · หากไม่เลือกจะเปิดอัตโนมัติ':'WASD / ลูกศร หรือปุ่มเดิน');
  }});
@@ -133,12 +138,15 @@ try{
   else notice('เดินเข้าใกล้หีบ บ่อน้ำ ประตูห้องบอส หรือประตูชั้นถัดไป');
  };
  void controller.refresh();
+ // Combat progression must not depend on the canvas drawing successfully.
+ heartbeatTimer=setInterval(()=>{
+  if(!document.hidden&&ready&&!controller.busy&&performance.now()>=nextPulse){
+   nextPulse=Infinity;
+   void controller.pulse().finally(()=>{nextPulse=performance.now()+(controller.state?.battle?.status==='active'?750:5000);});
+  }
+ },100);
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
-  if(!document.hidden&&ready&&!controller.busy&&now>=nextPulse){
-   nextPulse=now+(controller.state?.hasActiveBattles?750:5000);
-   void controller.pulse();
-  }
   if(ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
@@ -175,7 +183,7 @@ addEventListener('keydown',e=>{if(moveKeys.has(e.key)){e.preventDefault();keys.a
 for(const button of document.querySelectorAll('#pad button')){const key=button.dataset.dx?(Number(button.dataset.dx)<0?'ArrowLeft':'ArrowRight'):(Number(button.dataset.dy)<0?'ArrowUp':'ArrowDown');
  button.onpointerdown=e=>{button.setPointerCapture(e.pointerId);keys.add(key);};button.onpointerup=button.onpointercancel=()=>keys.delete(key);}
 addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();freeze();}else void controller?.refresh();});
-addEventListener('pagehide',()=>{freeze();cancelAnimationFrame(frameId);vitals.remove();void controller?.close();});
+addEventListener('pagehide',()=>{freeze();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();void controller?.close();});
 function render(){
  const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,1.5);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#07131c';ctx.fillRect(0,0,w,h);
  if(!maze||!position)return;const scale=.6,F=maze.flatten;

@@ -1,6 +1,6 @@
 // A single request lane prevents old movement/solo responses overtaking a boss transition.
 export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},localExploration=false,getPosition=()=>null}){
- let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null;
+ let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null,commands=[];
  async function refresh(next){
   next??=await connection.run(roomId,'status',localExploration?{localExploration:true}:{});
   if(closed)return;
@@ -23,7 +23,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
  }
  async function lane(work){
   if(busy||closed)return false;busy=true;
-  try{await work();return true;}catch(error){path=[];onError(error);return false;}finally{busy=false;if(pendingState&&!closed)queueMicrotask(()=>void drain());}
+  try{await work();return true;}catch(error){path=[];onError(error);return false;}finally{busy=false;if(!closed)queueMicrotask(()=>{if(commands.length){const job=commands.shift();void lane(job.work).then(job.resolve);}else if(pendingState)void drain();});}
  }
  async function drain(){if(busy||closed||!pendingState)return;const next=pendingState;pendingState=null;return lane(()=>refresh(next));}
  return {
@@ -58,7 +58,8 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    }
    await refresh(next);
   }),
-  command:(action,data={})=>lane(async()=>{
+  command:(action,data={})=>new Promise(resolve=>{
+   const work=async()=>{
    // Interactions use confirmed positions. Keep pending walking in the pulse
    // queue, including when a target moves away before the action arrives.
    try{
@@ -72,9 +73,12 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
     throw error;
    }
    await refresh();
+   };
+   if(closed)return resolve(false);
+   if(busy)commands.push({work,resolve});else void lane(work).then(resolve);
   }),
   get state(){return snapshot;},get busy(){return busy;},
-  async close(){closed=true;path=[];scene.close();await motion?.close();motion=null;}
+  async close(){closed=true;path=[];for(const job of commands.splice(0))job.resolve(false);scene.close();await motion?.close();motion=null;}
  };
 }
 
