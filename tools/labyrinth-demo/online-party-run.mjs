@@ -140,7 +140,7 @@ try{
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0;
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
-    if(me?.position&&nav.distance(me.position,point)<=135&&nav.clear(position,point)&&controller.move(point,position))position=point;}
+    if(me?.position&&nav.distance(me.position,point)<=180&&nav.clear(position,point)&&controller.move(point,position))position=point;}
    controller.broadcast({...position,dir:(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8},moving,false);
    const confirmed=me?.position;
    if(!controller.busy&&confirmed&&now>=nextContact){const target=Object.entries(world.enemies||{}).find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
