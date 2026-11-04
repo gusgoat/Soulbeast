@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Soulbeast · ห้องปาร์ตี้ดันเจี้ยน</title><link rel="stylesheet" href="online-party-lobby.css"></head>
+<body><main>
+<a href="lobby.html">กลับไปเลือกโหมด</a><h1>ปาร์ตี้มหาวงกต</h1>
+<p>ผู้ผนึก 2–4 คน · เดินอิสระ · เลือกพลังเองหรือเปิดอัตโนมัติ<br>หากไม่เลือกคำสั่งใน 12 วินาที ระบบจะเปิดอัตโนมัติให้ผู้เล่นคนนั้น</p>
+<section id="joinPanel"><button id="create">สร้างห้องปาร์ตี้</button>
+<label for="roomCode">รหัสห้องจากหัวหน้าปาร์ตี้</label><input id="roomCode" autocomplete="off" spellcheck="false">
+<button id="join">เข้าร่วมห้อง</button></section>
+<section id="roomPanel" hidden><h2>สมาชิกปาร์ตี้ <span id="count"></span></h2>
+<p>รหัสห้อง: <code id="roomId"></code></p><button id="copy">คัดลอกรหัสห้อง</button>
+<ul id="members"></ul><p id="requirements"></p>
+<div class="actions"><button id="ready">ยืนยันพร้อม</button><button id="start" disabled>เริ่มดันเจี้ยน</button><button id="leave">ออกจากห้อง</button></div></section>
+<p id="status" role="status" aria-live="polite"></p>
+</main><script type="module" src="online-party-lobby.mjs"></script></body></html>

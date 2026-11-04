@@ -1,4 +1,8 @@
 (()=>{'use strict';const api=DungeonPartyPresence,$=id=>document.getElementById(id);let selected=null,signature='';const pet=p=>(p.party||[]).map(id=>p.pets?.find(v=>v.uid===id)).find(Boolean);
+try{const online=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');if(online?.code&&online.environment==='live'){
+ const link=document.createElement('a');link.href='online-party-lobby.html';link.textContent='สร้างหรือเข้าร่วมปาร์ตี้ออนไลน์ (2–4 คน)';
+ const modes=document.createElement('p');modes.append(link);$('identity').before(modes);
+}}catch{}
 // A directly opened tab has no session character. Match the floor's existing demo fallback without replacing an existing player.
 if(!api.player())MineState.create(sessionStorage,{...MineGameData.demo,code:'DUNGEON-DEMO-'+crypto.randomUUID(),dungeonLobbyDemo:true});
 function rowsFor(me){return [DungeonSimulatedFriend.forPlayer(me),...api.list()].filter(Boolean)}
