@@ -82,10 +82,19 @@ export function connectOnlineWalk(accountStorage) {
 
  const send = (action, extra) => client.game(action, {...extra, code: context.code}, context.environment);
  const social = (action, extra = {}) => {
-  if (!action.startsWith('tower_') || action === 'tower_status') return send(action, extra);
+  const draw = action === 'gacha_draw';
+  const towerMutation = action.startsWith('tower_') && action !== 'tower_status';
+  if (!draw && !towerMutation) return send(action, extra);
   return lock(async () => {
-   await saveWalk();
+   if (draw) syncRevision();
+   else await saveWalk();
    const result = await send(action, extra);
+   if (draw) {
+    const snapshot = JSON.parse(result.data);
+    if (snapshot.P?.code !== context.code || !result.accountSaveAt) throw Error('bad data');
+    context.snapshot = snapshot;
+    sessionStorage.setItem(playerKey, JSON.stringify(snapshot.P));
+   }
    if (result.accountSaveAt) {
     context.revision = result.accountSaveAt;
     sessionStorage.setItem(contextKey, JSON.stringify(context));
