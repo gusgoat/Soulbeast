@@ -2046,7 +2046,7 @@ const crystalIcon=itemIcon;itemIcon=function(id,size=44){const i=['petExp1','pe
 
 // Isolated staging build: never uses the live game's local-storage namespace.
 const SB_KEY='sb_publishable_-m9RbNVXYhaKjUZYSGGdMQ_rrkCuEL6';
-const SB_ENV='live';
+const SB_ENV=location.pathname.endsWith('/accounts.html')&&new URLSearchParams(location.search).get('world')==='test'?'test':'live';
 const sbTransport=sheetRequest;
 const SB_CHECK={pending:null,needed:false,lastLoaded:null};
 function sbMarkReady(code){try{localStorage.setItem('sealbeast_supabase_ready_'+code,SHEET_URL);}catch(e){}SB_CHECK.needed=false;}
@@ -4722,7 +4722,7 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
  };
  const previousSheetError=sheetError;sheetError=r=>r?.error==='save_conflict'?'พบเซฟใหม่จากอีกเครื่อง กรุณาเปิดตั้งค่าและโหลดเซฟใหม่ก่อน':previousSheetError(r);
  const originalBoot=boot;boot=()=>{S=blank();state.busy=true;ui();(async()=>{try{const m=await import('./client/account-client.mjs');state.errorText=m.accountError;state.client=m.connectAccounts(()=>{if(!state.busy)task(async()=>{if(state.client.sessions.read()){const user=await state.client.identity();if(user.id===state.user?.id)return;S=blank();state.code='';state.user=null;await list();}else{S=blank();state.code='';state.user=null;state.mode='login';}});});
-    state.client.redirect='https://gusgoat.github.io/Soulbeast/'+(SB_ENV==='live'?'accounts.html':'accounts-staging.html');
+    state.client.redirect='https://gusgoat.github.io/Soulbeast/'+(SB_ENV==='live'?'accounts.html':'accounts.html?world=test');
     const hash=location.hash; if(hash){history.replaceState(null,'',location.pathname+location.search);await state.client.acceptCallback(hash);}
     if(state.client.sessions.read()){if(state.client.recovery){state.user=await state.client.identity();state.mode='recovery';}else {await list();if(new URLSearchParams(location.search).get('create')==='1'&&state.slotsUsed<characterLimit())beginCreate();}}
    }catch(e){state.error=state.errorText?.(e)||'ระบบบัญชียังไม่พร้อม กรุณาลองใหม่อีกครั้ง';}finally{state.busy=false;}ui();})();};state.boot=data=>{state.initial=data.S;try{return originalBoot({accountEntry:true});}finally{state.initial=null;}};
