@@ -3,3 +3,5 @@
 #returnHome{position:fixed;top:140px;left:50%;transform:translateX(-50%);z-index:30}
 
 header{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:8px}#progress{grid-column:1}#leaveParty{grid-column:2;grid-row:1 / span 2;align-self:center;padding:6px 9px;font-size:11px;min-height:36px}
+
+#miniToggle{position:fixed;right:8px;top:100px;width:124px;padding:5px;z-index:13;background:#06131eed;border:2px solid #b99b62}#partyMini{display:block;width:100%;height:auto}#miniToggle span{font-size:10px;display:block}#miniToggle.expanded{top:90px;right:50%;transform:translateX(50%);width:min(80vw,320px);max-height:calc(100dvh - 190px);overflow:auto;z-index:18}#notice{max-width:55vw;top:72px}

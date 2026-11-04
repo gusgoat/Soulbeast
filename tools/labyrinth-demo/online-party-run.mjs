@@ -178,7 +178,7 @@ try{
    camera.x+=(position.x-camera.x)*follow;
    camera.y+=(position.y-camera.y)*follow;
   }
-  scene.frame();render();frameId=requestAnimationFrame(frame);
+  scene.frame();render();renderMinimap();frameId=requestAnimationFrame(frame);
  }
  frameId=requestAnimationFrame(frame);
 }catch(error){failure(error);}
@@ -211,3 +211,25 @@ function render(){
  for(const peer of peers.values())if(peer.member.exploring!==false)token(peer,'#85c8e4',peer.member.name,peer.member.avatar);
  if(me?.exploring!==false)token(position,'#efda8a',me?.name,me?.avatar);
 }
+
+// Cache static maze pixels; only markers refresh at 5 Hz.
+let miniMaze=null,miniBase=null,miniAt=0;
+function renderMinimap(){
+ if(!maze||!position||performance.now()-miniAt<200)return;miniAt=performance.now();
+ const target=$('partyMini'),c=target.getContext('2d'),pad=12,W=target.width,H=target.height-42;
+ const sx=(W-pad*2)/maze.width,sy=(H-pad*2)/maze.height;
+ if(miniMaze!==maze){
+  miniMaze=maze;miniBase=document.createElement('canvas');miniBase.width=W;miniBase.height=target.height;
+  const b=miniBase.getContext('2d');b.fillStyle='#06131e';b.fillRect(0,0,W,target.height);
+  b.fillStyle='#9a9279';for(let y=0;y<maze.rows;y++)for(let x=0;x<maze.cols;x++)if(maze.grid[y][x])b.fillRect(pad+x*maze.cell*sx,pad+y*maze.cell*sy,maze.cell*sx,maze.cell*sy);
+ }
+ c.drawImage(miniBase,0,0);
+ function mark(p,text,color){if(!p)return;c.font='bold 15px Tahoma';c.textAlign='center';c.lineWidth=3;c.strokeStyle='#06131e';c.strokeText(text,pad+p.x*sx,pad+p.y*sy+5);c.fillStyle=color;c.fillText(text,pad+p.x*sx,pad+p.y*sy+5);}
+ mark(maze.rooms.find(r=>r.id==='boss').gate,'B',world.doorOpen?'#7cf5b6':'#ff6868');
+ mark(maze.stairs,'↑','#fff');mark(maze.exit,'↓','#fff');
+ for(const peer of peers.values())if(peer.member.exploring!==false)mark(peer,'●','#78cfff');
+ mark(position,'▲','#fff16a');
+ c.textAlign='left';c.font='12px Tahoma';c.fillStyle='#fff16a';c.fillText('▲ คุณ   ● เพื่อน',8,H+17);
+ c.fillStyle='#ff9292';c.fillText('B ห้องบอส   ↑ ชั้นถัดไป',8,H+34);
+}
+$('miniToggle').onclick=()=>{const b=$('miniToggle'),expanded=b.classList.toggle('expanded');b.setAttribute('aria-expanded',String(expanded));b.setAttribute('aria-label',expanded?'ย่อแผนที่ดันเจี้ยน':'ขยายแผนที่ดันเจี้ยน');b.querySelector('span').textContent=expanded?'แตะเพื่อย่อแผนที่':'แผนที่ · แตะขยาย';};
