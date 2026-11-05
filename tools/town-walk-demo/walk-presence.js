@@ -65,7 +65,35 @@ function syncPeers(place,p,moving,running){const now=performance.now();if(!onlin
  }
  for(const [id,peer] of peers)if(!ids.has(id)){releasePeer(peer);peers.delete(id);}const seen=performance.now();for(const row of rows){if(!window.sealerSpriteCatalog?.[row.cls])continue;let peer=peers.get(row.id);if(!peer){peer={sprite:window.RemoteWalkSprite.create(),x:row.x,y:row.y};peers.set(row.id,peer);}if(seen-(peer.realtimeAt??-Infinity)<750){Object.assign(peer,{player:row,seen});peer.sprite.sync(row).catch(()=>{});continue;}samplePeer(peer,row,seen);Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,player:row,seen});peer.sprite.sync(row).catch(()=>{});}}).catch(()=>{nextHeartbeat=performance.now()+3000;}).finally(()=>{heartbeatPending=false;});}
 function tick(place,p,moving,running){if(onlineMode&&!place.includes(':'))place='town:'+place;window.walkSocial?.tick();window.DungeonPartyPresence?.publish();if(locationId!==place&&realtime){realtime.reset();lastRealtimePeerAt=-Infinity;}locationId=place;const now=performance.now();if(localCompanion){const elapsed=lastCompanionTick?Math.min((now-lastCompanionTick)/1000,.05):0;lastCompanionTick=now;if(companionScene!==place){localCompanion.reset(p);companionScene=place;}localCompanion.sync(window.CompanionFollowers.first(player()));localCompanion.update(elapsed,p);}for(const [id,v]of peers)if(now-v.seen>5000){releasePeer(v);peers.delete(id)}if(onlineMode){showRealtimeStatus(now);realtime?.send(place,p,moving,running);syncPeers(place,p,moving,running);return;}if(now-lastSend<150)return;lastSend=now;const me=player();if(!me)return;lastState={type:'position',session,place,x:p.x,y:p.y,dir:p.dir,moving,running,player:{name:me.name||me.n,cls:me.cls,gender:me.gender,lv:me.lv,country:me.country,walkFusion:me.walkFusion||null,walkCompanion:window.CompanionFollowers?.first(me)||null,entitlements:{premiumNameplates:window.WalkNameplates?.owned(me)||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}
-function draw(c,sx,sy,scale,phase){const now=performance.now(),dt=lastDraw?Math.min(now-lastDraw,100):16;lastDraw=now;localCompanion?.draw(c,sx,sy,scale);for(const p of peers.values()){if(onlineMode)advancePeer(p,now,dt);else{p.x+=(p.targetX-p.x)*.24;p.y+=(p.targetY-p.y)*.24;}if(window.CompanionFollowers){p.companion??=window.CompanionFollowers.create();p.companion.sync(p.walkCompanion===undefined?p.player?.walkCompanion:p.walkCompanion);p.companion.update(dt/1000,p);p.companion.draw(c,sx,sy,scale);}p.hitbox={x:sx(p.x),y:sy(p.y),scale};p.walkPhase=(p.walkPhase||0)+(p.moving?dt/1000*13*(p.running?360/220:1):0);p.sprite.draw(c,sx(p.x),sy(p.y),156*scale,p.dir,p.walkPhase,p.moving,p.running);p.hitbox.labelWidth=label(c,sx(p.x),sy(p.y)-154*scale,p.player)}}
+// Return actors to the scene's ground-depth sort; labels are a separate final pass.
+function objects(){
+ const now=performance.now(),dt=lastDraw?Math.min(now-lastDraw,100):16;lastDraw=now;
+ const items=[];
+ if(localCompanion?.key&&localCompanion.body)items.push({...localCompanion.body,kind:'presenceCompanion',drawType:'presence',companion:localCompanion});
+ for(const peer of peers.values()){
+  if(onlineMode)advancePeer(peer,now,dt);else{peer.x+=(peer.targetX-peer.x)*.24;peer.y+=(peer.targetY-peer.y)*.24;}
+  if(window.CompanionFollowers){
+   peer.companion??=window.CompanionFollowers.create();
+   peer.companion.sync(peer.walkCompanion===undefined?peer.player?.walkCompanion:peer.walkCompanion);
+   peer.companion.update(dt/1000,peer);
+   if(peer.companion.key&&peer.companion.body)items.push({...peer.companion.body,kind:'presenceCompanion',drawType:'presence',companion:peer.companion});
+  }
+  peer.walkPhase=(peer.walkPhase||0)+(peer.moving?dt/1000*13*(peer.running?360/220:1):0);
+  items.push({x:peer.x,y:peer.y,kind:'presencePlayer',drawType:'presence',peer});
+ }
+ return items;
+}
+function drawObject(c,item,sx,sy,scale){
+ if(item.kind==='presenceCompanion'){item.companion.draw(c,sx,sy,scale);return;}
+ const p=item.peer;p.hitbox={x:sx(p.x),y:sy(p.y),scale};
+ p.sprite.draw(c,sx(p.x),sy(p.y),156*scale,p.dir,p.walkPhase,p.moving,p.running);
+}
+function drawLabels(c,sx,sy,scale){for(const p of peers.values()){
+ p.hitbox={x:sx(p.x),y:sy(p.y),scale};
+ p.hitbox.labelWidth=label(c,sx(p.x),sy(p.y)-154*scale,p.player);
+}}
+// Compatibility for scenes that do not yet supply their own actor depth sort.
+function draw(c,sx,sy,scale,phase){for(const item of objects().sort((a,b)=>a.y-b.y))drawObject(c,item,sx,sy,scale);drawLabels(c,sx,sy,scale);}
 setInterval(()=>{const now=performance.now();if(lastState&&now-lastSend>900){window.walkSocial?.tick();lastSend=now;lastState={...lastState,moving:false,running:false,player:{...lastState.player,walkCompanion:window.CompanionFollowers?.first(player())||null,entitlements:{premiumNameplates:window.WalkNameplates?.owned(player())||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}},1000);
-addEventListener('pagehide',()=>channel.postMessage({type:'leave',session}));channel.postMessage({type:'hello',session});window.walkPresence={tick,draw,label,player,peers,session,localCompanion};
+addEventListener('pagehide',()=>channel.postMessage({type:'leave',session}));channel.postMessage({type:'hello',session});window.walkPresence={tick,draw,label,player,peers,session,localCompanion,objects,drawObject,drawLabels};
 })();
