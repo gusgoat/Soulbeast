@@ -36,7 +36,8 @@ export function connectOnlineWalk(accountStorage) {
   Object.assign(context, latest);
   if (!latest.request) delete context.request;
  }
- let stopped = false;
+ let stoppedAt = null;
+ const saveVersion = () => context.revision + ':' + (context.reloadId || '');
 
  async function saveWalk() {
   syncRevision();
@@ -81,14 +82,18 @@ export function connectOnlineWalk(accountStorage) {
     delete context.request;
     sessionStorage.setItem(contextKey, JSON.stringify(context));
    } catch (error) {
-    if (error.code === 'save_conflict' || error.status === 401 || error.code === 'character_not_owned') stopped = true;
+    if (error.code === 'save_conflict' || error.status === 401 || error.code === 'character_not_owned') stoppedAt = saveVersion();
     window.dispatchEvent(new CustomEvent('online-walk-save-error', {detail: error.code || error.message}));
     throw error;
   }
  }
 
  function flush(strict = false) {
-  if (stopped) return strict ? Promise.reject(Error('save_conflict')) : Promise.resolve();
+  if (stoppedAt !== null) {
+   try { syncRevision(); } catch (error) { return strict ? Promise.reject(error) : Promise.resolve(); }
+   if (saveVersion() === stoppedAt) return strict ? Promise.reject(Error('save_conflict')) : Promise.resolve();
+   stoppedAt = null;
+  }
   pending ??= lock(saveWalk).finally(() => { pending = null; });
   if(!strict)return pending.catch(()=>{});
   // An autosave already in flight may contain the inventory before a purchase.
@@ -101,6 +106,28 @@ export function connectOnlineWalk(accountStorage) {
     await saveWalk();
    }
   }));
+ }
+
+ async function reloadWalk() {
+  return lock(async () => {
+   syncRevision();
+   const latest = await client.game('load', {code:context.code}, context.environment);
+   const snapshot = JSON.parse(latest.data);
+   const revision = Number(latest.accountSaveAt || latest.at);
+   if (snapshot.P?.code !== context.code || !Number.isFinite(revision) || revision <= 0) throw Error('bad data');
+   syncRevision();
+   snapshot.P.gsAt = revision;
+   delete snapshot.P.cpin;
+   delete snapshot.P.walkId;
+   context.revision = revision;
+   context.snapshot = snapshot;
+   context.reloadId = crypto.randomUUID();
+   delete context.request;
+   sessionStorage.setItem(playerKey, JSON.stringify(snapshot.P));
+   sessionStorage.setItem(contextKey, JSON.stringify(context));
+   stoppedAt = null;
+   return snapshot.P;
+  });
  }
 
  let appearanceKey='', appearanceAt=0, nextAppearanceAttempt=0, appearancePending=null;
@@ -163,7 +190,7 @@ export function connectOnlineWalk(accountStorage) {
    identity:async()=>client.request('/rest/v1/rpc/'+(context.environment==='live'?'sb_walk_live_identity':'sb_walk_test_identity'),{p_code:context.code},await client.sessions.token())
   });
  };
- return {flush, heartbeat, invitations, social, socialTarget, walkRealtimeTest, openWalkRealtime};
+ return {flush, reloadWalk, heartbeat, invitations, social, socialTarget, walkRealtimeTest, openWalkRealtime};
 }
 
 export function mountDungeonInvitations(connection, peers) {

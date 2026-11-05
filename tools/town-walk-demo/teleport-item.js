@@ -3,12 +3,15 @@ ITEM_ART.teleportScroll='assets/world-quests/teleport-scroll-v1.png.webp';
 function walkTeleportBlocked(){return !!S.zone||!!(S.battle&&!S.battle.over)}
 function teleportSaveError(error){
  const reason=error.code||error.message;
- if(reason==='save_conflict'||reason==='gacha stale')return 'เซฟออนไลน์ของตัวละครเปลี่ยนแล้ว กรุณากลับหน้าเลือกตัวละครและเข้าเกมใหม่ก่อนเทเลพอร์ต';
+ if(reason==='save_conflict'||reason==='gacha stale'){
+  teleportNeedsReload=true;
+  return 'เซฟออนไลน์เปลี่ยนแล้ว กรุณากดโหลดเซฟออนไลน์ล่าสุด';
+ }
  if(reason==='login_required'||reason==='character_not_owned'||error.status===401)return 'กรุณาเข้าสู่ระบบและเลือกตัวละครอีกครั้งก่อนเทเลพอร์ต';
  if(reason==='party_run_active'||reason==='tower locked'||reason==='finish other battle')return 'กรุณาจบกิจกรรมที่ค้างอยู่ก่อนเทเลพอร์ต';
  return 'ยังบันทึกการใช้ใบเทเลพอร์ตไม่ได้ กรุณาลองใหม่';
 }
-let teleportView=null, teleportDestination='', teleportBusy=false;
+let teleportView=null, teleportDestination='', teleportBusy=false, teleportNeedsReload=false;
 async function loadTeleportTerritory(){
  const packet={action:'country_status',code:S.P.code,pin:S.P.cpin||''};
  const view=WALK_ONLINE?await walkAccountPost(packet):await window.walkWarEngine.dispatch(S.P,packet);
@@ -29,10 +32,22 @@ handlers.useTeleport=async()=>{
   document.querySelector('main')?.scrollTo(0,0);
  }catch(e){toast(e.message);}finally{teleportBusy=false;render();}
 };
+handlers.reloadTeleportSave=async()=>{
+ if(!WALK_ONLINE||!teleportNeedsReload||teleportBusy||!S.ui.walkTeleport)return;
+ if(!window.confirm('โหลดเซฟออนไลน์ล่าสุดหรือไม่? การเปลี่ยนแปลงในแท็บนี้ที่ยังไม่ขึ้นเซิร์ฟเวอร์จะถูกแทนที่'))return;
+ teleportBusy=true;render();
+ try{
+  S.P=await (await getWalkAccountConnection()).reloadWalk();
+  normalizePack();initDiscovery();
+  teleportNeedsReload=false;
+  toast('โหลดเซฟออนไลน์แล้ว · ตรวจจำนวนใบก่อนยืนยันอีกครั้ง');
+ }catch{toast('โหลดเซฟออนไลน์ไม่สำเร็จ กรุณาลองใหม่');}
+ finally{teleportBusy=false;render();}
+};
 handlers.cancelTeleport=()=>{if(!teleportBusy){S.ui.walkTeleport=false;render();}};
 handlers.selectTeleport=id=>{if(!teleportBusy&&teleportLocations().some(n=>n.id===id)){teleportDestination=id;render();}};
 handlers.confirmTeleport=async()=>{
- if(S.screen!=='bag'||!S.ui.walkTeleport||teleportBusy||walkTeleportBlocked()||!(S.P.items.teleportScroll>0)||!teleportDestination)return;
+ if(S.screen!=='bag'||!S.ui.walkTeleport||teleportBusy||walkTeleportBlocked()||!(S.P.items.teleportScroll>0)||!teleportDestination||teleportNeedsReload)return;
  const destination=teleportDestination;
  teleportBusy=true;render();
  try{
@@ -62,7 +77,8 @@ vBag=function(){
  return '<section class="card stack" aria-label="เลือกปลายทางเทเลพอร์ต"><h3>เลือกปลายทาง · ใช้ใบเทเลพอร์ต 1 ใบ</h3>'
   +countryMapView(locations,'selectTeleport',teleportDestination)
   +(selected?'<p>ปลายทาง · '+esc(selected.name)+'</p>':'<p>'+(locations.length?'แตะพื้นที่บนแผนที่ หรือเลือกจากรายชื่อด้านล่าง':'ไม่มีพื้นที่ที่สามารถเทเลพอร์ตไปได้')+'</p>')
-  +'<button class="btn pri" data-a="confirmTeleport" '+(!selected||teleportBusy?'disabled':'')+'>ยืนยันเทเลพอร์ต</button> <button class="btn" data-a="cancelTeleport" '+(teleportBusy?'disabled':'')+'>ยกเลิก</button>'
+  +'<button class="btn pri" data-a="confirmTeleport" '+(!selected||teleportBusy||teleportNeedsReload||!(S.P.items.teleportScroll>0)?'disabled':'')+'>ยืนยันเทเลพอร์ต</button> <button class="btn" data-a="cancelTeleport" '+(teleportBusy?'disabled':'')+'>ยกเลิก</button>'
+  +(teleportNeedsReload?'<button class="btn" data-a="reloadTeleportSave" '+(teleportBusy?'disabled':'')+'>โหลดเซฟออนไลน์ล่าสุด</button>':'')
   +'<div class="row wrap">'+locations.map(n=>'<button class="btn sm" data-a="selectTeleport" data-v="'+esc(n.id)+'" aria-pressed="'+(n.id===teleportDestination)+'">'+esc(n.name)+'</button>').join('')+'</div></section>';
 };
 // Normal shop buys call handlers.buy; no discounted country/class pricing for this item.
