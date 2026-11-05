@@ -4658,7 +4658,7 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
  async function select(code,remoteOnly=false){if(!state.characters.some(c=>c.code===code))throw Error('character_not_owned');state.code=code;let data;
   try{data=JSON.parse(localStorage.getItem(key())||'null');}catch{}
   const r=await state.client.game('load',{code},SB_ENV);
-  const remoteRevision=Number(r.accountSaveAt||r.at);if(remoteOnly||data?.P?.code!==code||(!data.battle&&remoteRevision>Number(data.P.gsAt||0))){data=JSON.parse(r.data);data.P.gsAt=remoteRevision;}
+  const remoteRevision=Number(r.accountSaveAt||r.at);if(remoteOnly||new URLSearchParams(location.search).get('fresh')==='1'||data?.P?.code!==code||(!data.battle&&remoteRevision>Number(data.P.gsAt||0))){data=JSON.parse(r.data);data.P.gsAt=remoteRevision;}
   if(r.account?.name)data.P.name=r.account.name;if(r.account?.renameAt)data.P.renameAt=r.account.renameAt;
   state.saveConflict=false;state.pendingSave=null;
   delete data.P.cpin;state.mode='playing';IMG={};GS.lastJson='';GS.lastAt=0;sbMarkReady(code);state.boot({S:data});save();

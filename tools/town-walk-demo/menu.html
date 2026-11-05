@@ -6304,14 +6304,27 @@ migrate=function(...args){const out=accountManagementMigrate(...args);AccountMan
 const accountManagementSettings=vSettings;
 vSettings=function(){return accountManagementSettings().replace('<button class="btn danger" data-a="reset">เริ่มเกมใหม่</button>','<button class="btn" data-a="reset">เริ่มเกมใหม่</button><button class="btn" data-a="accountCharacters">กลับหน้าเลือกตัวละคร</button>')+AccountManagement.credits();};
 handlers.img=()=>{};handlers.delimg=()=>{};saveImg=()=>{};
+let accountCharactersBusy=false;
 async function openAccountCharacters(create=false){
+ if(accountCharactersBusy)return;
+ accountCharactersBusy=true;
  try{
   save();
-  if(WALK_ONLINE)await (await getWalkAccountConnection()).flush(true);
+  if(WALK_ONLINE){
+   try{await (await getWalkAccountConnection()).flush(true);}
+   catch(error){
+    if(!['save_conflict','gacha stale'].includes(error.code||error.message))throw error;
+    if(!window.confirm('เซฟออนไลน์มีข้อมูลใหม่ ต้องการกลับหน้าเลือกตัวละครเพื่อโหลดเซฟล่าสุดหรือไม่? การเปลี่ยนแปลงที่ยังบันทึกไม่สำเร็จอาจไม่ได้รับการเก็บ'))return;
+   }
+   const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');
+   if(context){context.exiting=true;sessionStorage.setItem('soulbeast-online-walk-v1',JSON.stringify(context));}
+  }
   const url=new URL('../../accounts.html',location.href);
+  url.searchParams.set('fresh','1');
   if(create)url.searchParams.set('create','1');
   window.top.location.assign(url.href);
- }catch(error){toast(error.message==='save_conflict'?'เซฟออนไลน์เปลี่ยนแล้ว กรุณาโหลดตัวละครล่าสุด':'บันทึกออนไลน์ไม่สำเร็จ กรุณาลองอีกครั้ง');}
+ }catch(error){toast('บันทึกออนไลน์ไม่สำเร็จ กรุณาลองอีกครั้ง');}
+ finally{accountCharactersBusy=false;}
 }
 handlers.reset=()=>openAccountCharacters(true);
 handlers.doreset=handlers.reset;

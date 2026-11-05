@@ -34,6 +34,7 @@ export function connectOnlineWalk(accountStorage) {
  const lock = task => navigator.locks?.request('soulbeast-walk-save:' + context.code, task) ?? task();
  function syncRevision() {
   const latest = JSON.parse(sessionStorage.getItem(contextKey) || 'null');
+  if (latest?.exiting) throw Error('login_required');
   if (!latest || latest.code !== context.code || latest.environment !== context.environment || latest.owner !== context.owner) throw Error('login_required');
   Object.assign(context, latest);
   if (!latest.request) delete context.request;
