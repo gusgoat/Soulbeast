@@ -1,4 +1,4 @@
-import {connectAccounts,accountRealtimeConfig} from './account-client.mjs';
+import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=game-session-1';
 export const partySessionKey='soulbeast-online-party-room-v1';
 export function connectDungeonParty({storage=localStorage,session=sessionStorage}={}) {
  const context=JSON.parse(session.getItem('soulbeast-online-walk-v1')||'null');

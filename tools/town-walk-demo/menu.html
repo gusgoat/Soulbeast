@@ -3628,7 +3628,7 @@ const WALK_ONLINE=!!sessionStorage.getItem('soulbeast-online-walk-v1');
 const SHEET_URL=String(window.SHEET_URL||'').trim();
 let walkAccountConnection;
 async function getWalkAccountConnection(){
- return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=teleport-reload-1',location.href).href)).connectOnlineWalk(walkStorage);
+ return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=game-session-1',location.href).href)).connectOnlineWalk(walkStorage);
 }
 async function walkAccountPost(packet){
  const {action,pin,cpin,...extra}=packet;
@@ -7576,9 +7576,9 @@ const localSocialPost=lbPost;lbPost=function(packet){if(sessionStorage.getItem('
  return walkAccountPost(packet);
 }return ['social_sync','friend_add','friend_remove','pvp_create','pvp_join','pvp_resume','pvp_poll','pvp_ready','pvp_move','pvp_auto','pvp_leave','camp_list','camp_register','camp_begin','camp_poll','camp_move','camp_leave'].includes(packet.action)?window.walkSocialEngine.dispatch(S.P,packet).then(result=>{if(result.ok&&result.walkCampAccount){const a=result.walkCampAccount,previous=S.P.walkCamp||{};S.P.gold+=(Number(a.delta)||0)-(Number(previous.delta)||0);S.P.score=(S.P.score||0)+(Number(a.scoreDelta)||0)-(Number(previous.scoreDelta)||0);S.P.walkCamp={delta:Number(a.delta)||0,scoreDelta:Number(a.scoreDelta)||0};save()}return result}):localSocialPost(packet)};
 communityCall=async function(action='social_sync',extra={}){if(COMMUNITY.busy||!S.P)return;COMMUNITY.busy=true;COMMUNITY.error='';try{const online=sessionStorage.getItem('soulbeast-online-walk-v1');
-const r=online?await (await import(new URL('../../client/online-walk.mjs?v=teleport-reload-1',location.href).href)).connectOnlineWalk(walkStorage).social(action,extra):await window.walkSocialEngine.dispatch(S.P,{action,...extra});if(!r.ok)throw Error(r.error);Object.assign(COMMUNITY,{friends:r.friends||[],friendRequests:r.friendRequests||{incoming:[],outgoing:[]},online:r.online||[],incoming:r.incoming||null,serverTime:r.serverTime,ready:true,code:ensureCode()});if(online&&r.match&&!communityBattleBusy()){
+const r=online?await (await import(new URL('../../client/online-walk.mjs?v=game-session-1',location.href).href)).connectOnlineWalk(walkStorage).social(action,extra):await window.walkSocialEngine.dispatch(S.P,{action,...extra});if(!r.ok)throw Error(r.error);Object.assign(COMMUNITY,{friends:r.friends||[],friendRequests:r.friendRequests||{incoming:[],outgoing:[]},online:r.online||[],incoming:r.incoming||null,serverTime:r.serverTime,ready:true,code:ensureCode()});if(online&&r.match&&!communityBattleBusy()){
  PVP.code=ensureCode();PVP.pending=null;pvpReceive(r.match);S.screen='pvp';
- await (await import(new URL('../../client/online-walk.mjs?v=teleport-reload-1',location.href).href)).connectOnlineWalk(walkStorage).social('friend_ack',{invite:r.match.invite});
+ await (await import(new URL('../../client/online-walk.mjs?v=game-session-1',location.href).href)).connectOnlineWalk(walkStorage).social('friend_ack',{invite:r.match.invite});
  COMMUNITY.incoming=null;pvpSessionSave();pvpSchedule();render();
 }
 if(action==='friend_add')toast('เพิ่มเพื่อนแล้ว');parent.postMessage({type:'walk-social-refresh'},location.origin);}catch(e){COMMUNITY.error=communityError(e.message)}finally{COMMUNITY.busy=false;if(S.screen==='friends')render()}};

@@ -1,4 +1,4 @@
-import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=walk-realtime-test-1';
+import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=game-session-1';
 
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
@@ -14,12 +14,14 @@ function saveComparable(player) {
 
 export function enterOnlineWalk(state, environment, owner) {
  const player = structuredClone(state.P);
+ let sessionId;
+ try{sessionId=gameSessionId(JSON.parse(localStorage.getItem('soulbeast_shop_test_auth_v1')||'null')?.access_token);}catch{}
  delete player.cpin;
  delete player.walkId;
  const country = ['blue','green','red'].includes(player.country) ? player.country : 'blue';
  sessionStorage.setItem(playerKey, JSON.stringify(player));
  sessionStorage.setItem(contextKey, JSON.stringify({
-  code: player.code, environment, owner, revision: player.gsAt, snapshot: {...state, P: player}
+  code: player.code, environment, owner, sessionId, revision: player.gsAt, snapshot: {...state, P: player}
  }));
  location.assign('./tools/town-walk-demo/index.html?city=' + country + '-capital');
 }
