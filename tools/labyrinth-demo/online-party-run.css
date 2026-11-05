@@ -8,3 +8,5 @@
 #battleError{position:absolute;bottom:0;left:0;right:0;margin:0;padding:8px;background:#29151e;color:#ffd7c1}
 #action:disabled{opacity:.5}
 [hidden]{display:none!important}
+
+[data-dungeon-mode="party"] .walk-audio-toggle{bottom:calc(96px + env(safe-area-inset-bottom))!important;right:14px}

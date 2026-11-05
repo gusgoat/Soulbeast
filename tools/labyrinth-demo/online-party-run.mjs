@@ -1,3 +1,4 @@
+import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
 import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
 import {partyArt} from './online-party-art.mjs?v=shared-shell-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
@@ -9,6 +10,7 @@ const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext(
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
 const localWorld=localPartyWorld();let trapPlacements=[];
+const sceneAudio=partyAudio();
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
 let nextPulse=0,nextContact=0,heartbeatTimer;
@@ -80,7 +82,7 @@ function drawBattle(run){
  }
 }
 const view={
- loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
+ loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);sceneAudio.setFloor(config,maze);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
  vitals:members=>vitals.update(members),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);menus.update(me);},
  world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
@@ -160,7 +162,7 @@ try{
   }
  },100);
  function frame(now){
-  const dt=Math.min(.05,(now-last)/1000);last=now;
+  const dt=Math.min(.05,(now-last)/1000);last=now;selfMoving=false;
   if(!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
@@ -188,14 +190,14 @@ try{
    camera.x+=(position.x-camera.x)*follow;
    camera.y+=(position.y-camera.y)*follow;
   }
-  scene.frame();render();renderMinimap();frameId=requestAnimationFrame(frame);
+  scene.frame();sceneAudio.tick(dt,{position,moving:selfMoving,ready,world,nav,blocked:menus.open||!$('mapPanel').hidden||!$('battle').hidden||!!window.WalkControls?.editing});render();renderMinimap();frameId=requestAnimationFrame(frame);
  }
  frameId=requestAnimationFrame(frame);
 }catch(error){failure(error);}
 const moveKeys=new Set(['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight']);
 addEventListener('keydown',e=>{if(!menus.open&&moveKeys.has(e.key)){e.preventDefault();keys.add(e.key);}});addEventListener('keyup',e=>keys.delete(e.key));
 addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();freeze();}else void controller?.refresh();});
-addEventListener('pagehide',()=>{freeze();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();void controller?.close();});
+addEventListener('pagehide',()=>{freeze();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();sceneAudio.dispose();void controller?.close();});
 function render(){
  const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,1.5);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#07131c';ctx.fillRect(0,0,w,h);
  if(!maze||!position)return;
