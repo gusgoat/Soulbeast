@@ -63,7 +63,19 @@ export class AccountClient{
   this.sessions.save(a);this.user=user;this.recovery=p.get('type')==='recovery';
  }
  async identity(){const token=await this.sessions.token();this.user=await this.request('/auth/v1/user',undefined,token,'GET');return this.user;}
- async login(email,password){const a=await this.request('/auth/v1/token?grant_type=password',{email,password});this.sessions.save({...a,expires_at:a.expires_at||Math.floor(Date.now()/1000)+a.expires_in});await this.identity();this.onChange();}
+ async login(email,password){
+  const a=await this.request('/auth/v1/token?grant_type=password',{email,password});
+  const user=await this.request('/auth/v1/user',undefined,a.access_token,'GET');
+  if(user.email_confirmed_at){
+   const result=await this.fetcher(BASE+'/auth/v1/logout?scope=others',{
+    method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+a.access_token},
+    signal:AbortSignal.timeout(10000)
+   });
+   if(!result.ok)throw Error('account_service_unavailable');
+  }
+  this.sessions.save({...a,expires_at:a.expires_at||Math.floor(Date.now()/1000)+a.expires_in});
+  this.user=user;this.onChange();
+ }
  async signup(email,password){
   if(this.gate.remaining())throw Error('email_wait');this.gate.wait();
   return this.request('/auth/v1/signup?redirect_to='+encodeURIComponent(this.redirect),{email,password});

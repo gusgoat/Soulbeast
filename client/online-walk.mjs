@@ -1,4 +1,4 @@
-import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=game-session-1';
+import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=game-session-2';
 
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
