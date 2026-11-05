@@ -1,6 +1,6 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
 import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
-import {partyArt} from './online-party-art.mjs?v=shared-shell-1';
+import {partyArt} from './online-party-art.mjs?v=half-boss-20261106';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
