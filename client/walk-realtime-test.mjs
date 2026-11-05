@@ -1,4 +1,4 @@
-export async function connectWalkRealtime({url, key, token, identity, environment='test'}) {
+export async function connectWalkRealtime({url, key, token, identity, companion=()=>null, environment='test'}) {
  const {createClient} = await import('https://esm.sh/@supabase/supabase-js@2.76.1');
  const supabase = createClient(url, key, {accessToken:token});
  await supabase.realtime.setAuth();
@@ -38,13 +38,14 @@ export async function connectWalkRealtime({url, key, token, identity, environmen
  }
  function send(place, position, moving, running){
   if(scene!==place||!publisher?.ready)return;
-  const now=performance.now(),motion=[position.dir||0,!!moving,!!running].join(':');
-  if(motion===lastMotion&&(!moving||now-lastSent<150))return;
+  const pet=companion();
+  const now=performance.now(),motion=[position.dir||0,!!moving,!!running,pet?.sp||'',pet?.form??''].join(':');
+  if(motion===lastMotion&&now-lastSent<(moving?150:2000))return;
   // Send only once the private channel is subscribed, so send stays on WebSocket.
   lastSent=now;lastMotion=motion;
   void publisher.channel.send({type:'broadcast',event:'position',payload:{
    x:Math.round(position.x),y:Math.round(position.y),dir:position.dir||0,
-   moving:!!moving,running:!!running,seq:++sequence
+   moving:!!moving,running:!!running,seq:++sequence,companion:pet
   }}).catch(()=>{});
  }
  return {update,send,reset,get ready(){return publisher?.ready===true;}};

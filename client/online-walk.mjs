@@ -188,8 +188,9 @@ export function connectOnlineWalk(accountStorage) {
  }, await client.sessions.token());
  const walkRealtimeTest = context.environment==='live' || (context.environment==='test' && new URLSearchParams(location.search).get('realtimeWalk')==='1');
  const openWalkRealtime = async () => {
-  const {connectWalkRealtime}=await import('./walk-realtime-test.mjs?v=live-1');
+  const {connectWalkRealtime}=await import('./walk-realtime-test.mjs?v=companions-20261105');
   return connectWalkRealtime({...accountRealtimeConfig,environment:context.environment,token:()=>client.sessions.token(),
+   companion:()=>window.CompanionFollowers?.first(window.walkPresence?.player())||null,
    identity:async()=>client.request('/rest/v1/rpc/'+(context.environment==='live'?'sb_walk_live_identity':'sb_walk_test_identity'),{p_code:context.code},await client.sessions.token())
   });
  };
