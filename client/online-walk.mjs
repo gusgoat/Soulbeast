@@ -3,6 +3,15 @@ import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=walk
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
 
+function saveComparable(player) {
+ const canonical = value => Array.isArray(value) ? value.map(canonical) :
+  value && typeof value === 'object'
+   ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]))
+   : value;
+ const {gsAt, cpin, walkId, ...data} = player;
+ return JSON.stringify(canonical(data));
+}
+
 export function enterOnlineWalk(state, environment, owner) {
  const player = structuredClone(state.P);
  delete player.cpin;
@@ -35,15 +44,34 @@ export function connectOnlineWalk(accountStorage) {
   if (player?.code !== context.code) return;
   const serialized = JSON.stringify(player);
   if (serialized === JSON.stringify(context.snapshot.P) && !context.request) return;
-  const request = context.request || {serialized, id: crypto.randomUUID()};
-  const snapshot = {...context.snapshot, P: JSON.parse(request.serialized)};
-  context.request = request;
-  sessionStorage.setItem(contextKey, JSON.stringify(context));
+  let request = context.request || {serialized, id: crypto.randomUUID()};
+  let snapshot = {...context.snapshot, P: JSON.parse(request.serialized)};
+  const commit = () => {
+   context.request = request;
+   sessionStorage.setItem(contextKey, JSON.stringify(context));
+   return client.game('save', {
+    code: context.code, expectedSaveAt: context.revision,
+    data: JSON.stringify(snapshot), _sbRequest: request.id
+   }, context.environment);
+  };
   try {
-    const response = await client.game('save', {
-     code: context.code, expectedSaveAt: context.revision,
-     data: JSON.stringify(snapshot), _sbRequest: request.id
-    }, context.environment);
+    let response;
+    try {
+     response = await commit();
+    } catch (error) {
+     if ((error.code || error.message) !== 'save_conflict') throw error;
+     const latest = await client.game('load', {code:context.code}, context.environment);
+     const server = JSON.parse(latest.data);
+     const revision = Number(latest.accountSaveAt || latest.at);
+     if (server.P?.code !== context.code || revision <= context.revision ||
+         !Number.isFinite(revision) || saveComparable(server.P) !== saveComparable(context.snapshot.P)) throw error;
+     // Only the revision changed. Preserve the server snapshot and retry this exact player update once.
+     context.revision = revision;
+     context.snapshot = {...server, P:context.snapshot.P};
+     snapshot = {...server, P:snapshot.P};
+     request = {...request, id:crypto.randomUUID()};
+     response = await commit();
+    }
     context.revision = response.accountSaveAt || response.at;
     context.snapshot = snapshot;
     const accountSnapshot = {...snapshot, P: {...snapshot.P, gsAt: context.revision}};

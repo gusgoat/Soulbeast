@@ -1,4 +1,4 @@
-import {connectOnlineWalk} from '../../client/online-walk.mjs?v=inventory-save-1';
+import {connectOnlineWalk} from '../../client/online-walk.mjs?v=revision-retry-1';
 import {connectDungeonParty,partySessionKey} from '../../client/dungeon-party.mjs?v=short-code-1';
 import {partyRules} from './online-party-rules.mjs';
 const $=id=>document.getElementById(id);
