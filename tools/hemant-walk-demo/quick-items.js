@@ -3,7 +3,7 @@
  const rules=window.walkRepellent,bar=document.createElement('div');
  bar.className='country-quick-items';bar.setAttribute('role','group');bar.setAttribute('aria-label','ไอเท่มลัด');
  const style=document.createElement('style');style.textContent=`
- .country-quick-items{position:fixed;right:14px;bottom:154px;display:flex;gap:8px;z-index:4}
+ .country-quick-items{position:fixed;right:14px;bottom:154px;display:flex;flex-direction:column;gap:8px;z-index:4}
  .country-quick-items button{box-sizing:border-box;width:38px;height:38px;padding:5px;border:2px solid #dab966;border-radius:50%;background:radial-gradient(circle,#214c59,#061f2c);box-shadow:0 1px 4px #0009,inset 0 0 0 1px #7e5b2b;touch-action:manipulation;cursor:pointer}
  .country-quick-items button:active{transform:scale(.94)}
  .country-quick-items button:focus-visible{outline:2px solid #9cecff;outline-offset:3px}
