@@ -7801,5 +7801,9 @@ if(params.has('partyInventory')&&parent!==window){
 }
 }
 
+if(params.get('quickItem')==='teleportScroll'&&params.get('walkScene')==='country'&&S.screen==='bag'){
+ queueMicrotask(()=>{if(S.P.items?.teleportScroll>0)handlers.useTeleport();else toast('ไม่มีใบเทเลพอร์ต');});
+}
+
 </script></body>
 </html>
