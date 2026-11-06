@@ -31,7 +31,7 @@ function create(config){
   if(pendingVoice&&clock>=pendingVoice.at){if(!state.chasing||blocked||!prefs.enabled)pendingVoice=null;else if(unlocked&&!document.hidden){oneShot(pendingVoice.src,.75);pendingVoice=null;}}
   const dom=document.documentElement.dataset;dom.walkAudioMusic=current;dom.walkAudioSteps=walking?step:'idle';dom.walkAudioWater=waterLevel.toFixed(2);dom.walkAudioBlocked=String(blocked);dom.walkAudioContext=ctx?.state||'locked';
  }
- function dispose(){if(disposed)return;disposed=true;stopAll();if(ctx&&!scope.SoulbeastAudioBridge?.owns(ctx))ctx.close().catch(()=>{});scope.removeEventListener('storage',storage);document.removeEventListener('pointerdown',gesture,true);document.removeEventListener('keydown',gesture,true);document.removeEventListener('visibilitychange',visibility);button.remove();}
+ function dispose(){if(disposed)return;disposed=true;stopAll();if(water){try{water.source.stop();water.source.disconnect();water.filter.disconnect();water.gain.disconnect()}catch{}water=null}if(ctx&&!scope.SoulbeastAudioBridge?.owns(ctx))ctx.close().catch(()=>{});scope.removeEventListener('storage',storage);document.removeEventListener('pointerdown',gesture,true);document.removeEventListener('keydown',gesture,true);document.removeEventListener('visibilitychange',visibility);button.remove();}
  scope.addEventListener('pagehide',e=>{if(e.persisted){stopAll();if(ctx)ctx.suspend().catch(()=>{});}else dispose();});scope.addEventListener('pageshow',e=>{if(e.persisted)visibility();});status();return {tick,boss,dispose};
 }
 const api={create,distance,settings};scope.WalkAudio=api;if(typeof module!=='undefined')module.exports=api;
