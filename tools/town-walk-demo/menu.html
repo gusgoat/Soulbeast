@@ -7413,7 +7413,15 @@ function teleportSaveError(error){
  if(reason==='party_run_active'||reason==='tower locked'||reason==='finish other battle')return 'กรุณาจบกิจกรรมที่ค้างอยู่ก่อนเทเลพอร์ต';
  return 'ยังบันทึกการใช้ใบเทเลพอร์ตไม่ได้ กรุณาลองใหม่';
 }
-let teleportView=null, teleportDestination='', teleportBusy=false, teleportNeedsReload=false, teleportOpening=false,teleportLoadId=0,teleportError='';
+let teleportView=null, teleportDestination='', teleportBusy=false, teleportNeedsReload=false, teleportOpening=false,teleportLoadId=0,teleportError='',teleportPhase='';
+function teleportProgress(){
+ if(!teleportBusy)return '';
+ const label={map:'กำลังโหลดแผนที่ปลายทาง…',verify:'กำลังตรวจสอบพื้นที่ปลายทาง…',save:'กำลังบันทึกความคืบหน้าก่อนเทเลพอร์ต…',consume:'กำลังบันทึกการใช้ใบเทเลพอร์ต…',reconcile:'กำลังตรวจและบันทึกความคืบหน้า…'}[teleportPhase]||'กำลังเตรียมเทเลพอร์ต…';
+ return '<div class="stack" role="status" aria-live="polite" aria-atomic="true" style="text-align:center;align-items:center;padding:16px">'
+  +'<img src="assets/ui/online-hourglass.webp" alt="" width="80" height="80" style="object-fit:contain">'
+  +'<strong>'+label+'</strong><div class="walk-loading-progress" aria-hidden="true" style="width:180px"><i></i></div>'
+  +'<small>กรุณารอสักครู่ ไม่ต้องรีเฟรชหน้า</small></div>';
+}
 async function loadTeleportTerritory(){
  const packet={action:'country_status',code:S.P.code,pin:S.P.cpin||''};
  const view=WALK_ONLINE?await walkAccountPost(packet):await window.walkWarEngine.dispatch(S.P,packet);
@@ -7429,7 +7437,7 @@ handlers.useTeleport=async()=>{
  if(walkTeleportBlocked()){toast('ใช้ใบเทเลพอร์ตไม่ได้ระหว่างอยู่ในป่าหรือกำลังต่อสู้');return;}
  if(!(S.P.items?.teleportScroll>0)){toast('ไม่มีใบเทเลพอร์ต');return;}
  const load=++teleportLoadId;
- teleportBusy=true;teleportOpening=true;teleportError='';teleportView=null;teleportDestination='';S.ui.walkTeleport=true;
+ teleportBusy=true;teleportOpening=true;teleportPhase='map';teleportError='';teleportView=null;teleportDestination='';S.ui.walkTeleport=true;
  render();document.querySelector('main')?.scrollTo(0,0);
  try{
   const view=await loadTeleportTerritory();
@@ -7442,7 +7450,7 @@ handlers.retryTeleport=()=>handlers.useTeleport();
 handlers.reloadTeleportSave=async()=>{
  if(!WALK_ONLINE||!teleportNeedsReload||teleportBusy||!S.ui.walkTeleport)return;
  window.WalkSaveSafety?.backupActiveWalk(walkStorage,sessionStorage,'before-reconcile');
- teleportBusy=true;render();
+ teleportBusy=true;teleportPhase='reconcile';teleportError='';render();
  try{
   S.P=await (await getWalkAccountConnection()).reloadWalk();
   normalizePack();initDiscovery();
@@ -7456,39 +7464,42 @@ handlers.selectTeleport=id=>{if(!teleportBusy&&teleportLocations().some(n=>n.id=
 handlers.confirmTeleport=async()=>{
  if(S.screen!=='bag'||!S.ui.walkTeleport||teleportBusy||walkTeleportBlocked()||!(S.P.items.teleportScroll>0)||!teleportDestination||teleportNeedsReload)return;
  const destination=teleportDestination;
- teleportBusy=true;render();
+ teleportBusy=true;teleportPhase='verify';teleportError='';render();
  try{
   teleportView=await loadTeleportTerritory();
   if(S.screen!=='bag'||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;
   if(!teleportLocations().some(n=>n.id===destination)){teleportDestination='';toast('อาณาจักรของคุณไม่ได้ครอบครองปลายทางนี้แล้ว');return;}
   const online=WALK_ONLINE?await getWalkAccountConnection():null;
   if(WALK_ONLINE){
+   teleportPhase='save';render();
    try{await online.flush(true);}
    catch(error){throw Error(teleportSaveError(error));}
   }
   if(S.screen!=='bag'||walkTeleportBlocked()||!(S.P.items.teleportScroll>0))return;
   S.P.items.teleportScroll--;save();
   if(online){
+   teleportPhase='consume';render();
    try{await online.flush(true);}
    catch(error){S.P.items.teleportScroll++;save();throw Error(teleportSaveError(error));}
   }
   S.ui.walkTeleport=false;
   parent.postMessage({type:'walk-teleport',destination},location.origin);
- }catch(e){toast(e.message);}finally{teleportBusy=false;render();}
+ }catch(e){teleportError=e.message;toast(e.message);}finally{teleportBusy=false;render();}
 };
 CON.teleportScroll.bagAction='useTeleport';CON.teleportScroll.bagDisabled=walkTeleportBlocked;
 const teleportBag=vBag;
 vBag=function(){
  if(!S.ui.walkTeleport)return teleportBag();
  if(!teleportView)return '<section class="card stack" aria-label="เลือกปลายทางเทเลพอร์ต" aria-busy="'+teleportOpening+'"><h3>เลือกปลายทาง · ใช้ใบเทเลพอร์ต 1 ใบ</h3>'
-  +countryMapView([],'selectTeleport','')
-  +(teleportOpening?'<p role="status">กำลังโหลดพื้นที่ที่อาณาจักรครอบครอง…</p>':'<p role="alert">'+esc(teleportError||'โหลดข้อมูลปลายทางไม่สำเร็จ')+'</p><button class="btn pri" data-a="retryTeleport">ลองโหลดแผนที่อีกครั้ง</button>')
+  +(teleportOpening?teleportProgress():'<p role="alert">'+esc(teleportError||'โหลดข้อมูลปลายทางไม่สำเร็จ')+'</p><button class="btn pri" data-a="retryTeleport">ลองโหลดแผนที่อีกครั้ง</button>')
   +'<button class="btn" data-a="cancelTeleport">กลับไปกระเป๋า</button></section>';
  const locations=teleportLocations(),selected=locations.find(n=>n.id===teleportDestination);
  return '<section class="card stack" aria-label="เลือกปลายทางเทเลพอร์ต"><h3>เลือกปลายทาง · ใช้ใบเทเลพอร์ต 1 ใบ</h3>'
+  +teleportProgress()
+  +(teleportError?'<p role="alert">'+esc(teleportError)+'</p>':'')
   +countryMapView(locations,'selectTeleport',teleportDestination)
   +(selected?'<p>ปลายทาง · '+esc(selected.name)+'</p>':'<p>'+(locations.length?'แตะพื้นที่บนแผนที่ หรือเลือกจากรายชื่อด้านล่าง':'ไม่มีพื้นที่ที่สามารถเทเลพอร์ตไปได้')+'</p>')
-  +'<button class="btn pri" data-a="confirmTeleport" '+(!selected||teleportBusy||teleportNeedsReload||!(S.P.items.teleportScroll>0)?'disabled':'')+'>ยืนยันเทเลพอร์ต</button> <button class="btn" data-a="cancelTeleport" '+(teleportBusy?'disabled':'')+'>ยกเลิก</button>'
+  +'<button class="btn pri" data-a="confirmTeleport" '+(!selected||teleportBusy||teleportNeedsReload||!(S.P.items.teleportScroll>0)?'disabled':'')+'>'+(teleportBusy?'กำลังดำเนินการ…':'ยืนยันเทเลพอร์ต')+'</button> <button class="btn" data-a="cancelTeleport" '+(teleportBusy?'disabled':'')+'>ยกเลิก</button>'
   +(teleportNeedsReload?'<button class="btn" data-a="reloadTeleportSave" '+(teleportBusy?'disabled':'')+'>ตรวจและบันทึกอีกครั้ง</button>':'')
   +'<div class="row wrap">'+locations.map(n=>'<button class="btn sm" data-a="selectTeleport" data-v="'+esc(n.id)+'" aria-pressed="'+(n.id===teleportDestination)+'">'+esc(n.name)+'</button>').join('')+'</div></section>';
 };
@@ -7735,6 +7746,39 @@ bagVitals=function(){const html=dungeonBagVitals(),entry=dungeonBagFriend();if(!
 const dungeonBagUse=handlers.use;
 handlers.use=function(value){const [id,who]=String(value).split(':');if(who!=='dungeonFriend')return dungeonBagUse(value);if(statsLocked()||towerActive())return toast('ใช้ยากับเพื่อนได้หลังจบการต่อสู้');const entry=dungeonBagFriend(),it=CON[id];if(!entry||!it||!(S.P.items[id]>0)||it.seal||it.rev||it.petExp||it.bagAction||!(it.hp||it.mp||it.cure))return;const f=entry.friend,st=dungeonFriendStats(f),cured=(it.cure||[]).filter(k=>f.ailments?.[k]),recover=f.hp>0&&(it.hp&&f.hp<st.hp||it.mp&&f.mp<st.mp);if(!cured.length&&!recover)return toast('เพื่อนไม่มีอาการที่ยานี้รักษาได้ หรือพลังเต็มแล้ว');if(recover){if(it.hp)f.hp=Math.min(st.hp,f.hp+taleRecoveryAmount(it,'hp'));if(it.mp)f.mp=Math.min(st.mp,f.mp+taleRecoveryAmount(it,'mp'))}for(const k of cured)delete f.ailments[k];S.P.items[id]--;sessionStorage.setItem('soulbeast-dungeon-party-v1',JSON.stringify(entry.team));ExtraAudio.play(cured.length?'heal':'drink');save();render();toast('ใช้ '+it.n+' ให้ '+f.name+(cured.length?' · รักษา '+cured.map(k=>STS[k].n).join(' / '):''))};
 if(S.screen==='bag'&&dungeonBagFriend())render();
+
+/* Manual save uses the same guarded, idempotent online save as autosave. */
+let manualSaveBusy=false,manualSaveResult='',manualSaveTime=0;
+function manualSavePanel(){
+ if(!WALK_ONLINE)return '';
+ const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');
+ const at=Number(manualSaveTime||context?.revision)||0;
+ const time=at?new Date(at).toLocaleString('th-TH',{timeZone:'Asia/Bangkok'}):'';
+ return '<section class="card stack" aria-label="บันทึกเกมออนไลน์"><h3>บันทึกเกมออนไลน์</h3>'
+  +'<p>เกมบันทึกอัตโนมัติอยู่แล้ว หากต้องการตรวจให้แน่ใจ กดบันทึกด้วยตัวเองได้</p>'
+  +'<button class="btn pri full" data-a="walkManualSave" '+(manualSaveBusy?'disabled':'')+'>'+(manualSaveBusy?'กำลังบันทึกบนเซิร์ฟเวอร์…':'บันทึกเกมตอนนี้')+'</button>'
+  +'<p role="status" aria-live="polite">'+esc(manualSaveResult||(time?'บันทึกออนไลน์ล่าสุด · '+time:'ยังไม่มีเวลาบันทึกที่ยืนยันได้'))+'</p>'
+  +(manualSaveBusy?'<small>กำลังตรวจและบันทึกความคืบหน้า กรุณารอ ไม่ต้องรีเฟรชหน้า</small>':'')+'</section>';
+}
+const manualSaveSettings=vSettings;
+vSettings=function(){return manualSaveSettings().replace('<div class="achievement-grid">',manualSavePanel()+'<div class="achievement-grid">');};
+handlers.walkManualSave=async()=>{
+ if(!WALK_ONLINE||manualSaveBusy)return;
+ manualSaveBusy=true;manualSaveResult='กำลังบันทึกความคืบหน้าปัจจุบัน…';render();
+ try{
+  save();await (await getWalkAccountConnection()).flush(true);
+  const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');
+  manualSaveTime=Number(context?.revision)||0;
+  manualSaveResult='บันทึกบนเซิร์ฟเวอร์สำเร็จ'+(manualSaveTime?' · '+new Date(manualSaveTime).toLocaleString('th-TH',{timeZone:'Asia/Bangkok'}):'');
+ }catch(error){
+  const reason=error.code||error.message;
+  window.WalkSaveSafety?.backupActiveWalk(walkStorage,sessionStorage,'manual-save-error');
+  manualSaveResult=['session_replaced','login_required','character_not_owned'].includes(reason)||error.status===401
+   ?'ยังบันทึกไม่สำเร็จ · เซสชันเข้าสู่ระบบใช้ไม่ได้ กรุณาเก็บไฟล์สำรองจากแถบแจ้งเตือนก่อนเข้าสู่ระบบใหม่'
+   :reason==='save_conflict'?'ยังบันทึกไม่สำเร็จ · เซฟบนเซิร์ฟเวอร์เปลี่ยน กรุณาลองบันทึกอีกครั้ง อย่าโหลดเซฟเก่าทับ'
+   :'ยังบันทึกไม่สำเร็จ · ตรวจการเชื่อมต่อแล้วกดบันทึกอีกครั้ง อย่ารีเฟรชหรือปิดเกมระหว่างนี้';
+ }finally{manualSaveBusy=false;render();}
+};
 
 const controlsSettings=vSettings;
 vSettings=function(){const prefs=WalkDevicePrefs.read();const panel='<section class="card stack" aria-label="ตั้งค่าจอยสติ๊ก"><h3>ตำแหน่งจอยสติ๊ก</h3><p>ปรับให้ถนัดมือและจดจำไว้ในเบราว์เซอร์เครื่องนี้ ใช้ร่วมกันในเมือง แผนที่ประเทศ และดันเจี้ยน</p><button class="btn pri full" data-a="walkJoystickEdit">ปรับตำแหน่งจอยสติ๊กบนฉาก</button><label class="row">ซ้าย–ขวา <input type="range" min="0" max="100" value="'+Math.round(prefs.joystick.x*100)+'" data-walk-joy="x" aria-label="ตำแหน่งจอยสติ๊กแนวนอน"></label><label class="row">บน–ล่าง <input type="range" min="0" max="100" value="'+Math.round(prefs.joystick.y*100)+'" data-walk-joy="y" aria-label="ตำแหน่งจอยสติ๊กแนวตั้ง"></label><div class="walk-joystick-preview"><i style="left:'+Math.round(8+prefs.joystick.x*84)+'%;top:'+Math.round(15+prefs.joystick.y*70)+'%"></i></div><button class="btn" data-a="walkJoystickReset">คืนตำแหน่งเริ่มต้น</button><small>ปุ่ม ▣ บนฉาก ใช้ซ่อนหรือแสดงแถบเมนูด้านบนและด้านล่าง</small></section>';return controlsSettings().replace('<div class="achievement-grid">',panel+'<div class="achievement-grid">')};
