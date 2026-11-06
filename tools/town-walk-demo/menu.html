@@ -7935,7 +7935,7 @@ if(params.has('partyBattle')&&parent!==window){
   state=effects.length&&next.run.status!=='active'?{...next,run:{...next.run,status:'active',waiting:null}}:next;draw();
   if(effects.length)focusParty('arena');else if(focusTurn)focusParty('commands');
   if(effects.length&&next.run.status!=='active'){queuedParty=next;if(!partyPump)partyPump=setTimeout(()=>{partyPump=null;const pending=queuedParty;queuedParty=null;if(pending)receiveParty(pending);},60);}
-  if(next.run.presentation?.pending?.includes(next.code)&&!partyAcknowledged.has(next.run.id+':'+next.run.presentation.turn)){const id=next.run.id,turn=next.run.presentation.turn;const ack=()=>{if(state?.run.id!==id)return;if(MotionTimeline.busy()||Date.now()<MotionTimeline.until||!BattleReady.ready(S.battle)){setTimeout(ack,60);return;}partyAcknowledged.add(id+':'+turn);send('party-battle-presented',{turn});};setTimeout(ack,80);}
+  if(next.run.presentation&&!partyAcknowledged.has(next.run.id+':'+next.run.presentation.turn)){const id=next.run.id,turn=next.run.presentation.turn;const ack=()=>{if(state?.run.id!==id)return;if(MotionTimeline.busy()||Date.now()<MotionTimeline.until||!BattleReady.ready(S.battle)){setTimeout(ack,60);return;}partyAcknowledged.add(id+':'+turn);send('party-battle-presented',{turn});};setTimeout(ack,80);}
   const presentation=next.run;
   if(!partyPresented.has(presentation.id)){partyPresented.add(presentation.id);BattleReady.wait(S.battle).then(()=>{if(state?.run.id===presentation.id)parent.postMessage({type:'party-battle-visible',battle:presentation.id},location.origin)});}
  }

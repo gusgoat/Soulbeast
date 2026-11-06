@@ -74,7 +74,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-combat-runtime.mjs",
-      "sha256": "f1d3d1cda2f7f8d4b23600a108f931c5ab3c35251cdc91eaa45f72873dcc5d75"
+      "sha256": "7c3b5327be45249f7ca17102db929eb16c2cd7022ae8b75c5e98018ecb8e354a"
     },
     {
       "file": "source/server/accounts/dungeon-party-respawn.mjs",

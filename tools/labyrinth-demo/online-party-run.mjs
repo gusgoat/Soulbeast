@@ -1,10 +1,10 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
 import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
-import {partyArt} from './online-party-art.mjs?v=party-controls-20261107';
+import {partyArt} from './online-party-art.mjs?v=party-controls-2-20261107';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
-import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-20261107';
+import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
 import {partyRunController} from './online-party-controller.mjs?v=fast-combat-20261106';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
@@ -74,7 +74,7 @@ function drawBattle(run){
  if(shownBattle?.id!==run.id){
   clearTimeout(soloFinishTimer);soloFinishTimer=null;
   battleFrameReady=false;visibleBattleId=null;
-  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-controls-20261107&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-controls-2-20261107&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
  }
  shownBattle=run;$('battle').hidden=false;sendBattle();
 

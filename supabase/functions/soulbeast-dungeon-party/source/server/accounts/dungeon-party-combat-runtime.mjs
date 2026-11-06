@@ -32,7 +32,7 @@ export function partyCombatRuntime({engine,soloEnemies,now=()=>Date.now(),turnMs
  function controls(room,run){return {allowCapture:run.kind==='solo'&&room.dungeon.enemies[run.enemyId]?.kind==='shadow',allowEscape:run.kind==='solo',players:Object.fromEntries(room.members.map(m=>[m.code,m.save.P])),manualOwners:manual?room.members.filter(m=>!room.autoPlayers?.[m.code]).map(m=>m.code):[],inventories:Object.fromEntries(room.members.map(m=>[m.code,m.save.P.items||{}]))};}
  function finishStep(room,run,step,time){
   sync(room,run);
-  if(!step.waiting&&run.battle.effects?.length)run.presentation={turn:run.battle.turns,pending:run.participants.filter(code=>room.members.some(m=>m.code===code&&m.hp>0)),deadline:time+20000};
+  if(!step.waiting&&run.battle.effects?.length)run.presentation={turn:run.battle.turns,pending:run.participants.filter(code=>room.members.some(m=>m.code===code&&m.hp>0)&&!run.presentationExpired?.includes(code)),deadline:time+20000};
   if(step.waiting){run.waiting={...step.waiting,deadline:time+12000};return;}
   delete run.waiting;run.nextTurnAt=time+turnMs;
   if(step.result){run.status='finished';run.result=step.result;run.finishedAt=time;}
@@ -46,7 +46,7 @@ export function partyCombatRuntime({engine,soloEnemies,now=()=>Date.now(),turnMs
   delete run.loading;run.nextTurnAt=now()+turnMs;delete run.waiting;return true;
  }
  return {
-  async ready(room,run,actor,data={}){if(run.presentation&&data.turn===run.presentation.turn)run.presentation.pending=run.presentation.pending.filter(code=>code!==actor);if(run.loading){run.loading.pending=run.loading.pending.filter(code=>code!==actor);beginWhenReady(room,run);}},
+  async ready(room,run,actor,data={}){if(run.presentation&&data.turn===run.presentation.turn){run.presentation.pending=run.presentation.pending.filter(code=>code!==actor);run.presentationExpired=run.presentationExpired?.filter(code=>code!==actor);}if(run.loading){run.loading.pending=run.loading.pending.filter(code=>code!==actor);beginWhenReady(room,run);}},
   async choose(room,run,actor,data){
    if(!beginWhenReady(room,run)||run.status!=='active'||!run.waiting||run.waiting.ownerCode!==actor)throw Error('not_your_turn');
    if(now()>=run.waiting.deadline){
@@ -73,7 +73,7 @@ export function partyCombatRuntime({engine,soloEnemies,now=()=>Date.now(),turnMs
   async advance(room,run) {
    if(run.status!=='active'||!beginWhenReady(room,run))return;
    const time=now();
-   if(run.presentation){run.presentation.pending=run.presentation.pending.filter(code=>room.members.some(m=>m.code===code&&m.hp>0));if(run.presentation.pending.length&&time<run.presentation.deadline)return;delete run.presentation;}
+   if(run.presentation){run.presentation.pending=run.presentation.pending.filter(code=>room.members.some(m=>m.code===code&&m.hp>0));if(run.presentation.pending.length&&time<run.presentation.deadline)return;if(run.presentation.pending.length)run.presentationExpired=[...new Set([...(run.presentationExpired||[]),...run.presentation.pending])];delete run.presentation;}
    if(run.waiting){
     if(time<run.waiting.deadline)return;
     room.autoPlayers??={};room.autoPlayers[run.waiting.ownerCode]=true;
