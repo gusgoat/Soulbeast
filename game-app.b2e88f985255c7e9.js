@@ -1626,7 +1626,7 @@ function boot(data){if(data&&data.S){S=data.S;try{const t=localStorage.getItem(S
  if(S.battle&&S.battle.v!==4){S.battle=null;S.screen=S.zone?'zone':'town'}
  if(S.zone&&(S.zone.depth==null||(S.zone.fork&&typeof S.zone.fork[0]==='string'))){S.zone.depth=S.zone.depth||0;S.zone.log=S.zone.log||[];S.zone.ev=null;newFork()}
  if(S.zone&&!S.zone.fork&&!S.zone.ev&&S.zone.depth<ZDEPTH&&!S.battle)newFork();
- const resume=()=>{render();cloudInit();if(S.screen==='world')wbCall(WORLD.roomId?'wb_poll':'wb_status');if(S.screen==='pvp')pvpSchedule();
+ const resume=()=>{if(data?.enterWalk&&!S.battle&&!S.zone){void data.enterWalk();return;}render();cloudInit();if(S.screen==='world')wbCall(WORLD.roomId?'wb_poll':'wb_status');if(S.screen==='pvp')pvpSchedule();
  const b=S.battle;if(b&&!b.over){const u=b.cur&&uById(b.cur);if(!u||u.side==='enemy'||b.menu==='wait'){if(u&&u.side==='ally'&&!teamAutoUnit(u)){b.menu='main';render()}else battleLater(u?aiAct:advance,600)}}};
  if(!WEB_INTRO.open(resume,!!data?.accountEntry,!!data?.accountEntry))resume();}
 
@@ -4655,6 +4655,21 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
  };
  async function task(fn){if(state.busy)return;state.busy=true;state.error='';ui();try{await fn();}catch(e){state.error=state.errorText?.(e)||'เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง';if(e.message==='email_wait')state.error='กรุณารอสักครู่ก่อนส่งอีเมลอีกครั้ง';}finally{state.busy=false;if(!ui())render();}}
  async function list(){state.user=await state.client.identity();if(!state.user.email_confirmed_at)throw Error('verified_account_required');const r=await state.client.game('account_list',{},SB_ENV);state.characters=r.characters.map(c=>({...c,cls:/^(?:สไนเปอร์|สไนป์เปอร์|Sniper)$/i.test(c.className||'')?'sniper':Object.keys(CLS).find(k=>CLS[k].n===c.className)||(CLS[c.cls]?c.cls:'swordsman'),gender:['male','female'].includes(c.gender)?c.gender:undefined}));state.slotsUsed=r.slotsUsed??r.characters.length;state.limit=r.characterLimit||5;state.mode='list';}
+ let walkEntryPending=false,walkEntryBusy=false,walkEntryError='';
+ function renderWalkEntry(){
+  root().innerHTML='<main class="stack" style="max-width:540px;margin:auto;padding:24px"><section class="card stack" role="status" style="text-align:center"><img src="assets/ui/online-hourglass.webp" alt="" width="110" height="110" style="align-self:center;object-fit:contain"><h2>กำลังเข้าสู่ฉากเดินออนไลน์…</h2><p>'+esc(walkEntryError||'กำลังบันทึกและเตรียมตัวละคร กรุณารอสักครู่')+'</p>'+(walkEntryError?'<button class="btn pri" id="walkEntryRetry">ลองเข้าสู่ฉากเดินอีกครั้ง</button>':'')+'</section></main>';
+  const retry=document.getElementById('walkEntryRetry');if(retry)retry.onclick=enterWalking;
+ }
+ async function enterWalking(){
+  if(walkEntryBusy||state.mode!=='playing')return;
+  walkEntryPending=true;walkEntryBusy=true;walkEntryError='';renderWalkEntry();
+  try{
+   await gsSave(true);if(state.saveConflict||!S.P?.gsAt)throw Error('save_conflict');
+   const {enterOnlineWalk}=await import('./client/online-walk.mjs?v=save-safe-20261106');
+   enterOnlineWalk(S,SB_ENV,state.user.id);
+  }catch(e){walkEntryError=state.errorText?.(e)||'ยังเข้าสู่ฉากเดินไม่ได้ กรุณาลองอีกครั้ง';}
+  finally{walkEntryBusy=false;if(walkEntryError)renderWalkEntry();}
+ }
  async function select(code,remoteOnly=false){if(!state.characters.some(c=>c.code===code))throw Error('character_not_owned');state.code=code;let data;
   try{data=JSON.parse(localStorage.getItem(key())||'null');}catch{}
   const r=await state.client.game('load',{code},SB_ENV);
@@ -4671,7 +4686,7 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
   if(a==='create'){if((state.slotsUsed??state.characters.length)>=characterLimit()){state.error=fullMessage();ui();return;}beginCreate();return;}
   if(a==='logout'){await task(async()=>{await state.client.logout();state.user=null;state.mode='login';S=blank();state.code='';});return;}
  }
- const originalRender=render;render=function(...a){if(ui())return;const out=originalRender(...a);if(state.mode==='playing'&&S.screen==='town'&&!S.battle&&!S.zone){const button=document.createElement('button');button.className='btn pri';button.textContent='เข้าสู่ฉากเดินออนไลน์';button.onclick=()=>task(async()=>{await gsSave(true);if(state.saveConflict||!S.P?.gsAt)throw Error('save_conflict');const {enterOnlineWalk}=await import('./client/online-walk.mjs?v=save-safe-20261106');enterOnlineWalk(S,SB_ENV,state.user.id);});document.querySelector('main')?.prepend(button);}if(state.saveConflict)document.querySelector('main')?.insertAdjacentHTML?.('afterbegin','<aside class="card" role="alert">พบเซฟใหม่จากอีกเครื่อง ระบบหยุดบันทึกเพื่อป้องกันข้อมูลถูกทับ <button class="btn" data-a="go" data-v="settings">ตรวจเซฟในตั้งค่า</button></aside>');applyGameLanguage(root());return out;};
+ const originalRender=render;render=function(...a){if(ui())return;if(WEB_INTRO.active)return;if(walkEntryPending&&state.mode==='playing'){renderWalkEntry();return;}return originalRender(...a);};
  // Every local save belongs to an authenticated account and a server-authorized character.
  save=function(){if(state.mode==='playing'&&state.user&&S.P?.code===state.code)try{localStorage.setItem(key(),JSON.stringify(S));}catch{};};
  load=function(){S=state.initial||blank();IMG={};if(state.user&&state.code)try{IMG=JSON.parse(localStorage.getItem(key()+':images')||'{}');}catch{}};
@@ -4722,7 +4737,7 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
     state.client.redirect='https://gusgoat.github.io/Soulbeast/'+(SB_ENV==='live'?'accounts.html':'accounts.html?world=test');
     const hash=location.hash; if(hash){history.replaceState(null,'',location.pathname+location.search);await state.client.acceptCallback(hash);}
     if(state.client.sessions.read()){if(state.client.recovery){state.user=await state.client.identity();state.mode='recovery';}else {await list();if(new URLSearchParams(location.search).get('create')==='1'&&state.slotsUsed<characterLimit())beginCreate();}}
-   }catch(e){state.error=state.errorText?.(e)||'ระบบบัญชียังไม่พร้อม กรุณาลองใหม่อีกครั้ง';}finally{state.busy=false;}ui();})();};state.boot=data=>{state.initial=data.S;try{return originalBoot({accountEntry:true});}finally{state.initial=null;}};
+   }catch(e){state.error=state.errorText?.(e)||'ระบบบัญชียังไม่พร้อม กรุณาลองใหม่อีกครั้ง';}finally{state.busy=false;}ui();})();};state.boot=data=>{state.initial=data.S;walkEntryPending=!data.S.battle&&!data.S.zone;walkEntryError='';const banner=document.getElementById('account-session-ended');if(banner)banner.hidden=true;try{return originalBoot({accountEntry:true,enterWalk:enterWalking});}finally{state.initial=null;}};
  return state;
 })();
 
