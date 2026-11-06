@@ -1,0 +1,74 @@
+ระบบภาพเหตุการณ์เควส — ระยะ 3
+
+ไฟล์หลัก
+quest-events.js: สร้างข้อมูลการ์ดและแสดงภาพ/บทพูด/ผล/เป้าหมายถัดไป
+quest-events.css: การ์ดและแถบแจ้งเตือน รองรับจอแคบและพื้นที่ปลอดภัยของมือถือ
+quest-event-art.js: ภาพรางวัล 109 รายการ สร้างจาก catalog เดิม
+quest-events-preview.html: ตัวอย่างโต้ตอบที่ใช้ผู้เล่นจำลอง ไม่แตะเซฟจริง
+
+ขอบเขต
+- เปลี่ยนการนำเสนอ ไม่ให้ระบบภาพแก้ progress หรือแจกของ
+- รับงานและเลือกทาง: ยืนยันการรับ/ทางเลือก และค่าใช้จ่ายที่จ่ายแล้ว
+- คุย NPC: การ์ดผลในบทสนทนา โดยใช้ภาพผู้พูดที่ตรงเป้าหมาย
+- ค้นป่า: การ์ดพบเหตุการณ์ก่อนกด และใบยืนยันหลังทำสำเร็จ
+- ล่า/บริการ/กิจกรรม: แถบแจ้งเตือนแบบกดเปิดเอง ไม่เปิด modal อัตโนมัติ
+- ส่งงาน: รูปรางวัลและจำนวนจริง พร้อมภาพเป้าหมายถัดไป
+- เปิดหีบ: ใช้ id ของที่ได้รับจริง เพื่อเลือกภาพให้ตรงไอเทม
+- iframe ของเมนูส่งเฉพาะข้อมูลแสดงผลกลับฉากแม่ ผ่าน origin และ source ที่ตรวจแล้ว
+
+การเติมภาพเฉพาะเรื่องในระยะ 4–5
+q.visuals.accept / q.visuals.complete
+choice.visuals.accept / choice.visuals.complete (มีลำดับก่อนภาพระดับเควส)
+objective.visual.discover: ภาพ/ข้อความก่อนทำ ไม่ใช่คำยืนยันความสำเร็จ
+objective.visual.complete: ภาพ/ข้อความหลังสำเร็จ
+objective.visual: รูปแบบเก่าสำหรับหลังสำเร็จ ยังคงรองรับ
+
+ข้อมูลภาพแต่ละช่อง
+{ art, alt, quote, result, speaker, portrait, grid, frame, row,
+  next: { label, place, name, art } }
+art/portrait/next.art เป็น path รูป; ไม่ใช้ HTML ในข้อความ
+grid=true สำหรับภาพ 3 คอลัมน์ × 2 แถว; frame=0..2 และ row=0..1
+รูปเดี่ยวไม่ต้องระบุ grid/frame/row
+next เป็นข้อมูลนำทาง ไม่เปิดเมนูหรือรับรางวัลแทนผู้เล่น
+
+ตัวอย่างข้อมูลขั้นตอน
+{
+  type: "forestSearch", target: "npc-blue-01-0", zone: 7, depth: 2,
+  visual: {
+    discover: { art: "/Soulbeast/assets/world-quests/rescue-v1.png.webp",
+      quote: "มีเสียงเรียกจากริมทาง", result: "พบผู้ต้องการความช่วยเหลือ" },
+    complete: { art: "/Soulbeast/assets/world-quests/rescue-v1.png.webp",
+      quote: "ขอบคุณที่ช่วยข้า", result: "พากลับจุดพักแล้ว" }
+  }
+}
+
+การทดสอบ
+node tools/build-quest-event-art.cjs
+node tools/test-quest-events.cjs
+node tools/test-quest-logic.cjs
+
+ข้อจำกัดที่ยังต้องตรวจในระยะถัดไป
+ภาพเฉพาะเรื่อง/ตอนจบยังไม่ครบทุกเควส ระบบใช้ภาพเดิมเป็นค่าเริ่มต้น
+การทดสอบ DOM ใน VM ไม่รับรองการจัดวางจริง เสียงอ่านหน้าจอ หรือการเล่นออนไลน์
+ต้องเปิด preview ในเบราว์เซอร์และตรวจหน้าจอจริงก่อนเผยแพร่
+
+ระยะ 4: quest-pilot-visuals.js เพิ่มภาพ/บทพูดให้ 21 เควสตัวอย่าง (24 เส้นทาง)
+โหลดหลัง world-quests-data.js ก่อนเริ่ม UI; ไม่เปลี่ยนเป้าหมาย เงิน หรือรางวัล
+offer ใช้เล่าเงื่อนไขก่อนรับงาน; objective.visual.progress แยกจาก complete เพื่อไม่ยืนยันก่อนครบจำนวน
+columns/rows กำหนดจำนวนช่อง atlas ได้; crop:{x,y,width,height,sourceWidth,sourceHeight} ใช้เมื่อช่องไม่เท่ากัน
+ภาพ pilot-events-v1 มี 12 ฉาก แต่ช่องไม่เท่ากัน ต้องใช้ crop ตาม metadata ไม่แบ่งด้วยจำนวนช่องอย่างเดียว
+ทดสอบเพิ่ม: node tools/test-quest-pilots.cjs
+ตัวอย่างเล่นครบวงจร: quest-pilots-preview.html
+เซิร์ฟเวอร์ดูตัวอย่าง: node tools/serve-quest-preview.cjs (เฉพาะ 127.0.0.1:8767)
+
+ระยะ 5: โหลด quest-expansion-visuals.js หลัง pilot เพื่อเติม 441 เควสที่เหลือ รวม 462 เควส
+ใช้ภาพประเภทเหตุการณ์ร่วมกับภาพเรื่องเดิมและปมเรื่องจาก source; 87 เควสทางเลือกมีภาพจบคนละฉากต่อเส้นทาง
+เก็บ story/ending และเงื่อนไขเดิมไว้ ขยายข้อความเฉพาะผู้พูด สถานที่ และขั้นตอน; เปิดอ่านเรื่องเต็มได้ใน UI
+การหลอม/ผนึกส่ง gearId/gearName หรือ beastSp/beastName ให้ renderer แสดงของ/อสูรที่สำเร็จจริง
+QuestActionArt และ QuestBeastArt สร้างจาก catalog ภาพเดิมด้วย build-quest-event-art.cjs
+เควสทั้งหมดทดลองได้ที่ quest-pilots-preview.html?library=1 พร้อมค้นชื่อเควส/NPC
+ทดสอบเพิ่ม: node tools/test-quest-expansion.cjs [coverage-output.json]
+
+ระยะ 6: test-quest-integration.cjs ตรวจ source/origin ของ townMenu, regionMenu และ menuFrame ดันเจี้ยน รวมทั้งไฟล์อ้างอิงจริงและ syntax สี่ entrypoints
+ผลระยะ 6 อยู่ที่ outputs/quest-inventory-20261106/phase-6.txt ของ workspace หลัก; ผ่านในเครื่อง ยังไม่เผยแพร่หรือรับรองการเล่นออนไลน์จริง
+ข้อจำกัดภาพไม่ครบที่กล่าวในระยะ 3 เป็นสถานะในอดีต; ระยะ 5 เติม metadata ครบ 462 เควสแล้ว โดยใช้ฉากร่วมตามชนิดเหตุการณ์

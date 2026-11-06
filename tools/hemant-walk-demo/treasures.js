@@ -9,7 +9,7 @@ function create(nav,bandits,storage,catalog,random=Math.random,country='blue'){
   const roll=random(),type=roll<.5?'items':roll<.9?'gear':'crafted',pool=catalog[type],entry=pool[Math.min(pool.length-1,Math.floor(random()*pool.length))],qty=type==='items'?1+Math.floor(random()*3):1,gold=type==='crafted'?0:100+Math.floor(random()*201);
   p.gold=(Number(p.gold)||0)+gold;
   if(type!=='items'){p.owned||=[];p.owned.push(entry.id)}else{p.items||={};p.items[entry.id]=(p.items[entry.id]||0)+qty}
-  p.walkTreasure.opened||={};p.walkTreasure.opened[chest.id]={gold,type,id:entry.id,qty};storage.setItem(KEY,JSON.stringify(p));return {ok:true,gold,name:entry.name,qty,type};
+  p.walkTreasure.opened||={};p.walkTreasure.opened[chest.id]={gold,type,id:entry.id,qty};storage.setItem(KEY,JSON.stringify(p));return {ok:true,id:entry.id,gold,name:entry.name,qty,type};
  }
  return {chests,state,unlock,claim};
 }

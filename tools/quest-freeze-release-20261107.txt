@@ -1,0 +1,46 @@
+Quest visuals and freeze integration — 2026-11-07
+
+Base: 1756dbf63c45178a6f2807f62343d242edfd2129
+Target: codex/web-latest-20261103
+Preserved party patch: party-controls-2-20261107
+
+Scope
+- Quest correctness: location/country/step restrictions, isolated forest searches,
+  promotion prerequisites, once-only rewards and completed online boss receipts.
+- Image-first presentation for all 462 quests / 549 routes / 1,334 objectives.
+- Blacksmith certification scene and character-menu promotion instructions.
+- Existing story, quest objectives and rewards preserved by visual expansion.
+- Freeze: randomly 3–5 normal turns of the affected unit; fire hits thaw players,
+  companions and enemies; save/swap paths preserve the last remaining turn.
+- Updated status descriptions and asset/menu cache versions.
+
+Verification
+node tools/test-freeze.cjs                  PASS 305 cases
+node tools/test-quest-logic.cjs             PASS 549 routes
+node tools/test-quest-events.cjs            PASS 2,668 models
+node tools/test-quest-pilots.cjs            PASS 21 quests / 24 routes
+node tools/test-quest-expansion.cjs         PASS 441 expanded + 21 pilots
+node tools/test-quest-integration.cjs       PASS 223 local references,
+                                          100 external + 4 inline scripts
+Syntax checks on standalone game/data/social/war engines passed.
+Browser smoke: promotion25 accepted, five shadow groups, illustrated certificate,
+turn-in rewards and character-menu instructions; no captured console errors.
+Preview uses an isolated dummy character; no live player saves changed.
+
+Protection of the user's latest work
+- New worktree starts at the exact supplied base; original dirty worktree retained.
+- 61 existing backend/client/party/music files checked equal to base (normalized EOL).
+- Entire partyBattle integration block in menu.html checked equal to base.
+- Dungeon party import still uses party-controls-2-20261107.
+- No account-client coupon-test edit, music edit, or older walk-presence cache key copied.
+- Backend party engine already contains the requested freeze rules at this base;
+  no backend deployment or party server edits included.
+
+Limits
+- Automated coverage does not mean all routes were played manually.
+- No live multiplayer, live account or physical-device gameplay in this merge run.
+- Shared event scenes are intentional; no claim of one unique image per quest.
+
+Local preview
+node tools/serve-quest-preview.cjs
+/Soulbeast/tools/town-walk-demo/quest-pilots-preview.html?library=1

@@ -213,7 +213,7 @@ function battlePlaceUnit(u,n){
   if(!old.temporary)(b.retiredUnits??=[]).push(old);
   // Persist a defeated pet before its visible slot is reused.
   const p=old.side==='ally'&&old.kind==='pet'&&S.P?.pets?.find(p=>p.uid===old.uid);
-  if(p){p.hp=old.hp;p.mp=old.mp;p.ailments=Object.fromEntries(['poison','burn','confuse','para','static','freeze','chill'].filter(k=>old.status?.[k]).map(k=>[k,Math.max(2,old.status[k])]));}
+  if(p){p.hp=old.hp;p.mp=old.mp;p.ailments=Object.fromEntries(['poison','burn','confuse','para','static','freeze','chill'].filter(k=>old.status?.[k]).map(k=>[k,Math.max(k==='freeze'?1:2,old.status[k])]));}
   b.queue=(b.queue||[]).filter(id=>String(id).replace(/\*$/,'')!==old.id);
   list[list.indexOf(old)]=n;
  }else list.push(n);
@@ -686,7 +686,7 @@ function turnStartBase(u){const s=u.status;
  if(hasPas(u,'regen')&&u.hp<u.st.hp)heal(u,u.st.hp*(isBalancedPvp()?.035:.06));
  if(hasPas(u,'mpregen'))u.mp=Math.min(u.st.mp,u.mp+Math.round(u.st.mp*.08));
  for(const k of ['burn','poison'])if(s[k]){const d=Math.max(1,Math.round(u.st.hp*(k==='burn'?.06:.08)));blog(`${u.name} ${k==='burn'?'โดนไฟเผา':'โดนพิษกัดกร่อน'} เสีย ${d} HP`);hurt(u,d);if(u.hp<=0)return true}
- if(s.freeze){if(persistentBattleUnit(u))s.freeze=Math.max(2,s.freeze);s.freeze--;if(s.freeze<=0){delete s.freeze;blog(`น้ำแข็งที่ห่อหุ้ม ${u.name} ละลายแล้ว`)}else{blog(`${u.name} ถูกแช่แข็ง ขยับไม่ได้`);return true}}
+ if(s.freeze){s.freeze--;blog(`${u.name} ถูกแช่แข็ง ขยับไม่ได้`);if(s.freeze<=0){delete s.freeze;blog(`น้ำแข็งที่ห่อหุ้ม ${u.name} ละลายแล้ว`)}return true}
  if(s.sleep){s.sleep--;if(s.sleep<=0){delete s.sleep;blog(`${u.name} ตื่นขึ้นแล้ว`)}else{blog(`${u.name} หลับปุ๋ย...`);fxAdd(u,'Zzz','muted');return true}}
  let skip=null;
  if(s.para&&Math.random()<.25)skip=`${u.name} เป็นอัมพาต ขยับตัวไม่ได้`;
@@ -832,7 +832,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
   if(t.hp>0&&u.hp>0&&hasPas(t,'counter')&&!t._ctr&&Math.random()<.25){t._ctr=1;blog(`${t.name} สวนกลับ!`);hitOne(t,SK.attack,u,1);t._ctr=0}}
  if(t.hp<=0)return;
  if(t.status.sleep){delete t.status.sleep;blog(`${t.name} สะดุ้งตื่น!`)}
- if(t.status.freeze&&attackHasElement(u,sk,'fire')&&!persistentBattleUnit(t)){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
+ if(t.status.freeze&&attackHasElement(u,sk,'fire')){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
  if(sk.bf)addBuffs(t,{bf:sk.bf,tn:sk.tn});
  if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):scale<1?.7:1)*tx)}
 /* simple AI for enemies and auto pets */
@@ -970,7 +970,7 @@ function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
   else if(sel?.kind==='pet'&&sel.hp>0)slot=b.allies.indexOf(sel);
   else slot=b.allies.findIndex(x=>x.kind==='pet'&&x.hp>0);
   if(slot<0){toast(ct('สนามเต็ม 4 ตำแหน่งแล้ว','All four battlefield positions are occupied','战场四个位置已满'));return;}
-  const old=b.allies[slot],n=petUnit(p);if(old){const op=petBy(old.uid);if(op){op.hp=old.hp;op.mp=old.mp;op.ailments=Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>old.status?.[k]).map(k=>[k,Math.max(2,old.status[k])]));}b.queue=b.queue.map(id=>String(id).replace(/\*$/,'')===old.id?id.replace(old.id,n.id):id);}
+  const old=b.allies[slot],n=petUnit(p);if(old){const op=petBy(old.uid);if(op){op.hp=old.hp;op.mp=old.mp;op.ailments=Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>old.status?.[k]).map(k=>[k,Math.max(k==='freeze'?1:2,old.status[k])]));}b.queue=b.queue.map(id=>String(id).replace(/\*$/,'')===old.id?id.replace(old.id,n.id):id);}
   b.allies[slot]=n;if(!old||old.hp<=0){b.queue=b.queue.filter(id=>String(id).replace(/\*$/,'')!==n.id);b.queue.push(n.id);}
   if(!b.used.includes(p.uid))b.used.push(p.uid);
   S.P.party=b.allies.filter(x=>x.kind==='pet').map(x=>x.uid);blog(`เรียก ${petName(p)} ออกจากผนึก!`);b.menu='main';render();return;}
@@ -2440,10 +2440,10 @@ endBattle=function(result){const b=S.battle,first=b&&!b.over&&b.kind==='boss'&&r
 const PERSISTENT_AILMENTS=['poison','burn','confuse','para','static','freeze','chill'];
 function persistentBattleUnit(u){return !!S.battle&&!['pvp','world','camp','guildwar'].includes(S.battle.kind)&&u.side==='ally'&&['player','pet'].includes(u.kind);}
 function retainedBattleAilments(u){return persistentBattleUnit(u)?Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>u.status?.[k]).map(k=>[k,u.status[k]])):{};}
-function storedAilments(o){return Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>o.ailments?.[k]).map(k=>[k,Math.max(2,Number(o.ailments[k])||2)]));}
+function storedAilments(o){return Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>o.ailments?.[k]).map(k=>[k,Math.max(k==='freeze'?1:2,Number(o.ailments[k])||2)]));}
 const forestPlayerUnit=playerUnit;playerUnit=function(){const u=forestPlayerUnit();u.status={...u.status,...storedAilments(S.P)};return u;};
 const forestPetUnit=petUnit;petUnit=function(p){const u=forestPetUnit(p);u.status={...u.status,...storedAilments(p)};return u;};
-const forestSyncBack=syncBack;syncBack=function(){const b=S.battle;forestSyncBack();if(!b)return;for(const u of b.allies){const o=u.kind==='player'?S.P:u.kind==='pet'?petBy(u.uid):null;if(o)o.ailments=Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>u.status[k]).map(k=>[k,Math.max(2,u.status[k]) ]));}};
+const forestSyncBack=syncBack;syncBack=function(){const b=S.battle;forestSyncBack();if(!b)return;for(const u of b.allies){const o=u.kind==='player'?S.P:u.kind==='pet'?petBy(u.uid):null;if(o)o.ailments=Object.fromEntries(PERSISTENT_AILMENTS.filter(k=>u.status[k]).map(k=>[k,Math.max(k==='freeze'?1:2,u.status[k]) ]));}};
 // Swapped-out pets also keep their ailments when their battle unit leaves the field.
 const forestBattleAction=battleAction;battleAction=function(v){if(forestAutoLocked()&&String(v).startsWith('auto:'))return toast('ต่อสู้อัตโนมัติปลดล็อกเลเวล 10');if(String(v).startsWith('swap:'))syncBack();return forestBattleAction(v);};
 const forestFullHeal=fullHeal;fullHeal=function(){forestFullHeal();S.P.ailments={};(S.zone?carriedPets():S.P.pets).forEach(p=>p.ailments={});};
@@ -2491,7 +2491,7 @@ bagVitals=function(){return '<div class="bag-vitals">'+bagHealTargets().map(t=>'
 const statusHandbook=vGuide;vGuide=function(){return statusHandbook().replace('<div class="guide-catalogs">','<div class="guide-catalogs"><button class="btn" data-a="go" data-v="statusbook">สมุดสถานะผิดปกติ →</button>');};
 function statusBookArt(key,name){const v=BATTLE_SPECIAL_ICONS[key];return '<span class="status-book-art">'+(v?'<span class="battle-effect-icon special-effect '+v[1]+'"><span class="battle-special-image" role="img" aria-label="'+esc(name)+'" style="background-position:'+(v[0]%6*20)+'% '+(Math.floor(v[0]/6)*100/3)+'%"></span></span>':'<span class="battle-effect-icon">'+battleEffectImage(key,name)+'</span>')+'</span>';}
 function statusBookCard(key,name,description,extra=''){return '<article class="card status-book-card">'+statusBookArt(key,name)+'<div><h3>'+esc(name)+'</h3><p>'+esc(description)+'</p>'+extra+'</div></article>';}
-function vStatusBook(){const ailments=Object.keys(STS).map(k=>{const cure=Object.values(CON).filter(it=>it.cure?.includes(k)).map(it=>it.n).join(' / '),persistent=PERSISTENT_AILMENTS.includes(k),description=k==='freeze'?'ขยับไม่ได้ แต่พลังป้องกันกายภาพและเวทเพิ่ม 50%':STS[k].info;return statusBookCard(k,STS[k].n,description,'<small class="status-book-persistence">'+(persistent?'ติดค้างหลังการต่อสู้ · ไม่หายเอง':'มีระยะเวลา · หายเมื่อครบผลของสถานะ'+(k==='sleep'?' หรือถูกโจมตี':''))+'</small><small>รักษาด้วย: '+esc(cure)+'</small>');}).join('');
+function vStatusBook(){const ailments=Object.keys(STS).map(k=>{const cure=Object.values(CON).filter(it=>it.cure?.includes(k)).map(it=>it.n).join(' / '),persistent=PERSISTENT_AILMENTS.includes(k),description=STS[k].info;return statusBookCard(k,STS[k].n,description,'<small class="status-book-persistence">'+(k==='freeze'?'นับเมื่อถึงเทิร์นปกติของผู้ติดสถานะ · หากจบการต่อสู้ก่อน จะเก็บเวลาที่เหลือไว้':persistent?'ติดค้างหลังการต่อสู้ · ไม่หายเอง':'มีระยะเวลา · หายเมื่อครบผลของสถานะ'+(k==='sleep'?' หรือถูกโจมตี':''))+'</small><small>รักษาด้วย: '+esc(cure)+'</small>');}).join('');
  const names={patk:'พลังโจมตีกายภาพ',matk:'พลังโจมตีเวท',crit:'คริติคอล',acc:'ความแม่นยำ',eva:'หลบหลีก',spd:'ความเร็ว',pdef:'ป้องกันกายภาพ',mdef:'ป้องกันเวท'};
  const buffs=Object.entries(names).flatMap(([key,name])=>[true,false].map(up=>statusBookCard(key+(up?'-up':'-down'),(up?'เพิ่ม':'ลด')+name,'ปรับ'+name+' ตามเปอร์เซ็นต์และระยะเวลาของสกิล หมดผลเมื่อครบระยะเวลา ไม่ใช่สถานะติดค้างที่ต้องใช้ยา'))).join('');
  const extra=[['taunt','ยั่วยุ','ดึงการโจมตีเป้าหมายเดี่ยวส่วนใหญ่ให้เล็งผู้ยั่วยุ ช่วยป้องกันเพื่อน แต่ทำให้ตัวเองเสี่ยงถูกโจมตี'],['charging','กำลังชาร์จ','รวบรวมพลังเพื่อปล่อยสกิลเมื่อถึงจังหวะถัดไป'],['empowered','พลังโจมตีครั้งถัดไป','เพิ่มพลังการโจมตีครั้งถัดไปตามตัวคูณของสกิล'],['physicalImmune','ป้องกันกายภาพ 100%','ป้องกันการโจมตีกายภาพขณะผลยังทำงาน'],['magicImmune','ป้องกันเวท 100%','ป้องกันการโจมตีเวทขณะผลยังทำงาน'],['enchant','ประทับธาตุอาวุธ','ผสมธาตุที่ประทับกับการโจมตีปกติและสกิลโจมตีชั่วคราว ธาตุซ้ำนับครั้งเดียว'],['summonLife','ระยะเวลาอัญเชิญ','ผู้ช่วยอัญเชิญอยู่ได้ตามจำนวนเทิร์นที่เหลือ และออกจากสนามเมื่อหมดเวลา']];

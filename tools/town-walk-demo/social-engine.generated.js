@@ -236,7 +236,7 @@ const typeMult=(el,types)=>Array.isArray(el)?el.reduce((m,e)=>m*typeMult(e,types
 const STS={
  burn:{n:'ติดไฟ',c:'#ee8130',d:()=>3,info:'เสีย HP 6% ทุกตา'},
  poison:{n:'ติดพิษ',c:'#c060be',d:()=>4,info:'เสีย HP 8% ทุกตา'},
- freeze:{n:'แช่แข็ง',c:'#96d9d6',d:()=>R(2,3),info:'ขยับไม่ได้ แต่ป้องกันเพิ่ม 50% (โดนธาตุไฟจะละลาย)'},
+ freeze:{n:'แช่แข็ง',c:'#96d9d6',d:()=>R(3,5),info:'ขยับไม่ได้ 3–5 เทิร์นของตนเอง (สุ่ม) แต่พลังป้องกันกายภาพและเวทเพิ่ม 50% · หายเมื่อครบเวลา หรือถูกโจมตีธาตุไฟโดนตัว'},
  chill:{n:'เยือกแข็ง',c:'#9ec9e6',d:()=>3,info:'ความเร็วลด 40%'},
  love:{n:'หลงรัก',c:'#f08ab0',d:()=>3,info:'45% เหม่อลอยไม่ยอมโจมตี'},
  sleep:{n:'นอนหลับ',c:'#9a9fd0',d:()=>R(3,5),info:'ข้ามตาจนกว่าจะโดนโจมตีหรือครบ 3–5 ตา'},
@@ -1063,7 +1063,7 @@ function battlePlaceUnit(u,n){
   if(!old.temporary)(b.retiredUnits??=[]).push(old);
   // Persist a defeated pet before its visible slot is reused.
   const p=old.side==='ally'&&old.kind==='pet'&&S.P?.pets?.find(p=>p.uid===old.uid);
-  if(p){p.hp=old.hp;p.mp=old.mp;p.ailments=Object.fromEntries(['poison','burn','confuse','para','static','freeze','chill'].filter(k=>old.status?.[k]).map(k=>[k,Math.max(2,old.status[k])]));}
+  if(p){p.hp=old.hp;p.mp=old.mp;p.ailments=Object.fromEntries(['poison','burn','confuse','para','static','freeze','chill'].filter(k=>old.status?.[k]).map(k=>[k,Math.max(k==='freeze'?1:2,old.status[k])]));}
   b.queue=(b.queue||[]).filter(id=>String(id).replace(/\*$/,'')!==old.id);
   list[list.indexOf(old)]=n;
  }else list.push(n);
@@ -1131,7 +1131,7 @@ function turnStartBase(u){const s=u.status;
  if(hasPas(u,'regen')&&u.hp<u.st.hp)heal(u,u.st.hp*(isBalancedPvp()?.035:.06));
  if(hasPas(u,'mpregen'))u.mp=Math.min(u.st.mp,u.mp+Math.round(u.st.mp*.08));
  for(const k of ['burn','poison'])if(s[k]){const d=Math.max(1,Math.round(u.st.hp*(k==='burn'?.06:.08)));blog(`${u.name} ${k==='burn'?'โดนไฟเผา':'โดนพิษกัดกร่อน'} เสีย ${d} HP`);hurt(u,d);if(u.hp<=0)return true}
- if(s.freeze){s.freeze--;if(s.freeze<=0){delete s.freeze;blog(`น้ำแข็งที่ห่อหุ้ม ${u.name} ละลายแล้ว`)}else{blog(`${u.name} ถูกแช่แข็ง ขยับไม่ได้`);return true}}
+ if(s.freeze){s.freeze--;blog(`${u.name} ถูกแช่แข็ง ขยับไม่ได้`);if(s.freeze<=0){delete s.freeze;blog(`น้ำแข็งที่ห่อหุ้ม ${u.name} ละลายแล้ว`)}return true}
  if(s.sleep){s.sleep--;if(s.sleep<=0){delete s.sleep;blog(`${u.name} ตื่นขึ้นแล้ว`)}else{blog(`${u.name} หลับปุ๋ย...`);fxAdd(u,'Zzz','muted');return true}}
  let skip=null;
  if(s.para&&Math.random()<.25)skip=`${u.name} เป็นอัมพาต ขยับตัวไม่ได้`;
