@@ -5,7 +5,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=dungeon-flow-20261106';
+import {partyRunController} from './online-party-controller.mjs?v=fast-combat-20261106';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
@@ -156,7 +156,7 @@ try{
  heartbeatTimer=setInterval(()=>{
   if(!document.hidden&&ready&&!controller.busy&&performance.now()>=nextPulse){
    nextPulse=Infinity;
-   void controller.pulse().finally(()=>{nextPulse=performance.now()+(controller.state?.battle?.status==='active'?750:5000);});
+   void controller.pulse().finally(()=>{nextPulse=performance.now()+controller.pollDelay;});
   }
  },100);
  function frame(now){
