@@ -1,4 +1,6 @@
-import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=game-session-2';
+export {mountSaveNotice} from './walk-save-notice.mjs?v=save-safe-20261106';
+import {mergeWalkPlayer,backupWalkDraft,backupActiveWalk} from './walk-save-merge.mjs?v=save-safe-20261106';
+import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=save-safe-20261106';
 
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
@@ -26,10 +28,10 @@ export function enterOnlineWalk(state, environment, owner) {
  location.assign('./tools/town-walk-demo/index.html?city=' + country + '-capital');
 }
 
-export function connectOnlineWalk(accountStorage) {
+export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
  const context = JSON.parse(sessionStorage.getItem(contextKey) || 'null');
  if (!context) return null;
- const client = connectAccounts(() => {}, accountStorage);
+ const client = providedClient||connectAccounts(() => {}, accountStorage);
  let pending = null;
  const lock = task => navigator.locks?.request('soulbeast-walk-save:' + context.code, task) ?? task();
  function syncRevision() {
@@ -39,15 +41,19 @@ export function connectOnlineWalk(accountStorage) {
   Object.assign(context, latest);
   if (!latest.request) delete context.request;
  }
- let stoppedAt = null;
+ let stoppedAt = null,nextRetryAt=0;
  const saveVersion = () => context.revision + ':' + (context.reloadId || '');
+ function backup(player,reason){return backupWalkDraft(accountStorage??localStorage,context,player,reason);}
+ function status(state,error){window.dispatchEvent(new CustomEvent('online-walk-save-status',{detail:{state,at:context.revision,error:error?.code||error?.message||'',conflicts:error?.conflicts||[]}}));if(parent!==window)parent.postMessage({type:'online-walk-save-status',state,at:context.revision,error:error?.code||error?.message||''},location.origin);}
+
 
  async function saveWalk() {
   syncRevision();
   const player = JSON.parse(sessionStorage.getItem(playerKey) || 'null');
   if (player?.code !== context.code) return;
   const serialized = JSON.stringify(player);
-  if (serialized === JSON.stringify(context.snapshot.P) && !context.request) return;
+  backup(player,'autosave');
+  if (saveComparable(player) === saveComparable(context.snapshot.P) && !context.request) return;
   let request = context.request || {serialized, id: crypto.randomUUID()};
   let snapshot = {...context.snapshot, P: JSON.parse(request.serialized)};
   const commit = () => {
@@ -59,6 +65,7 @@ export function connectOnlineWalk(accountStorage) {
    }, context.environment);
   };
   try {
+    status('saving');
     let response;
     try {
      response = await commit();
@@ -67,13 +74,19 @@ export function connectOnlineWalk(accountStorage) {
      const latest = await client.game('load', {code:context.code}, context.environment);
      const server = JSON.parse(latest.data);
      const revision = Number(latest.accountSaveAt || latest.at);
-     if (server.P?.code !== context.code || revision <= context.revision ||
-         !Number.isFinite(revision) || saveComparable(server.P) !== saveComparable(context.snapshot.P)) throw error;
-     // Only the revision changed. Preserve the server snapshot and retry this exact player update once.
+     if (server.P?.code !== context.code || revision <= context.revision || !Number.isFinite(revision)) throw error;
+     const currentSerialized=sessionStorage.getItem(playerKey);
+     const currentPlayer=JSON.parse(currentSerialized||'null');
+     if(currentPlayer?.code!==context.code)throw Error('character_not_owned');
+     const merged=mergeWalkPlayer(context.snapshot.P,currentPlayer,server.P);
+     if(!merged.ok){error.conflicts=merged.conflicts;throw error;}
+     // Preserve independent server updates while keeping unsaved battle progress.
      context.revision = revision;
-     context.snapshot = {...server, P:context.snapshot.P};
-     snapshot = {...server, P:snapshot.P};
-     request = {...request, id:crypto.randomUUID()};
+     context.snapshot = server;
+     snapshot = {...server, P:merged.player};
+     request = {serialized:JSON.stringify(merged.player), id:crypto.randomUUID()};
+     if(sessionStorage.getItem(playerKey)===currentSerialized)
+      sessionStorage.setItem(playerKey,JSON.stringify(merged.player));
      response = await commit();
     }
     context.revision = response.accountSaveAt || response.at;
@@ -84,14 +97,20 @@ export function connectOnlineWalk(accountStorage) {
     }
     delete context.request;
     sessionStorage.setItem(contextKey, JSON.stringify(context));
+    nextRetryAt=0;status('saved');
    } catch (error) {
-    if (error.code === 'save_conflict' || error.status === 401 || error.code === 'character_not_owned') stoppedAt = saveVersion();
+    if (error.status === 401 || ['login_required','session_replaced','character_not_owned'].includes(error.code||error.message)) stoppedAt = saveVersion();
+    nextRetryAt=Date.now()+10000;
+    backup(JSON.parse(sessionStorage.getItem(playerKey)||'null'),'save-error');
+    status('error',error);
     window.dispatchEvent(new CustomEvent('online-walk-save-error', {detail: error.code || error.message}));
     throw error;
   }
  }
 
  function flush(strict = false) {
+  backupActiveWalk(accountStorage??localStorage,sessionStorage,'flush');
+  if(!strict&&Date.now()<nextRetryAt)return Promise.resolve();
   if (stoppedAt !== null) {
    try { syncRevision(); } catch (error) { return strict ? Promise.reject(error) : Promise.resolve(); }
    if (saveVersion() === stoppedAt) return strict ? Promise.reject(Error('save_conflict')) : Promise.resolve();
@@ -105,7 +124,7 @@ export function connectOnlineWalk(accountStorage) {
     syncRevision();
     const player=JSON.parse(sessionStorage.getItem(playerKey)||'null');
     if(player?.code!==context.code)throw Error('character_not_owned');
-    if(!context.request&&JSON.stringify(player)===JSON.stringify(context.snapshot.P))return;
+    if(!context.request&&saveComparable(player)===saveComparable(context.snapshot.P))return;
     await saveWalk();
    }
   }));
@@ -114,11 +133,15 @@ export function connectOnlineWalk(accountStorage) {
  async function reloadWalk() {
   return lock(async () => {
    syncRevision();
+   backup(JSON.parse(sessionStorage.getItem(playerKey)||'null'),'before-server-reload');
+   const current=JSON.parse(sessionStorage.getItem(playerKey)||'null');
+   if(context.request||saveComparable(current)!==saveComparable(context.snapshot.P))await saveWalk();
    const latest = await client.game('load', {code:context.code}, context.environment);
    const snapshot = JSON.parse(latest.data);
    const revision = Number(latest.accountSaveAt || latest.at);
    if (snapshot.P?.code !== context.code || !Number.isFinite(revision) || revision <= 0) throw Error('bad data');
    syncRevision();
+   if(saveComparable(JSON.parse(sessionStorage.getItem(playerKey)||'null'))!==saveComparable(context.snapshot.P))throw Error('unsaved_progress');
    snapshot.P.gsAt = revision;
    delete snapshot.P.cpin;
    delete snapshot.P.walkId;

@@ -1,3 +1,4 @@
+import {backupActiveWalk} from './walk-save-merge.mjs?v=save-safe-20261106';
 import {ShopSession} from './topup-session.mjs';
 import {EmailSendGate,emailErrorText} from './topup-email.mjs';
 const BASE='https://zycmmtvubzyxduxqpuzl.supabase.co',KEY='sb_publishable_-m9RbNVXYhaKjUZYSGGdMQ_rrkCuEL6',STORE='soulbeast_shop_test_auth_v1';
@@ -12,9 +13,9 @@ export function gameSessionId(token){
  }catch{return null;}
 }
 let watchingGameSession=false, leavingGame=false;
-function leaveEndedGameSession(){
+function leaveEndedGameSession(storage){
  if(leavingGame||typeof window==='undefined'||location.hostname!=='gusgoat.github.io')return;
- leavingGame=true;
+ leavingGame=true;backupActiveWalk(storage??localStorage,sessionStorage,'session-ended');
  sessionStorage.removeItem('soulbeast-online-walk-v1');
  sessionStorage.removeItem('soulbeast-walk-preview-player-v1');
  window.top.location.replace('/Soulbeast/accounts.html?session=ended');
@@ -40,14 +41,14 @@ export class AccountClient{
    let pinned;
    try{pinned=JSON.parse(globalThis.sessionStorage?.getItem('soulbeast-online-walk-v1')||'null')?.sessionId;}catch{}
    if(pinned&&gameSessionId(token)!==pinned){
-    leaveEndedGameSession();
+    leaveEndedGameSession(this.sessions.storage);
     throw Error('session_replaced');
    }
    return token;
   };
   check(this.sessions.read()?.access_token);
   try{return check(await this.sessions.token(true));}
-  catch(error){if(revokedSession(error)&&!this.sessions.read())leaveEndedGameSession();throw error;}
+  catch(error){if(revokedSession(error)&&!this.sessions.read())leaveEndedGameSession(this.sessions.storage);throw error;}
  }
  async request(path,body,token,method='POST'){
   const r=await this.fetcher(BASE+path,{method,headers:{apikey:KEY,'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(45000)}),v=await r.json();
@@ -87,9 +88,10 @@ export class AccountClient{
   let r=await post(await (action==='save'&&env==='live'?this.verifySession():this.sessions.token()));if(r.status===401)r=await post(await this.verifySession());const v=await r.json();
   if(!r.ok||!v.ok)throw Object.assign(Error(v.error||'account_service_unavailable'),{status:r.status,code:v.error});return v;
  }
- async logout(){try{await this.request('/auth/v1/logout?scope=local',{},await this.sessions.token());}catch{}finally{this.sessions.save(null);this.user=null;this.onChange();}}
+ async logout(){backupActiveWalk(this.sessions.storage,globalThis.sessionStorage,'logout');try{await this.request('/auth/v1/logout?scope=local',{},await this.sessions.token());}catch{}finally{this.sessions.save(null);this.user=null;this.onChange();}}
 }
 export function connectAccounts(onChange, accountStorage){
+ try{backupActiveWalk(accountStorage??localStorage,sessionStorage,'account-open');}catch{}
  let storage,legacy;try{storage=accountStorage??localStorage;legacy=sessionStorage;}catch{}
  const client=new AccountClient({storage,legacy,onChange,lock:fn=>navigator.locks?.request?navigator.locks.request(STORE+'-refresh',fn):fn()});
  watchGameSession(client);
