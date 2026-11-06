@@ -2955,10 +2955,58 @@ function pvpSessionSave(){try{localStorage.setItem('soulbeast_supabase_test_pvp_
 function pvpSessionLoad(){try{const p=JSON.parse(localStorage.getItem('soulbeast_supabase_test_pvp_v1')||'{}');if(p.endpoint===String(window.SHEET_URL||'').trim()&&p.token&&p.room){PVP.token=p.token;PVP.code=p.code;PVP.restore=p.room;PVP.pending=p.pending||null}}catch(e){}}
 pvpSessionLoad();
 function pvpError(message){return ({'camp pets selection':'เลือกอสูรที่พกติดตัวตามจำนวนที่อาชีพใช้ได้','bad action':'ต้องอัปเดต ระบบต่อสู้ แล้ว Deploy เวอร์ชันใหม่ก่อนใช้ PVP',pin:'PIN ของเซฟไม่ตรงกับ เซิร์ฟเวอร์ออนไลน์',notfound:'ไม่พบเซฟบน ระบบออนไลน์ โปรดบันทึกเซฟก่อน','room not found':'ไม่พบห้องนี้','room expired':'ห้องหมดอายุ','room full':'ห้องมีผู้เล่นครบแล้ว','same player':'ใช้ตัวละครเดียวกันสู้กันไม่ได้','already in room':'ตัวละครนี้อยู่ในห้องอื่น กดเชื่อมต่อห้องเดิม','no active room':'ไม่มีห้องที่ยังเปิดอยู่',unauthorized:'สิทธิ์ห้องหมดอายุหรือเปิดจากอีกเครื่อง กดเชื่อมต่อห้องเดิม','bad points':'แต้มสถานะในเซฟเกินเกณฑ์ PVP','bad class':'อาชีพไม่ตรงกับระดับเลเวล','bad equipment':'อุปกรณ์ในเซฟไม่ตรงกับระดับหรือช่อง','bad weapon':'อาวุธไม่ตรงกับอาชีพ','not your turn':'ยังไม่ถึงเทิร์นของคุณ','stale turn':'เทิร์นเปลี่ยนแล้ว กำลังตรวจข้อมูลใหม่','items not allowed':'PVP ห้ามใช้ยาและไอเท็มรักษา','illegal skill':'สกิลนี้ใช้ไม่ได้','not enough mp':'MP ไม่พอ','not enough gold':'เหรียญเฉพาะแมตช์ไม่พอ','not lobby':'ห้องเริ่มหรือปิดไปแล้ว กดรีเฟรช','not active':'การประลองจบแล้ว','stake changed':'เดิมพันมีการเปลี่ยน โปรดตรวจของอีกฝ่ายแล้วกดยืนยันใหม่','stake unavailable':'ของเดิมพันไม่พอหรือไม่อยู่ในเซฟออนไลน์','stake pet must rest':'อสูรต้องพักค่ายและไม่เฝ้าค่าย จึงใช้เดิมพันได้','stake history full':'เปลี่ยนเดิมพันครบจำนวนที่รองรับแล้ว'})[message]||'เชื่อมต่อ PVP ไม่สำเร็จ: '+String(message||'โปรดลองอีกครั้ง')}
-function pvpSchedule(){clearTimeout(PVP.timer);if(PVP.room?.replaying)return;if(S.screen==='pvp'&&PVP.token&&!document.hidden&&(!PVP.room||['waiting','lobby','active'].includes(PVP.room.status)))PVP.timer=setTimeout(()=>pvpRequest({action:'pvp_poll'},true),PVP.room?.status==='active'?2500:8000)}
-function pvpReceive(result){PVP.balanceVersion=result.balanceVersion||0;applyAccount(result.account);const prior=PVP.room;PVP.room=result.room;PVP.clock=Date.now()-PVP.room.serverTime;observeUnits([...PVP.room.battle.allies,...PVP.room.battle.enemies]);PVP.audioAt=Date.now();if(result.token)PVP.token=result.token;PVP.restore=PVP.room.id;if(PVP.pending&&(PVP.room.rev>PVP.pending.rev||PVP.room.status==='finished'))PVP.pending=null;pvpSessionSave();
+let pvpRealtime=null,pvpRealtimeLoading=false;
+function pvpWake(hint){
+ if(hint?.rev<=PVP.room?.rev)return;
+ if(hint?.rev)PVP.wakeRev=Math.max(PVP.wakeRev||0,hint.rev);
+ if(S.screen!=='pvp'||!PVP.token||document.hidden||!['waiting','lobby','active'].includes(PVP.room?.status))return;
+ if(PVP.busy||PVP.polling){PVP.wake=true;return;}
+ clearTimeout(PVP.timer);PVP.timer=setTimeout(()=>pvpRequest({action:'pvp_poll'},true),0);
+}
+function pvpWatch(){
+ if(!sessionStorage.getItem('soulbeast-online-walk-v1'))return;
+ if(S.screen!=='pvp'||!PVP.room||!['waiting','lobby','active'].includes(PVP.room.status)){pvpRealtime?.close();return;}
+ if(pvpRealtime){const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');pvpRealtime.watch(PVP.room.id,context?.environment);return;}
+ if(pvpRealtimeLoading)return;pvpRealtimeLoading=true;
+ import(new URL('../../client/pvp-realtime.mjs?v=pvp-fast-turns-20261106',location.href).href).then(({createPvpRealtime})=>{
+  pvpRealtime=createPvpRealtime({storage:walkStorage,onChange:pvpWake});pvpWatch();
+ }).catch(()=>{}).finally(()=>pvpRealtimeLoading=false);
+}
+function pvpSchedule(){
+ clearTimeout(PVP.timer);if(PVP.room?.replaying)return;
+ if(S.screen!=='pvp'||!PVP.token||document.hidden||PVP.room&&!['waiting','lobby','active'].includes(PVP.room.status)){pvpRealtime?.close();return;}
+ pvpWatch();
+ const actor=[...(PVP.room?.battle.allies||[]),...(PVP.room?.battle.enemies||[])].find(u=>u.id===PVP.room?.battle.cur);
+ const automatic=actor&&PVP.room.players?.[actor.owner]?.auto;
+ // Manual commands never wait for this fallback; automatic turns still advance promptly.
+ const delay=PVP.wake?0:PVP.room?.status==='active'?(automatic?650:pvpRealtime?.ready?5000:1000):(pvpRealtime?.ready?8000:2000);
+ PVP.timer=setTimeout(()=>pvpRequest({action:'pvp_poll'},true),delay);
+}
+function pvpReceive(result){PVP.balanceVersion=result.balanceVersion||0;applyAccount(result.account);const prior=PVP.room;PVP.room=result.room;if(PVP.wakeRev&&PVP.room.rev>=PVP.wakeRev){PVP.wake=false;PVP.wakeRev=0;}PVP.clock=Date.now()-PVP.room.serverTime;observeUnits([...PVP.room.battle.allies,...PVP.room.battle.enemies]);PVP.audioAt=Date.now();if(result.token)PVP.token=result.token;PVP.restore=PVP.room.id;if(PVP.pending&&(PVP.room.rev>PVP.pending.rev||PVP.room.status==='finished'))PVP.pending=null;pvpSessionSave();
  if(S.screen==='pvp'){render();if(prior&&PVP.room.rev>prior.rev){const b=PVP.room.battle,units=[...b.allies,...b.enemies],oldUnits=[...prior.battle.allies,...prior.battle.enemies];for(const u of units){const old=oldUnits.find(x=>x.id===u.id);if(old&&old.hp>0&&u.hp<=0)Sound.cry(u.sp,true)}if(PVP.room.status==='active'&&b.effects?.length){VQ.push(...BattleEffects.enrich(b.effects,PVP.room.last?.actor||prior.battle.cur));const critical=b.effects.find(e=>e.k==='hit'&&e.crit);const cast=b.effects.find(e=>e.k==='cast');if(critical)ExtraAudio.skill(critical.skill,units.find(x=>x.id===PVP.room.last?.actor),true);else if(cast)Sound.skill(cast.skill,units.find(x=>x.id===cast.id));else if(b.effects.some(e=>e.k==='charge'))Sound.fx('charge');else if(PVP.room.last?.skill==='defend')Sound.fx('shield');else{const hit=b.effects.find(e=>e.k==='hit');if(hit)Sound.skill(hit.skill,units.find(x=>x.id===PVP.room.last?.actor))}(window.requestAnimationFrame||setTimeout)(flushVfx)}if(PVP.room.status==='finished'&&prior.status!=='finished'){if(b.effects?.length){VQ.push(...BattleEffects.enrich(b.effects,PVP.room.last?.actor||prior.battle.cur));(window.requestAnimationFrame||setTimeout)(flushVfx);}Sound.fx(PVP.room.winner===PVP.room.me?'win':'lose')}}}}
-async function pvpRequest(packet,silent=false){if(PVP.busy||PVP.room?.replaying)return;PVP.busy=true;if(!silent){PVP.error='';render()}try{const body={room:PVP.room?.id||PVP.restore,token:PVP.token,...packet};const r=await lbPost(body);if(!r.ok){if(packet.action==='pvp_move'){PVP.pending=null;pvpSessionSave()}throw new Error(r.error)}if(!r.room||r.pvpVersion!==1)throw new Error('bad action');PVP.error='';pvpReceive(r)}catch(e){PVP.error=pvpError(e.message);if(!silent)toast(PVP.error)}finally{PVP.busy=false;if(S.screen==='pvp')render();pvpSchedule()}}
+async function pvpRequest(packet,silent=false){
+ const poll=packet.action==='pvp_poll';
+ if(PVP.room?.replaying||PVP.busy||poll&&PVP.polling){if(poll)PVP.wake=true;return;}
+ const room=PVP.room?.id||PVP.restore;
+ if(poll){PVP.polling=true;PVP.wake=false;}else{PVP.busy=true;clearTimeout(PVP.timer);}
+ if(!silent){PVP.error='';render();}
+ let changed=false;
+ try{
+  const body={room,token:PVP.token,...packet},r=await lbPost(body);
+  if(!r.ok){if(packet.action==='pvp_move'){PVP.pending=null;pvpSessionSave();}throw Error(r.error);}
+  if(!r.room||r.pvpVersion!==1)throw Error('bad action');
+  // A slower background read must not rewind a newer command response.
+  if(PVP.room&&PVP.room.id!==room||PVP.room?.id===r.room.id&&r.room.rev<PVP.room.rev)return;
+  PVP.error='';changed=!PVP.room||PVP.room.rev!==r.room.rev||PVP.room.status!==r.room.status;
+  if(!poll||changed)pvpReceive(r);
+  else PVP.clock=Date.now()-r.room.serverTime;
+ }catch(e){if(!poll||!PVP.busy)PVP.error=pvpError(e.message);if(!silent)toast(PVP.error);}
+ finally{
+  if(poll)PVP.polling=false;else PVP.busy=false;
+  if(S.screen==='pvp'&&(!poll||changed))render();
+  if(!PVP.busy&&!PVP.polling)pvpSchedule();
+ }
+}
 async function pvpConnect(mode){if(PVP.busy||!S.P)return;if(S.zone||S.battle){toast('กลับเมืองก่อนเข้า PVP');return}const room=String(document.getElementById('pvpRoomCode')?.value||'').trim().toUpperCase();if(mode==='join'&&!/^[A-F0-9]{8}$/.test(room)){toast('รหัสห้องต้องมี 8 ตัว');return}
  PVP.busy=true;PVP.error='';render();try{const code=ensureCode(),P=S.P;const saved=await lbPost({action:'save',code,pin:P.cpin||'',data:gsData(),name:P.name,clsName:CLS[P.cls].n,lv:P.lv});if(!saved.ok)throw new Error(saved.error);P.gsAt=saved.at;GS.lastJson=gsData();GS.lastAt=Date.now();save();const r=await lbPost({action:'pvp_'+mode,code,pin:P.cpin||'',room,...(['create','join'].includes(mode)?{pets:ActivityPets.ids('pvp').slice()}:{})});if(!r.ok)throw new Error(r.error);PVP.code=code;PVP.pending=null;pvpReceive(r)}catch(e){PVP.error=pvpError(e.message);toast(PVP.error)}finally{PVP.busy=false;if(S.screen==='pvp')render();pvpSchedule()}}
 function pvpCard(u,own,me){const chosen=own?PVP.friend===u.id:PVP.target===u.id;return `<button class="ucard ${own?'ally':'foe'} ${chosen?(own?'at':'tg'):''} ${u.hp<=0?'down':''}" data-u="${u.id}" data-a="${own?'pvpFriend':'pvpTarget'}" data-v="${u.id}" ${!own&&u.hp<=0?'disabled':''}>${unitPortrait(u,46,{own:u.owner===me})}<div class="grow"><span class="nm" ${u.kind==='player'?'data-user-content':''}>${esc(u.name)}</span><span class="sub num">Lv ${u.lv}${u.hp<=0?' · หมดสติ':''}</span>${bar(u.hp,u.st.hp)}<span class="meta num">HP ${u.hp}/${u.st.hp} · MP ${u.mp}/${u.st.mp}</span><span class="meta">${Object.keys(u.status).map(k=>STS[k]?STS[k].n:'').filter(Boolean).join(' · ')}</span></div></button>`}
@@ -3719,7 +3767,7 @@ function vCloud(){const i=CLOUD.info,has=S.P;
 function toast(t){if(/ไม่พอ|ไม่ได้|ไม่สำเร็จ|ผิด|ไม่ตรง|หมดอายุ/.test(t))ExtraAudio.play('error');else if(/สำเร็จ/.test(t))ExtraAudio.play('quest');const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2500)}
 function forestReturnScreen(){return S.P.hp*5<pStats().hp*4?'hospital':'town';}
 function go(s){if(WORLD?.room?.status==='active'&&!['world','town','hero','team','bag','settings'].includes(s)){toast('จบบอสโลกหรือถอนตัวก่อนเริ่มโหมดอื่น');return;}if(s==='world'){S.screen='world';render();wbCall(WORLD.roomId?'wb_poll':'wb_status');return;}if(S.zone&&['town','shop','hospital','arena','forge','leader','pvp','camp','world'].includes(s)){toast('ออกจากป่าไม่ได้ จนกว่าจะชนะบอส เจอทางออก หรือพ่ายแพ้');return}if(s==='wild'){if(S.battle)s='battle';else if(S.zone)s='zone';else S.ui.forestChoice=null;}
- S.screen=s;clearTimeout(PVP.timer);if(s==='pvp'){if(PVP.code&&S.P&&PVP.code!==ensureCode()){PVP.room=null;PVP.token='';PVP.restore='';PVP.pending=null;pvpSessionSave()}if(PVP.token)pvpSchedule()}S.ui.petView=null;save();render();if(s==='leader')lbLoad();document.querySelector('main')?.scrollTo(0,0)}
+ S.screen=s;clearTimeout(PVP.timer);if(s!=='pvp')pvpRealtime?.close();if(s==='pvp'){if(PVP.code&&S.P&&PVP.code!==ensureCode()){PVP.room=null;PVP.token='';PVP.restore='';PVP.pending=null;pvpSessionSave()}if(PVP.token)pvpSchedule()}S.ui.petView=null;save();render();if(s==='leader')lbLoad();document.querySelector('main')?.scrollTo(0,0)}
 const healCost=()=>Math.max(1,Math.round((5+S.P.lv*4)*WorldTales.hospitalFactor()));
 function allFull(){const P=S.P,s=pStats();return P.hp>=s.hp&&P.mp>=s.mp&&(S.zone?carriedPets():P.pets).every(p=>{const q=calcPet(p);return p.hp>=q.hp&&p.mp>=q.mp})}
 function fullHeal(){const P=S.P,s=pStats();P.hp=s.hp;P.mp=s.mp;(S.zone?carriedPets():P.pets).forEach(p=>{const q=calcPet(p);p.hp=q.hp;p.mp=q.mp})}
