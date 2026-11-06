@@ -5,7 +5,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=battle-close-4';
+import {partyRunController} from './online-party-controller.mjs?v=battle-ready-20261106';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
@@ -37,7 +37,7 @@ function offerReturn(city,automatic=false){
  if(automatic)void button.onclick();
 }
 const menus=partyMenu({canOpen:()=>ready&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{keys.clear();selfMoving=false;}});
-let clockOffset=0, shownBattle=null, battleFrameReady=false, soloFinishTimer;
+let clockOffset=0, shownBattle=null, battleFrameReady=false, visibleBattleId=null, soloFinishTimer;
 const battleFrame=$('partyBattleFrame');
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
@@ -49,6 +49,7 @@ addEventListener('message',event=>{
  const message=event.data;
  if(message?.type==='party-battle-ready'){battleFrameReady=true;sendBattle();return;}
  if(!shownBattle||$('battle').hidden||message?.battle!==shownBattle.id)return;
+ if(message.type==='party-battle-visible'){visibleBattleId=shownBattle.id;return;}
  if(message.type==='party-battle-done'&&shownBattle.status!=='active'){
   seenBattle=shownBattle.id;drawBattle(null);window.focus();return;
  }
@@ -71,8 +72,8 @@ function drawBattle(run){
  if(menus.open)menus.close();
  if(shownBattle?.id!==run.id){
   clearTimeout(soloFinishTimer);soloFinishTimer=null;
-  battleFrameReady=false;
-  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-battle-effects-1&partyBattle=shared-battle-effects-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+  battleFrameReady=false;visibleBattleId=null;
+  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=battle-ready-20261106&partyBattle=shared-battle-effects-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
  }
  shownBattle=run;$('battle').hidden=false;sendBattle();
  if(run.kind==='solo'&&run.status!=='active'&&!soloFinishTimer){
@@ -120,7 +121,7 @@ try{
  connection=connectDungeonParty();const roomId=new URL(location.href).searchParams.get('room');
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
  const scene=partyScene({code:connection.code,roomId,view});
- controller=partyRunController({connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
+ controller=partyRunController({canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
   clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);

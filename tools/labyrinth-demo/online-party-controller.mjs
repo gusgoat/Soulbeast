@@ -1,5 +1,5 @@
 // A single request lane prevents old movement/solo responses overtaking a boss transition.
-export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},localExploration=false,getPosition=()=>null}){
+export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},localExploration=false,getPosition=()=>null,canAdvanceBattle=()=>true}){
  let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null,commands=[];
  async function refresh(next){
   next??=await connection.run(roomId,'status',localExploration?{localExploration:true}:{});
@@ -45,6 +45,10 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   pulse:()=>lane(async()=>{
    if(!snapshot)return refresh();
    if(snapshot.departure||snapshot.state==='closed')return;
+   if(snapshot.battle?.status==='active'){
+    if(!canAdvanceBattle(snapshot.battle))return refresh();
+    if(snapshot.battle.loading?.pending?.includes(connection.code)){await connection.run(roomId,'battleReady',{battle:snapshot.battle.id});await refresh();return;}
+   }
    if(localExploration){
     // Advance my encounter directly. A failing unrelated solo battle must not
     // roll back this player's turn through the room-wide pulse transaction.
