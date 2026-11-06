@@ -7818,8 +7818,10 @@ const serviceSpeakerRender=render;render=function(...args){const r=serviceSpeake
 if(S.screen==='arena'&&!TOWER_UI.ready)void towerStatus();
 if(['guild','guildwar'].includes(S.screen)&&!GUILD_UI.data)void guildRequest();
 if(params.has('partyBattle')&&parent!==window){
- let selectedMedicine=null,showMedicines=false;
- const partyPresented=new Set();
+ let selectedMedicine=null,showMedicines=false,selectedSeal=null,showSeals=false,showSummons=false;
+ function focusParty(where){requestAnimationFrame(()=>BattleCommandFocus.scroll(where));}
+ const command=(data)=>{focusParty('arena');send('party-battle-command',data);};
+ const partyPresented=new Set(),partyAcknowledged=new Set();
  function partyRewardLines(run,code){const r=run.rewards?.[code];if(!r)return run.result==='win'?['กำลังยืนยันรางวัลจากเซิร์ฟเวอร์…']:[];const lines=['ได้รับ '+fmt(r.gold||0)+' เหรียญ','ได้รับ EXP '+fmt(r.xp||0)];for(const [id,qty]of Object.entries(r.parts||{})){const [sp,part]=id.split('|');lines.push(itemIcon(id,44)+' '+esc(SP[sp]?.parts?.[Number(part)]?.[0]||id)+' ×'+qty)}for(const up of r.levelUps||[])lines.push('เลเวลอัป! '+esc(SP[up.name]?.n||up.name)+' · Lv '+up.from+' → '+up.to);return lines;}
 
  let state, selectedEnemy, selectedAlly, turnKey, showSkills=false, hideCommands=false, effectTurn=0;
@@ -7862,9 +7864,12 @@ if(params.has('partyBattle')&&parent!==window){
     body.innerHTML=`<p class="sub party-turn-note">${esc(status)}</p>`+(own?`<div class="acts">${showSkills||!attack?choices.map(button).join(''):button(attack)}${attack?`<button class="btn" data-a="partySkills">${showSkills?'ย้อนกลับ':'สกิล'}</button>`:''}</div>`:'');
     if(own&&actor?.kind==='player'){
      const medicines=w.items||[];
-     if(selectedMedicine){body.innerHTML='<div class="battle-target-prompt" role="status"><div><b>'+esc(medicines.find(it=>it.id===selectedMedicine)?.name||'ใช้ยา')+'</b><span>แตะผู้ผนึกหรืออสูรฝ่ายเราเพื่อใช้ยา · ยังไม่หักไอเท่ม</span></div><button class="btn sm" data-a="partyMedicineCancel">ยกเลิก</button></div>';}
+     if(showSummons){body.innerHTML='<p class="sub">เรียกหรือสลับอสูรที่พกมา · ไม่เสียเทิร์น</p><div class="lst">'+(w.summons||[]).map(p=>'<div class="item">'+portrait(p.sp,48,{form:p.form})+'<div class="grow"><b>'+esc(p.name)+' · Lv '+p.lv+'</b><small>HP '+p.hp+' · MP '+p.mp+'</small></div><button class="btn sm" data-a="partySummon" data-v="'+p.uid+'">เรียก</button></div>').join('')+'</div><button class="btn" data-a="partySummons">ย้อนกลับ</button>';}
+     else if(selectedSeal){body.innerHTML='<p class="battle-target-prompt">แตะอสูรเงาที่ต้องการผนึก</p><button class="btn" data-a="partySeals">ย้อนกลับ</button>';}
+     else if(showSeals){body.innerHTML='<p class="sub">เลือกผนึก แล้วแตะอสูรเงาเป้าหมาย · ลด HP เพื่อเพิ่มโอกาสสำเร็จ</p><div class="lst">'+(w.seals||[]).map(it=>'<div class="item">'+itemIcon(it.id)+'<b>'+esc(it.name)+' ×'+it.count+'</b><button class="btn sm" data-a="partySeal" data-v="'+esc(it.id)+'">เลือก</button></div>').join('')+'</div><button class="btn" data-a="partySeals">ย้อนกลับ</button>';}
+     else if(selectedMedicine){body.innerHTML='<div class="battle-target-prompt" role="status"><div><b>'+esc(medicines.find(it=>it.id===selectedMedicine)?.name||'ใช้ยา')+'</b><span>แตะผู้ผนึกหรืออสูรฝ่ายเราเพื่อใช้ยา · ยังไม่หักไอเท่ม</span></div><button class="btn sm" data-a="partyMedicineCancel">ยกเลิก</button></div>';}
      else if(showMedicines){body.innerHTML='<p class="sub">เลือกยา แล้วเลือกเป้าหมาย</p><div class="lst">'+medicines.map(it=>'<div class="item">'+itemIcon(it.id)+'<div class="grow"><b>'+esc(it.name)+' ×'+it.count+'</b></div><button class="btn sm" data-a="partyMedicine" data-v="'+esc(it.id)+'" '+(b.allies.some(u=>battleMedicineUseful(it,u))?'':'disabled')+'>ใช้</button></div>').join('')+'</div><button class="btn" data-a="partyMedicines">ย้อนกลับ</button>';}
-     else body.insertAdjacentHTML('beforeend','<button class="btn" data-a="partyMedicines" '+(!medicines.length?'disabled':'')+'>ไอเท่ม</button>');
+     else body.insertAdjacentHTML('beforeend','<div class="acts"><button class="btn" data-a="partyMedicines" '+(!medicines.length?'disabled':'')+'>ไอเท่ม</button><button class="btn" data-a="partySeals" '+(!(w.seals?.length&&w.captureTargets?.length)?'disabled':'')+'>ผนึก</button><button class="btn" data-a="partySummons" '+(!w.summons?.length?'disabled':'')+'>เรียกอสูร</button><button class="btn" data-a="partyEscape" '+(!w.canEscape?'disabled title="หนีจากศึกบอสไม่ได้"':'')+'>หนี</button></div>');
     }
 
    }
@@ -7875,6 +7880,7 @@ if(params.has('partyBattle')&&parent!==window){
    }
   }
   if(selectedMedicine&&own){const it=w.items?.find(it=>it.id===selectedMedicine);for(const card of main.querySelectorAll('[data-a="bt"][data-v^="ally:"]')){const u=b.allies[Number(card.dataset.v.split(':')[1])],valid=battleMedicineUseful(it,u);card.dataset.skillTarget=valid?'valid':'invalid';card.disabled=!valid;}}
+  if(selectedSeal&&own){for(const card of main.querySelectorAll('[data-a="bt"][data-v^="target:"]')){const u=b.enemies[Number(card.dataset.v.split(':')[1])],valid=w.captureTargets?.includes(u?.id);card.dataset.skillTarget=valid?'valid':'invalid';card.disabled=!valid;}}
   if(!active){const done=main.querySelector('[data-a="bt"][data-v="done"]');if(done)done.textContent='เดินต่อ';}
   if(b.log?.length){const log=document.createElement('div');log.className='log';for(const line of b.log.slice(-4)){const row=document.createElement('p');row.textContent=typeof line==='string'?line:line.text||'';log.append(row);}main.append(log);}
   main.scrollTop=oldScroll;
@@ -7896,42 +7902,45 @@ if(params.has('partyBattle')&&parent!==window){
   if(action==='battleCommands'){hideCommands=!hideCommands;draw();return;}
   if(action==='battleDetails'||action==='battleSpeed'){handlers[action]();return;}
   if(w?.ownerCode!==code)return;
-  if(action==='partyMedicines'){showMedicines=!showMedicines;selectedMedicine=null;draw();return;}
+  if(action==='partySummons'){showSummons=!showSummons;showMedicines=false;showSeals=false;selectedMedicine=null;selectedSeal=null;draw();focusParty('commands');return;}
+  if(action==='partySummon'){const pet=w.summons?.find(p=>String(p.uid)===value);if(pet){command({actor:w.actor,turn:w.turn,swap:pet.uid,friend:curAlly()?.id});showSummons=false;}return;}
+  if(action==='partyEscape'){command({actor:w.actor,turn:w.turn,escape:true});return;}
+  if(action==='partySeals'){showSummons=false;showSeals=!showSeals;selectedSeal=null;showMedicines=false;selectedMedicine=null;draw();focusParty('commands');return;}
+  if(action==='partySeal'){if(w.seals?.some(it=>it.id===value)){selectedSeal=value;draw();focusParty('arena');}return;}
+  if(action==='partyMedicines'){showSummons=false;showSeals=false;selectedSeal=null;showMedicines=!showMedicines;selectedMedicine=null;draw();focusParty('commands');return;}
   if(action==='partyMedicineCancel'){selectedMedicine=null;showMedicines=true;draw();return;}
-  if(action==='partyMedicine'){const it=w?.items?.find(it=>it.id===value);if(it&&w.ownerCode===code){selectedMedicine=value;draw();}return;}
-  if(action==='partySkills'){showSkills=!showSkills;draw();return;}
-  if(action==='bt'&&value?.startsWith('target:')){selectedEnemy=run.battle.enemies[Number(value.split(':')[1])]?.id;draw();return;}
-  if(action==='bt'&&value?.startsWith('ally:')){const target=run.battle.allies[Number(value.split(':')[1])];if(selectedMedicine){const it=w?.items?.find(it=>it.id===selectedMedicine);if(w?.ownerCode===code&&battleMedicineUseful(it,target)){button.disabled=true;send('party-battle-command',{actor:w.actor,turn:w.turn,item:selectedMedicine,friend:target.id});}return;}selectedAlly=target?.id;draw();return;}
+  if(action==='partyMedicine'){const it=w?.items?.find(it=>it.id===value);if(it&&w.ownerCode===code){selectedMedicine=value;draw();focusParty('arena');}return;}
+  if(action==='partySkills'){showSkills=!showSkills;draw();focusParty('commands');return;}
+  if(action==='bt'&&value?.startsWith('target:')){selectedEnemy=run.battle.enemies[Number(value.split(':')[1])]?.id;if(selectedSeal&&w.captureTargets?.includes(selectedEnemy)){command({actor:w.actor,turn:w.turn,seal:selectedSeal,target:selectedEnemy});return;}draw();return;}
+  if(action==='bt'&&value?.startsWith('ally:')){const target=run.battle.allies[Number(value.split(':')[1])];if(selectedMedicine){const it=w?.items?.find(it=>it.id===selectedMedicine);if(w?.ownerCode===code&&battleMedicineUseful(it,target)){button.disabled=true;command({actor:w.actor,turn:w.turn,item:selectedMedicine,friend:target.id});}return;}selectedAlly=target?.id;draw();return;}
   if(action==='partySkill'&&w.choices.some(c=>c.id===value&&!c.disabled)){
    button.disabled=true;
-   send('party-battle-command',{actor:w.actor,turn:w.turn,skill:value,target:curTarget()?.id,friend:curAlly()?.id});
+   command({actor:w.actor,turn:w.turn,skill:value,target:curTarget()?.id,friend:curAlly()?.id});
   }
  },true);
- addEventListener('message',event=>{
-  if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='party-battle-state'||!event.data.run?.battle)return;
-  const next=event.data,w=next.run.waiting,key=JSON.stringify([next.run.id,w?.actor,w?.turn]);
-  if(key!==turnKey){showSkills=false;showMedicines=false;selectedMedicine=null;turnKey=key;}
+ let queuedParty=null,partyPump=null;
+ function receiveParty(next){
+  if(state&&(MotionTimeline.busy()||Date.now()<MotionTimeline.until||!BattleReady.ready(S.battle))){queuedParty=next;if(!partyPump)partyPump=setTimeout(()=>{partyPump=null;const pending=queuedParty;queuedParty=null;if(pending)receiveParty(pending);},60);return;}
+  const w=next.run.waiting,key=JSON.stringify([next.run.id,w?.actor,w?.turn]);
+  const focusTurn=key!==turnKey&&w?.ownerCode===next.code;
+  if(key!==turnKey){showSkills=false;showMedicines=false;selectedMedicine=null;showSeals=false;selectedSeal=null;showSummons=false;turnKey=key;hideCommands=false;}
   if(state?.run.id!==next.run.id)effectTurn=0;
   const battle=next.run.battle,turn=battle.turns;
   const effects=Number.isSafeInteger(turn)&&turn>effectTurn&&Array.isArray(battle.effects)&&battle.effects.length?battle.effects.slice(-32):[];
   if(effects.length){
    effectTurn=turn;
+   MotionTimeline.hold(MotionTimeline.snapshot(),battle);
    VQ.push(...BattleEffects.enrich(effects,battle.cur));
   }
-  state=next;draw();
+  state=effects.length&&next.run.status!=='active'?{...next,run:{...next.run,status:'active',waiting:null}}:next;draw();
+  if(effects.length)focusParty('arena');else if(focusTurn)focusParty('commands');
+  if(effects.length&&next.run.status!=='active'){queuedParty=next;if(!partyPump)partyPump=setTimeout(()=>{partyPump=null;const pending=queuedParty;queuedParty=null;if(pending)receiveParty(pending);},60);}
+  if(next.run.presentation?.pending?.includes(next.code)&&!partyAcknowledged.has(next.run.id+':'+next.run.presentation.turn)){const id=next.run.id,turn=next.run.presentation.turn;const ack=()=>{if(state?.run.id!==id)return;if(MotionTimeline.busy()||Date.now()<MotionTimeline.until||!BattleReady.ready(S.battle)){setTimeout(ack,60);return;}partyAcknowledged.add(id+':'+turn);send('party-battle-presented',{turn});};setTimeout(ack,80);}
   const presentation=next.run;
   if(!partyPresented.has(presentation.id)){partyPresented.add(presentation.id);BattleReady.wait(S.battle).then(()=>{if(state?.run.id===presentation.id)parent.postMessage({type:'party-battle-visible',battle:presentation.id},location.origin)});}
-  if(effects.length){
-   const cast=effects.find(e=>e.k==='cast'||e.k==='charge'),hit=effects.find(e=>e.k==='hit');
-   const actor=BattleEffects.actor(cast?.source||cast?.id||hit?.source||battle.cur);
-   const medicine=effects.find(e=>e.medicine);
-   if(medicine)ExtraAudio.play(CON[medicine.medicine]?.cure?'heal':'drink');
-   else if(cast?.k==='charge')Sound.fx('charge');
-   else if(hit?.crit)ExtraAudio.skill(hit.skill||cast?.skill||'attack',actor,true);
-   else if(cast||hit)Sound.skill(cast?.skill||hit?.skill||'attack',actor);
-  }
- });
- parent.postMessage({type:'party-battle-ready'},location.origin);
+ }
+ addEventListener('message',event=>{if(event.origin===location.origin&&event.source===parent&&event.data?.type==='party-battle-state'&&event.data.run?.battle)receiveParty(event.data);});
+parent.postMessage({type:'party-battle-ready'},location.origin);
 }
 
 if(params.has('partyInventory')&&parent!==window){

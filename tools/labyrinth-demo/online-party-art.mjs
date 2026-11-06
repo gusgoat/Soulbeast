@@ -35,7 +35,7 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
   ground.width=ground.height=1;
  }
  groundTiles?.draw(ctx,{left:focus.x-w/(2*s),right:focus.x+w/(2*s),top:focus.y*F-h/(2*s),bottom:focus.y*F+h/(2*s)},x=>screen({x,y:0}).x,y=>screen({x:0,y}).y,s,F);
- for(const room of map.rooms)if((room.id==='boss'&&world.doorOpen)||(room.id==='treasure'&&world.boss==='defeated')){
+ for(const room of map.rooms)if(room.secret||(room.id==='boss'&&world.doorOpen)||(room.id==='treasure'&&world.boss==='defeated')){
   const q=screen(room.gate);if(art.floor)ctx.drawImage(art.floor,q.x-C*s/2,q.y-C*s*F/2,C*s,C*s*F);
  }
  ctx.save();ctx.lineWidth=64*s;ctx.lineJoin='round';ctx.strokeStyle=cfg.theme==='lava'?'#bc4719':'#248a9b';if(art.water){if(waterImage!==art.water){waterImage=art.water;waterPattern=ctx.createPattern(waterImage,'repeat');}waterPattern.setTransform(new DOMMatrix().translate(time*7,time*9).scale(.4));ctx.strokeStyle=waterPattern;}ctx.beginPath();map.river.forEach((p,i)=>{const q=screen(p);i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.restore();

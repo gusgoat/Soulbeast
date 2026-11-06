@@ -34,5 +34,5 @@ export function mountPartyVitals(parent=document.body) {
  return {update(members){const values=JSON.stringify(members.map(m=>[m.code,m.name,m.hp,m.mp,m.maxHp,m.maxMp,m.online]));if(values===signature)return;signature=values;box.replaceChildren();
   for(const member of members){const row=document.createElement('div');row.className='online-party-member';const name=document.createElement('strong');name.textContent=member.name+(member.online===false?' · หลุด':'');row.append(name);
    for(const [key,maxKey]of [['hp','maxHp'],['mp','maxMp']]){const bar=document.createElement('meter');bar.className=key;bar.min=0;bar.max=Math.max(1,Number(member[maxKey])||1);bar.value=Math.max(0,Math.min(bar.max,Number(member[key])||0));bar.setAttribute('aria-label',`${member.name} ${key.toUpperCase()} ${bar.value}/${bar.max}`);row.append(bar);}box.append(row);}
- },remove(){box.remove();style.remove();}};
+ },setHidden(value){box.hidden=!!value;},remove(){box.remove();style.remove();}};
 }
