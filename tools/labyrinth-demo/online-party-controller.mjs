@@ -1,5 +1,5 @@
 // A single request lane prevents old movement/solo responses overtaking a boss transition.
-export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},localExploration=false,getPosition=()=>null,canAdvanceBattle=()=>true}){
+export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},onResult=()=>{},localExploration=false,getPosition=()=>null,canAdvanceBattle=()=>true}){
  let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null,commands=[];
  async function refresh(next){
   next??=await connection.run(roomId,'status',localExploration?{localExploration:true}:{});
@@ -74,6 +74,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    // queue, including when a target moves away before the action arrives.
    try{
     const result=await connection.run(roomId,action,{...(localExploration?{floor:snapshot.floor,position:getPosition()}:{}),...data,requestId:data.requestId||crypto.randomUUID()});
+    await onResult(action,result,data);
     if(action==='leave'){await refresh(result);return;}
    }
    catch(error){

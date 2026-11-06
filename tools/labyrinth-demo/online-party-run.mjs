@@ -5,7 +5,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs';
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
 import {mountPartyVitals} from './online-party-view.mjs';
-import {partyRunController} from './online-party-controller.mjs?v=battle-ready-20261106';
+import {partyRunController} from './online-party-controller.mjs?v=dungeon-flow-20261106';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
@@ -24,19 +24,19 @@ function notice(text){const toast=$('toast');toast.textContent=text;toast.style.
 function freeze(){ready=false;keys.clear();$('action').disabled=true;}
 function offerReturn(city,automatic=false){
  $('leaveParty').hidden=true;$('retry').hidden=true;
- const button=$('returnHome');button.hidden=false;
+ const button=$('returnHome');button.hidden=false;button.textContent=city?'ไปโรงพยาบาลเมืองหลวง':'กลับหน้าดันเจี้ยน';
  button.onclick=async()=>{
   if(button.disabled)return;button.disabled=true;
   try{
    const player=await connection.restoreWalk();
    const destination=/^(blue|green|red)-capital$/.test(city||'')?city:
     (['blue','green','red'].includes(player.country)?player.country:'blue')+'-capital';
-   location.assign(new URL('../town-walk-demo/index.html?city='+destination,import.meta.url));
-  }catch{notice('โหลดเซฟล่าสุดไม่สำเร็จ · กดกลับเมืองหลวงอีกครั้ง');button.disabled=false;}
+   location.assign(new URL(city?'../town-walk-demo/index.html?city='+destination+'&screen=hospital':'../hemant-walk-demo/index.html?country=red&arrival=dungeon',import.meta.url));
+  }catch{notice('โหลดเซฟล่าสุดไม่สำเร็จ · กดกลับไปฉากเดินอีกครั้ง');button.disabled=false;}
  };
  if(automatic)void button.onclick();
 }
-const menus=partyMenu({canOpen:()=>ready&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{keys.clear();selfMoving=false;}});
+const menus=partyMenu({canOpen:()=>ready&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{keys.clear();selfMoving=false;}});
 let clockOffset=0, shownBattle=null, battleFrameReady=false, visibleBattleId=null, soloFinishTimer;
 const battleFrame=$('partyBattleFrame');
 function sendBattle(){
@@ -63,7 +63,7 @@ addEventListener('message',event=>{
 });
 function drawBattle(run){
  const continuing=shownBattle?.id===run?.id;
- if(!run||(run.status!=='active'&&(seenBattle===run.id||(run.kind==='solo'&&!continuing)))){
+ if(!run||(run.status!=='active'&&seenBattle===run.id)){
   clearTimeout(soloFinishTimer);soloFinishTimer=null;
   shownBattle=null;$('battle').hidden=true;$('battleError').hidden=true;
   if(run?.kind==='solo'){seenBattle=run.id;keys.clear();}
@@ -73,14 +73,10 @@ function drawBattle(run){
  if(shownBattle?.id!==run.id){
   clearTimeout(soloFinishTimer);soloFinishTimer=null;
   battleFrameReady=false;visibleBattleId=null;
-  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=battle-ready-20261106&partyBattle=shared-battle-effects-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=dungeon-flow-20261106&partyBattle=shared-battle-effects-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
  }
  shownBattle=run;$('battle').hidden=false;sendBattle();
- if(run.kind==='solo'&&run.status!=='active'&&!soloFinishTimer){
-  soloFinishTimer=setTimeout(()=>{
-   seenBattle=run.id;drawBattle(null);window.focus();
-  },run.battle?.effects?.length?2500:500);
- }
+
 }
 const view={
  loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);sceneAudio.setFloor(config,maze);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
@@ -96,7 +92,7 @@ const view={
  respawn(destination,reason){freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
   // Navigation is restricted to our own town page; never use a server-supplied URL.
   const city=typeof destination==='string'?destination:destination?.city;
-  offerReturn(city,true);},
+  offerReturn(reason==='left'?null:city,true);},
  complete(){freeze();$('battle').hidden=true;notice('พิชิตดันเจี้ยนสำเร็จแล้ว');
   offerReturn();
  }
@@ -115,13 +111,14 @@ function failure(error){
  if(['not_your_turn','stale_turn','invalid_skill','invalid_target','invalid_auto_mode'].includes(error.message)){
   notice('คำสั่งใช้ไม่ได้หรือเทิร์นเปลี่ยนแล้ว · เลือกคำสั่งใหม่');return;
  }
+ if(error.message==='floor_quota_incomplete'){const a=Math.max(0,(world.rules?.shadows||0)-(world.kills?.shadow||0)),b=Math.max(0,(world.rules?.bandits||0)-(world.kills?.bandit||0));notice('ต้องปราบอสูรเงาอีก '+a+' ตัว และโจรป่าอีก '+b+' ตัว');return;}
  if(error.message==='login_required')freeze();$('retry').hidden=false;notice(error.message==='login_required'?'กรุณาเข้าสู่ระบบออนไลน์ก่อน':'กำลังเชื่อมต่อปาร์ตี้ใหม่ · เดินต่อได้ รอยืนยันกิจกรรม');
 }
 try{
  connection=connectDungeonParty();const roomId=new URL(location.href).searchParams.get('room');
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
  const scene=partyScene({code:connection.code,roomId,view});
- controller=partyRunController({canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
+ controller=partyRunController({onResult:async(action,result)=>{if(action==='chest'){keys.clear();await DungeonFeedback.reward(result)}if(action==='trapResolve'&&result?.hit){keys.clear();await DungeonFeedback.trap(result.type,result.damage?'เสีย '+result.damage+' HP':'')}},canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
   clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
@@ -134,7 +131,7 @@ try{
   notice(state.battle?.status==='active'?'เลือกคำสั่งภายใน 12 วินาที · หากไม่เลือกจะเปิดอัตโนมัติ':'WASD / ลูกศร หรือปุ่มเดิน');
  }});
  $('leaveParty').onclick=async()=>{
-  if(!window.confirm('ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับเมืองหลวงหรือไม่?'))return;
+  if(!window.confirm('ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับหน้าปากถ้ำหรือไม่?'))return;
   const button=$('leaveParty');button.disabled=true;
   try{
    while(controller.busy)await new Promise(resolve=>setTimeout(resolve,50));
@@ -143,14 +140,14 @@ try{
  };
  $('retry').onclick=()=>void controller.refresh();
  $('action').onclick=()=>{
-  if(menus.open||!ready||controller.busy||!position)return;
+  if(DungeonFeedback.isOpen||menus.open||!ready||controller.busy||!position)return;
   const confirmed=position;if(!confirmed)return;
   const near=p=>nav.distance(confirmed,p)<210;
   const door=maze.rooms.find(r=>r.id==='boss').gate;
   const chest=maze.chests.find(c=>!controller.state?.chestClaims?.[c.id]&&nav.distance(confirmed,c)<145&&nav.clear(confirmed,c));
   if(chest)void controller.command('chest',{chest:chest.id});
   else if(nav.distance(confirmed,maze.mini)<180&&nav.clear(confirmed,maze.mini))void controller.command('heal');
-  else if(near(door)&&!world.doorOpen)void controller.command('openDoor');
+  else if(near(door)&&!world.doorOpen){const a=Math.max(0,(world.rules?.shadows||0)-(world.kills?.shadow||0)),b=Math.max(0,(world.rules?.bandits||0)-(world.kills?.bandit||0));if(a||b)notice('ยังเปิดประตูไม่ได้ · ต้องปราบอสูรเงาอีก '+a+' ตัว และโจรป่าอีก '+b+' ตัว');else void controller.command('openDoor');}
   else if(near(maze.stairs)&&world.boss==='defeated')void controller.command('nextFloor');
   else notice('เดินเข้าใกล้หีบ บ่อน้ำ ประตูห้องบอส หรือประตูชั้นถัดไป');
  };
@@ -164,7 +161,7 @@ try{
  },100);
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;selfMoving=false;
-  if(!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
+  if(!DungeonFeedback.isOpen&&$('battle').hidden&&!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}

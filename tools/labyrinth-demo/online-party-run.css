@@ -10,3 +10,8 @@
 [hidden]{display:none!important}
 
 [data-dungeon-mode="party"] .walk-audio-toggle{bottom:calc(96px + env(safe-area-inset-bottom))!important;right:14px}
+
+[data-dungeon-mode="party"] #progress{display:block!important;position:fixed;top:135px;left:10px;right:auto;width:min(240px,calc(100vw - 190px));max-width:none;padding:8px 10px;border:1px solid #b99753;border-radius:10px;background:#071e2be8;color:#fff0be;z-index:7;line-height:1.55;font-size:12px;pointer-events:none}
+[data-dungeon-mode="party"] aside{top:210px!important}
+
+[data-dungeon-mode="party"] .online-party-vitals{top:245px!important}

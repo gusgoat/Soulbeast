@@ -12,6 +12,13 @@ function create(seed=20261102,options={}){const floor=options.floor||1,desert=fl
  for(const r of rooms){if(r.lockedByBoss)for(let y=r.ring[1];y<=r.ring[3];y++)for(let x=r.ring[0];x<=r.ring[2];x++)grid[y][x]=0;for(let y=r.y0;y<=r.y1;y++)for(let x=r.x0;x<=r.x1;x++)grid[y][x]=1;grid[r.door[1]][r.door[0]]=r.bossEntrance||r.secret||r.lockedByBoss?2:1;r.x=(r.anchor[0]+.5)*CELL;r.y=(r.anchor[1]+.5)*CELL;r.gate={x:(r.door[0]+.5)*CELL,y:(r.door[1]+.5)*CELL}}
  // Replace the former remote vault with ordinary narrow branches, preserving the rest of the maze seed/layout.
  if(!later){for(let x=32;x<=37;x++)grid[15][x]=1;for(let y=12;y<=18;y++)grid[y][35]=1;}
+ // Guarantee room approaches connect to the entrance without bypassing locked gates.
+ const steps=[[1,0],[-1,0],[0,1],[0,-1]],insideRing=(x,y)=>rooms.some(r=>x>=r.ring[0]&&x<=r.ring[2]&&y>=r.ring[1]&&y<=r.ring[3]);
+ function reachable(){const q=[[20,53]],seen=new Set(['20,53']);for(let i=0;i<q.length;i++)for(const [dx,dy]of steps){const x=q[i][0]+dx,y=q[i][1]+dy,k=x+','+y;if(grid[y]?.[x]===1&&!seen.has(k)){seen.add(k);q.push([x,y])}}return seen}
+ function connect(start){const connected=reachable(),q=[start],prev=new Map([[start.join(','),null]]);let end=null;for(let i=0;i<q.length;i++){const [x,y]=q[i];if(connected.has(x+','+y)){end=q[i];break}for(const [dx,dy]of steps){const a=x+dx,b=y+dy,k=a+','+b;if(a<=0||b<=0||a>=COLS-1||b>=ROWS-1||insideRing(a,b)||prev.has(k))continue;prev.set(k,q[i]);q.push([a,b])}}if(!end)throw Error('Dungeon passage cannot connect');for(let p=end;p;p=prev.get(p.join(',')))grid[p[1]][p[0]]=1;}
+ for(const r of rooms.filter(r=>!r.lockedByBoss)){const [x,y]=r.door,outer=x===r.ring[0]?[x-1,y]:x===r.ring[2]?[x+1,y]:y===r.ring[1]?[x,y-1]:[x,y+1];connect(outer)}
+ // Any decorative old branch must also be reachable; keep all room seals intact.
+ let connected=reachable();for(let y=1;y<ROWS-1;y++)for(let x=1;x<COLS-1;x++)if(grid[y][x]===1&&!insideRing(x,y)&&!connected.has(x+','+y)){connect([x,y]);connected=reachable();}
  const center=(x,y)=>({x:(x+.5)*CELL,y:(y+.5)*CELL});const cells=[];for(let y=1;y<ROWS-1;y++)for(let x=1;x<COLS-1;x++)if(grid[y][x]===1&&!rooms.some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1))cells.push({cx:x,cy:y,...center(x,y)});
  const roomAt=p=>[...rooms].reverse().find(r=>p.x/CELL>=r.x0&&p.x/CELL<r.x1+1&&p.y/CELL>=r.y0&&p.y/CELL<r.y1+1);
  const deadEnds=cells.filter(c=>[[1,0],[-1,0],[0,1],[0,-1]].filter(([a,b])=>grid[c.cy+b]?.[c.cx+a]===1).length===1).sort((a,b)=>((a.cx*923+a.cy*2017)%10007)-((b.cx*923+b.cy*2017)%10007));const chosen=[];

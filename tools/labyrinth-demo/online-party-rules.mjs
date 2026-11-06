@@ -6,7 +6,7 @@ export function partyRules(size) {
 export function createFloor(size,floor=1) {
  if (!Number.isInteger(floor)||floor<1||floor>7) throw Error('bad_floor');
  return {floor,rules:partyRules(size),kills:{shadow:0,bandit:0},enemies:Object.fromEntries(
-  ['shadow','bandit'].flatMap(kind=>Array.from({length:kind==='shadow'?50:5},(_,i)=>
+  ['shadow','bandit'].flatMap(kind=>Array.from({length:kind==='shadow'?50:8},(_,i)=>
    [kind+':'+i,{kind,state:'roaming',battle:null}]))),doorOpen:false,boss:'guarding',bossBattle:null};
 }
 export function doorReady(floor) {
