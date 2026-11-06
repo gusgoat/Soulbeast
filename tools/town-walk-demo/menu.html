@@ -3936,8 +3936,8 @@ function vBattle(){const b=B(),u=uById(b.cur),P=S.P;
    return `<button class="btn ${['heal','buff','form'].includes(s.t)?'seal':''}" data-a="bt" data-v="sk:${id}" ${dis?'disabled':''}>${skillElementIcon(u,s,id)}<span class="skill-name">${s.n}</span><small>${cd?'รอ '+cd+' เทิร์น · ':''}${c?c+' MP':'—'}${s.gc?' · '+fmt(s.gc*u.lv)+'฿':''} · ${skTag(s)}${stab?'★':''} ${multTxt(m)}</small></button>`};
   if(u.kind==='pet'||u.kind==='summon')panel=`<div class="panel">${head}<div class="acts">${u.skills.filter(id=>SK[id]).map(skBtn).join('')}${skBtn('rest')}</div><p class="sub" style="margin:0">แตะการ์ดศัตรูเพื่อเลือกเป้า · ×2 ได้ผลดี ×½ ไม่ค่อยได้ผล · ★ ธาตุเดียวกับผู้ใช้ +25%</p></div>`;
   else if(b.menu==='skill')panel=`<div class="panel">${head}<div class="acts">${u.skills.filter(s=>s!=='attack'&&SK[s]).map(skBtn).join('')}${skBtn('rest')}${back}</div><p class="sub" style="margin:0">สกิล "เลือกฝ่ายเรา" ใช้กับการ์ดฝ่ายเราที่เลือกไว้ (แตะเพื่อเปลี่ยน)</p></div>`;
-  else if(b.menu==='item'){const its=Object.keys(CON).filter(k=>!CON[k].seal&&!CON[k].petExp&&P.items[k]>0);
-   panel=`<div class="panel">${head}<p class="sub" style="margin:0">ใช้กับ: <b>${esc(al.name)}</b> — แตะการ์ดฝ่ายเราเพื่อเปลี่ยน</p><div class="lst">${its.length?its.map(k=>`<div class="item">${itemIcon(k)}<div class="grow"><b>${CON[k].n} ×${P.items[k]}</b><small>${CON[k].d}</small></div><button class="btn sm" data-a="bt" data-v="item:${k}" ${potionUseful(CON[k],al,al.st)?'':'disabled'}>ใช้</button></div>`).join(''):'<p class="sub">ไม่มียาในกระเป๋า</p>'}</div>${back}</div>`}
+  else if(b.menu==='item'){const its=Object.keys(CON).filter(k=>!CON[k].seal&&!CON[k].petExp&&(CON[k].hp||CON[k].mp||CON[k].cure||CON[k].rev)&&P.items[k]>0);
+   panel=`<div class="panel">${head}<p class="sub" style="margin:0">กดใช้ยา แล้วแตะผู้ผนึกหรืออสูรที่ต้องการรักษา</p><div class="lst">${its.length?its.map(k=>`<div class="item">${itemIcon(k)}<div class="grow"><b>${CON[k].n} ×${P.items[k]}</b><small>${CON[k].d}</small></div><button class="btn sm" data-a="bt" data-v="item:${k}" ${b.allies.some(target=>battleMedicineUseful(CON[k],target))?'':'disabled'}>ใช้</button></div>`).join(''):'<p class="sub">ไม่มียาในกระเป๋า</p>'}</div>${back}</div>`}
   else if(b.menu==='seal'){const its=Object.keys(CON).filter(k=>CON[k].seal&&P.items[k]>0);panel=`<div class="panel">${head}<p class="sub" style="margin:0">HP เป้าหมายยิ่งน้อยยิ่งผนึกง่าย ถ้าเป้าหมายหลับ แช่แข็ง หรืออัมพาต ผนึกง่ายขึ้นอีก 50%</p><div class="lst">${its.length?its.map(k=>`<div class="item">${itemIcon(k)}<div class="grow"><b>${CON[k].n} ×${P.items[k]}</b><small>โอกาสสำเร็จประมาณ <span class="num">${Math.round(sealChance(t,CON[k].seal)*100)}%</span></small></div><button class="btn sm seal" data-a="bt" data-v="seal:${k}" ${sealable(t)?'':'disabled'}>ขว้าง</button></div>`).join(''):'<p class="sub">ไม่มีผนึกเหลือ</p>'}</div>${back}</div>`}
   else if(b.menu==='swap'){const inF=b.allies.slice(1).map(x=>x.uid),ps=carriedPets().filter(p=>!inF.includes(p.uid)&&p.hp>0);
    panel=`<div class="panel">${head}<p class="sub" style="margin:0">${b.allies.length-1<clsSum(P.cls)?'มีช่องว่าง อสูรที่เลือกจะลงสนามเพิ่ม':`จะสลับกับ ${b.allies[b.atarget]&&b.allies[b.atarget].kind==='pet'?esc(b.allies[b.atarget].name):esc(b.allies[1]?b.allies[1].name:'-')} (แตะการ์ดอสูรฝ่ายเราเพื่อเลือก)`}</p><div class="lst">${ps.length?ps.map(p=>{const q=calcPet(p);return `<div class="item">${portrait(p.sp,36)}<div class="grow"><b>${petName(p)} <span class="num sub">Lv ${p.lv}</span></b><span class="row wrap" style="gap:3px">${tChips(SP[p.sp].t)}</span>${bar(p.hp,q.hp)}</div><button class="btn sm pri" data-a="bt" data-v="swap:${p.uid}">เรียก</button></div>`}).join(''):'<p class="sub">ไม่มีอสูรตัวอื่นที่พร้อมสู้</p>'}</div>${back}</div>`}
@@ -4053,6 +4053,7 @@ Object.assign(handlers,{autoStats:uid=>autoStats(uid),pendingPets:()=>{S.ui.team
 function teamAutoAllowed(){return !!B()&&!['pvp','raid','world'].includes(B().kind)}
 function teamAutoUnit(u){return !!u&&u.side==='ally'&&((teamAutoAllowed()&&S.ui.autoTeam)||(u.kind==='pet'&&S.ui.autoPet)||(u.kind==='summon'&&u.name.startsWith('ทหาร')))}
 function toggleTeamAuto(){const b=B();if(!b||b.over||!teamAutoAllowed())return;S.ui.autoTeam=!S.ui.autoTeam;const u=uById(b.cur);if(S.ui.autoTeam&&u&&u.side==='ally'&&b.menu!=='wait'){b.menu='wait';battleLater(aiAct,500)}save();render()}
+function battleMedicineUseful(it,u){if(!it||!u||it.seal||it.petExp)return false;if(it.rev)return !['player','human'].includes(u.kind)&&u.hp<=0;if(u.hp<=0)return false;return !!(it.hp&&u.hp<u.st.hp||it.mp&&u.mp<u.st.mp||(it.cure||[]).some(k=>u.status?.[k]));}
 function potionUseful(it,o,st){if(!it||!o||!st)return false;if(it.rev)return o.hp<=0;if(it.hp||it.mp)return o.hp>0&&!!((it.hp&&o.hp<st.hp)||(it.mp&&o.mp<st.mp));return true}
 function bagPotionDisabled(id,who){if(CON[id]?.petExp){const p=who==='P'?null:petBy(Number(who));return !p||p.lv>=Math.min(MAXLV,S.P.lv)||p.hp<=0||statsLocked()}const o=who==='P'?S.P:petBy(Number(who));return !potionUseful(CON[id],o,who==='P'?pStats():o&&calcPet(o))}
 function beastLocations(k){return ZN.flatMap(z=>{const tags=[];if(z.sp.includes(k))tags.push('ทั่วไป Lv '+z.lv.join('–'));if(z.rare.includes(k))tags.push('หายาก Lv '+z.lv.join('–'));if((z.bosses||[z.boss]).some(b=>b.sp===k))tags.push('บอส Lv '+z.boss.lv);return tags.length?[z.n+' · '+tags.join(' / ')]:[]})}
@@ -7328,7 +7329,12 @@ BattleSkillTarget.valid=function(u,side){const p=this.current();return p?.sealIt
 BattleSkillTarget.banner=function(){const p=this.current();return p?.sealItem?'<div class="battle-target-prompt" role="status"><div><b>'+esc(CON[p.sealItem].n)+'</b><span>แตะการ์ดอสูรที่ต้องการผนึก · ยังไม่ใช้ผนึกจนกว่าจะเลือกเป้าหมาย</span></div><button class="btn sm" data-a="battleTargetCancel">ยกเลิก</button></div>':walkTargetBanner.call(this)};
 let walkSealConfirmed=false;
 BattleSkillTarget.confirm=function(side,value){const p=this.current();if(!p?.sealItem)return walkTargetConfirm.call(this,side,value);const c=this.context(),target=c?.b.enemies[Number(value)];if(!this.valid(target,side))return true;this.pending=null;c.b.target=Number(value);walkSealConfirmed=true;try{battleAction('seal:'+p.sealItem)}finally{walkSealConfirmed=false}return true};
-const walkBattleAction=battleAction;battleAction=function(v){const b=B(),[action,item]=String(v).split(':');if(action==='auto'){if(S.P.lv<10)return toast('ต่อสู้อัตโนมัติปลดล็อกเลเวล 10');const r=walkBattleAction(v);walkStoreBattlePrefs();return r}if(action==='seal'&&!walkSealConfirmed){const c=BattleSkillTarget.context();if(!c||c.u.kind!=='player'||!CON[item]?.seal||!(S.P.items[item]>0)||!b.enemies.some(sealable))return;BattleSkillTarget.pending={...c,sealItem:item,side:'enemy'};BattleCommandFocus.pending='arena';render();return}return walkBattleAction(v)};
+const medicineTargetValid=BattleSkillTarget.valid,medicineTargetBanner=BattleSkillTarget.banner,medicineTargetConfirm=BattleSkillTarget.confirm;
+let medicineConfirmed=false;
+BattleSkillTarget.valid=function(u,side){const p=this.current();return p?.medicine?side==='ally'&&battleMedicineUseful(CON[p.medicine],u):medicineTargetValid.call(this,u,side)};
+BattleSkillTarget.banner=function(){const p=this.current();return p?.medicine?'<div class="battle-target-prompt" role="status"><div><b>'+esc(CON[p.medicine].n)+'</b><span>แตะผู้ผนึกหรืออสูรฝ่ายเราเพื่อใช้ยา · ยังไม่หักไอเท่มจนกว่าจะเลือกเป้าหมาย</span></div><button class="btn sm" data-a="battleTargetCancel">ยกเลิก</button></div>':medicineTargetBanner.call(this)};
+BattleSkillTarget.confirm=function(side,value){const p=this.current();if(!p?.medicine)return medicineTargetConfirm.call(this,side,value);const c=this.context(),u=c?.b.allies[Number(value)];if(!this.valid(u,side))return true;this.pending=null;c.b.atarget=Number(value);medicineConfirmed=true;try{battleAction('item:'+p.medicine)}finally{medicineConfirmed=false}return true;};
+const walkBattleAction=battleAction;battleAction=function(v){const b=B(),[action,item]=String(v).split(':');if(action==='auto'){if(S.P.lv<10)return toast('ต่อสู้อัตโนมัติปลดล็อกเลเวล 10');const r=walkBattleAction(v);walkStoreBattlePrefs();return r}if(action==='item'&&!medicineConfirmed&&!b?.towerRun){const c=BattleSkillTarget.context(),it=CON[item];if(!c||!['player','human'].includes(c.u.kind)||!(S.P.items[item]>0))return;if(!b.allies.some(u=>battleMedicineUseful(it,u)))return toast('ไม่มีเป้าหมายที่ใช้ยานี้ได้');BattleSkillTarget.pending={...c,medicine:item,side:'ally'};BattleCommandFocus.pending='arena';render();return;}if(action==='seal'&&!walkSealConfirmed){const c=BattleSkillTarget.context();if(!c||c.u.kind!=='player'||!CON[item]?.seal||!(S.P.items[item]>0)||!b.enemies.some(sealable))return;BattleSkillTarget.pending={...c,sealItem:item,side:'enemy'};BattleCommandFocus.pending='arena';render();return}return walkBattleAction(v)};
 const walkBattleView=vBattle;vBattle=function(){const item=CON.teleportScroll;let h;try{delete CON.teleportScroll;h=walkBattleView()}finally{if(item)CON.teleportScroll=item}if(B()?.enemies.some(sealable))h=h.replace(/(data-v="seal:[^"]*"\s*)disabled/g,'$1');if(S.P.lv<10&&!B()?.over)h+='<small class="sub" data-auto-unlock>ต่อสู้อัตโนมัติปลดล็อกเลเวล 10</small>';return h};
 
 CON.teleportScroll={n:'ใบเทเลพอร์ต',d:'วาร์ปไปเมืองหลวง เมือง หรือหมู่บ้านที่อาณาจักรของคุณครอบครอง · ใช้ไม่ได้ระหว่างต่อสู้หรืออยู่ในป่า',price:30,lv:1};
@@ -7659,6 +7665,7 @@ const serviceSpeakerRender=render;render=function(...args){const r=serviceSpeake
 if(S.screen==='arena'&&!TOWER_UI.ready)void towerStatus();
 if(['guild','guildwar'].includes(S.screen)&&!GUILD_UI.data)void guildRequest();
 if(params.has('partyBattle')&&parent!==window){
+ let selectedMedicine=null,showMedicines=false;
  const partyPresented=new Set();
  function partyRewardLines(run,code){const r=run.rewards?.[code];if(!r)return run.result==='win'?['กำลังยืนยันรางวัลจากเซิร์ฟเวอร์…']:[];const lines=['ได้รับ '+fmt(r.gold||0)+' เหรียญ','ได้รับ EXP '+fmt(r.xp||0)];for(const [id,qty]of Object.entries(r.parts||{})){const [sp,part]=id.split('|');lines.push(itemIcon(id,44)+' '+esc(SP[sp]?.parts?.[Number(part)]?.[0]||id)+' ×'+qty)}for(const up of r.levelUps||[])lines.push('เลเวลอัป! '+esc(SP[up.name]?.n||up.name)+' · Lv '+up.from+' → '+up.to);return lines;}
 
@@ -7700,6 +7707,13 @@ if(params.has('partyBattle')&&parent!==window){
     const button=choice=>`<button class="btn" data-a="partySkill" data-v="${esc(choice.id)}" ${choice.disabled?'disabled':''}>${SK[choice.id]?skillElementIcon(displayUnit(actor),SK[choice.id],choice.id):''}<span class="skill-name">${esc(choice.name)}</span><small>${choice.mp?choice.mp+' MP':'—'}</small></button>`;
     const attack=choices.find(c=>c.id==='attack');
     body.innerHTML=`<p class="sub party-turn-note">${esc(status)}</p>`+(own?`<div class="acts">${showSkills||!attack?choices.map(button).join(''):button(attack)}${attack?`<button class="btn" data-a="partySkills">${showSkills?'ย้อนกลับ':'สกิล'}</button>`:''}</div>`:'');
+    if(own&&actor?.kind==='player'){
+     const medicines=w.items||[];
+     if(selectedMedicine){body.innerHTML='<div class="battle-target-prompt" role="status"><div><b>'+esc(medicines.find(it=>it.id===selectedMedicine)?.name||'ใช้ยา')+'</b><span>แตะผู้ผนึกหรืออสูรฝ่ายเราเพื่อใช้ยา · ยังไม่หักไอเท่ม</span></div><button class="btn sm" data-a="partyMedicineCancel">ยกเลิก</button></div>';}
+     else if(showMedicines){body.innerHTML='<p class="sub">เลือกยา แล้วเลือกเป้าหมาย</p><div class="lst">'+medicines.map(it=>'<div class="item">'+itemIcon(it.id)+'<div class="grow"><b>'+esc(it.name)+' ×'+it.count+'</b></div><button class="btn sm" data-a="partyMedicine" data-v="'+esc(it.id)+'" '+(b.allies.some(u=>battleMedicineUseful(it,u))?'':'disabled')+'>ใช้</button></div>').join('')+'</div><button class="btn" data-a="partyMedicines">ย้อนกลับ</button>';}
+     else body.insertAdjacentHTML('beforeend','<button class="btn" data-a="partyMedicines" '+(!medicines.length?'disabled':'')+'>ไอเท่ม</button>');
+    }
+
    }
    main.querySelector('[data-auto-unlock]')?.remove();
    if(controls){
@@ -7707,6 +7721,7 @@ if(params.has('partyBattle')&&parent!==window){
     controls.insertAdjacentHTML('afterbegin',`<button class="btn sm ${auto?'pri':''}" data-a="partyAuto" aria-pressed="${auto}">ออโต้ทีม ${auto?'เปิด':'ปิด'}</button>`);
    }
   }
+  if(selectedMedicine&&own){const it=w.items?.find(it=>it.id===selectedMedicine);for(const card of main.querySelectorAll('[data-a="bt"][data-v^="ally:"]')){const u=b.allies[Number(card.dataset.v.split(':')[1])],valid=battleMedicineUseful(it,u);card.dataset.skillTarget=valid?'valid':'invalid';card.disabled=!valid;}}
   if(!active){const done=main.querySelector('[data-a="bt"][data-v="done"]');if(done)done.textContent='เดินต่อ';}
   if(b.log?.length){const log=document.createElement('div');log.className='log';for(const line of b.log.slice(-4)){const row=document.createElement('p');row.textContent=typeof line==='string'?line:line.text||'';log.append(row);}main.append(log);}
   main.scrollTop=oldScroll;
@@ -7728,9 +7743,12 @@ if(params.has('partyBattle')&&parent!==window){
   if(action==='battleCommands'){hideCommands=!hideCommands;draw();return;}
   if(action==='battleDetails'||action==='battleSpeed'){handlers[action]();return;}
   if(w?.ownerCode!==code)return;
+  if(action==='partyMedicines'){showMedicines=!showMedicines;selectedMedicine=null;draw();return;}
+  if(action==='partyMedicineCancel'){selectedMedicine=null;showMedicines=true;draw();return;}
+  if(action==='partyMedicine'){const it=w?.items?.find(it=>it.id===value);if(it&&w.ownerCode===code){selectedMedicine=value;draw();}return;}
   if(action==='partySkills'){showSkills=!showSkills;draw();return;}
   if(action==='bt'&&value?.startsWith('target:')){selectedEnemy=run.battle.enemies[Number(value.split(':')[1])]?.id;draw();return;}
-  if(action==='bt'&&value?.startsWith('ally:')){selectedAlly=run.battle.allies[Number(value.split(':')[1])]?.id;draw();return;}
+  if(action==='bt'&&value?.startsWith('ally:')){const target=run.battle.allies[Number(value.split(':')[1])];if(selectedMedicine){const it=w?.items?.find(it=>it.id===selectedMedicine);if(w?.ownerCode===code&&battleMedicineUseful(it,target)){button.disabled=true;send('party-battle-command',{actor:w.actor,turn:w.turn,item:selectedMedicine,friend:target.id});}return;}selectedAlly=target?.id;draw();return;}
   if(action==='partySkill'&&w.choices.some(c=>c.id===value&&!c.disabled)){
    button.disabled=true;
    send('party-battle-command',{actor:w.actor,turn:w.turn,skill:value,target:curTarget()?.id,friend:curAlly()?.id});
@@ -7739,7 +7757,7 @@ if(params.has('partyBattle')&&parent!==window){
  addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='party-battle-state'||!event.data.run?.battle)return;
   const next=event.data,w=next.run.waiting,key=JSON.stringify([next.run.id,w?.actor,w?.turn]);
-  if(key!==turnKey){showSkills=false;turnKey=key;}
+  if(key!==turnKey){showSkills=false;showMedicines=false;selectedMedicine=null;turnKey=key;}
   if(state?.run.id!==next.run.id)effectTurn=0;
   const battle=next.run.battle,turn=battle.turns;
   const effects=Number.isSafeInteger(turn)&&turn>effectTurn&&Array.isArray(battle.effects)&&battle.effects.length?battle.effects.slice(-32):[];
@@ -7753,7 +7771,9 @@ if(params.has('partyBattle')&&parent!==window){
   if(effects.length){
    const cast=effects.find(e=>e.k==='cast'||e.k==='charge'),hit=effects.find(e=>e.k==='hit');
    const actor=BattleEffects.actor(cast?.source||cast?.id||hit?.source||battle.cur);
-   if(cast?.k==='charge')Sound.fx('charge');
+   const medicine=effects.find(e=>e.medicine);
+   if(medicine)ExtraAudio.play(CON[medicine.medicine]?.cure?'heal':'drink');
+   else if(cast?.k==='charge')Sound.fx('charge');
    else if(hit?.crit)ExtraAudio.skill(hit.skill||cast?.skill||'attack',actor,true);
    else if(cast||hit)Sound.skill(cast?.skill||hit?.skill||'attack',actor);
   }

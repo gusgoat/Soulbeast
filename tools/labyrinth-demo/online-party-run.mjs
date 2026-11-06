@@ -58,7 +58,7 @@ addEventListener('message',event=>{
  if(message.type==='party-battle-command'){
   const turn=shownBattle.waiting;
   if(turn?.ownerCode!==connection.code||message.turn!==turn.turn||message.actor!==turn.actor)return;
-  void controller.command('battleCommand',{battle:shownBattle.id,actor:turn.actor,turn:turn.turn,skill:message.skill,target:message.target,friend:message.friend});
+  void controller.command('battleCommand',{battle:shownBattle.id,actor:turn.actor,turn:turn.turn,skill:message.skill,item:message.item,target:message.target,friend:message.friend});
  }
 });
 function drawBattle(run){
@@ -73,7 +73,7 @@ function drawBattle(run){
  if(shownBattle?.id!==run.id){
   clearTimeout(soloFinishTimer);soloFinishTimer=null;
   battleFrameReady=false;visibleBattleId=null;
-  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=dungeon-flow-20261106&partyBattle=shared-battle-effects-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=battle-items-20261106&partyBattle=shared-battle-effects-1&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
  }
  shownBattle=run;$('battle').hidden=false;sendBattle();
 
@@ -108,7 +108,7 @@ function failure(error){
   offerReturn();return;
  }
  if(['trap_not_due','trap_unavailable','trap_out_of_reach','movement_wrong_floor'].includes(error.message))return;
- if(['not_your_turn','stale_turn','invalid_skill','invalid_target','invalid_auto_mode'].includes(error.message)){
+ if(['not_your_turn','stale_turn','invalid_skill','invalid_item','invalid_target','invalid_auto_mode'].includes(error.message)){
   notice('คำสั่งใช้ไม่ได้หรือเทิร์นเปลี่ยนแล้ว · เลือกคำสั่งใหม่');return;
  }
  if(error.message==='floor_quota_incomplete'){const a=Math.max(0,(world.rules?.shadows||0)-(world.kills?.shadow||0)),b=Math.max(0,(world.rules?.bandits||0)-(world.kills?.bandit||0));notice('ต้องปราบอสูรเงาอีก '+a+' ตัว และโจรป่าอีก '+b+' ตัว');return;}
