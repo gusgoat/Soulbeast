@@ -7614,7 +7614,7 @@ communityCall=async function(action='social_sync',extra={}){
    try{await (await getWalkAccountConnection()).social('friend_ack',{invite:r.match.invite});}catch(e){console.warn('PVP invitation acknowledgement:',e.message);}
   }else if(priorInvite!==COMMUNITY.incoming?.id)render();
   if(action==='friend_add')toast('ส่งคำขอเป็นเพื่อนแล้ว');
- }catch(e){COMMUNITY.error=communityError(e.message);if(action!=='social_sync')toast(COMMUNITY.error);}
+ }catch(e){if(e.message==='challenge expired'){COMMUNITY.incoming=null;COMMUNITY.error='คำท้าหมดอายุหรือถูกตอบรับแล้ว · กรุณาส่งคำท้าใหม่';}else COMMUNITY.error=communityError(e.message);if(action!=='social_sync')toast(COMMUNITY.error);}
  finally{COMMUNITY.busy=false;if(S.screen==='friends'||S.screen==='pvp'||COMMUNITY.incoming)render();}
 };
 handlers.friendChallenge=id=>{if(communityBattleBusy())return toast(communityError('finish other battle'));return WALK_ONLINE?communityCall('friend_challenge',{target:id}):parent.postMessage({type:'walk-peer-action',action:'challenge',target:id},location.origin);};
