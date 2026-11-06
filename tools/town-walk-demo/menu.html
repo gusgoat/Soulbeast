@@ -7594,16 +7594,37 @@ const fusionBuy=handlers.buy;handlers.buy=function(id){if(id==='fusionSeal')retu
 const localSocialPost=lbPost;lbPost=function(packet){if(sessionStorage.getItem('soulbeast-online-walk-v1')&&/^(social_sync|friend_|pvp_|camp_|wb_|guild_|tower_)/.test(packet.action)){
  return walkAccountPost(packet);
 }return ['social_sync','friend_add','friend_remove','pvp_create','pvp_join','pvp_resume','pvp_poll','pvp_ready','pvp_move','pvp_auto','pvp_leave','camp_list','camp_register','camp_begin','camp_poll','camp_move','camp_leave'].includes(packet.action)?window.walkSocialEngine.dispatch(S.P,packet).then(result=>{if(result.ok&&result.walkCampAccount){const a=result.walkCampAccount,previous=S.P.walkCamp||{};S.P.gold+=(Number(a.delta)||0)-(Number(previous.delta)||0);S.P.score=(S.P.score||0)+(Number(a.scoreDelta)||0)-(Number(previous.scoreDelta)||0);S.P.walkCamp={delta:Number(a.delta)||0,scoreDelta:Number(a.scoreDelta)||0};save()}return result}):localSocialPost(packet)};
-communityCall=async function(action='social_sync',extra={}){if(COMMUNITY.busy||!S.P)return;COMMUNITY.busy=true;COMMUNITY.error='';try{const online=sessionStorage.getItem('soulbeast-online-walk-v1');
-const r=online?await (await import(new URL('../../client/online-walk.mjs?v=game-session-1',location.href).href)).connectOnlineWalk(walkStorage).social(action,extra):await window.walkSocialEngine.dispatch(S.P,{action,...extra});if(!r.ok)throw Error(r.error);Object.assign(COMMUNITY,{friends:r.friends||[],friendRequests:r.friendRequests||{incoming:[],outgoing:[]},online:r.online||[],incoming:r.incoming||null,serverTime:r.serverTime,ready:true,code:ensureCode()});if(online&&r.match&&!communityBattleBusy()){
- PVP.code=ensureCode();PVP.pending=null;pvpReceive(r.match);S.screen='pvp';
- await (await import(new URL('../../client/online-walk.mjs?v=game-session-1',location.href).href)).connectOnlineWalk(walkStorage).social('friend_ack',{invite:r.match.invite});
- COMMUNITY.incoming=null;pvpSessionSave();pvpSchedule();render();
-}
-if(action==='friend_add')toast('เพิ่มเพื่อนแล้ว');parent.postMessage({type:'walk-social-refresh'},location.origin);}catch(e){COMMUNITY.error=communityError(e.message)}finally{COMMUNITY.busy=false;if(S.screen==='friends')render()}};
-handlers.friendChallenge=id=>sessionStorage.getItem('soulbeast-online-walk-v1')?communityCall('friend_challenge',{target:id}):parent.postMessage({type:'walk-peer-action',action:'challenge',target:id},location.origin);
-if(S.screen==='friends')communityCall();
-if(params.get('localDuel')==='1'){
+// Friend invitations and accepted matches use the same authenticated online PVP client.
+let friendSyncAt=0,friendWaitingUntil=0;
+communityCall=async function(action='social_sync',extra={}){
+ if(COMMUNITY.busy||!S.P)return;
+ COMMUNITY.busy=true;COMMUNITY.error='';friendSyncAt=Date.now();
+ try{
+  const online=WALK_ONLINE;
+  const r=online?await (await getWalkAccountConnection()).social(action,extra):await window.walkSocialEngine.dispatch(S.P,{action,...extra});
+  if(!r.ok)throw Error(r.error);
+  const priorInvite=COMMUNITY.incoming?.id;
+  Object.assign(COMMUNITY,{friends:r.friends||[],friendRequests:r.friendRequests||{incoming:[],outgoing:[]},online:r.online||[],incoming:r.incoming||null,serverTime:r.serverTime,ready:true,code:ensureCode()});
+  if(action==='friend_challenge'){friendWaitingUntil=Date.now()+65000;toast('ส่งคำท้าแล้ว · รอเพื่อนยอมรับคำท้า');}
+  const sameRoom=r.match?.room?.id===PVP.room?.id;
+  if(online&&r.match&&(!communityBattleBusy()||sameRoom)){
+   friendWaitingUntil=0;PVP.code=ensureCode();PVP.pending=null;S.screen='pvp';
+   pvpReceive(r.match);COMMUNITY.incoming=null;pvpSessionSave();pvpSchedule();render();
+   // A failed acknowledgement must never hide an already-created room.
+   try{await (await getWalkAccountConnection()).social('friend_ack',{invite:r.match.invite});}catch(e){console.warn('PVP invitation acknowledgement:',e.message);}
+  }else if(priorInvite!==COMMUNITY.incoming?.id)render();
+  if(action==='friend_add')toast('ส่งคำขอเป็นเพื่อนแล้ว');
+ }catch(e){COMMUNITY.error=communityError(e.message);if(action!=='social_sync')toast(COMMUNITY.error);}
+ finally{COMMUNITY.busy=false;if(S.screen==='friends'||S.screen==='pvp'||COMMUNITY.incoming)render();}
+};
+handlers.friendChallenge=id=>{if(communityBattleBusy())return toast(communityError('finish other battle'));return WALK_ONLINE?communityCall('friend_challenge',{target:id}):parent.postMessage({type:'walk-peer-action',action:'challenge',target:id},location.origin);};
+setInterval(()=>{
+ if(!WALK_ONLINE||document.hidden||COMMUNITY.busy||communityBattleBusy())return;
+ const interval=S.screen==='friends'||friendWaitingUntil>Date.now()?4000:10000;
+ if(Date.now()-friendSyncAt>=interval)communityCall();
+},1000);
+if(S.screen==='friends'||WALK_ONLINE&&S.screen==='pvp')communityCall();
+if(params.get('localDuel')==='1'&&!WALK_ONLINE){
  wagerPanel=()=>'<p class="sub">ประลองแบบไม่เดิมพัน</p>';
  const localDuelKey='soulbeast-local-duel-v1',host=String(S.P.walkId||S.P.code||[S.P.name,S.P.cls,S.P.country].join('|'));let stored;try{stored=JSON.parse(sessionStorage.getItem(localDuelKey)||'null')}catch{}
  pvpConnect=async function(mode){if(PVP.busy)return;PVP.busy=true;PVP.error='';try{const r=await window.walkSocialEngine.dispatch(S.P,{action:'pvp_resume'});if(!r.ok)throw Error(r.error);PVP.code=ensureCode();PVP.pending=null;pvpReceive(r)}catch(e){PVP.error=pvpError(e.message)}finally{PVP.busy=false;render();pvpSchedule()}};
