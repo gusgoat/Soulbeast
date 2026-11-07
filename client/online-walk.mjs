@@ -185,6 +185,44 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
  }
 
  const send = (action, extra) => client.game(action, {...extra, code: context.code}, context.environment);
+ async function island(action, {country,visitId,resumeOnly}){
+  return lock(async()=>{
+   syncRevision();
+   let pending=context.islandRequest;
+   if(pending&&(pending.action!==action||pending.country!==country||pending.visitId!==visitId))
+    throw Error('island_transaction_pending');
+   if(!pending){
+    await saveWalk();
+    pending={action,country,visitId,resumeOnly,expectedSaveAt:context.revision,_sbRequest:crypto.randomUUID()};
+    context.islandRequest=pending;
+    sessionStorage.setItem(contextKey,JSON.stringify(context));
+   }
+   const clear=()=>{delete context.islandRequest;sessionStorage.setItem(contextKey,JSON.stringify(context));};
+   let result;
+   try{
+    const {action,...packet}=pending;
+    result=await send(action,packet);
+   }catch(error){
+    const code=error.code||error.message;
+    if(['save_conflict','island_fare','island_bad_country','island_resume_missing','island_visit_missing','island_character_unavailable','island_boss_incomplete'].includes(code))clear();
+    throw error;
+   }
+   const snapshot=JSON.parse(result.data),revision=Number(result.accountSaveAt||result.at);
+   if(snapshot.P?.code!==context.code||!Number.isFinite(revision)||revision<=0)throw Error('bad data');
+   if(revision>=context.revision){
+    snapshot.P.gsAt=revision;
+    delete snapshot.P.cpin;delete snapshot.P.walkId;
+    context.snapshot=snapshot;context.revision=revision;
+    sessionStorage.setItem(playerKey,JSON.stringify(snapshot.P));
+    if(context.owner){
+     try{(accountStorage??localStorage).setItem('soulbeast_account_save_v1:'+context.environment+':'+context.owner+':'+context.code,JSON.stringify(snapshot));}catch{}
+    }
+   }
+   clear();
+   status('saved');
+   return {player:JSON.parse(sessionStorage.getItem(playerKey)),outcome:result.outcome,already:result.already};
+  });
+ }
  const social = (action, extra = {}) => {
   const draw = action === 'gacha_draw';
   const towerMutation = action.startsWith('tower_') && action !== 'tower_status';
@@ -217,7 +255,7 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
    identity:async()=>client.request('/rest/v1/rpc/'+(context.environment==='live'?'sb_walk_live_identity':'sb_walk_test_identity'),{p_code:context.code},await client.sessions.token())
   });
  };
- return {flush, reloadWalk, heartbeat, invitations, social, socialTarget, walkRealtimeTest, openWalkRealtime};
+ return {flush, reloadWalk, heartbeat, invitations, island, social, socialTarget, walkRealtimeTest, openWalkRealtime};
 }
 
 export function mountDungeonInvitations(connection, peers) {

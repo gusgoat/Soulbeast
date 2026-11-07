@@ -22,7 +22,7 @@ const zoom=()=>overview?Math.min((W-32)/data.width,(H-245)/(data.height*F)):.72;
 const sx=x=>(x-(overview?data.width/2:cam.x))*zoom()+W/2,sy=y=>(y-(overview?data.height/2:cam.y))*F*zoom()+H*(overview?.53:.57);
 function ellipse(ctx,x,y,rx,ry,color){ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()}
 let seed=205;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
-const terrain=window.hemantTerrain.create(data,nav);nav.setTerrain(terrain);const islandPort=IslandRules.port(data.countryId,nav);nav.places.push(islandPort);const questNpcs=window.walkQuestEnvoy.createAll(data,nav),envoy=questNpcs[0];const npcArt={};for(const n of questNpcs){const im=new Image();im.src=n.portrait;npcArt[n.slug]=im}const arrivalGate=borderGates.find(g=>g.id===new URLSearchParams(location.search).get('arrival'));Object.assign(spawn,arrivalGate?window.walkBorderLinks.arrival(arrivalGate,data):nav.spawnAt(origin,exitFrom||'south'));if(data.countryId==='red'&&new URLSearchParams(location.search).get('arrival')==='dungeon')Object.assign(spawn,{x:1104,y:7804});const forestArrival=/^forest-(\d+)$/.exec(new URLSearchParams(location.search).get('arrival')||'');if(forestArrival){const forest=data.forests.find(f=>Number(f.zoneId)===Number(forestArrival[1]));if(forest){Object.assign(spawn,forest);}}if(new URLSearchParams(location.search).get('arrival')==='island-port')Object.assign(spawn,islandPort);Object.assign(p,spawn);Object.assign(cam,spawn);const {trees,mountains}=terrain;for(const tree of trees)tree.variant=LivingEnvironment.treeVariant(data.countryId,tree,terrain.water.raw(tree.x,tree.y,420));const roamers=window.hemantRoamers.create(data,nav);const bandits=window.hemantBandits.create(data,nav,terrain);window.walkQuestTargets.populate(data,nav,roamers,bandits,window.townQuests.read(),window.WorldQuestData);const threats=window.hemantEncounters.create(nav,[{kind:"shadow",actors:roamers.actors},{kind:"bandit",actors:bandits.actors}],{leashDistance:()=>WorldPursuit.leash(W,H,zoom(),1)});let activeEncounter=null;const treasures=window.hemantTreasures.create(nav,bandits.actors,sessionStorage,window.hemantTreasureCatalog,Math.random,data.countryId);
+const terrain=window.hemantTerrain.create(data,nav);nav.setTerrain(terrain);const islandPort=IslandRules.port(data.countryId);nav.places.push(islandPort);const questNpcs=window.walkQuestEnvoy.createAll(data,nav),envoy=questNpcs[0];const npcArt={};for(const n of questNpcs){const im=new Image();im.src=n.portrait;npcArt[n.slug]=im}const arrivalGate=borderGates.find(g=>g.id===new URLSearchParams(location.search).get('arrival'));Object.assign(spawn,arrivalGate?window.walkBorderLinks.arrival(arrivalGate,data):nav.spawnAt(origin,exitFrom||'south'));if(data.countryId==='red'&&new URLSearchParams(location.search).get('arrival')==='dungeon')Object.assign(spawn,{x:1104,y:7804});const forestArrival=/^forest-(\d+)$/.exec(new URLSearchParams(location.search).get('arrival')||'');if(forestArrival){const forest=data.forests.find(f=>Number(f.zoneId)===Number(forestArrival[1]));if(forest){Object.assign(spawn,forest);}}if(new URLSearchParams(location.search).get('arrival')==='island-port')Object.assign(spawn,islandPort);Object.assign(p,spawn);Object.assign(cam,spawn);const {trees,mountains}=terrain;for(const tree of trees)tree.variant=LivingEnvironment.treeVariant(data.countryId,tree,terrain.water.raw(tree.x,tree.y,420));const roamers=window.hemantRoamers.create(data,nav);const bandits=window.hemantBandits.create(data,nav,terrain);window.walkQuestTargets.populate(data,nav,roamers,bandits,window.townQuests.read(),window.WorldQuestData);const threats=window.hemantEncounters.create(nav,[{kind:"shadow",actors:roamers.actors},{kind:"bandit",actors:bandits.actors}],{leashDistance:()=>WorldPursuit.leash(W,H,zoom(),1)});let activeEncounter=null;const treasures=window.hemantTreasures.create(nav,bandits.actors,sessionStorage,window.hemantTreasureCatalog,Math.random,data.countryId);
 const ground=document.createElement('canvas');ground.width=data.width/2;ground.height=data.height*F/2;
 function makeGround(){const g=ground.getContext('2d');g.scale(.5,.5);const snow=g.createPattern(images.snow,'repeat');snow.setTransform(new DOMMatrix().scale(.45));g.fillStyle=snow;g.fillRect(0,0,data.width,data.height*F);
  LivingEnvironment.patches(g,data.width,data.height,data.countryId,147,200);
@@ -84,7 +84,7 @@ function update(dt){if(document.documentElement.hasAttribute('data-event-announc
  const len=Math.hypot(x,y),tilt=Math.min(1,Math.hypot(joy.x,joy.y)),keyboard=['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].some(k=>keys.has(k));moving=len>.12;running=moving&&(auto||keys.has('shift')||tilt>(running ? .62 : .72));if(moving){p.dir=(Math.round(-Math.atan2(x,y)/(Math.PI/4))+8)%8;let speed=.68425*(auto?360:keyboard?(running?360:220):220*Math.min(1,tilt/.72)+140*Math.max(0,(tilt-.72)/.28)),step=Math.min(fusion.speed(speed,auto||keyboard?1:tilt/.72)*dt,auto?len:Infinity),nx=p.x+x/len*step,ny=p.y+y/len*step/F;if(nav.walkable(nx,p.y))p.x=nx;if(nav.walkable(p.x,ny))p.y=ny;phase+=dt*(speed/220)*13}
  cam.x+=(p.x-cam.x)*Math.min(1,dt*7);cam.y+=(p.y-cam.y)*Math.min(1,dt*7);near=questNpcs.find(n=>nav.distance(p,n)<125)||treasures.chests.find(s=>nav.distance(p,s)<125)||nav.places.filter(s=>nav.distance(p,s)<190).sort((a,b)=>nav.distance(p,a)-nav.distance(p,b))[0];$('interact').textContent=near?.type==='questNpc'?'◇ สนทนาและรับเควส':near?.kind==='chest'?'◇ เปิดหีบสมบัติ':near?.type==='border'?'◇ ข้ามประเทศ':near?.type==='islandPort'?'⚓ ท่าเรือ':'◇ สำรวจทางเข้า';$('nearby').hidden=!near;$('nearbyName').textContent=near?.name||'';$('interact').disabled=!near;$('area').textContent=near?.name||(data.countryId==='blue'?'ถนนหิมะ':data.countryId==='green'?'เส้นทางพงไพร':'เส้นทางดินแดง')+' · '+data.country;
 }
-function button(text,action){const b=document.createElement('button');b.textContent=text;b.onclick=action;$('dialogChoices').append(b)}
+function button(text,action){const b=document.createElement('button');b.textContent=text;b.onclick=action;$('dialogChoices').append(b);return b}
 function dialog(title,text){$('islandFerryPreview')?.remove();window.NpcDialogue.clear($('townDialog'));$('townDialog').classList.remove('places-list');reset();$('dialogTitle').textContent=title;$('dialogText').textContent=text;$('dialogChoices').replaceChildren();$('forestEntranceArt')?.remove();if(!$('townDialog').open)$('townDialog').showModal()}
 function navigate(s){stopTravel();const path=s.type==='dungeon'?nav.pathBetween(p,s):s.type==='islandPort'?[...nav.route(p,s.anchor),...nav.pathBetween(nav.byId.get(s.anchor),s)]:s.type==='questNpc'?[...nav.route(p,s.anchor),...nav.pathBetween(data.cities.find(c=>c.id===s.anchor),s)]:nav.route(p,s.id);if(!path.length){dialog('ยังหาทางกลับถนนไม่ได้','ลองเดินอ้อมสิ่งกีดขวางออกมาเล็กน้อย แล้วเลือกจุดหมายอีกครั้ง');return}travel={id:s.id,path};overview=false;$('travel').hidden=false;$('travelName').textContent='กำลังเดินไป '+s.name;$('townDialog').close();reset()}
 function openCountryMenu(screen,quickItem=''){if(screen==='quests'){reset();stopTravel();window.townQuests.show(true);return}if(!['mail','hero','team','bag','friends','settings','coupon'].includes(screen))return;reset();stopTravel();menu=true;const f=document.createElement('iframe');f.id='regionMenu';f.title=quickItem==='teleportScroll'?'แผนที่เทเลพอร์ต':'เมนูผู้ผนึก';f.src=screen==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?v=camp-replay-1&walkScene=country&screen='+screen+'&city='+data.countryId+'-capital'+(quickItem?'&quickItem='+encodeURIComponent(quickItem):'');f.style='position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000;background:#122b40';document.body.append(f)}
@@ -135,22 +135,33 @@ function showPlace(s){
   if(nav.distance(p,s)>=190)button('นำทางไปท่าเรือ',()=>navigate(s));
   else{
    showFerryPreview(country,cfg.name);
-   if(sessionStorage.getItem(I.onlineKey)){
-    $('dialogText').textContent+=' · เล่นด้วยตัวละครทดสอบในแท็บแยก';
-    const link=document.createElement('a');link.href='../island-demo/preview.html?country='+country;
-    link.target='_blank';link.rel='noopener';link.textContent='เปิดตัวอย่างเกาะ';
-    $('dialogChoices').append(link);return;
-   }
    const previous=window.townQuests.read()?.islandProgress?.visit?.country;
    const resuming=previous===country;
    if(resuming)$('dialogText').textContent='กลับไป'+cfg.name+'เพื่อเดินทางต่อ · ไม่มีค่าเรือ';
    else if(I.islands[previous])$('dialogText').textContent+=' · ขึ้นเรือจะจบรอบที่ค้างบน'+I.islands[previous].name;
-   button(resuming?'กลับไป'+cfg.name+' · ฟรี':'จ่าย 10,000 เหรียญ · ขึ้นเรือ',()=>{
-    const player=window.townQuests.read();
-    const result=I.sail(player,country);
-    if(result==='depart'||result==='resume'){
-     window.townQuests.write(player);location.href='../island-demo/index.html?country='+country;
-    }else $('dialogText').textContent=result==='fare'?'เหรียญไม่พอ ต้องใช้ 10,000 เหรียญ':'ยังเดินทางไม่ได้';
+   const embark=button(resuming?'กลับไป'+cfg.name+' · ฟรี':'จ่าย 10,000 เหรียญ · ขึ้นเรือ',async()=>{
+    const online=IslandAccount.active();
+    embark.disabled=true;
+    try{
+     let result;
+     if(online){
+      $('dialogText').textContent='กำลังยืนยันค่าเรือกับเซิร์ฟเวอร์…';
+      ({outcome:result}=await IslandAccount.command('island_depart',country,undefined,resuming));
+     }else{
+      const player=window.townQuests.read();
+      result=I.sail(player,country);
+      if(result==='depart')window.townQuests.write(player);
+     }
+     if(result==='depart'||result==='resume'){
+      location.href='../island-demo/index.html?country='+country;
+     }else $('dialogText').textContent=result==='fare'?'เหรียญไม่พอ ต้องใช้ 10,000 เหรียญ':'ยังเดินทางไม่ได้';
+    }catch(error){
+     const text=error.code||error.message;
+     $('dialogText').textContent=text==='island_fare'?'เหรียญไม่พอ ต้องใช้ 10,000 เหรียญ':
+      text==='island_resume_missing'?'รอบเดิมสิ้นสุดแล้ว กรุณาเปิดท่าเรือใหม่เพื่อเลือกเที่ยวเรือ':
+      ['login_required','character_not_owned','session_replaced'].includes(text)
+       ?'กรุณาเข้าสู่ระบบและเลือกตัวละครอีกครั้ง':'ยังยืนยันการบันทึกค่าเรือไม่ได้ กรุณาลองอีกครั้ง';
+    }finally{embark.disabled=false;}
    });
   }
   return;

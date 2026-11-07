@@ -304,25 +304,10 @@ async function run(){
   assert.equal(await warMap.locator('.cw-island-pin.island').count(),3);
   assert(await warMap.locator('.cw-node').count()>0);
   await warMap.getByRole('button',{name:'เกาะศิลามรกต',exact:true}).press('Enter');
-  await page.locator('#cw-island-green[open]').getByRole('link',{name:'เปิดตัวอย่างเกาะ'}).waitFor();
+  await page.locator('#cw-island-green[open]').getByText('เดินไปที่ท่าเรือบนแผนที่ประเทศเพื่อขึ้นเรือ').waitFor();
   await warMap.getByRole('button',{name:'ท่าเรืออัคนีบรรพต',exact:true}).click();
   await page.locator('#cw-island-red[open]').waitFor();
   assert(!await page.evaluate(()=>window.eval("countryMapView([], 'selectTeleport', '').includes('cw-island-pin')")));
-  if(new URL(origin).hostname==='gusgoat.github.io'){
-   const onlineKey='soulbeast-online-walk-v1';
-   await page.goto(origin+'/Soulbeast/tools/hemant-walk-demo/index.html?country=green&arrival=island-port');
-   const accountPlayer=await profile();
-   await page.evaluate(key=>sessionStorage.setItem(key,'{}'),onlineKey);
-   await page.getByRole('button',{name:'⚓ ท่าเรือ'}).click();
-   const link=page.getByRole('link',{name:'เปิดตัวอย่างเกาะ'});
-   assert.match(await link.getAttribute('rel'),/noopener/);
-   assert.equal(await page.getByRole('button',{name:/จ่าย 10,000/}).count(),0);
-   const [preview]=await Promise.all([page.context().waitForEvent('page'),link.click()]);
-   await preview.getByRole('button',{name:'ไปท่าเรือพนาสมุทร'}).waitFor();
-   assert.equal(await preview.evaluate(key=>sessionStorage.getItem(key),onlineKey),null);
-   assert.deepEqual(await profile(),accountPlayer);
-   await preview.close();
-  }
   assert.deepEqual(errors,[]);
   console.log('PASS mobile: war map islands and ferry pins, all ferry illustrations and encounter lists, three ports and maps, scenery atlases, ferry fare, free return and switching from a saved island visit, ruins, portal combat and surrender, chest, actual encounter pools, boss walk and flight sprites, automatic boss combat, first and repeat reward, equipped preview profile, country HUD, shadow and bandit pursuit with active repellent, 1–4 shadow opponents, and teleport.');
  }finally{await browser.close();}

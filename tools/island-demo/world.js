@@ -16,12 +16,13 @@ function show(title,message,actions,art){
 const close=()=>$('townDialog').close();
 const mainland=()=>location.assign('../hemant-walk-demo/index.html?country='+encodeURIComponent(cfg?country:'blue')+'&arrival=island-port');
 let player=read();
-if(!cfg||!player||sessionStorage.getItem(I.onlineKey)||!I.state(player,country).visit){
+const online=IslandAccount.active();
+if(!cfg||!player||(online&&!IslandAccount.hasVisit(player,country))||!I.state(player,country).visit){
  for(const hud of document.querySelectorAll('.walk-hud'))hud.hidden=true;
- show('ท่าเรือสามอาณาจักร','กรุณาใช้ท่าเรือบนแผนที่ประเทศเพื่อเดินทางเข้าเกาะในโหมดทดสอบ', [['กลับแผนที่ประเทศ',mainland]]);
+ show('ท่าเรือสามอาณาจักร','กรุณาใช้ท่าเรือบนแผนที่ประเทศเพื่อเดินทางเข้าเกาะ', [['กลับแผนที่ประเทศ',mainland]]);
  return;
 }
-if(IslandPreviewProfile.upgrade(player,WalkVitals.maximum)){
+if(!online&&IslandPreviewProfile.upgrade(player,WalkVitals.maximum)){
  const raw=JSON.stringify(player);sessionStorage.setItem(I.key,raw);
  localStorage.setItem('soulbeast-walk-save:'+player.walkId,raw);
 }
@@ -112,7 +113,7 @@ const portArt={...data.coast(cfg.angle,.988),depthY:data.spawn.y-16,art:'port',s
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let width=0,height=0,dpr=1,last=performance.now(),clock=0,phase=0,writeAt=0,miniAt=0;
 let moving=false,running=false,near=null,frame=null,kind='',noticeTimer=null,portalOpen=false;
-const coupon=()=>show('คูปองทดสอบ','คูปองในเซฟเกาะ '+I.state(player).coupons+' ใบ',[['กลับ',close]]);
+const coupon=()=>online?openFrame(null,'coupon'):show('คูปองเกาะ','คูปองในเซฟเกาะ '+I.state(player).coupons+' ใบ',[['กลับ',close]]);
 const fusion=BeastFusion.create({
  canOpen:()=>!frame&&!$('townDialog').open&&!DungeonFeedback.isOpen&&!window.WalkControls?.editing,
  stop:reset,openShop:coupon,onChange:fresh=>{player=fresh;persist();},
@@ -291,22 +292,60 @@ function status(message){
  const box=$('notice');box.textContent=message;box.hidden=false;
  clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{box.hidden=true;},3200);
 }
+let saveContinuation=null,saving=false;
+function saveThen(next,action){
+ if(!online){next();return;}
+ saveContinuation={next,action,visitId:visit()?.id};
+ void confirmSave();
+}
+async function confirmSave(){
+ if(saving||!saveContinuation)return;
+ saving=true;reset();
+ show('บันทึกการเดินทาง','กำลังบันทึกความคืบหน้าของตัวละคร…',[]);
+ const {next,action,visitId}=saveContinuation;
+ let result;
+ try{
+  if(action){
+   result=await IslandAccount.command(action,country,visitId);
+   player=result.player;
+  }else player=await IslandAccount.checkpoint();
+ }catch(error){
+  const code=error.code||error.message;
+  const message=['login_required','character_not_owned','session_replaced'].includes(code)
+   ?'กรุณาเข้าสู่ระบบและเลือกตัวละครอีกครั้ง':'ยังยืนยันการบันทึกไม่ได้ กรุณาลองอีกครั้ง';
+  show('บันทึกการเดินทาง',message,[['ลองบันทึกอีกครั้ง',confirmSave]]);
+  return;
+ }finally{saving=false;}
+ saveContinuation=null;close();next(result);
+}
+function exitIsland(next,defeated=false){
+ const maxHp=WalkVitals.maximum(player).hp;
+ if(online){
+  if(defeated)player.hp=Math.max(1,Math.round(maxHp*.3));
+ }else I.leave(player,country,defeated,maxHp);
+ persist(false);
+ saveThen(next,'island_exit');
+}
 function goHome(defeated){
- I.leave(player,country,defeated,WalkVitals.maximum(player).hp);persist(false);
- if(!defeated)return mainland();
- const url=new URL(townProfiles.entryURL((I.islands[player.country]?player.country:country)+'-capital'),location.href);
- url.searchParams.set('screen','hospital');location.assign(url);
+ exitIsland(()=>{
+  if(!defeated)return mainland();
+  const url=new URL(townProfiles.entryURL((I.islands[player.country]?player.country:country)+'-capital'),location.href);
+  url.searchParams.set('screen','hospital');location.assign(url);
+ },defeated);
 }
 function openFrame(id,screen='bag',quickItem){
- if(frame)return;
- if($('townDialog').open)close();
+ if(frame||saveContinuation)return;
  reset();persist();
- frame=document.createElement('iframe');frame.id='regionMenu';frame.title=id?'เหตุการณ์บนเกาะ':'กระเป๋าผู้ผนึก';
- const query=new URLSearchParams({city:country+'-capital',v:'islands-4',walkScene:'island',screen:id?'town':screen});
- if(quickItem)query.set('quickItem',quickItem);
- if(id){query.set('island',country);query.set('islandEncounter',id);}
- frame.src='../town-walk-demo/menu.html?'+query;
- kind=id||'menu';document.body.append(frame);
+ const mount=()=>{
+  if($('townDialog').open)close();
+  frame=document.createElement('iframe');frame.id='regionMenu';frame.title=id?'เหตุการณ์บนเกาะ':'กระเป๋าผู้ผนึก';
+  const query=new URLSearchParams({city:country+'-capital',v:'islands-live-1',walkScene:'island',screen:id?'town':screen});
+  if(quickItem)query.set('quickItem',quickItem);
+  if(id){query.set('island',country);query.set('islandEncounter',id);}
+  frame.src=screen==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+query;
+  kind=id||'menu';document.body.append(frame);
+ };
+ if(id)saveThen(mount);else mount();
 }
 function openPortal(pending){
  portalOpen=true;reset();
@@ -325,13 +364,18 @@ function activate(o){
    const result=I.explore(player,country,o.id);
    if(result==='items'){
     const loot=I.items(player);persist();
-    show('กล่องไอเทม',loot.map(([id,n])=>(DungeonRewardArt[id]?.name||id)+' ×'+n).join(' · '),[['เดินต่อ',close]]);
+    saveThen(()=>show('กล่องไอเทม',loot.map(([id,n])=>(DungeonRewardArt[id]?.name||id)+' ×'+n).join(' · '),[['เดินต่อ',close]]));
    }else if(result){persist();if(result==='portal')openPortal(visit().pending);else openFrame(o.id);}
   }],['กลับ',close]]);
  }else if(o.id==='chest'){
   show(o.name,'อุปกรณ์หายาก 40% · คราฟ 30% · ตำนาน 20% · ตำนานสุริยคราส 10%',[
    ['เปิดหีบ',()=>{if(I.begin(player,country,o.id,'chest',60))openFrame(o.id);}],['กลับ',close]]);
  }
+}
+function resumeAfterBattle(result){
+ void avatar.sync(player).catch(console.error);reset();refreshHud();
+ if(result?.outcome==='first'&&!result.already)status('ได้รับคูปอง 10 ใบเข้าบัญชี');
+ if(result?.outcome==='repeat'&&!result.already)status('ได้รับ 10,000 เหรียญ และผนึกนิรันดร์ 1 ชิ้น');
 }
 function refreshHud(){
  for(const id of ['hudTop','hudBottom'])$(id).contentWindow?.postMessage({type:'walk-hud-refresh'},location.origin);
@@ -353,11 +397,12 @@ addEventListener('message',e=>{
   if(record?.id!==kind||record.result!==message.result)return;
   player=fresh;frame.remove();frame=null;cooldown.set(kind,clock+4);
   if(record.result==='lose')goHome(true);
-  else{void avatar.sync(player).catch(console.error);reset();refreshHud();}
+  else saveThen(resumeAfterBattle,kind==='boss'&&record.result==='win'?'island_boss_reward':null);
  }else if(kind==='menu'&&message?.type==='town-return'){
   player=read();frame.remove();frame=null;reset();persist();void avatar.sync(player).catch(console.error);refreshHud();
  }else if(kind==='menu'&&message?.type==='walk-teleport'&&Object.hasOwn(townProfiles.profiles,message.destination)){
-  player=read();I.leave(player,country);persist(false);location.assign(townProfiles.entryURL(message.destination));
+  player=read();frame.remove();frame=null;
+  exitIsland(()=>location.assign(townProfiles.entryURL(message.destination)));
  }
 });
 function update(dt){
@@ -414,7 +459,7 @@ function tick(now){
  }
  requestAnimationFrame(tick);
 }
-$('townDialog').addEventListener('cancel',event=>{if(portalOpen)event.preventDefault();});
+$('townDialog').addEventListener('cancel',event=>{if(portalOpen||saveContinuation)event.preventDefault();});
 $('townDialog').addEventListener('close',reset);
 $('interact').onclick=()=>{if(near)activate(near);};
 addEventListener('country-quick-teleport',()=>{
@@ -455,5 +500,6 @@ canvas.dataset.island=country;canvas.dataset.shadows=I.shadowCount;canvas.datase
 canvas.dataset.ruins=data.sites.length;canvas.dataset.traps=traps.list.length;
 if(visit().last?.result==='lose')goHome(true);
 else if(visit().pending){if(visit().pending.kind==='portal')openPortal(visit().pending);else openFrame(visit().pending.id);}
+else if(online&&visit().cleared.boss&&!player.islandAccount?.active?.reward)saveThen(resumeAfterBattle,'island_boss_reward');
 refreshHud();requestAnimationFrame(tick);
 })().catch(error=>{console.error(error);const notice=document.getElementById('notice');notice.textContent='เปิดแผนที่เกาะไม่สำเร็จ กรุณาลองโหลดใหม่';notice.hidden=false;});

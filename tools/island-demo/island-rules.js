@@ -3,13 +3,13 @@ const key='soulbeast-walk-preview-player-v1', onlineKey='soulbeast-online-walk-v
 const fare=10000, F=.64, shadowCount=20, banditCount=8, trapCount=20;
 const countries=['blue','green','red'];
 const islands={
- blue:{name:'เกาะวิมานน้ำแข็ง',port:'ท่าเรือเหมันตคีรี',anchor:'blue-city-3',size:[7400,10200],angle:Math.PI,seed:1729,
+ blue:{name:'เกาะวิมานน้ำแข็ง',port:'ท่าเรือเหมันตคีรี',anchor:'blue-city-3',landing:[2046,5225],size:[7400,10200],angle:Math.PI,seed:1729,
   boss:'solar_cryostag',bossName:'คริโอสเทล กวางมงกุฎเหมันต์',helper:'legend2_aurorion',helperName:'ออโรริออน มังกรแสงเหนือ',
   gate:2,ruins:['เมืองร้างธารน้ำแข็ง','เมืองร้างหอคอยหิมะ','เมืองร้างมงกุฎขาว']},
- green:{name:'เกาะศิลามรกต',port:'ท่าเรือพนาสมุทร',anchor:'green-city-4',size:[7300,17600],angle:0,seed:2718,
+ green:{name:'เกาะศิลามรกต',port:'ท่าเรือพนาสมุทร',anchor:'green-city-4',landing:[4973,14022],size:[7300,17600],angle:0,seed:2718,
   boss:'solar_raijaku',bossName:'ไรจาคุ ราชันนยุราวายุ',helper:'legend2_yggwarden',helperName:'อิดดราซิล ผู้พิทักษ์รากจักรวาล',
   gate:5,ruins:['เมืองร้างป่าชายเลน','เมืองร้างรากมรกต','เมืองร้างวิหารวายุ']},
- red:{name:'เกาะเถ้าทมิฬ',port:'ท่าเรืออัคนีบรรพต',anchor:'red-city-4',size:[9000,14500],angle:Math.PI*.75,seed:3141,
+ red:{name:'เกาะเถ้าทมิฬ',port:'ท่าเรืออัคนีบรรพต',anchor:'red-city-4',landing:[5474,10435],size:[9000,14500],angle:Math.PI*.75,seed:3141,
   boss:'solar_pentadrake',bossName:'แพนทาไพโรส มังกรห้าเศียรสุริยัน',helper:'solar_sovereign',helperName:'พญาราชสีห์สุริยะ',
   gate:3,ruins:['เมืองร้างหาดดำ','เมืองร้างเตาหลอม','เมืองร้างปราการเถ้า']}
 };
@@ -25,11 +25,9 @@ function pointSegment(p,a,b){
  const t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*F*dy)/(dx*dx+dy*dy||1)));
  return Math.hypot(p.x-a.x-dx*t,(p.y-a.y)*F-dy*t);
 }
-function port(country,nav){
- const cfg=islands[country],anchor=nav.byId.get(cfg.anchor);
- const candidates=['south','west','east'].map(gate=>nav.spawnAt(anchor,gate));
- const location=candidates.find(p=>distance(p,anchor)>190)||candidates[0];
- return {...location,id:'island-port',type:'islandPort',name:cfg.port,anchor:anchor.id};
+function port(country){
+ const cfg=islands[country],[x,y]=cfg.landing;
+ return {x,y,id:'island-port',type:'islandPort',name:cfg.port,anchor:cfg.anchor};
 }
 function map(country){
  const cfg=islands[country],width=Math.round(cfg.size[0]/Math.SQRT2),height=Math.round(cfg.size[1]/Math.SQRT2);
@@ -221,14 +219,14 @@ function begin(p,country,id,kind,lv){
  s.visit.pending={id,kind,lv};
  return true;
 }
-function finish(p,country,id,result){
+function finish(p,country,id,result,{bossRewards=true}={}){
  const s=state(p,country),pending=s.visit?.pending;
  if(!pending||pending.id!==id||!['win','lose','flee'].includes(result))return null;
  s.visit.pending=null;
  s.visit.last={id,result};
  if(result!=='win')return {};
  s.visit.cleared[id]=true;
- if(pending.kind!=='boss')return {};
+ if(pending.kind!=='boss'||!bossRewards)return {};
  const first=!s.ledger.clears[country];
  s.ledger.clears[country]=(s.ledger.clears[country]||0)+1;
  if(first){s.ledger.coupons+=10;return {coupons:10};}

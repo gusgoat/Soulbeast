@@ -2,6 +2,10 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
 const I=require('./island-demo/island-rules.js');
 const Patrols=require('./island-demo/patrols.js');
+const CountryNavigation=require('./hemant-walk-demo/navigation.js');
+const CountryTerrain=require('./hemant-walk-demo/terrain.js');
+const countries=require('./hemant-walk-demo/country-data.js');
+const blue=require('./hemant-walk-demo/map-data.js');
 const T=require('./labyrinth-demo/traps.js');
 const p={hp:40,mp:5,gold:40000,items:{},ailments:{poison:3}};
 const species=Object.fromEntries(Array.from({length:40},(_,i)=>['beast'+i,i<4?{legendary:true}:i<8?{rare:true}:{ev:Array(i%3).fill({})}]));
@@ -43,6 +47,12 @@ for(const kind of ['shadow','bandit','boss']){
 }
 for(const country of I.countries){
  const cfg=I.islands[country],d=I.map(country),nav={distance:I.distance,walkable:d.walkable};
+ const mainland=country==='blue'?blue:countries[country],roads=CountryNavigation.create(mainland);
+ const terrain=CountryTerrain.create(mainland,roads),port=I.port(country);
+ roads.setTerrain(terrain);
+ assert(roads.walkable(port.x,port.y)&&!terrain.water.raw(port.x,port.y,25)&&terrain.water.raw(port.x,port.y,90));
+ assert(roads.pathBetween(roads.byId.get(port.anchor),port).length);
+
  assert.equal(Object.keys(props.trees).filter(id=>id.startsWith(country+'-')).length,5);
  for(const name of ['port','wreck','rock','ruin'])assert(fs.existsSync(path.resolve(__dirname,'../assets/island-props',country+'-'+name+'.webp')));
  const traps=T.create(d,nav,{},{count:I.trapCount,spacing:370,seed:cfg.seed});
