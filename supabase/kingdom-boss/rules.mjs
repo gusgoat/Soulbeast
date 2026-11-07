@@ -34,7 +34,7 @@ export function kingdomBossExpire(s,now){
 export function kingdomBossPosition(s,actor,pos,now){
  if(!live(s,now)||!actor?.id||!KB_COUNTRIES.includes(actor.country))return false;
  const prior=s.players[actor.id];
- if(prior?.fight||prior?.respawn||!Number.isFinite(pos.x)||!Number.isFinite(pos.y)||!KB_COUNTRIES.includes(pos.country))return false;
+ if(prior?.fight||!Number.isFinite(pos.x)||!Number.isFinite(pos.y)||pos.country!==s.country)return false;
  s.players[actor.id]={country:actor.country,map:pos.country,x:pos.x,y:pos.y,seen:now,running:!!pos.running,fight:null,lastFight:prior?.lastFight};
  return true;
 }
@@ -50,28 +50,59 @@ export function kingdomBossContact(from,to,targets){
 }
 export function kingdomBossMove(s,actor,pos,now){
  const prior=s.players[actor.id];if(!kingdomBossPosition(s,actor,pos,now))return null;
- const self=s.players[actor.id];if(self.map!==s.country)return null;
+ const self=s.players[actor.id],previousBoss={...s.position};
+ kingdomBossPatrol(s,now);
  const targets=[{...s.position,id:s.species,kind:'boss',radius:48}];
  if(self.running)for(const [id,p] of Object.entries(s.players))
   if(id!==actor.id&&p.map===s.country&&p.country!==self.country&&!p.fight&&!p.respawn&&now-p.seen<=3000)targets.push({...p,id,kind:'pvp',radius:34});
- const hit=kingdomBossContact(prior?.map===self.map&&now-prior.seen<=3000?prior:self,self,targets);
+ const from=prior?.map===self.map&&!prior.respawn&&now-prior.seen<=3000?prior:self;
+ const chased=s.chase?.id===actor.id&&kingdomBossContact(previousBoss,s.position,[{...self,kind:'boss',radius:48}]);
+ const hit=kingdomBossContact(from,self,targets)||chased;
  if(!hit)return null;
  const id=s.id+':fight:'+s.rev, members=hit.kind==='boss'?[actor.id]:[actor.id,hit.id];
  const fight={id,kind:hit.kind,members,status:'active',started:now,turn:0};
  s.fights[id]=fight;for(const member of members)s.players[member].fight=id;
+ if(s.chase?.id&&members.includes(s.chase.id))s.chase={returning:true};
  bump(s);return fight;
 }
-export function kingdomBossPatrol(s,now,{walkable=()=>true,route=(a,b)=>b,speed=72,chaseSpeed=155}={}){
+function bossDirection(dx,dy){
+ return (Math.round(-Math.atan2(dx,dy*.64)/(Math.PI/4))+8)%8;
+}
+export function kingdomBossIdlePosition(home,since,now){
+ const phase=Math.max(0,now-since)/1800;
+ return {x:home.x+72*Math.sin(phase),y:home.y+60*(1-Math.cos(phase)),
+  dir:bossDirection(72*Math.cos(phase),60*Math.sin(phase))};
+}
+export function kingdomBossPatrol(s,now,{chaseSpeed=270}={}){
  if(!live(s,now))return kingdomBossExpire(s,now);
- const elapsed=Math.max(0,Math.min(.25,(now-s.lastTick)/1000));s.lastTick=now;
- const p=s.position,home=s.home,near=Object.entries(s.players).filter(([,v])=>v.map===s.country&&!v.fight&&!v.respawn&&now-v.seen<=3000&&dist(p,v)<=190).sort((a,b)=>dist(p,a[1])-dist(p,b[1]));
- if(!s.chase&&near.length&&now>=(s.restUntil||0))s.chase={id:near[0][0],until:now+5000};
- const tracked=s.chase?.id&&s.players[s.chase.id];
- if(s.chase?.id&&(now>=s.chase.until||!tracked||tracked.fight||tracked.respawn||now-tracked.seen>3000||tracked.map!==s.country))s.chase={returning:true};
- const goal=s.chase?.returning?home:s.chase?.id?tracked:{x:home.x+Math.cos((now-s.start)/4500)*90,y:home.y+Math.sin((now-s.start)/4500)*90};
- const next=route(p,goal)||goal,d=dist(p,next),step=Math.min(d,elapsed*(s.chase?chaseSpeed:speed));
- if(d>0){const x=p.x+(next.x-p.x)*step/d,y=p.y+(next.y-p.y)*step/d;if(walkable(x,y)){p.dir=(Math.round(-Math.atan2(x-p.x,(y-p.y)*.64)/(Math.PI/4))+8)%8;p.x=x;p.y=y;}}
- if(s.chase?.returning&&dist(p,home)<3){s.chase=null;s.restUntil=now+1500;}
+ const last=s.lastTick;
+ s.lastTick=now;
+ const home=s.home;
+ if(!s.chase){
+  s.position=kingdomBossIdlePosition(home,s.idleSince??s.start,now);
+  if(now>=(s.restUntil||0)){
+   const near=Object.entries(s.players).filter(([,p])=>p.map===s.country&&!p.fight&&!p.respawn&&now-p.seen<=1000&&dist(s.position,p)<=190);
+   near.sort((a,b)=>dist(s.position,a[1])-dist(s.position,b[1])||a[0].localeCompare(b[0]));
+   if(near.length)s.chase={id:near[0][0],until:now+5000};
+  }
+  return s;
+ }
+ const tracked=s.players[s.chase.id];
+ const cutoff=s.chase.returning?last:Math.min(s.chase.until,tracked?tracked.seen+1800:now);
+ const returning=s.chase.returning||now>=cutoff||!tracked||tracked.fight||tracked.respawn||tracked.map!==s.country;
+ if(returning)s.chase={returning:true};
+ const elapsed=Math.max(0,returning?now-Math.max(last,cutoff):Math.min(800,now-last))/1000;
+ const p=s.position,goal=returning?home:tracked,distance=dist(p,goal);
+ const step=Math.min(distance,elapsed*chaseSpeed);
+ if(step>0){
+  const dx=(goal.x-p.x)*step/distance,dy=(goal.y-p.y)*step/distance;
+  s.position={x:p.x+dx,y:p.y+dy,dir:bossDirection(dx,dy)};
+ }
+ if(returning&&step===distance){
+  s.chase=null;
+  s.idleSince=now;
+  s.restUntil=now+1500;
+ }
  return s;
 }
 // Resolution is supplied by the server combat engine, never by the browser.

@@ -1343,9 +1343,20 @@ function pvpNext_(r){const b=r.battle;if(!r.raid)b.kind='pvp';S={P:{gold:0},batt
  if(pvpCheckEnd_(r))return;
  if(!b.queue.length){b.round++;const speed=u=>eff(u,'spd')*(b.round===1&&hasPas(u,'firstblood')?2:1),ord=allU().filter(u=>u.hp>0).map(u=>[u,speed(u)*(.97+Math.random()*.06)]).sort((a,c)=>class10OpeningOrder(a[0],c[0],b)||c[1]-a[1]);const extras=[];for(const [u] of ord){b.queue.push(u.id);const opp=foesOf(u).filter(x=>x.hp>0);if(opp.length&&speed(u)>=2*Math.max(...opp.map(speed))){if(r.raid)b.queue.push(u.id+'*');else if(b.round>1&&b.round%2===0)extras.push(u.id+'*')}}b.queue.push(...extras);if(!r.raid&&b.round===1){for(const side of [b.allies,b.enemies]){const guard=side.find(x=>x.hp>0&&x.kind!=='player'&&(x.skills||[]).some(id=>SK[id]&&SK[id].taunt));if(guard){guard.taunt=Math.max(guard.taunt||0,2);blog(guard.name+' ตั้งรับคุ้มกันเปิดการประลอง')}}}}
  const q=b.queue.shift(),extra=q.endsWith('*'),u=uById(q.replace('*',''));if(!u||u.hp<=0)continue;
- if(!extra&&turnStart(u)){if(pvpCompleteTurn_(r))return;continue}if(extra&&(u.status.freeze||u.status.sleep)){if(pvpCompleteTurn_(r))return;continue}
+ if((!extra&&turnStart(u))||(extra&&(u.status.freeze||u.status.sleep))){
+  const ended=pvpCompleteTurn_(r);
+  if(r.raid)recordCampFrame_(r,u.id);
+  if(ended)return;
+  continue;
+ }
+ if(r.raid&&!extra)recordCampFrame_(r,u.id);
  b.cur=u.id;b.extra=extra;S.P={gold:r.players[u.owner].gold};
- if(u.charging){const charge=u.charging;u.charging=null;u.pendingStealthChargeCrit=!!charge.stealthCrit;const target=uById(charge.tid);blog(u.name+' ปลดปล่อยพลัง');act(u,charge.id,target&&target.hp>0?target:null,null,true);r.players[u.owner].gold=S.P.gold;if(pvpCompleteTurn_(r))return;continue}
+ if(u.charging){const charge=u.charging;u.charging=null;u.pendingStealthChargeCrit=!!charge.stealthCrit;const target=uById(charge.tid);blog(u.name+' ปลดปล่อยพลัง');act(u,charge.id,target&&target.hp>0?target:null,null,true);r.players[u.owner].gold=S.P.gold;
+  const ended=pvpCompleteTurn_(r);
+  if(r.raid)recordCampFrame_(r,u.id,charge.id);
+  if(ended)return;
+  continue;
+ }
  r.turnTimerVersion=1;r.deadline=r.raid?r.expires:Math.min(r.expires,Date.now()+PVP_TURN_MS);return
  }pvpFinish_(r,-1,'การประลองสิ้นสุดจากขีดจำกัดการคำนวณ')}
 function pvpView_(r,seat){return {ok:true,account:campAccount_(r.players[seat].code),pvpVersion:1,balanceVersion:4,room:{wagers:stakeView_(r),id:r.id,status:r.status,turnLimit:PVP_MAX_TURNS,turnSeconds:30,rev:r.rev,expires:r.expires,deadline:r.deadline,serverTime:Date.now(),me:seat,winner:r.winner,reason:r.reason||'',players:r.players.map(p=>({name:p.name,cls:p.cls,lv:p.lv,ready:!!p.ready&&p.wagerConfirmed===stakeRead_(r.id).rev,auto:!!p.auto})),gold:r.players[seat].gold,last:r.last||null,battle:r.battle}}}
@@ -1392,7 +1403,14 @@ function campSettle_(r){if(!r.raid||r.status!=='finished')return;const sh=sheet_
 function campScore_(r){if(r.status!=='finished')return;for(let seat=0;seat<r.players.length;seat++){const c=campState_(r.players[seat].code),id='score-'+r.id+'-'+seat;if(c.receipts.includes(id))continue;const enemies=[...(seat===0?r.battle.enemies:r.battle.allies),...(r.battle.retiredUnits||[]).filter(u=>u.side===(seat===0?'enemy':'ally'))];c.scoreDelta+=enemies.filter(u=>u.hp<=0&&!u.temporary).reduce((n,u)=>n+scoreValue(u),0);c.receipts.push(id);campWrite_(c)}}
 function campTeam_(raw,pet,seat){const p=JSON.parse(JSON.stringify(raw));if(!p.pets.some(x=>x.uid===pet))pvpFail_('choose one pet');p.party=[pet];p.carried=[pet];return pvpTeam_(p,seat)}
 function campView_(r){campSettle_(r);campScore_(r);return {...pvpView_(r,0),camp:true,account:campAccount_(r.players[0].code)}}
-function campAI_(r){for(let i=0;i<120&&r.status==='active';i++){const u=[...r.battle.allies,...r.battle.enemies].find(x=>x.id===r.battle.cur);if(!u)return;S={P:{gold:r.players[u.owner].gold},battle:r.battle};const foes=foesOf(u).filter(x=>x.hp>0),mates=sideOf(u).filter(x=>x.hp>0);let id='attack',target=foes.find(x=>x.taunt>0)||foes[0],friend=mates.slice().sort((a,b)=>a.hp/a.st.hp-b.hp/b.st.hp)[0];const legal=u.skills.filter(k=>SK[k]&&!cooldownOf(u,k)&&costOf(u,SK[k])<=u.mp&&!SK[k].summon);const healSkill=legal.find(k=>SK[k].t==='heal');const taunt=legal.find(k=>SK[k].taunt);if(friend&&friend.hp<friend.st.hp*.45&&healSkill)id=healSkill;else if(chooseAutoForm(u))id=chooseAutoForm(u);else if(class10AutoDefense(u))id=class10AutoDefense(u);else if(chooseAutoSummon(u))id=chooseAutoSummon(u);else if(taunt&&!u.taunt)id=taunt;else{const damage=legal.filter(k=>['p','m','h','auto'].includes(SK[k].t));damage.sort((a,b)=>combatSkillScore(u,b,target,foes)-combatSkillScore(u,a,target,foes));id=damage[0]||'attack'}const visibleMove=class10AutoMove(u,{id,target,friend});if(!act(u,visibleMove.id,visibleMove.target,visibleMove.friend))act(u,'rest',null,u);r.players[u.owner].gold=S.P.gold;r.rev++;if(!takeFreeForm(u)&&!pvpCompleteTurn_(r))pvpNext_(r)}if(r.status==='active'&&uById(r.battle.cur)?.owner===1)pvpFinish_(r,-1,'ขีดจำกัดการต่อสู้')}
+function campAI_(r){for(let i=0;i<120&&r.status==='active';i++){const u=[...r.battle.allies,...r.battle.enemies].find(x=>x.id===r.battle.cur);if(!u)return;S={P:{gold:r.players[u.owner].gold},battle:r.battle};const foes=foesOf(u).filter(x=>x.hp>0),mates=sideOf(u).filter(x=>x.hp>0);let id='attack',target=foes.find(x=>x.taunt>0)||foes[0],friend=mates.slice().sort((a,b)=>a.hp/a.st.hp-b.hp/b.st.hp)[0];const legal=u.skills.filter(k=>SK[k]&&!cooldownOf(u,k)&&costOf(u,SK[k])<=u.mp&&!SK[k].summon);const healSkill=legal.find(k=>SK[k].t==='heal');const taunt=legal.find(k=>SK[k].taunt);if(friend&&friend.hp<friend.st.hp*.45&&healSkill)id=healSkill;else if(chooseAutoForm(u))id=chooseAutoForm(u);else if(class10AutoDefense(u))id=class10AutoDefense(u);else if(chooseAutoSummon(u))id=chooseAutoSummon(u);else if(taunt&&!u.taunt)id=taunt;else{const damage=legal.filter(k=>['p','m','h','auto'].includes(SK[k].t));damage.sort((a,b)=>combatSkillScore(u,b,target,foes)-combatSkillScore(u,a,target,foes));id=damage[0]||'attack'}const visibleMove=class10AutoMove(u,{id,target,friend});
+ let skill=visibleMove.id;
+ if(!act(u,skill,visibleMove.target,visibleMove.friend)){skill='rest';act(u,skill,null,u);}
+ r.players[u.owner].gold=S.P.gold;r.rev++;
+ const free=takeFreeForm(u);
+ const ended=!free&&pvpCompleteTurn_(r);
+ recordCampFrame_(r,u.id,skill);
+ if(!free&&!ended)pvpNext_(r)}if(r.status==='active'&&uById(r.battle.cur)?.owner===1)pvpFinish_(r,-1,'ขีดจำกัดการต่อสู้')}
 function campDispatch_(d){try{campFlush_();const auth=pvpSaveAuth_(d),code=auth.code,P=auth.P,c=campState_(code);campAdjust_(P,c);if(P.lv<10&&d.action!=='camp_profile')pvpFail_('camp level 10');
  if(d.action==='camp_register'){const ids=campInputPets_(P,d.pets??d.pet);c.pets=ids;c.pet=ids[0];campWrite_(c);return {ok:true,account:campAccount_(code)}}
  if(d.action==='camp_profile'){if(d.name!=null){const name=String(d.name).trim().slice(0,20);if(!name)pvpFail_('bad name');if(c.renameAt&&Date.now()-c.renameAt<7*86400000)pvpFail_('rename weekly');c.name=name;c.renameAt=Date.now()}campWrite_(c);return {ok:true,account:campAccount_(code)}}
@@ -1484,8 +1502,30 @@ function stakeSyncReady_(r){const v=stakeRead_(r.id).rev;for(const p of r.player
 
 function replayInit_(r){if(!r.replay){r.replay={initial:JSON.parse(JSON.stringify(r.battle)),frames:[]};r._replayUnits={};}replayFrame_(r);}
 function replayFrame_(r){if(!r.replay)return;const b=r.battle,units=[...b.allies,...b.enemies],changed=[];r._replayUnits=r._replayUnits||{};for(const u of units){const v=[u.hp,u.mp,u.status,u.taunt||0];const key=JSON.stringify(v);if(r._replayUnits[u.id]!==key){changed.push([u.id,...JSON.parse(key)]);r._replayUnits[u.id]=key;}}r.replay.frames.push({cur:b.cur,round:b.round,turns:b.turns,bossTurns:b.bossTurns,damageTotal:b.damageTotal,damageBy:b.damageBy?JSON.parse(JSON.stringify(b.damageBy)):null,units:changed,log:b.log.slice(-3),effects:JSON.parse(JSON.stringify((b.effects||[]).slice(-8)))});}
-const replayCampNext_=pvpNext_;pvpNext_=function(r){replayCampNext_(r);if(r.raid)replayFrame_(r);};
-const replayCampAI_=campAI_;campAI_=function(r){if(r.status==='active')replayInit_(r);replayCampAI_(r);replayFrame_(r);delete r._replayUnits;};
+// A camp frame owns the effects emitted by a single action or turn start.
+function recordCampFrame_(r,actor,skill){
+ if(!r.replay)return;
+ const b=r.battle;
+ replayFrame_(r);
+ const frame=r.replay.frames.at(-1);
+ frame.campAction=true;
+ frame.actor=actor;
+ frame.skill=skill;
+ frame.effects=JSON.parse(JSON.stringify(b.effects||[]));
+ b.effects=[];
+ b.fx=[];
+}
+const replayCampNext_=pvpNext_;
+pvpNext_=function(r){
+ if(r.raid&&!r.replay)replayInit_(r);
+ replayCampNext_(r);
+};
+const replayCampAI_=campAI_;
+campAI_=function(r){
+ if(r.status==='active'&&!r.replay)replayInit_(r);
+ replayCampAI_(r);
+ delete r._replayUnits;
+};
 const replayCampView_=campView_;campView_=function(r){if(r.status==='active'){campAI_(r);pvpWrite_(r,findRow_(sheet_(PVP_ROOM,PVP_HEAD),r.id));}const res=replayCampView_(r);res.room.replay=r.replay;return res;};
 wbAdvance_=function(r){if(r.status==='starting'){wbStart_(r);return;}if(r.status==='active'){replayInit_(r);for(let i=0;i<1500&&r.status==='active';i++){S={P:{gold:0},battle:r.battle};const u=uById(r.battle.cur);if(!u)break;S.P.gold=r.players[u.owner].gold;const move=wbAuto_(u);wbMove_(r,move.id,move.friend,false);replayFrame_(r);}delete r._replayUnits;}if(r.status==='finished')wbSettle_(r);};
 const replayWbStart_=wbStart_;wbStart_=function(r){replayWbStart_(r);if(r.status==='active')wbAdvance_(r);};

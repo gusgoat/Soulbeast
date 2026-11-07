@@ -125,5 +125,5 @@ export function mountAnnouncements() {
 }
 if (typeof window !== 'undefined') {
  const announcements=mountAnnouncements();
- if(announcements)import('./kingdom-boss-feed.mjs?v=kingdom-boss-20261107').then(m=>m.mountKingdomBossFeed(announcements)).catch(()=>{});
+ if(announcements)import('./kingdom-boss-feed.mjs?v=kingdom-boss-patrol-1').then(m=>m.mountKingdomBossFeed(announcements)).catch(()=>{});
 }

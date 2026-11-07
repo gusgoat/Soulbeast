@@ -27,5 +27,13 @@ s=spawn();move(s,C,900,1);let f=move(s,C,1000,2);kingdomBossResolve(s,f.id,0,{da
 move(s,A,900,4);f=move(s,A,1000,5);assert(kingdomBossResolve(s,f.id,0,{damage:1980},start+6,{dropPart:'claw'}));assert.equal(s.letters.c.gold,1000);assert.equal(s.letters.c.coupons,1);assert.equal(s.letters.c.pet,null);
 s=spawn();move(s,B,1100,1,false);move(s,A,900,2);f=move(s,A,1150,3);assert.equal(f.kind,'boss','boss lies before opponent');
 assert(!kingdomBossResolve(s,f.id,0,{damage:3000},start+3600000));assert.equal(s.status,'expired');assert.deepEqual(s.letters,{});
-s=spawn();move(s,A,1150,1,false);kingdomBossPatrol(s,start+10);assert.equal(s.chase.until,start+5010);move(s,A,1150,4990,false);kingdomBossPatrol(s,start+5010);assert(!s.chase?.id);
+s=spawn();
+kingdomBossPatrol(s,start+1000);assert.notDeepEqual(s.position,{...s.home,dir:0},'boss patrols without a target');
+s=spawn();move(s,A,1180,1,false);assert.equal(s.chase.until,start+5001);
+for(let t=401;t<5001;t+=400)assert.equal(move(s,A,1180+t*.35,t,false),null);
+assert.equal(s.chase.id,A.id);
+move(s,A,3000,5001,false);assert.equal(s.chase.returning,true,'chase ends at five seconds');
+kingdomBossPatrol(s,start+11000);assert.equal(s.chase,null);
+assert.deepEqual({x:s.position.x,y:s.position.y},s.home,'return ends at the original spawn');
+s=spawn();move(s,A,1180,1,false);assert.equal(move(s,A,1180,801,false).kind,'boss','boss initiates the fight if it reaches a stationary player');
 console.log('PASS Bangkok windows, rare pool, aura, first collision, hidden fighters, chase limit, shared damage, expiry, last hit and single claim');

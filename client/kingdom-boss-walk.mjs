@@ -1,6 +1,7 @@
 import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=admin-session-20261107';
 import {connectOnlineWalk} from './online-walk.mjs?v=admin-session-20261107';
-import {gameContext} from './kingdom-boss-feed.mjs?v=kingdom-boss-20261107';
+import {gameContext} from './kingdom-boss-feed.mjs?v=kingdom-boss-patrol-1';
+import {kingdomBossIdlePosition} from '../supabase/kingdom-boss/rules.mjs?v=kingdom-boss-patrol-1';
 
 const scene=window.kingdomBossWalkScene,context=gameContext();
 if(scene&&context?.code)mount(scene,context);
@@ -46,9 +47,18 @@ function mount(scene,context){
  const art=window.RareBossSprites?.create();
  let event=null,sprite='',frame=null,fight=null,queued=null,lastMove=0,ready=false,visible=false,waitTurn=null,
   polling=null,requesting=false,withdrawing=false,stayClear=false,resumed=false,feedback=null;
- let health=null,healthWatch=null,realtimeClient=null;
+ let health=null,healthWatch=null,realtimeClient=null,motion=null;
  const sameMap=()=>event?.country===scene.country;
- const active=()=>event?.status==='active'&&(window.SoulbeastKingdomBoss?.now()||Date.now())<event.end;
+ const now=()=>window.SoulbeastKingdomBoss?.now()??Date.now();
+ const active=()=>event?.status==='active'&&now()<event.end;
+ function bossPosition(){
+  if(!event?.position)return null;
+  if(event.motion==='patrol'&&event.home)return kingdomBossIdlePosition(event.home,event.idleSince,now());
+  if(!motion||event.motion==='patrol')return event.position;
+  const t=Math.min(1,(performance.now()-motion.at)/320);
+  const {from,to}=motion;
+  return {x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t,dir:to.dir};
+ }
  function stopHealthWatch(){
   const previous=healthWatch;
   healthWatch=null;
@@ -97,7 +107,10 @@ function mount(scene,context){
  addEventListener('pagehide',stopHealthWatch);
  addEventListener('pageshow',e=>{if(e.persisted)void watchHealth();});
  const sync=e=>{
-  if(event?.id!==e?.id){stayClear=false;lastMove=0;health=null;}
+  if(event?.id!==e?.id){stayClear=false;resumed=false;lastMove=0;health=null;motion=null;}
+  else if(e?.position&&e.motionAt!==event?.motionAt){
+   motion={from:bossPosition()||e.position,to:e.position,at:performance.now()};
+  }
   event=e;button.hidden=!sameMap()||!active()||!!frame;
   if(!button.hidden){button.textContent='บอสอาณาจักร · '+event.name;button.title='ดูตำแหน่งบอสบนแผนที่ประเทศ';}
   if(sameMap()&&active()&&sprite!==event.species){sprite=event.species;art?.sync(sprite).catch(()=>{});}
@@ -125,7 +138,7 @@ function mount(scene,context){
   fight=data.fight;fight.round=data.event.id;fight.respawn=data.respawn;fight.hospital=data.hospital;
   sessionStorage.setItem(doneKey,JSON.stringify({id:fight.id,round:fight.round}));
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title='ต่อสู้กิจกรรมบอสอาณาจักร';
-  frame.src=new URL('../tools/town-walk-demo/menu.html?v=kingdom-boss-20261107&partyBattle=1&kingdomBoss=1&city='+scene.country+'-capital',import.meta.url);
+  frame.src=new URL('../tools/town-walk-demo/menu.html?v=kingdom-boss-patrol-1&partyBattle=1&kingdomBoss=1&city='+scene.country+'-capital',import.meta.url);
   frame.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000;background:#122b40';
   scene.pause();button.hidden=true;document.body.append(frame);
  }
@@ -168,17 +181,19 @@ function mount(scene,context){
 
  async function move(position,running){
   if(requesting||frame||!active()||!sameMap()||document.hidden||!scene.canMove())return;
-  const distance=Math.hypot(position.x-event.position.x,(position.y-event.position.y)*.64);
+  const boss=bossPosition();if(!boss)return;
+  const distance=Math.hypot(position.x-boss.x,(position.y-boss.y)*.64);
+  const home=event.home||event.position,homeDistance=Math.hypot(position.x-home.x,(position.y-home.y)*.64);
   if(distance>110)stayClear=false;
   const prior=readBattle(),resume=!resumed&&prior?.round===event.id&&!prior.done;
-  if(!resume&&(distance>540||stayClear||Date.now()-lastMove<900))return;
   if(queued){const next=queued;queued=null;show(next);if(frame)return;}
+  if(!resume&&(Math.min(distance,homeDistance)>540||stayClear||Date.now()-lastMove<(distance<260||event.motion!=='patrol'?420:900)))return;
   const round=event.id,x=position.x,y=position.y;lastMove=Date.now();requesting=true;
   try{
    let data;
    if(resume){resumed=true;data=await send('poll',{round,fight:prior.id,turn:-1});}
    else{
-    if(distance<140)await connection.flush(true);
+    if(distance<260)await connection.flush(true);
     if(!scene.canMove()||event?.id!==round)return;
     data=await send('move',{round,map:scene.country,x,y,running});
    }
@@ -188,17 +203,20 @@ function mount(scene,context){
  }
  window.walkKingdomBoss={tick(position,running){if(!requesting&&!frame)void move(position,running);},
  drawMinimap(context,worldWidth,worldHeight){
-  if(!sameMap()||!active()||!event?.position)return;
-  const x=event.position.x/worldWidth*context.canvas.width;
-  const y=event.position.y/worldHeight*context.canvas.height;
+  if(!sameMap()||!active())return;
+  const boss=bossPosition();if(!boss)return;
+  const x=boss.x/worldWidth*context.canvas.width;
+  const y=boss.y/worldHeight*context.canvas.height;
   context.save();
   drawBossMarker(context,x,y,6);
   context.restore();
  },draw(c,x,y,zoom,overview,time){
-  if(!sameMap()||!active()||!event?.position)return;
-  const px=x(event.position.x),py=y(event.position.y);c.save();
+  if(!sameMap()||!active())return;
+  const boss=bossPosition();if(!boss)return;
+  const px=x(boss.x),py=y(boss.y);c.save();
+  const running=event.motion==='chase'||event.motion==='return';
   if(overview){drawBossMarker(c,px,py,10);}
-  else if(!art?.draw(c,px,py,210*zoom,0,time,false)){c.beginPath();c.arc(px,py,20*zoom,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.strokeStyle='#ffe283';c.stroke();}
+  else if(!art?.draw(c,px,py,210*zoom,boss.dir||0,running?time*1.7:time,!!event.motion)){c.beginPath();c.arc(px,py,20*zoom,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.strokeStyle='#ffe283';c.stroke();}
   c.font='bold '+(overview?'13px':'14px')+' Tahoma';c.textAlign='center';c.lineWidth=4;c.strokeStyle='#081924';c.fillStyle='#ffe694';
   const name='♛ '+event.name+' · Lv '+event.level,labelY=py-(overview?16:188*zoom);c.strokeText(name,px,labelY);c.fillText(name,px,labelY);
   if(!overview){

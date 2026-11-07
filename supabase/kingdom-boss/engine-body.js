@@ -4,7 +4,9 @@ const kbPoints=__KINGDOM_BOSS_POINTS__;
 function kbSummary(s){
  const beast=SP[s.species],winner=s.winnerName;
  return {id:String(s.start),start:s.start,end:s.end,country:s.country,species:s.species,name:beast?.n||s.species,
-  level:s.level,status:s.status,position:s.position,hp:s.hp,maxHP:s.stats.hp,...(winner?{winner}:{}),rev:s.rev};
+  level:s.level,status:s.status,position:s.position,home:s.home,idleSince:s.idleSince??s.start,
+  motion:s.chase?.returning?'return':s.chase?'chase':'patrol',motionAt:s.lastTick,
+  hp:s.hp,maxHP:s.stats.hp,...(winner?{winner}:{}),rev:s.rev};
 }
 function kbState(now,testing){
  const w=kingdomBossWindow(now,testing),last=guildRead_('kb:current');
@@ -61,9 +63,9 @@ function kbAdvance(s,f,now){
  if(s.status==='defeated')kbFinish(s,now);
  return true;
 }
-function kbView(s,code){
+function kbView(s,code,requestedFight=null){
  const summary=kbSummary(s),p=s.players[code],f=s.fights[p?.fight||p?.lastFight];
- if(!f)return {event:summary,fight:null};
+ if(!f||(requestedFight===null?f.status!=='active':f.id!==requestedFight))return {event:summary,fight:null};
  const seat=f.members.indexOf(code);if(seat<0)return {event:summary,fight:null};
  const battle=structuredClone(f.battle);
  if(f.kind==='boss'){battle.enemies[0].hp=s.hp;battle.enemies[0].mp=s.mp;}
@@ -93,13 +95,16 @@ function kbDispatch(d){
   communityAllowed_(code);if(!KB_COUNTRIES.includes(nation))pvpFail_('country required');
   const s=kbState(now,testing);if(!s)return {ok:true,event:null,fight:null};
   if(d.round!==String(s.start))return {ok:true,event:kbSummary(s),fight:null};
-  const p=s.players[code],current=s.fights[p?.fight];
+ if(d.action==='kingdom_boss_move')kbCleanup(s,now);
+ const p=s.players[code],current=s.fights[p?.fight];
   let changed=false;
+ const wasMoving=!!s.chase;
   if(d.action==='kingdom_boss_move'&&s.status==='active'){
    const x=Number(d.x),y=Number(d.y),map=String(d.map||'');
-   if(map!==s.country||!Number.isFinite(x)||!Number.isFinite(y)||x<0||y<0||x>50000||y>50000||Math.hypot(x-s.position.x,(y-s.position.y)*.64)>650)pvpFail_('bad position');
-   if(p&&now-p.seen<=3000&&Math.hypot(x-p.x,(y-p.y)*.64)>110+430*(now-p.seen)/1000)pvpFail_('position too far');
-   if(!current&&!p?.respawn){kbCleanup(s,now);const f=kingdomBossMove(s,{id:code,country:nation},{country:map,x,y,running:d.running===true},now);if(f)kbStart(s,f);changed=true;}
+   if(map!==s.country||!Number.isFinite(x)||!Number.isFinite(y)||x<0||y<0||x>50000||y>50000||
+      Math.min(Math.hypot(x-s.home.x,(y-s.home.y)*.64),Math.hypot(x-s.position.x,(y-s.position.y)*.64))>650)pvpFail_('bad position');
+   if(p&&!p.respawn&&now-p.seen<=3000&&Math.hypot(x-p.x,(y-p.y)*.64)>110+430*(now-p.seen)/1000)pvpFail_('position too far');
+   if(!current){const f=kingdomBossMove(s,{id:code,country:nation},{country:map,x,y,running:d.running===true},now);if(f)kbStart(s,f);changed=true;}
   }else if(d.action==='kingdom_boss_poll'&&s.status==='active'){
    if(current?.id===d.fight&&current.turn===d.turn)changed=kbAdvance(s,current,now);
   }else if(d.action==='kingdom_boss_leave'&&current?.id===d.fight&&current.status==='active'){
@@ -108,8 +113,11 @@ function kbDispatch(d){
    else kingdomBossResolve(s,current.id,current.turn,{left:true},now);
    changed=true;
   }
-  if(changed){guildWrite_(s.id,s);if(d.action==='kingdom_boss_poll')guildWrite_('kb:public',kbSummary(s));}
-  return {ok:true,...kbView(s,code)};
+ if(changed){
+  guildWrite_(s.id,s);
+  if(d.action==='kingdom_boss_poll'||wasMoving||s.chase||!guildRead_('kb:public')?.home)guildWrite_('kb:public',kbSummary(s));
+ }
+ return {ok:true,...kbView(s,code,d.action==='kingdom_boss_move'?null:d.fight)};
  }catch(e){return {ok:false,error:e.message||String(e)};}
 }
 function kbApplyRewards(P,code){

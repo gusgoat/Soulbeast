@@ -12,6 +12,10 @@ export function mountKingdomBossFeed(announcements){
  function accept(next,serverTime){
   if(Number.isFinite(serverTime))offset=serverTime-Date.now();
   if(next&&event&&(next.start<event.start||(next.id===event.id&&next.rev<event.rev)))return;
+  if(next&&event?.id===next.id&&(event.motionAt??0)>(next.motionAt??0)){
+   const {position,home,idleSince,motion,motionAt}=event;
+   next={...next,position,home,idleSince,motion,motionAt};
+  }
   event=next;
   if(event)announcements.publish({...event,serverManaged:true,location:'แผนที่ประเทศ'+(countryNames[event.country]||'')});
   dispatchEvent(new CustomEvent('soulbeast-kingdom-boss-update',{detail:event}));

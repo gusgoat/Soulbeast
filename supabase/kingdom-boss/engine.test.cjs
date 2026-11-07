@@ -26,13 +26,33 @@ now+=550;
 const after=act(0,'poll',{fight:a.fight.id,turn:0});assert.equal(after.fight.turn,1);assert(after.fight.battle.turns===1);
 assert.equal(act(0,'poll',{fight:a.fight.id,turn:0}).fight.turn,1);
 assert.equal(act(1,'poll',{fight:b.fight.id,turn:-1}).fight.battle.enemies[0].hp,after.event.hp);
+// Defeat the second player with a real enemy turn, then walk back in the same round.
+const stateRow=book.tables.GuildState.find(r=>r[0]==='kb:'+round);
+const setupLoss=JSON.parse(stateRow[1]),losingBattle=setupLoss.fights[b.fight.id].battle;
+losingBattle.queue=[losingBattle.enemies[0].id];
+for(const ally of losingBattle.allies){ally.hp=1;ally.st.pdef=0;ally.st.mdef=0;ally.st.spd=0;}
+losingBattle.enemies[0].st.patk=50000;losingBattle.enemies[0].st.matk=50000;
+stateRow[1]=JSON.stringify(setupLoss);
+let loss=b;
+for(let tries=0;tries<15&&loss.fight.status==='active';tries++){
+ now+=600;loss=act(1,'poll',{fight:b.fight.id,turn:loss.fight.turn});
+}
+assert.equal(loss.fight.status,'lost');assert.equal(loss.respawn,'red-capital');assert.equal(loss.hospital,true);
+assert.equal(act(1,'poll',{fight:b.fight.id,turn:-1}).fight.status,'lost','refresh can still retrieve the loss before re-entering');
+const approach=act(1,'move',{map:first.event.country,x:x+380,y});
+assert.equal(approach.fight,null,'walking back does not reopen the old fight');
+now+=4100;
+const returned=act(1,'move',{map:first.event.country,...ctx.kingdomBossIdlePosition(approach.event.home,approach.event.idleSince,now)});
+assert.equal(returned.fight.kind,'boss');assert.notEqual(returned.fight.id,b.fight.id);
+assert.equal(returned.respawn,null);assert.equal(returned.fight.battle.enemies[0].hp,loss.event.hp);
+assert.equal(act(1,'poll',{fight:b.fight.id,turn:-1}).fight,null,'a stale poll cannot advance or retrieve the new fight');
 // Reduce the boss to 1 HP only in this isolated workbook; verify a real attack ends the round.
 const row=book.tables.GuildState.find(r=>r[0]==='kb:'+round),weak=JSON.parse(row[1]);weak.hp=1;const replay=weak.fights[a.fight.id].battle;replay.queue=[];for(const ally of replay.allies){ally.hp=ally.st.hp;ally.st.spd=50000;ally.st.patk=50000;ally.status={};ally.dots=[];ally.buffs=[];}row[1]=JSON.stringify(weak);
 let result=after;for(let tries=0;tries<15&&result.event.status==='active';tries++){
  now+=600;result=act(0,'poll',{fight:a.fight.id,turn:result.fight.turn});
 }
 assert.equal(result.event.status,'defeated');assert.equal(result.event.winner,'KB QA 0');assert.equal(tick().event.status,'defeated');
-const ended=act(1,'poll',{fight:b.fight.id,turn:0});assert.notEqual(ended.fight.status,'active');
+const ended=act(1,'poll',{fight:returned.fight.id,turn:0});assert.notEqual(ended.fight.status,'active');
 const load=()=>{const r=send({action:'load',code:codes[0],pin});assert(r.ok,JSON.stringify(r));return JSON.parse(r.data);};
 const rewarded=load(),repeated=load();assert.equal(rewarded.P.gold,1150);assert.equal(rewarded.P.parts[first.event.species+'|0'],1);
 assert.equal(rewarded.P.pets.at(-1).sp,first.event.species);assert.equal(rewarded.P.pets.at(-1).lv,10);
