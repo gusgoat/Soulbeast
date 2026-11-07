@@ -36,4 +36,14 @@ move(s,A,3000,5001,false);assert.equal(s.chase.returning,true,'chase ends at fiv
 kingdomBossPatrol(s,start+11000);assert.equal(s.chase,null);
 assert.deepEqual({x:s.position.x,y:s.position.y},s.home,'return ends at the original spawn');
 s=spawn();move(s,A,1180,1,false);assert.equal(move(s,A,1180,801,false).kind,'boss','boss initiates the fight if it reaches a stationary player');
+s=spawn();
+move(s,A,1230,1,false);assert.equal(s.chase.id,A.id,'aggro starts beyond the former 190-unit range');
+const before=s.position.x;
+move(s,A,1476,1001,false);
+assert(Math.abs(s.position.x-before-288)<1,'a one-second network gap still moves the boss a full second at running speed');
+s=spawn();
+kingdomBossMove(s,A,{country:'blue',x:750,y:1310},start+1);
+assert.equal(s.chase,null);
+kingdomBossMove(s,A,{country:'blue',x:1300,y:1310},start+1100);
+assert.equal(s.chase.id,A.id,'a player crossing the detection radius between samples triggers pursuit');
 console.log('PASS Bangkok windows, rare pool, aura, first collision, hidden fighters, chase limit, shared damage, expiry, last hit and single claim');

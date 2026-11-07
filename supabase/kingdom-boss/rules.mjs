@@ -1,5 +1,6 @@
 /* Pure event rules. Call mutations inside one authoritative transaction per window. */
 export const KB_COUNTRIES=Object.freeze(['blue','green','red']);
+export const KINGDOM_BOSS_AGGRO_RADIUS=240;
 const HOUR=3600000,DAY=24*HOUR,THAI=7*HOUR;
 export const KINGDOM_BOSS_HOURS={testing:[10,12,14,16,18,20,22],normal:[10,22]};
 export function kingdomBossWindow(now,testing=false){
@@ -50,13 +51,14 @@ export function kingdomBossContact(from,to,targets){
 }
 export function kingdomBossMove(s,actor,pos,now){
  const prior=s.players[actor.id];if(!kingdomBossPosition(s,actor,pos,now))return null;
- const self=s.players[actor.id],previousBoss={...s.position};
- kingdomBossPatrol(s,now);
+ const self=s.players[actor.id],previousBoss={...s.position},previousTarget=s.chase?.id;
+ const approach=prior?.map===self.map&&!prior.respawn&&now-prior.seen<=1250?{id:actor.id,from:prior}:null;
+ kingdomBossPatrol(s,now,{approach});
  const targets=[{...s.position,id:s.species,kind:'boss',radius:48}];
  if(self.running)for(const [id,p] of Object.entries(s.players))
   if(id!==actor.id&&p.map===s.country&&p.country!==self.country&&!p.fight&&!p.respawn&&now-p.seen<=3000)targets.push({...p,id,kind:'pvp',radius:34});
  const from=prior?.map===self.map&&!prior.respawn&&now-prior.seen<=3000?prior:self;
- const chased=s.chase?.id===actor.id&&kingdomBossContact(previousBoss,s.position,[{...self,kind:'boss',radius:48}]);
+ const chased=previousTarget===actor.id&&s.chase?.id===actor.id&&kingdomBossContact(previousBoss,s.position,[{...self,kind:'boss',radius:48}]);
  const hit=kingdomBossContact(from,self,targets)||chased;
  if(!hit)return null;
  const id=s.id+':fight:'+s.rev, members=hit.kind==='boss'?[actor.id]:[actor.id,hit.id];
@@ -73,7 +75,7 @@ export function kingdomBossIdlePosition(home,since,now){
  return {x:home.x+72*Math.sin(phase),y:home.y+60*(1-Math.cos(phase)),
   dir:bossDirection(72*Math.cos(phase),60*Math.sin(phase))};
 }
-export function kingdomBossPatrol(s,now,{chaseSpeed=270}={}){
+export function kingdomBossPatrol(s,now,{approach=null}={}){
  if(!live(s,now))return kingdomBossExpire(s,now);
  const last=s.lastTick;
  s.lastTick=now;
@@ -81,19 +83,22 @@ export function kingdomBossPatrol(s,now,{chaseSpeed=270}={}){
  if(!s.chase){
   s.position=kingdomBossIdlePosition(home,s.idleSince??s.start,now);
   if(now>=(s.restUntil||0)){
-   const near=Object.entries(s.players).filter(([,p])=>p.map===s.country&&!p.fight&&!p.respawn&&now-p.seen<=1000&&dist(s.position,p)<=190);
+   const zone={...s.position,radius:KINGDOM_BOSS_AGGRO_RADIUS};
+   const near=Object.entries(s.players).filter(([id,p])=>
+    p.map===s.country&&!p.fight&&!p.respawn&&now-p.seen<=1000&&
+    (dist(s.position,p)<=zone.radius||(approach?.id===id&&kingdomBossContact(approach.from,p,[zone]))));
    near.sort((a,b)=>dist(s.position,a[1])-dist(s.position,b[1])||a[0].localeCompare(b[0]));
    if(near.length)s.chase={id:near[0][0],until:now+5000};
   }
   return s;
  }
  const tracked=s.players[s.chase.id];
- const cutoff=s.chase.returning?last:Math.min(s.chase.until,tracked?tracked.seen+1800:now);
+ const cutoff=s.chase.returning?last:Math.min(s.chase.until,tracked?tracked.seen+2200:now);
  const returning=s.chase.returning||now>=cutoff||!tracked||tracked.fight||tracked.respawn||tracked.map!==s.country;
  if(returning)s.chase={returning:true};
- const elapsed=Math.max(0,returning?now-Math.max(last,cutoff):Math.min(800,now-last))/1000;
+ const elapsed=Math.max(0,returning?now-Math.max(last,cutoff):Math.min(1250,now-last))/1000;
  const p=s.position,goal=returning?home:tracked,distance=dist(p,goal);
- const step=Math.min(distance,elapsed*chaseSpeed);
+ const step=Math.min(distance,elapsed*288);
  if(step>0){
   const dx=(goal.x-p.x)*step/distance,dy=(goal.y-p.y)*step/distance;
   s.position={x:p.x+dx,y:p.y+dy,dir:bossDirection(dx,dy)};

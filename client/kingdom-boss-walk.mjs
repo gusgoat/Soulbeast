@@ -1,7 +1,7 @@
 import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=admin-session-20261107';
 import {connectOnlineWalk} from './online-walk.mjs?v=admin-session-20261107';
 import {gameContext} from './kingdom-boss-feed.mjs?v=kingdom-boss-patrol-1';
-import {kingdomBossIdlePosition} from '../supabase/kingdom-boss/rules.mjs?v=kingdom-boss-patrol-1';
+import {KINGDOM_BOSS_AGGRO_RADIUS,kingdomBossIdlePosition} from '../supabase/kingdom-boss/rules.mjs?v=kingdom-boss-chase-2';
 
 const scene=window.kingdomBossWalkScene,context=gameContext();
 if(scene&&context?.code)mount(scene,context);
@@ -47,7 +47,7 @@ function mount(scene,context){
  const art=window.RareBossSprites?.create();
  let event=null,sprite='',frame=null,fight=null,queued=null,lastMove=0,ready=false,visible=false,waitTurn=null,
   polling=null,requesting=false,withdrawing=false,stayClear=false,resumed=false,feedback=null;
- let health=null,healthWatch=null,realtimeClient=null,motion=null;
+ let health=null,healthWatch=null,realtimeClient=null,motion=null,playerPosition=null;
  const sameMap=()=>event?.country===scene.country;
  const now=()=>window.SoulbeastKingdomBoss?.now()??Date.now();
  const active=()=>event?.status==='active'&&now()<event.end;
@@ -55,7 +55,7 @@ function mount(scene,context){
   if(!event?.position)return null;
   if(event.motion==='patrol'&&event.home)return kingdomBossIdlePosition(event.home,event.idleSince,now());
   if(!motion||event.motion==='patrol')return event.position;
-  const t=Math.min(1,(performance.now()-motion.at)/320);
+  const t=Math.min(1,(performance.now()-motion.at)/motion.duration);
   const {from,to}=motion;
   return {x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t,dir:to.dir};
  }
@@ -109,7 +109,9 @@ function mount(scene,context){
  const sync=e=>{
   if(event?.id!==e?.id){stayClear=false;resumed=false;lastMove=0;health=null;motion=null;}
   else if(e?.position&&e.motionAt!==event?.motionAt){
-   motion={from:bossPosition()||e.position,to:e.position,at:performance.now()};
+   const interval=e.motionAt-event.motionAt;
+   motion={from:bossPosition()||e.position,to:e.position,at:performance.now(),
+    duration:Number.isFinite(interval)?Math.max(140,Math.min(600,interval)):300};
   }
   event=e;button.hidden=!sameMap()||!active()||!!frame;
   if(!button.hidden){button.textContent='บอสอาณาจักร · '+event.name;button.title='ดูตำแหน่งบอสบนแผนที่ประเทศ';}
@@ -179,29 +181,35 @@ function mount(scene,context){
  });
  document.addEventListener('visibilitychange',()=>{if(document.hidden)clearTimeout(polling);else if(waitTurn!=null)schedule(1500);else schedule();});
 
- async function move(position,running){
+ async function move(){
   if(requesting||frame||!active()||!sameMap()||document.hidden||!scene.canMove())return;
+  const position=playerPosition;
   const boss=bossPosition();if(!boss)return;
   const distance=Math.hypot(position.x-boss.x,(position.y-boss.y)*.64);
   const home=event.home||event.position,homeDistance=Math.hypot(position.x-home.x,(position.y-home.y)*.64);
   if(distance>110)stayClear=false;
   const prior=readBattle(),resume=!resumed&&prior?.round===event.id&&!prior.done;
   if(queued){const next=queued;queued=null;show(next);if(frame)return;}
-  if(!resume&&(Math.min(distance,homeDistance)>540||stayClear||Date.now()-lastMove<(distance<260||event.motion!=='patrol'?420:900)))return;
-  const round=event.id,x=position.x,y=position.y;lastMove=Date.now();requesting=true;
+  const near=distance<KINGDOM_BOSS_AGGRO_RADIUS+100||event.motion==='chase';
+  if(!resume&&(Math.min(distance,homeDistance)>540||stayClear||Date.now()-lastMove<(near?300:700)))return;
+  const round=event.id;lastMove=Date.now();requesting=true;
   try{
    let data;
    if(resume){resumed=true;data=await send('poll',{round,fight:prior.id,turn:-1});}
    else{
-    if(distance<260)await connection.flush(true);
-    if(!scene.canMove()||event?.id!==round)return;
+    if(near)await connection.flush(true);
+    if(!scene.canMove()||event?.id!==round||document.hidden)return;
+    const {x,y,running}=playerPosition;
     data=await send('move',{round,map:scene.country,x,y,running});
    }
    update(data);if(data.fight)show(data);
   }catch(error){lastMove=Date.now()+1200;if(distance<90)report(error.message==='save_conflict'?'บันทึกตัวละครก่อนเริ่มสู้กับบอส':'ยังเข้าร่วมไม่ได้ · ลองเดินเข้าหาบอสอีกครั้ง');}
   finally{requesting=false;}
  }
- window.walkKingdomBoss={tick(position,running){if(!requesting&&!frame)void move(position,running);},
+ window.walkKingdomBoss={tick(position,running){
+  playerPosition={x:position.x,y:position.y,running};
+  if(!requesting&&!frame)void move();
+ },
  drawMinimap(context,worldWidth,worldHeight){
   if(!sameMap()||!active())return;
   const boss=bossPosition();if(!boss)return;
