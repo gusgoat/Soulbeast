@@ -18,6 +18,17 @@ function accept(p,q,choice){
  if(!Number.isFinite(cost)||cost<0||(p.gold||0)<cost)return false;
  p.gold=(p.gold||0)-cost;state(p).accepted[q.id]={step:0,count:0,choice:c?.id};return true;
 }
+function isTracking(p,q){
+ const s=state(p);
+ return s.tracked===q.id&&!!s.accepted[q.id]&&!s.completed[q.id];
+}
+function toggleTracking(p,q){
+ const s=state(p);
+ if(!s.accepted[q.id]||s.completed[q.id])return false;
+ if(isTracking(p,q))delete s.tracked;
+ else s.tracked=q.id;
+ return true;
+}
 function current(p,q){
  const s=state(p),a=s.accepted[q.id];
  if(!a||s.completed[q.id]||!validRoute(p,q)||!prerequisites(p,q)||!Number.isInteger(a.step)||a.step<0)return null;
@@ -53,7 +64,8 @@ function claim(p,q,place,npc){
  const correctNpc=npc===q.npc||npc==='questboard'&&!q.cast;
  if(!a||!validRoute(p,q)||!prerequisites(p,q)||!Number.isInteger(a.step)||a.step!==route.length||q.place!==place||!correctNpc||s.completed[q.id]||!validRewards(q)||!Number.isFinite(gold)||gold<0)return false;
  s.outcomes||={};s.outcomes[q.id]={choice:a.choice,ending:choice?.ending||q.ending,gold,rewards:rewardList(q)};
+ if(s.tracked===q.id)delete s.tracked;
  grant(p,q);s.completed[q.id]=Date.now();delete s.accepted[q.id];p.gold=(p.gold||0)+gold;return true;
 }
-const api={state,available,blockedReason,steps,accept,emit,claim,isTarget,rewardList,rewardText,countryOf,objectiveCountry,searchObjectives};g.WalkQuestEngine=api;if(typeof module!=='undefined')module.exports=api;
+const api={state,available,blockedReason,steps,accept,emit,claim,isTarget,isTracking,toggleTracking,rewardList,rewardText,countryOf,objectiveCountry,searchObjectives};g.WalkQuestEngine=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

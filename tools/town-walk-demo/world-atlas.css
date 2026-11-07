@@ -3,3 +3,6 @@
 .atlas-forest-list{padding:10px 18px;border-top:1px solid #997f4d}.atlas-forest-list summary{cursor:pointer;color:#f1d798}#atlasForestList{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:7px;padding-top:10px}#atlasForestList button{text-align:left;font-size:12px}
 
 #worldAtlas .atlas-dungeon{transform:translate(-50%,-180%);z-index:9}.atlas-dungeon .atlas-symbol{font-size:24px;color:#dbabff}.atlas-dungeon small{display:block;top:0;left:22px;color:#efd8ff}.atlas-dungeon:after{content:'';position:absolute;left:8px;top:18px;height:20px;border-left:1px dashed #d8a6ff;pointer-events:none}
+.atlas-tracking-legend{color:#ffdb32}
+#atlasPins .atlas-tracked{z-index:7}
+#atlasPins .atlas-tracked strong{color:#ffdb32;-webkit-text-stroke-color:#432b10}

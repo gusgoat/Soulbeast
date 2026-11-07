@@ -13,3 +13,11 @@
 
 
 .quest-close-bar{position:sticky;top:0;z-index:20;display:flex;justify-content:flex-end;height:0;overflow:visible}.quest-close{position:relative;top:-12px;right:-12px;width:38px;height:38px;flex-shrink:0;border:1px solid #d6b96c;border-radius:50%;background:#142f40;color:#ffe8a9;font:bold 28px/1 sans-serif;box-shadow:0 2px 8px #0008;cursor:pointer}#townDialog:has(.quest-close-bar) #dialogTitle{padding-right:30px}
+
+#dialogChoices .quest-log-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px}
+#dialogChoices .quest-log-row .quest-answer{padding:12px 18px!important;overflow-wrap:anywhere}
+#dialogChoices button.quest-track{min-height:44px!important;width:auto!important;padding:6px 10px!important;border:1px solid #9c8452!important;border-radius:8px;background:#153344!important;color:#fff0c6!important;white-space:nowrap;cursor:pointer}
+#dialogChoices button.quest-track[aria-pressed="true"]{border-color:#ffdb32!important;background:#504019!important;color:#ffec81!important}
+#dialogChoices button.quest-track:focus-visible{outline:2px solid #ffdb32;outline-offset:2px}
+#dialogChoices .quest-entry .quest-track{margin:8px 0}
+#dialogChoices .quest-tracking-status{padding:8px 10px;border-left:3px solid #ffdb32;background:#4a371f;color:#ffec81}
