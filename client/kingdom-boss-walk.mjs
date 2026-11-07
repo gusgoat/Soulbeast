@@ -5,6 +5,16 @@ import {gameContext} from './kingdom-boss-feed.mjs?v=kingdom-boss-20261107';
 const scene=window.kingdomBossWalkScene,context=gameContext();
 if(scene&&context?.code)mount(scene,context);
 
+function drawBossMarker(context,x,y,radius){
+ context.beginPath();
+ context.arc(x,y,radius,0,Math.PI*2);
+ context.fillStyle='#ae272d';
+ context.fill();
+ context.lineWidth=2;
+ context.strokeStyle='#ffe283';
+ context.stroke();
+}
+
 function mount(scene,context){
  const account=connectAccounts(()=>{}),connection=connectOnlineWalk(undefined,{client:account});
  const send=(action,extra)=>account.game('kingdom_boss_'+action,{code:context.code,...extra},context.environment);
@@ -106,10 +116,18 @@ function mount(scene,context){
   }catch(error){lastMove=Date.now()+1200;if(distance<90)report(error.message==='save_conflict'?'บันทึกตัวละครก่อนเริ่มสู้กับบอส':'ยังเข้าร่วมไม่ได้ · ลองเดินเข้าหาบอสอีกครั้ง');}
   finally{requesting=false;}
  }
- window.walkKingdomBoss={tick(position,running){if(!requesting&&!frame)void move(position,running);},draw(c,x,y,zoom,overview,time){
+ window.walkKingdomBoss={tick(position,running){if(!requesting&&!frame)void move(position,running);},
+ drawMinimap(context,worldWidth,worldHeight){
+  if(!sameMap()||!active()||!event?.position)return;
+  const x=event.position.x/worldWidth*context.canvas.width;
+  const y=event.position.y/worldHeight*context.canvas.height;
+  context.save();
+  drawBossMarker(context,x,y,6);
+  context.restore();
+ },draw(c,x,y,zoom,overview,time){
   if(!sameMap()||!active()||!event?.position)return;
   const px=x(event.position.x),py=y(event.position.y);c.save();
-  if(overview){c.beginPath();c.arc(px,py,10,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.lineWidth=2;c.strokeStyle='#ffe283';c.stroke();}
+  if(overview){drawBossMarker(c,px,py,10);}
   else if(!art?.draw(c,px,py,210*zoom,0,time,false)){c.beginPath();c.arc(px,py,20*zoom,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.strokeStyle='#ffe283';c.stroke();}
   c.font='bold '+(overview?'13px':'14px')+' Tahoma';c.textAlign='center';c.lineWidth=4;c.strokeStyle='#081924';c.fillStyle='#ffe694';
   const name='♛ '+event.name+' · Lv '+event.level,labelY=py-(overview?16:188*zoom);c.strokeText(name,px,labelY);c.fillText(name,px,labelY);c.restore();
