@@ -296,6 +296,18 @@ async function run(){
   await page.waitForURL(/town-walk-demo\/index\.html/);
   assert.equal((await profile()).items.teleportScroll,beforeTeleport.items.teleportScroll-1);
   assert.equal((await profile()).islandProgress.visit,undefined);
+  await page.goto(origin+'/Soulbeast/tools/town-walk-demo/menu.html?screen=countrywar&walkScene=country');
+  const warMap=page.locator('.cw-map');
+  await warMap.waitFor();
+  assert.equal(await warMap.locator('.cw-island-route').count(),3);
+  assert.equal(await warMap.locator('.cw-island-pin.port').count(),3);
+  assert.equal(await warMap.locator('.cw-island-pin.island').count(),3);
+  assert(await warMap.locator('.cw-node').count()>0);
+  await warMap.getByRole('button',{name:'เกาะศิลามรกต',exact:true}).press('Enter');
+  await page.locator('#cw-island-green[open]').getByRole('link',{name:'เปิดตัวอย่างเกาะ'}).waitFor();
+  await warMap.getByRole('button',{name:'ท่าเรืออัคนีบรรพต',exact:true}).click();
+  await page.locator('#cw-island-red[open]').waitFor();
+  assert(!await page.evaluate(()=>window.eval("countryMapView([], 'selectTeleport', '').includes('cw-island-pin')")));
   if(new URL(origin).hostname==='gusgoat.github.io'){
    const onlineKey='soulbeast-online-walk-v1';
    await page.goto(origin+'/Soulbeast/tools/hemant-walk-demo/index.html?country=green&arrival=island-port');
@@ -312,7 +324,7 @@ async function run(){
    await preview.close();
   }
   assert.deepEqual(errors,[]);
-  console.log('PASS mobile: all ferry illustrations and encounter lists, three ports and maps, scenery atlases, ferry fare, free return and switching from a saved island visit, ruins, portal combat and surrender, chest, actual encounter pools, boss walk and flight sprites, automatic boss combat, first and repeat reward, equipped preview profile, country HUD, shadow and bandit pursuit with active repellent, 1–4 shadow opponents, and teleport.');
+  console.log('PASS mobile: war map islands and ferry pins, all ferry illustrations and encounter lists, three ports and maps, scenery atlases, ferry fare, free return and switching from a saved island visit, ruins, portal combat and surrender, chest, actual encounter pools, boss walk and flight sprites, automatic boss combat, first and repeat reward, equipped preview profile, country HUD, shadow and bandit pursuit with active repellent, 1–4 shadow opponents, and teleport.');
  }finally{await browser.close();}
 }
 run().catch(error=>{console.error(error);process.exitCode=1;});

@@ -1,0 +1,12 @@
+.cw-island-route line{stroke:var(--ferry);stroke-width:4;stroke-dasharray:10 8;opacity:.9;pointer-events:none}
+.cw-island-pin{cursor:pointer;outline:none}
+.cw-island-hit{fill:transparent}
+.cw-island-icon{fill:#102b3b;stroke:var(--ferry);stroke-width:4;filter:drop-shadow(0 2px 3px #000)}
+.cw-island-pin:focus-visible .cw-island-icon,.cw-island-pin:hover .cw-island-icon{fill:#365766;stroke:#fff1bb}
+.cw-island-pin text{fill:#fff1cf;text-anchor:middle;dominant-baseline:central;font-size:30px;font-weight:bold;pointer-events:none}
+.cw-island-pin.port text{font-size:22px}
+.cw-island-pin .cw-island-label{font-size:27px;paint-order:stroke;stroke:#081b29;stroke-width:8;stroke-linejoin:round}
+.cw-island-guide details{border:1px solid #b79b5b66;border-radius:9px;padding:9px 12px}
+.cw-island-guide summary{cursor:pointer;color:#fff0c6}
+.cw-island-guide img{display:block;width:100%;height:clamp(124px,30dvh,246px);object-fit:cover;border-radius:8px;margin-top:9px}
+.cw-island-guide a{display:inline-block}
