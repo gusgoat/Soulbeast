@@ -1,13 +1,13 @@
 // Presentation only. The authoritative activity service supplies publish() events.
 // Never infer a boss spawn from a device clock or create an activity here.
 const phases = { active: 0, expired: 1, defeated: 2 };
-const countries = { blue: 'คีรีมรกต', green: 'พนาสมุทร', red: 'อัคนีบรรพต' };
+const countries = { blue: 'เหมันตคีรี', green: 'พนาสมุทร', red: 'อัคนีบรรพต' };
 export function normalizeAnnouncement(value) {
  if (!value || !/^[\w-]{1,100}$/.test(value.id || '') || !Object.hasOwn(phases, value.status)) return null;
  const end = Number(value.end);
  if (!Number.isFinite(end) || end <= 0) return null;
- return { id: value.id, status: value.status === 'active' && end <= Date.now() ? 'expired' : value.status,
-  end, country: countries[value.country] ? value.country : null,
+ return { id: value.id, status: value.status === 'active' && !value.serverManaged && end <= Date.now() ? 'expired' : value.status,
+  end, serverManaged: value.serverManaged===true, country: Object.hasOwn(countries,value.country) ? value.country : null,
   name: String(value.name || 'บอสอาณาจักร').slice(0, 80),
   level: Math.max(1, Math.min(999, Number(value.level) || 1)),
   location: String(value.location || '').slice(0, 120),
@@ -75,7 +75,7 @@ export function mountAnnouncements() {
   const dialogs = [...document.querySelectorAll('dialog[open]')].filter(visible);
   const container = dialogs.at(-1) || document.body;
   if (host.parentElement !== container) container.append(host);
-  if (pending?.status === 'active' && pending.end <= Date.now()) { pending = { ...pending, status: 'expired' }; manual = false; persist(); }
+  if (pending?.status === 'active' && !pending.serverManaged && pending.end <= Date.now()) { pending = { ...pending, status: 'expired' }; manual = false; persist(); }
   const show = pending && signature() !== acknowledged && !document.hidden;
   const expanded = !!show && (manual || !busy());
   get('.compact').hidden = !show || expanded;
@@ -90,7 +90,7 @@ export function mountAnnouncements() {
    get('.description').textContent = pending.status === 'active' ? `${pending.name} · Lv ${pending.level}` : pending.status === 'defeated' ? (pending.winner ? 'ผู้ปิดฉาก: ' + pending.winner : 'ขอบคุณผู้ผนึกที่ร่วมต่อสู้') : 'หมดเวลารอบนี้แล้ว ติดตามประกาศรอบต่อไป';
    get('.location').textContent = pending.status === 'active' && pending.location ? 'สถานที่: ' + pending.location : '';
   }
-  if (show && pending.status === 'active') timer = setTimeout(schedule, Math.min(2147483647, Math.max(1, pending.end - Date.now())));
+  if (show && pending.status === 'active' && !pending.serverManaged) timer = setTimeout(schedule, Math.min(2147483647, Math.max(1, pending.end - Date.now())));
   setFull(expanded);
  }
  function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(render); } }
@@ -110,9 +110,11 @@ export function mountAnnouncements() {
  observer.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden', 'open', 'class', 'style'] });
  document.body.append(host);
  const api = Object.freeze({
+  clear(){pending=null;manual=false;persist();schedule();},
   publish(value) {
    const next = normalizeAnnouncement(value);
    if (!next || !newerAnnouncement(pending, next)) return false;
+   if(JSON.stringify(pending)===JSON.stringify(next))return true;
    if (pending && signature() !== next.id + ':' + next.status) manual = false;
    pending = next; persist(); schedule(); return true;
   }
@@ -121,4 +123,7 @@ export function mountAnnouncements() {
  addEventListener('soulbeast-event-announcement', e => api.publish(e.detail));
  schedule(); return api;
 }
-if (typeof window !== 'undefined') mountAnnouncements();
+if (typeof window !== 'undefined') {
+ const announcements=mountAnnouncements();
+ if(announcements)import('./kingdom-boss-feed.mjs?v=kingdom-boss-20261107').then(m=>m.mountKingdomBossFeed(announcements)).catch(()=>{});
+}

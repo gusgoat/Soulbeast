@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {kingdomBossWindow,kingdomBossNextStart,kingdomBossSpawn,kingdomBossMove,kingdomBossResolve,kingdomBossView,kingdomBossClaim,kingdomBossPatrol} from './rules.mjs';
+const start=Date.parse('2026-11-03T03:00:00Z');
+assert.equal(kingdomBossWindow(start-1),null);assert.equal(kingdomBossWindow(start+3600000),null);
+assert.equal(kingdomBossWindow(start+12*3600000).start,start+12*3600000);
+for(let hour=0;hour<24;hour++){
+ const at=start+(hour-10)*3600000;
+ assert.equal(!!kingdomBossWindow(at,true),[10,12,14,16,18,20,22].includes(hour));
+ assert.equal(!!kingdomBossWindow(at,false),[10,22].includes(hour));
+}
+assert.equal(kingdomBossNextStart(start,true),start+2*3600000);
+assert.equal(kingdomBossNextStart(start,false),start+12*3600000);
+assert.equal(kingdomBossNextStart(start+12*3600000,true),start+24*3600000);
+const base={hp:100,mp:20,pdef:40,mdef:40,patk:60,matk:60,spd:80};
+const options={species:[{id:'legend',rare:true,legendary:true},{id:'solar',rare:true,solar:true},{id:'baihu',rare:true}],points:{blue:[{x:1000,y:1000}],green:[{x:1,y:1}],red:[{x:1,y:1}]},baseStats:()=>base,random:()=>0};
+const spawn=()=>kingdomBossSpawn(start,options),A={id:'a',country:'blue'},B={id:'b',country:'red'},C={id:'c',country:'blue'},D={id:'d',country:'green'};
+const move=(s,p,x,t=1,running=true)=>kingdomBossMove(s,p,{country:'blue',x,y:1000,running},start+t);
+let s=spawn();assert.equal(s.species,'baihu');assert.deepEqual(s.stats,{hp:2000,mp:400,pdef:80,mdef:80,patk:90,matk:90,spd:100});
+move(s,B,850,1,false);move(s,A,700);const duel=move(s,A,1020,2);assert.equal(duel.kind,'pvp');assert.deepEqual(duel.members,['a','b']);assert.equal(kingdomBossView(s,'x',start+3).players.length,0);
+assert(kingdomBossResolve(s,duel.id,0,{loser:'b'},start+3));assert.equal(kingdomBossView(s,'b',start+3).respawn,'red-capital');
+move(s,C,900,4);const fight=move(s,C,1000,5);assert.equal(fight.kind,'boss');
+move(s,D,910,6);assert.equal(move(s,D,1000,7).kind,'boss','fighter is absent from PvP collision');assert(kingdomBossResolve(s,fight.id,0,{damage:400,defeated:true},start+8));assert.equal(s.hp,1600);assert.equal(kingdomBossView(s,'c',start+8).hospital,true);
+assert.equal(kingdomBossResolve(s,fight.id,0,{damage:400},start+9),false);
+const killer=s.players.d.fight;assert(kingdomBossResolve(s,killer,0,{damage:1600},start+10,{dropPart:'claw'}));
+assert.deepEqual(Object.keys(s.letters),['d']);assert.deepEqual(s.letters.d.pet,{species:'baihu',level:10});let paid=0;assert(kingdomBossClaim(s,'d',l=>paid+=l.gold));assert(!kingdomBossClaim(s,'d',()=>assert.fail('double claim')));assert.equal(paid,1000);
+s=spawn();move(s,C,900,1);let f=move(s,C,1000,2);kingdomBossResolve(s,f.id,0,{damage:20,defeated:true},start+3);
+move(s,A,900,4);f=move(s,A,1000,5);assert(kingdomBossResolve(s,f.id,0,{damage:1980},start+6,{dropPart:'claw'}));assert.equal(s.letters.c.gold,1000);assert.equal(s.letters.c.coupons,1);assert.equal(s.letters.c.pet,null);
+s=spawn();move(s,B,1100,1,false);move(s,A,900,2);f=move(s,A,1150,3);assert.equal(f.kind,'boss','boss lies before opponent');
+assert(!kingdomBossResolve(s,f.id,0,{damage:3000},start+3600000));assert.equal(s.status,'expired');assert.deepEqual(s.letters,{});
+s=spawn();move(s,A,1150,1,false);kingdomBossPatrol(s,start+10);assert.equal(s.chase.until,start+5010);move(s,A,1150,4990,false);kingdomBossPatrol(s,start+5010);assert(!s.chase?.id);
+console.log('PASS Bangkok windows, rare pool, aura, first collision, hidden fighters, chase limit, shared damage, expiry, last hit and single claim');

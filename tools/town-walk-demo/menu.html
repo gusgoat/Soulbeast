@@ -7828,12 +7828,12 @@ function mountServiceSpeaker(){
 const serviceSpeakerRender=render;render=function(...args){const r=serviceSpeakerRender(...args);mountServiceSpeaker();return r};mountServiceSpeaker();
 if(S.screen==='arena'&&!TOWER_UI.ready)void towerStatus();
 if(['guild','guildwar'].includes(S.screen)&&!GUILD_UI.data)void guildRequest();
-if(params.has('partyBattle')&&parent!==window){
+if(params.has('partyBattle')&&parent!==window){const kingdomFight=params.has('kingdomBoss');
  let selectedMedicine=null,showMedicines=false,selectedSeal=null,showSeals=false,showSummons=false;
  function focusParty(where){requestAnimationFrame(()=>BattleCommandFocus.scroll(where));}
  const command=(data)=>{focusParty('arena');send('party-battle-command',data);};
  const partyPresented=new Set(),partyAcknowledged=new Set();
- function partyRewardLines(run,code){const r=run.rewards?.[code];if(!r)return run.result==='win'?['กำลังยืนยันรางวัลจากเซิร์ฟเวอร์…']:[];const lines=['ได้รับ '+fmt(r.gold||0)+' เหรียญ','ได้รับ EXP '+fmt(r.xp||0)];for(const [id,qty]of Object.entries(r.parts||{})){const [sp,part]=id.split('|');lines.push(itemIcon(id,44)+' '+esc(SP[sp]?.parts?.[Number(part)]?.[0]||id)+' ×'+qty)}for(const up of r.levelUps||[])lines.push('เลเวลอัป! '+esc(SP[up.name]?.n||up.name)+' · Lv '+up.from+' → '+up.to);return lines;}
+ function partyRewardLines(run,code){if(kingdomFight)return run.reward?['รางวัลรอบนี้ส่งไปที่จดหมาย']:run.result==='expired'?['หมดเวลาของกิจกรรมบอสอาณาจักร']:[];const r=run.rewards?.[code];if(!r)return run.result==='win'?['กำลังยืนยันรางวัลจากเซิร์ฟเวอร์…']:[];const lines=['ได้รับ '+fmt(r.gold||0)+' เหรียญ','ได้รับ EXP '+fmt(r.xp||0)];for(const [id,qty]of Object.entries(r.parts||{})){const [sp,part]=id.split('|');lines.push(itemIcon(id,44)+' '+esc(SP[sp]?.parts?.[Number(part)]?.[0]||id)+' ×'+qty)}for(const up of r.levelUps||[])lines.push('เลเวลอัป! '+esc(SP[up.name]?.n||up.name)+' · Lv '+up.from+' → '+up.to);return lines;}
 
  let state, selectedEnemy, selectedAlly, turnKey, showSkills=false, hideCommands=false, effectTurn=0;
  const app=document.getElementById('app');
@@ -7857,7 +7857,7 @@ if(params.has('partyBattle')&&parent!==window){
   S.battle=Object.assign(S.battle?.partyRunId===run.id?S.battle:{},{...b,partyRunId:run.id,allies:b.allies.map(displayUnit),enemies:b.enemies.map(displayUnit),kind:'dungeonParty',meta:dungeonFloor?.battleZone||(dungeonFloor?.floor===2?3:1),
    queue:b.queue||[],fx:[],menu:'wait',target:enemy<0?b.enemies.findIndex(u=>u.hp>0):enemy,
    atarget:ally<0?Math.max(0,b.allies.findIndex(u=>u.id===w?.actor)):ally,
-   over:active?null:{res:run.result,title:run.result==='win'?'ชนะการต่อสู้':'สิ้นสุดการต่อสู้',lines:partyRewardLines(run,code)}});
+   over:active?null:{res:run.result,title:run.result==='win'?'ชนะการต่อสู้':run.result==='lose'?'พ่ายแพ้':run.result==='expired'?'กิจกรรมหมดเวลา':'สิ้นสุดการต่อสู้',lines:partyRewardLines(run,code)}});
   S.ui.battleCommandsHidden=hideCommands;
   S.screen='battle';
   if(member)Object.assign(S.P,{name:member.name,cls:member.cls,gender:member.gender,country:member.country,lv:member.level});
@@ -7884,10 +7884,10 @@ if(params.has('partyBattle')&&parent!==window){
     }
 
    }
-   main.querySelector('[data-auto-unlock]')?.remove();
+   if(kingdomFight){body?.replaceChildren();if(body){const note=document.createElement('p');note.className='sub';note.textContent=run.kind==='boss'?'บอสอาณาจักร · ต่อสู้อัตโนมัติ':'ประลองชิงบอสอาณาจักร · ต่อสู้อัตโนมัติ';const leave=document.createElement('button');leave.className='btn';leave.dataset.a='kingdomWithdraw';leave.textContent='ถอนตัว';body.append(note,leave);}}main.querySelector('[data-auto-unlock]')?.remove();
    if(controls){
     controls.querySelectorAll('[data-a="bt"],[data-a="teamAuto"]').forEach(button=>button.remove());
-    controls.insertAdjacentHTML('afterbegin',`<button class="btn sm ${auto?'pri':''}" data-a="partyAuto" aria-pressed="${auto}">ออโต้ทีม ${auto?'เปิด':'ปิด'}</button>`);
+    if(!kingdomFight)controls.insertAdjacentHTML('afterbegin',`<button class="btn sm ${auto?'pri':''}" data-a="partyAuto" aria-pressed="${auto}">ออโต้ทีม ${auto?'เปิด':'ปิด'}</button>`);
    }
   }
   if(selectedMedicine&&own){const it=w.items?.find(it=>it.id===selectedMedicine);for(const card of main.querySelectorAll('[data-a="bt"][data-v^="ally:"]')){const u=b.allies[Number(card.dataset.v.split(':')[1])],valid=battleMedicineUseful(it,u);card.dataset.skillTarget=valid?'valid':'invalid';card.disabled=!valid;}}
@@ -7909,7 +7909,7 @@ if(params.has('partyBattle')&&parent!==window){
   const {run,code}=state,w=run.waiting;
   if(action==='bt'&&value==='done'){send('party-battle-done');return;}
   if(run.status!=='active')return;
-  if(action==='partyAuto'){send('party-battle-auto',{enabled:!state.auto});return;}
+  if(kingdomFight&&action==='kingdomWithdraw'){send('kingdom-boss-withdraw');return;}if(action==='partyAuto'){send('party-battle-auto',{enabled:!state.auto});return;}
   if(action==='battleCommands'){hideCommands=!hideCommands;draw();return;}
   if(action==='battleDetails'||action==='battleSpeed'){handlers[action]();return;}
   if(w?.ownerCode!==code)return;
@@ -8004,5 +8004,5 @@ if(params.get('quickItem')==='teleportScroll'&&params.get('walkScene')==='countr
 }
 }
 
-</script><script type="module" src="../../client/event-announcements.mjs?v=20261107"></script></body>
+</script><script type="module" src="../../client/event-announcements.mjs?v=kingdom-boss-20261107"></script></body>
 </html>

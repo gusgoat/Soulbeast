@@ -8,9 +8,11 @@ while busy. Returning to walking expands unread notices. Closing acknowledges
 the current phase. Pending notices survive same-tab navigation, scoped to the
 online walk owner, character code and environment.
 
-The authoritative kingdom boss activity must supply confirmed events. This
-module neither polls an unsupported endpoint nor schedules a fictional boss.
-No kingdom boss event source is enabled by this change.
+`kingdom-boss-feed.mjs` reads confirmed events from the account function's
+lightweight status endpoint with the current game login. It pauses in background tabs. The endpoint
+spawns at most one shared boss per due window, only after the first status or
+activity request reaches the server. It reports expiry using server time. The
+browser cannot spawn, advance, or extend a round through the announcement API.
 
 ```js
 window.SoulbeastAnnouncements.publish({
@@ -28,10 +30,11 @@ window.SoulbeastAnnouncements.publish({
 Alternatively dispatch `soulbeast-event-announcement` with that object as detail
 in the outer page. Do not expose this as a cross-origin message receiver.
 Send terminal status even if the viewer missed the spawn. Newer phases supersede
-older ones; older rounds cannot replace the latest round. An unread active event
-becomes a timeout notice at its deadline, and later confirmed defeat supersedes
-that timeout. Do not describe victory rewards until the server confirms them.
+older ones; older rounds cannot replace the latest round. `serverManaged` waits
+for the endpoint to confirm expiry. Do not describe victory rewards until the
+server confirms them.
 
 Walking input pauses while a full notice is visible. Country auto-travel stops;
 closing the notice requires the player to resume movement. Notification rendering
-uses activity DOM changes rather than a new polling loop or network connection.
+uses activity DOM changes. The feed makes short status requests only while the
+tab is visible; it does not open a second WebSocket.
