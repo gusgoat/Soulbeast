@@ -140,6 +140,8 @@ async function run(){
   assert.deepEqual(migration,{changed:true,level:60,previousGear:true,sameVisit:true,once:true});
   assert.equal(Object.keys(initial.eq).length,9);
   assert(initial.pets.some(p=>initial.party.includes(p.uid)&&p.sp==='legend2_aurorion'&&p.lv===60));
+  await page.locator('#world[data-companion="legend2_aurorion:0"]').waitFor();
+  await page.waitForFunction(()=>performance.getEntriesByType('resource').some(r=>r.name.endsWith('/assets/companions/legend2_aurorion.webp')&&r.responseEnd>0));
   await page.locator('#hudTop').waitFor();
   await page.locator('#joystick').waitFor();
   await page.getByRole('button',{name:'ผนึกรวมร่าง'}).click();
@@ -309,7 +311,7 @@ async function run(){
   await page.locator('#cw-island-red[open]').waitFor();
   assert(!await page.evaluate(()=>window.eval("countryMapView([], 'selectTeleport', '').includes('cw-island-pin')")));
   assert.deepEqual(errors,[]);
-  console.log('PASS mobile: war map islands and ferry pins, all ferry illustrations and encounter lists, three ports and maps, scenery atlases, ferry fare, free return and switching from a saved island visit, ruins, portal combat and surrender, chest, actual encounter pools, boss walk and flight sprites, automatic boss combat, first and repeat reward, equipped preview profile, country HUD, shadow and bandit pursuit with active repellent, 1–4 shadow opponents, and teleport.');
+  console.log('PASS mobile: war map islands and ferry pins, all ferry illustrations and encounter lists, three ports and maps, scenery atlases, ferry fare, free return and switching from a saved island visit, ruins, portal combat and surrender, chest, actual encounter pools, boss walk and flight sprites, automatic boss combat, first and repeat reward, equipped preview profile and companion, country HUD, shadow and bandit pursuit with active repellent, 1–4 shadow opponents, and teleport.');
  }finally{await browser.close();}
 }
 run().catch(error=>{console.error(error);process.exitCode=1;});

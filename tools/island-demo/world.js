@@ -35,9 +35,10 @@ const mini=$('mini').getContext('2d'),avatar=sealerSprites.create(),keys=new Set
 const visit=()=>I.state(player,country).visit;
 const saved=visit().position;
 const p={...(saved&&data.walkable(saved.x,saved.y)?saved:data.spawn),dir:saved?.dir||0};
-const cam={...p};
+const cam={...p},companion=CompanionFollowers.create();
 const nav={walkable:data.walkable,distance:I.distance};
-const traps=DungeonTraps.create(data,nav,visit().traps,{seed:cfg.seed,count:I.trapCount,spacing:370});
+const trapState=visit().traps;
+const traps=DungeonTraps.create(data,nav,trapState,{seed:cfg.seed,count:I.trapCount,spacing:370});
 const colors={
  blue:{sea:'#12415d',deep:'#071d35',ground:'#a5bcc4',edge:'#cfdddb',road:'#e0dccc',tree:'assets/hemant-walk-preview/pine-v2.png.webp',floor:'assets/hemant-walk-preview/snow-v1.png.webp'},
  green:{sea:'#12616c',deep:'#082e43',ground:'#4c7440',edge:'#ccb98a',road:'#bba878',tree:'assets/country-walk/green/tree.png.webp',floor:'assets/town-walk-preview/grass-v1.png.webp'},
@@ -115,7 +116,7 @@ let width=0,height=0,dpr=1,last=performance.now(),clock=0,phase=0,writeAt=0,mini
 let moving=false,running=false,near=null,frame=null,kind='',noticeTimer=null,portalOpen=false;
 const coupon=()=>online?openFrame(null,'coupon'):show('คูปองเกาะ','คูปองในเซฟเกาะ '+I.state(player).coupons+' ใบ',[['กลับ',close]]);
 const fusion=BeastFusion.create({
- canOpen:()=>!frame&&!$('townDialog').open&&!DungeonFeedback.isOpen&&!window.WalkControls?.editing,
+ canOpen:()=>!frame&&!saveContinuation&&!$('townDialog').open&&!DungeonFeedback.isOpen&&!window.WalkControls?.editing,
  stop:reset,openShop:coupon,onChange:fresh=>{player=fresh;persist();},
 });
 const peers=document.createElement('button');
@@ -242,11 +243,13 @@ function draw(){
   ...data.sites.map(o=>({...o,art:'ruin',size:190})),
   ...(!visit().cleared.chest?[{...data.chest,art:'chest',size:75}]:[]),
   ...patrols.actors.filter(a=>!visit().cleared[a.id]).map(a=>({...a,art:a.kind})),
+  ...(companion.key&&companion.body?[{...companion.body,art:'companion'}]:[]),
   {...p,art:'player'},
  ].sort((a,b)=>(a.depthY??a.y)-(b.depthY??b.y));
  for(const o of objects){
   const x=sx(o.x),y=sy(o.y);
   if(x<-200||x>width+200||y<-25||y>height+250)continue;
+  if(o.art==='companion'){companion.draw(ctx,sx,sy,zoom);continue;}
   if(o.art==='player'){if(!fusion.draw(ctx,x,y,1,p.dir,clock,moving))avatar.draw(ctx,x,y,134,p.dir,phase,moving,running);continue;}
   if(o.art==='boss'){
    const size=country==='red'?242:216;
@@ -282,41 +285,74 @@ function drawMap(c){
  dot(c,px(p.x),py(p.y),4,'#fff');
 }
 function reset(){keys.clear();joy.x=joy.y=0;joy.id=null;$('stick').style.transform='';moving=running=false;}
+let publishedPlayer=sessionStorage.getItem(I.key);
+function syncPlayer(){
+ const raw=sessionStorage.getItem(I.key);
+ if(raw===publishedPlayer||!raw)return;
+ const fresh=JSON.parse(raw);
+ if(fresh.code!==player.code)return;
+ player=fresh;publishedPlayer=raw;
+ const storedTraps=visit()?.traps;
+ if(storedTraps&&storedTraps!==trapState)trapState.revealed=storedTraps.revealed||{};
+}
 function persist(savePosition=true){
- if(savePosition&&visit())visit().position={x:p.x,y:p.y,dir:p.dir};
+ const current=visit();
+ if(current){
+  if(savePosition)current.position={x:p.x,y:p.y,dir:p.dir};
+  current.traps=trapState;
+ }
  const raw=JSON.stringify(player);
- sessionStorage.setItem(I.key,raw);
+ sessionStorage.setItem(I.key,raw);publishedPlayer=raw;
  if(player.walkId)localStorage.setItem('soulbeast-walk-save:'+player.walkId,raw);
 }
 function status(message){
  const box=$('notice');box.textContent=message;box.hidden=false;
  clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{box.hidden=true;},3200);
 }
+let needsSave=false,savingProgress=false,retrySaveAt=0;
 let saveContinuation=null,saving=false;
-function saveThen(next,action){
+function queueSave(){
+ if(online)needsSave=true;
+}
+async function saveProgress(){
+ if(!needsSave||savingProgress||saveContinuation||frame||clock<retrySaveAt)return;
+ needsSave=false;savingProgress=true;
+ try{
+  await IslandAccount.checkpoint({background:true});
+  retrySaveAt=0;
+ }catch{
+  if(!retrySaveAt)status('บันทึกยังไม่สำเร็จ ระบบจะลองอีกครั้ง');
+  retrySaveAt=clock+8;needsSave=true;
+ }finally{savingProgress=false;}
+}
+function saveThen(next,action,{quiet=false}={}){
  if(!online){next();return;}
- saveContinuation={next,action,visitId:visit()?.id};
+ saveContinuation={next,action,quiet,visitId:visit()?.id};
  void confirmSave();
 }
 async function confirmSave(){
  if(saving||!saveContinuation)return;
+ const save=saveContinuation;
+ const {next,action,quiet,visitId}=save;
  saving=true;reset();
- show('บันทึกการเดินทาง','กำลังบันทึกความคืบหน้าของตัวละคร…',[]);
- const {next,action,visitId}=saveContinuation;
+ if(!quiet||save.failed)show('บันทึกการเดินทาง','กำลังบันทึกความคืบหน้าของตัวละคร…',[]);
  let result;
  try{
-  if(action){
-   result=await IslandAccount.command(action,country,visitId);
-   player=result.player;
-  }else player=await IslandAccount.checkpoint();
+  if(action)result=await IslandAccount.command(action,country,visitId);
+  else await IslandAccount.checkpoint();
+  syncPlayer();
+  needsSave=false;retrySaveAt=0;
  }catch(error){
   const code=error.code||error.message;
   const message=['login_required','character_not_owned','session_replaced'].includes(code)
    ?'กรุณาเข้าสู่ระบบและเลือกตัวละครอีกครั้ง':'ยังยืนยันการบันทึกไม่ได้ กรุณาลองอีกครั้ง';
+  save.failed=true;
   show('บันทึกการเดินทาง',message,[['ลองบันทึกอีกครั้ง',confirmSave]]);
   return;
  }finally{saving=false;}
- saveContinuation=null;close();next(result);
+ saveContinuation=null;
+ if(!quiet||save.failed)close();
+ next(result);
 }
 function exitIsland(next,defeated=false){
  const maxHp=WalkVitals.maximum(player).hp;
@@ -324,7 +360,7 @@ function exitIsland(next,defeated=false){
   if(defeated)player.hp=Math.max(1,Math.round(maxHp*.3));
  }else I.leave(player,country,defeated,maxHp);
  persist(false);
- saveThen(next,'island_exit');
+ saveThen(next,'island_exit',{quiet:defeated});
 }
 function goHome(defeated){
  exitIsland(()=>{
@@ -345,7 +381,7 @@ function openFrame(id,screen='bag',quickItem){
   frame.src=screen==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+query;
   kind=id||'menu';document.body.append(frame);
  };
- if(id)saveThen(mount);else mount();
+ if(id==='boss')saveThen(mount,null,{quiet:true});else mount();
 }
 function openPortal(pending){
  portalOpen=true;reset();
@@ -355,7 +391,8 @@ function openPortal(pending){
  ],'assets/ui/boss-gates/gate-'+cfg.gate+'.webp');
 }
 function activate(o){
- if(frame)return;
+ if(frame||saveContinuation)return;
+ syncPlayer();
  if(o.id==='port'){
   show(cfg.port,'ขากลับแผ่นดินไม่เสียค่าเดินทาง',[['กลับแผนที่ประเทศ',()=>goHome(false)],['เดินต่อ',close]]);
  }else if(o.id.startsWith('ruin-')){
@@ -364,7 +401,7 @@ function activate(o){
    const result=I.explore(player,country,o.id);
    if(result==='items'){
     const loot=I.items(player);persist();
-    saveThen(()=>show('กล่องไอเทม',loot.map(([id,n])=>(DungeonRewardArt[id]?.name||id)+' ×'+n).join(' · '),[['เดินต่อ',close]]));
+    queueSave();show('กล่องไอเทม',loot.map(([id,n])=>(DungeonRewardArt[id]?.name||id)+' ×'+n).join(' · '),[['เดินต่อ',close]]);
    }else if(result){persist();if(result==='portal')openPortal(visit().pending);else openFrame(o.id);}
   }],['กลับ',close]]);
  }else if(o.id==='chest'){
@@ -373,7 +410,7 @@ function activate(o){
  }
 }
 function resumeAfterBattle(result){
- void avatar.sync(player).catch(console.error);reset();refreshHud();
+ persist();void avatar.sync(player).catch(console.error);refreshHud();
  if(result?.outcome==='first'&&!result.already)status('ได้รับคูปอง 10 ใบเข้าบัญชี');
  if(result?.outcome==='repeat'&&!result.already)status('ได้รับ 10,000 เหรียญ และผนึกนิรันดร์ 1 ชิ้น');
 }
@@ -384,7 +421,7 @@ addEventListener('message',e=>{
  if(e.origin!==location.origin)return;
  const message=e.data;
  if(['hudTop','hudBottom'].some(id=>e.source===$(id).contentWindow)){
-  if(message?.type!=='walk-menu'||frame||$('townDialog').open)return;
+  if(message?.type!=='walk-menu'||frame||saveContinuation||$('townDialog').open)return;
   const screen=message.screen;
   if(screen==='quests'){reset();$('dialogBody').replaceChildren();window.townQuests.show(true);}
   else if(screen==='coupon')coupon();
@@ -393,20 +430,26 @@ addEventListener('message',e=>{
  }
  if(e.source!==frame?.contentWindow)return;
  if(message?.type==='island-encounter-result'&&message.country===country&&message.id===kind){
-  const fresh=read(),record=I.state(fresh,country).visit?.last;
+  const fresh=read();
+  if(!fresh||fresh.code!==player.code)return;
+  const record=I.state(fresh,country).visit?.last;
   if(record?.id!==kind||record.result!==message.result)return;
-  player=fresh;frame.remove();frame=null;cooldown.set(kind,clock+4);
+  frame.remove();frame=null;syncPlayer();reset();cooldown.set(kind,clock+4);
   if(record.result==='lose')goHome(true);
-  else saveThen(resumeAfterBattle,kind==='boss'&&record.result==='win'?'island_boss_reward':null);
+  else if(kind==='boss'&&record.result==='win')saveThen(resumeAfterBattle,'island_boss_reward',{quiet:true});
+  else{resumeAfterBattle();queueSave();}
  }else if(kind==='menu'&&message?.type==='town-return'){
-  player=read();frame.remove();frame=null;reset();persist();void avatar.sync(player).catch(console.error);refreshHud();
+  frame.remove();frame=null;syncPlayer();reset();resumeAfterBattle();queueSave();
  }else if(kind==='menu'&&message?.type==='walk-teleport'&&Object.hasOwn(townProfiles.profiles,message.destination)){
-  player=read();frame.remove();frame=null;
+  frame.remove();frame=null;syncPlayer();
   exitIsland(()=>location.assign(townProfiles.entryURL(message.destination)));
  }
 });
 function update(dt){
- if(frame||$('townDialog').open||fusion.isOpen||DungeonFeedback.isOpen||window.WalkControls?.editing)return;
+ if(frame||$('townDialog').open||fusion.isOpen||DungeonFeedback.isOpen||window.WalkControls?.editing||
+    (saveContinuation&&saveContinuation.action!=='island_boss_reward'))return;
+ if(!saveContinuation)syncPlayer();
+ if(!visit())return;
  let x=joy.x,y=joy.y;
  if(keys.has('a')||keys.has('arrowleft'))x--;
  if(keys.has('d')||keys.has('arrowright'))x++;
@@ -424,13 +467,14 @@ function update(dt){
   phase+=dt*(running?12:8);
  }
  cam.x+=(p.x-cam.x)*Math.min(1,dt*10);cam.y+=(p.y-cam.y)*Math.min(1,dt*10);
+ if(saveContinuation)return;
  const safe=data.isSafe(p);
  const events=traps.update(dt,[{id:'player',position:p,alive:!safe&&player.hp>0}]);
  for(const event of events){
   if(event.kind==='armed')status('กับดัก'+DungeonTraps.types[event.trap.type].name+' · ออกจากวงภายใน 2 วินาที');
   else if(event.hit.includes('player')){
    const damage=DungeonTraps.apply(event.trap.type,player,WalkVitals.maximum(player).hp);
-   persist();reset();
+   persist();reset();queueSave();
    if(player.hp<=0){goHome(true);return;}
    void DungeonFeedback.trap(event.trap.type,damage?'-'+damage+' HP':'');
    return;
@@ -451,7 +495,12 @@ function tick(now){
  const dt=Math.min(.05,(now-last)/1000);last=now;clock+=dt;
  if(visit()){
   update(dt);
-  if(visit())draw();
+  if(visit()){
+   companion.sync(CompanionFollowers.first(player));companion.update(dt,p);
+   if(companion.key)canvas.dataset.companion=companion.key;else delete canvas.dataset.companion;
+   draw();
+  }
+  if(needsSave)void saveProgress();
   if(clock>=miniAt&&visit()){
    miniAt=clock+.15;drawMap(mini);
   }
@@ -465,11 +514,12 @@ $('interact').onclick=()=>{if(near)activate(near);};
 addEventListener('country-quick-teleport',()=>{
  if(!frame&&!$('townDialog').open)openFrame(null,'bag','teleportScroll');
 });
-$('places').onclick=()=>show(cfg.name,'สถานที่บนเกาะ · เดินเข้าใกล้จุดเพื่อสำรวจ',[
+$('places').onclick=()=>!saveContinuation&&show(cfg.name,'สถานที่บนเกาะ · เดินเข้าใกล้จุดเพื่อสำรวจ',[
  [cfg.port,()=>$('map').click()],...data.sites.map(site=>[site.name,()=>$('map').click()]),
  [cfg.bossName,()=>$('map').click()],['ปิด',close],
 ]);
 $('map').onclick=()=>{
+ if(saveContinuation)return;
  reset();show(cfg.name,'สีเขียว: ท่าเรือ · สีทอง: เมืองร้าง · สีแดง: บอส · สีขาว: คุณ',[['ปิดแผนที่',close]]);
  const map=document.createElement('canvas');map.width=410;map.height=370;map.style.width='100%';
  $('dialogBody').prepend(map);drawMap(map.getContext('2d'));
@@ -494,12 +544,15 @@ function steer(e){
 stick.onpointerdown=e=>{joy.id=e.pointerId;stick.setPointerCapture(e.pointerId);steer(e);};
 stick.onpointermove=steer;
 for(const type of ['pointerup','pointercancel','lostpointercapture'])stick.addEventListener(type,()=>{joy.x=joy.y=0;joy.id=null;$('stick').style.transform='';});
-addEventListener('pagehide',()=>{if(!frame&&visit())persist();});
+addEventListener('pagehide',event=>{
+ if(!frame&&!saveContinuation){syncPlayer();if(visit())persist();}
+ if(!event.persisted)companion.release();
+});
 $('title').textContent=cfg.name;document.title='Soulbeast · '+cfg.name;
 canvas.dataset.island=country;canvas.dataset.shadows=I.shadowCount;canvas.dataset.bandits=I.banditCount;
 canvas.dataset.ruins=data.sites.length;canvas.dataset.traps=traps.list.length;
 if(visit().last?.result==='lose')goHome(true);
 else if(visit().pending){if(visit().pending.kind==='portal')openPortal(visit().pending);else openFrame(visit().pending.id);}
-else if(online&&visit().cleared.boss&&!player.islandAccount?.active?.reward)saveThen(resumeAfterBattle,'island_boss_reward');
+else if(online&&visit().cleared.boss&&!player.islandAccount?.active?.reward)saveThen(resumeAfterBattle,'island_boss_reward',{quiet:true});
 refreshHud();requestAnimationFrame(tick);
 })().catch(error=>{console.error(error);const notice=document.getElementById('notice');notice.textContent='เปิดแผนที่เกาะไม่สำเร็จ กรุณาลองโหลดใหม่';notice.hidden=false;});

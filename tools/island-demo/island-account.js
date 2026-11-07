@@ -15,13 +15,13 @@ let connection;
 async function connect(){
  if(!owns(read()))throw Error('character_not_owned');
  if(!connection){
-  const api=await import('../../client/online-walk.mjs?v=island-account-1');
+  const api=await import('../../client/online-walk.mjs?v=island-account-2');
   connection=api.connectOnlineWalk();
  }
  return connection;
 }
-async function checkpoint(){
- await (await connect()).flush(true);
+async function checkpoint({background=false}={}){
+ await (await connect()).flush(true,!background);
  const player=read();
  if(!owns(player))throw Error('character_not_owned');
  return player;

@@ -108,7 +108,7 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
   }
  }
 
- function flush(strict = false) {
+ function flush(strict = false, drain = true) {
   backupActiveWalk(accountStorage??localStorage,sessionStorage,'flush');
   if(!strict&&Date.now()<nextRetryAt)return Promise.resolve();
   if (stoppedAt !== null) {
@@ -118,6 +118,7 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
   }
   pending ??= lock(saveWalk).finally(() => { pending = null; });
   if(!strict)return pending.catch(()=>{});
+  if(!drain)return pending;
   // An autosave already in flight may contain the inventory before a purchase.
   return pending.then(()=>lock(async()=>{
    while(true){
