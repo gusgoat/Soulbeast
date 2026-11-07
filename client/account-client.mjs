@@ -1,11 +1,11 @@
 import {backupActiveWalk} from './walk-save-merge.mjs?v=save-safe-20261106';
-import {ShopSession} from './topup-session.mjs';
+import {ShopSession} from './topup-session.mjs?v=admin-session-20261107';
 import {EmailSendGate,emailErrorText} from './topup-email.mjs';
 const BASE='https://zycmmtvubzyxduxqpuzl.supabase.co',KEY='sb_publishable_-m9RbNVXYhaKjUZYSGGdMQ_rrkCuEL6',STORE='soulbeast_shop_test_auth_v1';
 export const accountRealtimeConfig={url:BASE,key:KEY};
-export const accountError=e=>emailErrorText(e.code,e.message,e.status)||({invalid_credentials:'อีเมลหรือรหัสผ่านไม่ถูกต้อง',email_not_confirmed:'กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ',login_required:'กรุณาเข้าสู่ระบบอีกครั้ง',verified_account_required:'กรุณายืนยันอีเมลก่อนเริ่มเล่น',character_not_owned:'บัญชีนี้ไม่มีตัวละครที่เลือก','finish other battle':'จบการต่อสู้ก่อนลบตัวละคร',character_deleted:'ตัวละครนี้ถูกลบแล้ว',payment_pending:'มีรายการชำระเงินค้าง กรุณาจัดการรายการก่อนลบตัวละคร',delete_confirmation_required:'กรุณายืนยันก่อนลบตัวละคร',character_limit:'สร้างตัวละครครบ 5 ตัวแล้ว กรุณาลบตัวเก่าก่อนสร้างเพิ่ม',account_service_unavailable:'ระบบบัญชีขัดข้องชั่วคราว กรุณาลองอีกครั้ง',account_database_unavailable:'ระบบบัญชียังไม่พร้อม กรุณาลองภายหลัง',weak_password:'รหัสผ่านไม่ผ่านเกณฑ์ความปลอดภัย',same_password:'กรุณาเลือกรหัสผ่านใหม่',otp_expired:'ลิงก์หมดอายุหรือถูกใช้แล้ว กรุณาขอลิงก์ใหม่'})[e.code||e.message]||'เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง';
+export const accountError=e=>emailErrorText(e.code,e.message,e.status)||({invalid_credentials:'อีเมลหรือรหัสผ่านไม่ถูกต้อง',email_not_confirmed:'กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ',login_required:'กรุณาเข้าสู่ระบบอีกครั้ง',session_expired:'เซสชันถูกยกเลิกจากการเข้าสู่ระบบใหม่ กรุณาเข้าสู่ระบบอีกครั้ง',verified_account_required:'กรุณายืนยันอีเมลก่อนเริ่มเล่น',character_not_owned:'บัญชีนี้ไม่มีตัวละครที่เลือก','finish other battle':'จบการต่อสู้ก่อนลบตัวละคร',character_deleted:'ตัวละครนี้ถูกลบแล้ว',payment_pending:'มีรายการชำระเงินค้าง กรุณาจัดการรายการก่อนลบตัวละคร',delete_confirmation_required:'กรุณายืนยันก่อนลบตัวละคร',character_limit:'สร้างตัวละครครบ 5 ตัวแล้ว กรุณาลบตัวเก่าก่อนสร้างเพิ่ม',account_service_unavailable:'ระบบบัญชีขัดข้องชั่วคราว กรุณาลองอีกครั้ง',account_database_unavailable:'ระบบบัญชียังไม่พร้อม กรุณาลองภายหลัง',weak_password:'รหัสผ่านไม่ผ่านเกณฑ์ความปลอดภัย',same_password:'กรุณาเลือกรหัสผ่านใหม่',otp_expired:'ลิงก์หมดอายุหรือถูกใช้แล้ว กรุณาขอลิงก์ใหม่'})[e.code||e.message]||'เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง';
 const revokedSession = error => [400,401,403].includes(error.status) &&
- ['session_not_found','refresh_token_not_found','refresh_token_already_used','invalid_grant','login_required','user_not_found'].includes(error.code||error.message);
+ ['session_expired','session_not_found','refresh_token_not_found','refresh_token_already_used','invalid_grant','login_required','user_not_found'].includes(error.code||error.message);
 export function gameSessionId(token){
  try{
   const payload=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
@@ -31,10 +31,11 @@ function watchGameSession(client){
  setInterval(verify,30000);
 }
 export class AccountClient{
- constructor({storage,legacy,fetcher=fetch,lock=fn=>fn(),redirect=(globalThis.location?.pathname?.endsWith('/accounts-staging.html')?'https://gusgoat.github.io/Soulbeast/accounts-staging.html':'https://gusgoat.github.io/Soulbeast/accounts.html'),onChange=()=>{}}={}){
+ constructor({storage,legacy,gameSession=true,fetcher=fetch,lock=fn=>fn(),redirect=(globalThis.location?.pathname?.endsWith('/accounts-staging.html')?'https://gusgoat.github.io/Soulbeast/accounts-staging.html':'https://gusgoat.github.io/Soulbeast/accounts.html'),onChange=()=>{}}={}){
   // Native browser fetch rejects an AccountClient receiver (Illegal invocation).
   this.fetcher=(...args)=>fetcher(...args);this.redirect=redirect;this.onChange=onChange;this.user=null;this.recovery=false;this.gate=new EmailSendGate(legacy);
   this.sessions=new ShopSession({storage,legacy,lock,refresh:refresh_token=>this.request('/auth/v1/token?grant_type=refresh_token',{refresh_token})});
+  const sessionToken=this.sessions.token.bind(this.sessions);this.sessions.token=async(...args)=>{try{return await sessionToken(...args);}catch(error){if(gameSession&&revokedSession(error)&&!this.sessions.read())leaveEndedGameSession(this.sessions.storage);throw error;}};
  }
  async verifySession(){
   const check = token => {

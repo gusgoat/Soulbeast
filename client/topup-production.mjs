@@ -1,5 +1,5 @@
 import {withLoading} from './online-loading.mjs';
-import {connectAccounts,accountError} from './account-client.mjs';
+import {connectAccounts,accountError} from './account-client.mjs?v=admin-session-20261107';
 import {paymentApi,shopText,couponArtwork,couponCount,couponPrice} from './production-shop.mjs';
 document.getElementById('shopBootWait')?.remove();
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

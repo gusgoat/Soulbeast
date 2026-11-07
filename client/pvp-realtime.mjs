@@ -1,4 +1,4 @@
-import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=game-session-2';
+import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=admin-session-20261107';
 // The websocket carries only a wake-up hint. Battle state always comes from the API.
 export function createPvpRealtime({storage,onChange,loadClient=()=>import('https://esm.sh/@supabase/supabase-js@2.76.1')}) {
  let room='',channel=null,supabase=null,ready=false,generation=0,revision=0,authAt=0;

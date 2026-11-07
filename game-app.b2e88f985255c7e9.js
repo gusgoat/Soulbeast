@@ -4665,7 +4665,7 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
   walkEntryPending=true;walkEntryBusy=true;walkEntryError='';renderWalkEntry();
   try{
    await gsSave(true);if(state.saveConflict||!S.P?.gsAt)throw Error('save_conflict');
-   const {enterOnlineWalk}=await import('./client/online-walk.mjs?v=save-safe-20261106');
+   const {enterOnlineWalk}=await import('./client/online-walk.mjs?v=admin-session-20261107');
    enterOnlineWalk(S,SB_ENV,state.user.id);
   }catch(e){walkEntryError=state.errorText?.(e)||'ยังเข้าสู่ฉากเดินไม่ได้ กรุณาลองอีกครั้ง';}
   finally{walkEntryBusy=false;if(walkEntryError)renderWalkEntry();}
@@ -4674,6 +4674,7 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
   try{data=JSON.parse(localStorage.getItem(key())||'null');}catch{}
   const r=await state.client.game('load',{code},SB_ENV);
   const remoteRevision=Number(r.accountSaveAt||r.at);if(remoteOnly||new URLSearchParams(location.search).get('fresh')==='1'||data?.P?.code!==code||(!data.battle&&remoteRevision>Number(data.P.gsAt||0))){data=JSON.parse(r.data);data.P.gsAt=remoteRevision;}
+  if(!remoteOnly){const {offerUnsavedWalkRecovery}=await import('./client/walk-draft-recovery.mjs?v=admin-session-20261107');const recovered=await offerUnsavedWalkRecovery({snapshot:JSON.parse(r.data),owner:state.user.id,code,environment:SB_ENV,revision:remoteRevision});if(recovered)data=recovered;}
   if(r.account?.name)data.P.name=r.account.name;if(r.account?.renameAt)data.P.renameAt=r.account.renameAt;
   state.saveConflict=false;state.pendingSave=null;
   delete data.P.cpin;state.mode='playing';IMG={};GS.lastJson='';GS.lastAt=0;sbMarkReady(code);state.boot({S:data});save();
@@ -4733,7 +4734,7 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
   }catch(e){if(e.code==='save_conflict')state.saveConflict=true;return {ok:false,error:e.code||e.message};}
  };
  const previousSheetError=sheetError;sheetError=r=>r?.error==='save_conflict'?'พบเซฟใหม่จากอีกเครื่อง กรุณาเปิดตั้งค่าและโหลดเซฟใหม่ก่อน':previousSheetError(r);
- const originalBoot=boot;boot=()=>{S=blank();state.busy=true;ui();(async()=>{try{const m=await import('./client/account-client.mjs?v=save-safe-20261106');state.errorText=m.accountError;state.client=m.connectAccounts(()=>{if(!state.busy)task(async()=>{if(state.client.sessions.read()){const user=await state.client.identity();if(user.id===state.user?.id)return;S=blank();state.code='';state.user=null;await list();}else{S=blank();state.code='';state.user=null;state.mode='login';}});});
+ const originalBoot=boot;boot=()=>{S=blank();state.busy=true;ui();(async()=>{try{const m=await import('./client/account-client.mjs?v=admin-session-20261107');state.errorText=m.accountError;state.client=m.connectAccounts(()=>{if(!state.busy)task(async()=>{if(state.client.sessions.read()){const user=await state.client.identity();if(user.id===state.user?.id)return;S=blank();state.code='';state.user=null;await list();}else{S=blank();state.code='';state.user=null;state.mode='login';}});});
     state.client.redirect='https://gusgoat.github.io/Soulbeast/'+(SB_ENV==='live'?'accounts.html':'accounts.html?world=test');
     const hash=location.hash; if(hash){history.replaceState(null,'',location.pathname+location.search);await state.client.acceptCallback(hash);}
     if(state.client.sessions.read()){if(state.client.recovery){state.user=await state.client.identity();state.mode='recovery';}else {await list();if(new URLSearchParams(location.search).get('create')==='1'&&state.slotsUsed<characterLimit())beginCreate();}}

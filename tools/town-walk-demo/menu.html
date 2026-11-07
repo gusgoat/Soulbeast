@@ -3676,7 +3676,7 @@ const WALK_ONLINE=!!sessionStorage.getItem('soulbeast-online-walk-v1');
 const SHEET_URL=String(window.SHEET_URL||'').trim();
 let walkAccountConnection;
 async function getWalkAccountConnection(){
- return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=save-safe-20261106',location.href).href)).connectOnlineWalk(walkStorage);
+ return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=admin-session-20261107',location.href).href)).connectOnlineWalk(walkStorage);
 }
 async function walkAccountPost(packet){
  const {action,pin,cpin,...extra}=packet;

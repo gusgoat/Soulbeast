@@ -14,7 +14,7 @@ export class ShopSession{
    try{if(!used)throw Object.assign(Error('login_required'),{status:401});const next=await this.refresh(used);a={...next,expires_at:Number(next.expires_at)||Math.floor(this.now()/1000)+Number(next.expires_in||3600)};this.save(a);return a.access_token;}
    catch(error){const newer=this.read();if(newer?.access_token&&newer.refresh_token!==used)return newer.access_token;
     // A timeout, offline state, rate limit or server error is not a sign-out.
-    if([400,401,403].includes(error.status)&&(['refresh_token_not_found','refresh_token_already_used','invalid_grant','session_not_found','user_not_found'].includes(error.code)||error.message==='login_required'))this.save(null);
+    if([400,401,403].includes(error.status)&&(['refresh_token_not_found','refresh_token_already_used','invalid_grant','session_not_found','session_expired','user_not_found'].includes(error.code)||error.message==='login_required'))this.save(null);
     throw error;
    }
   });try{return await this.pending;}finally{this.pending=null;}
