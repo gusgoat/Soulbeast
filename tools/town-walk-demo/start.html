@@ -5859,7 +5859,15 @@ vBag=function(){return talesBag()+'<button class="btn full" data-a="taleBook">เน
 
 // Story effects operate only on offline forest combat and never change species/player baseline stats.
 const talesSealChance=sealChance;
-sealChance=function(e,pow){const base=talesSealChance(e,pow);if(pow===Infinity||!WorldTales.offline()||e.noSeal||e.temporary||B()?.kind==='taleTrial')return e.noSeal||B()?.kind==='taleTrial'?0:base;return clamp(base*(1+WorldTales.modifier('seal',e.types||[])),0,.97);};
+sealChance=function(e,pow){
+ const base=talesSealChance(e,pow);
+ if(e.noSeal||B()?.kind==='taleTrial')return 0;
+ if(pow===Infinity)return base;
+ const chance=WorldTales.offline()&&!e.temporary
+  ?clamp(base*(1+WorldTales.modifier('seal',e.types||[])),0,.97)
+  :base;
+ return SP[e.sp]?.legendary?chance/2:chance;
+};
 const talesHurt=hurt;
 hurt=function(u,d,...args){if(WorldTales.offline()&&u.side==='ally')d=Math.round(d*(1-WorldTales.modifier('guard')));return talesHurt(u,d,...args);};
 const talesStartBattle=startBattle;
