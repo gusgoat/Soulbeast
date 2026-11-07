@@ -1155,7 +1155,7 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
  if(sk.t==='heal'||sk.t==='buff'){
   let list=sk.tg==='team'?mates.filter(x=>x.hp>0||((sk.revAll)&&x.kind!=='player')):sk.tg==='self'?[u]:[atgt&&(atgt.hp>0||sk.rev)&&mates.includes(atgt)?atgt:u];
   const hm=(hasPas(u,'healer')?1.3:1)*((['pet','npcpet','summon'].includes(u.kind)||u.kind==='beast'&&u.side==='ally') ? .7 : ['player','human'].includes(u.kind)&&u.cls&&['druid','summoner'].includes(baseOf(u.cls))&&!(['pvp','raid','camp','guildwar','tower','world'].includes(B()?.kind)||B()?.towerRun) ? .7 : 1);
-  list.forEach(x=>{if(sk.t==='heal'){if(x.hp<=0){if(sk.rev||sk.revAll){x.hp=Math.round(x.st.hp*sk.pw/100);x.status={};blog(`${x.name} ฟื้นคืนชีพ!`);fxAdd(x,'คืนชีพ','good')}return}
+  list.forEach(x=>{if(sk.t==='heal'){if(x.hp<=0){if(sk.rev||sk.revAll){x.hp=Math.round(x.st.hp*sk.pw/100);x.status={};blog(`${x.name} ฟื้นคืนชีพ!`);fxAdd(x,'คืนชีพ','good');vfx('heal',x.id)}return}
    heal(x,(x.st.hp*sk.pw/100+eff(u,'matk')*.5)*hm);if(sk.cure)x.status={};vfx('heal',x.id)}
    if(sk.t==='buff')vfx('buff',x.id,{c:sk.charge?'#6f9cf0':'#d9b35b'});
    addBuffs(x,sk);if(sk.charge){x.charge=sk.charge;fxAdd(x,'×'+sk.charge,'mp')}});
@@ -1235,8 +1235,8 @@ function pvpSkill(id,inPvp=isBalancedPvp(),mode=null){const sk=SK[id];if(sk&&(mo
 function hitOne(u,sk,t,scale,areaCount=0){
  const dmgT=['p','m','h','auto'].includes(sk.t);
  const attackEl=effectiveElement(u,sk);const m=attackMultiplier(u,sk,t);
- if(m===0){blog(`ไม่มีผลต่อ ${t.name}`);fxAdd(t,'×0','muted');vfx('miss',t.id);return}
- if(!sk.acc||sk.acc<100)if(Math.random()*100>hitChance(u,t,sk)){blog(`${t.name} หลบได้`);fxAdd(t,'พลาด','muted');vfx('miss',t.id);return}
+ if(m===0){blog(`ไม่มีผลต่อ ${t.name}`);fxAdd(t,'×0','muted');vfx('miss',t.id,{source:u.id,skill:VSKID.get(sk)||sk._pvpId});return}
+ if(!sk.acc||sk.acc<100)if(Math.random()*100>hitChance(u,t,sk)){blog(`${t.name} หลบได้`);fxAdd(t,'พลาด','muted');vfx('miss',t.id,{source:u.id,skill:VSKID.get(sk)||sk._pvpId});return}
  const tx=hasPas(u,'toxin')?1.5:1;
  if(!dmgT){if(class10BlockHit(u,sk,t,false))return;vfx('debuff',t.id,{el:sk.el,c:sk.el?null:'#a07ad8'});addBuffs(t,{bf:sk.bf,tn:sk.tn});if(sk.bf)fxAdd(t,'↓','bad');if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*tx);return}
  const type=sk.t==='auto'?u.atkType:sk.t;if((type==='p'&&t.immune==='p')||(type==='m'&&t.immune==='m')){blog(t.name+' ป้องกันสมบูรณ์');vfx('buff',t.id);return}if(class10BlockHit(u,sk,t,true))return;if(type==='h'&&t.immune)scale*=.5;let atk,def;
@@ -1251,7 +1251,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
  d*=hasPas(t,'counter50')?.5:hasPas(t,'reflect50')?.8:1;d*=classDefenseDamageFactor(u,t);d=Math.max(1,Math.round(d));if(classDefenseAbsorb(u,sk,t,d))return;
  if(hasPas(t,'sturdy')&&t.hp===t.st.hp&&d>=t.hp&&t.hp>1){d=t.hp-1;blog(`${t.name} อึดทนไว้ได้!`)}
  blog(`→ ${t.name} ${d} ดาเมจ${crit?' คริติคอล!':''}${m>1?' ได้ผลดีมาก':m<1?' ไม่ค่อยได้ผล':''}`);
- vfx('hit',t.id,{skill:VSKID.get(sk)||sk._pvpId,el:sk.el,phys:type!=='m',crit});
+ vfx('hit',t.id,{source:u.id,skill:VSKID.get(sk)||sk._pvpId,el:sk.el,phys:type!=='m',crit});
  if(isWorldBattle()&&t.immortalWorld)B().wbDamageOwner=u.owner;hurt(t,d);if(sk.dot&&t.hp>0){t.dots=t.dots||[];t.dots=t.dots.filter(x=>x.n!==sk.dot.n);t.dots.push({...sk.dot,rate:sk.dot.rate*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):1)})}
  const ls=(sk.ls||0)+(hasPas(u,'lifesteal')?.15:0);if(ls&&u.hp>0)heal(u,d*ls);
  if(hasPas(u,'manadrain'))u.mp=Math.min(u.st.mp,u.mp+Math.round(d*.08));
@@ -4007,13 +4007,23 @@ communitySocial_ = function(d) {
 register(EQ);})();
 // Included inside createEngine by build-dungeon-party-engine.mjs.
 // Room transactions own authentication, inventory and save persistence.
+function partySkillTargets(b,sk){
+ if(['heal','buff'].includes(sk.t)){
+  return sk.tg==='ally'?b.allies.filter(u=>u.hp>0||sk.rev&&u.kind!=='player'):null;
+ }
+ if(!['p','m','h','auto','status','debuff'].includes(sk.t))return null;
+ const enemies=b.enemies.filter(u=>u.hp>0&&(sk.all||!class10Invisible(u)));
+ if(sk.all||sk.rt||sk.summon)return enemies;
+ const taunt=enemies.find(u=>u.taunt>0);
+ return taunt?[taunt]:enemies;
+}
 const partyCombat = {
  summon(b,raw,code,uid,friend){const previous=S;try{S={P:raw,battle:b};const hero=b.allies.find(u=>u.id===b.partyPending?.actor&&u.ownerCode===code&&u.kind==='player'&&u.hp>0),pet=raw.pets?.find(p=>p.uid===uid);if(!hero||!pet||!raw.carried?.includes(uid)||pet.hp<=0||b.allies.some(u=>u.ownerCode===code&&u.kind==='pet'&&u.uid===uid))throw Error('invalid_summon');
   const own=b.allies.filter(u=>u.ownerCode===code),pets=own.filter(u=>u.kind==='pet'&&u.hp>0),selected=own.find(u=>u.id===friend&&u.kind==='pet');
   let old=own.find(u=>u.kind==='pet'&&u.hp<=0);if(!old&&(pets.length>=Math.min(3,clsSum(raw.cls))||own.length>=4))old=selected||pets[0];if(!old&&own.length>=4)throw Error('invalid_summon');
   const n=petUnit(pet);Object.assign(n,{id:hero.id+'_pet_'+uid+'_'+(b.summonSerial=(b.summonSerial||0)+1),side:'ally',owner:hero.owner,ownerCode:code,hp:pet.hp,mp:pet.mp,status:structuredClone(pet.ailments||{})});
   if(old){b.retiredUnits??=[];b.retiredUnits.push(old);b.allies[b.allies.indexOf(old)]=n;b.queue=b.queue.map(id=>String(id).replace(/\*$/,'')===old.id?String(id).replace(old.id,n.id):id);if(old.hp<=0)b.queue.push(n.id);}else{b.allies.push(n);b.queue.push(n.id);}
-  raw.party=b.allies.filter(u=>u.ownerCode===code&&u.kind==='pet').map(u=>u.uid);blog(hero.name+' เรียก '+n.name+' ออกจากผนึก');return {summoned:n.id};
+  raw.party=b.allies.filter(u=>u.ownerCode===code&&u.kind==='pet').map(u=>u.uid);blog(hero.name+' เรียก '+n.name+' ออกจากผนึก');return {summoned:n.id,actor:hero.id};
  }finally{S=previous;}},
  inventory(raw,op=null,data={}){const previous=S;try{S={P:raw};const P=raw;P.carried??=(P.party||[]).slice();P.owned??=[];P.eq??={};P.items??={};
   const fail=()=>{throw Error('invalid_inventory_action');};
@@ -4156,8 +4166,10 @@ const partyCombat = {
      if(control.manualOwners?.includes(u.ownerCode)&&!control.command){
       b.partyPending={actor:u.id,ownerCode:u.ownerCode,extra,turn:b.turns||0};
       const choices=[...new Set([...(u.skills||[]),'rest'])].filter(id=>SK[id]).map(id=>{
-       const sk=SK[id];return {id,name:sk.n,mp:costOf(u,sk),type:sk.t,revive:!!(sk.rev||sk.revAll),
-        disabled:!!cooldownOf(u,id)||costOf(u,sk)>u.mp||!!(sk.gc&&S.P.gold<sk.gc*u.lv)};
+       const sk=SK[id],targets=partySkillTargets(b,sk),cooldown=cooldownOf(u,id);
+       return {id,name:sk.n,mp:costOf(u,sk),type:sk.t,revive:!!(sk.rev||sk.revAll),cooldown,
+        targets:targets?.map(target=>target.id),
+        disabled:!!cooldown||costOf(u,sk)>u.mp||!!(sk.gc&&S.P.gold<sk.gc*u.lv)||targets?.length===0};
       });
       const sealable=e=>control.allowCapture&&e.kind==='beast'&&e.hp>0&&!e.boss&&!e.dungeonBoss&&!e.bossHelper&&!e.dungeonMinion&&!e.owner&&!e.temporary&&!SP[e.sp]?.noseal&&!SP[e.sp]?.legendary&&!SP[e.sp]?.solar;
       const seals=u.kind==='player'?Object.entries(control.inventories?.[u.ownerCode]||{}).filter(([id,n])=>n>0&&CON[id]?.seal).map(([id,count])=>({id,count,name:CON[id].n})):[];
@@ -4196,10 +4208,12 @@ const partyCombat = {
        inv[cmd.item]--;blog(u.name+' ใช้ '+it.n+' กับ '+t.name);vfx('heal',t.id,{medicine:cmd.item});skill='item:'+cmd.item;
       }else{
       if(!sk||(!(u.skills||[]).includes(cmd.skill)&&cmd.skill!=='rest')||cooldownOf(u,cmd.skill)||costOf(u,sk)>u.mp||sk.gc&&S.P.gold<sk.gc*u.lv)throw Error('invalid_skill');
+      const allowed=partySkillTargets(b,sk);
       const target=b.enemies.find(t=>t.id===cmd.target&&t.hp>0);
-      const friend=b.allies.find(t=>t.id===cmd.friend);
-      if(['p','m','h','auto','status','debuff'].includes(sk.t)&&!target)throw Error('invalid_target');
-      if(['heal','buff'].includes(sk.t)&&(!friend||friend.hp<=0&&!sk.rev&&!sk.revAll))throw Error('invalid_target');
+      const allyTarget=['heal','buff'].includes(sk.t)&&sk.tg==='ally';
+      const friend=allyTarget?b.allies.find(t=>t.id===cmd.friend):u;
+      const aim=allyTarget?friend:target;
+      if(allowed&&!allowed.includes(aim))throw Error('invalid_target');
       skill=cmd.skill;if(!act(u,skill,target,friend))throw Error('invalid_skill');
       }
      } else {

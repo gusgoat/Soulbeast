@@ -5,7 +5,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=
 import {partyScene} from './online-party-scene.mjs';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
-import {partyRunController} from './online-party-controller.mjs?v=fast-combat-20261106';
+import {partyRunController} from './online-party-controller.mjs?v=party-combat-parity-20261107';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
@@ -53,13 +53,20 @@ addEventListener('message',event=>{
  if(message.type==='party-battle-done'&&shownBattle.status!=='active'){
   seenBattle=shownBattle.id;drawBattle(null);window.focus();return;
  }
- if(message.type==='party-battle-presented'){void controller.command('battleReady',{battle:shownBattle.id,turn:message.turn});return;}
+ if(message.type==='party-battle-presented'){void controller.command('battleReady',{battle:shownBattle.id,turn:message.turn,sequence:message.sequence});return;}
  if(shownBattle.status!=='active')return;
  if(message.type==='party-battle-auto')void controller.command('battleAuto',{battle:shownBattle.id,enabled:!!message.enabled});
  if(message.type==='party-battle-command'){
   const turn=shownBattle.waiting;
-  if(turn?.ownerCode!==connection.code||message.turn!==turn.turn||message.actor!==turn.actor)return;
-  void controller.command('battleCommand',{battle:shownBattle.id,actor:turn.actor,turn:turn.turn,skill:message.skill,item:message.item,seal:message.seal,escape:message.escape,swap:message.swap,target:message.target,friend:message.friend});
+  const battleId=shownBattle.id;
+  const reply=ok=>{
+   if(shownBattle?.id===battleId)battleFrame.contentWindow.postMessage({type:'party-battle-command-result',battle:battleId,request:message.request,ok},location.origin);
+  };
+  if(turn?.ownerCode!==connection.code||message.turn!==turn.turn||message.actor!==turn.actor){reply(false);return;}
+  void controller.command('battleCommand',{battle:battleId,actor:turn.actor,turn:turn.turn,presentationVersion:2,skill:message.skill,item:message.item,seal:message.seal,escape:message.escape,swap:message.swap,target:message.target,friend:message.friend}).then(ok=>{
+   reply(ok);
+   if(!ok)void controller.refresh();
+  });
  }
 });
 function drawBattle(run){
@@ -74,7 +81,7 @@ function drawBattle(run){
  if(shownBattle?.id!==run.id){
   clearTimeout(soloFinishTimer);soloFinishTimer=null;
   battleFrameReady=false;visibleBattleId=null;
-  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-controls-2-20261107&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-combat-parity-20261107&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
  }
  shownBattle=run;$('battle').hidden=false;sendBattle();
 

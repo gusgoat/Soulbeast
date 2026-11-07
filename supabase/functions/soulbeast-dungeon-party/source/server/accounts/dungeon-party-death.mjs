@@ -2,7 +2,8 @@ import {settleEnemy,settleBoss} from '../../tools/labyrinth-demo/online-party-ru
 // evacuate must save the normal respawn and delete the room membership in the
 // SAME transaction. It must also remove the sealer and pets from active combat.
 export async function evacuateDeadMembers(room,evacuate){
- const dead=room.members.filter(p=>p.hp<=0);
+ const presenting=Object.values(room.battles||{}).filter(battle=>battle.presentation);
+ const dead=room.members.filter(p=>p.hp<=0&&!presenting.some(battle=>battle.participants.includes(p.code)));
  if(dead.length&&!evacuate)throw Error('respawn_adapter_required');
  for(const member of dead)await departPartyMember(room,member,'death',await evacuate(room,member));
  return dead.map(p=>p.code);

@@ -30,7 +30,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
  async function drain(){if(busy||closed||!pendingState)return;const next=pendingState;pendingState=null;return lane(()=>refresh(next));}
  function manualWait(){
   const w=snapshot?.battle?.waiting;
-  return snapshot?.battle?.status==='active'&&w&&!snapshot.autoPlayers?.[w.ownerCode]&&w.deadline>snapshot.serverTime+Math.max(0,Date.now()-snapshotAt)+200;
+  return snapshot?.battle?.status==='active'&&!snapshot.battle.presentation&&w&&!snapshot.autoPlayers?.[w.ownerCode]&&w.deadline>snapshot.serverTime+Math.max(0,Date.now()-snapshotAt)+200;
  }
  async function readStatus(){
   if(reading||closed)return false;reading=true;
@@ -62,7 +62,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    if(snapshot.departure||snapshot.state==='closed')return;
    if(snapshot.battle?.status==='active'){
     if(!canAdvanceBattle(snapshot.battle))return refresh();
-    if(snapshot.battle.loading?.pending?.includes(connection.code)){const result=await connection.run(roomId,'battleReady',{battle:snapshot.battle.id});await refresh(result.snapshot);return;}
+    if(snapshot.battle.loading?.pending?.includes(connection.code)){const result=await connection.run(roomId,'battleReady',{battle:snapshot.battle.id,presentationVersion:2});await refresh(result.snapshot);return;}
    }
    if(localExploration){
     // Advance my encounter directly. A failing unrelated solo battle must not

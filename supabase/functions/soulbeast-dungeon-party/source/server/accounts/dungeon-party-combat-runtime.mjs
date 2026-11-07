@@ -30,13 +30,36 @@ export function partyCombatRuntime({engine,soloEnemies,now=()=>Date.now(),turnMs
   }
  }
  function controls(room,run){return {allowCapture:run.kind==='solo'&&room.dungeon.enemies[run.enemyId]?.kind==='shadow',allowEscape:run.kind==='solo',players:Object.fromEntries(room.members.map(m=>[m.code,m.save.P])),manualOwners:manual?room.members.filter(m=>!room.autoPlayers?.[m.code]).map(m=>m.code):[],inventories:Object.fromEntries(room.members.map(m=>[m.code,m.save.P.items||{}]))};}
+ function present(room,run,step,time,remaining){
+  if(!run.battle.effects?.length)return;
+  run.effectSequence=(run.effectSequence??run.battle.turns)+1;
+  run.effectActor=step.actor||run.battle.cur;
+  run.effectSkill=step.skill;
+  run.presentation={
+   turn:run.battle.turns,sequence:run.effectSequence,remaining,deadline:time+20000,
+   pending:run.participants.filter(code=>room.members.some(m=>m.code===code)&&!run.presentationExpired?.includes(code)&&
+    (remaining===undefined||run.presentationClients?.includes(code))),
+  };
+ }
  function finishStep(room,run,step,time){
   sync(room,run);
-  if(!step.waiting&&run.battle.effects?.length)run.presentation={turn:run.battle.turns,pending:run.participants.filter(code=>room.members.some(m=>m.code===code&&m.hp>0)&&!run.presentationExpired?.includes(code)),deadline:time+20000};
+  present(room,run,step,time,step.waiting?12000:undefined);
   if(step.waiting){run.waiting={...step.waiting,deadline:time+12000};return;}
   delete run.waiting;run.nextTurnAt=time+turnMs;
   if(step.result){run.status='finished';run.result=step.result;run.finishedAt=time;}
   if(run.status==='finished')for(const m of room.members)if(run.participants.includes(m.code))m.exploring=m.hp>0;
+ }
+ function releasePresentation(room,run,time){
+  const p=run.presentation;
+  if(!p)return false;
+  p.pending=p.pending.filter(code=>room.members.some(m=>m.code===code));
+  if(p.pending.length&&time<p.deadline)return true;
+  if(p.pending.length)run.presentationExpired=[...new Set([...(run.presentationExpired||[]),...p.pending])];
+  delete run.presentation;
+  if(!run.waiting||p.remaining===undefined)return false;
+  run.waiting.deadline=time+p.remaining;
+  if(room.autoPlayers?.[run.waiting.ownerCode])finishStep(room,run,engine.step(run.battle,run.wallets,controls(room,run)),time);
+  return true;
  }
  function beginWhenReady(room,run){
   if(!run.loading)return true;
@@ -46,15 +69,42 @@ export function partyCombatRuntime({engine,soloEnemies,now=()=>Date.now(),turnMs
   delete run.loading;run.nextTurnAt=now()+turnMs;delete run.waiting;return true;
  }
  return {
-  async ready(room,run,actor,data={}){if(run.presentation&&data.turn===run.presentation.turn){run.presentation.pending=run.presentation.pending.filter(code=>code!==actor);run.presentationExpired=run.presentationExpired?.filter(code=>code!==actor);}if(run.loading){run.loading.pending=run.loading.pending.filter(code=>code!==actor);beginWhenReady(room,run);}},
+  async ready(room,run,actor,data={}){
+   if(data.presentationVersion===2&&run.participants.includes(actor)&&!run.presentationClients?.includes(actor)){
+    (run.presentationClients??=[]).push(actor);
+   }
+   const p=run.presentation;
+   if(p&&data.turn===p.turn&&(data.sequence===p.sequence||data.sequence===undefined&&p.remaining===undefined)){
+    p.pending=p.pending.filter(code=>code!==actor);
+    run.presentationExpired=run.presentationExpired?.filter(code=>code!==actor);
+    if(!p.pending.length)releasePresentation(room,run,now());
+   }
+   if(run.loading){run.loading.pending=run.loading.pending.filter(code=>code!==actor);beginWhenReady(room,run);}
+  },
   async choose(room,run,actor,data){
    if(!beginWhenReady(room,run)||run.status!=='active'||!run.waiting||run.waiting.ownerCode!==actor)throw Error('not_your_turn');
+   if(run.presentation)throw Error('battle_presenting');
    if(now()>=run.waiting.deadline){
     room.autoPlayers??={};room.autoPlayers[actor]=true;
     finishStep(room,run,engine.step(run.battle,run.wallets,controls(room,run)),now());
     return {timedOut:true};
    }
-   if(data.swap!==undefined){if(data.actor!==run.waiting.actor||data.turn!==run.waiting.turn)throw Error('stale_turn');const member=room.members.find(m=>m.code===actor),deadline=run.waiting.deadline;sync(room,run);engine.summon(run.battle,member.save.P,actor,data.swap,data.friend);const pending=engine.step(run.battle,run.wallets,controls(room,run));if(!pending.waiting)throw Error('invalid_summon');run.waiting={...pending.waiting,deadline};sync(room,run);return {accepted:true};}
+   if(data.swap!==undefined){
+    if(data.actor!==run.waiting.actor||data.turn!==run.waiting.turn)throw Error('stale_turn');
+    const member=room.members.find(m=>m.code===actor),deadline=run.waiting.deadline;
+    sync(room,run);
+    const summoned=engine.summon(run.battle,member.save.P,actor,data.swap,data.friend);
+    const pending=engine.step(run.battle,run.wallets,controls(room,run));
+    if(!pending.waiting)throw Error('invalid_summon');
+    run.waiting={...pending.waiting,deadline};
+    sync(room,run);
+    if(data.presentationVersion===2){
+     if(!run.presentationClients?.includes(actor))(run.presentationClients??=[]).push(actor);
+     run.battle.effects=[{k:'buff',id:summoned.summoned,source:summoned.actor,skill:'summon:party'}];
+     present(room,run,{actor:summoned.actor,skill:'summon:party'},now(),Math.max(0,deadline-now()));
+    }
+    return {accepted:true};
+   }
    const step=engine.step(run.battle,run.wallets,{...controls(room,run),command:{...data,ownerCode:actor}});
    finishStep(room,run,step,now());return {accepted:true};
   },
@@ -63,7 +113,7 @@ export function partyCombatRuntime({engine,soloEnemies,now=()=>Date.now(),turnMs
    room.autoPlayers??={};room.autoPlayers[actor]=enabled;
    // Disabling auto never grants a fresh 12 seconds to an existing turn.
    if(!beginWhenReady(room,run))return;
-   if(enabled&&run.waiting?.ownerCode===actor)finishStep(room,run,engine.step(run.battle,run.wallets,controls(room,run)),now());
+   if(enabled&&!run.presentation&&run.waiting?.ownerCode===actor)finishStep(room,run,engine.step(run.battle,run.wallets,controls(room,run)),now());
   },
   async createSolo(room,member,enemy,id) {
    const enemyId=Object.keys(room.dungeon.enemies).find(key=>room.dungeon.enemies[key]===enemy);
@@ -71,9 +121,8 @@ export function partyCombatRuntime({engine,soloEnemies,now=()=>Date.now(),turnMs
   },
   async createBoss(room,enemies,id){return start(room,room.members.filter(m=>m.hp>0),enemies,id,'boss');},
   async advance(room,run) {
-   if(run.status!=='active'||!beginWhenReady(room,run))return;
    const time=now();
-   if(run.presentation){run.presentation.pending=run.presentation.pending.filter(code=>room.members.some(m=>m.code===code&&m.hp>0));if(run.presentation.pending.length&&time<run.presentation.deadline)return;if(run.presentation.pending.length)run.presentationExpired=[...new Set([...(run.presentationExpired||[]),...run.presentation.pending])];delete run.presentation;}
+   if(releasePresentation(room,run,time)||run.status!=='active'||!beginWhenReady(room,run))return;
    if(run.waiting){
     if(time<run.waiting.deadline)return;
     room.autoPlayers??={};room.autoPlayers[run.waiting.ownerCode]=true;

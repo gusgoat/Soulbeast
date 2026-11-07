@@ -3,12 +3,12 @@ const pick=(value,keys)=>Object.fromEntries(keys.filter(k=>value?.[k]!==undefine
 export function partyBattleSnapshot(run){
  if(!run)return null;
  const b=run.battle;
- return {...pick(run,['id','kind','enemyId','participants','status','result','settled','nextTurnAt','finishedAt','waiting','rewards','loading','presentation']),
-  battle:b?{...pick(b,['round','turns','cur']),
+ return {...pick(run,['id','kind','enemyId','participants','status','result','settled','nextTurnAt','finishedAt','waiting','rewards','loading','presentation','effectSequence','effectActor','effectSkill']),
+  battle:b?{...pick(b,['round','turns','cur','queue']),
    allies:(b.allies||[]).map(publicUnit),enemies:(b.enemies||[]).map(publicUnit),
    log:(b.log||[]).slice(-20),effects:(b.effects||[]).slice(-32)}:null};
 }
-function publicUnit(u){return pick(u,['id','ownerCode','side','kind','name','cls','gender','sp','evo','img','lv','hp','mp','st','status','buffs','taunt','boss','bossHelper','temporary','captured']);}
+function publicUnit(u){return pick(u,['id','ownerCode','side','kind','name','cls','gender','sp','evo','img','lv','hp','mp','st','types','stab','form','status','buffs','taunt','boss','bossHelper','temporary','captured','class10Barrier','archerVeil','elementalBarrierHits']);}
 // Explicit allowlist: room storage also contains saves, credentials and receipts.
 // Never serialize that storage object directly to a player or broadcast channel.
 export function partySnapshot(room,code,serverTime){

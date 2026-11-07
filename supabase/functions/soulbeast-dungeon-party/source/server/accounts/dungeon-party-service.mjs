@@ -43,6 +43,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
     if(data.position&&me.exploring)acceptLocalPosition(room,me,data,await combat.navigation(room));
    }
    async function finishBattle(battle){
+    if(battle.presentation)return;
     await evacuateDeadMembers(room,combat.evacuate);
     if(battle.status==='finished'&&!battle.settled){
      const changed=battle.kind==='boss'?settleBoss(floor,battle.id,battle.result):settleEnemy(floor,battle.enemyId,battle.id,battle.result);
@@ -81,7 +82,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
      if(action==='pulse'){
       if(!room.localExploration&&data.movement&&me.exploring&&!Object.values(room.battles||{}).some(b=>b.status==='active'&&b.participants.includes(actor)))
        movePartyMember(room,me,data.movement,now(),await combat.navigation(room),await combat.movementSpeed(room,me));
-      for(const battle of Object.values(room.battles||{}))if(battle.status==='active'){
+      for(const battle of Object.values(room.battles||{}))if(battle.status==='active'||battle.presentation){
        await combat.advance(room,battle);await finishBattle(battle);
       }
      }
@@ -141,7 +142,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
     case 'tick':{
      const battle=room.battles?.[data.battle];
      if(!battle||!battle.participants.includes(actor))throw Error('battle_not_member');
-     if(battle.status!=='active'){result={battle:partyBattleSnapshot(battle)};break;}
+     if(battle.status!=='active'&&!(battle.presentation&&['battleReady','tick'].includes(action))){result={battle:partyBattleSnapshot(battle)};break;}
      // Advance only turns due by server time; manual turns retain their deadline.
      if(action==='battleReady')await combat.ready(room,battle,actor,data);
      else if(action==='battleCommand')await combat.choose(room,battle,actor,data);

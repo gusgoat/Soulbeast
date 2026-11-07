@@ -3,7 +3,7 @@ const publicErrors=new Set(['invalid_inventory_action','login_required','charact
  'trap_unavailable','trap_not_due','trap_out_of_reach','enemy_unavailable','already_fighting','boss_battle_active','enemy_out_of_reach','door_out_of_reach',
  'floor_quota_incomplete','boss_out_of_reach','boss_door_closed','boss_unavailable',
  'battle_not_member','stairs_out_of_reach','boss_not_defeated','player_defeated','bad_request_id','request_mismatch',
- 'movement_wrong_floor','bad_movement','not_your_turn','stale_turn','invalid_skill','invalid_item','invalid_capture','invalid_summon','invalid_escape','pet_capacity','invalid_target','invalid_auto_mode','chest_locked','chest_out_of_reach','spring_out_of_reach']);
+ 'movement_wrong_floor','bad_movement','not_your_turn','stale_turn','battle_presenting','invalid_skill','invalid_item','invalid_capture','invalid_summon','invalid_escape','pet_capacity','invalid_target','invalid_auto_mode','chest_locked','chest_out_of_reach','spring_out_of_reach']);
 export function dungeonPartyHttp({verifyToken,command,origins,environment,report=()=>{}}){
  const allowed=new Set(origins);
  return async request=>{
