@@ -1,0 +1,9 @@
+#islandFerryPreview{margin:0 0 12px;display:grid;gap:8px}
+#islandFerryPreview img{display:block;width:100%;height:clamp(116px,24dvh,222px);object-fit:cover;border:1px solid #b7a56b99;border-radius:10px;box-sizing:border-box}
+#islandFerryPreview details{min-width:0;border:1px solid #b7a56b55;border-radius:8px;background:#092733;color:#fff0c7}
+#islandFerryPreview summary{cursor:pointer;padding:8px 10px;font-size:13px;line-height:1.5;touch-action:pan-y}
+#islandFerryPreview summary:focus-visible,.island-ferry-pools:focus-visible{outline:2px solid #f4d88e;outline-offset:-2px}
+.island-ferry-pools{display:grid;gap:5px;padding:0 7px 7px;max-height:min(31dvh,260px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+#islandFerryPreview .island-ferry-pools p{font-size:12px;margin:0 2px 2px}
+.island-ferry-pools ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr));gap:4px 8px;margin:0;padding:4px 8px 8px 22px}
+.island-ferry-pools li{font-size:12px;color:#eceddf;overflow-wrap:anywhere;line-height:1.55}

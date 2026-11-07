@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soulbeast · เกาะสามอาณาจักร</title>
+<link rel="stylesheet" href="../town-walk-demo/style.css?v=close-overview-20261103">
+<link rel="stylesheet" href="../hemant-walk-demo/style.css?v=world-polish-20261103">
+<link rel="stylesheet" href="../town-walk-demo/world-quests.css?v=quest-tracking-1">
+<link rel="stylesheet" href="../town-walk-demo/device-controls.css?v=world-polish-20261103">
+<link rel="stylesheet" href="../town-walk-demo/walk-skin.css?v=world-polish-20261103">
+<link rel="stylesheet" href="../town-walk-demo/dialogue-skin.css?v=world-polish-20261103">
+<link rel="stylesheet" href="../hemant-walk-demo/fusion.css?v=fusion-catalog-20261104">
+<link rel="stylesheet" href="../town-walk-demo/social-scene.css">
+<link rel="stylesheet" href="island.css?v=3"></head>
+<body data-walk-scene="island">
+<canvas id="world" aria-label="ฉากเดินบนเกาะ"></canvas>
+<section class="location"><span>✦ น่านน้ำสามอาณาจักร ✦</span><h1 id="title">เกาะสามอาณาจักร</h1></section>
+<aside class="map" aria-label="แผนที่ย่อ"><button id="map" type="button" aria-label="ดูแผนที่เกาะ"><canvas id="mini" width="180" height="180"></canvas></button><small id="area"></small></aside>
+<div class="tools"><button id="mapToggle" aria-label="ดูแผนที่เกาะทั้งหมด">▧</button><button id="places" aria-label="สถานที่บนเกาะ">☷</button></div>
+<p id="notice" role="status" hidden></p>
+<div class="bottom-shade"></div>
+<section class="joystick-wrap"><div id="joystick" role="application" aria-label="จอยสติ๊กเดินทาง 8 ทิศทาง"><span class="tick n">⌃</span><span class="tick s">⌄</span><span class="tick e">›</span><span class="tick w">‹</span><div id="stick">✦</div></div><small>ลากน้อยเดิน · ลากไกลวิ่ง · ปล่อยหยุด</small></section>
+<div class="actions"><button id="interact" type="button" disabled><span>◇</span><small>สำรวจ</small></button></div>
+<iframe class="walk-hud hud-top" id="hudTop" title="แถบสถานะผู้ผนึก" src="../town-walk-demo/hud.html?edge=top&v=world-polish-20261103"></iframe>
+<iframe class="walk-hud hud-bottom" id="hudBottom" title="เมนูหลัก" src="../town-walk-demo/hud.html?edge=bottom&v=world-polish-20261103"></iframe>
+<dialog id="townDialog"><h2 id="dialogTitle"></h2><div id="dialogBody"></div><p id="dialogText"></p><div id="dialogChoices"></div></dialog>
+<script src="island-rules.js?v=4"></script>
+<script src="../town-walk-demo/hud-vitals.js"></script>
+<script src="preview-profile.js?v=3"></script>
+<script src="../hemant-walk-demo/country-data.js"></script>
+<script src="../town-walk-demo/town-profiles.js"></script>
+<script src="../town-walk-demo/sealer-sprite-catalog.js"></script>
+<script src="../town-walk-demo/sealer-sprites.js?v=all-scenes-smooth-20261103"></script>
+<script src="../town-walk-demo/walk-audio-catalog.js"></script>
+<script src="../town-walk-demo/walk-audio.js?v=country-teleport-button-1"></script>
+<script src="../hemant-walk-demo/render-budget.js"></script>
+<script src="../rare-beast-walk-demo/rare-boss-sprites.js?v=island-boss-walk-1"></script>
+<script src="../labyrinth-demo/traps.js?v=hidden-runes-20261103"></script>
+<script src="../labyrinth-demo/reward-art.js?v=1"></script><script src="../labyrinth-demo/feedback.js?v=1"></script>
+<script src="../town-walk-demo/npc-dialogue.js?v=world-polish-20261103"></script>
+<script src="../town-walk-demo/quest-engine.js?v=quest-tracking-1"></script>
+<script src="../town-walk-demo/world-quests-data.js?v=main-story-20261103"></script>
+<script src="../town-walk-demo/world-quests-ui.js?v=quest-tracking-1"></script>
+<script src="../town-walk-demo/device-controls.js"></script><script src="../town-walk-demo/walk-controls.js?v=world-polish-20261103"></script>
+<script src="../hemant-walk-demo/fusion-rules.js?v=owned-beasts-20261104"></script>
+<script src="../hemant-walk-demo/fusion-sprites.js"></script>
+<script src="../hemant-walk-demo/fusion.js?v=island-1"></script>
+<script src="../hemant-walk-demo/pursuit.js"></script>
+<script src="../hemant-walk-demo/encounters.js"></script>
+<script src="patrols.js?v=2"></script>
+<script src="world.js?v=8"></script>
+<script src="../hemant-walk-demo/repellent.js?v=stack-time-1"></script><script src="../hemant-walk-demo/quick-items.js?v=island-1"></script>
+</body></html>
