@@ -1,4 +1,4 @@
-import {connectAccounts} from './account-client.mjs?v=admin-session-20261107';
+import {connectAccounts,accountRealtimeConfig} from './account-client.mjs?v=admin-session-20261107';
 import {connectOnlineWalk} from './online-walk.mjs?v=admin-session-20261107';
 import {gameContext} from './kingdom-boss-feed.mjs?v=kingdom-boss-20261107';
 
@@ -15,6 +15,27 @@ function drawBossMarker(context,x,y,radius){
  context.stroke();
 }
 
+function drawBossHealth(context,x,y,hp,maxHP){
+ if(!Number.isFinite(hp)||!Number.isFinite(maxHP)||maxHP<=0)return;
+ const current=Math.max(0,Math.min(hp,maxHP));
+ const width=138,height=15,left=x-width/2;
+ context.fillStyle='#28131a';
+ context.fillRect(left,y,width,height);
+ context.fillStyle='#b52738';
+ context.fillRect(left,y,width*current/maxHP,height);
+ context.lineWidth=1;
+ context.strokeStyle='#ffe283';
+ context.strokeRect(left,y,width,height);
+ context.font='bold 11px Tahoma';
+ context.textBaseline='middle';
+ context.lineWidth=3;
+ context.strokeStyle='#13090e';
+ context.fillStyle='#fff4d5';
+ const label=`HP ${Math.round(current)} / ${Math.round(maxHP)}`;
+ context.strokeText(label,x,y+height/2,width-8);
+ context.fillText(label,x,y+height/2,width-8);
+}
+
 function mount(scene,context){
  const account=connectAccounts(()=>{}),connection=connectOnlineWalk(undefined,{client:account});
  const send=(action,extra)=>account.game('kingdom_boss_'+action,{code:context.code,...extra},context.environment);
@@ -25,13 +46,62 @@ function mount(scene,context){
  const art=window.RareBossSprites?.create();
  let event=null,sprite='',frame=null,fight=null,queued=null,lastMove=0,ready=false,visible=false,waitTurn=null,
   polling=null,requesting=false,withdrawing=false,stayClear=false,resumed=false,feedback=null;
+ let health=null,healthWatch=null,realtimeClient=null;
  const sameMap=()=>event?.country===scene.country;
  const active=()=>event?.status==='active'&&(window.SoulbeastKingdomBoss?.now()||Date.now())<event.end;
+ function stopHealthWatch(){
+  const previous=healthWatch;
+  healthWatch=null;
+  if(previous?.channel)void realtimeClient.removeChannel(previous.channel).catch(()=>{});
+ }
+ async function watchHealth(){
+  const round=event?.id;
+  if(document.hidden||!sameMap()||!active()||!/^[0-9]+$/.test(round)||!['live','test'].includes(context.environment)){
+   stopHealthWatch();return;
+  }
+  if(healthWatch?.round===round){
+   if(healthWatch.channel&&Date.now()-healthWatch.authAt>60000){
+    healthWatch.authAt=Date.now();
+    void realtimeClient.realtime.setAuth().catch(()=>{});
+   }
+   return;
+  }
+  stopHealthWatch();
+  const watch={round,channel:null,authAt:0};
+  healthWatch=watch;
+  try{
+   if(!realtimeClient){
+    const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.76.1');
+    if(healthWatch!==watch)return;
+    const {url,key}=accountRealtimeConfig;
+    realtimeClient=createClient(url,key,{accessToken:()=>account.sessions.token()});
+   }
+   await realtimeClient.realtime.setAuth();
+   if(healthWatch!==watch)return;
+   watch.authAt=Date.now();
+   const channel=realtimeClient.channel(`sb-kb-hp:${context.environment}:${round}`,{config:{private:true}});
+   watch.channel=channel;
+   channel.on('broadcast',{event:'hp'},({payload})=>{
+    if(healthWatch!==watch||payload?.id!==event?.id||!Number.isSafeInteger(payload.rev)||
+       payload.rev<=(health?.rev??event.rev)||!Number.isFinite(payload.hp)||!Number.isFinite(payload.maxHP)||payload.maxHP<=0)return;
+    health=payload;
+    if(payload.status!=='active')void window.SoulbeastKingdomBoss?.refresh();
+   }).subscribe(status=>{
+    if(healthWatch===watch&&status==='SUBSCRIBED')void window.SoulbeastKingdomBoss?.refresh();
+   });
+  }catch{
+   if(healthWatch===watch)stopHealthWatch();
+  }
+ }
+ document.addEventListener('visibilitychange',()=>void watchHealth());
+ addEventListener('pagehide',stopHealthWatch);
+ addEventListener('pageshow',e=>{if(e.persisted)void watchHealth();});
  const sync=e=>{
-  if(event?.id!==e?.id){stayClear=false;lastMove=0;}
+  if(event?.id!==e?.id){stayClear=false;lastMove=0;health=null;}
   event=e;button.hidden=!sameMap()||!active()||!!frame;
   if(!button.hidden){button.textContent='บอสอาณาจักร · '+event.name;button.title='ดูตำแหน่งบอสบนแผนที่ประเทศ';}
   if(sameMap()&&active()&&sprite!==event.species){sprite=event.species;art?.sync(sprite).catch(()=>{});}
+  void watchHealth();
  };
  addEventListener('soulbeast-kingdom-boss-update',e=>sync(e.detail));
  sync(window.SoulbeastKingdomBoss?.event||null);
@@ -130,6 +200,11 @@ function mount(scene,context){
   if(overview){drawBossMarker(c,px,py,10);}
   else if(!art?.draw(c,px,py,210*zoom,0,time,false)){c.beginPath();c.arc(px,py,20*zoom,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.strokeStyle='#ffe283';c.stroke();}
   c.font='bold '+(overview?'13px':'14px')+' Tahoma';c.textAlign='center';c.lineWidth=4;c.strokeStyle='#081924';c.fillStyle='#ffe694';
-  const name='♛ '+event.name+' · Lv '+event.level,labelY=py-(overview?16:188*zoom);c.strokeText(name,px,labelY);c.fillText(name,px,labelY);c.restore();
+  const name='♛ '+event.name+' · Lv '+event.level,labelY=py-(overview?16:188*zoom);c.strokeText(name,px,labelY);c.fillText(name,px,labelY);
+  if(!overview){
+   const latest=health&&health.rev>event.rev?health:event;
+   drawBossHealth(c,px,labelY+5,latest.hp,latest.maxHP);
+  }
+  c.restore();
  }};
 }
