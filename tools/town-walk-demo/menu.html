@@ -2954,7 +2954,7 @@ const PVP={room:null,token:'',code:'',busy:false,error:'',timer:null,pending:nul
 function pvpSessionSave(){try{localStorage.setItem('soulbeast_supabase_test_pvp_v1',JSON.stringify({endpoint:String(window.SHEET_URL||'').trim(),room:PVP.room?.id||'',token:PVP.token,code:PVP.code,pending:PVP.pending}))}catch(e){}}
 function pvpSessionLoad(){try{const p=JSON.parse(localStorage.getItem('soulbeast_supabase_test_pvp_v1')||'{}');if(p.endpoint===String(window.SHEET_URL||'').trim()&&p.token&&p.room){PVP.token=p.token;PVP.code=p.code;PVP.restore=p.room;PVP.pending=p.pending||null}}catch(e){}}
 pvpSessionLoad();
-function pvpError(message){return ({'camp pets selection':'เลือกอสูรที่พกติดตัวตามจำนวนที่อาชีพใช้ได้','bad action':'ต้องอัปเดต ระบบต่อสู้ แล้ว Deploy เวอร์ชันใหม่ก่อนใช้ PVP',pin:'PIN ของเซฟไม่ตรงกับ เซิร์ฟเวอร์ออนไลน์',notfound:'ไม่พบเซฟบน ระบบออนไลน์ โปรดบันทึกเซฟก่อน','room not found':'ไม่พบห้องนี้','room expired':'ห้องหมดอายุ','room full':'ห้องมีผู้เล่นครบแล้ว','same player':'ใช้ตัวละครเดียวกันสู้กันไม่ได้','already in room':'ตัวละครนี้อยู่ในห้องอื่น กดเชื่อมต่อห้องเดิม','no active room':'ไม่มีห้องที่ยังเปิดอยู่',unauthorized:'สิทธิ์ห้องหมดอายุหรือเปิดจากอีกเครื่อง กดเชื่อมต่อห้องเดิม','bad points':'แต้มสถานะในเซฟเกินเกณฑ์ PVP','bad class':'อาชีพไม่ตรงกับระดับเลเวล','bad equipment':'อุปกรณ์ในเซฟไม่ตรงกับระดับหรือช่อง','bad weapon':'อาวุธไม่ตรงกับอาชีพ','not your turn':'ยังไม่ถึงเทิร์นของคุณ','stale turn':'เทิร์นเปลี่ยนแล้ว กำลังตรวจข้อมูลใหม่','items not allowed':'PVP ห้ามใช้ยาและไอเท็มรักษา','illegal skill':'สกิลนี้ใช้ไม่ได้','not enough mp':'MP ไม่พอ','not enough gold':'เหรียญเฉพาะแมตช์ไม่พอ','not lobby':'ห้องเริ่มหรือปิดไปแล้ว กดรีเฟรช','not active':'การประลองจบแล้ว','stake changed':'เดิมพันมีการเปลี่ยน โปรดตรวจของอีกฝ่ายแล้วกดยืนยันใหม่','stake unavailable':'ของเดิมพันไม่พอหรือไม่อยู่ในเซฟออนไลน์','stake pet must rest':'อสูรต้องพักค่ายและไม่เฝ้าค่าย จึงใช้เดิมพันได้','stake history full':'เปลี่ยนเดิมพันครบจำนวนที่รองรับแล้ว'})[message]||'เชื่อมต่อ PVP ไม่สำเร็จ: '+String(message||'โปรดลองอีกครั้ง')}
+function pvpError(message){return ({save_conflict:'เซฟออนไลน์มีการเปลี่ยนแปลง กรุณาลองบันทึกเกมในหน้าตั้งค่าอีกครั้งก่อนเข้าห้อง','camp pets selection':'เลือกอสูรที่พกติดตัวตามจำนวนที่อาชีพใช้ได้','bad action':'ต้องอัปเดต ระบบต่อสู้ แล้ว Deploy เวอร์ชันใหม่ก่อนใช้ PVP',pin:'PIN ของเซฟไม่ตรงกับ เซิร์ฟเวอร์ออนไลน์',notfound:'ไม่พบเซฟบน ระบบออนไลน์ โปรดบันทึกเซฟก่อน','room not found':'ไม่พบห้องนี้','room expired':'ห้องหมดอายุ','room full':'ห้องมีผู้เล่นครบแล้ว','same player':'ใช้ตัวละครเดียวกันสู้กันไม่ได้','already in room':'ตัวละครนี้อยู่ในห้องอื่น กดเชื่อมต่อห้องเดิม','no active room':'ไม่มีห้องที่ยังเปิดอยู่',unauthorized:'สิทธิ์ห้องหมดอายุหรือเปิดจากอีกเครื่อง กดเชื่อมต่อห้องเดิม','bad points':'แต้มสถานะในเซฟเกินเกณฑ์ PVP','bad class':'อาชีพไม่ตรงกับระดับเลเวล','bad equipment':'อุปกรณ์ในเซฟไม่ตรงกับระดับหรือช่อง','bad weapon':'อาวุธไม่ตรงกับอาชีพ','not your turn':'ยังไม่ถึงเทิร์นของคุณ','stale turn':'เทิร์นเปลี่ยนแล้ว กำลังตรวจข้อมูลใหม่','items not allowed':'PVP ห้ามใช้ยาและไอเท็มรักษา','illegal skill':'สกิลนี้ใช้ไม่ได้','not enough mp':'MP ไม่พอ','not enough gold':'เหรียญเฉพาะแมตช์ไม่พอ','not lobby':'ห้องเริ่มหรือปิดไปแล้ว กดรีเฟรช','not active':'การประลองจบแล้ว','stake changed':'เดิมพันมีการเปลี่ยน โปรดตรวจของอีกฝ่ายแล้วกดยืนยันใหม่','stake unavailable':'ของเดิมพันไม่พอหรือไม่อยู่ในเซฟออนไลน์','stake pet must rest':'อสูรต้องพักค่ายและไม่เฝ้าค่าย จึงใช้เดิมพันได้','stake history full':'เปลี่ยนเดิมพันครบจำนวนที่รองรับแล้ว'})[message]||'เชื่อมต่อ PVP ไม่สำเร็จ: '+String(message||'โปรดลองอีกครั้ง')}
 let pvpRealtime=null,pvpRealtimeLoading=false;
 function pvpWake(hint){
  if(hint?.rev<=PVP.room?.rev)return;
@@ -3007,8 +3007,47 @@ async function pvpRequest(packet,silent=false){
   if(!PVP.busy&&!PVP.polling)pvpSchedule();
  }
 }
-async function pvpConnect(mode,matchMode){if(PVP.busy||!S.P)return;if(S.zone||S.battle){toast('กลับเมืองก่อนเข้า PVP');return}const room=String(document.getElementById('pvpRoomCode')?.value||'').trim().toUpperCase();const team=document.getElementById('pvpJoinTeam')?.value;if(mode==='join'&&!/^[A-F0-9]{8}$/.test(room)){toast('รหัสห้องต้องมี 8 ตัว');return}
- PVP.busy=true;PVP.error='';render();try{const code=ensureCode(),P=S.P;const saved=await lbPost({action:'save',code,pin:P.cpin||'',data:gsData(),name:P.name,clsName:CLS[P.cls].n,lv:P.lv});if(!saved.ok)throw new Error(saved.error);P.gsAt=saved.at;GS.lastJson=gsData();GS.lastAt=Date.now();save();const r=await lbPost({action:'pvp_'+mode,code,pin:P.cpin||'',room,...(mode==='create'?{mode:matchMode}:{}),...(mode==='join'&&['0','1'].includes(team)?{team:Number(team)}:{}),...(['create','join'].includes(mode)?{pets:ActivityPets.ids('pvp').slice()}:{})});if(!r.ok)throw new Error(r.error);PVP.code=code;PVP.pending=null;pvpReceive(r)}catch(e){PVP.error=pvpError(e.message);toast(PVP.error)}finally{PVP.busy=false;if(S.screen==='pvp')render();pvpSchedule()}}
+async function pvpConnect(mode,matchMode){
+ if(PVP.busy||!S.P)return;
+ if(S.zone||S.battle){toast('กลับเมืองก่อนเข้า PVP');return;}
+ const room=String(document.getElementById('pvpRoomCode')?.value||'').trim().toUpperCase();
+ const team=document.getElementById('pvpJoinTeam')?.value;
+ if(mode==='join'&&!/^[A-F0-9]{8}$/.test(room)){toast('รหัสห้องต้องมี 8 ตัว');return;}
+ PVP.busy=true;
+ PVP.error='';
+ render();
+ try{
+  const code=ensureCode();
+  if(WALK_ONLINE){
+   save();
+   await (await getWalkAccountConnection()).flush(true);
+  }else{
+   const P=S.P,data=gsData();
+   const saved=await lbPost({action:'save',code,pin:P.cpin||'',data,name:P.name,clsName:CLS[P.cls].n,lv:P.lv});
+   if(!saved.ok)throw Error(saved.error);
+   P.gsAt=saved.at;
+   GS.lastJson=gsData();
+   GS.lastAt=Date.now();
+   save();
+  }
+  const packet={action:'pvp_'+mode,code,pin:S.P.cpin||'',room};
+  if(mode==='create')packet.mode=matchMode;
+  if(mode==='join'&&['0','1'].includes(team))packet.team=Number(team);
+  if(mode==='create'||mode==='join')packet.pets=ActivityPets.ids('pvp').slice();
+  const result=await lbPost(packet);
+  if(!result.ok)throw Error(result.error);
+  PVP.code=code;
+  PVP.pending=null;
+  pvpReceive(result);
+ }catch(error){
+  PVP.error=pvpError(error.code||error.message);
+  toast(PVP.error);
+ }finally{
+  PVP.busy=false;
+  if(S.screen==='pvp')render();
+  pvpSchedule();
+ }
+}
 function pvpCard(u,own,me){const chosen=own?PVP.friend===u.id:PVP.target===u.id;return `<button class="ucard ${own?'ally':'foe'} ${chosen?(own?'at':'tg'):''} ${u.hp<=0?'down':''}" data-u="${u.id}" data-a="${own?'pvpFriend':'pvpTarget'}" data-v="${u.id}" ${!own&&u.hp<=0?'disabled':''}>${unitPortrait(u,46,{own:u.owner===me})}<div class="grow"><span class="nm" ${u.kind==='player'?'data-user-content':''}>${esc(u.name)}</span><span class="sub num">Lv ${u.lv}${u.hp<=0?' · หมดสติ':''}</span>${bar(u.hp,u.st.hp)}<span class="meta num">HP ${u.hp}/${u.st.hp} · MP ${u.mp}/${u.st.mp}</span><span class="meta">${Object.keys(u.status).map(k=>STS[k]?STS[k].n:'').filter(Boolean).join(' · ')}</span></div></button>`}
 function pvpSide(r){return r.side??r.me;}
 function pvpTeamRoster(r){
