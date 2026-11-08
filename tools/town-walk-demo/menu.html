@@ -1589,6 +1589,74 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 #app[data-screen=world] .world-arena .battle-vital[data-battle-card=full]{grid-column:auto!important;grid-row:auto!important;align-self:start!important}
 #app[data-screen=world] .world-arena .world-empty-position{height:auto!important;max-height:none!important;aspect-ratio:5/3}
 @media(prefers-reduced-motion:reduce){.demon-black-aura,.demon-black-motes>i{animation:none!important}}
+
+/* Two rows per side, with one four-slot row per sealer. */
+#app[data-screen="pvp"] .team-pvp-arena .online-combat-board{overflow:hidden;padding:5px 7px;gap:0}
+#app[data-screen="pvp"] .team-pvp-arena .online-combat-scroll{overflow:hidden;gap:8px;padding:3px}
+#app[data-screen="pvp"] .team-pvp-arena .online-combat-side{flex:1;min-height:0;gap:3px}
+#app[data-screen="pvp"] .team-pvp-arena .online-combat-side>small{line-height:12px;font-size:10px;color:#f5dfab}
+#app[data-screen="pvp"] .team-pvp-arena .online-combat-side+.online-combat-side::after{display:none}
+#app[data-screen="pvp"] .team-pvp-arena .team-pvp-groups{
+ display:grid;grid-template-rows:repeat(2,minmax(0,1fr));flex:1;min-height:0;gap:4px;
+}
+#app[data-screen="pvp"] .team-pvp-arena .team-pvp-group{
+ display:grid;grid-template-rows:auto minmax(0,1fr);gap:2px;min-height:0;min-width:0;
+}
+#app[data-screen="pvp"] .team-pvp-arena .team-pvp-group-label{
+ font-size:9px;line-height:11px;color:#eddbb0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#app[data-screen="pvp"] .team-pvp-arena .team-pvp-row{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr);
+ gap:4px;min-height:0;
+}
+#app[data-screen="pvp"] .team-pvp-arena .team-pvp-row>.battle-vital[data-battle-card=full]{
+ width:100%;height:100%!important;max-height:72px!important;min-height:0!important;aspect-ratio:auto!important;
+ align-self:start;overflow:hidden!important;container-type:size;
+}
+#app[data-screen="pvp"] .team-pvp-arena .team-pvp-row>.battle-vital[data-battle-card=full]>.battle-face{
+ left:0!important;top:0!important;width:50%!important;height:100%!important;aspect-ratio:auto;
+}
+#app[data-screen="pvp"] .team-pvp-arena .battle-vital[data-battle-card=full]>.battle-meter{
+ --team-pvp-icon-size:clamp(3.5px,13cqh,8px);
+ top:50%!important;bottom:auto!important;left:51%!important;right:5%!important;height:auto!important;
+ transform:translateY(-50%);justify-content:flex-start;gap:clamp(.5px,2.2cqh,1.5px)!important;
+}
+#app[data-screen="pvp"] .team-pvp-arena .battle-vital[data-battle-card=full] .battle-meter>b{
+ display:block!important;font-size:clamp(6px,19cqh,11px)!important;
+}
+#app[data-screen="pvp"] .team-pvp-arena .battle-meter .online-unit-name{display:block}
+#app[data-screen="pvp"] .team-pvp-arena .battle-vital[data-battle-card=full] .battle-meter .battle-level{
+ display:block;font-size:clamp(5px,15cqh,9px)!important;line-height:1.1;
+}
+#app[data-screen="pvp"] .team-pvp-arena .battle-vital[data-battle-card=full] .battle-meter>.bar{
+ height:clamp(2px,3cqw,3px)!important;
+}
+#app[data-screen="pvp"] .team-pvp-arena .battle-vital[data-battle-card=full] .element-icon{
+ width:var(--team-pvp-icon-size)!important;height:var(--team-pvp-icon-size)!important;
+ flex-basis:var(--team-pvp-icon-size)!important;padding:0;border-width:.5px;
+}
+#app[data-screen="pvp"] .team-pvp-arena .battle-vital[data-battle-card=full] .battle-effect-strip{
+ height:var(--team-pvp-icon-size)!important;min-height:0!important;max-height:none!important;
+ grid-template-columns:repeat(5,var(--team-pvp-icon-size));
+}
+#app[data-screen="pvp"] .team-pvp-arena .battle-vital[data-battle-card=full] .battle-effect-strip:empty{display:none!important}
+#app[data-screen="pvp"] .team-pvp-arena .battle-vital[data-battle-card=full] .battle-effect-icon{
+ height:var(--team-pvp-icon-size)!important;
+}
+#app[data-screen="pvp"] .team-pvp-arena .team-pvp-empty{
+ height:100%;max-height:72px;border:1px dashed #bba57155;border-radius:4px;background:#08142150;
+}
+#app[data-screen="pvp"] .team-pvp-arena .online-command-body{max-height:min(17dvh,140px)}
+@media(max-height:600px){
+ #app[data-screen="pvp"] .team-pvp-arena .online-command-body{max-height:14dvh}
+}
+@media(max-width:380px){
+ #app[data-screen="pvp"] .team-pvp-arena .battle-command-controls{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;padding:4px;
+ }
+ #app[data-screen="pvp"] .team-pvp-arena .battle-command-controls>.btn{min-height:36px;padding:3px;font-size:9px}
+}
+
 /* Let tall formations scroll in normal flow rather than sit beneath the command dock. */
 #app .battle-vitals:has([data-battle-card=full]){position:relative!important;top:auto!important}
 #app .battle-enhanced:has([data-battle-card=full]) .battle-command-dock{position:relative!important;bottom:auto!important}
@@ -5000,7 +5068,9 @@ const BattleSkillTarget={pending:null,confirming:null,
  cancel(){const c=this.context();this.pending=null;if(c?.mode==='local')BattleCommandFocus.pending='commands';render();},
  attrs(u,side){return this.current()?' data-skill-target="'+(this.valid(u,side)?'valid':'invalid')+'"'+(this.valid(u,side)?'':' disabled')+' ':'';},
  banner(){const p=this.current();return p?'<div class="battle-target-prompt" role="status"><div><b>'+esc(SK[p.skill]?.n||p.skill)+'</b><span>'+(p.side==='enemy'?ct('แตะการ์ดศัตรูเพื่อใช้สกิล','Tap an enemy to use this skill','点击敌方卡牌施放技能'):ct('แตะการ์ดฝ่ายเราเพื่อใช้สกิล','Tap an ally to use this skill','点击友方卡牌施放技能'))+'</span></div><button class="btn sm" data-a="battleTargetCancel">'+ct('ยกเลิก','Cancel','取消')+'</button></div>':'';},
- focusOnline(){const board=document.querySelector('.online-combat-scroll'),side=board?.querySelector?.(this.pending?.side==='ally'?'.our-side':'.opponent-side');if(board&&side)board.scrollTop+=side.getBoundingClientRect().top-board.getBoundingClientRect().top;}
+ focusOnline(){
+  if(PVP.room?.mode==='2v2'){document.getElementById('onlineCommandBody')?.scrollTo(0,0);return;}
+  const board=document.querySelector('.online-combat-scroll'),side=board?.querySelector?.(this.pending?.side==='ally'?'.our-side':'.opponent-side');if(board&&side)board.scrollTop+=side.getBoundingClientRect().top-board.getBoundingClientRect().top;}
 };
 handlers.battleTargetCancel=()=>BattleSkillTarget.cancel();
 const targetPvpMove=handlers.pvpMove,targetPvpEnemy=handlers.pvpTarget,targetPvpAlly=handlers.pvpFriend;
@@ -5089,12 +5159,28 @@ function compactOnlineCard(u,mode,r,own){
  const action=mode==='pvp'?(own?'pvpFriend':'pvpTarget'):mode==='world'?'wbFriend':mode==='camp'?(own?'campFriend':'campTarget'):'';
  const image=u.kind==='player'&&!u.form?(u.owner===r.me?'player':'cls:'+u.cls):u.img||u.sp;
  const immortal=mode==='world'&&u.immortalWorld;
+ const compactMeters=mode==='pvp'&&r.mode==='2v2';
  const held=mode==='camp'?MotionTimeline.held.get(String(u.id)):null;
  const display=held?.conditions?{...u,...held.conditions}:u;
  const statuses=Object.keys(display.status||{}).filter(k=>STS[k]).map(k=>STS[k].n).join(' · ');
- return statusBattleCard('<button class="battle-vital '+(mode==='world'?(own?'world-player-card ':immortal?'world-boss-card ':'world-helper-card '):'')+(u.hp<=0?'down ':'')+(u.id===r.battle.cur?'acting ':'')+(selected?'selected':'')+'" '+(action?'data-a="'+action+'" data-v="'+esc(u.id)+'" ':'')+(mode==='pvp'?BattleSkillTarget.attrs(u,own?'ally':'enemy'):'')+(!own&&u.hp<=0?'disabled ':'')+'title="'+esc(u.name)+' · Lv '+u.lv+' · HP '+(immortal?'∞':fmt(u.hp)+'/'+fmt(u.st.hp))+' · MP '+fmt(u.mp)+'/'+fmt(u.st.mp)+(statuses?' · '+esc(statuses):'')+'"><span class="battle-face" data-u="'+esc(u.id)+'">'+unitPortrait(u,28,{own:['pvp','world'].includes(mode)&&u.kind==='player'&&u.owner===r.me})+'</span><div class="battle-meter"><b><span class="online-unit-name" data-user-content>'+esc(u.name)+'</span> <small class="battle-level">Lv '+u.lv+'</small></b>'+bar(immortal?u.st.hp:u.hp,u.st.hp)+'<small>HP '+(immortal?'∞':fmt(u.hp)+'/'+fmt(u.st.hp))+'</small>'+bar(u.mp,u.st.mp,'mp')+'<small>MP '+fmt(u.mp)+'/'+fmt(u.st.mp)+'</small>'+(statuses?'<span class="online-unit-status">'+esc(statuses)+'</span>':'')+'</div></button>',display);
+ return statusBattleCard('<button class="battle-vital '+(mode==='world'?(own?'world-player-card ':immortal?'world-boss-card ':'world-helper-card '):'')+(u.hp<=0?'down ':'')+(u.id===r.battle.cur?'acting ':'')+(selected?'selected':'')+'" '+(action?'data-a="'+action+'" data-v="'+esc(u.id)+'" ':'')+(mode==='pvp'?BattleSkillTarget.attrs(u,own?'ally':'enemy'):'')+(!own&&u.hp<=0?'disabled ':'')+'title="'+esc(u.name)+' · Lv '+u.lv+' · HP '+(immortal?'∞':fmt(u.hp)+'/'+fmt(u.st.hp))+' · MP '+fmt(u.mp)+'/'+fmt(u.st.mp)+(statuses?' · '+esc(statuses):'')+'"><span class="battle-face" data-u="'+esc(u.id)+'">'+unitPortrait(u,28,{own:['pvp','world'].includes(mode)&&u.kind==='player'&&u.owner===r.me})+'</span><div class="battle-meter"><b><span class="online-unit-name" data-user-content>'+esc(u.name)+'</span> <small class="battle-level">Lv '+u.lv+'</small></b>'+bar(immortal?u.st.hp:u.hp,u.st.hp)+(compactMeters?'':'<small>HP '+(immortal?'∞':fmt(u.hp)+'/'+fmt(u.st.hp))+'</small>')+bar(u.mp,u.st.mp,'mp')+(compactMeters?'':'<small>MP '+fmt(u.mp)+'/'+fmt(u.st.mp)+'</small>')+(statuses?'<span class="online-unit-status">'+esc(statuses)+'</span>':'')+'</div></button>',display);
+}
+function compactPvpTeamSide(units,title,r,own){
+ const side=own?pvpSide(r):1-pvpSide(r);
+ const rows=r.players.map((player,seat)=>{
+  if(player.side!==side)return '';
+  const team=units.filter(unit=>unit.owner===seat);
+  const sealer=team.find(unit=>unit.kind==='player'&&!unit.temporary);
+  const lineup=sealer?[sealer,...team.filter(unit=>unit!==sealer)]:team;
+  const slots=Array.from({length:4},(_,index)=>lineup[index]
+   ?compactOnlineCard(lineup[index],'pvp',r,own)
+   :'<span class="team-pvp-empty" aria-hidden="true"></span>').join('');
+  return '<div class="team-pvp-group"><span class="team-pvp-group-label" data-user-content>'+esc(player.name)+'</span><div class="team-pvp-row">'+slots+'</div></div>';
+ }).join('');
+ return '<section class="online-combat-side '+(own?'our-side':'opponent-side')+'"><small>'+title+' · '+units.filter(unit=>unit.hp>0).length+'/'+units.length+'</small><div class="team-pvp-groups">'+rows+'</div></section>';
 }
 function compactOnlineSide(units,title,mode,r,own){
+ if(mode==='pvp'&&r.mode==='2v2')return compactPvpTeamSide(units,title,r,own);
  const cols=mode==='world'&&own?4:units.length>1?2:1;
  const owners=Math.max(1,Math.min(4,Math.max(r.players?.length||0,...units.map(u=>(Number.isInteger(u.owner)?u.owner:0)+1))));
  let cells=units.map(u=>compactOnlineCard(u,mode,r,own)).join('');
@@ -5108,6 +5194,7 @@ function compactOnlineResult(mode,r){if(mode==='world'){const v=r.reward;return 
  return '<b>'+(r.winner<0?'เสมอ':r.winner===(mode==='pvp'?pvpSide(r):(r.me??0))?'ชนะ':'แพ้')+'</b><p>'+esc(r.reason||'บันทึกผลแล้ว')+'</p>'+(mode==='pvp'?(r.mode==='2v2'?'':'<small>ผลเดิมพันบันทึกบนเซิร์ฟเวอร์แล้ว</small>'):mode==='camp'?'<small>เงินปัจจุบัน '+fmt(S.P.gold)+' เหรียญ · บันทึกผลจู่โจมแล้ว</small>':'<small>บันทึกคะแนนสงครามกิลแล้ว</small>');}
 function compactOnlineBattle(mode,r){
  const b=r.battle,units=[...b.allies,...b.enemies],actor=units.find(u=>u.id===b.cur),finished=r.status==='finished'&&!r.replaying;
+ const teamMatch=mode==='pvp'&&r.mode==='2v2';
  const reverse=mode==='pvp'&&pvpSide(r)===1;
  const own=reverse?b.enemies:b.allies,foes=reverse?b.allies:b.enemies;
  if(mode==='pvp'){if(!own.some(u=>u.id===PVP.friend))PVP.friend=own[0]?.id||'';if(!foes.some(u=>u.id===PVP.target&&u.hp>0))PVP.target=foes.find(u=>u.hp>0)?.id||'';}
@@ -5115,7 +5202,9 @@ function compactOnlineBattle(mode,r){
  const state=mode==='guildwar'?GUILD_UI:mode==='pvp'?PVP:mode==='world'?WORLD:CAMP;
  const score=mode==='world'?' · คะแนน '+fmt(finished?r.sharedScore||0:Math.floor((b.damageTotal||0)/Math.max(1,r.players?.length||1)/25)):'';
  const inspected=mode==='world'?(own.find(u=>u.id===WORLD.friend)||own.find(u=>u.owner===r.me)||own[0]):null;
+ const targetPrompt=mode==='pvp'?BattleSkillTarget.banner():'';
  let commands=finished?compactOnlineResult(mode,r):mode==='pvp'?compactPvpCommands(r,actor):'<p>ต่อสู้อัตโนมัติ · '+esc(actor?.name||'กำลังประมวลผล')+'</p>';
+ if(teamMatch&&targetPrompt)commands=targetPrompt;
  if(ONLINE_COMPACT.details){commands+='<details open><summary>รายงานการต่อสู้</summary><div class="online-full-log">'+(b.log||[]).slice(-25).map(line=>'<p>'+esc(line)+'</p>').join('')+'</div></details>'+(mode==='pvp'&&r.mode!=='2v2'?foldCard('เดิมพันที่ตกลงไว้',wagerPanel(r)):'');}
  let actions='';if(mode==='pvp'&&!finished)actions+=onlineAutoButton('pvp');
  if(r.replaying&&mode==='guildwar')actions+=compactButton('guildSkipReplay','ข้ามรีเพลย์');
@@ -5125,13 +5214,13 @@ function compactOnlineBattle(mode,r){
  if(mode==='world'&&WORLD.pending)actions+=compactButton('wbRetry','ตรวจคำสั่งเดิม','',WORLD.busy);
  actions+=compactButton('onlineBattleDetails',ONLINE_COMPACT.details?'ย่อรายงาน':'รายละเอียด');
  actions+='<button class="btn sm" data-a="onlineCommands" aria-controls="onlineCommandBody" aria-expanded="'+!ONLINE_COMPACT.hidden+'">'+(ONLINE_COMPACT.hidden?'แสดงคำสั่ง':'ซ่อนคำสั่ง')+'</button>';
- return '<section class="online-arena '+(mode==='world'?'world-arena':'standard-arena')+'"><header class="online-combat-heading"><b>'+title+'</b>'+(mode==='pvp'&&!r.replaying?'<time id="pvpTurnTimer" class="pvp-turn-timer">'+pvpTurnTimeText()+'</time>':'')+(mode==='pvp'&&!r.replaying?'<button class="btn sm online-refresh" data-a="pvpPoll" aria-label="ตรวจสถานะห้อง PVP" '+(PVP.busy?'disabled':'')+'>↻</button>':'')+'<small>รอบ '+(b.round||0)+score+' · '+(r.replaying?'รีเพลย์':finished?'จบแล้ว':actor?'ตาของ '+esc(actor.name):'กำลังรอ')+'</small></header><div class="online-combat-board battle-scenery"'+BattleScenery.attributes(b,mode)+'>'+BattleScenery.decoration(b,mode)+(['pvp','world'].includes(mode)?'<div class="online-combat-scroll" tabindex="0" role="region" aria-label="'+ct('สนามต่อสู้','Battlefield','战场')+'">':'')+(mode==='pvp'?BattleSkillTarget.banner():'')+compactOnlineSide(foes,'ศัตรู',mode,r,false)+compactOnlineSide(own,'ทีมเรา',mode,r,true)+(['pvp','world'].includes(mode)?'</div>':'')+'</div><footer class="online-combat-footer"><p class="online-last-log">'+esc(state.error||(b.log||[]).slice(-1)[0]||'')+'</p>'+(inspected?'<p class="world-unit-inspection"><span data-user-content>'+esc(inspected.name)+'</span><small>HP '+fmt(inspected.hp)+'/'+fmt(inspected.st.hp)+' · MP '+fmt(inspected.mp)+'/'+fmt(inspected.st.mp)+'</small></p>':'')+'<div id="onlineCommandBody" class="online-command-body" '+(ONLINE_COMPACT.hidden?'hidden':'')+'>'+commands+'</div><div class="battle-command-controls">'+actions+'</div></footer></section>';
+ return '<section class="online-arena '+(mode==='world'?'world-arena':'standard-arena')+(teamMatch?' team-pvp-arena':'')+'"><header class="online-combat-heading"><b>'+title+'</b>'+(mode==='pvp'&&!r.replaying?'<time id="pvpTurnTimer" class="pvp-turn-timer">'+pvpTurnTimeText()+'</time>':'')+(mode==='pvp'&&!r.replaying?'<button class="btn sm online-refresh" data-a="pvpPoll" aria-label="ตรวจสถานะห้อง PVP" '+(PVP.busy?'disabled':'')+'>↻</button>':'')+'<small>รอบ '+(b.round||0)+score+' · '+(r.replaying?'รีเพลย์':finished?'จบแล้ว':actor?'ตาของ '+esc(actor.name):'กำลังรอ')+'</small></header><div class="online-combat-board battle-scenery"'+BattleScenery.attributes(b,mode)+'>'+BattleScenery.decoration(b,mode)+(['pvp','world'].includes(mode)?'<div class="online-combat-scroll" tabindex="0" role="region" aria-label="'+ct('สนามต่อสู้','Battlefield','战场')+'">':'')+(teamMatch?'':targetPrompt)+compactOnlineSide(foes,'ศัตรู',mode,r,false)+compactOnlineSide(own,'ทีมเรา',mode,r,true)+(['pvp','world'].includes(mode)?'</div>':'')+'</div><footer class="online-combat-footer"><p class="online-last-log">'+esc(state.error||(b.log||[]).slice(-1)[0]||'')+'</p>'+(inspected?'<p class="world-unit-inspection"><span data-user-content>'+esc(inspected.name)+'</span><small>HP '+fmt(inspected.hp)+'/'+fmt(inspected.st.hp)+' · MP '+fmt(inspected.mp)+'/'+fmt(inspected.st.mp)+'</small></p>':'')+'<div id="onlineCommandBody" class="online-command-body" '+(ONLINE_COMPACT.hidden?'hidden':'')+'>'+commands+'</div><div class="battle-command-controls">'+actions+'</div></footer></section>';
 }
 const compactPvpView=vPvp;vPvp=function(){return compactBattleReady('pvp')?compactOnlineBattle('pvp',PVP.room):compactPvpView();};
 const compactWorldView=vWorld;vWorld=function(){return compactBattleReady('world')?compactOnlineBattle('world',WORLD.room):compactWorldView();};
 const compactCampView=vCamp;vCamp=function(){return compactBattleReady('camp')?compactOnlineBattle('camp',CAMP.room):compactCampView();};
 const compactGuildView=vGuildWar;vGuildWar=function(){return compactBattleReady('guildwar')?compactOnlineBattle('guildwar',GUILD_UI.warRoom):compactGuildView();};
-const compactRenderBase=render;render=function(){const active=compactBattleReady(),room=active?compactRoom():null,key=active?S.screen+':'+room.id:'';const previousBody=document.querySelector('.online-command-body'),scroll=ONLINE_COMPACT.key===key?previousBody?.scrollTop||0:0,previousBoard=document.querySelector('.online-combat-scroll'),boardScroll=previousBoard?.scrollTop||0,previousTurn=previousBoard?.dataset?.combatView;if(ONLINE_COMPACT.key!==key){ONLINE_COMPACT.key=key;ONLINE_COMPACT.hidden=false;ONLINE_COMPACT.details=false;ONLINE_COMPACT.effectStamp='';}compactRenderBase();const main=document.querySelector('main');main?.classList?.toggle('online-combat-screen',active);document.getElementById('app')?.classList?.toggle?.('online-combat-mode',active);if(active){if(main)main.scrollTop=0;const body=document.querySelector('.online-command-body');if(body)body.scrollTop=scroll;if(['pvp','world'].includes(S.screen)){const board=document.querySelector('.online-combat-scroll'),turn=S.screen==='pvp'?key+':'+room.battle.cur:key;if(board?.dataset&&board.getBoundingClientRect){board.dataset.combatView=turn;if(previousTurn===turn)board.scrollTop=boardScroll;else if(S.screen==='pvp'){const actor=board.querySelector('.battle-vital.acting');if(actor){const a=actor.getBoundingClientRect(),v=board.getBoundingClientRect();if(a.bottom>v.bottom-12)board.scrollTop+=a.bottom-v.bottom+12;else if(a.top<v.top+12)board.scrollTop+=a.top-v.top-12;}}}}if(S.screen==='guildwar'&&room.replaying){const b=room.battle,stamp=key+':'+b.cur+':'+b.round+':'+JSON.stringify([b.effects,[...b.allies,...b.enemies].map(u=>[u.id,u.hp,u.mp])]);if(stamp!==ONLINE_COMPACT.effectStamp){ONLINE_COMPACT.effectStamp=stamp;VQ.push(...(b.effects||[]).slice(-64));(window.requestAnimationFrame||setTimeout)(flushVfx);}}}};
+const compactRenderBase=render;render=function(){const active=compactBattleReady(),room=active?compactRoom():null,key=active?S.screen+':'+room.id:'';const previousBody=document.querySelector('.online-command-body'),scroll=ONLINE_COMPACT.key===key?previousBody?.scrollTop||0:0,previousBoard=document.querySelector('.online-combat-scroll'),boardScroll=previousBoard?.scrollTop||0,previousTurn=previousBoard?.dataset?.combatView;if(ONLINE_COMPACT.key!==key){ONLINE_COMPACT.key=key;ONLINE_COMPACT.hidden=false;ONLINE_COMPACT.details=false;ONLINE_COMPACT.effectStamp='';}compactRenderBase();const main=document.querySelector('main');main?.classList?.toggle('online-combat-screen',active);document.getElementById('app')?.classList?.toggle?.('online-combat-mode',active);if(active){if(main)main.scrollTop=0;const body=document.querySelector('.online-command-body');if(body)body.scrollTop=scroll;if(['pvp','world'].includes(S.screen)&&!(S.screen==='pvp'&&room.mode==='2v2')){const board=document.querySelector('.online-combat-scroll'),turn=S.screen==='pvp'?key+':'+room.battle.cur:key;if(board?.dataset&&board.getBoundingClientRect){board.dataset.combatView=turn;if(previousTurn===turn)board.scrollTop=boardScroll;else if(S.screen==='pvp'){const actor=board.querySelector('.battle-vital.acting');if(actor){const a=actor.getBoundingClientRect(),v=board.getBoundingClientRect();if(a.bottom>v.bottom-12)board.scrollTop+=a.bottom-v.bottom+12;else if(a.top<v.top+12)board.scrollTop+=a.top-v.top-12;}}}}if(S.screen==='guildwar'&&room.replaying){const b=room.battle,stamp=key+':'+b.cur+':'+b.round+':'+JSON.stringify([b.effects,[...b.allies,...b.enemies].map(u=>[u.id,u.hp,u.mp])]);if(stamp!==ONLINE_COMPACT.effectStamp){ONLINE_COMPACT.effectStamp=stamp;VQ.push(...(b.effects||[]).slice(-64));(window.requestAnimationFrame||setTimeout)(flushVfx);}}}};
 
 function battlePortraitElements(html,u){if(html.includes('class="battle-portrait-elements"'))return html;const types=[...new Set(u.types||SP[u.sp]?.t||[])].filter(k=>EL[k]);if(!types.length)return html;return html.replace(/(<span class="battle-face"[^>]*>)/,'$1<span class="battle-portrait-elements">'+types.map(elementIcon).join('')+'</span>');}
 function statusBattleCard(html,u){html=UnitFrames.decorate(html,u);html=battleEffectIcons(battlePortraitElements(html,u),u);const statuses=Object.keys(u.status||{}).filter(k=>STS[k]&&u.status[k]);if(!statuses.length)return html;const colors=statuses.map(k=>STS[k].c),label=statuses.map(k=>STS[k].n).join(' · ');return html.replace(/<button\b[^>]*>/,tag=>{tag=tag.replace('class="','class="has-battle-status '+(colors.length>1?'multi-battle-status ':'')).replace(/style="/, 'style="--status-main:'+colors[0]+';--status-gradient:linear-gradient(120deg,'+colors.join(',')+');');if(!tag.includes('style="'))tag=tag.replace('<button','<button style="--status-main:'+colors[0]+';--status-gradient:linear-gradient(120deg,'+colors.join(',')+');"');if(tag.includes('title="'))tag=tag.replace('title="','title="'+esc(label)+' · ');else tag=tag.replace('<button','<button title="'+esc(label)+'"');return tag.replace('<button','<button data-status="'+statuses.join(' ')+'"');});}
