@@ -10,4 +10,6 @@ body.coupon-page{color:#edf2f5}
 .coupon-page .coupon-pack-grid{gap:10px}
 .coupon-page #packs{padding:12px}
 .coupon-page .coupon-hero{display:block;width:min(100%,180px);height:auto;margin:16px auto;border-radius:12px}
+.coupon-page .coupon-topup-link{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid #d9b35b;border-radius:9px;background:#254552;color:#ffe1a0;font-weight:700;text-decoration:none}
+.coupon-page a.coupon-pack-button{display:grid;place-items:center;aspect-ratio:1;padding:8px;box-sizing:border-box;background:radial-gradient(ellipse at center,#2b536b66,transparent 72%)}
 @media(max-width:420px){.coupon-page .coupon-item{gap:9px;align-items:flex-start}.coupon-page .coupon-item>img{width:60px;height:60px;flex:none}.coupon-page #couponItems,.coupon-page #premiumNameplates{padding:10px}.coupon-page .coupon-pack-caption>strong{font-size:16px}.coupon-page .coupon-pack-price{font-size:19px}}
