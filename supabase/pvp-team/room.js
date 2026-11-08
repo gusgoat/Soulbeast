@@ -32,3 +32,53 @@ function pvpJoinTeam_(room, row, auth, token, packet) {
  pvpWrite_(room, row);
  return {...pvpView_(room, seat), token};
 }
+
+function pvpMoveTeamSeats_(room, seat, partner) {
+ const player = room.players[seat];
+ const nextSide = 1 - player.side;
+ if (partner != null) room.players[partner].side = player.side;
+ player.side = nextSide;
+
+ const units = [...room.battle.allies, ...room.battle.enemies];
+ room.battle.allies = [];
+ room.battle.enemies = [];
+ for (const unit of units) {
+  const ally = room.players[unit.owner].side === 0;
+  unit.side = ally ? 'ally' : 'enemy';
+  (ally ? room.battle.allies : room.battle.enemies).push(unit);
+ }
+ for (const member of room.players) member.ready = false;
+ room.teamRevision = (room.teamRevision || 0) + 1;
+}
+
+function pvpChangeTeam_(room, seat, packet) {
+ if (room.mode !== '2v2' || !['waiting', 'lobby'].includes(room.status)) pvpFail_('pvp team locked');
+ const player = room.players[seat];
+ const swap = room.teamSwap;
+ if (packet.response != null) {
+  if (!swap || packet.swapId !== swap.id) pvpFail_('pvp swap expired');
+  if (packet.response === 'cancel') {
+   if (swap.from !== seat) pvpFail_('unauthorized');
+  } else {
+   if (swap.to !== seat) pvpFail_('unauthorized');
+   if (packet.response === 'accept') {
+    pvpMoveTeamSeats_(room, swap.from, seat);
+    room.battle.log.push(room.players[swap.from].name + ' สลับทีมกับ ' + player.name);
+   } else if (packet.response !== 'decline') pvpFail_('bad action');
+  }
+  delete room.teamSwap;
+ } else {
+  if ((packet.teamRevision ?? 0) !== (room.teamRevision || 0)) pvpFail_('pvp teams changed');
+  if (swap) pvpFail_('pvp swap pending');
+  const destination = room.players.filter(member => member.side !== player.side);
+  if (destination.length < 2) {
+   pvpMoveTeamSeats_(room, seat);
+   room.battle.log.push(player.name + ' ย้ายไปทีม ' + (player.side === 0 ? 'A' : 'B'));
+  } else {
+   const target = Number.isInteger(packet.target) && room.players[packet.target];
+   if (!target || target.side === player.side) pvpFail_('bad pvp team');
+   room.teamSwap = {id:room.rev + 1, from:seat, to:packet.target};
+  }
+ }
+ room.rev++;
+}

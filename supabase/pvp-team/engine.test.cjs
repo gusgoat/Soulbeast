@@ -99,12 +99,48 @@ const eliminated=knockOutAndAdvance('p1');
 assert.equal(eliminated.status, 'finished');
 assert.equal(eliminated.winner, 1);
 
+room = create('2v2');
+const swapRoom = room.id;
+const movedSide = success(command(swapRoom, 0, 'team', {teamRevision:0})).room;
+assert.equal(movedSide.side, 1);
+assert.equal(movedSide.teamRevision, 1);
+assert.equal(movedSide.battle.enemies[0].owner, 0);
+assert.equal(command(swapRoom, 0, 'team', {teamRevision:0}).error, 'pvp teams changed');
+join(swapRoom, 1, 0);
+join(swapRoom, 2, 0);
+join(swapRoom, 3, 1);
+success(command(swapRoom, 0, 'ready', {teamRevision:1}));
+const requestSwap = () => success(command(swapRoom, 1, 'team', {target:0, teamRevision:1})).room.teamSwap;
+let swap = requestSwap();
+assert.equal(command(swapRoom, 2, 'team', {response:'accept', swapId:swap.id}).error, 'unauthorized');
+assert.equal(success(command(swapRoom, 0, 'team', {response:'decline', swapId:swap.id})).room.teamSwap, null);
+const oldId = swap.id;
+swap = requestSwap();
+assert.equal(command(swapRoom, 0, 'team', {response:'accept', swapId:oldId}).error, 'pvp swap expired');
+assert.equal(success(command(swapRoom, 1, 'team', {response:'cancel', swapId:swap.id})).room.teamSwap, null);
+swap = requestSwap();
+room = success(command(swapRoom, 0, 'team', {response:'accept', swapId:swap.id})).room;
+assert.equal(room.teamRevision, 2);
+assert.equal(room.side, 0);
+assert.equal(room.teamSwap, null);
+assert.ok(room.players.every(player=>!player.ready));
+assert.deepEqual(Array.from(room.players, player=>player.side), [0, 1, 0, 1]);
+for (const [side,units] of [[0,room.battle.allies],[1,room.battle.enemies]]) {
+ assert.ok(units.every(unit=>room.players[unit.owner].side===side && unit.side===(side===0?'ally':'enemy')));
+}
+assert.equal(command(swapRoom, 0, 'ready', {teamRevision:1}).error, 'pvp teams changed');
+for (let seat=0; seat<4; seat++) room = success(command(swapRoom, seat, 'ready', {teamRevision:2})).room;
+assert.equal(room.status, 'active');
+assert.equal(command(swapRoom, 0, 'team', {teamRevision:2,target:1}).error, 'pvp team locked');
+success(command(swapRoom, 1, 'leave'));
+
 room = create();
 assert.equal(room.mode, '1v1');
 room = join(room.id, 1);
 assert.equal(room.status, 'lobby');
 assert.equal(room.wagers.rev, 0);
 const duelId = room.id;
+assert.equal(command(duelId, 0, 'team', {teamRevision:0}).error, 'pvp team locked');
 const wager = success(command(duelId, 0, 'wager', {type:'gold', qty:20, wagerRev:0, request:crypto.randomUUID()})).room;
 assert.equal(wager.wagers.offers[0].qty, 20);
 success(command(duelId, 1, 'wager', {type:'gold', qty:20, wagerRev:1, request:crypto.randomUUID()}));

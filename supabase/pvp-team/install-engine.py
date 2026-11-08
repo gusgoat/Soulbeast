@@ -15,8 +15,8 @@ def replace(old, new):
     source = source.replace(old, new, 1)
 
 
+body = Path(__file__).with_name("room.js").read_text(encoding="utf-8").strip()
 if "function pvpJoinTeam_(" not in source:
-    body = Path(__file__).with_name("room.js").read_text(encoding="utf-8").strip()
     replace("function pvpDispatch_(d){try{", body + "\n\nfunction pvpDispatch_(d){try{")
     replace(
         "const a=r.battle.allies[0],b=r.battle.enemies[0];if(a.hp<=0||b.hp<=0){pvpFinish_(r,a.hp<=0&&b.hp<=0?-1:a.hp<=0?1:0,",
@@ -64,4 +64,13 @@ if "function pvpJoinTeam_(" not in source:
     replace("stakeSettle_(r);communityClosePvpInvite_(r);", "if(r.mode!=='2v2'){stakeSettle_(r);communityClosePvpInvite_(r);}")
     replace("const enemies=[...(seat===0?r.battle.enemies:r.battle.allies),...(r.battle.retiredUnits||[]).filter(u=>u.side===(seat===0?'enemy':'ally'))];",
             "const side=pvpSide_(r,seat);const enemies=[...(side===0?r.battle.enemies:r.battle.allies),...(r.battle.retiredUnits||[]).filter(u=>u.side===(side===0?'enemy':'ally'))];")
-    target.write_bytes(source.replace("\n", newline).encode("utf-8"))
+if "if(d.action==='pvp_team')" not in source:
+    start = source.index("// Team matches share the duel engine.")
+    end = source.index("function pvpDispatch_(d){try{", start)
+    source = source[:start] + body + "\n\n" + source[end:]
+    replace("side:pvpSide_(r,seat),wagers:", "side:pvpSide_(r,seat),teamRevision:r.teamRevision||0,teamSwap:r.teamSwap||null,wagers:")
+    replace(" if(d.action==='pvp_wager'){", " if(d.action==='pvp_team'){pvpChangeTeam_(r,seat,d);pvpWrite_(r,row);return pvpView_(r,seat)}\n if(d.action==='pvp_wager'){")
+    replace("if(d.action==='pvp_ready'){if(r.mode!=='2v2')", "if(d.action==='pvp_ready'){if(r.mode==='2v2'&&(d.teamRevision??0)!==(r.teamRevision||0))pvpFail_('pvp teams changed');if(r.mode!=='2v2')")
+    replace("if(r.players.every(p=>p.ready)){r.status='active';r.expires=Date.now()+PVP_ROOM_MS;",
+            "if(r.players.every(p=>p.ready)){delete r.teamSwap;r.status='active';r.expires=Date.now()+PVP_ROOM_MS;")
+target.write_bytes(source.replace("\n", newline).encode("utf-8"))
