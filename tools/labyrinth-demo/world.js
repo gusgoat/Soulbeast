@@ -39,8 +39,16 @@ const groundTiles=CountryRenderBudget.groundTiles(ground,()=>document.createElem
 function resize(){W=innerWidth;H=innerHeight;DPR=Math.min(devicePixelRatio||1,2);canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}addEventListener('resize',resize);resize();
 function refresh(){const p=store.player();for(const id of ['hudTop','hudBottom'])$(id).contentWindow.postMessage({type:'walk-hud-refresh'},location.origin);$('identity').textContent=(p.name||p.n)+' · '+(avatar.current?.name||p.cls)+' · Lv '+p.lv+' · '+({blue:'เหมันตคีรี',green:'พนาสมุทร',red:'อัคนีบรรพต'}[p.country]||'ผู้ผนึก');$('progress').textContent='หีบเล็ก '+data.chests.filter(c=>!c.big&&state.opened[c.id]).length+'/10 · หีบใหญ่ '+(state.opened[cfg.grandId]?'1':'0')+'/1\n'+(state.bossCleared?cfg.bossName+'พ่ายแพ้แล้ว':'ค้นหา'+cfg.bossName+'ทางเหนือ');try{const duo=JSON.parse(sessionStorage.getItem('soulbeast-dungeon-party-v1')||'null');if(duo?.friend)$('progress').textContent+='\nร่วมทีม: '+duo.friend.name+' · Lv '+duo.friend.lv}catch{}avatar.sync(p).catch(console.error)}
 function persist(){store.change(f=>{Object.assign(f,state);f.position={x:pos.x,y:pos.y}})}
-function stop(){keys.clear();stick.x=stick.y=0;stick.id=null;$('joystick').querySelector('b').style.transform='';moving=running=false}
-function paused(){return window.DungeonFeedback?.isOpen||window.WalkControls?.editing||!active||window.walkSocial.isOpen||$('townDialog').open||!$('dialog').hidden||!$('mapPanel').hidden||!$('gameMenu').hidden}
+function clearStick(){
+ const id=stick.id;
+ stick.x=stick.y=0;
+ stick.id=null;
+ knob.style.transform='';
+ if(id!==null&&joy.hasPointerCapture(id))joy.releasePointerCapture(id);
+}
+function stop(){keys.clear();clearStick();moving=running=false}
+function walkBlocked(){return window.DungeonFeedback?.isOpen||window.WalkControls?.editing||window.walkSocial.isOpen||$('townDialog').open||!$('dialog').hidden||!$('mapPanel').hidden||!$('gameMenu').hidden}
+function paused(){return !active||walkBlocked()}
 function toast(text){$('toast').textContent=text;$('toast').style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').style.opacity=0,4000)}
 function dialog(title,text,img,choices,kicker=cfg.name+' · ชั้นที่ '+cfg.floor){$('dialog').classList.remove('bossDoorDialog');stop();$('mineDialogTitle').textContent=title;$('mineDialogText').textContent=text;$('dialogKicker').textContent=kicker;$('dialogArt').src=img;$('dialogArt').hidden=!img;$('choices').replaceChildren();for(const [label,fn]of choices){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{$('dialog').hidden=true;fn?.()};$('choices').append(b)}$('dialog').hidden=false}
 function leave(){persist();if(cfg.floor>1){location.href='index.html?floor='+(cfg.floor-1)+'&arrival=stairs';return}if(sessionStorage.getItem('soulbeast-dungeon-entry-v1')||sessionStorage.getItem('soulbeast-dungeon-party-v1')){sessionStorage.removeItem('soulbeast-dungeon-entry-v1');sessionStorage.removeItem('soulbeast-dungeon-party-v1');location.href='../hemant-walk-demo/index.html?country=red&arrival=dungeon';return}location.href='../hemant-walk-demo/index.html?country=red&arrival=dungeon'}
@@ -72,8 +80,30 @@ function interact(){
 }
 $('action').onclick=interact;
 function updateTarget(){document.documentElement.dataset.bossDoorOpen=String(!!state.bossDoorOpen);document.documentElement.dataset.bossPosition=Math.round(bossGuard.actor.x)+','+Math.round(bossGuard.actor.y);document.documentElement.dataset.bossReturning=String(!!bossGuard.actor.returning);document.documentElement.dataset.chaseLeash=String(WorldPursuit.leash(W,H));document.documentElement.dataset.bossChasing=String(bossGuard.actor.chasing);document.documentElement.dataset.bossSpeed=String(bossGuard.speed);document.documentElement.dataset.position=Math.round(pos.x)+','+Math.round(pos.y);document.documentElement.dataset.movement=moving?(running?'run':'walk'):'idle';const candidates=[{...data.exit,kind:'exit',name:cfg.floor>1?'กลับชั้นที่ '+(cfg.floor-1):'ออกจากเหมือง'},{...data.stairs,kind:'stairs',name:state.bossCleared?(cfg.final?'ประตูชัย · จบดันเจี้ยน':'ประตูชั้นถัดไป'):'ประตูถูกผนึก'}];if(!state.bossDoorOpen)candidates.push({...data.rooms.find(r=>r.id==='boss').gate,kind:'boss-door',name:'เปิดประตูห้องบอส'});if(state.discovered.mini&&(cfg.rest||!state.miniCleared))candidates.push({...data.mini,kind:cfg.rest?'well':'mini',name:cfg.rest?'ใช้บ่อน้ำศักดิ์สิทธิ์':'ท้าทายผู้เฝ้าสายแร่'});for(const c of data.chests)if(!state.opened[c.id]&&(!c.room||state.bossCleared&&state.treasureDoorOpen))candidates.push({...c,kind:'chest',name:'เปิด'+(c.big?'มหาหีบสมบัติ':'หีบสมบัติ'),chest:c});for(const r of data.rooms)if(r.lockedByBoss&&!state.treasureDoorOpen)candidates.push({...r.gate,kind:'treasure-door',name:state.bossCleared?'เปิดประตูคลังสมบัติ':'คลังสมบัติ · ต้องชนะบอส'});for(const r of data.rooms)if(r.secret&&!state.discovered[r.id])candidates.push({...r.gate,kind:'secret',name:extended?'สำรวจทางลับ':jungle?'สำรวจโพรงรากไม้':desert?'สำรวจซากกำแพง':'สำรวจผนังแร่',room:r});target=candidates.filter(t=>nav.distance(pos,t)<(t.kind==='well'?230:t.kind==='boss'?225:145)&&(t.kind==='boss-door'||t.kind==='secret'||t.kind==='treasure-door'||nav.clear(pos,t))).sort((a,b)=>nav.distance(a,pos)-nav.distance(b,pos))[0];$('action').hidden=!target||paused();if(target)$('action').textContent=target.name}
-addEventListener('keydown',e=>{if(e.target.matches('input,textarea')||!$('gameMenu').hidden)return;const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='m'&&!e.repeat)mapToggle($('mapPanel').hidden);else if(k==='escape'){mapToggle(false);if(!$('dialog').hidden)$('dialog').hidden=true}else if(k==='e'&&!e.repeat)interact();else keys.add(k)});addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));addEventListener('blur',()=>{active=false;stop();persist()});addEventListener('focus',()=>active=true);document.addEventListener('visibilitychange',()=>{active=!document.hidden;stop();if(!active)persist()});addEventListener('pagehide',persist);
-const joy=$('joystick');function stickMove(e){const r=joy.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,len=Math.hypot(dx,dy),limit=45;stick.x=dx/Math.max(limit,len);stick.y=dy/Math.max(limit,len);joy.querySelector('b').style.transform=`translate(${stick.x*limit}px,${stick.y*limit}px)`}joy.onpointerdown=e=>{if(paused())return;stick.id=e.pointerId;joy.setPointerCapture(e.pointerId);stickMove(e)};joy.onpointermove=e=>{if(e.pointerId===stick.id)stickMove(e)};joy.onpointerup=joy.onpointercancel=()=>stop();
+addEventListener('keydown',e=>{if(e.target.matches('input,textarea')||!$('gameMenu').hidden)return;const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='m'&&!e.repeat)mapToggle($('mapPanel').hidden);else if(k==='escape'){mapToggle(false);if(!$('dialog').hidden)$('dialog').hidden=true}else if(k==='e'&&!e.repeat)interact();else keys.add(k)});addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));addEventListener('blur',event=>{if(event.isTrusted)active=false;stop();persist()});addEventListener('focus',()=>active=true);document.addEventListener('visibilitychange',()=>{active=!document.hidden;stop();if(!active)persist()});addEventListener('pagehide',persist);
+const joy=$('joystick'),knob=joy.querySelector('b');
+function stickMove(event){
+ if(event.pointerId!==stick.id)return;
+ const bounds=joy.getBoundingClientRect(),limit=bounds.width*.33;
+ const dx=event.clientX-bounds.left-bounds.width/2,dy=event.clientY-bounds.top-bounds.height/2;
+ const scale=Math.max(limit,Math.hypot(dx,dy));
+ stick.x=dx/scale;
+ stick.y=dy/scale;
+ knob.style.transform=`translate(${stick.x*limit}px,${stick.y*limit}px)`;
+ event.preventDefault();
+}
+joy.onpointerdown=event=>{
+ if(event.button!==0||stick.id!==null||document.hidden||walkBlocked())return;
+ // A press on the scene can resume input after focus moved into a HUD iframe.
+ active=true;
+ joy.setPointerCapture(event.pointerId);
+ stick.id=event.pointerId;
+ stickMove(event);
+};
+joy.onpointermove=stickMove;
+for(const type of ['pointerup','pointercancel','lostpointercapture']){
+ joy.addEventListener(type,event=>{if(event.pointerId===stick.id)clearStick();});
+}
 function viewAnchor(){const room=data.roomAt(pos)?.id;return room==='boss'||cfg.rest&&room==='mini'?.72:.55}
 function screen(p){return {x:p.x-camera.x+W/2,y:p.y*F-camera.y+H*viewAnchor()}}
 function visible(p,pad=280){const q=screen(p);return q.x>-pad&&q.x<W+pad&&q.y>-pad&&q.y<H+pad}

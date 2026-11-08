@@ -18,7 +18,7 @@ if(room){
  document.querySelector('header').append(document.getElementById('leaveParty'));
  await import('./online-party-run.mjs?v=party-combat-parity-20261107');
 }else{
- for(const src of ['/Soulbeast/tools/labyrinth-demo/party-presence.js', '../town-walk-demo/walk-presence.js?v=party-at-entrance-1', '/Soulbeast/tools/town-walk-demo/social-scene.js?v=friend-consent-20261104', 'world.js?v=admin-session-20261107'])await new Promise((resolve,reject)=>{
+ for(const src of ['/Soulbeast/tools/labyrinth-demo/party-presence.js', '../town-walk-demo/walk-presence.js?v=party-at-entrance-1', '/Soulbeast/tools/town-walk-demo/social-scene.js?v=friend-consent-20261104', 'world.js?v=dungeon-joystick-1'])await new Promise((resolve,reject)=>{
   const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=reject;document.body.append(script);
  });
 }
