@@ -1,6 +1,6 @@
 import '../town-walk-demo/sealer-sprite-catalog.js';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, CELL, COLORS, FLAT, TEAM_ARENA} from './arena.mjs?v=base-raid-1';
+import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-repair-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -120,6 +120,13 @@ export class Scene{
   const y0=Math.floor(top/TILE)-1,y1=Math.ceil(bottom/TILE)+1;
   for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)this.tile(x,y,now);
   const castles=bases.filter(b=>inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
+  const repairs=new Set();
+  for(const b of castles){
+   if(b.side!==me.side||b.remaining>=b.maxDurability)continue;
+   const active=entities.some(p=>p.repairingBase===b.id&&distance(p,b)<=BASE_REPAIR_RANGE);
+   if(active)repairs.add(b.id);
+   this.repairRing(b,active);
+  }
   for(const box of chests)if(inSight(me,box)&&box.x>left-55&&box.x<right+55&&box.y*FLAT>top-55&&box.y*FLAT<bottom+55)this.chest(box,now);
   drawArenaTraps(this.traps,c,traps.filter(trap=>inSight(me,trap)),serverTime,FLAT);
   const seen=entities.filter(p=>p.id===me.id||inSight(me,p));
@@ -127,7 +134,11 @@ export class Scene{
   for(const id of this.anim.keys())if(!alive.has(id))this.anim.delete(id);
   const props=obstacles.filter(p=>inSight(me,p)&&p.x>=left-75&&p.x<=right+75&&p.y*FLAT>=top-80&&p.y*FLAT<=bottom+100);
   for(const e of [...castles,...seen,...props].sort((a,b)=>a.y-b.y)){
-   if(e.main!==undefined){this.base(e,now);continue;}
+   if(e.main!==undefined){
+    this.base(e,now);
+    if(repairs.has(e.id))this.repairSparks(e,now);
+    continue;
+   }
    if(e.x<left-160||e.x>right+160||e.y*FLAT<top-180||e.y*FLAT>bottom+100)continue;
    if(e.radius)this.drawProp(e);
    else this.actor(e,now,e.id===me.id);
@@ -280,6 +291,27 @@ export class Scene{
   light.addColorStop(0,'#ffaa5388');light.addColorStop(1,'#ffaa5300');c.fillStyle=light;c.fillRect(x-38,y-38,76,76);
   c.fillStyle='#ffb756';c.beginPath();c.ellipse(x,y-4,5,r,0,0,Math.PI*2);c.fill();
   c.fillStyle='#ffe7a9';c.beginPath();c.ellipse(x,y,2.5,6,0,0,Math.PI*2);c.fill();
+ }
+ repairRing(b,active){
+  const c=this.c,x=b.x,y=b.y*FLAT;
+  c.save();
+  c.beginPath();c.arc(x,y,BASE_REPAIR_RANGE,0,Math.PI*2);
+  c.strokeStyle='#101b20d9';c.lineWidth=7;c.stroke();
+  c.fillStyle=active?'#61f1ac26':'#61f1ac12';c.fill();
+  c.strokeStyle=active?'#a6ffcd':'#a7dfc4';c.lineWidth=3;
+  if(!active)c.setLineDash([11,7]);
+  c.stroke();c.restore();
+ }
+ repairSparks(b,now){
+  const c=this.c,x=b.x,y=b.y*FLAT;
+  c.save();c.strokeStyle='#d3ffe3';c.lineWidth=2;
+  for(let i=0;i<7;i++){
+   const age=(now/1100+i/7)%1,theta=i*2.39996;
+   const px=x+Math.cos(theta)*(50+age*22),py=y-10+Math.sin(theta)*22-age*58;
+   c.globalAlpha=Math.sin(age*Math.PI)*.94;
+   c.beginPath();c.moveTo(px-4,py);c.lineTo(px+4,py);c.moveTo(px,py-4);c.lineTo(px,py+4);c.stroke();
+  }
+  c.restore();
  }
  base(b,now){
   const c=this.c,x=b.x,y=b.y*FLAT,color=COLORS[b.side],r=b.main?74:b.tier==='medium'?59:47;

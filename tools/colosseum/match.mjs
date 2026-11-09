@@ -1,5 +1,5 @@
-import {ASSIST, BASES, BASE_AURA_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS, canRaidBase,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=base-raid-1';
+import {ASSIST, BASES, BASE_AURA_RANGE, BASE_REPAIR_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS, canRaidBase,
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=base-repair-1';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=skill-effects-1';
 import rareArt from './rare-art.mjs';
@@ -176,7 +176,7 @@ export class Match {
  }
  teleport(p,now){
   Object.assign(p,p.spawn,{phase:'walk',safeUntil:now+2500,dx:0,dy:0,warp:(p.warp||0)+1});
-  delete p.battle;delete p.respawnAt;
+  delete p.battle;delete p.respawnAt;delete p.repair;
   resetBotRoute(p);
  }
  respawn(p,now){
@@ -248,7 +248,7 @@ export class Match {
    b.remaining--;
    const captured=b.remaining===0;
    this.score[p.side]+=b.points;this.score[b.side]=Math.max(0,this.score[b.side]-b.points);
-   if(captured){b.side=p.side;b.remaining=b.maxDurability/2;}
+   if(captured){b.side=p.side;b.remaining=b.maxDurability/2;this.clearBaseRepairs(b.id);}
    this.teleport(p,now);
    this.note(`${p.name} ${captured?'ยึด':'จู่โจม'}${b.label} · ${TEAMS[p.side]} +${b.points}`,now);
    if(captured&&b.main)this.finish(p.side,'base-captured',now);
@@ -304,10 +304,12 @@ export class Match {
   this.battles.set(id,battle);
   for(const p of [...teams.flat(),...(neutral?[b]:[])]){
    p.phase='battle';p.battle=id;p.dx=p.dy=0;
+   if(p.repair)p.repair.lastAt=null;
   }
  }
  fall(p,now,cause=''){
   p.phase='dead';
+  delete p.repair;
   if(this.solo){p.eliminationCause=cause;this.note(`${p.name} ตกรอบ${cause?' · '+cause:''}`,now);return;}
   p.respawnAt=now+RESPAWN_MS;
   this.score[p.side]=Math.max(0,this.score[p.side]-10);
@@ -466,6 +468,30 @@ export class Match {
   const length=Math.hypot(dx,dy);
   if(length>0)move(beast,dx/length,dy/length,Math.min(dt,length/speed),speed);
  }
+ clearBaseRepairs(id){
+  for(const p of this.players)if(p.repair?.baseId===id)delete p.repair;
+ }
+ repairBases(now){
+  for(const p of this.players){
+   if(p.phase!=='walk'&&p.phase!=='battle')continue;
+   const nearby=this.bases.filter(b=>b.side===p.side&&b.remaining<b.maxDurability&&distance(p,b)<=BASE_REPAIR_RANGE);
+   const base=nearby.find(b=>b.id===p.repair?.baseId)||nearest(p,nearby);
+   if(p.repair?.baseId!==base?.id)delete p.repair;
+   if(!base)continue;
+   if(p.phase==='battle'||!p.connected){
+    if(p.repair)p.repair.lastAt=null;
+    continue;
+   }
+   const repair=p.repair??={baseId:base.id,elapsed:0,lastAt:null};
+   if(repair.lastAt!==null)repair.elapsed+=Math.max(0,now-repair.lastAt);
+   repair.lastAt=now;
+   const points=Math.floor(repair.elapsed/BASE_REPAIR_MS);
+   if(!points)continue;
+   base.remaining=Math.min(base.maxDurability,base.remaining+points);
+   if(base.remaining===base.maxDurability)this.clearBaseRepairs(base.id);
+   else repair.elapsed-=points*BASE_REPAIR_MS;
+  }
+ }
  tick(now,dt){
   if(this.phase!=='match')return;
   if(this.solo){this.updateFog(now);this.eliminateByScore(now);}
@@ -534,6 +560,7 @@ export class Match {
     if(distance(b,patrol)<=10)b.patrolLeft=!b.patrolLeft;
    }
   }
+  if(!this.solo)this.repairBases(now);
  }
  spectatorTarget(p){
   if(!this.solo||this.phase!=='match'||p.phase!=='dead')return null;
@@ -547,6 +574,8 @@ export class Match {
  snapshot(p,now){
   const {bushAt,canSeeOpponent}=this.arena,hero=this.battleHero(p);
   const spectating=this.spectatorTarget(p),viewer=spectating||p;
+  const repairing=q=>this.phase==='match'&&q.phase==='walk'&&q.connected&&q.repair?.lastAt!=null&&
+   this.bases.some(b=>b.id===q.repair.baseId&&b.side===q.side&&b.remaining<b.maxDurability);
   const players=this.players.map(q=>{
    const {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,x,y,warp,safeUntil}=q;
    const ally=this.solo?q===p:side===p.side;
@@ -554,6 +583,7 @@ export class Match {
    const teamHp=ally?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
    return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),...teamHp,
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
+    ...(!this.solo&&ally&&visible?{repairingBase:repairing(q)?q.repair.baseId:null}:{}),
     ...(!this.solo&&ally&&!visible&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });
   return {type:'state',me:p.id,code:this.code,phase:this.phase,practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),
@@ -568,6 +598,7 @@ export class Match {
     return [{id,x,y,type,endsAt:now+state.remaining*1000,burstUntil:state.done?now+state.burst*1000:0}];
    }),
    players,vitals:{mp:hero?.mp??p.mp,maxMp:p.maxMp,ailments:Object.keys(hero?.status??p.ailments??{})},baseHeal:p.baseHeal,
+   ...(repairing(p)?{baseRepair:{id:p.repair.baseId,elapsed:p.repair.elapsed}}:{}),
    respawnAt:p.respawnAt,finishedAt:this.finishedAt,ack:p.appliedSeq??-1,input:[p.dx,p.dy],battleId:p.phase==='battle'?p.battle:null,
    shadows:this.shadows.filter(b=>b.phase==='walk'&&inSight(viewer,b)).map(({id,x,y,sp,rare,lv,label})=>({id,x,y,sp,rare,lv,label})),
    bosses:this.bosses.filter(b=>!b.claimed&&inSight(viewer,b)).map(({id,x,y,sp,boss,lv,label,hp,maxHp,phase})=>({id,x,y,sp,boss,lv,label,hp,maxHp,phase})),

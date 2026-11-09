@@ -7,7 +7,7 @@
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
  <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=conquest-1">
+ <link rel="stylesheet" href="./style.css?v=base-repair-1">
 </head>
 <body>
  <main id="lobby">
@@ -57,6 +57,10 @@
   <button id="map" class="map" aria-label="ขยายมินิแมป"><canvas id="mini"></canvas><span>แผนที่สนาม ↗</span></button>
   <div id="objectives">
    <span id="chest-count"></span><span id="boss-clock"></span>
+   <div id="base-repair" hidden>
+    <span id="base-repair-label"></span>
+    <progress id="base-repair-progress" max="1" value="0" aria-label="เวลาซ่อมฐาน"></progress>
+   </div>
    <details id="survival-standings" hidden>
     <summary id="survival-points">คะแนนคุณ 0</summary>
     <ol id="survival-ranks" aria-label="อันดับคะแนนผู้รอด"></ol>
@@ -87,6 +91,6 @@
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=base-raid-1"></script>
+ <script type="module" src="./client.mjs?v=base-repair-1"></script>
 </body>
 </html>

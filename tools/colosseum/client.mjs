@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-raid-1';
+import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-repair-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-raid-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-repair-1';
 import {battlePresentation} from './battle-presentation.mjs?v=skill-effects-1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
@@ -55,7 +55,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=base-raid-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=base-repair-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -245,7 +245,7 @@ function applyState(next){
   const err=distance(local,expected);
   if(err>145||!scene.arena.fits(local.x,local.y)){local.x=expected.x;local.y=expected.y;correction=null;}
   else correction=err>7?{x:expected.x-local.x,y:expected.y-local.y}:null;
-  for(const k of ['phase','connected','safeUntil'])local[k]=me[k];
+  for(const k of ['phase','connected','safeUntil','repairingBase'])local[k]=me[k];
  }
  const visible=[...next.players.filter(p=>p.id!==me.id&&Number.isFinite(p.x)&&p.connected&&p.phase!=='dead'),...next.shadows,...next.bosses];
  const ids=new Set(visible.map(p=>p.id));
@@ -721,6 +721,15 @@ function frame(t){
   $('walk-sound').hidden=!walking;
   presentation.walk(walking,stepped?(scene.arena.bushAt(local)!==null?'leaves':'stone'):null);
   $('objectives').hidden=!walking;
+  const repair=walking&&state.baseRepair;
+  const repairBase=repair&&state.bases.find(b=>b.id===repair.id&&distance(local,b)<=BASE_REPAIR_RANGE);
+  $('base-repair').hidden=!repairBase;
+  if(repairBase){
+   const label=`กำลังซ่อม${repairBase.label} · ${repairBase.remaining}/${repairBase.maxDurability}`;
+   const text=$('base-repair-label');if(text.textContent!==label)text.textContent=label;
+   const elapsed=repair.elapsed+Math.min(150,Math.max(0,now-state.now));
+   $('base-repair-progress').value=Math.min(BASE_REPAIR_MS-1,elapsed)/BASE_REPAIR_MS;
+  }
   $('leave-practice').hidden=!state.practice;
   const treasure=`หีบเหลือ ${state.chestsLeft}/${state.chestsTotal??CHEST_COUNT}`;
   $('chest-count').textContent=treasure;$('map-chests').textContent=treasure;
