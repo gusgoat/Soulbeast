@@ -87,7 +87,7 @@ function questNpcSprite(n,q){
  if(!im.naturalWidth)return;
  const x=sx(n.x),y=sy(n.y),h=160*q,w=h*im.naturalWidth/im.naturalHeight;
  if(x+w/2<0||x-w/2>W||y<0||y-h>H)return;
- c.drawImage(im,x-w/2,y-h,w,h);
+ WalkIdleArt.drawNpc(c,im,null,x-w/2,y-h,w,h,t,(n.x+n.y)*.013);
 }
 function player(){const x=sx(p.x),y=sy(p.y),q=zoom();ellipse(c,x,y,21*q,7*q,'#173a4c44');if(overview){ellipse(c,x,y,5,5,'#edcb69');c.strokeStyle='#173e59';c.lineWidth=2;c.strokeRect(x-6,y-6,12,12)}else {if(!fusion.draw(c,x,y,q,p.dir,t,moving))avatar.draw(c,x,y,154*q,p.dir,phase,moving,running)}}
 function shadowBeast(a){const x=sx(a.x),y=sy(a.y),q=zoom();if(overview){ellipse(c,x,y,2,2,'#32384bd0');return}if(x<-120||x>W+120||y<-30||y>H+160)return;const frame=a.moving?Math.floor(a.phase)%8:0;ellipse(c,x,y,25*q,8*q,'#0a172a44');c.save();c.translate(x,y);c.scale(a.facing,1);c.drawImage(images.shadow,(frame%4)*256,Math.floor(frame/4)*256,256,256,-72*q,-133*q,144*q,144*q);c.restore();window.townQuests.drawTarget(c,x,y-150*q,q,window.townQuests.targetStyle({type:'enemy',kind:'shadow',country:data.countryId,place:questNearbyPlace(a)}));if(nav.distance(p,a)<240)label(a.chasing?'! เงาอสูร':'เงาอสูร',x,y-116*q,a.chasing?'#922d34':'#343751')}
