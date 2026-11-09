@@ -1,8 +1,9 @@
 (function(g){
  'use strict';
- const poses=[-1,-.3,.88,.34];
- const frameDuration=.38;
- const cache=new WeakMap();
+ const frameEnds=[.65,1.02,1.48,1.84];
+ const atlasRoot='/Soulbeast/assets/ui/npc-idle-v2/';
+ const atlases=new Map(),motions=new WeakMap();
+ const reducedMotion=g.matchMedia('(prefers-reduced-motion: reduce)');
 
  function makeCanvas(width,height){
   const canvas=document.createElement('canvas');
@@ -11,58 +12,46 @@
   return canvas;
  }
 
- function makeFrames(image,source){
-  const scale=Math.min(1,256/Math.max(source.width,source.height));
-  const width=Math.max(1,Math.round(source.width*scale));
-  const height=Math.max(1,Math.round(source.height*scale));
-  const padding=Math.ceil(height*.026)+2;
-  const base=makeCanvas(width,height);
-  const ctx=base.getContext('2d',{willReadFrequently:true});
-  ctx.drawImage(image,source.x,source.y,source.width,source.height,0,0,width,height);
-  const pixels=ctx.getImageData(0,0,width,height).data;
-  let top=height,bottom=-1;
-  for(let y=0;y<height;y++){
-   for(let x=0;x<width;x++){
-    if(pixels[(y*width+x)*4+3]<32)continue;
-    top=Math.min(top,y);
-    bottom=y;
-    break;
+ function motionFor(image,source){
+  let crops=motions.get(image);
+  if(!crops){crops=new Map();motions.set(image,crops);}
+  const index=source?Math.floor(source.y/source.height)*4+Math.floor(source.x/source.width):-1;
+  if(crops.has(index))return crops.get(index);
+  const url=image.src;
+  const service=index>=0&&index<8&&url.endsWith('/town-walk-preview/npcs-v2.png.webp');
+  const person=url.match(/\/world-quests\/npcs\/(blue|green|red)-(\d{2})-v1\.png\.webp$/);
+  const id=Number(person?.[2]);
+  const name=service?'service-'+(index<4?'top':'bottom'):
+   id>=22&&id<=24?person[1]+'-road':
+   id>=1&&id<=21?person[1]+'-town-'+Math.floor((id-1)/6):null;
+  const row=service?index%4:id>=22?id-22:(id-1)%6;
+  let motion=null;
+  if(name){
+   if(!atlases.has(name)){
+    const atlas=new Image();
+    atlas.src=atlasRoot+name+'.webp';
+    atlases.set(name,atlas);
    }
+   motion={atlas:atlases.get(name),row};
   }
-  const bodyHeight=Math.max(1,bottom-top);
-  const frames=poses.map(pose=>{
-   const canvas=makeCanvas(width+padding*2,height);
-   const frame=canvas.getContext('2d');
-   for(let y=0;y<height;y+=2){
-    const band=Math.min(2,height-y);
-    const position=Math.max(0,(y-top)/bodyHeight);
-    // Bend the head and shoulders while keeping the lower body on the ground.
-    const lean=Math.max(0,1-position/.49)**2;
-    const shoulders=Math.max(0,1-Math.abs(position-.3)/.22)**2;
-    const offset=pose*height*.017*lean;
-    const stretch=pose*width*.025*shoulders;
-    frame.drawImage(base,0,y,width,band,padding+offset-stretch/2,y,width+stretch,band);
-   }
-   return canvas;
-  });
-  return {frames,padding:padding/width};
+  crops.set(index,motion);
+  return motion;
  }
 
- function drawNpc(ctx,image,source,x,y,width,height,time,phase){
+ function drawNpc(ctx,image,source,x,y,width,height,time,phase=0){
   if(!image.naturalWidth)return;
-  source??={x:0,y:0,width:image.naturalWidth,height:image.naturalHeight};
-  if(time===null){
-   ctx.drawImage(image,source.x,source.y,source.width,source.height,x,y,width,height);
-   return;
+  const motion=time!=null&&!reducedMotion.matches?motionFor(image,source):null;
+  if(motion?.atlas.naturalWidth){
+   const {atlas,row}=motion,cell=atlas.naturalWidth/4;
+   if((row+1)*cell<=atlas.naturalHeight){
+    const elapsed=((time+phase)%frameEnds[3]+frameEnds[3])%frameEnds[3];
+    const frame=frameEnds.findIndex(end=>elapsed<end);
+    ctx.drawImage(atlas,frame*cell,row*cell,cell,cell,x+(width-height)/2,y,height,height);
+    return;
+   }
   }
-  let crops=cache.get(image);
-  if(!crops){crops=new Map();cache.set(image,crops);}
-  const key=`${source.x},${source.y},${source.width},${source.height}`;
-  if(!crops.has(key))crops.set(key,makeFrames(image,source));
-  const {frames,padding}=crops.get(key);
-  const frame=Math.floor((time+phase)/frameDuration)%frames.length;
-  const bleed=width*padding;
-  ctx.drawImage(frames[frame],x-bleed,y,width+bleed*2,height);
+  source??={x:0,y:0,width:image.naturalWidth,height:image.naturalHeight};
+  ctx.drawImage(image,source.x,source.y,source.width,source.height,x,y,width,height);
  }
 
  const flagCache=new WeakMap();
@@ -70,7 +59,7 @@
 
  function makeFlagFrames(image){
   const width=120,height=80,padding=10;
-  return poses.map((_,index)=>{
+  return Array.from({length:4},(_,index)=>{
    const canvas=makeCanvas(width,height+2*padding),frame=canvas.getContext('2d');
    for(let x=0;x<width;x+=2){
     const position=x/width;

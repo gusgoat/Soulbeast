@@ -65,7 +65,8 @@ fetch('island-props.json?v=1').then(res=>res.json()).then(async catalog=>{
  }));
  canvas.dataset.scenery='ready';
 }).catch(console.error);
-const music=WalkAudio.create({kind:'country',music:{blue:'countryBlue',green:'countryGreen',red:'countryRed'}[country],surface:'leaves'});
+const shore=Array.from({length:81},(_,i)=>data.coast(i*Math.PI/40));
+const music=WalkAudio.create({kind:'country',music:{blue:'countryBlue',green:'countryGreen',red:'countryRed'}[country],surface:'leaves',waterSources:[{points:shore,width:85}]});
 async function loadBossSprite(){
  let entry;
  if(country==='green'){
