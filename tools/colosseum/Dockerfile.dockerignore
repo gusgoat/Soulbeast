@@ -1,0 +1,8 @@
+**
+!tools/
+!tools/colosseum/
+!tools/colosseum/*.mjs
+!tools/hemant-walk-demo/
+!tools/hemant-walk-demo/war-engine.generated.js
+!tools/labyrinth-demo/
+!tools/labyrinth-demo/traps.js

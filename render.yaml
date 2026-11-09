@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: soulbeast-colosseum
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: codex/web-latest-20261103
+    autoDeployTrigger: off
+    dockerfilePath: ./tools/colosseum/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      - key: SB_COLOSSEUM_SITE_ORIGIN
+        value: https://gusgoat.github.io
+      - key: SB_COLOSSEUM_ACCOUNT_URL
+        value: https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-accounts
+      - key: SB_COLOSSEUM_ACCOUNT_KEY
+        value: sb_publishable_-m9RbNVXYhaKjUZYSGGdMQ_rrkCuEL6

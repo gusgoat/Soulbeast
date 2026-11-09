@@ -4,7 +4,7 @@ import {createAccountLoader} from './account-auth.mjs';
 
 const TYPES={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8',
  '.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg','.mp3':'audio/mpeg'};
-const STATIC=new Set(['index.html','client.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','pvp-card-art.mjs','labyrinth-demo/traps.js']);
+const STATIC=new Set(['index.html','client.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','pvp-card-art.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js']);
 const ROOT=new URL('../../',import.meta.url);
 const TICK=50, LOBBY_TTL=30*60_000, FINISH_TTL=5*60_000;
 const MAX_ROOMS=32, MAX_CONNECTIONS=160;
@@ -125,6 +125,9 @@ export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
  }
  const server=Deno.serve({hostname:'127.0.0.1',port:8788,...options},async req=>{
   const url=new URL(req.url);
+  if(url.pathname==='/healthz'&&['GET','HEAD'].includes(req.method)){
+   return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':siteOrigin||'*','Cache-Control':'no-store'}});
+  }
   if(url.pathname==='/ticket'&&loadCharacter){
    if(!allowed(req))return new Response(null,{status:403});
    const headers={'Access-Control-Allow-Origin':req.headers.get('origin'),'Access-Control-Allow-Methods':'POST, OPTIONS',
@@ -142,13 +145,14 @@ export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
    }catch{return Response.json({error:'ยืนยันตัวละครไม่สำเร็จ กรุณาลองใหม่'},{status:403,headers});}
   }
   if(url.pathname==='/ws'&&req.headers.get('upgrade')?.toLowerCase()==='websocket')return connect(req);
+  if(loadCharacter)return new Response('Not found',{status:404});
   if(!['GET','HEAD'].includes(req.method))return new Response(null,{status:405});
   const path=url.pathname==='/'?'index.html':url.pathname.slice(1);
   const contentType=TYPES[path.match(/\.[a-z0-9]+$/i)?.[0]];
   const asset=path.startsWith('assets/')&&/^assets\/[a-z0-9_./-]+$/i.test(path)&&!path.split('/').some(x=>x.startsWith('.'));
   const atlas=/^art\/(?:(swordsman|archer|mage|summoner)-(idle|run)|tall-grass-v1|tall-hedge-v2|maze-wall-v1|stone-base-v1|arena-(crowd|paving|column|ruins)-v1|(?:ice|fire)-castle-(?:main|small)-v1)\.webp$/.test(path);
   if(!contentType||!(STATIC.has(path)||asset||atlas))return new Response('Not found',{status:404});
-  const location=asset?new URL(path,ROOT):new URL(path==='labyrinth-demo/traps.js'?'../'+path:path,import.meta.url);
+  const location=asset?new URL(path,ROOT):new URL(path.includes('/')&&STATIC.has(path)?'../'+path:path,import.meta.url);
   try{
    const body=req.method==='HEAD'?null:await Deno.readFile(location);
    return new Response(body,{headers:{'Content-Type':contentType,'X-Content-Type-Options':'nosniff','Cache-Control':asset?'public, max-age=3600':'no-store'}});
@@ -163,10 +167,11 @@ export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
 if(import.meta.main){
  const portArg=Deno.args.find(x=>x.startsWith('--port='));
  const publicServer=Deno.args.includes('--public');
+ const port=portArg?.slice(7)||(publicServer?Deno.env.get('PORT'):null)||8788;
  const siteOrigin=publicServer?Deno.env.get('SB_COLOSSEUM_SITE_ORIGIN'):null;
  const accountURL=publicServer?Deno.env.get('SB_COLOSSEUM_ACCOUNT_URL'):null;
  const accountKey=publicServer?Deno.env.get('SB_COLOSSEUM_ACCOUNT_KEY'):null;
  if(publicServer&&(!siteOrigin||!accountURL||!accountKey))throw Error('Missing Colosseum public server settings');
  serve({hostname:publicServer||Deno.args.includes('--lan')?'0.0.0.0':'127.0.0.1',
-  port:portArg?Number(portArg.slice(7)):8788,siteOrigin,loadCharacter:publicServer?createAccountLoader(accountURL,accountKey):null});
+  port:Number(port),siteOrigin,loadCharacter:publicServer?createAccountLoader(accountURL,accountKey):null});
 }

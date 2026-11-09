@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, distance} from './arena.mjs';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, portraitAtlas} from './scene.mjs?v=colosseum-ranges';
+import {Scene, drawMap, portrait, portraitAtlas, sealerGender} from './scene.mjs?v=career-art';
 import {battlePresentation} from './battle-presentation.mjs';
 import pvpCardArt from './pvp-card-art.mjs';
 
@@ -49,7 +49,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=colosseum-ranges',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=career-art',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -72,23 +72,44 @@ const own=()=>state?.players.find(p=>p.id===state.me);
 const clock=ms=>{const t=Math.max(0,Math.ceil(ms/1000));return [Math.floor(t/60),t%60].map(x=>String(x).padStart(2,'0')).join(':');};
 function saved(){try{return JSON.parse(sessionStorage.getItem(channel)||'null');}catch{return null;}}
 function store(value){try{if(value)sessionStorage.setItem(channel,JSON.stringify(value));else sessionStorage.removeItem(channel);}catch{}}
-function connect(payload){
+async function waitForHost(base,payload){
+ const deadline=Date.now()+105_000;
+ const url=new URL('/healthz',base);
+ while(packet===payload&&Date.now()<deadline){
+  try{
+   const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(12_000)});
+   if(response.status===204)return;
+  }catch{}
+  await new Promise(resolve=>setTimeout(resolve,2500));
+ }
+ throw Error('เซิร์ฟเวอร์ยังเปิดไม่สำเร็จ กรุณาลองอีกครั้ง');
+}
+async function connect(payload){
  clearTimeout(retry);packet=payload;
  pendingMoves=[];pendingChest=null;correction=null;oneWay=0;bestRtt=Infinity;
  const useWorker=practiceType(payload.type)&&Boolean(selectedCharacter);
  const base=new URL(serverURL||location.origin);
  const url=new URL('/ws',base);
  url.protocol=base.protocol==='https:'?'wss:':'ws:';
- const socket=useWorker?practiceSocket():new WebSocket(url);
- ws=socket;$('notice').textContent='กำลังเชื่อมต่อสนาม…';
- socket.onopen=async()=>{
+ $('notice').textContent='กำลังเชื่อมต่อสนาม…';
+ let ticket=null;
+ if(gameWeb&&!useWorker){
   try{
-   const ticket=gameWeb?await onlineTicket(base):null;
-   if(ws===socket)send(ticket?{...payload,ticket}:payload);
+   if(!accountContext?.code||accountContext.environment!=='live')throw Error('กรุณาเข้าสู่ระบบและเลือกตัวละครออนไลน์');
+   $('notice').textContent='กำลังเปิดเซิร์ฟเวอร์สนาม อาจใช้เวลาประมาณหนึ่งนาที…';
+   await waitForHost(base,payload);
+   if(packet!==payload)return;
+   ticket=await onlineTicket(base);
+   if(packet!==payload)return;
+   $('notice').textContent='กำลังเชื่อมต่อสนาม…';
   }catch(error){
-   if(ws===socket){ws=null;socket.close();$('notice').textContent=error.message;}
+   if(packet===payload)$('notice').textContent=error.message;
+   return;
   }
- };
+ }
+ const socket=useWorker?practiceSocket():new WebSocket(url);
+ ws=socket;
+ socket.onopen=()=>{if(ws===socket)send(ticket?{...payload,ticket}:payload);};
  socket.onmessage=({data})=>{
   if(ws!==socket)return;
   const m=JSON.parse(data);
@@ -242,9 +263,11 @@ function frameArt(unit){
 }
 function combatPose(unit){
  if(unit.kind==='player'){
-  // Follow the PvP art defaults for fighters without a selected gender.
-  const gender=['male','female'].includes(unit.gender)?unit.gender:unit.cls==='swordsman'?'male':'female';
-  return pvpCardArt[`${unit.cls}-${gender}`]??pvpCardArt[`${unit.baseCls}-${gender}`];
+  const key=`${unit.cls}-${sealerGender(unit)}`;
+  const existing=pvpCardArt[key];
+  if(existing)return existing;
+  const pose=phase=>`/assets/beasts/motion/${key}-${phase}-v1.webp`;
+  return {motion:'breathe',idle:pose('idle'),windup:pose('windup'),melee:pose('melee'),hit:pose('hit')};
  }
  return pvpCardArt[`${unit.sp}:${unit.evo||0}`];
 }

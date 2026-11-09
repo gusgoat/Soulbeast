@@ -1,4 +1,4 @@
-import {Match} from './match.mjs?v=colosseum-ranges';
+import {Match} from './match.mjs?v=career-art';
 import {startPractice} from './practice.mjs';
 
 let room,player,timer,last,frame=0,battleKey;

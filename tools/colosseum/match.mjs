@@ -39,7 +39,7 @@ export class Match {
   const cls=character?.cls||(Object.hasOwn(CLASSES,profile.cls)||profile.botCareer&&careerInfo(profile.cls)?profile.cls:'swordsman');
   const career=careerInfo(cls);
   assert(career,'อาชีพของตัวละครไม่ถูกต้อง');
-  const p={id:crypto.randomUUID(),token:crypto.randomUUID(),name:safeName(character?.name??profile.name),cls,baseCls:career.base,className:career.name,
+  const p={id:crypto.randomUUID(),token:crypto.randomUUID(),name:safeName(character?.name??profile.name),cls,baseCls:career.base,className:career.name,gender:character?.gender,
    lv:character?Number(character.lv):Math.max(1,Math.min(60,Math.trunc(Number(profile.lv))||20)),side,ready:false,connected:true,phase:'lobby',seq:-1,dx:0,dy:0,safeUntil:0};
   if(character){
    p.character={...structuredClone(character),name:p.name};
@@ -486,11 +486,11 @@ export class Match {
  snapshot(p,now){
   const {bushAt,canSeeOpponent}=this.arena,hero=this.battleHero(p);
   const players=this.players.map(q=>{
-   const {id,side,cls,baseCls,className,name,lv,phase,ready,connected,x,y,warp,safeUntil}=q;
+   const {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,x,y,warp,safeUntil}=q;
    const ally=this.solo?q===p:side===p.side;
    const visible=q===p||(inSight(p,q)&&(ally||canSeeOpponent(p,q)));
    const teamHp=ally?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
-   return {id,side,cls,baseCls,className,name,lv,phase,ready,connected,bot:Boolean(q.bot),...teamHp,
+   return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),...teamHp,
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
     ...(!this.solo&&ally&&!visible&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });

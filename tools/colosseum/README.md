@@ -7,7 +7,7 @@
 ตั้งค่า `SB_COLOSSEUM_SITE_ORIGIN=https://gusgoat.github.io` พร้อม `SB_COLOSSEUM_ACCOUNT_URL` และ `SB_COLOSSEUM_ACCOUNT_KEY` ให้ตรงกับ Accounts API และคีย์ publishable ใน `client/account-client.mjs` ใช้คำสั่งต่อไปนี้บนโฮสต์ (เปลี่ยนพอร์ตตามโฮสต์ได้):
 
 ```powershell
-deno run --allow-env=SB_COLOSSEUM_SITE_ORIGIN,SB_COLOSSEUM_ACCOUNT_URL,SB_COLOSSEUM_ACCOUNT_KEY --allow-net --allow-read=assets,tools/colosseum,tools/labyrinth-demo/traps.js tools/colosseum/server.mjs --public --port=8788
+deno run --allow-env=PORT,SB_COLOSSEUM_SITE_ORIGIN,SB_COLOSSEUM_ACCOUNT_URL,SB_COLOSSEUM_ACCOUNT_KEY --allow-net --allow-read=assets,tools/colosseum,tools/labyrinth-demo/traps.js tools/colosseum/server.mjs --public --port=8788
 ```
 
 ทดสอบ `/ticket` และ `/ws` ผ่าน HTTPS/WSS ก่อนตั้งค่า `<meta name="colosseum-server">` ใน `index.html` เป็น HTTPS origin ของเซิร์ฟเวอร์ หน้าสนามจะเปิดให้สร้างและเข้าร่วมห้องออนไลน์หลังตั้งค่านี้ ส่วนคำสั่งด้านล่างใช้เปิดสนามทดสอบแบบไม่อ่านเซฟจริง:
@@ -15,7 +15,7 @@ deno run --allow-env=SB_COLOSSEUM_SITE_ORIGIN,SB_COLOSSEUM_ACCOUNT_URL,SB_COLOSS
 จากโฟลเดอร์งาน `party-combat-parity-release-20261107`:
 
 ```powershell
-deno run --allow-read=assets,tools/colosseum,tools/labyrinth-demo/traps.js --allow-net=127.0.0.1 tools/colosseum/server.mjs
+deno run --allow-read=assets,tools/colosseum,tools/labyrinth-demo/traps.js,tools/town-walk-demo/sealer-sprite-catalog.js --allow-net=127.0.0.1 tools/colosseum/server.mjs
 ```
 
 เปิด http://127.0.0.1:8788 ในเบราว์เซอร์สองหน้าต่างหรือสองโปรไฟล์ คนแรกสร้างห้อง อีกคนใส่รหัส 8 ตัว ทั้งสองกดพร้อมแล้วให้หัวหน้าห้องเปิดประตูสนาม บนคอมใช้ WASD/ลูกศรหรือจอย บนมือถือใช้จอยสัมผัส แตะมินิแมปเพื่อขยาย
@@ -33,7 +33,7 @@ deno run --allow-read=assets,tools/colosseum,tools/labyrinth-demo/traps.js --all
 ถ้าจะทดลองคนละเครื่องใน Wi-Fi เดียวกัน ให้รันคำสั่งด้านล่างแล้วเปิด `http://<IP ของเครื่องที่รัน>:8788` บนทั้งสองเครื่อง:
 
 ```powershell
-deno run --allow-read=assets,tools/colosseum,tools/labyrinth-demo/traps.js --allow-net tools/colosseum/server.mjs --lan
+deno run --allow-read=assets,tools/colosseum,tools/labyrinth-demo/traps.js,tools/town-walk-demo/sealer-sprite-catalog.js --allow-net tools/colosseum/server.mjs --lan
 ```
 
 กติกา 1–5 คนต่อฝั่งและทีมต้องเท่ากัน เริ่ม 100 คะแนน แมตช์ละ 12 นาที คะแนนเท่ากันเมื่อหมดเวลาถือว่าเสมอ ฐานย่อยได้และหัก 10 คะแนน ฐานใหญ่ 15 คะแนน โจมตีฐานแล้วกลับจุดเกิด ผู้ผนึกที่ล้มเสีย 10 คะแนนและรอ 30 วินาที เพื่อนที่ใกล้ที่สุดภายใน 400 หน่วยซึ่งไม่มีผนังกั้นจะเข้าช่วยฝั่งละหนึ่งคน

@@ -1,5 +1,6 @@
+import '../town-walk-demo/sealer-sprite-catalog.js';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, CELL, CLASSES, COLORS, FLAT, TEAM_ARENA} from './arena.mjs';
+import {BASES, CELL, COLORS, FLAT, TEAM_ARENA} from './arena.mjs';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -7,12 +8,23 @@ import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
 const TILE=CELL*FLAT;
 const img=url=>Object.assign(new Image(),{src:url});
 const ready=i=>i?.complete&&i.naturalWidth>0;
-export const portrait=u=>u.sp?((rareArt[u.sp]?.portrait?.replace(/^\/assets\//,assets))??assets+'companions/'+u.sp+'.webp'):assets+'portraits/'+u.cls+(u.cls==='swordsman'?'-female':'-male')+'.webp';
+const catalog=globalThis.sealerSpriteCatalog;
+const siteAsset=path=>path?.replace(/^\/Soulbeast\/assets\//,assets);
+export const sealerGender=u=>['male','female'].includes(u.gender)?u.gender:u.cls==='swordsman'?'male':'female';
+export const portrait=u=>u.sp
+ ? rareArt[u.sp]?.portrait?.replace(/^\/assets\//,assets)??assets+'companions/'+u.sp+'.webp'
+ : siteAsset(catalog[u.cls]?.[sealerGender(u)]?.portrait);
 export const portraitAtlas=u=>rareArt[u.sp]?.referenceAtlas;
 const atlases=new Map(), beastArt=new Map(), rareAtlases=new Map();
-function getAtlas(cls){
- if(!atlases.has(cls))atlases.set(cls,{idle:img(`./art/${cls}-idle.webp`),run:img(`./art/${cls}-run.webp`)});
- return atlases.get(cls);
+function getAtlas(player){
+ const gender=sealerGender(player);
+ const key=`${player.cls}-${gender}`;
+ if(!atlases.has(key)){
+  const entry=catalog[player.cls]?.[gender];
+  if(!entry?.ready)return null;
+  atlases.set(key,{entry});
+ }
+ return atlases.get(key);
 }
 const hash=(x,y)=>Math.abs((Math.imul(x,733)^Math.imul(y,1499))%997)/997;
 const treasure=img(assets+'country-walk/temperate-chest.png.webp');
@@ -325,12 +337,24 @@ export class Scene{
     c.strokeStyle='#ffca79';c.lineWidth=1;c.strokeRect(x-44,y-119,88,9);
    }
   }else{
-   const a=getAtlas(Object.hasOwn(CLASSES,p.baseCls||p.cls)?(p.baseCls||p.cls):'swordsman'), sheet=moving?a.run:a.idle, size=145;
-   if(ready(sheet)){
-    const col=moving?Math.floor(prev.phase)%12:prev.dir%4,row=moving?prev.dir:Math.floor(prev.dir/4);
-    const cell=sheet.width/(moving?12:4);
-    c.drawImage(sheet,col*cell,row*cell,cell,cell,x-size/2,y-size*(p.cls==='swordsman'?.80:.765),size,size);
-   }else{c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
+   const atlas=getAtlas(p);
+   const pose=moving?'run':'idle';
+   if(atlas){
+    const {entry}=atlas;
+    const sheet=atlas[pose]??=img(siteAsset(moving?(entry.run||entry.walk):entry.idle));
+    if(ready(sheet)){
+     const layout=moving?(entry.runLayout||entry.walkLayout):entry.idleLayout;
+     const cols=layout?.columns??(moving?(entry.runFrames||entry.walkFrames||8):4);
+     const rows=layout?.rows??(moving?8:2);
+     const rate=entry.runPhaseScale??entry.phaseScale??1;
+     const col=moving?Math.floor(prev.phase*rate*cols/8)%cols:prev.dir%cols;
+     const row=moving?prev.dir:Math.floor(prev.dir/cols);
+     const width=sheet.naturalWidth/cols, height=sheet.naturalHeight/rows;
+     const [ax,ay]=entry.anchor||[.5,.962],size=145*(entry.renderScale||1);
+     c.drawImage(sheet,col*width,row*height,width,height,x-size*ax,y-size*ay,size,size);
+    }
+   }
+   if(!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
    this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,y-88,isMe?'#fff2af':color);
   }
   c.restore();
