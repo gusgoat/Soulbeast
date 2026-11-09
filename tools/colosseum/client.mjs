@@ -55,7 +55,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=base-repair-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=pet-vitals-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -595,7 +595,7 @@ function objective(){
  }
  if(!state.vitals)return null;
  const friendly=state.bases.find(b=>HEAL_TARGET(me,b));
- return friendly?{type:'healBase',id:friendly.id,label:friendly.main?'ฟื้นเต็ม + ล้างสถานะ':'ฟื้น HP/MP 30%',
+ return friendly?{type:'healBase',id:friendly.id,label:friendly.main?'ฟื้นเต็มทั้งทีม + ล้างสถานะ':'ฟื้น HP/MP ทั้งทีม 30%',
   disabled:me.hp>=me.maxHp&&state.vitals.mp>=state.vitals.maxMp&&!(friendly.main&&state.vitals.ailments.length)}:null;
 }
 $('raid').onclick=()=>{
@@ -707,7 +707,9 @@ function frame(t){
   const bossEvent=state.bossEvent;$('boss-announcement').textContent=bossEvent&&now-bossEvent.at<8500?bossEvent.text:'';
   const heal=state.baseHeal;
   const healing=heal&&now-heal.at<3300&&(!event||heal.at>=event.at);
-  $('event').textContent=healing?[heal.source,heal.hp?`HP +${heal.hp}`:'',heal.mp?`MP +${heal.mp}`:'',heal.cleansed?'ล้างสถานะผิดปกติ':''].filter(Boolean).join(' · '):event?.text??'';
+  $('event').textContent=healing?[heal.source,heal.hp?`HP +${heal.hp}`:'',heal.mp?`MP +${heal.mp}`:'',
+   heal.petsRecovered?`ฟื้นพลังอสูร ${heal.petsRecovered} ตัว`:'',heal.petsRevived?`ชุบอสูร ${heal.petsRevived} ตัว`:'',
+   heal.cleansed?'ล้างสถานะผิดปกติ':''].filter(Boolean).join(' · '):event?.text??'';
   const walking=state.phase==='match'&&me.phase==='walk';
   $('stick').hidden=!walking;$('map').hidden=!walking&&!watch;
   $('arena').toggleAttribute('data-spectating',Boolean(watch));

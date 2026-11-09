@@ -101,6 +101,9 @@ export function makeCombat(id,teams,shadow,now,auraOwners=new Map()){
     if(Number.isFinite(p.hp))u.hp=Math.max(1,Math.min(u.hp,p.hp));
     if(Number.isFinite(p.mp))u.mp=Math.max(0,Math.min(u.mp,p.mp));
     Object.assign(u.status,p.ailments);
+   }else if(u.kind==='pet'){
+    const vitals=p.petVitals?.get(u.uid);
+    if(vitals){u.hp=Math.min(u.st.hp,vitals.hp);u.mp=Math.min(u.st.mp,vitals.mp);}
    }
    list.push(u);
   }

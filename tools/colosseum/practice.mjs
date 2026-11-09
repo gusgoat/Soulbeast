@@ -30,7 +30,8 @@ function chooseObjective(match,bot,now){
  const {role,lane,patrol,skipPoint}=bot.bot;
  const pick=points=>nearestTo(bot,points.filter(p=>p!==skipPoint||now>=bot.bot.skipUntil));
  const own=match.bases.filter(base=>base.side===bot.side&&base.remaining>0);
- const low=bot.hp<bot.maxHp*.58||bot.mp<bot.maxMp*.34,afflicted=Object.keys(bot.ailments).length>0;
+ const lowVitals=u=>u.hp<u.maxHp*.58||u.mp<u.maxMp*.34;
+ const low=lowVitals(bot)||[...bot.petVitals.values()].some(lowVitals),afflicted=Object.keys(bot.ailments).length>0;
  const heal=pick(low?own:afflicted?own.filter(base=>base.main&&distance(bot,base)<900):[]);
  if(heal)return {type:'healBase',point:heal};
 

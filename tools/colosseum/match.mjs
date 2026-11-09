@@ -1,14 +1,15 @@
 import {ASSIST, BASES, BASE_AURA_RANGE, BASE_REPAIR_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS, canRaidBase,
  TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=base-repair-1';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=skill-effects-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=pet-vitals-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=base-raid-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=pet-vitals-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const nearest=(p,list)=>list.slice().sort((a,b)=>distance(a,p)-distance(b,p)||a.id.localeCompare(b.id))[0];
+const partyPets=(battle,p)=>[...battle.allies,...battle.enemies].filter(u=>u.kind==='pet'&&u.sealer===p.id&&p.petVitals?.has(u.uid));
 const SHADOW_AGGRO=1000, SHADOW_LEASH=2000, SHADOW_CHASE_MS=5000;
 const SURVIVAL_CUT_INTERVAL=120_000;
 const SURVIVAL_CHEST_WAVE=5;
@@ -93,7 +94,9 @@ export class Match {
   const edgeSpawns=SURVIVAL_SPAWNS.slice(), assigned=[];
   for(const side of [0,1]){
    this.players.filter(p=>p.side===side).forEach((p,i)=>{
-    const hero=demoProfile(p,0).find(u=>u.kind==='player');
+    const party=demoProfile(p,0);
+    const hero=party.find(u=>u.kind==='player');
+    p.petVitals=new Map(party.filter(u=>u.kind==='pet').map(u=>[u.uid,{hp:u.hp,mp:u.mp,maxHp:u.st.hp,maxMp:u.st.mp}]));
     let spawn=spawns(side)[i];
     if(this.solo){
      const separation=point=>Math.min(...assigned.map(other=>distance(point,other)));
@@ -260,8 +263,9 @@ export class Match {
    p.hp=base.main?p.maxHp:Math.min(p.maxHp,hp+Math.round(p.maxHp*.3));
    p.mp=base.main?p.maxMp:Math.min(p.maxMp,mp+Math.round(p.maxMp*.3));
    if(base.main)p.ailments={};
-   if(p.hp!==hp||p.mp!==mp||cleansed){
-    p.baseHeal={hp:p.hp-hp,mp:p.mp-mp,cleansed,at:now};
+   const pets=this.recoverPets(p,base.main?1:.3,base.main);
+   if(p.hp!==hp||p.mp!==mp||cleansed||pets.petsRecovered){
+    p.baseHeal={hp:p.hp-hp,mp:p.mp-mp,cleansed,at:now,...pets};
    }
   }else if(m.type==='chest'){
    const c=this.chests.find(x=>x.id===m.id);
@@ -320,13 +324,14 @@ export class Match {
   for(const id of b.fallen){
    const p=this.players.find(x=>x.id===id);
    if(!p||p.battle!==b.id||p.phase==='dead')continue;
+   this.savePetVitals(p,b);
    this.fall(p,now);changed=true;
    if(this.solo&&!b.beastId){
     const winner=[...b.allies,...b.enemies].find(u=>u.kind==='player'&&u.sealer!==id&&u.hp>0);
     const survivor=winner&&this.players.find(player=>player.id===winner.sealer);
     if(survivor){
      this.addSurvivalPoints(survivor,SURVIVAL_POINTS.player,now);
-     this.recover(survivor,winner,.3,now,`ชนะคู่ต่อสู้ · +${SURVIVAL_POINTS.player} คะแนน`);
+     this.recover(survivor,winner,.3,now,`ชนะคู่ต่อสู้ · +${SURVIVAL_POINTS.player} คะแนน`,true,b);
      this.note(`${survivor.name} ชนะ ${p.name} · +${SURVIVAL_POINTS.player} คะแนน`,now);
     }
    }
@@ -339,7 +344,7 @@ export class Match {
     const survivor=winner&&this.players.find(p=>p.id===winner.sealer&&p.phase==='battle'&&p.battle===b.id);
     if(survivor){
      this.addSurvivalPoints(survivor,SURVIVAL_POINTS.beast,now);
-     this.recover(survivor,winner,.2,now,`ชนะอสูร · +${SURVIVAL_POINTS.beast} คะแนน`,false);
+     this.recover(survivor,winner,.2,now,`ชนะอสูร · +${SURVIVAL_POINTS.beast} คะแนน`,false,b);
      this.note(`${survivor.name} ชนะ${beast.name} · +${SURVIVAL_POINTS.beast} คะแนน`,now);
     }
    }
@@ -387,7 +392,31 @@ export class Match {
    if(this.phase==='match')this.spawnSurvivalChests(now);
   }
  }
- recover(p,unit,fraction,now,source,cleanse=true){
+ savePetVitals(p,battle){
+  for(const pet of partyPets(battle,p)){
+   const vitals=p.petVitals.get(pet.uid);
+   vitals.hp=Math.max(0,Math.min(vitals.maxHp,pet.hp));
+   vitals.mp=Math.max(0,Math.min(vitals.maxMp,pet.mp));
+  }
+ }
+ recoverPets(p,fraction,cleanse,battle){
+  if(battle)this.savePetVitals(p,battle);
+  let petsRecovered=0,petsRevived=0;
+  for(const vitals of p.petVitals?.values()??[]){
+   const {hp,mp,maxHp,maxMp}=vitals;
+   vitals.hp=Math.min(maxHp,hp+Math.max(1,Math.round(maxHp*fraction)));
+   vitals.mp=Math.min(maxMp,mp+Math.round(maxMp*fraction));
+   if(vitals.hp!==hp||vitals.mp!==mp)petsRecovered++;
+   if(hp===0&&vitals.hp>0)petsRevived++;
+  }
+  if(battle)for(const pet of partyPets(battle,p)){
+   const {hp,mp}=p.petVitals.get(pet.uid);
+   Object.assign(pet,{hp,mp});
+   if(cleanse){pet.status={};pet.dots=[];}
+  }
+  return petsRecovered?{petsRecovered,petsRevived}:{};
+ }
+ recover(p,unit,fraction,now,source,cleanse=true,battle){
   const hp=unit.hp,mp=unit.mp;
   unit.hp=Math.min(p.maxHp,hp+Math.round(p.maxHp*fraction));
   unit.mp=Math.min(p.maxMp,mp+Math.round(p.maxMp*fraction));
@@ -397,7 +426,8 @@ export class Match {
    if(unit!==p){unit.status={};unit.dots=[];}
   }
   if(unit!==p){p.hp=unit.hp;p.mp=unit.mp;}
-  p.baseHeal={hp:unit.hp-hp,mp:unit.mp-mp,cleansed,at:now,source};
+  const pets=this.recoverPets(p,fraction,cleanse,battle);
+  p.baseHeal={hp:unit.hp-hp,mp:unit.mp-mp,cleansed,at:now,source,...pets};
  }
  updateFog(now){
   const zone=fogZone(this.started,now);
@@ -507,6 +537,7 @@ export class Match {
     for(const hero of [...b.allies,...b.enemies].filter(u=>u.kind==='player')){
      const p=this.players.find(player=>player.id===hero.sealer);
      if(p?.battle!==b.id||p.phase!=='battle')continue;
+     this.savePetVitals(p,b);
      Object.assign(p,{phase:'walk',safeUntil:now+3500,hp:Math.max(1,hero.hp),mp:hero.mp,ailments:{...hero.status}});
      delete p.battle;
     }

@@ -124,6 +124,28 @@ Deno.test('base repair counts 15 seconds of walking inside the ring and discards
  eq(base.remaining,4);eq(r.snapshot(a,72000).baseRepair,undefined);
  eq(r.score,[100,100]);
 });
+Deno.test('pet HP and MP carry to the next fight and team bases can revive downed pets',()=>{
+ const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
+ r.encounter(a,b,3000);
+ const fight=r.battles.get(a.battle),pets=fight.allies.filter(u=>u.kind==='pet');
+ eq(pets.length,2);
+ Object.assign(pets[0],{hp:0,mp:0});Object.assign(pets[1],{hp:9,mp:3});
+ Object.assign(fight,{finished:true,releasedAt:4000});r.tick(4000,0);
+ r.encounter(b,a,8000);
+ const rematch=r.battles.get(a.battle);
+ eq(rematch.allies.filter(u=>u.kind==='pet').map(u=>[u.hp,u.mp]),[[0,0],[9,3]]);
+ Object.assign(rematch,{finished:true,releasedAt:9000});r.tick(9000,0);
+ const small=r.bases.find(x=>x.side===a.side&&x.tier==='small');
+ Object.assign(a,{x:small.x,y:small.y});
+ r.command(a,{type:'healBase',id:small.id},10000);
+ const revived=a.petVitals.get(pets[0].uid);
+ eq([revived.hp,revived.mp],[Math.round(revived.maxHp*.3),Math.round(revived.maxMp*.3)]);
+ eq(a.baseHeal.petsRevived,1);
+ const capital=r.bases.find(x=>x.side===a.side&&x.main);
+ Object.assign(a,{x:capital.x,y:capital.y});
+ r.command(a,{type:'healBase',id:capital.id},11000);
+ eq([...a.petVitals.values()].map(v=>[v.hp===v.maxHp,v.mp===v.maxMp]),[[true,true],[true,true]]);
+});
 Deno.test('only current owners can repair and simultaneous repairs stop at maximum',()=>{
  const {r,p:[a,b,mate]}=match(4);start(r,r.players);r.shadows=[];
  const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');

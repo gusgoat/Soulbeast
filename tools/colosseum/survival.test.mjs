@@ -105,8 +105,11 @@ Deno.test('free-for-all supports odd rooms and ten unique spawns, and randomizes
 Deno.test('chests grant 5 and restore 15%, PvP knockouts grant 20 and restore 30% once',()=>{
  const {room,players:[a,b,c]}=setup(3);
  const chest=room.chests[0];Object.assign(a,{x:chest.x,y:chest.y,hp:1,mp:0,ailments:{poison:2}});
+ const petVitals=[...a.petVitals.values()][0];Object.assign(petVitals,{hp:0,mp:0});
  room.command(a,{type:'chest',id:chest.id},3000);
  eq(a.hp,1+Math.round(a.maxHp*.15));eq(a.mp,Math.round(a.maxMp*.15));eq(a.ailments,{});eq(a.points,5);
+ eq([petVitals.hp,petVitals.mp],[Math.round(petVitals.maxHp*.15),Math.round(petVitals.maxMp*.15)]);
+ eq(a.baseHeal.petsRevived,1);
  eq(room.snapshot(a,3000).chestsLeft,14);
  let repeat=false;try{room.command(a,{type:'chest',id:chest.id},3001);}catch{repeat=true;}ok(repeat);
  const at=cellCenter(15,15);Object.assign(a,at);Object.assign(b,at);
@@ -114,9 +117,11 @@ Deno.test('chests grant 5 and restore 15%, PvP knockouts grant 20 and restore 30
  const duel=room.battles.get(a.battle);eq(duel.teams,[[a.id],[b.id]]);
  ok([...duel.allies,...duel.enemies].every(unit=>!unit.baseAura));
  const attacker=room.battleHero(a);Object.assign(attacker,{hp:1,mp:0,status:{burn:2},dots:[{}]});
+ const pet=duel.allies.find(u=>u.kind==='pet');Object.assign(pet,{hp:0,mp:0});
  room.battleHero(b).hp=0;duel.fallen.push(b.id);room.recordFalls(duel,4001);
  eq(attacker.hp,1+Math.round(a.maxHp*.3));eq(attacker.mp,Math.round(a.maxMp*.3));eq(attacker.status,{});
  eq(attacker.dots,[]);eq(b.phase,'dead');eq(b.respawnAt,undefined);eq(room.phase,'match');eq(a.points,25);
+ eq([pet.hp,pet.mp],[Math.round(pet.st.hp*.3),Math.round(pet.st.mp*.3)]);
  room.recordFalls(duel,4002);eq(attacker.hp,1+Math.round(a.maxHp*.3));eq(a.points,25);
  room.fall(c,5000);room.checkScore(5000);
  eq(room.winner,a.id);eq(room.snapshot(a,5000).winnerName,a.name);
@@ -126,11 +131,13 @@ Deno.test('a beast victory grants 10 and restores 20% once without removing ailm
  const {room,players:[a]}=setup(3);
  room.encounter(a,room.shadows[0],3000,true);
  const fight=room.battles.get(a.battle),hero=room.battleHero(a);
+ const pet=fight.allies.find(u=>u.kind==='pet');Object.assign(pet,{hp:0,mp:0});
  Object.assign(hero,{hp:1,mp:0,status:{poison:2}});
  fight.enemies[0].hp=0;
  room.recordFalls(fight,3001);
  room.recordFalls(fight,3050);
  eq(a.points,10);eq(hero.hp,1+Math.round(a.maxHp*.2));eq(hero.mp,Math.round(a.maxMp*.2));eq(hero.status,{poison:2});
+ eq([pet.hp,pet.mp],[Math.round(pet.st.hp*.2),Math.round(pet.st.mp*.2)]);
 });
 
 Deno.test('the score cut runs every two minutes, cuts one tied low scorer and grants no PvP reward',()=>{
