@@ -9,6 +9,7 @@ export function normalizeAnnouncement(value) {
  return { id: value.id, status: value.status === 'active' && !value.serverManaged && end <= Date.now() ? 'expired' : value.status,
   end, serverManaged: value.serverManaged===true, country: Object.hasOwn(countries,value.country) ? value.country : null,
   name: String(value.name || 'บอสอาณาจักร').slice(0, 80),
+  species: /^[a-z][a-z0-9_]{0,59}$/.test(value.species||'') ? value.species : null,
   level: Math.max(1, Math.min(999, Number(value.level) || 1)),
   location: String(value.location || '').slice(0, 120),
   winner: String(value.winner || '').slice(0, 80) };
@@ -19,6 +20,25 @@ export function newerAnnouncement(previous, next) {
  return next.end > previous.end;
 }
 const asset = name => new URL('../assets/' + name, import.meta.url).href;
+let portraits;
+function bossPortraits() {
+ if (!portraits) portraits = Promise.all([
+  fetch(asset('rare-beast-walk-20261103/catalog.json')).then(r => r.json()).catch(() => []),
+  fetch(new URL('../tools/labyrinth-demo/party-portraits.json', import.meta.url)).then(r => r.json()).catch(() => ({}))
+ ]).then(([walking, battle]) => {
+  const entries = new Map(Object.entries(battle));
+  for (const entry of Array.isArray(walking) ? walking : []) {
+   if (!entry.reference) continue;
+   // The eight Mist beasts share a portrait atlas but have individual idle art.
+   const path = entry.reference.endsWith('/mist-beasts.webp')
+    ? 'assets/beasts/motion/' + entry.id.replaceAll('_','-') + '-idle-v1.webp'
+    : entry.reference;
+   entries.set(entry.id, path);
+  }
+  return entries;
+ });
+ return portraits;
+}
 function visible(el) {
  if (!el || !el.getClientRects().length) return false;
  for (let node = el; node?.nodeType === 1; node = node.parentElement) {
@@ -46,10 +66,10 @@ export function mountAnnouncements() {
  .compact .details{flex:1;text-align:left;border:0;background:none;padding:5px;line-height:1.5}.close{padding:5px 12px;font-size:22px}
  .shade{position:fixed;inset:0;background:#0009;display:grid;place-items:center;padding:16px;box-sizing:border-box}
  .card{box-sizing:border-box;position:relative;width:min(440px,100%);max-height:calc(100dvh - 32px);overflow:auto;padding:26px 22px;border:2px solid #d2ae59;border-radius:18px;background:radial-gradient(ellipse at top,#194b58,#061923 80%);box-shadow:0 0 0 4px #132d37,0 15px 50px #000b;text-align:center}
- .logo{width:190px;max-width:70%;height:auto}.card h2{font-size:25px;margin:16px 0}.card p{line-height:1.7}.flag{width:48px;height:34px;object-fit:contain;vertical-align:middle;margin-right:8px}.card .close{position:absolute;right:8px;top:8px}.continue{width:100%;margin-top:12px}
+ .boss-portrait{display:block;width:min(164px,48vw);aspect-ratio:1;object-fit:contain;margin:0 auto 10px;border:1px solid #a8844d;border-radius:12px;background:#091d2a}.compact .boss-portrait{width:44px;flex:none;margin:0;border-radius:8px}.logo{width:190px;max-width:70%;height:auto}.card h2{font-size:25px;margin:16px 0}.card p{line-height:1.7}.flag{width:48px;height:34px;object-fit:contain;vertical-align:middle;margin-right:8px}.card .close{position:absolute;right:8px;top:8px}.continue{width:100%;margin-top:12px}
  @media(prefers-reduced-motion:no-preference){.card{animation:appear .15s ease-out}@keyframes appear{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}}
- </style><aside class="compact" hidden aria-label="ประกาศกิจกรรม"><button class="details"></button><button class="close" aria-label="อ่านแล้วและปิดประกาศ">×</button></aside>
- <div class="shade" hidden><section class="card" role="dialog" aria-modal="true" aria-labelledby="eventTitle" tabindex="-1"><button class="close" aria-label="ปิดประกาศ">×</button><img class="logo" alt="SoulBeast"><h2 id="eventTitle"></h2><p class="country"></p><p class="description"></p><p class="location"></p><button class="continue">รับทราบ</button></section></div>`;
+ </style><aside class="compact" hidden aria-label="ประกาศกิจกรรม"><img class="boss-portrait" alt="" hidden><button class="details"></button><button class="close" aria-label="อ่านแล้วและปิดประกาศ">×</button></aside>
+ <div class="shade" hidden><section class="card" role="dialog" aria-modal="true" aria-labelledby="eventTitle" tabindex="-1"><button class="close" aria-label="ปิดประกาศ">×</button><img class="logo" alt="SoulBeast"><h2 id="eventTitle"></h2><img class="boss-portrait" alt="" hidden><p class="country"></p><p class="description"></p><p class="location"></p><button class="continue">รับทราบ</button></section></div>`;
  const get = selector => shadow.querySelector(selector);
  get('.logo').src = asset('ui/soulbeast-logo-v2.webp');
  const signature = () => pending ? pending.id + ':' + pending.status : '';
@@ -67,6 +87,23 @@ export function mountAnnouncements() {
   if (value) { previousFocus = document.activeElement; dispatchEvent(new Event('blur')); get('.card').focus({ preventScroll: true }); }
   else if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
  }
+ function renderPortrait(event) {
+  const images = [...shadow.querySelectorAll('.boss-portrait')];
+  images.forEach(image => { image.hidden = true; image.removeAttribute('src'); });
+  if (event.status !== 'active' || !event.species) return;
+  void bossPortraits().then(entries => {
+   if (pending?.id !== event.id || pending.species !== event.species || pending.status !== 'active') return;
+   const path = entries.get(event.species)?.replace(/^\/Soulbeast\//, '');
+   if (!/^assets\/[a-z\d_./-]+\.webp$/i.test(path || '')) return;
+   const src = asset(path.slice('assets/'.length));
+   images.forEach(image => {
+    image.alt = event.name;
+    image.onload = () => { image.hidden = false; };
+    image.onerror = () => { image.hidden = true; };
+    image.src = src;
+   });
+  });
+ }
  function render() {
   scheduled = false;
   clearTimeout(timer);
@@ -82,6 +119,7 @@ export function mountAnnouncements() {
   get('.shade').hidden = !expanded;
   if (show && content !== JSON.stringify(pending)) {
    content = JSON.stringify(pending);
+   renderPortrait(pending);
    const title = pending.status === 'active' ? 'บอสอาณาจักรปรากฏตัว!' : pending.status === 'defeated' ? 'บอสอาณาจักรถูกปราบแล้ว' : 'กิจกรรมบอสอาณาจักรสิ้นสุดแล้ว';
    get('#eventTitle').textContent = title;
    get('.details').textContent = title + ' · แตะดูรายละเอียด';

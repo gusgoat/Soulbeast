@@ -27,7 +27,7 @@ function create(data,nav){
  // Cache current distances and shoreline polygons, rather than rebuilding world geometry per frame.
  const currents=rivers.map(r=>{let length=0;const segments=r.points.slice(1).map((b,i)=>{const a=r.points[i],len=dist(a,b),start=length;length+=len;return {a,b,len,start}});const banks=[-1,1].map(side=>r.points.map((p,i)=>{const a=r.points[Math.max(0,i-1)],b=r.points[Math.min(r.points.length-1,i+1)],len=dist(a,b);return {x:p.x-(b.y-a.y)*F/len*(r.width/2-5)*side,y:p.y+(b.x-a.x)/len*(r.width/2-5)*side/F}}));return {...r,segments,length,outline:[...banks[0],...banks[1].reverse()]}});
  let flowPattern=null,flowTexture=null;
- function drawFlow(c,sx,sy,z,time,texture,viewport){
+ function drawFlow(c,sx,sy,z,time,texture,viewport,compact=false){
   // The overview uses the cached terrain; detail animation is only needed close up.
   if(z<.15)return;
     const pixelRatio=c.getTransform?.()?.a||1,vw=viewport?.width||c.canvas.width/pixelRatio,vh=viewport?.height||c.canvas.height/pixelRatio;
@@ -52,15 +52,15 @@ function create(data,nav){
    if(texture!==flowTexture){flowTexture=texture;flowPattern=c.createPattern(texture,'repeat')}
    c.save();c.translate(sx(0),sy(0));c.scale(z,z);
    // Two differently paced layers keep the surface from looking like a sliding photograph.
-   for(const layer of [{scale:.38,x:-11,y:8,alpha:.36},{scale:.52,x:-5,y:13,alpha:.14}]){
+   for(const layer of (compact?[{scale:.38,x:-11,y:8,alpha:.29}]:[{scale:.38,x:-11,y:8,alpha:.36},{scale:.52,x:-5,y:13,alpha:.14}])){
     flowPattern.setTransform(new DOMMatrix().translate(time*layer.x,time*layer.y).scale(layer.scale));
     c.globalAlpha=layer.alpha;c.fillStyle=flowPattern;c.fillRect(-sx(0)/z,-sy(0)/z,vw/z,vh/z);
    }c.restore();
   }
   for(const r of visibleCurrents){
-   const count=Math.ceil(r.length/32);
+   const count=Math.ceil(r.length/(compact?86:32));
    for(let i=0;i<count;i++){
-    const travel=(i*37.73+time*(25+i%5*2))%r.length,seg=r.segments.find(s=>travel<=s.start+s.len)||r.segments.at(-1),t=(travel-seg.start)/seg.len;
+    const travel=(i*(compact?89.7:37.73)+time*(25+i%5*2))%r.length,seg=r.segments.find(s=>travel<=s.start+s.len)||r.segments.at(-1),t=(travel-seg.start)/seg.len;
     const dx=(seg.b.x-seg.a.x)/seg.len,dy=(seg.b.y-seg.a.y)*F/seg.len,offset=Math.sin(i*12.9898)*r.width*.37;
     const x=seg.a.x+(seg.b.x-seg.a.x)*t-dy*offset,y=seg.a.y+(seg.b.y-seg.a.y)*t+dx*offset/F;
     const X=sx(x),Y=sy(y);if(X<-30||Y<-30||X>vw+30||Y>vh+30)continue;
@@ -70,7 +70,8 @@ function create(data,nav){
    }
   }
   for(let j=0;j<visibleLakes.length;j++){const l=visibleLakes[j],center=l.points.reduce((a,p)=>({x:a.x+p.x/l.points.length,y:a.y+p.y/l.points.length}),{x:0,y:0});
-   for(let i=0;i<9;i++){const phase=(time*.15+i/9)%1,x=center.x+Math.sin(i*7.4)*160,y=center.y+Math.cos(i*5.9)*150;c.beginPath();c.ellipse(sx(x),sy(y),(12+phase*38)*z,(4+phase*13)*z,.15,0,Math.PI*2);c.strokeStyle=`rgba(194,230,235,${Math.sin(phase*Math.PI)*.14})`;c.lineWidth=z;c.stroke()}
+   const rings=compact?5:9;
+   for(let i=0;i<rings;i++){const phase=(time*.15+i/rings)%1,x=center.x+Math.sin(i*7.4)*160,y=center.y+Math.cos(i*5.9)*150;c.beginPath();c.ellipse(sx(x),sy(y),(12+phase*38)*z,(4+phase*13)*z,.15,0,Math.PI*2);c.strokeStyle=`rgba(194,230,235,${Math.sin(phase*Math.PI)*.14})`;c.lineWidth=z;c.stroke()}
   }c.restore();
  }
  const rails=[];for(const b of bridges){const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,nx=-dy*b.width/2,ny=dx*b.width/2,count=Math.ceil(b.length/80);for(const side of [-1,1])for(let i=0;i<count;i++){const a={x:b.a.x+(b.b.x-b.a.x)*i/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*i/count+ny*side/F},end={x:b.a.x+(b.b.x-b.a.x)*(i+1)/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*(i+1)/count+ny*side/F};rails.push({kind:'bridgeRail',x:(a.x+end.x)/2,y:(a.y+end.y)/2,a,b:end})}}

@@ -1,4 +1,9 @@
 (function(g){'use strict';
+const progression=[7,1,2,3,4,5,6,8];
+function unlocked(id,player){
+ const index=progression.indexOf(Number(id));
+ return index>=0&&progression.slice(0,index).every(zone=>(player?.forestClears?.[zone]||0)>0);
+}
 function seen(player,id){return !!(player?.seen?.[id]||player?.caught?.[id]||player?.seenForms?.[id]?.length||player?.pets?.some(p=>p.sp===id))}
 function entries(id,player,data=g.ForestEntranceData){const zone=data.zones[Number(id)];if(!zone)return [];return ['normal','rare','bosses'].flatMap(kind=>zone[kind].map(key=>({...data.species[key],kind,seen:seen(player,key)})))}
 const waits=new WeakMap();
@@ -6,6 +11,6 @@ function clear(dialog){if(!dialog)return;waits.get(dialog)?.finish();waits.delet
 function show(dialog,id,player){clear(dialog);const zone=g.ForestEntranceData.zones[Number(id)];if(!zone)return;dialog.classList.add('forest-entrance');const body=dialog.querySelector('#dialogChoices'),panel=document.createElement('section'),art=document.createElement('img');panel.dataset.forestPreview=String(id);art.id='forestEntranceArt';art.src=zone.art;art.alt=zone.name;art.className='forest-original-art';panel.append(art);const title=document.createElement('h3');title.textContent='อสูรที่พบได้ใน'+zone.name;const legend=document.createElement('p');legend.className='forest-discovery-key';legend.textContent='ภาพสี: เคยพบแล้ว · ภาพและกรอบขาวดำ: ยังไม่เคยพบ';panel.append(title,legend);
  const list=entries(id,player);for(const [kind,label]of [['normal','อสูรทั่วไป'],['rare','อสูรหายาก'],['bosses','บอสประจำป่า']]){const heading=document.createElement('h4'),grid=document.createElement('div');heading.textContent=label;grid.className='forest-species-grid';for(const entry of list.filter(e=>e.kind===kind)){const cell=document.createElement('figure'),portrait=document.createElement('div'),name=document.createElement('figcaption');cell.className='forest-species';cell.dataset.species=entry.id;cell.dataset.seen=String(entry.seen);portrait.className='forest-species-art'+(entry.seen?'':' unseen');portrait.innerHTML=entry.portrait;portrait.setAttribute('role','img');portrait.setAttribute('aria-label',entry.name+' · '+(entry.seen?'เคยพบแล้ว':'ยังไม่เคยพบ'));name.textContent=entry.name;cell.title=portrait.getAttribute('aria-label');cell.append(portrait,name);grid.append(cell)}panel.append(heading,grid)}body.append(panel);body.scrollTop=0;waits.set(dialog,g.WalkLoading?.image(art,'กำลังโหลดภาพ'+zone.name+'…',{container:dialog}));
 }
-g.ForestEntrance={seen,entries,clear,show};if(typeof module!=='undefined')module.exports=g.ForestEntrance;
+g.ForestEntrance={unlocked,seen,entries,clear,show};if(typeof module!=='undefined')module.exports=g.ForestEntrance;
 if(typeof document!=='undefined'){const d=document.getElementById('townDialog');d?.addEventListener('close',()=>clear(d))}
 })(typeof window==='undefined'?globalThis:window);

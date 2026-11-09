@@ -13,12 +13,13 @@ body{margin:0;background:radial-gradient(ellipse at top,#193844,transparent 55%)
 main{max-width:520px;padding:calc(14px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 .back{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px}
 .intro{text-align:center;margin:4px 0 16px}.intro img{width:min(62vw,240px);height:auto;display:block;margin:auto}.intro h1{font-size:clamp(24px,7vw,34px);margin:4px 0}.intro p,section p{margin:0 0 12px}
-section{margin:12px 0;border:12px solid transparent;border-image:url('../../assets/ui/menu-theme/frame-panel.png.webp') 48 fill stretch;padding:12px;background:linear-gradient(#071726c9,#071726ef),url('../../assets/ui/menu-portrait/panel-journal.webp') center/cover}
+section{margin:12px 0;border:12px solid transparent;border-image:url('../../assets/ui/menu-theme/frame-panel.png.webp') 48 fill stretch;padding:clamp(22px,6.1vw,30px) clamp(23px,6.4vw,31px) clamp(27px,7.7vw,37px);background:linear-gradient(#071726c9,#071726ef),url('../../assets/ui/menu-portrait/panel-journal.webp') center/cover}
 h2{font-size:19px;margin:0 0 8px}label{margin-top:0}input{font-size:16px;min-height:48px}
 button{min-height:48px;touch-action:manipulation}.primary,#start{background:#665128}#create,#join{width:100%}
 .feedback:has(#status:empty) #status{display:none}#status{min-height:0;margin:0 0 8px;overflow-wrap:anywhere}
 .room-code{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.room-code code{display:block;font-size:21px;letter-spacing:.12em;color:#ffdd94;user-select:all}
-.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#leave{grid-column:1/-1;background:#3a2430}#resume{grid-column:1/-1}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.actions>button{width:100%;min-width:0;padding-inline:clamp(6px,2vw,14px);line-height:1.45;overflow-wrap:anywhere}.room-code>span{min-width:0}
+@media(max-width:340px){.actions{grid-template-columns:minmax(0,1fr)}}#leave{grid-column:1/-1;background:#3a2430}#resume{grid-column:1/-1}
 button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #ffdc87;outline-offset:3px}
 [hidden]{display:none!important}
 

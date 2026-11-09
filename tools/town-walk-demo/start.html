@@ -1187,6 +1187,9 @@ dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padd
 .motion-flight .pt{width:100%!important;height:100%!important;display:block}
 .motion-flight .um-body{transform:none!important}
 .motion-flight .um-window{overflow:hidden}
+.motion-flight .pt.frame-solar{border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;margin:0!important;overflow:visible!important}
+.motion-flight .pt.frame-solar::before,.motion-flight .pt.frame-solar::after{display:none!important}
+.motion-flight .pt.frame-solar :is(.um-window,.um-art,.um-embers){border-radius:0!important}
 @media(prefers-reduced-motion:reduce){.battle-motion .um-body,.battle-motion .um-aura,.battle-motion .um-embers i{animation:none!important}.battle-motion .um-power,.battle-motion .um-melee-effect{display:none}}
 
 /* Equipment stays still: animate only the light and the Eclipse motes. */
