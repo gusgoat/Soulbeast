@@ -2,6 +2,8 @@
  'use strict';
  const catalog=window.WalkCompanionCatalog||{};
  const assets=new Map();
+ const followDistance=90;
+ const followResponse=16;
  function normalize(value){
   if(!value||typeof value.sp!=='string'||!Number.isInteger(value.form)||value.form<0||value.form>2)return null;
   return catalog[value.sp+':'+value.form]?{sp:value.sp,form:value.form}:null;
@@ -37,32 +39,39 @@
   }
   function reset(leader){
    body={x:leader.x-65,y:leader.y+65,direction:0};
-   trail=[{x:leader.x,y:leader.y}];
+   trail=[{x:body.x,y:body.y},{x:leader.x,y:leader.y}];
   }
   function update(dt,leader){
    if(!leader||!Number.isFinite(leader.x)||!Number.isFinite(leader.y))return;
    dt=Math.min(Math.max(dt,0),.05);clock+=dt;
    if(!body||Math.hypot(body.x-leader.x,body.y-leader.y)>1000)reset(leader);
    if(!key)return;
-   const last=trail[trail.length-1];
-   if(Math.hypot(last.x-leader.x,last.y-leader.y)>10)trail.push({x:leader.x,y:leader.y});
-   // Bound route history even when a remote player is far away or teleports.
-   if(trail.length>160)trail.splice(0,trail.length-160);
-   let remaining=0,stop=trail.length-1;
-   for(let i=trail.length-1;i>0;i--){
-    remaining+=Math.hypot(trail[i].x-trail[i-1].x,trail[i].y-trail[i-1].y);stop=i-1;
-    if(remaining>=90)break;
+   // Start from the live position so the target advances between recorded points.
+   let targetX=leader.x,targetY=leader.y,remaining=followDistance;
+   for(let i=trail.length-1;i>=0;i--){
+    const point=trail[i],dx=point.x-targetX,dy=point.y-targetY;
+    const length=Math.hypot(dx,dy);
+    if(length>=remaining){
+     const fraction=remaining/length;
+     targetX+=dx*fraction;targetY+=dy*fraction;
+     if(i>0)trail.splice(0,i);
+     break;
+    }
+    remaining-=length;
+    targetX=point.x;targetY=point.y;
    }
-   let budget=dt*Math.min(560,230+Math.hypot(body.x-leader.x,body.y-leader.y));
-   while(budget>0&&trail.length){
-    const target=trail[0],dx=target.x-body.x,dy=target.y-body.y,distance=Math.hypot(dx,dy);
-    if(trail.length===1&&distance<=90)break;
-    const available=trail.length===1?distance-90:distance;
-    if(available<.5){if(stop<=0)break;trail.shift();stop--;continue;}
-    const step=Math.min(available,budget);
-    body.x+=dx/distance*step;body.y+=dy/distance*step;budget-=step;
-    body.direction=Math.abs(dx)>Math.abs(dy)?(dx<0?2:3):(dy<0?1:0);
-    if(step>=available&&stop<=0)break;
+   const last=trail[trail.length-1];
+   if(Math.hypot(last.x-leader.x,last.y-leader.y)>=8)trail.push({x:leader.x,y:leader.y});
+
+   const blend=1-Math.exp(-dt*followResponse);
+   const dx=(targetX-body.x)*blend,dy=(targetY-body.y)*blend;
+   body.x+=dx;body.y+=dy;
+   if(Math.hypot(dx,dy)>dt*12){
+    // Favor the current axis near diagonals so small corrections do not flip the sprite.
+    const horizontal=body.direction>=2;
+    const xWeight=Math.abs(dx)*(horizontal?1.2:1);
+    const yWeight=Math.abs(dy)*(horizontal?1:1.2);
+    body.direction=xWeight>yWeight?(dx<0?2:3):(dy<0?1:0);
    }
   }
   function draw(ctx,sx,sy,scale){
@@ -74,7 +83,7 @@
    if(asset.failed&&performance.now()>=asset.retryAt){asset.failed=false;asset.image.src='/Soulbeast/assets/companions/'+catalog[key].file;}
    if(!asset.ready)return;
    const image=asset.image,col=body.direction%2,row=Math.floor(body.direction/2);
-   const bob=Math.sin(clock*3.5)*5*scale;
+   const bob=Math.sin(clock*3.5)*4*scale;
    ctx.save();ctx.fillStyle='#173a4c30';ctx.beginPath();ctx.ellipse(x,y,15*scale,5*scale,0,0,Math.PI*2);ctx.fill();
    ctx.drawImage(image,col*image.naturalWidth/2,row*image.naturalHeight/2,image.naturalWidth/2,image.naturalHeight/2,x-size/2,y-size-13*scale+bob,size,size);ctx.restore();
   }
