@@ -84,11 +84,18 @@ async function waitForHost(base,payload){
  }
  throw Error('เซิร์ฟเวอร์ยังเปิดไม่สำเร็จ กรุณาลองอีกครั้ง');
 }
+let opening=false,leaving=false,leaveTimer;
+function updateEntryControls(){
+ $('country-return').hidden=!$('country-return').hasAttribute('href')||opening||Boolean(state);
+ for(const button of $('entry-form').querySelectorAll('button[type="submit"]')){
+  button.disabled=opening||(!onlineEnabled&&!practiceType(button.value));
+ }
+}
 async function connect(payload){
- clearTimeout(retry);packet=payload;
+ clearTimeout(retry);packet=payload;opening=true;updateEntryControls();
  pendingMoves=[];pendingChest=null;correction=null;oneWay=0;bestRtt=Infinity;
  const useWorker=practiceType(payload.type)&&Boolean(selectedCharacter);
- const base=new URL(serverURL||location.origin);
+ const base=new URL(gameWeb&&serverURL?serverURL:location.origin);
  const url=new URL('/ws',base);
  url.protocol=base.protocol==='https:'?'wss:':'ws:';
  $('notice').textContent='กำลังเชื่อมต่อสนาม…';
@@ -103,7 +110,7 @@ async function connect(payload){
    if(packet!==payload)return;
    $('notice').textContent='กำลังเชื่อมต่อสนาม…';
   }catch(error){
-   if(packet===payload)$('notice').textContent=error.message;
+   if(packet===payload)reset(error.message);
    return;
   }
  }
@@ -117,12 +124,13 @@ async function connect(payload){
    seq=Math.max(seq,m.seq);if(!socket.local)store({type:'resume',code:m.room,token:m.token});
    send({type:'ping',echo:performance.now()});
    $('signal').hidden=true;$('notice').textContent='';
-  }else if(m.type==='left'){reset();}
+  }else if(m.type==='left'){reset('',true);}
   else if(m.type==='pong'){acceptPong(m);}
   else if(m.type==='chest-result'){pendingChest=null;}
   else if(m.type==='error'){
    if(m.action==='chest')pendingChest=null;
-   if(packet?.type==='resume'&&!state){store(null);packet=null;}
+   if(opening){reset(m.message);return;}
+   if(m.action==='leave'){leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;}
    if(state?.phase==='match'){
     $('signal').textContent=m.message;$('signal').hidden=false;
     setTimeout(()=>{if(ws?.readyState===WebSocket.OPEN)$('signal').hidden=true;},1800);
@@ -147,18 +155,15 @@ async function connect(payload){
  socket.onclose=event=>{
   if(ws!==socket)return;
   release();lastInput='';
-  if(event.code===4001){
-   store(null);packet=null;
-   if(state?.phase==='match'){$('signal').textContent='เปิดห้องเดิมในอีกแท็บแล้ว';$('signal').hidden=false;}
-   else $('notice').textContent='เปิดห้องเดิมในอีกแท็บแล้ว';
-   return;
-  }
+  if(event.code===4001){reset('เปิดห้องเดิมในอีกแท็บแล้ว');return;}
+  if(event.code===1000&&event.reason==='left'){reset('',true);return;}
+  if(event.code===1000&&event.reason==='room closed'){reset('ห้องเดิมปิดแล้ว',true);return;}
+  if(leaving){reset('ออกจากหน้าห้องแล้ว เซิร์ฟเวอร์จะคืนที่นั่งหลังหมดเวลารอเชื่อมต่อ',true);return;}
   const p=saved();
-  if(event.code===1000&&['left','room closed'].includes(event.reason)){reset();return;}
   if(p&&state?.phase!=='finished'){
    $('signal').textContent='กำลังเชื่อมต่อกลับเข้าสนาม…';$('signal').hidden=false;
    retry=setTimeout(()=>connect(p),900);
-  }else if(packet)$('notice').textContent='เชื่อมต่อสนามไม่ได้ ลองอีกครั้ง';
+  }else if(packet&&state?.phase!=='finished')reset('เชื่อมต่อสนามไม่ได้ ลองอีกครั้ง');
  };
  socket.onerror=()=>{};
  if(useWorker){store(null);send({type:payload.type,character:selectedCharacter});}
@@ -167,18 +172,27 @@ function hideBattle(){
  $('battle').hidden=true;
  presentation.setActive(false);
 }
-function reset(){
+function reset(message='',clearInvite=false){
  hideBattle();
+ opening=leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;
+ if(clearInvite){
+  $('code').value='';
+  const url=new URL(location.href);
+  if(url.searchParams.has('room')){url.searchParams.delete('room');history.replaceState(history.state,'',url);}
+ }
  store(null);packet=null;clearTimeout(retry);const current=ws;ws=null;current?.close();
  state=me=local=battle=null;actors.clear();scene.camera=null;lobbyKey='';battleKey='';teamHpKey='';survivalRankKey='';lastInput='';
  pendingMoves=[];pendingChest=null;correction=null;
  $('survival-standings').open=false;
- $('arena').hidden=$('room').hidden=true;$('lobby').hidden=$('entry').hidden=false;$('notice').textContent='';
+ $('arena').hidden=$('room').hidden=true;$('lobby').hidden=$('entry').hidden=false;$('notice').textContent=message;
+ updateEntryControls();
  if(mapDialog.open)mapDialog.close();
 }
 function applyState(next){
  const arrival=performance.now();
- state=next;offset=next.now+oneWay-arrival;
+ const entering=opening||!state;
+ opening=false;state=next;offset=next.now+oneWay-arrival;
+ if(entering)updateEntryControls();
  $('lobby').hidden=state.phase!=='lobby';$('arena').hidden=state.phase==='lobby';
  $('entry').hidden=true;$('room').hidden=false;
  if(state.phase==='lobby'){renderLobby();return;}
@@ -456,10 +470,9 @@ function renderBattle(){
 }
 
 for(const [id,name] of Object.entries(CLASSES))$('cls').add(new Option(name,id));
-const fromLink=params.get('room'),country=params.get('country');
+const fromLink=params.get('room'),country=params.get('country')||selectedCharacter?.country;
 if(['blue','green','red'].includes(country)){
  $('country-return').href='../hemant-walk-demo/?country='+country+'&arrival=colosseum';
- $('country-return').hidden=false;
 }
 if(selectedCharacter){
  $('demo-profile').hidden=$('demo-profile').disabled=true;
@@ -467,12 +480,14 @@ if(selectedCharacter){
  $('selected-profile').hidden=false;
 }
 if(!onlineEnabled){
- for(const button of document.querySelectorAll('button[value="create"],button[value="survival"],button[value="join"],#code'))button.disabled=true;
+ $('code').disabled=true;
  $('notice').textContent='โหมดออนไลน์กำลังรอเปิดเซิร์ฟเวอร์ · ทดลองกับบอทได้';
 }
+updateEntryControls();
 if(/^[A-F0-9]{8}$/i.test(fromLink??''))$('code').value=fromLink.toUpperCase();
 $('entry-form').onsubmit=event=>{
  event.preventDefault();
+ if(opening||state)return;
  const type=event.submitter?.value??'create',code=$('code').value.trim().toUpperCase();
  if(!practiceType(type)&&!onlineEnabled)return;
  if(gameWeb&&!selectedCharacter){location.assign('../../accounts.html');return;}
@@ -480,9 +495,15 @@ $('entry-form').onsubmit=event=>{
  if(ws){const old=ws;ws=null;old.close();}
  connect({type,code,name:$('name').value,cls:$('cls').value,lv:$('level').value});
 };
-$('ready').onclick=()=>send({type:'ready',ready:!own()?.ready});
-$('start').onclick=()=>send({type:'start'});
-$('leave').onclick=()=>send({type:'leave'});
+$('ready').onclick=()=>{if(!leaving)send({type:'ready',ready:!own()?.ready});};
+$('start').onclick=()=>{if(!leaving)send({type:'start'});};
+$('leave').onclick=()=>{
+ if(leaving||state?.phase!=='lobby')return;
+ if(!send({type:'leave'})){reset('ออกจากหน้าห้องแล้ว เซิร์ฟเวอร์จะคืนที่นั่งหลังหมดเวลารอเชื่อมต่อ',true);return;}
+ leaving=true;$('leave').disabled=true;
+ $('notice').textContent='กำลังออกจากห้อง…';
+ leaveTimer=setTimeout(()=>reset('ออกจากหน้าห้องแล้ว เซิร์ฟเวอร์จะคืนที่นั่งหลังหมดเวลารอเชื่อมต่อ',true),5000);
+};
 function leavePractice(){
  if(!send({type:'leavePractice'}))reset();
 }

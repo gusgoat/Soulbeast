@@ -60,3 +60,57 @@ Deno.test('public WebSocket seats require a one-use ticket and trust only the ac
   abort.abort();await server.finished;
  }
 });
+
+Deno.test('public lobbies reuse a character seat, confirm leaving and expire disconnected seats',async()=>{
+ const origin='https://game.example',abort=new AbortController(),sockets=[];
+ const server=serve({port:0,signal:abort.signal,onListen(){},siteOrigin:origin,lobbyReconnectMs:250,
+  loadCharacter:async(token,code)=>({...character,code,name:token})});
+ const host='127.0.0.1:'+server.addr.port;
+ const wait=async(peer,test)=>{
+  for(let i=0;i<90;i++){
+   const value=peer.messages.find(test);
+   if(value)return value;
+   await new Promise(resolve=>setTimeout(resolve,20));
+  }
+  throw Error('Timed out waiting for lobby');
+ };
+ async function enter(code,command){
+  const response=await fetch('http://'+host+'/ticket',{
+   method:'POST',headers:{Origin:origin,Authorization:'Bearer '+code,'Content-Type':'application/json'},
+   body:JSON.stringify({code}),
+  });
+  const {ticket}=await response.json();
+  const ws=new WebSocket('ws://'+host+'/ws',{headers:{Origin:origin}}),messages=[];
+  const peer={messages,send:m=>ws.send(JSON.stringify(m)),close:()=>ws.close()};
+  sockets.push(ws);
+  ws.onmessage=({data})=>messages.push(JSON.parse(data));
+  await new Promise((resolve,reject)=>{ws.onopen=resolve;ws.onerror=reject;});
+  peer.send({...command,ticket});
+  return peer;
+ }
+ try{
+  const a=await enter('player-a',{type:'create'});
+  const first=await wait(a,m=>m.type==='welcome');
+  const duplicate=await enter('player-a',{type:'survival'});
+  const reused=await wait(duplicate,m=>m.type==='welcome');
+  eq([reused.room,reused.token],[first.room,first.token]);
+  const b=await enter('player-b',{type:'join',code:first.room});
+  const joined=await wait(b,m=>m.type==='state'&&m.players.length===2);
+  eq(joined.code,first.room);
+  duplicate.send({type:'leave'});
+  await wait(duplicate,m=>m.type==='left');
+  const promoted=await wait(b,m=>m.type==='state'&&m.players.length===1);
+  eq(promoted.host,joined.me);
+  b.close();
+  await new Promise(resolve=>setTimeout(resolve,450));
+  const late=await enter('player-c',{type:'join',code:first.room});
+  eq((await wait(late,m=>m.type==='error')).message,'ไม่พบห้อง');
+  const again=await enter('player-a',{type:'create'});
+  eq((await wait(again,m=>m.type==='welcome')).room===first.room,false);
+  again.send({type:'leave'});
+  await wait(again,m=>m.type==='left');
+ }finally{
+  await Promise.all(sockets.map(ws=>ws.readyState===WebSocket.CLOSED?null:new Promise(resolve=>{ws.addEventListener('close',resolve,{once:true});ws.close();})));
+  abort.abort();await server.finished;
+ }
+});

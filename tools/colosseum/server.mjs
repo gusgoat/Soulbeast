@@ -6,10 +6,10 @@ const TYPES={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset
  '.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg','.mp3':'audio/mpeg'};
 const STATIC=new Set(['index.html','client.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','pvp-card-art.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js']);
 const ROOT=new URL('../../',import.meta.url);
-const TICK=50, LOBBY_TTL=30*60_000, FINISH_TTL=5*60_000;
+const TICK=50, LOBBY_TTL=30*60_000, LOBBY_RECONNECT_MS=60_000, FINISH_TTL=5*60_000;
 const MAX_ROOMS=32, MAX_CONNECTIONS=160;
 
-export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
+export function serve({loadCharacter=null,siteOrigin=null,lobbyReconnectMs=LOBBY_RECONNECT_MS,...options}={}){
  const rooms=new Map(), peers=new Set(),tickets=new Map();
  const allowed=req=>req.headers.get('origin')===(siteOrigin||new URL(req.url).origin);
  const send=(peer,value)=>{
@@ -24,16 +24,24 @@ export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
   const key=b?`${b.id}:${b.turn}:${b.last?.n||0}:${b.finished}:${b.autoVersion}:${b.fogVersion??0}`:'';
   if(key!==peer.battleKey){peer.battleKey=key;send(peer,{type:'battle',battle:room.battleSnapshot(player)});}
  }
+ function closeRoom(room){
+  rooms.delete(room.code);
+  for(const peer of peers)if(peer.room===room)peer.ws.close(1000,'room closed');
+ }
  let last=Date.now(), frame=0;
  const timer=setInterval(()=>{
   const now=Date.now(),dt=Math.min(.10,(now-last)/1000);last=now;
   const changed=new Set();
   for(const [ticket,entry] of tickets)if(now>=entry.until)tickets.delete(ticket);
-  for(const [code,room] of rooms){
+  for(const room of rooms.values()){
+   if(room.phase==='lobby'){
+    const before=room.players.length;
+    room.players=room.players.filter(p=>p.connected||now-(p.disconnectedAt??now)<lobbyReconnectMs);
+    if(room.players.length!==before)changed.add(room);
+   }
    if((room.phase==='lobby'&&(now-room.created>LOBBY_TTL||room.players.length===0))||
       (room.phase==='finished'&&now-room.finishedAt>FINISH_TTL)){
-    rooms.delete(code);
-    for(const peer of peers)if(peer.room===room)peer.ws.close(1000,'room closed');
+    closeRoom(room);
     continue;
    }
    const event=room.eventSerial,battle=room.battleSerial,phase=room.phase;
@@ -55,7 +63,7 @@ export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
   const old=[...peers].find(q=>q!==peer&&q.player===p);
   if(old){old.player=null;old.ws.close(4001,'session resumed');}
   peer.room=room;peer.player=p;peer.battleKey=null;
-  p.connected=true;p.dx=p.dy=0;
+  p.connected=true;p.disconnectedAt=null;p.dx=p.dy=0;
   send(peer,{type:'welcome',room:room.code,token:p.token,seq:p.seq});push(peer,Date.now());
  }
  function connect(req){
@@ -67,7 +75,10 @@ export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
   const timeout=setTimeout(()=>{if(!peer.player&&ws.readyState===WebSocket.OPEN)ws.close(1000,'join timed out');},30_000);
   ws.addEventListener('close',()=>{
    peers.delete(peer);clearTimeout(timeout);
-   if(peer.player){peer.player.connected=false;peer.player.dx=peer.player.dy=0;if(peer.room.phase==='lobby')peer.player.ready=false;}
+   if(peer.player){
+    peer.player.connected=false;peer.player.disconnectedAt=Date.now();peer.player.dx=peer.player.dy=0;
+    if(peer.room.phase==='lobby')peer.player.ready=false;
+   }
   });
   ws.addEventListener('error',()=>{});
   ws.addEventListener('message',event=>{
@@ -86,12 +97,19 @@ export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
      }
      if(m.type==='chest'&&(peer.player.appliedSeq??-1)<peer.player.seq){peer.pendingChest??=m;return;}
      const room=peer.room,serial=room.eventSerial,phase=room.phase;
+     if(m.type==='leave'){
+      if(phase!=='lobby')throw Error('การแข่งขันเริ่มแล้ว');
+      room.command(peer.player,m,now);
+      peer.player=null;peer.room=null;
+      send(peer,{type:'left'});
+      ws.close(1000,'left');
+      if(!room.players.length)closeRoom(room);
+      else for(const q of peers)if(q.room===room)push(q,now);
+      return;
+     }
      room.command(peer.player,m,now);
      if(m.type==='chest')send(peer,{type:'chest-result',id:m.id});
      if(room.eventSerial!==serial||room.phase!==phase)for(const q of peers)if(q.room===room)push(q,now);
-     if(m.type==='leave'&&peer.room.phase==='lobby'){
-      peer.player=null;peer.room=null;ws.close(1000,'left');
-     }
      return;
     }
     let character=null;
@@ -102,6 +120,14 @@ export function serve({loadCharacter=null,siteOrigin=null,...options}={}){
      character=entry.character;
     }
     const code=String(m.code||'').trim().toUpperCase();
+    if(character&&['create','survival','join'].includes(m.type)){
+     // Opening the arena in another tab must not claim a second seat.
+     for(const room of rooms.values()){
+      if(room.phase==='finished'||room.practice)continue;
+      const existing=room.players.find(p=>p.character?.code===character.code);
+      if(existing){assign(peer,room,existing);return;}
+     }
+    }
     if(m.type==='resume'){
      const room=rooms.get(code);
      const p=typeof m.token==='string'&&room?.players.find(x=>!x.bot&&x.token===m.token);
