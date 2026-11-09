@@ -1,103 +1,145 @@
 (function(g){'use strict';
 const TAU=Math.PI*2;
+const artRoot='/Soulbeast/assets/country-walk/red/lava-terrain-v1/';
+const art=Object.freeze({
+ lavaPool1:artRoot+'pool-1.webp',lavaPool2:artRoot+'pool-2.webp',
+ lavaPool3:artRoot+'pool-3.webp',lavaPool4:artRoot+'pool-4.webp',lavaFissure:artRoot+'fissure.webp'
+});
+const vents=[
+ [[-.20,.10],[.19,.07]],
+ [[0,.13]],
+ [[-.23,.07],[.16,.22]],
+ [[-.25,.14],[.24,-.15]]
+];
 
 function create(data,nav,terrain){
  const pools=[],cracks=[],flatten=data.flatten;
  if(data.countryId==='red'){
   let seed=9143;
   const random=()=>((seed=Math.imul(seed,1664525)+1013904223>>>0)/4294967296);
-  const open=(point,margin)=>{
-   if(!terrain.insideEnclosure(point.x,point.y))return false;
+  function open(point,margin,roadLimit){
+   if(!terrain.insideEnclosure(point.x,point.y)||terrain.blocked(point.x,point.y))return false;
    const roadDistance=nav.nearest(point).distance;
-   return roadDistance>margin+110&&roadDistance<480&&!terrain.water.raw(point.x,point.y,margin+120)&&
+   return roadDistance>margin+100&&roadDistance<roadLimit&&!terrain.water.raw(point.x,point.y,margin+120)&&
     nav.places.every(place=>nav.distance(place,point)>margin+300);
-  };
+  }
+  function addPool(point,radius,volcano=null){
+   const spacing=volcano?225:530;
+   if(!open(point,radius,volcano?720:480)||pools.some(pool=>nav.distance(pool,point)<spacing))return false;
+   const variant=pools.length%vents.length;
+   pools.push({...point,radius,variant,flip:random()<.5,seed:random()*10,volcano});
+   return true;
+  }
+  // Give each volcano a cluster, then scatter a few pools along the rest of the map.
+  for(const mountain of terrain.mountains.filter(m=>!m.border)){
+   let placed=0;
+   const start=random()*TAU;
+   for(let i=0;i<42&&placed<6;i++){
+    const angle=start+i*2.39996;
+    const distance=mountain.w*(.42+random()*.43);
+    const point={x:mountain.x+Math.cos(angle)*distance,y:mountain.y+Math.sin(angle)*distance/flatten};
+    if(addPool(point,62+random()*36,mountain))placed++;
+   }
+  }
   for(let band=0;band<6;band++){
-   for(let i=0;i<100;i++){
+   let placed=0;
+   for(let i=0;i<100&&placed<2;i++){
     const point={x:(.09+random()*.82)*data.width,y:(band+.16+random()*.68)*data.height/6};
-    const radius=74+random()*54;
-    if(!open(point,radius)||pools.some(pool=>nav.distance(pool,point)<530))continue;
-    pools.push({...point,radius,angle:random()*TAU,seed:random()*10});
-    if(pools.length>=2*(band+1))break;
+    if(addPool(point,74+random()*54))placed++;
    }
   }
-  for(let i=0;i<170&&cracks.length<26;i++){
+  for(let i=0;i<220&&cracks.length<26;i++){
    const point={x:(.08+random()*.84)*data.width,y:(.08+random()*.84)*data.height};
-   const length=95+random()*100;
-   if(open(point,length/2)&&pools.every(pool=>nav.distance(pool,point)>pool.radius+length/2))
-    cracks.push({...point,length,angle:random()*TAU,seed:random()*10});
+   const length=145+random()*105;
+   if(open(point,length/2,480)&&pools.every(pool=>nav.distance(pool,point)>pool.radius+length/2)&&
+    cracks.every(crack=>nav.distance(crack,point)>150)){
+    cracks.push({...point,length,flip:random()<.5,seed:random()*10});
+   }
   }
  }
 
- function drawGround(ctx){
-  for(const pool of pools){
-   const {x,y,radius,angle,seed}=pool;
-   ctx.save();ctx.translate(x,y*flatten);ctx.scale(1,flatten);ctx.rotate(angle);
-   ctx.beginPath();
-   for(let i=0;i<18;i++){
-    const a=i*TAU/18,r=radius*(.83+.14*Math.sin(3*a+seed)+.07*Math.cos(5*a));
-    const px=Math.cos(a)*r,py=Math.sin(a)*r*.72;
-    if(i)ctx.lineTo(px,py);else ctx.moveTo(px,py);
-   }
-   ctx.closePath();ctx.lineJoin='round';ctx.strokeStyle='#302220';ctx.lineWidth=24;ctx.stroke();
-   const glow=ctx.createRadialGradient(-radius*.22,0,6,0,0,radius);
-   glow.addColorStop(0,'#fff1a0');glow.addColorStop(.29,'#ffb333');
-   glow.addColorStop(.73,'#e74913');glow.addColorStop(1,'#6b241a');
-   ctx.fillStyle=glow;ctx.fill();ctx.strokeStyle='#a84424';ctx.lineWidth=5;ctx.stroke();
-   ctx.restore();
-  }
-  for(const crack of cracks){
-   const {x,y,length,angle,seed}=crack;
-   ctx.save();ctx.translate(x,y*flatten);ctx.scale(1,flatten);ctx.rotate(angle);
-   ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
-   for(let i=0;i<=7;i++){
-    const px=(i/7-.5)*length,py=i===0||i===7?0:Math.sin(i*2.7+seed)*15;
-    if(i)ctx.lineTo(px,py);else ctx.moveTo(px,py);
-    if(i===2||i===5){ctx.lineTo(px+12,py+(i===2?-26:30));ctx.moveTo(px,py);}
-   }
-   ctx.strokeStyle='#3a241e';ctx.lineWidth=13;ctx.stroke();
-   ctx.strokeStyle='#ac4825';ctx.lineWidth=5;ctx.stroke();
-   ctx.strokeStyle='#ee7b36';ctx.lineWidth=1.8;ctx.stroke();ctx.restore();
-  }
+ const poolImage=(pool,images)=>images['lavaPool'+(pool.variant+1)];
+ function drawDecal(ctx,point,image,width){
+  if(!image?.naturalWidth)return;
+  const height=width*image.naturalHeight/image.naturalWidth;
+  ctx.save();ctx.translate(point.x,point.y*flatten);if(point.flip)ctx.scale(-1,1);
+  ctx.drawImage(image,-width/2,-height/2,width,height);
+  ctx.restore();
+ }
+ function drawGround(ctx,images){
+  for(const crack of cracks)drawDecal(ctx,crack,images.lavaFissure,crack.length);
+  for(const pool of pools)drawDecal(ctx,pool,poolImage(pool,images),pool.radius*2.15);
  }
 
+ let haze;
+ function shimmer(ctx,x,y,scale,time,seed,width,height){
+  const left=x-scale*.63,top=y-scale*1.62,w=scale*1.26,h=scale*1.66;
+  if(scale<12||left<0||top<0||left+w>width||top+h>height||!g.document)return;
+  if(!haze){
+   haze=g.document.createElement('canvas');
+   haze.width=64;haze.height=80;
+  }
+  const buffer=haze.getContext('2d');
+  const {a,d}=ctx.getTransform();
+  buffer.clearRect(0,0,haze.width,haze.height);
+  buffer.drawImage(ctx.canvas,left*a,top*d,w*a,h*d,0,0,haze.width,haze.height);
+  ctx.save();
+  for(let i=0;i<10;i++){
+   const v=(i+.5)/10,fade=Math.sin(v*Math.PI);
+   const inset=(1-fade)*22;
+   const offset=Math.sin(time*5-v*16+seed)*Math.min(2.5,scale*.06)*fade;
+   ctx.globalAlpha=.35*fade;
+   ctx.drawImage(haze,inset,i*8,64-2*inset,8,
+    left+inset*w/64+offset,top+i*h/10,(64-2*inset)*w/64,h/10+.3);
+  }
+  ctx.restore();
+ }
  function heat(ctx,x,y,scale,time,seed,compact,width,height){
   if(x< -100||x>width+100||y< -40||y>height+145)return;
+  if(!compact)shimmer(ctx,x,y,scale,time,seed,width,height);
   ctx.save();
-  const count=compact?3:6;
+  const count=compact?2:4;
   for(let i=0;i<count;i++){
-   const cycle=(time*.48+i/count+seed)%1;
-   const px=x+Math.sin(time*1.7+i+seed)*scale*(.1+cycle*.35);
-   const py=y-cycle*scale*1.5;
-   const radius=scale*(.22+.34*cycle);
+   const cycle=(time*.42+i/count+seed)%1;
+   const px=x+Math.sin(time*1.6+i+seed)*scale*(.08+cycle*.28);
+   const py=y-cycle*scale*1.58;
+   const radius=scale*(.18+.38*cycle);
    const glow=ctx.createRadialGradient(px,py,0,px,py,radius);
-   glow.addColorStop(0,'#ffd3a25a');glow.addColorStop(1,'#ffac6200');
-   ctx.globalAlpha=Math.sin(cycle*Math.PI)*.65;
+   glow.addColorStop(0,'#ffcf9b66');glow.addColorStop(1,'#fcb88400');
+   ctx.globalAlpha=Math.sin(cycle*Math.PI)*.64;
    ctx.fillStyle=glow;ctx.fillRect(px-radius,py-radius,radius*2,radius*2);
    if(i%2===0){
-    ctx.strokeStyle='#ffd09a';
-    ctx.lineWidth=Math.max(1,scale*.022);
-    ctx.globalAlpha=Math.sin(cycle*Math.PI)*.22;
-    ctx.beginPath();ctx.moveTo(px,py+scale*.31);
-    ctx.quadraticCurveTo(px-scale*.16,py+scale*.17,px+scale*.08,py);
-    ctx.stroke();
-    ctx.globalAlpha=(1-cycle)*.85;
-    ctx.fillStyle='#ffb85d';ctx.beginPath();ctx.arc(px,py,Math.max(1,scale*.028),0,TAU);ctx.fill();
+    ctx.globalAlpha=(1-cycle)*.7;
+    ctx.fillStyle='#ffc271';ctx.beginPath();ctx.arc(px,py,Math.max(.75,scale*.022),0,TAU);ctx.fill();
    }
   }
   ctx.restore();
  }
 
- function drawPoolHeat(ctx,sx,sy,zoom,time,compact,width,height){
-  for(const pool of pools)heat(ctx,sx(pool.x),sy(pool.y),pool.radius*zoom*.72,time,pool.seed,compact,width,height);
+ function drawGroundHeat(ctx,sx,sy,zoom,time,compact,width,height,images){
+  for(const pool of pools){
+   const im=poolImage(pool,images);
+   if(!im?.naturalWidth)continue;
+   const w=pool.radius*2.15*zoom,h=w*im.naturalHeight/im.naturalWidth;
+   const points=vents[pool.variant];
+   for(let i=0;i<(compact?1:points.length);i++){
+    const [x,y]=points[i];
+    heat(ctx,sx(pool.x)+x*w*(pool.flip?-1:1),sy(pool.y)+y*h,w*.27,time,pool.seed+i,compact,width,height);
+   }
+  }
+  for(const crack of cracks){
+   heat(ctx,sx(crack.x),sy(crack.y),crack.length*zoom*.22,time,crack.seed,compact,width,height);
+  }
  }
  function drawVolcanoHeat(ctx,x,y,width,height,time,compact,viewWidth,viewHeight){
-  for(const [u,v,size] of [[.54,.15,.07],[.31,.48,.045],[.70,.66,.045]]){
+  const vents=[[.54,.15,.11],[.31,.48,.06],[.70,.66,.06]];
+  for(let i=0;i<(compact?2:vents.length);i++){
+   const [u,v,size]=vents[i];
    heat(ctx,x+(u-.5)*width,y+(v-.94)*height,width*size,time,u*4,compact,viewWidth,viewHeight);
   }
  }
- return {pools,cracks,drawGround,drawPoolHeat,drawVolcanoHeat};
+ return {pools,cracks,drawGround,drawGroundHeat,drawVolcanoHeat};
 }
-const api={create};g.CountryLava=api;
+const api={art,create};g.CountryLava=api;
 if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);
