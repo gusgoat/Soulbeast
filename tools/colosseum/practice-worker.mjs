@@ -1,12 +1,12 @@
-import {Match} from './match.mjs?v=bot-lobbies-1';
-import {startPractice} from './practice.mjs?v=bot-lobbies-1';
+import {Match} from './match.mjs?v=conquest-1';
+import {startPractice} from './practice.mjs?v=conquest-1';
 
 let room,player,timer,last,frame=0,battleKey;
 const send=message=>postMessage(message);
 function push(now){
  send(room.snapshot(player,now));
- const b=player.phase==='battle'&&room.battles.get(player.battle);
- const key=b?`${b.id}:${b.turn}:${b.last?.n||0}:${b.finished}:${b.autoVersion}:${b.fogVersion??0}`:'';
+ const b=room.viewedBattle(player);
+ const key=b?`${room.spectatorTarget(player)?.id||player.id}:${b.id}:${b.turn}:${b.last?.n||0}:${b.finished}:${b.autoVersion}:${b.fogVersion??0}`:'';
  if(key!==battleKey){battleKey=key;send({type:'battle',battle:room.battleSnapshot(player)});}
 }
 self.onmessage=({data})=>{
@@ -33,7 +33,7 @@ self.onmessage=({data})=>{
    const serial=room.eventSerial,phase=room.phase;
    room.command(player,data,now);
    if(data.type==='chest')send({type:'chest-result',id:data.id});
-   if(serial!==room.eventSerial||phase!==room.phase)push(now);
+   if(data.type==='spectate'||serial!==room.eventSerial||phase!==room.phase)push(now);
   }
  }catch(error){send({type:'error',action:data?.type,message:error.message});}
 };

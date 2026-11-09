@@ -1,4 +1,4 @@
-import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, SPEED, TEAM_ARENA, canSeeOpponent, cellCenter, distance, indexAt, nextCell} from './arena.mjs';
+import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, SPEED, TEAM_ARENA, canRaidBase, canSeeOpponent, cellCenter, distance, indexAt, nextCell} from './arena.mjs?v=conquest-1';
 import {inSight} from './sight.mjs';
 import {fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -54,9 +54,10 @@ function chooseObjective(match,bot,now){
   if(partner)return {type:'escort',point:partner};
  }
  if(role==='raider'||role==='scout'&&patrol%4===3){
-  const targets=match.bases.filter(base=>base.side!==bot.side&&base.remaining>0);
-  const preferred=targets.filter(base=>base.id===`${1-bot.side}-${lane===0?1:3}`);
-  const raid=pick(preferred)||pick(targets);
+  const targets=match.bases.filter(base=>canRaidBase(bot.side,base,match.bases));
+  const middle=match.bases.find(base=>base.id===`${1-bot.side}-${lane+1}`);
+  const raid=pick(targets.filter(base=>base.main))||pick(targets.filter(base=>base===middle))||
+   pick(targets.filter(base=>base.tier==='medium'))||pick(targets.filter(base=>middle?.links.includes(base.id)))||pick(targets);
   if(raid)return {type:'raid',point:raid};
  }
  return {type:'patrol',point:patrolPoint(bot)};
@@ -66,7 +67,8 @@ function currentObjective(match, bot, now) {
  const brain = bot.bot;
  const goal = brain.goal;
  const expired = goal?.type === 'chest' && goal.point.opened ||
-  ['raid','healBase'].includes(goal?.type) && !goal.point.remaining ||
+  goal?.type==='raid'&&!canRaidBase(bot.side,goal.point,match.bases) ||
+  goal?.type==='healBase'&&goal.point.side!==bot.side ||
   goal?.type === 'hunt' && (goal.point.claimed || goal.point.phase !== 'walk') ||
   goal?.type === 'intercept' && (goal.point.phase !== 'walk' || !canSeeOpponent(bot, goal.point)) ||
   goal?.type === 'escort' && (goal.point.phase !== 'walk' || distance(bot,goal.point)<145);
@@ -194,7 +196,7 @@ export function stepBot(match, bot, now, dt) {
  if (canInteract) {
   match.command(bot, {type, id: point.id}, now);
   brain.goal = null;
-  if(type==='raid'){brain.lane=1-brain.lane;brain.patrol++;}
+  if(type==='raid'&&point.side===bot.side)brain.patrol++;
   return;
  }
  if (type === 'patrol' && distance(bot, point) < 12) {

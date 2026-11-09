@@ -3,7 +3,6 @@ import rareArt from './rare-art.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
 const ACT_MS=12_000, SHOW_MS=850;
 const BOT_ACT_MS=500;
-const BASE_AURA_MULTIPLIER=1.2;
 const BASE_AURA_STATS=['patk','matk','pdef','mdef'];
 const units=b=>[...b.allies,...b.enemies];
 const find=(b,id)=>units(b).find(u=>u.id===id);
@@ -80,19 +79,19 @@ export function demoProfile(p,seat){
 function syncBaseAura(b){
  if(!b.baseAuraOwners.size)return;
  for(const u of units(b)){
-  const active=b.baseAuraOwners.has(b.roster[u.owner]);
-  if(active===Boolean(u.baseAura))continue;
-  const factor=active?BASE_AURA_MULTIPLIER:1/BASE_AURA_MULTIPLIER;
+  const active=b.baseAuraOwners.get(b.roster[u.owner])||0,previous=u.baseAura||0;
+  if(active===previous)continue;
+  const factor=(100+active)/(100+previous);
   for(const stat of BASE_AURA_STATS)u.st[stat]*=factor;
   u.baseAura=active;
  }
 }
-export function makeCombat(id,teams,shadow,now,auraOwners=[]){
+export function makeCombat(id,teams,shadow,now,auraOwners=new Map()){
  const roster=teams.flat();
  const b={id,kind:shadow?'hunt':'pvp',round:0,turns:0,turn:0,cur:null,queue:[],deadline:0,
   teams:teams.map(t=>t.map(p=>p.id)),roster:roster.map(p=>p.id),botOwners:roster.map(p=>Boolean(p.bot)),beastId:shadow?.id,
   allies:[],enemies:[],log:[],fx:[],effects:[],fallen:[],finished:false,releasedAt:0,autoOwners:new Set(),autoVersion:0,
-  baseAuraOwners:new Set(auraOwners)};
+  baseAuraOwners:auraOwners};
  for(const [side,team] of teams.entries()) for(const p of team){
   const list=side?b.enemies:b.allies;
   for(const u of demoProfile(p,roster.indexOf(p))){
@@ -108,7 +107,7 @@ export function makeCombat(id,teams,shadow,now,auraOwners=[]){
  }
  if(shadow){const u=shadow.boss?bossUnit(shadow):core.shadow(shadow.sp,shadow.lv,0);u.owner=-1;u.name=shadow.label;b.enemies.push(u);b.boss=!!shadow.boss;}
  syncBaseAura(b);
- if(b.baseAuraOwners.size)b.log.push('◆ ออร่าฐาน · โจมตี +20% · ป้องกัน +20%');
+ for(const p of roster)if(auraOwners.has(p.id))b.log.push(`◆ ${p.name} · ออร่าฐาน โจมตีและป้องกัน +${auraOwners.get(p.id)}%`);
  core.bind(b);next(b,now);return b;
 }
 function checkEnd(b,now){

@@ -1,9 +1,9 @@
-import {ASSIST, BASES, BASE_AURA_RANGE, BASE_RAID_LIMIT, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=colosseum-ranges';
+import {ASSIST, BASES, BASE_AURA_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS, canRaidBase,
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=conquest-1';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=bot-lobbies-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=conquest-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=bot-lobbies-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=conquest-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -11,6 +11,7 @@ const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const nearest=(p,list)=>list.slice().sort((a,b)=>distance(a,p)-distance(b,p)||a.id.localeCompare(b.id))[0];
 const SHADOW_AGGRO=1000, SHADOW_LEASH=2000, SHADOW_CHASE_MS=5000;
 const SURVIVAL_CUT_INTERVAL=120_000;
+const SURVIVAL_CHEST_WAVE=5;
 const SURVIVAL_POINTS={chest:5,player:20,beast:10};
 const count=(r,side)=>r.players.filter(p=>p.side===side).length;
 const safeName=name=>String(name??'').trim().replace(/[\u0000-\u001f\u007f]/g,'').slice(0,20)||'ผู้ผนึก';
@@ -30,8 +31,19 @@ export class Match {
   this.solo=mode==='survival';
   this.arena=this.solo?SURVIVAL_ARENA:TEAM_ARENA;
   this.sites=this.solo?SURVIVAL_SITES:OBJECT_SITES;
-  this.bases=this.solo?[]:BASES.map(base=>({...base,remaining:BASE_RAID_LIMIT}));
+  this.bases=this.solo?[]:BASES.map(base=>({...base,remaining:base.maxDurability}));
   this.traps=createArenaTraps();
+ }
+ spawnSurvivalChests(now){
+  if(!this.zone.remaining)return;
+  const occupied=new Set([...this.chests.filter(c=>!c.opened),...this.shadows,...this.traps.controller.list].map(p=>this.arena.indexAt(p)));
+  const sites=this.sites.filter(p=>insideFogSafe(this.zone,p.x,p.y)&&!occupied.has(this.arena.indexAt(p)));
+  const count=Math.min(SURVIVAL_CHEST_WAVE,sites.length);
+  for(let i=0;i<count;i++){
+   const [spot]=sites.splice(Math.floor(this.random()*sites.length),1);
+   this.chests.push({id:`chest-${this.chests.length}`,...spot,points:SURVIVAL_POINTS.chest,opened:false});
+  }
+  if(count)this.note(`หีบสมบัติเกิดเพิ่ม ${count} หีบ`,now);
  }
  join(profile,character=null,assignedSide=null){
   assert(this.phase==='lobby'&&this.players.length<10,'ห้องเต็มหรือเริ่มแล้ว');
@@ -213,6 +225,10 @@ export class Match {
    return;
   }
   if(this.phase!=='match')return;
+  if(m.type==='spectate'){
+   if(this.solo&&p.phase==='dead'&&this.players.some(q=>q.id===m.target&&q.connected&&q.phase!=='dead'))p.spectating=m.target;
+   return;
+  }
   if(this.solo&&now>=this.nextEliminationAt){
    this.updateFog(now);
    this.eliminateByScore(now);
@@ -227,12 +243,16 @@ export class Match {
    }
   }else if(m.type==='raid'){
    const b=this.bases.find(x=>x.id===m.id);
-   assert(fresh(p,now)&&b?.remaining>0&&RAID_TARGET(p,b),'ฐานถูกทำลายแล้วหรือยังอยู่ไกลเกินไป');
+   assert(fresh(p,now)&&b&&RAID_TARGET(p,b),'ต้องเข้าใกล้ฐานของฝ่ายตรงข้าม');
+   assert(canRaidBase(p.side,b,this.bases),b.main?'ต้องยึดฐานกลางที่เชื่อมอยู่ก่อน':'ต้องยึดฐานเล็กที่เชื่อมอยู่ก่อน');
    b.remaining--;
+   const captured=b.remaining===0;
+   if(captured){b.side=p.side;b.remaining=b.maxDurability/2;}
    this.score[p.side]+=b.points;this.score[b.side]=Math.max(0,this.score[b.side]-b.points);
    this.teleport(p,now);
-   this.note(`${p.name} ${b.remaining?'จู่โจม':'ทำลาย'}${b.label} · ${TEAMS[p.side]} +${b.points}`,now);
-   this.checkScore(now);
+   this.note(`${p.name} ${captured?'ยึด':'จู่โจม'}${b.label} · ${TEAMS[p.side]} +${b.points}`,now);
+   if(captured&&b.main)this.finish(p.side,'base-captured',now);
+   else this.checkScore(now);
   }else if(m.type==='healBase'){
    const base=this.bases.find(x=>x.id===m.id);
    assert(p.connected&&p.phase==='walk'&&base?.remaining>0&&HEAL_TARGET(p,base),'ต้องอยู่ใกล้ฐานของทีมที่ยังไม่ถูกทำลาย');
@@ -272,8 +292,12 @@ export class Match {
   const teams=this.solo?(neutral?[[a],[]]:[[a],[b]]):
    neutral?[[a,b.boss?helper(a):null].filter(Boolean),[]]:[a,b].sort((x,y)=>x.side-y.side).map(p=>[p,helper(p)].filter(Boolean));
   const contact={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
-  const auraOwners=this.solo?[]:teams.flat().filter(p=>this.bases.some(base=>
-   base.side===p.side&&base.remaining>0&&distance(contact,base)<=BASE_AURA_RANGE)).map(p=>p.id);
+  const auraOwners=new Map();
+  if(!this.solo)for(const p of teams.flat()){
+   const aura=this.bases.reduce((max,base)=>base.side===p.side&&base.remaining>0&&distance(contact,base)<=BASE_AURA_RANGE?
+    Math.max(max,base.aura):max,0);
+   if(aura)auraOwners.set(p.id,aura);
+  }
   const id=String(++this.battleSerial), battle=makeCombat(id,teams,neutral?b:null,now,auraOwners);
   if(b.boss)battle.bossSide=a.side;
   if(neutral)battle.huntSide=a.side;
@@ -358,6 +382,7 @@ export class Match {
    this.fall(eliminated,now,`คัดคะแนนต่ำสุด (${eliminated.points} คะแนน)`);
    if(battle)settleCombat(battle,now);
    this.checkScore(now);
+   if(this.phase==='match')this.spawnSurvivalChests(now);
   }
  }
  recover(p,unit,fraction,now,source,cleanse=true){
@@ -510,12 +535,22 @@ export class Match {
    }
   }
  }
+ spectatorTarget(p){
+  if(!this.solo||this.phase!=='match'||p.phase!=='dead')return null;
+  const survivors=this.players.filter(q=>q.connected&&q.phase!=='dead');
+  return survivors.find(q=>q.id===p.spectating)||survivors[0]||null;
+ }
+ viewedBattle(p){
+  const viewer=this.spectatorTarget(p)||p;
+  return viewer.phase==='battle'?this.battles.get(viewer.battle):null;
+ }
  snapshot(p,now){
   const {bushAt,canSeeOpponent}=this.arena,hero=this.battleHero(p);
+  const spectating=this.spectatorTarget(p),viewer=spectating||p;
   const players=this.players.map(q=>{
    const {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,x,y,warp,safeUntil}=q;
    const ally=this.solo?q===p:side===p.side;
-   const visible=q===p||(inSight(p,q)&&(ally||canSeeOpponent(p,q)));
+   const visible=q===p||q===spectating||(inSight(viewer,q)&&(ally||canSeeOpponent(viewer,q)));
    const teamHp=ally?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
    return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),...teamHp,
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
@@ -524,24 +559,24 @@ export class Match {
   return {type:'state',me:p.id,code:this.code,phase:this.phase,practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),
    ...(this.phase==='lobby'?{canManageBots:this.host===p.id}:{}),score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
    ...(this.solo?{mode:'survival',zone:this.zone,survivors:this.players.filter(player=>player.phase!=='dead').length,
-    nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,eliminationCause:p.eliminationCause,
+    nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,eliminationCause:p.eliminationCause,spectating:spectating?.id,
     winnerName:this.players.find(player=>player.id===this.winner)?.name}:{}),
-   bases:this.bases.filter(base=>base.remaining>0),
+   bases:this.bases,
    traps:this.traps.controller.list.flatMap(({id,x,y,type})=>{
     const state=this.traps.state.revealed[id];
-    if(!state||(state.done&&!state.burst)||!inSight(p,{x,y}))return [];
+    if(!state||(state.done&&!state.burst)||!inSight(viewer,{x,y}))return [];
     return [{id,x,y,type,endsAt:now+state.remaining*1000,burstUntil:state.done?now+state.burst*1000:0}];
    }),
    players,vitals:{mp:hero?.mp??p.mp,maxMp:p.maxMp,ailments:Object.keys(hero?.status??p.ailments??{})},baseHeal:p.baseHeal,
    respawnAt:p.respawnAt,finishedAt:this.finishedAt,ack:p.appliedSeq??-1,input:[p.dx,p.dy],battleId:p.phase==='battle'?p.battle:null,
-   shadows:this.shadows.filter(b=>b.phase==='walk'&&inSight(p,b)).map(({id,x,y,sp,rare,lv,label})=>({id,x,y,sp,rare,lv,label})),
-   bosses:this.bosses.filter(b=>!b.claimed&&inSight(p,b)).map(({id,x,y,sp,boss,lv,label,hp,maxHp,phase})=>({id,x,y,sp,boss,lv,label,hp,maxHp,phase})),
-   chests:this.chests.filter(c=>!c.opened&&inSight(p,c)).map(({id,x,y})=>({id,x,y})),
+   shadows:this.shadows.filter(b=>b.phase==='walk'&&inSight(viewer,b)).map(({id,x,y,sp,rare,lv,label})=>({id,x,y,sp,rare,lv,label})),
+   bosses:this.bosses.filter(b=>!b.claimed&&inSight(viewer,b)).map(({id,x,y,sp,boss,lv,label,hp,maxHp,phase})=>({id,x,y,sp,boss,lv,label,hp,maxHp,phase})),
+   chests:this.chests.filter(c=>!c.opened&&inSight(viewer,c)).map(({id,x,y})=>({id,x,y})),
    chestsLeft:this.chests.filter(c=>!c.opened).length,chestsTotal:this.chests.length,
    nextBossAt:this.nextBossAt<this.ends?this.nextBossAt:null,bossEvent:this.bossEvent,events:this.events};
  }
  battleSnapshot(p){
-  const b=p.phase==='battle'&&this.battles.get(p.battle);
-  return b?combatView(b,p.id):null;
+  const b=this.viewedBattle(p);
+  return b?combatView(b,p.phase==='dead'?null:p.id):null;
  }
 }

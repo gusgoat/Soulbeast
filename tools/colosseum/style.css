@@ -81,6 +81,12 @@ dialog p{margin-top:10px;font-size:.82em}
 #overlay,#battle{position:absolute;z-index:5;inset:0;overflow:auto;background:#0d111bdc}
 #overlay{display:grid;place-content:center;text-align:center;padding:15px}
 #overlay h2{color:#ffd58a;font-size:2em}
+#spectator{position:absolute;z-index:7;bottom:max(8px,env(safe-area-inset-bottom));left:50%;translate:-50%;display:flex;align-items:center;gap:5px;width:max-content;max-width:96%;padding:4px;background:#131825ed;border:1px solid #ae8a54;border-radius:8px}
+#spectator[hidden]{display:none}
+#spectator button{min-height:38px;padding:.25rem .5rem}
+#spectator-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#arena[data-spectating] #battle{bottom:58px}
+#arena[data-spectating] #world{cursor:grab}
 #battle{inset:max(66px,calc(env(safe-area-inset-top) + 58px)) 0 0;overflow:hidden;padding:6px clamp(6px,3vw,16px) max(6px,env(safe-area-inset-bottom));background:#0a1018}
 .battle-inner{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;width:min(100%,650px);height:100%;margin:auto}
 .battle-title{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 9px;border-bottom:1px solid #caa56c55;color:#f5dcab;font-size:.87rem}

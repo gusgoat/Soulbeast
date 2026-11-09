@@ -13,9 +13,9 @@ function match(n=2){
 }
 function start(r,p){for(const u of p)r.command(u,{type:'ready',ready:true},0);r.command(p[0],{type:'start'},0);}
 function checkAura(unit,reference,active){
- eq(Boolean(unit.baseAura),active);
+ eq(unit.baseAura||0,active);
  for(const [stat,value] of Object.entries(reference.st)){
-  const factor=active&&['patk','matk','pdef','mdef'].includes(stat)?1.2:1;
+  const factor=['patk','matk','pdef','mdef'].includes(stat)?1+active/100:1;
   ok(Math.abs(unit.st[stat]-value*factor)<.001,`incorrect ${stat} for ${unit.name}`);
  }
 }
@@ -63,7 +63,7 @@ Deno.test('mirror, connected arena, all spawn and base cells accessible',()=>{
  for(const p of [...BASES,...spawns(0),...spawns(1)])ok(fits(p.x,p.y));
  eq(maze.filter(row=>row[Math.floor(COLS/2)]).length,7);
  eq(BUSHES.length,40);eq(CELL,180);
- eq(OBSTACLES.length,348);
+ eq(BASES.map(base=>base.maxDurability),[8,6,6,4,4,4,4,8,6,6,4,4,4,4]);
  ok(OBSTACLES.every(prop=>!fits(prop.x,prop.y)));
  for(const b of BUSHES)for(let i=0;i<b.w;i++)ok(maze[b.y][b.x+i]);
 });
@@ -79,12 +79,11 @@ Deno.test('balanced rooms start at 1v1 and 5v5; 12 minutes, draw on tie',()=>{
 });
 Deno.test('only enemy bases in reach score, teleport immediately, zero ends the match',()=>{
  const {r,p:[a,b]}=match();
- start(r,[a,b]);const mini=BASES.find(x=>x.side!==a.side&&!x.main),main=BASES.find(x=>x.side!==a.side&&x.main);
+ start(r,[a,b]);const mini=BASES.find(x=>x.side!==a.side&&x.tier==='small'),main=BASES.find(x=>x.side!==a.side&&x.main);
  let rejected=false;try{r.command(a,{type:'raid',id:main.id},3000);}catch{rejected=true;}ok(rejected);
- Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},4000);eq(r.score,[110,90]);eq({x:a.x,y:a.y},a.spawn);
+ Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},4000);eq(r.score,[103,97]);eq({x:a.x,y:a.y},a.spawn);
  rejected=false;try{r.command(a,{type:'raid',id:mini.id},4001);}catch{rejected=true;}ok(rejected);
- Object.assign(a,{x:main.x,y:main.y});r.command(a,{type:'raid',id:main.id},7000);eq(r.score,[125,75]);
- r.score[1]=8;Object.assign(a,{x:main.x,y:main.y});r.command(a,{type:'raid',id:main.id},10000);eq(r.score,[140,0]);eq(r.winner,0);
+ r.score[1]=2;Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},10000);eq(r.score,[106,0]);eq(r.winner,0);
 });
 Deno.test('friendly castles heal the player with 30% or a full cleanse; enemy, distant and ruined castles refuse',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
@@ -100,7 +99,7 @@ Deno.test('friendly castles heal the player with 30% or a full cleanse; enemy, d
  Object.assign(a,{x:main.x,y:main.y,hp:1,mp:0});
  tryHeal(main,4200);eq(a.hp,a.maxHp);eq(a.mp,a.maxMp);eq(a.ailments,{});
  eq(r.snapshot(a,4200).baseHeal,{hp:a.maxHp-1,mp:a.maxMp,cleansed:true,at:4200});
- eq(r.score,[100,100]);eq(main.remaining,4);
+ eq(r.score,[100,100]);eq(main.remaining,8);
 });
 Deno.test('team snapshots expose live fight HP to teammates only and preserve HP, MP and ailments between fights',()=>{
  const {r,p:[a,b,mate,other]}=match(4);start(r,[a,b,mate,other]);
@@ -116,15 +115,15 @@ Deno.test('team snapshots expose live fight HP to teammates only and preserve HP
  eq(next.hp,31);eq(next.mp,0);
 });
 Deno.test('PvP base aura is inclusive at 600 from the collision midpoint and requires a standing friendly base',()=>{
- for(const [range,remaining,active] of [[600,4,true],[601,4,false],[600,0,false]]){
+ for(const [range,remaining,active] of [[600,4,10],[601,4,0],[600,0,0]]){
   const {r,p:[a,b]}=match();start(r,[a,b]);
-  const base=r.bases.find(x=>x.side===a.side&&!x.main);base.remaining=remaining;
+  const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');base.remaining=remaining;r.bases=[base];
   Object.assign(a,{x:base.x+range+20,y:base.y});Object.assign(b,{x:base.x+range-20,y:base.y});
   r.encounter(a,b,3000);
   const duel=r.battles.get(a.battle);
   duel.allies.forEach((unit,i)=>checkAura(unit,demoProfile(a,0)[i],active));
-  duel.enemies.forEach((unit,i)=>checkAura(unit,demoProfile(b,1)[i],false));
-  eq(Boolean(combatView(duel,a.id).allies[0].baseAura),active);
+  duel.enemies.forEach((unit,i)=>checkAura(unit,demoProfile(b,1)[i],0));
+  eq(combatView(duel,a.id).allies[0].baseAura||0,active);
  }
 });
 Deno.test('base aura applies independently to both PvP sides and their helpers without stacking',()=>{
@@ -142,7 +141,7 @@ Deno.test('base aura applies independently to both PvP sides and their helpers w
  for(const [side,group] of [fight.allies,fight.enemies].entries()){
   for(const id of fight.teams[side]){
    const seat=fight.roster.indexOf(id), player=r.players.find(p=>p.id===id);
-   group.filter(u=>u.owner===seat).forEach((unit,i)=>checkAura(unit,demoProfile(player,seat)[i],true));
+   group.filter(u=>u.owner===seat).forEach((unit,i)=>checkAura(unit,demoProfile(player,seat)[i],side===0?30:20));
   }
  }
 });
@@ -157,13 +156,13 @@ Deno.test('friendly main base aura covers PvE and summoned golems while shadow a
   ok(combatAction(battle,a.id,{turn:battle.turn,skill:'summon_golem',target:battle.enemies[0].id},battle.openAt));
   return battle.allies.find(u=>u.sp==='bastion_golem');
  };
- checkAura(fight.enemies[0],reference.enemies[0],false);
- checkAura(summon(fight),summon(reference),true);
+ checkAura(fight.enemies[0],reference.enemies[0],0);
+ checkAura(summon(fight),summon(reference),30);
  r.spawnBoss(BOSS_INTERVAL);const boss=r.bosses[0];Object.assign(boss,at);
  r.encounter(a,boss,BOSS_INTERVAL,true);
  const bossFight=r.battles.get(a.battle);
- bossFight.allies.forEach((unit,i)=>checkAura(unit,demoProfile(a,0)[i],true));
- checkAura(bossFight.enemies[0],bossUnit(boss),false);
+ bossFight.allies.forEach((unit,i)=>checkAura(unit,demoProfile(a,0)[i],30));
+ checkAura(bossFight.enemies[0],bossUnit(boss),0);
 });
 Deno.test('team and survival enforce a 300-unit sight boundary without changing chest totals or the team minimap',()=>{
  for(const mode of ['team','survival']){
@@ -286,17 +285,24 @@ Deno.test('a creature breaks pursuit on entry into grass and returns to its star
  for(let time=3100;beast.returning&&time<=4000;time+=50)r.tick(time,.05);
  eq(beast.returning,false);ok(distance(beast,beast.home)<=10);
 });
-Deno.test('base is removed after its fourth scored raid',()=>{
+Deno.test('linked captures unlock only their own route and the capital wins above zero points',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
- const base=r.bases.find(x=>x.side===1&&!x.main);
- for(let i=1;i<=4;i++){
-  Object.assign(a,{x:base.x,y:base.y});
-  r.command(a,{type:'raid',id:base.id},i*3000);
- }
- eq(r.score,[140,60]);ok(!r.snapshot(a,12000).bases.some(x=>x.id===base.id));
- Object.assign(a,{x:base.x,y:base.y});
- let denied=false;try{r.command(a,{type:'raid',id:base.id},15000);}catch{denied=true;}
- ok(denied);eq(r.score,[140,60]);
+ const [capital,middle,other,small]=r.bases.filter(x=>x.side===1);
+ let now=3000;
+ const raid=(base,player=a)=>{Object.assign(player,{x:base.x,y:base.y});r.command(player,{type:'raid',id:base.id},now+=3000);};
+ const denied=base=>{let rejected=false;try{raid(base);}catch{rejected=true;}ok(rejected);};
+ denied(middle);denied(capital);
+ for(let i=0;i<4;i++)raid(small);
+ eq([small.side,small.remaining],[0,2]);eq(r.snapshot(a,now).bases.length,14);
+ denied(other);denied(capital);
+ for(let i=0;i<2;i++)raid(small,b);
+ eq([small.side,small.remaining],[1,2]);denied(middle);
+ for(let i=0;i<2;i++)raid(small);
+ for(let i=0;i<6;i++)raid(middle);
+ eq([middle.side,middle.remaining],[0,3]);
+ for(let i=0;i<8;i++)raid(capital);
+ eq([capital.side,capital.remaining,r.winner,r.reason],[0,4,0,'base-captured']);
+ ok(r.score[1]>0);
 });
 Deno.test('a shadow acquires at 1000, runs 20% slower and returns after five seconds or beyond 2000',()=>{
  for(const reason of ['time','distance']){

@@ -13,6 +13,42 @@ function setup(count,random=Math.random){
  return {room,players};
 }
 
+Deno.test('survival adds five distinct safe chests per two-minute cut',()=>{
+ const {room,players}=setup(5,()=>.5);
+ const safe=fogZone(0,240_000),spots=[];
+ for(const p of room.sites)if(insideFogSafe(safe,p.x,p.y)&&spots.every(q=>distance(p,q)>240))spots.push(p);
+ for(const [i,p] of players.entries())Object.assign(p,spots[i]);
+ eq(room.chests.length,15);
+ room.tick(119_999,0);eq(room.chests.length,15);
+ for(const now of [120_000,240_000]){
+  const before=room.chests.length;
+  room.tick(now,0);
+  const added=room.chests.slice(before);
+  eq(added.length,5);
+  ok(added.every(c=>insideFogSafe(room.zone,c.x,c.y)));
+  eq(new Set(room.chests.map(c=>c.id)).size,room.chests.length);
+  eq(new Set(room.chests.filter(c=>!c.opened).map(c=>arena.indexAt(c))).size,room.chests.length);
+  room.tick(now+1,0);eq(room.chests.length,before+5);
+ }
+});
+
+Deno.test('eliminated players can switch survivor perspectives and watch battles without commands',()=>{
+ const {room,players:[a,b,c,d]}=setup(4,()=>.5);
+ room.command(a,{type:'spectate',target:c.id},3000);
+ eq(room.snapshot(a,3000).spectating,undefined);
+ room.fall(a,3000);
+ eq(room.snapshot(a,3000).spectating,b.id);
+ room.command(a,{type:'spectate',target:c.id},3000);
+ const view=room.snapshot(a,3000);
+ eq(view.spectating,c.id);
+ eq(view.players.find(p=>p.id===c.id).x,c.x);
+ room.encounter(c,d,3000);
+ eq(room.battleSnapshot(a).commands,[]);
+ eq(room.viewedBattle(a).id,c.battle);
+ room.fall(c,3000);
+ eq(room.snapshot(a,3000).spectating,b.id);
+});
+
 Deno.test('four-axis symmetry and ten single-exit spawns; every safe ring remains connected',()=>{
  const n=arena.cols-1;
  eq(arena.rows,arena.cols);eq(SURVIVAL_SPAWNS.length,10);

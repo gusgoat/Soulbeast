@@ -20,8 +20,8 @@ export function serve({loadCharacter=null,siteOrigin=null,lobbyReconnectMs=LOBBY
   const {room,player}=peer;
   if(peer.ws.bufferedAmount>=96_000)return;
   send(peer,room.snapshot(player,now));
-  const b=player.phase==='battle'&&room.battles.get(player.battle);
-  const key=b?`${b.id}:${b.turn}:${b.last?.n||0}:${b.finished}:${b.autoVersion}:${b.fogVersion??0}`:'';
+  const b=room.viewedBattle(player);
+  const key=b?`${room.spectatorTarget(player)?.id||player.id}:${b.id}:${b.turn}:${b.last?.n||0}:${b.finished}:${b.autoVersion}:${b.fogVersion??0}`:'';
   if(key!==peer.battleKey){peer.battleKey=key;send(peer,{type:'battle',battle:room.battleSnapshot(player)});}
  }
  function closeRoom(room){
@@ -109,7 +109,8 @@ export function serve({loadCharacter=null,siteOrigin=null,lobbyReconnectMs=LOBBY
      }
      room.command(peer.player,m,now);
      if(m.type==='chest')send(peer,{type:'chest-result',id:m.id});
-     if(phase==='lobby'||room.eventSerial!==serial||room.phase!==phase)for(const q of peers)if(q.room===room)push(q,now);
+     if(m.type==='spectate')push(peer,now);
+     else if(phase==='lobby'||room.eventSerial!==serial||room.phase!==phase)for(const q of peers)if(q.room===room)push(q,now);
      return;
     }
     let character=null;

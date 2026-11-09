@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, distance} from './arena.mjs';
+import {CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=conquest-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=career-art';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=conquest-1';
 import {battlePresentation} from './battle-presentation.mjs?v=battle-parity-1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
@@ -17,6 +17,10 @@ let ws,state,battle,me,local,lastInput='',seq=0,offset=0,stick={x:0,y:0,id:null}
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
 let showBattleLog=false;
 const battleUpdates=[];
+const spectatorPan={x:0,y:0};
+let spectatorDrag=null;
+const watchedPlayer=()=>state?.spectating&&state.players.find(p=>p.id===state.spectating);
+const viewingBattle=()=>state?.phase==='match'&&(me?.phase==='battle'||watchedPlayer()?.phase==='battle');
 let pendingChest=null, pendingMoves=[], correction=null, oneWay=0, bestRtt=Infinity;
 function acceptPong(message){
  const rtt=performance.now()-message.echo;
@@ -51,7 +55,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=bot-lobbies-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=conquest-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -180,7 +184,7 @@ function receiveBattle(next){
 }
 function continueBattle(){
  if(battleUpdates.length)receiveBattle(battleUpdates.shift());
- else if(me?.phase!=='battle'||state.phase!=='match')hideBattle();
+ else if(!viewingBattle())hideBattle();
  else{battleKey='';renderBattle();}
 }
 function hideBattle(){
@@ -190,6 +194,7 @@ function hideBattle(){
 }
 function reset(message='',clearInvite=false){
  battleUpdates.length=0;
+ spectatorPan.x=spectatorPan.y=0;spectatorDrag=null;
  presentation.walk(false);
  presentation.setActive(false);
  hideBattle();
@@ -210,6 +215,13 @@ function reset(message='',clearInvite=false){
 function applyState(next){
  const arrival=performance.now();
  const entering=opening||!state;
+ if(next.spectating!==state?.spectating){
+  spectatorPan.x=spectatorPan.y=0;spectatorDrag=null;scene.camera=null;
+  if(next.spectating){
+   battleUpdates.length=0;battle=null;battleKey='';
+   presentation.setActive(false);hideBattle();
+  }
+ }
  opening=false;state=next;offset=next.now+oneWay-arrival;
  if(entering)updateEntryControls();
  $('lobby').hidden=state.phase!=='lobby';$('arena').hidden=state.phase==='lobby';
@@ -222,7 +234,7 @@ function applyState(next){
  $('blue-label').textContent=solo?'เหลือผู้รอด':'ไพลิน';
  $('red-label').textContent=solo?'พื้นที่ปลอดภัย':'ทับทิม';
  $('vitals-label').textContent=solo?'พลังของคุณ':'HP ทีมเรา';
- $('map-legend').textContent=solo?'กรอบเขียว พื้นที่ปลอดภัย · ◎ ตำแหน่งคุณ':'◆ ฐานใหญ่ · □ ฐานย่อย · ● ทีมเรา · ◎ ตำแหน่งคุณ';
+ $('map-legend').textContent=solo?'กรอบเขียว พื้นที่ปลอดภัย · ◎ ตำแหน่งมุมมอง':'◆ ฐานใหญ่ · ▣ ฐานกลาง · □ ฐานเล็ก · เส้นแสดงฐานที่เชื่อมกัน';
  renderTeamHp();
  renderSurvivalRank(solo);
  pendingMoves=pendingMoves.filter(move=>move.seq>next.ack);
@@ -247,8 +259,8 @@ function applyState(next){
    if(q.samples.length>6)q.samples.shift();
   }
  }
- if((state.phase!=='match'||me.phase!=='walk')&&mapDialog.open)mapDialog.close();
- if(me.phase!=='battle'||state.phase!=='match')hideBattle();
+ if((state.phase!=='match'||me.phase!=='walk'&&!state.spectating)&&mapDialog.open)mapDialog.close();
+ if(!viewingBattle())hideBattle();
 }
 function renderLobby(){
  const key=JSON.stringify([state.players,state.canStart,state.host,state.canManageBots]);if(key===lobbyKey)return;lobbyKey=key;
@@ -314,7 +326,9 @@ function combatPose(unit){
 function unitCard(unit,current,selectable,choose){
  const card=node(selectable?'button':'div',null,'card');
  card.title=`${unit.name} · Lv ${unit.lv} · HP ${unit.hp}/${unit.maxHp} · MP ${unit.mp}/${unit.maxMp}`;
- if(unit.baseAura)card.title+=' · ออร่าฐาน โจมตี +20% · ป้องกัน +20%';
+ const aura=unit.baseAura===true?20:unit.baseAura;
+ const auraLabel=`ออร่าฐาน โจมตี +${aura}% · ป้องกัน +${aura}%`;
+ if(aura)card.title+=' · '+auraLabel;
  card.dataset.unitId=unit.id;
  card.dataset.dead=String(unit.hp<=0);
  card.dataset.current=String(unit.id===current);
@@ -357,10 +371,10 @@ function unitCard(unit,current,selectable,choose){
  });
  const stats=node('div',null,'battle-meter');
  const level=node('small',`Lv ${unit.lv}`,'battle-level');
- if(unit.baseAura){
-  const aura=node('span','◆','battle-base-aura');
-  aura.title='ออร่าฐาน โจมตี +20% · ป้องกัน +20%';aura.setAttribute('aria-label',aura.title);
-  level.append(' ',aura);
+ if(aura){
+  const badge=node('span','◆','battle-base-aura');
+  badge.title=auraLabel;badge.setAttribute('aria-label',auraLabel);
+  level.append(' ',badge);
  }
  stats.append(name,level,...meters);
  const statuses=(unit.statuses||[]).filter(status=>Object.hasOwn(statusLabels,status));
@@ -387,11 +401,11 @@ function skillButton(skill,enabled,onClick){
  return button;
 }
 function renderBattle(){
- const panel=$('battle'),inCombat=me?.phase==='battle'&&state?.phase==='match';
- if(!battle||(!inCombat&&panel.hidden))return;
+ const panel=$('battle'),inCombat=me?.phase==='battle'&&state?.phase==='match',watch=watchedPlayer();
+ if(!battle||(!viewingBattle()&&panel.hidden))return;
  const b=battle,effectKey=`${b.id}:${b.last?.n??0}`,playEffect=panel.dataset.last!==effectKey&&!!b.last;
  const can=inCombat&&!playEffect&&!presentation.busy&&!battleUpdates.length&&b.commands.length>0&&now>=b.openAt&&now<b.deadline&&pendingTurn!==b.turn;
- const inFog=!insideFogSafe(state.zone,me.x,me.y);
+ const position=watch||me,inFog=!insideFogSafe(state.zone,position.x,position.y);
  const key=`${b.id}:${b.turn}:${b.last?.n}:${b.finished}:${b.auto}:${can}:${selected?.id}:${pendingTurn}:${inFog}`;
  if(battleKey===key)return;
  const first=panel.dataset.battleId!==b.id;
@@ -406,7 +420,7 @@ function renderBattle(){
  const stage=node('div',null,'battle-stage');
  host.append(title,stage);
  const known=[...b.allies,...b.enemies], current=known.find(u=>u.id===b.cur);
- const solo=state.mode==='survival',order=b.teams[1].includes(me.id)?[0,1]:[1,0];
+ const solo=state.mode==='survival',order=b.teams[1].includes(position.id)?[0,1]:[1,0];
  function act(skill,target){
   if(send({type:'combat',turn:b.turn,skill,target})){
    pendingTurn=b.turn;selected=null;renderBattle();
@@ -418,7 +432,7 @@ function renderBattle(){
   const own=side===order[1];
   const section=node('div',null,`battle-side${slots.length<=1?' solo':''}`);
   if(slots.length)section.style.setProperty('--team',solo?(own?'#e9ca85':COLORS[1]):COLORS[isPvp?side:me.side]);
-  const sideName=slots.length?(solo?(own?'ฝ่ายเรา':'คู่ต่อสู้'):`${own?'ทีมเรา':'ฝ่ายตรงข้าม'} · ${TEAMS[isPvp?side:me.side]}`):b.boss?'ออร่าบอสโคลอสเซียม':'อสูรเงา';
+  const sideName=slots.length?(solo?(own?(watch?'ผู้เล่นที่กำลังชม':'ฝ่ายเรา'):'คู่ต่อสู้'):`${own?'ทีมเรา':'ฝ่ายตรงข้าม'} · ${TEAMS[isPvp?side:me.side]}`):b.boss?'ออร่าบอสโคลอสเซียม':'อสูรเงา';
   const header=node('div',null,'battle-side-title');
   header.append(node('b',sideName),node('small',`${units.filter(unit=>presentation.hp(unit)>0).length}/${units.length}`));
   section.append(header);
@@ -454,7 +468,7 @@ function renderBattle(){
   soundButton.setAttribute('aria-pressed',String(presentation.enabled));
  };
  const actions=node('div',null,'battle-control-buttons');
- if(!b.finished){
+ if(!b.finished&&!watch){
   const autoButton=node('button',b.auto?'อัตโนมัติ: เปิด':'สู้อัตโนมัติ','secondary battle-auto');
   autoButton.setAttribute('aria-label','สู้อัตโนมัติ');
   autoButton.setAttribute('aria-pressed',String(b.auto));
@@ -536,6 +550,29 @@ function leavePractice(){
  if(!send({type:'leavePractice'}))reset();
 }
 $('back').onclick=()=>state?.practice?leavePractice():reset();
+$('spectator-leave').onclick=$('back').onclick;
+function cycleSpectator(step){
+ const survivors=state?.players.filter(p=>p.connected&&p.phase!=='dead')||[];
+ if(survivors.length<2)return;
+ const current=survivors.findIndex(p=>p.id===state.spectating);
+ send({type:'spectate',target:survivors[(current+step+survivors.length)%survivors.length].id});
+}
+$('spectator-prev').onclick=()=>cycleSpectator(-1);
+$('spectator-next').onclick=()=>cycleSpectator(1);
+const world=$('world');
+world.addEventListener('pointerdown',e=>{
+ if(!state?.spectating)return;
+ world.setPointerCapture(e.pointerId);
+ spectatorDrag={id:e.pointerId,x:e.clientX,y:e.clientY};
+});
+world.addEventListener('pointermove',e=>{
+ if(spectatorDrag?.id!==e.pointerId)return;
+ const pan=(value,delta)=>Math.max(-480,Math.min(480,value+delta));
+ spectatorPan.x=pan(spectatorPan.x,spectatorDrag.x-e.clientX);
+ spectatorPan.y=pan(spectatorPan.y,spectatorDrag.y-e.clientY);
+ spectatorDrag.x=e.clientX;spectatorDrag.y=e.clientY;
+});
+world.addEventListener('lostpointercapture',()=>{spectatorDrag=null;});
 $('leave-practice').onclick=leavePractice;
 $('copy').onclick=async()=>{
  const link=new URL(location.pathname,location.href);link.searchParams.set('room',state.code);
@@ -550,7 +587,11 @@ function objective(){
   if(chest)return {type:'chest',id:chest.id,disabled:pendingChest===chest.id,
    label:pendingChest===chest.id?'กำลังเปิดหีบ…':state.mode==='survival'?'เปิดหีบ · +5 คะแนน':'เปิดหีบสมบัติ'};
   const base=state.bases.find(b=>RAID_TARGET(me,b));
-  if(base)return {type:'raid',id:base.id,label:`จู่โจม${base.label} · +${base.points}`};
+  if(base){
+   const allowed=canRaidBase(me.side,base,state.bases);
+   return {type:'raid',id:base.id,disabled:!allowed,label:allowed?`จู่โจม${base.label} · ${base.remaining}/${base.maxDurability??4} · +${base.points}`:
+    base.main?'ยึดฐานกลางที่เชื่อมอยู่ก่อน':'ยึดฐานเล็กที่เชื่อมอยู่ก่อน'};
+  }
  }
  if(!state.vitals)return null;
  const friendly=state.bases.find(b=>HEAL_TARGET(me,b));
@@ -655,7 +696,8 @@ function frame(t){
    p.x=from.x+(to.x-from.x)*a;p.y=from.y+(to.y-from.y)*a;
   }
   const all=[...actors.values(),...(local.phase==='dead'?[]:[local])];
-  scene.render(local,all,t,state.chests,state.bases,state.traps,now,zone);
+  const watch=watchedPlayer(),focus=watch?(actors.get(watch.id)||watch):local;
+  scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null);
   $('blue').textContent=solo?state.survivors:state.score[0];
   $('red').textContent=solo?`${Math.round(zone.remaining*100)}%`:state.score[1];
   $('clock').textContent=solo?(zone.nextAt?clock(zone.nextAt-(state.finishedAt??now)):'☠'):clock(state.ends-(state.finishedAt??now));
@@ -667,25 +709,33 @@ function frame(t){
   const healing=heal&&now-heal.at<3300&&(!event||heal.at>=event.at);
   $('event').textContent=healing?[heal.source,heal.hp?`HP +${heal.hp}`:'',heal.mp?`MP +${heal.mp}`:'',heal.cleansed?'ล้างสถานะผิดปกติ':''].filter(Boolean).join(' · '):event?.text??'';
   const walking=state.phase==='match'&&me.phase==='walk';
-  $('stick').hidden=!walking;$('map').hidden=!walking;
+  $('stick').hidden=!walking;$('map').hidden=!walking&&!watch;
+  $('arena').toggleAttribute('data-spectating',Boolean(watch));
+  $('spectator').hidden=!watch;
+  if(watch){
+   const label=`ชม ${watch.name}`;
+   if($('spectator-name').textContent!==label)$('spectator-name').textContent=label;
+   const canSwitch=state.players.filter(p=>p.connected&&p.phase!=='dead').length>1;
+   $('spectator-prev').disabled=$('spectator-next').disabled=!canSwitch;
+  }
   $('walk-sound').hidden=!walking;
   presentation.walk(walking,stepped?(scene.arena.bushAt(local)!==null?'leaves':'stone'):null);
   $('objectives').hidden=!walking;
   $('leave-practice').hidden=!state.practice;
   const treasure=`หีบเหลือ ${state.chestsLeft}/${state.chestsTotal??CHEST_COUNT}`;
   $('chest-count').textContent=treasure;$('map-chests').textContent=treasure;
-  $('boss-clock').textContent=solo?(!insideFogSafe(zone,me.x,me.y)?'อยู่ในหมอกพิษ · เสีย HP 2%/วิ':zone.nextAt?`หมอกเข้ามาอีก ${clock(zone.nextAt-now)}`:'หมอกปกคลุมทั้งสนาม'):
+  $('boss-clock').textContent=solo?(!insideFogSafe(zone,focus.x,focus.y)?'อยู่ในหมอกพิษ · เสีย HP 2%/วิ':zone.nextAt?`หมอกเข้ามาอีก ${clock(zone.nextAt-now)}`:'หมอกปกคลุมทั้งสนาม'):
    state.nextBossAt?`บอสเกิดอีก ${clock(state.nextBossAt-now)}`:'ไม่มีบอสเกิดเพิ่ม';
   const target=walking&&objective();
   $('raid').hidden=!target;
   if(target){const button=$('raid');button.textContent=target.label;button.dataset.action=target.type;button.disabled=Boolean(target.disabled);}
-  if(walking&&t-lastMap>80){
-   drawMap($('mini'),state,all,local);
-   if(mapDialog.open)drawMap($('full-map'),state,all,local,2);
+  if((walking||watch)&&t-lastMap>80){
+   drawMap($('mini'),state,all,focus);
+   if(mapDialog.open)drawMap($('full-map'),state,all,focus,2);
    lastMap=t;
   }
   const ended=state.phase==='finished',dead=me.phase==='dead';
-  $('overlay').hidden=(!$('battle').hidden)||!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
+  $('overlay').hidden=(!$('battle').hidden)||Boolean(watch)||!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
   if(ended||dead){
    if(solo){
     $('overlay-title').textContent=ended?(state.winner===me.id?'คุณรอดเป็นคนสุดท้าย!':state.winnerName?'จบการประลอง':'เสมอ'):'คุณตกรอบ';
@@ -694,7 +744,7 @@ function frame(t){
     $('overlay-text').textContent=[state.eliminationCause,result,Number.isFinite(me.points)?`คะแนนคุณ ${me.points}`:''].filter(Boolean).join(' · ');
    }else{
     $('overlay-title').textContent=ended?(state.winner===-1?'เสมอ':state.winner===me.side?'ทีมคุณชนะ!':'ทีมคุณแพ้'):'ผู้ผนึกล้มลง';
-    $('overlay-text').textContent=ended?`${state.reason==='error'?'สนามยุติการเล่น · ':''}${TEAMS[0]} ${state.score[0]} : ${state.score[1]} ${TEAMS[1]}`:`เกิดใหม่ที่ฐานใหญ่ใน ${clock(state.respawnAt-now)}`;
+    $('overlay-text').textContent=ended?`${state.reason==='base-captured'?`${TEAMS[state.winner]} ยึดฐานใหญ่ · `:state.reason==='error'?'สนามยุติการเล่น · ':''}${TEAMS[0]} ${state.score[0]} : ${state.score[1]} ${TEAMS[1]}`:`เกิดใหม่ที่ฐานใหญ่ใน ${clock(state.respawnAt-now)}`;
    }
   }
   if(walking&&scene.arena.bushAt(local)!==null&&!event&&!healing)$('event').textContent='อยู่ในพุ่มไม้ · ความเร็วครึ่งหนึ่ง';

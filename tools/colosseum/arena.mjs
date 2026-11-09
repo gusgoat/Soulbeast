@@ -5,7 +5,7 @@ export const BEAST_SPEED_SCALE=.8;
 export const BASE_AURA_RANGE=600;
 export const MATCH_MS=12*60_000, RESPAWN_MS=30_000;
 export const BOSS_INTERVAL=2*60_000, BOSS_POINTS=20, CHEST_COUNT=10;
-export const BEAST_POINTS=5, BASE_RAID_LIMIT=4;
+export const BEAST_POINTS=5;
 export const TEAMS=['ไพลิน','ทับทิม'], COLORS=['#6ac9ff','#ff827a'];
 export const cellCenter=(x,y)=>({x:(x+.5)*CELL,y:(y+.5)*CELL});
 export const distance=(a,b)=>Math.hypot(a.x-b.x,(a.y-b.y)*FLAT);
@@ -52,9 +52,17 @@ function findBush(p,bushes){
  const x=Math.floor(p.x/CELL),y=Math.floor(p.y/CELL);
  return bushes.find(b=>y===b.y&&x>=b.x&&x<b.x+b.w)?.id??null;
 }
-export const BASES=TEAMS.flatMap((team,side)=>[[2,21],[6,5],[10,21],[6,37]].map(([x,y],i)=>({
- id:`${side}-${i}`,side,main:i===0,points:i===0?15:10,label:i===0?`ฐานใหญ่${team}`:`ฐาน ${i} ${team}`,...cellCenter(side?COLS-1-x:x,y)
+const baseSites=[
+ [2,21,'large',8,30,[1,2]], [5,13,'medium',6,20,[3,4]], [6,29,'medium',6,20,[5,6]],
+ [6,5,'small',4,10,[]], [10,13,'small',4,10,[]], [10,29,'small',4,10,[]], [6,37,'small',4,10,[]],
+];
+export const BASES=TEAMS.flatMap((team,side)=>baseSites.map(([x,y,tier,maxDurability,aura,children],i)=>({
+ id:`${side}-${i}`,side,tier,maxDurability,aura,main:tier==='large',points:tier==='large'?5:tier==='medium'?4:3,
+ label:tier==='large'?'ฐานใหญ่':tier==='medium'?`ฐานกลาง ${i}`:`ฐานเล็ก ${i-2}`,
+ links:children.map(child=>`${side}-${child}`),...cellCenter(side?COLS-1-x:x,y)
 })));
+export const canRaidBase=(side,base,bases)=>base.side!==side&&base.remaining>0&&
+ (!base.links?.length||base.links.some(id=>bases.some(link=>link.id===id&&link.side===side&&link.remaining>0)));
 export const mainBase=side=>BASES.find(b=>b.main&&b.side===side);
 export const spawns=side=>[[-48,-52],[-48,52],[0,0],[48,-52],[48,52]].map(([dx,dy])=>({x:mainBase(side).x+(side?-dx:dx),y:mainBase(side).y+dy}));
 const propSites=maze.flatMap((row,y)=>row.slice(2,14).flatMap((open,i)=>{

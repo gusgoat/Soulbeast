@@ -1,6 +1,6 @@
 import '../town-walk-demo/sealer-sprite-catalog.js';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, CELL, COLORS, FLAT, TEAM_ARENA} from './arena.mjs';
+import {BASES, CELL, COLORS, FLAT, TEAM_ARENA} from './arena.mjs?v=conquest-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -70,18 +70,26 @@ export function drawMap(canvas,state,players,me,zoom=1){
   m.fill('evenodd');
   if(zone.remaining){m.strokeStyle='#b4f081';m.lineWidth=zoom;m.strokeRect(mapX(zone.min),mapY(zone.min),mapX(zone.max-zone.min),mapY(zone.max-zone.min));}
  }
- for(const b of state.bases??BASES){
+ const bases=state.bases??BASES;
+ for(const base of bases)for(const id of base.links||[]){
+  const target=bases.find(b=>b.id===id);
+  if(!target)continue;
+  m.strokeStyle=target.side===base.side?COLORS[base.side]+'99':'#fff0bd99';
+  m.lineWidth=zoom;m.beginPath();m.moveTo(mapX(base.x),mapY(base.y));m.lineTo(mapX(target.x),mapY(target.y));m.stroke();
+ }
+ for(const b of bases){
   m.save();m.translate(mapX(b.x),mapY(b.y));if(b.main)m.rotate(Math.PI/4);
-  const r=(b.main?4.4:3.3)*zoom;
+  const r=(b.main?4.4:b.tier==='medium'?4:3)*zoom;
   m.fillStyle=COLORS[b.side];m.strokeStyle='#17131c';m.lineWidth=1.4*zoom;
   m.fillRect(-r,-r,r*2,r*2);m.strokeRect(-r,-r,r*2,r*2);m.restore();
  }
  const side=state.players.find(p=>p.id===state.me)?.side;
  const rendered=new Map(players.map(p=>[p.id,p]));
- for(const p of state.players)if((solo?p.id===state.me:p.side===side)&&p.connected&&p.phase!=='dead'){
-  const pos=p.id===state.me?me:(rendered.get(p.id)??{x:p.mapX??p.x,y:p.mapY??p.y});
+ const focus=state.spectating||state.me;
+ for(const p of state.players)if((solo?p.id===focus:p.side===side)&&p.connected&&p.phase!=='dead'){
+  const pos=p.id===focus?me:(rendered.get(p.id)??{x:p.mapX??p.x,y:p.mapY??p.y});
   if(!Number.isFinite(pos?.x)||!Number.isFinite(pos?.y))continue;
-  m.fillStyle=p.id===state.me?'#fff2a4':'#d5f5ff';
+  m.fillStyle=p.id===focus?'#fff2a4':'#d5f5ff';
   m.strokeStyle='#10151d';m.lineWidth=1.6*zoom;
   m.beginPath();m.arc(mapX(pos.x),mapY(pos.y),(p.id===state.me?3.9:3.0)*zoom,0,2*Math.PI);m.stroke();m.fill();
  }
@@ -92,7 +100,7 @@ export function drawMap(canvas,state,players,me,zoom=1){
 }
 export class Scene{
  constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.camera=null;this.anim=new Map();this.traps=createArenaTraps();this.arena=TEAM_ARENA;}
- render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null){
+ render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null,pan=null){
   const canvas=this.canvas,c=this.c,w=canvas.clientWidth,h=canvas.clientHeight;
   if(!w||!h||!me)return;
   const dpr=Math.min(2,devicePixelRatio||1), zoom=Math.min(1.3,Math.max(.84,w/590))*1.08;
@@ -101,10 +109,10 @@ export class Scene{
   }
   const {width,obstacles}=this.arena;
   const edgeLook=Math.min(74,Math.max(0,(w-285)*.42))*Math.max(0,1-Math.max(0,Math.min(me.x,width-me.x)-430)/390);
-  const lookX=me.x+(me.x<width/2?-edgeLook:edgeLook);
-  if(!this.camera||this.camera.warp!==me.warp)this.camera={x:lookX,y:me.y*FLAT,warp:me.warp};
+  const lookX=me.x+(me.x<width/2?-edgeLook:edgeLook)+(pan?.x||0),lookY=me.y*FLAT+(pan?.y||0);
+  if(!this.camera||this.camera.warp!==me.warp)this.camera={x:lookX,y:lookY,warp:me.warp};
   const cam=this.camera;
-  cam.x+=(lookX-cam.x)*.18;cam.y+=(me.y*FLAT-cam.y)*.18;
+  cam.x+=(lookX-cam.x)*.18;cam.y+=(lookY-cam.y)*.18;
   const left=cam.x-w/2/zoom, top=cam.y-h/2/zoom, right=left+w/zoom, bottom=top+h/zoom;
   c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#342930';c.fillRect(0,0,w,h);
   c.setTransform(dpr*zoom,0,0,dpr*zoom,-left*dpr*zoom,-top*dpr*zoom);
@@ -274,10 +282,11 @@ export class Scene{
   c.fillStyle='#ffe7a9';c.beginPath();c.ellipse(x,y,2.5,6,0,0,Math.PI*2);c.fill();
  }
  base(b,now){
-  const c=this.c,x=b.x,y=b.y*FLAT,color=COLORS[b.side],r=b.main?74:47;
+  const c=this.c,x=b.x,y=b.y*FLAT,color=COLORS[b.side],r=b.main?74:b.tier==='medium'?59:47;
+  const label=`${b.label} · ${b.remaining??b.maxDurability??4}/${b.maxDurability??4}`;
   const castle=baseArt[b.side][b.main?'main':'small'];
   if(ready(castle)){
-   const width=b.main?225:136, height=width*castle.naturalHeight/castle.naturalWidth;
+   const width=b.main?225:b.tier==='medium'?177:136, height=width*castle.naturalHeight/castle.naturalWidth;
    // Use the base's ground point for both the sprite and its contact shadow.
    c.save();c.translate(x,y-width*.035);c.scale(width*.49,width*.11);
    const shadow=c.createRadialGradient(0,0,0,0,0,1);
@@ -287,7 +296,7 @@ export class Scene{
    c.fillStyle=shadow;c.fillRect(-1,-1,2,2);
    c.restore();
    c.drawImage(castle,x-width/2,y-height,width,height);
-   this.label(`${b.label} · ${b.remaining??4}/4`,x,y+38,color);
+   this.label(label,x,y+38,color);
    return;
   }
   c.fillStyle='#221c25c7';c.strokeStyle=color;c.lineWidth=2;
@@ -297,7 +306,7 @@ export class Scene{
   c.fillStyle='#a08568';c.fillRect(x-3,y-72,6,65);
   c.fillStyle=color;c.beginPath();c.moveTo(x-25,y-70);c.lineTo(x+25,y-70);c.lineTo(x+25,y-36);c.lineTo(x,y-23);c.lineTo(x-25,y-36);c.fill();
   c.fillStyle='#17202b';c.font='bold 20px sans-serif';c.textAlign='center';c.fillText(b.main?'◆':'✦',x,y-43);
-  this.label(b.label,x,y+22,color);
+  this.label(label,x,y+22,color);
  }
  label(text,x,y,color){
   const c=this.c;
