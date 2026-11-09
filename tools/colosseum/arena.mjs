@@ -57,7 +57,7 @@ const baseSites=[
  [6,5,'small',4,10,[]], [10,13,'small',4,10,[]], [10,29,'small',4,10,[]], [6,37,'small',4,10,[]],
 ];
 export const BASES=TEAMS.flatMap((team,side)=>baseSites.map(([x,y,tier,maxDurability,aura,children],i)=>({
- id:`${side}-${i}`,side,tier,maxDurability,aura,main:tier==='large',points:tier==='large'?5:tier==='medium'?4:3,
+ id:`${side}-${i}`,side,tier,maxDurability,aura,main:tier==='large',points:tier==='large'?15:tier==='medium'?10:5,
  label:tier==='large'?'ฐานใหญ่':tier==='medium'?`ฐานกลาง ${i}`:`ฐานเล็ก ${i-2}`,
  links:children.map(child=>`${side}-${child}`),...cellCenter(side?COLS-1-x:x,y)
 })));

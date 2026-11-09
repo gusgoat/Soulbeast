@@ -1,9 +1,9 @@
 import {ASSIST, BASES, BASE_AURA_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS, canRaidBase,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=conquest-1';
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=base-raid-1';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=conquest-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=skill-effects-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=conquest-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=base-raid-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -247,8 +247,8 @@ export class Match {
    assert(canRaidBase(p.side,b,this.bases),b.main?'ต้องยึดฐานกลางที่เชื่อมอยู่ก่อน':'ต้องยึดฐานเล็กที่เชื่อมอยู่ก่อน');
    b.remaining--;
    const captured=b.remaining===0;
-   if(captured){b.side=p.side;b.remaining=b.maxDurability/2;}
    this.score[p.side]+=b.points;this.score[b.side]=Math.max(0,this.score[b.side]-b.points);
+   if(captured){b.side=p.side;b.remaining=b.maxDurability/2;}
    this.teleport(p,now);
    this.note(`${p.name} ${captured?'ยึด':'จู่โจม'}${b.label} · ${TEAMS[p.side]} +${b.points}`,now);
    if(captured&&b.main)this.finish(p.side,'base-captured',now);

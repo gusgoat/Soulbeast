@@ -81,9 +81,9 @@ Deno.test('only enemy bases in reach score, teleport immediately, zero ends the 
  const {r,p:[a,b]}=match();
  start(r,[a,b]);const mini=BASES.find(x=>x.side!==a.side&&x.tier==='small'),main=BASES.find(x=>x.side!==a.side&&x.main);
  let rejected=false;try{r.command(a,{type:'raid',id:main.id},3000);}catch{rejected=true;}ok(rejected);
- Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},4000);eq(r.score,[103,97]);eq({x:a.x,y:a.y},a.spawn);
+ Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},4000);eq(r.score,[105,95]);eq({x:a.x,y:a.y},a.spawn);
  rejected=false;try{r.command(a,{type:'raid',id:mini.id},4001);}catch{rejected=true;}ok(rejected);
- r.score[1]=2;Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},10000);eq(r.score,[106,0]);eq(r.winner,0);
+ r.score[1]=2;Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},10000);eq(r.score,[110,0]);eq(r.winner,0);
 });
 Deno.test('friendly castles heal the player with 30% or a full cleanse; enemy, distant and ruined castles refuse',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
@@ -288,21 +288,22 @@ Deno.test('a creature breaks pursuit on entry into grass and returns to its star
 Deno.test('linked captures unlock only their own route and the capital wins above zero points',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const [capital,middle,other,small]=r.bases.filter(x=>x.side===1);
+ r.score=[100,250];
  let now=3000;
  const raid=(base,player=a)=>{Object.assign(player,{x:base.x,y:base.y});r.command(player,{type:'raid',id:base.id},now+=3000);};
  const denied=base=>{let rejected=false;try{raid(base);}catch{rejected=true;}ok(rejected);};
  denied(middle);denied(capital);
  for(let i=0;i<4;i++)raid(small);
- eq([small.side,small.remaining],[0,2]);eq(r.snapshot(a,now).bases.length,14);
+ eq([small.side,small.remaining],[0,2]);eq(r.snapshot(a,now).bases.length,14);eq(r.score,[120,230]);
  denied(other);denied(capital);
  for(let i=0;i<2;i++)raid(small,b);
  eq([small.side,small.remaining],[1,2]);denied(middle);
  for(let i=0;i<2;i++)raid(small);
  for(let i=0;i<6;i++)raid(middle);
- eq([middle.side,middle.remaining],[0,3]);
+ eq([middle.side,middle.remaining],[0,3]);eq(r.score,[180,170]);
  for(let i=0;i<8;i++)raid(capital);
  eq([capital.side,capital.remaining,r.winner,r.reason],[0,4,0,'base-captured']);
- ok(r.score[1]>0);
+ eq(r.score,[300,50]);
 });
 Deno.test('a shadow acquires at 1000, runs 20% slower and returns after five seconds or beyond 2000',()=>{
  for(const reason of ['time','distance']){

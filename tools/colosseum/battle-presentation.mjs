@@ -1,3 +1,5 @@
+import {battleEffects} from './battle-effects.generated.mjs?v=1';
+
 const assets = new URL('../../assets/',import.meta.url).pathname;
 // Reuse the sounds and painted projectiles from the game's PvP presentation.
 const audioFiles={
@@ -12,12 +14,6 @@ const walkingFiles={
  stone:'audio/forest-journey/stone.mp3',leaves:'audio/forest-journey/leaves.mp3',
 };
 const audioUrl=key=>assets+(walkingFiles[key]||'media/'+audioFiles[key]+'.mp3');
-const projectiles={
- fire:'v4/fire-high',water:'v4/water-high',electric:'v4/electric-high',ground:'v4/earth-high',rock:'v4/earth-high',
- flying:'v4/wind-high',grass:'v2/nature',ice:'v5/ice-high',fairy:'v5/holy-high',ghost:'v5/ghost-high',
- dark:'v5/dark-high',poison:'v5/poison-high',psychic:'v5/psychic-high',dragon:'v5/dragon-high',
-};
-const sprite=file=>assets+'vfx/projectiles/'+file+'.png.webp';
 const prefsKey='soulbeast-colosseum-battle-sound';
 
 export function battlePresentation(layer){
@@ -28,6 +24,18 @@ export function battlePresentation(layer){
  const music=new Audio(audioUrl('music'));
  music.loop=true;music.volume=.16;music.preload='none';
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+ const effectsHost=document.createElement('div');
+ effectsHost.style.cssText='position:absolute;inset:0;pointer-events:none';
+ const shadow=effectsHost.attachShadow({mode:'open'});
+ const stylesheet=document.createElement('link');
+ stylesheet.rel='stylesheet';
+ stylesheet.href=new URL('../../game-styles.afa6a43765a67ae5.css',import.meta.url).href;
+ const effectLayer=document.createElement('div');
+ effectLayer.id='vfx';
+ effectLayer.style.position='absolute';
+ shadow.append(stylesheet,effectLayer);
+ layer.append(effectsHost);
+ const effects=battleEffects(effectLayer,after);
 
  function clip(key){
   if(!clips.has(key)){
@@ -96,10 +104,11 @@ export function battlePresentation(layer){
   if(active===value)return;
   active=value;
   if(!active){
-   playing=false;timers.forEach(clearTimeout);timers.clear();poses.clear();flights.clear();heldHp.clear();layer.replaceChildren();syncPoses();
+   playing=false;timers.forEach(clearTimeout);timers.clear();poses.clear();flights.clear();heldHp.clear();effects.clear();
+   for(const node of [...layer.children])if(node!==effectsHost)node.remove();
+   syncPoses();
    music.currentTime=0;
-  }else for(const file of [...Object.values(projectiles),'v2/holy','v2/beam','v3/impact','v3/melee','v3/music','v3/shuriken','v3/crescent'])
-   preload(sprite(file));
+  }
   syncMusic();
  }
  function toggle(){
@@ -119,6 +128,8 @@ export function battlePresentation(layer){
   const y=Math.max(board.top+8,Math.min(board.bottom-8,face.top+face.height/2));
   const sourceY=Math.max(board.top+8,Math.min(board.bottom-8,face.top+face.height*ay/100));
   return {x:face.left+face.width/2-bounds.left,y:y-bounds.top,width:face.width,height:face.height,portrait,card,art,
+   node:portrait,size:Math.min(72,Math.max(28,Math.min(face.width,face.height))),
+   board:{left:board.left-bounds.left,top:board.top-bounds.top,width:board.width,height:board.height},
    source:{x:face.left+face.width*ax/100-bounds.left,y:sourceY-bounds.top}};
  }
  function preload(url){
@@ -153,14 +164,14 @@ export function battlePresentation(layer){
   layer.append(img);after(()=>img.remove(),duration);
   return img;
  }
- function impact(event,damage,element,kind,meleeArt){
+ function impact(event,damage,profile,actor,meleeArt){
   const target=anchor(event.id);
   if(!target)return;
-  const support=event.k==='heal'||event.k==='buff',debuff=event.k==='debuff';
+  const support=event.k==='heal'||event.k==='buff';
   const miss=event.k==='miss';
   if(event.k==='hit')showPose(event.id,'hit',380);
-  if(!miss)effectImage(kind==='melee'&&!support&&!debuff&&meleeArt?meleeArt:
-   sprite(support?'v2/holy':debuff?projectiles[element]||'v2/dark':kind==='melee'?'v3/melee':projectiles[element]||'v3/impact'),target,'battle-fx-impact');
+  effects.impact(profile,event,target,actor);
+  if(event.k==='hit'&&profile.id==='attack'&&meleeArt)effectImage(meleeArt,target,'battle-fx-impact');
   if(event.k==='hit'&&!reduced.matches)target.card.animate(
    [{translate:'0px'},{translate:'4px'},{translate:'-3px'},{translate:'0px'}],{duration:220});
   if(!damage&&!miss)return;
@@ -189,27 +200,6 @@ export function battlePresentation(layer){
   after(()=>{copy.remove();flights.delete(actor);syncPoses();},680);
   return 300;
  }
- function launch(last,from,to,element){
-  if(!from||!to||from.card===to.card||reduced.matches)return 0;
-  const start=from.source;
-  const dx=to.x-start.x,dy=to.y-start.y,length=Math.hypot(dx,dy);
-  const angle=Math.atan2(dy,dx)*180/Math.PI;
-  const beam=last.flight==='beam',travel=beam?340:300;
-  const file=last.kind==='blade'?'v3/crescent':last.flight==='music'?'v3/music':last.flight==='shuriken'?'v3/shuriken':
-   projectiles[element]||(last.kind==='bow'?'v3/crescent':'v2/beam');
-  const shot=effectImage(sprite(file),start,beam?'battle-fx-shot battle-fx-beam':'battle-fx-shot',beam?travel+110:travel);
-  if(beam){
-   shot.style.width=length+'px';
-   const transform=`translateY(-50%) rotate(${angle}deg)`;
-   shot.animate([{transform,clipPath:'inset(0 100% 0 0)'},{transform,clipPath:'inset(0)',offset:travel/(travel+110)},
-    {transform,clipPath:'inset(0)',opacity:0}],{duration:travel+110,fill:'both'});
-  }else{
-   shot.animate([{transform:`translate(-50%,-50%) rotate(${angle}deg) scale(.65)`},
-    {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${angle}deg)`}],
-    {duration:travel,fill:'both',easing:'linear'});
-  }
-  return travel;
- }
  function holdHp(previous,next){
   if(!previous||!next?.last||previous.id!==next.id||previous.last?.n===next.last.n)return;
   const effects=new Set((next.effects||[]).filter(e=>['hit','heal'].includes(e.k)).map(e=>e.id));
@@ -218,21 +208,25 @@ export function battlePresentation(layer){
    if(effects.has(u.id))heldHp.set(u.id,{value:u.hp,action:next.last.n});
   }
  }
- function action(last,events,damage,finished,repaint,complete){
+ function action(last,actor,events,damage,finished,repaint,complete){
   playing=true;
   const finish=delay=>after(()=>{
    for(const [id,hold] of heldHp)if(hold.action===last.n)heldHp.delete(id);
    playing=false;complete();
   },delay);
   const origin=anchor(last.actor);
+  const skillId=last.skillId||events.find(e=>e.k==='cast'||e.k==='charge')?.skill||
+   events.find(e=>e.skill)?.skill||effects.skillByName(last.skill);
+  const profile=effects.profile(skillId,actor);
+  if(profile.painted)preload(new URL('../../'+profile.painted.path,import.meta.url).href);
+  const motion=effects.motion(skillId,profile);
   if(events.some(event=>event.k==='charge')){
    showPose(last.actor,'windup',550);play('charge');
-   if(origin)effectImage(sprite('v2/holy'),origin,'battle-fx-impact');
+   effects.cast(profile,origin);
    finish(600);
    return;
   }
-  const {actor,kind}=last, ranged=kind==='bow'||kind==='spell'||kind==='blade';
-  const support=kind==='heal'||kind==='buff';
+  const ranged=motion==='ranged'||motion==='blade',support=motion==='support';
   const hits=events.filter(event=>['hit','miss','heal','buff','debuff'].includes(event.k));
   const unmatched=damage.slice();
   const numberKind=entry=>/^[−-]\d/.test(entry.t)?'hit':/^\+\d[\d,]*$/.test(entry.t)?'heal':
@@ -246,32 +240,33 @@ export function battlePresentation(layer){
    if(k==='hit'||k==='heal')impacts.push({id:entry.id,k,number:entry,secondary:true});
   }
   const firstTarget=impacts.find(e=>e.id!==actor);
-  const contact=kind==='melee'?meleeFlight(actor,origin,anchor(firstTarget?.id??last.target)):0;
+  const contact=motion==='melee'?meleeFlight(last.actor,origin,anchor(firstTarget?.id??last.target)):0;
   const data=origin?.art?.dataset;
-  const release=kind==='blade'?260:ranged||support?Math.round(240*(Number(data?.windupDuration)||1)):contact;
-  if(!contact)showPose(actor,support&&data?.threat?'threat':ranged&&kind!=='blade'||support?'windup':'melee',Math.max(release+120,350));
+  const windup=Math.round((Number(data?.windupDuration)||.36)*1000);
+  const release=reduced.matches?0:motion==='blade'?300:ranged||support?windup:contact;
+  if(!contact)showPose(last.actor,support&&data?.threat?'threat':motion==='ranged'||support?'windup':'melee',Math.max(release,350));
+  if(ranged||support)effects.cast(profile,origin);
   after(()=>{
-   if((kind==='bow'||kind==='spell')&&data?.power&&origin)
+   if(motion==='ranged'&&data?.power&&origin)
     effectImage(data.power,origin.source,'battle-fx-impact battle-fx-release',380);
-   for(const event of events.filter(event=>event.k==='flash')){
-    const bounds=layer.getBoundingClientRect();
-    effectImage(sprite(projectiles[event.el]||'v3/impact'),{x:bounds.width/2,y:bounds.height/2},'battle-fx-impact battle-fx-flash');
-   }
-   play(kind==='blade'?'melee':ranged&&audioFiles[last.element]?last.element:kind);
+   const sound=motion==='blade'||motion==='melee'?'melee':support?(last.kind==='heal'?'heal':'buff'):
+    last.kind==='bow'?'bow':audioFiles[last.element]?last.element:'spell';
+   play(sound);
    const arrivals=new Map();
    let end=0;
    for(const event of impacts){
-    const element=event.el||last.element;
     const previous=arrivals.get(event.id);
-    const delay=previous===undefined?(ranged&&!event.secondary?launch(last,anchor(actor),anchor(event.id),element):0):Math.min(previous+65,720);
+    const from=anchor(last.actor),to=anchor(event.id);
+    const travel=previous===undefined&&!event.secondary&&!reduced.matches&&motion!=='melee'&&from&&to&&last.actor!==event.id;
+    const delay=previous!==undefined?previous+65:travel?effects.travel(profile,{...from,...from.source},to,last.actor,event.id):0;
     arrivals.set(event.id,delay);
     end=Math.max(end,delay);
     after(()=>{
      if(heldHp.get(event.id)?.action===last.n){heldHp.delete(event.id);repaint();}
-     impact(event,event.number,element,kind,data?.meleeEffect);
+     impact(event,event.number,profile,actor,data?.meleeEffect);
     },delay);
    }
-   finish(end+(finished?740:240));
+   finish(end+(finished?940:300));
   },release);
  }
  addEventListener('pointerdown',unlock,{passive:true});

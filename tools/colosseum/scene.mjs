@@ -1,6 +1,6 @@
 import '../town-walk-demo/sealer-sprite-catalog.js';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, CELL, COLORS, FLAT, TEAM_ARENA} from './arena.mjs?v=conquest-1';
+import {BASES, CELL, COLORS, FLAT, TEAM_ARENA} from './arena.mjs?v=base-raid-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';

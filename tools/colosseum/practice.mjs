@@ -1,4 +1,4 @@
-import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, SPEED, TEAM_ARENA, canRaidBase, canSeeOpponent, cellCenter, distance, indexAt, nextCell} from './arena.mjs?v=conquest-1';
+import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, SPEED, TEAM_ARENA, canRaidBase, canSeeOpponent, cellCenter, distance, indexAt, nextCell} from './arena.mjs?v=base-raid-1';
 import {inSight} from './sight.mjs';
 import {fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 

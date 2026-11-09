@@ -4,7 +4,7 @@ import {createAccountLoader} from './account-auth.mjs';
 
 const TYPES={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8',
  '.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg','.mp3':'audio/mpeg'};
-const STATIC=new Set(['index.html','client.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','pvp-card-art.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js']);
+const STATIC=new Set(['index.html','client.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','battle-effects.generated.mjs','pvp-card-art.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js']);
 const ROOT=new URL('../../',import.meta.url);
 const TICK=50, LOBBY_TTL=30*60_000, LOBBY_RECONNECT_MS=60_000, FINISH_TTL=5*60_000;
 const MAX_ROOMS=32, MAX_CONNECTIONS=160;
@@ -185,8 +185,9 @@ export function serve({loadCharacter=null,siteOrigin=null,lobbyReconnectMs=LOBBY
   const contentType=TYPES[path.match(/\.[a-z0-9]+$/i)?.[0]];
   const asset=path.startsWith('assets/')&&/^assets\/[a-z0-9_./-]+$/i.test(path)&&!path.split('/').some(x=>x.startsWith('.'));
   const atlas=/^art\/(?:(swordsman|archer|mage|summoner)-(idle|run)|tall-grass-v1|tall-hedge-v2|maze-wall-v1|stone-base-v1|arena-(crowd|paving|column|ruins)-v1|(?:ice|fire)-castle-(?:main|small)-v1)\.webp$/.test(path);
-  if(!contentType||!(STATIC.has(path)||asset||atlas))return new Response('Not found',{status:404});
-  const location=asset?new URL(path,ROOT):new URL(path.includes('/')&&STATIC.has(path)?'../'+path:path,import.meta.url);
+  const effectStyles=path==='game-styles.afa6a43765a67ae5.css';
+  if(!contentType||!(STATIC.has(path)||asset||atlas||effectStyles))return new Response('Not found',{status:404});
+  const location=asset||effectStyles?new URL(path,ROOT):new URL(path.includes('/')&&STATIC.has(path)?'../'+path:path,import.meta.url);
   try{
    const body=req.method==='HEAD'?null:await Deno.readFile(location);
    return new Response(body,{headers:{'Content-Type':contentType,'X-Content-Type-Options':'nosniff','Cache-Control':asset?'public, max-age=3600':'no-store'}});

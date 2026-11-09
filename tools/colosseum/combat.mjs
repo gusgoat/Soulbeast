@@ -172,7 +172,7 @@ function perform(b,u,id,target,now){
  b.effects=[];b.fx=[];
  if(!core.act(u,id,support?enemies(b,u)[0]:aim,friend,!!charged))return false;
  syncBaseAura(b);
- b.last={actor:u.id,target:aim?.id,skill:sk.n,...actionVisual(u,id,sk),element:sk.el,n:(b.last?.n||0)+1};
+ b.last={actor:u.id,target:aim?.id,skill:sk.n,skillId:id,...actionVisual(u,id,sk),element:sk.el,n:(b.last?.n||0)+1};
  if(!core.takeFreeForm(u)){b.turns++;next(b,now);}
  else if(!checkEnd(b,now))openTurn(b,u,now);
  b.log=b.log.slice(-18);
