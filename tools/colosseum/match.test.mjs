@@ -1,4 +1,5 @@
 import {ASSIST, BASES, BEAST_SPEED_SCALE, BOSS_INTERVAL, BUSHES, CELL, COLS, MATCH_MS, OBSTACLES, RADIUS, RESPAWN_MS, SPEED, bushAt, cellCenter, clearPath, distance, fits, maze, movePlayer, nextCell, spawns} from './arena.mjs';
+import {SIGHT_RANGE} from './sight.mjs';
 import {Match} from './match.mjs';
 import {bossUnit, combatAction, combatView, demoProfile, makeCombat, rareSpecies} from './combat.mjs';
 import {serve} from './server.mjs';
@@ -129,9 +130,30 @@ Deno.test('friendly main base aura covers PvE and summoned golems while shadow a
  bossFight.allies.forEach((unit,i)=>checkAura(unit,demoProfile(a,0)[i],true));
  checkAura(bossFight.enemies[0],bossUnit(boss),false);
 });
+Deno.test('team and survival enforce a 3000-unit sight boundary without changing chest totals or the team minimap',()=>{
+ for(const mode of ['team','survival']){
+  const r=new Match('SIGHT',0,()=>.5,mode), [a,b,ally]=Array.from({length:4},()=>r.join({}));
+  start(r,r.players);
+  Object.assign(a,{x:200,y:200});
+  Object.assign(b,{x:3200,y:200});
+  Object.assign(ally,{x:3201,y:200});
+  r.shadows=[{id:'near-shadow',x:3200,y:200,phase:'walk'},{id:'far-shadow',x:3201,y:200,phase:'walk'}];
+  r.bosses=mode==='team'?[{id:'near-boss',x:3200,y:200},{id:'far-boss',x:3201,y:200}]:[];
+  r.chests=[{id:'near-chest',x:3200,y:200},{id:'far-chest',x:3201,y:200}];
+  const view=r.snapshot(a,0), other=view.players.find(p=>p.id===ally.id);
+  eq(view.players.find(p=>p.id===b.id).x,3200);
+  eq(other.x,undefined);eq(other.mapX,mode==='team'?3201:undefined);
+  eq(view.shadows.map(x=>x.id),['near-shadow']);
+  eq(view.bosses.map(x=>x.id),mode==='team'?['near-boss']:[]);
+  eq(view.chests.map(x=>x.id),['near-chest']);eq(view.chestsLeft,2);
+  Object.assign(b,{x:200,y:5200});
+  eq(r.snapshot(a,0).players.find(p=>p.id===b.id).x,undefined);
+ }
+});
 Deno.test('nearest ally within 400 units; allies alone never fight; far enemy coordinates are omitted',()=>{
  const {r,p}=match(6);start(r,p);
  const center=cellCenter(15,21), [a,b,help,far,further,tooFar]=p;
+ Object.assign(b,{x:a.x+SIGHT_RANGE+1,y:a.y});
  eq(r.snapshot(a,0).players.find(q=>q.id===b.id).x,undefined);
  for(const [u,dx] of [[a,0],[b,20],[help,200],[far,440],[further,-250],[tooFar,450]])Object.assign(u,center,{x:center.x+dx});
  r.tick(3000,0);

@@ -1,4 +1,4 @@
-import {Match} from './match.mjs';
+import {Match} from './match.mjs?v=sight-3000';
 import {startPractice} from './practice.mjs';
 
 let room,player,timer,last,frame=0,battleKey;

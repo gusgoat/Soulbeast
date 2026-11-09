@@ -1,5 +1,6 @@
 import {ASSIST, BASES, BASE_AURA_RANGE, BASE_RAID_LIMIT, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS,
  TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs';
+import {inSight} from './sight.mjs';
 import {advanceCombat, bossUnit, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs';
 import rareArt from './rare-art.mjs';
 import {resetBotRoute, stepBot} from './practice.mjs';
@@ -487,10 +488,11 @@ export class Match {
   const players=this.players.map(q=>{
    const {id,side,cls,baseCls,className,name,lv,phase,ready,connected,x,y,warp,safeUntil}=q;
    const ally=this.solo?q===p:side===p.side;
-   const visible=ally||(distance(q,p)<=1050&&canSeeOpponent(p,q));
+   const visible=q===p||(inSight(p,q)&&(ally||canSeeOpponent(p,q)));
    const teamHp=ally?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
    return {id,side,cls,baseCls,className,name,lv,phase,ready,connected,bot:Boolean(q.bot),...teamHp,
-    ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{})};
+    ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
+    ...(!this.solo&&ally&&!visible&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });
   return {type:'state',me:p.id,code:this.code,phase:this.phase,practice:Boolean(this.practice),host:this.host,canStart:this.canStart(),score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
    ...(this.solo?{mode:'survival',zone:this.zone,survivors:this.players.filter(player=>player.phase!=='dead').length,
@@ -504,9 +506,9 @@ export class Match {
    }),
    players,vitals:{mp:hero?.mp??p.mp,maxMp:p.maxMp,ailments:Object.keys(hero?.status??p.ailments??{})},baseHeal:p.baseHeal,
    respawnAt:p.respawnAt,finishedAt:this.finishedAt,ack:p.appliedSeq??-1,input:[p.dx,p.dy],battleId:p.phase==='battle'?p.battle:null,
-   shadows:this.shadows.filter(b=>b.phase==='walk').map(({id,x,y,sp,rare,lv,label})=>({id,x,y,sp,rare,lv,label})),
-   bosses:this.bosses.filter(b=>!b.claimed&&distance(p,b)<=900).map(({id,x,y,sp,boss,lv,label,hp,maxHp,phase})=>({id,x,y,sp,boss,lv,label,hp,maxHp,phase})),
-   chests:this.chests.filter(c=>!c.opened&&distance(p,c)<=900).map(({id,x,y})=>({id,x,y})),
+   shadows:this.shadows.filter(b=>b.phase==='walk'&&inSight(p,b)).map(({id,x,y,sp,rare,lv,label})=>({id,x,y,sp,rare,lv,label})),
+   bosses:this.bosses.filter(b=>!b.claimed&&inSight(p,b)).map(({id,x,y,sp,boss,lv,label,hp,maxHp,phase})=>({id,x,y,sp,boss,lv,label,hp,maxHp,phase})),
+   chests:this.chests.filter(c=>!c.opened&&inSight(p,c)).map(({id,x,y})=>({id,x,y})),
    chestsLeft:this.chests.filter(c=>!c.opened).length,chestsTotal:this.chests.length,
    nextBossAt:this.nextBossAt<this.ends?this.nextBossAt:null,bossEvent:this.bossEvent,events:this.events};
  }

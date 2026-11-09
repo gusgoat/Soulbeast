@@ -1,5 +1,6 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, CELL, CLASSES, COLORS, FLAT, TEAM_ARENA} from './arena.mjs';
+import {inSight,SIGHT_RANGE} from './sight.mjs';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
@@ -65,10 +66,13 @@ export function drawMap(canvas,state,players,me,zoom=1){
   m.fillRect(-r,-r,r*2,r*2);m.strokeRect(-r,-r,r*2,r*2);m.restore();
  }
  const side=state.players.find(p=>p.id===state.me)?.side;
- for(const p of players)if((solo?p.id===state.me:p.side===side)&&p.connected&&p.phase!=='dead'){
+ const rendered=new Map(players.map(p=>[p.id,p]));
+ for(const p of state.players)if((solo?p.id===state.me:p.side===side)&&p.connected&&p.phase!=='dead'){
+  const pos=p.id===state.me?me:(rendered.get(p.id)??{x:p.mapX??p.x,y:p.mapY??p.y});
+  if(!Number.isFinite(pos?.x)||!Number.isFinite(pos?.y))continue;
   m.fillStyle=p.id===state.me?'#fff2a4':'#d5f5ff';
   m.strokeStyle='#10151d';m.lineWidth=1.6*zoom;
-  m.beginPath();m.arc(mapX(p.x),mapY(p.y),(p.id===state.me?3.9:3.0)*zoom,0,2*Math.PI);m.stroke();m.fill();
+  m.beginPath();m.arc(mapX(pos.x),mapY(pos.y),(p.id===state.me?3.9:3.0)*zoom,0,2*Math.PI);m.stroke();m.fill();
  }
  if(!solo&&me?.phase==='dead'){
   const p=BASES.find(b=>b.side===side&&b.main);
@@ -96,19 +100,31 @@ export class Scene{
   const x0=Math.floor(left/CELL)-1,x1=Math.ceil(right/CELL)+1;
   const y0=Math.floor(top/TILE)-1,y1=Math.ceil(bottom/TILE)+1;
   for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)this.tile(x,y,now);
-  const castles=bases.filter(b=>b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
-  for(const box of chests)if(box.x>left-55&&box.x<right+55&&box.y*FLAT>top-55&&box.y*FLAT<bottom+55)this.chest(box,now);
+  const castles=bases.filter(b=>inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
+  for(const box of chests)if(inSight(me,box)&&box.x>left-55&&box.x<right+55&&box.y*FLAT>top-55&&box.y*FLAT<bottom+55)this.chest(box,now);
   drawArenaTraps(this.traps,c,traps,serverTime,FLAT);
-  const alive=new Set(entities.map(p=>p.id));
+  const seen=entities.filter(p=>p.id===me.id||inSight(me,p));
+  const alive=new Set(seen.map(p=>p.id));
   for(const id of this.anim.keys())if(!alive.has(id))this.anim.delete(id);
-  const props=obstacles.filter(p=>p.x>=left-75&&p.x<=right+75&&p.y*FLAT>=top-80&&p.y*FLAT<=bottom+100);
-  for(const e of [...castles,...entities,...props].sort((a,b)=>a.y-b.y)){
+  const props=obstacles.filter(p=>inSight(me,p)&&p.x>=left-75&&p.x<=right+75&&p.y*FLAT>=top-80&&p.y*FLAT<=bottom+100);
+  for(const e of [...castles,...seen,...props].sort((a,b)=>a.y-b.y)){
    if(e.main!==undefined){this.base(e,now);continue;}
    if(e.x<left-160||e.x>right+160||e.y*FLAT<top-180||e.y*FLAT>bottom+100)continue;
    if(e.radius)this.drawProp(e);
    else this.actor(e,now,e.id===me.id);
   }
+  this.sightMask(me,left,top,right,bottom);
   if(zone?.step)this.fog(zone,left,top,right,bottom,now);
+ }
+ sightMask(me,left,top,right,bottom){
+  const c=this.c,x=me.x,y=me.y*FLAT,r=SIGHT_RANGE;
+  const dx=Math.max(Math.abs(x-left),Math.abs(x-right)),dy=Math.max(Math.abs(y-top),Math.abs(y-bottom));
+  if(dx*dx+dy*dy<=r*r)return;
+  c.save();
+  c.beginPath();c.rect(left,top,right-left,bottom-top);
+  c.moveTo(x+r,y);c.arc(x,y,r,0,Math.PI*2);
+  c.fillStyle='#121b305e';c.fill('evenodd');
+  c.restore();
  }
  fog(zone,left,top,right,bottom,now){
   const c=this.c,{min,max,remaining}=zone;
