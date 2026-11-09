@@ -1,6 +1,6 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, CELL, CLASSES, COLORS, FLAT, TEAM_ARENA} from './arena.mjs';
-import {inSight,SIGHT_RANGE} from './sight.mjs';
+import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
@@ -102,7 +102,7 @@ export class Scene{
   for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)this.tile(x,y,now);
   const castles=bases.filter(b=>inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
   for(const box of chests)if(inSight(me,box)&&box.x>left-55&&box.x<right+55&&box.y*FLAT>top-55&&box.y*FLAT<bottom+55)this.chest(box,now);
-  drawArenaTraps(this.traps,c,traps,serverTime,FLAT);
+  drawArenaTraps(this.traps,c,traps.filter(trap=>inSight(me,trap)),serverTime,FLAT);
   const seen=entities.filter(p=>p.id===me.id||inSight(me,p));
   const alive=new Set(seen.map(p=>p.id));
   for(const id of this.anim.keys())if(!alive.has(id))this.anim.delete(id);

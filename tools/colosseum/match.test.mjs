@@ -84,8 +84,8 @@ Deno.test('team snapshots expose live fight HP to teammates only and preserve HP
  const next=r.battles.get(a.battle).allies.find(u=>u.sealer===a.id&&u.kind==='player');
  eq(next.hp,31);eq(next.mp,0);
 });
-Deno.test('PvP base aura is inclusive at 1000 from the collision midpoint and requires a standing friendly base',()=>{
- for(const [range,remaining,active] of [[1000,4,true],[1001,4,false],[1000,0,false]]){
+Deno.test('PvP base aura is inclusive at 600 from the collision midpoint and requires a standing friendly base',()=>{
+ for(const [range,remaining,active] of [[600,4,true],[601,4,false],[600,0,false]]){
   const {r,p:[a,b]}=match();start(r,[a,b]);
   const base=r.bases.find(x=>x.side===a.side&&!x.main);base.remaining=remaining;
   Object.assign(a,{x:base.x+range+20,y:base.y});Object.assign(b,{x:base.x+range-20,y:base.y});
@@ -99,6 +99,10 @@ Deno.test('PvP base aura is inclusive at 1000 from the collision midpoint and re
 Deno.test('base aura applies independently to both PvP sides and their helpers without stacking',()=>{
  const {r,p:[a,b,helper]}=match(4);start(r,r.players);
  const at=cellCenter(15,21);Object.assign(a,at);Object.assign(b,at);Object.assign(helper,at,{x:at.x+180});
+ for(const side of [a.side,b.side]){
+  const base=r.bases.find(x=>x.side===side&&!x.main);
+  Object.assign(base,at,{x:at.x+(side===a.side?-200:200)});
+ }
  const extra=r.bases.find(x=>x.side===a.side&&x.main);
  Object.assign(extra,{x:at.x,y:at.y});
  r.encounter(a,b,3000);
@@ -130,23 +134,23 @@ Deno.test('friendly main base aura covers PvE and summoned golems while shadow a
  bossFight.allies.forEach((unit,i)=>checkAura(unit,demoProfile(a,0)[i],true));
  checkAura(bossFight.enemies[0],bossUnit(boss),false);
 });
-Deno.test('team and survival enforce a 3000-unit sight boundary without changing chest totals or the team minimap',()=>{
+Deno.test('team and survival enforce a 300-unit sight boundary without changing chest totals or the team minimap',()=>{
  for(const mode of ['team','survival']){
   const r=new Match('SIGHT',0,()=>.5,mode), [a,b,ally]=Array.from({length:4},()=>r.join({}));
   start(r,r.players);
   Object.assign(a,{x:200,y:200});
-  Object.assign(b,{x:3200,y:200});
-  Object.assign(ally,{x:3201,y:200});
-  r.shadows=[{id:'near-shadow',x:3200,y:200,phase:'walk'},{id:'far-shadow',x:3201,y:200,phase:'walk'}];
-  r.bosses=mode==='team'?[{id:'near-boss',x:3200,y:200},{id:'far-boss',x:3201,y:200}]:[];
-  r.chests=[{id:'near-chest',x:3200,y:200},{id:'far-chest',x:3201,y:200}];
+  Object.assign(b,{x:500,y:200});
+  Object.assign(ally,{x:501,y:200});
+  r.shadows=[{id:'near-shadow',x:500,y:200,phase:'walk'},{id:'far-shadow',x:501,y:200,phase:'walk'}];
+  r.bosses=mode==='team'?[{id:'near-boss',x:500,y:200},{id:'far-boss',x:501,y:200}]:[];
+  r.chests=[{id:'near-chest',x:500,y:200},{id:'far-chest',x:501,y:200}];
   const view=r.snapshot(a,0), other=view.players.find(p=>p.id===ally.id);
-  eq(view.players.find(p=>p.id===b.id).x,3200);
-  eq(other.x,undefined);eq(other.mapX,mode==='team'?3201:undefined);
+  eq(view.players.find(p=>p.id===b.id).x,500);
+  eq(other.x,undefined);eq(other.mapX,mode==='team'?501:undefined);
   eq(view.shadows.map(x=>x.id),['near-shadow']);
   eq(view.bosses.map(x=>x.id),mode==='team'?['near-boss']:[]);
   eq(view.chests.map(x=>x.id),['near-chest']);eq(view.chestsLeft,2);
-  Object.assign(b,{x:200,y:5200});
+  Object.assign(b,{x:200,y:670});
   eq(r.snapshot(a,0).players.find(p=>p.id===b.id).x,undefined);
  }
 });
@@ -263,18 +267,18 @@ Deno.test('base is removed after its fourth scored raid',()=>{
  let denied=false;try{r.command(a,{type:'raid',id:base.id},15000);}catch{denied=true;}
  ok(denied);eq(r.score,[140,60]);
 });
-Deno.test('a shadow acquires at 1500, runs 20% slower and returns after five seconds or beyond 5000',()=>{
+Deno.test('a shadow acquires at 1000, runs 20% slower and returns after five seconds or beyond 2000',()=>{
  for(const reason of ['time','distance']){
   const {r,p:[a,b]}=match();start(r,[a,b]);
   const beast=r.shadows[0];
-  beast.home=cellCenter(1,21);Object.assign(beast,beast.home);
+  beast.home=cellCenter(3,21);Object.assign(beast,beast.home);
   r.shadows=[beast];b.connected=false;
-  Object.assign(a,{x:beast.x+1501,y:beast.y});
+  Object.assign(a,{x:beast.x+1001,y:beast.y});
   r.tick(3000,0);eq(beast.pursuedId,undefined);
-  a.x=beast.x+1500;r.tick(3100,0);eq(beast.pursuedId,a.id);
-  a.x=beast.x+5000;r.tick(3200,.05);eq(beast.pursuedId,a.id);
+  a.x=beast.x+1000;r.tick(3100,0);eq(beast.pursuedId,a.id);
+  a.x=beast.x+2000;r.tick(3200,.05);eq(beast.pursuedId,a.id);
   ok(Math.abs(distance(beast,beast.home)-SPEED*BEAST_SPEED_SCALE*.05)<.001);
-  if(reason==='distance')a.x=beast.x+5001;
+  if(reason==='distance')a.x=beast.x+2001;
   r.tick(reason==='time'?8100:3300,0);eq(beast.pursuedId,undefined);
   r.tick(reason==='time'?8150:3350,.05);eq(distance(beast,beast.home),0);
  }

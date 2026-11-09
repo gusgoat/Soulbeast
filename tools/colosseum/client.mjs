@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, distance} from './arena.mjs';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, portraitAtlas} from './scene.mjs?v=sight-3000';
+import {Scene, drawMap, portrait, portraitAtlas} from './scene.mjs?v=colosseum-ranges';
 import {battlePresentation} from './battle-presentation.mjs';
 import pvpCardArt from './pvp-card-art.mjs';
 
@@ -49,7 +49,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=sight-3000',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=colosseum-ranges',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});

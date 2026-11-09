@@ -1,6 +1,6 @@
 import {ASSIST, BASES, BASE_AURA_RANGE, BASE_RAID_LIMIT, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs';
-import {inSight} from './sight.mjs';
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=colosseum-ranges';
+import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs';
 import rareArt from './rare-art.mjs';
 import {resetBotRoute, stepBot} from './practice.mjs';
@@ -9,7 +9,7 @@ import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, f
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const nearest=(p,list)=>list.slice().sort((a,b)=>distance(a,p)-distance(b,p)||a.id.localeCompare(b.id))[0];
-const SHADOW_AGGRO=1500, SHADOW_LEASH=5000, SHADOW_CHASE_MS=5000;
+const SHADOW_AGGRO=1000, SHADOW_LEASH=2000, SHADOW_CHASE_MS=5000;
 const SURVIVAL_CUT_INTERVAL=120_000;
 const SURVIVAL_POINTS={chest:5,player:20,beast:10};
 const count=(r,side)=>r.players.filter(p=>p.side===side).length;
@@ -501,7 +501,7 @@ export class Match {
    bases:this.bases.filter(base=>base.remaining>0),
    traps:this.traps.controller.list.flatMap(({id,x,y,type})=>{
     const state=this.traps.state.revealed[id];
-    if(!state||(state.done&&!state.burst)||distance(p,{x,y})>1100)return [];
+    if(!state||(state.done&&!state.burst)||!inSight(p,{x,y}))return [];
     return [{id,x,y,type,endsAt:now+state.remaining*1000,burstUntil:state.done?now+state.burst*1000:0}];
    }),
    players,vitals:{mp:hero?.mp??p.mp,maxMp:p.maxMp,ailments:Object.keys(hero?.status??p.ailments??{})},baseHeal:p.baseHeal,
