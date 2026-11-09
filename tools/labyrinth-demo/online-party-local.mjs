@@ -44,10 +44,18 @@ export function localPartyWorld(){
    if(!chase&&nav.distance(actor.position,target)<5){actor.index++;target=patrol[actor.index%patrol.length];}
    step(actor,target,chase?160:65,dt,nav);
   }
-  boss??={position:{...(world.bossPosition||spawn)}};
+  boss??={position:{...(world.bossPosition||spawn)},dir:world.bossPosition?((world.bossDir||0)+6)%8:0,moving:false};
+  boss.moving=false;
   if(world.doorOpen&&world.boss==='guarding'){
    const target=nav.distance(position,spawn)<850?position:spawn;
+   const previous=boss.position;
    step(boss,target,90,dt,nav);
+   if(boss.position.x!==previous.x||boss.position.y!==previous.y){
+    const dx=boss.position.x-previous.x,dy=boss.position.y-previous.y;
+    const flatten=nav.distance({x:0,y:0},{x:0,y:1});
+    // Atlas starts facing down, then turns toward screen left.
+    boss.dir=(Math.round(-Math.atan2(dx,dy*flatten)/(Math.PI/4))+8)%8;
+   }else boss.moving=false;
   }
   for(const effect of effects.values()){
    if(effect.done){effect.burst=Math.max(0,effect.burst-dt);continue;}
@@ -68,5 +76,5 @@ export function localPartyWorld(){
    if(effect.done)return {action:'trapResolve',trap:effect.id,position:effect.hitPosition};
   }
  }
- return {reset,receive,update,trigger,request,enemies,effects,get boss(){return boss?.position;}};
+ return {reset,receive,update,trigger,request,enemies,effects,get boss(){return boss;}};
 }

@@ -1,9 +1,9 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
 import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
-import {partyArt} from './online-party-art.mjs?v=party-victory-traps-1';
+import {partyArt} from './online-party-art.mjs?v=party-boss-facing-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=admin-session-20261107';
 import {partyScene} from './online-party-scene.mjs?v=party-victory-traps-1';
-import {localPartyWorld} from './online-party-local.mjs?v=party-victory-traps-1';
+import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
 import {partyRunController} from './online-party-controller.mjs?v=party-combat-latency-1';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
@@ -212,11 +212,11 @@ try{
    if(trapRequest&&!controller.busy&&now>=nextContact){
     nextContact=now+750;void controller.command(trapRequest.action,{trap:trapRequest.trap,position:trapRequest.position});
    }
-   const confirmed=position;
+   const confirmed=position,bossPosition=localWorld.boss?.position||world.bossPosition||maze.boss;
    if(!controller.busy&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
     if(target){nextContact=now+500;void controller.command('claim',{enemy:target[0],enemyPosition:{...target[1].position},...(localCombat?{localCombatVersion:1}:{})});}
-    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,localWorld.boss||world.bossPosition||maze.boss)<65&&nav.clear(confirmed,localWorld.boss||world.bossPosition||maze.boss)){
-     nextContact=now+500;void controller.command('bossContact',{enemyPosition:{...(localWorld.boss||maze.boss)}});
+    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,bossPosition)<65&&nav.clear(confirmed,bossPosition)){
+     nextContact=now+500;void controller.command('bossContact',{enemyPosition:{...bossPosition}});
     }}
   }
   if(position){
