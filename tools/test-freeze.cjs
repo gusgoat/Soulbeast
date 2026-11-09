@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),read=f=>fs.readFileSync(path.join(root,f),'utf8').replace(/\r\n/g,'\n');
-const engines=['tools/town-walk-demo/menu.html','game-app.b2e88f985255c7e9.js','tools/town-walk-demo/social-engine.generated.js','tools/hemant-walk-demo/war-engine.generated.js','supabase/functions/soulbeast-dungeon-party/engine.mjs'];
+const engines=['tools/town-walk-demo/menu.html','game-app.95c532bf5f401ce2.js','tools/town-walk-demo/social-engine.generated.js','tools/hemant-walk-demo/war-engine.generated.js','supabase/functions/soulbeast-dungeon-party/engine.mjs'];
 function fn(src,name){const at=src.indexOf('function '+name+'(');assert(at>=0,name);const end=src.indexOf('\nfunction ',at+1);return src.slice(at,end).trim()}
 let checks=0;
 for(const file of [...engines,'game-data-elements.cbf3d313854fe0f5.js']){

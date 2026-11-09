@@ -6864,7 +6864,7 @@ flushVfx=function(){BattleEffects.flush();};const SolarBeasts={
 SolarBeasts.install();const STAGE_SEVEN=8;
 const stageSevenPools={entry:['gargoyle','golem','cerberus','obsidian_scarab'],crypt:['wisp','jiangshi','jorogumo','frost_lich','vampire_queen'],hall:['dragon','nue','wendigo','fallen_seraph','abyss_emperor']};
 ZN.push({id:8,n:'ป่าทมิฬพันธนาการ',d:'เมื่อจอมมารล่มสลาย ประตูหลังบัลลังก์เผยป่าเหล็กดำ เฟอร์รอธและมอร์ทิวาร์ยังคงรวบรวมวิญญาณไว้ในป้อมนิรันดร์ จงปลดพันธนาการที่เหลืออยู่',lv:[55,60],sp:Object.values(stageSevenPools).flat().filter(k=>!SP[k].rare),rare:Object.values(stageSevenPools).flat().filter(k=>SP[k].rare),boss:{sp:'solar_ferroth',lv:60,n:'เฟอร์รอธ และมอร์ทิวาร์'},mini:2,stageSeven:true});
-const stageSevenEvents={},stageSeven_tune={heal:.4,physical:.1,purge:false};
+const stageSevenEvents={},stageSeven_tune={heal:.5,physical:.1,petDamage:1.2,purge:false};
 SK.audit_repair={n:'ซ่อมเกราะพันธนาการ',t:'buff',tg:'self',bf:{},mp:16,cd:4};SK.audit_warn={n:'เตรียมท่าใหญ่',t:'buff',tg:'self',bf:{},mp:0};
 var stageSeven_oldAI=aiChoose,stageSeven_oldAct=act,stageSeven_oldHurt=hurt,stageSeven_oldEff=eff,stageSeven_oldEnd=endUnitTurn;
 function stageSeven_inDuo(){return B()?.kind==='boss'&&B().meta===8;}
@@ -6881,7 +6881,7 @@ act=function(u,id,...args){const duo=stageSeven_inDuo()&&u.boss,ferro=duo?B().en
  const ok=stageSeven_oldAct(u,id,...args);if(ok&&duo){if(id==='audit_repair'&&ferro){ferro.auditShield=Math.round(ferro.st.hp*.08);ferro.auditShieldTurns=2;stageSevenEvents.repairs=(stageSevenEvents.repairs||0)+1;}if(id==='audit_warn'){u.auditPending=true;stageSevenEvents.warnings=(stageSevenEvents.warnings||0)+1;}if(id===SP[u.sp].sig){u.auditPending=false;B().auditUltimateRound=B().round;stageSevenEvents.ultimates=(stageSevenEvents.ultimates||0)+1;}}return ok;};
 
 var stageSeven_tuneHeal=heal,stageSeven_tuneHurt=hurt,stageSeven_tuneEnd=endUnitTurn,stageSeven_tuneFactor=classCombatFactor;
-classCombatFactor=function(u,t,sk){let v=stageSeven_tuneFactor(u,t,sk);if(stageSeven_inDuo()&&u.boss&&u.side==='enemy'&&['solar_ferroth','solar_mortivar'].includes(u.sp)&&t.side==='ally'&&['pet','npcpet','summon','beast'].includes(t.kind))v*=1.5;const type=sk.t==='auto'?u.atkType:sk.t;if(stageSeven_tune.physical&&stageSeven_inDuo()&&t.boss&&type==='p'&&B().enemies.some(x=>x.sp==='solar_ferroth'&&x.hp>0))v*=1-stageSeven_tune.physical;return v;};
+classCombatFactor=function(u,t,sk){let v=stageSeven_tuneFactor(u,t,sk);if(stageSeven_inDuo()&&u.boss&&u.side==='enemy'&&['solar_ferroth','solar_mortivar'].includes(u.sp)&&t.side==='ally'&&['pet','npcpet','summon','beast'].includes(t.kind))v*=stageSeven_tune.petDamage;const type=sk.t==='auto'?u.atkType:sk.t;if(stageSeven_tune.physical&&stageSeven_inDuo()&&t.boss&&type==='p'&&B().enemies.some(x=>x.sp==='solar_ferroth'&&x.hp>0))v*=1-stageSeven_tune.physical;return v;};
 endUnitTurn=function(u){const v=stageSeven_tuneEnd(u);if(stageSeven_tune.purge&&stageSeven_inDuo()&&u.sp==='solar_mortivar'&&u.hp>0&&B().round%3===0){for(const t of B().allies.filter(x=>x.hp>0))t.buffs=(t.buffs||[]).filter(b=>!(b.amt>0));}if(stageSeven_tune.decay&&stageSeven_inDuo()&&u.side==='ally'&&u.hp>0&&B().round>=5&&B().enemies.some(x=>x.sp==='solar_mortivar'&&x.hp>0))stageSeven_tuneHurt(u,Math.round(u.st.hp*stageSeven_tune.decay));return v;};
 heal=function(u,a){if(stageSeven_inDuo()&&u.side==='ally'&&B().enemies.some(x=>x.sp==='solar_mortivar'&&x.hp>0))a*=stageSeven_tune.heal||1;return stageSeven_tuneHeal(u,a);};
 hurt=function(u,d,c){if(stageSeven_inDuo()&&u.boss&&B().enemies.some(x=>x.sp==='solar_ferroth'&&x.hp>0))d*=1-(stageSeven_tune.ward||0);return stageSeven_tuneHurt(u,d,c);};
@@ -6915,7 +6915,12 @@ eff=function(u,k){const v=stageSeven_helperlessEffBase(u,k);return k==='mdef'&&s
 hitOne=function(u,sk,...args){return stageSeven_withHelperlessContext(u,sk,()=>stageSeven_helperlessHitBase(u,sk,...args));};
 combatSkillScore=function(u,id,...args){return stageSeven_withHelperlessContext(u,pvpSkill(id)||{},()=>stageSeven_helperlessScoreBase(u,id,...args));};
 
-const stageSevenBoss=handlers.boss;handlers.boss=function(...args){if(S.zone?.id!==8)return stageSevenBoss(...args);if(S.P.hp<=0||S.battle||S.zone.depth<ZDEPTH)return;const es=['solar_ferroth','solar_mortivar'].map((sp,i)=>{const u=wildUnit(sp,60,i,SP[sp].n);u.noseal=true;u.r=0;return u;});for(const sp of ['legend2_myriapod','legend2_tricephalos']){const u=wildUnit(sp,40,es.length);u.bossHelper=true;u.noseal=true;u.r=0;es.push(u);}zlog('เผชิญหน้าเฟอร์รอธและมอร์ทิวาร์ พร้อมสมุนสองตน');startBattle(es,'boss',8);save();render();};
+const stageSevenBoss=handlers.boss;handlers.boss=function(...args){if(S.zone?.id!==8)return stageSevenBoss(...args);if(S.P.hp<=0||S.battle||S.zone.depth<ZDEPTH)return;const es=['solar_ferroth','solar_mortivar'].map((sp,i)=>{const u=wildUnit(sp,60,i);
+  const stats=u.st;
+  stats.hp=Math.round(stats.hp*2);
+  stats.mp=Math.round(stats.mp*1.15);
+  for(const k of ['patk','matk','pdef','mdef','spd'])stats[k]=Math.round(stats[k]*1.1);
+  return Object.assign(u,{name:SP[sp].n,boss:true,bossAura:true,bossAuraVersion:8,noseal:true,r:0,hp:stats.hp,mp:stats.mp});});for(const sp of ['legend2_myriapod','legend2_tricephalos']){const u=wildUnit(sp,35,es.length);u.bossHelper=true;u.noseal=true;u.r=0;es.push(u);}zlog('เผชิญหน้าเฟอร์รอธและมอร์ทิวาร์ พร้อมสมุนสองตน');startBattle(es,'boss',8);save();render();};
 const stageSevenGroup=wildGroup;wildGroup=function(z,ns){if(z.id!==8)return stageSevenGroup(z,ns);const depth=S.zone?.depth||1,key=depth<=3?'entry':depth<=6?'crypt':'hall',pool=stageSevenPools[key],n=key==='entry'?2:key==='crypt'?3:R(3,4);return Array.from({length:n},(_,i)=>wildUnit(pick(pool),R(55,60),i));};
 const stageSevenWildUnit=wildUnit;wildUnit=function(sp,lv,i,boss){if(S.zone?.id===8&&!boss&&!SP[sp]?.legendary&&!SP[sp]?.solar)lv=clamp(lv,55,60);return stageSevenWildUnit(sp,lv,i,boss);};
 const stageSevenLegendDrop=legendDrop;legendDrop=function(z){return stageSevenLegendDrop(z===8?6:z);};
