@@ -1,14 +1,17 @@
+import {remoteWalkMotion} from './remote-walk-motion.mjs?v=1';
+
 export async function connectWalkRealtime({url, key, token, identity, companion=()=>null, environment='test'}) {
  const {createClient} = await import('https://esm.sh/@supabase/supabase-js@2.76.1');
  const supabase = createClient(url, key, {accessToken:token});
  await supabase.realtime.setAuth();
  let scene, publisher, generation=0, sequence=0, lastSent=0, lastMotion='', authAt=Date.now();
- const subscribers=new Map();
+ const subscribers=new Map(), motion=remoteWalkMotion({delay:150,teleportDistance:400});
  const topic=id=>'sb-walk:'+environment+':'+scene+':'+id;
  const open=id=>supabase.channel(topic(id),{config:{private:true,broadcast:{self:false}}});
  const close=channel=>void supabase.removeChannel(channel).catch(()=>{});
  function reset(){
   generation++;
+  motion.clear();
   if(publisher?.channel)close(publisher.channel);
   publisher=null;
   for(const channel of subscribers.values())close(channel);
@@ -48,5 +51,5 @@ export async function connectWalkRealtime({url, key, token, identity, companion=
    moving:!!moving,running:!!running,seq:++sequence,companion:pet
   }}).catch(()=>{});
  }
- return {update,send,reset,get ready(){return publisher?.ready===true;}};
+ return {update,send,reset,motion,get ready(){return publisher?.ready===true;}};
 }

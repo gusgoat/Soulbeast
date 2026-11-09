@@ -1,5 +1,5 @@
 import {partyBattleTransition} from './online-party-battle-transition.mjs';
-import {remotePartyMotion} from './online-party-view.mjs';
+import {remotePartyMotion} from './online-party-view.mjs?v=smooth-peers-1';
 
 // Renderer bridge: authoritative snapshots control gameplay; WebSocket motion
 // updates only animate the visual positions of members still in this room.

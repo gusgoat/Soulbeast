@@ -2,7 +2,7 @@ import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
 import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
 import {partyArt} from './online-party-art.mjs?v=party-controls-2-20261107';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=admin-session-20261107';
-import {partyScene} from './online-party-scene.mjs';
+import {partyScene} from './online-party-scene.mjs?v=smooth-peers-1';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
 import {partyRunController} from './online-party-controller.mjs?v=party-combat-parity-20261107';

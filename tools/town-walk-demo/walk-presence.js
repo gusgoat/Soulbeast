@@ -1,7 +1,7 @@
 /* Local-machine preview transport. BroadcastChannel is intentionally not an online server. */
 (()=>{'use strict';const key='soulbeast-walk-preview-player-v1',peers=new Map(),channel=new BroadcastChannel('soulbeast-walk-presence-v1'),session=crypto.randomUUID();let locationId='',lastSend=0,lastState=null;function raster(im,w,h){const tile=document.createElement('canvas');tile.width=w;tile.height=h;tile.getContext('2d').drawImage(im,0,0,w,h);im.raster=tile}
 let online=null;const onlineMode=!!sessionStorage.getItem('soulbeast-online-walk-v1');
-if(onlineMode)import('../../client/online-walk.mjs?v=admin-session-20261107').then(m=>{online=m.connectOnlineWalk();if(online){m.mountSaveNotice(online);addEventListener('message',e=>{const frame=document.querySelector('#townMenu,#regionMenu,#menuFrame');if(e.origin===location.origin&&e.source===frame?.contentWindow&&e.data?.type==='walk-player-saved')void online.flush();});setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
+if(onlineMode)import('../../client/online-walk.mjs?v=smooth-peers-1').then(m=>{online=m.connectOnlineWalk();if(online){m.mountSaveNotice(online);addEventListener('message',e=>{const frame=document.querySelector('#townMenu,#regionMenu,#menuFrame');if(e.origin===location.origin&&e.source===frame?.contentWindow&&e.data?.type==='walk-player-saved')void online.flush();});setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
 const flags={};for(const id of ['blue','green','red']){const im=new Image();im.onload=()=>raster(im,64,42);im.src=new URL('../../assets/ui/country-war/flag-'+id+'-v1.webp',document.currentScript.src).href;flags[id]=im}
 let playerRaw,playerCache;function player(){try{const raw=sessionStorage.getItem(key);if(raw!==playerRaw){playerRaw=raw;playerCache=JSON.parse(raw||'null')}return playerCache}catch{return null}}
 const frames={};
@@ -52,6 +52,7 @@ function receiveRealtime(id,row){
  if(peer.moving!==row.moving||peer.running!==row.running||peer.dir!==row.dir)peer.quickUntil=now+220;
  lastRealtimePeerAt=now;
  if(Object.prototype.hasOwnProperty.call(row,'companion'))peer.walkCompanion=window.CompanionFollowers?.normalize(row.companion)||null;
+ realtime?.motion.receive(id,row,now);
  samplePeer(peer,row,now);
  Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,realtimeAt:now,realtimeSeq:row.seq});
 }
@@ -63,22 +64,27 @@ function syncPeers(place,p,moving,running){const now=performance.now();if(!onlin
    online.openWalkRealtime().then(connection=>{realtime=connection;}).catch(()=>{realtimeFailed=true;});
   }
  }
- for(const [id,peer] of peers)if(!ids.has(id)){releasePeer(peer);peers.delete(id);}const seen=performance.now();for(const row of rows){if(!window.sealerSpriteCatalog?.[row.cls])continue;let peer=peers.get(row.id);if(!peer){peer={sprite:window.RemoteWalkSprite.create(),x:row.x,y:row.y};peers.set(row.id,peer);}if(seen-(peer.realtimeAt??-Infinity)<750){Object.assign(peer,{player:row,seen});peer.sprite.sync(row).catch(()=>{});continue;}samplePeer(peer,row,seen);Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,player:row,seen});peer.sprite.sync(row).catch(()=>{});}}).catch(()=>{nextHeartbeat=performance.now()+3000;}).finally(()=>{heartbeatPending=false;});}
-function tick(place,p,moving,running){if(onlineMode&&!place.includes(':'))place='town:'+place;window.walkSocial?.tick();window.DungeonPartyPresence?.publish();if(locationId!==place&&realtime){realtime.reset();lastRealtimePeerAt=-Infinity;}locationId=place;const now=performance.now();if(localCompanion){const elapsed=lastCompanionTick?Math.min((now-lastCompanionTick)/1000,.05):0;lastCompanionTick=now;if(companionScene!==place){localCompanion.reset(p);companionScene=place;}localCompanion.sync(window.CompanionFollowers.first(player()));localCompanion.update(elapsed,p);}for(const [id,v]of peers)if(now-v.seen>5000){releasePeer(v);peers.delete(id)}if(onlineMode){showRealtimeStatus(now);realtime?.send(place,p,moving,running);syncPeers(place,p,moving,running);return;}if(now-lastSend<150)return;lastSend=now;const me=player();if(!me)return;lastState={type:'position',session,place,x:p.x,y:p.y,dir:p.dir,moving,running,player:{name:me.name||me.n,cls:me.cls,gender:me.gender,lv:me.lv,country:me.country,walkFusion:me.walkFusion||null,walkCompanion:window.CompanionFollowers?.first(me)||null,entitlements:{premiumNameplates:window.WalkNameplates?.owned(me)||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}
+ for(const [id,peer] of peers)if(!ids.has(id)){releasePeer(peer);peers.delete(id);realtime?.motion.remove(id);}const seen=performance.now();for(const row of rows){if(!window.sealerSpriteCatalog?.[row.cls])continue;let peer=peers.get(row.id);if(!peer){peer={sprite:window.RemoteWalkSprite.create(),x:row.x,y:row.y};peers.set(row.id,peer);}if(seen-(peer.realtimeAt??-Infinity)<750){Object.assign(peer,{player:row,seen});peer.sprite.sync(row).catch(()=>{});continue;}samplePeer(peer,row,seen);Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,player:row,seen});peer.sprite.sync(row).catch(()=>{});}}).catch(()=>{nextHeartbeat=performance.now()+3000;}).finally(()=>{heartbeatPending=false;});}
+function tick(place,p,moving,running){if(onlineMode&&!place.includes(':'))place='town:'+place;window.walkSocial?.tick();window.DungeonPartyPresence?.publish();if(locationId!==place&&realtime){realtime.reset();lastRealtimePeerAt=-Infinity;}locationId=place;const now=performance.now();if(localCompanion){const elapsed=lastCompanionTick?Math.min((now-lastCompanionTick)/1000,.05):0;lastCompanionTick=now;if(companionScene!==place){localCompanion.reset(p);companionScene=place;}localCompanion.sync(window.CompanionFollowers.first(player()));localCompanion.update(elapsed,p);}for(const [id,v]of peers)if(now-v.seen>5000){releasePeer(v);peers.delete(id);realtime?.motion.remove(id)}if(onlineMode){showRealtimeStatus(now);realtime?.send(place,p,moving,running);syncPeers(place,p,moving,running);return;}if(now-lastSend<150)return;lastSend=now;const me=player();if(!me)return;lastState={type:'position',session,place,x:p.x,y:p.y,dir:p.dir,moving,running,player:{name:me.name||me.n,cls:me.cls,gender:me.gender,lv:me.lv,country:me.country,walkFusion:me.walkFusion||null,walkCompanion:window.CompanionFollowers?.first(me)||null,entitlements:{premiumNameplates:window.WalkNameplates?.owned(me)||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}
 // Return actors to the scene's ground-depth sort; labels are a separate final pass.
 function objects(){
  const now=performance.now(),dt=lastDraw?Math.min(now-lastDraw,100):16;lastDraw=now;
  const items=[];
  if(localCompanion?.key&&localCompanion.body)items.push({...localCompanion.body,kind:'presenceCompanion',drawType:'presence',companion:localCompanion});
- for(const peer of peers.values()){
-  if(onlineMode)advancePeer(peer,now,dt);else{peer.x+=(peer.targetX-peer.x)*.24;peer.y+=(peer.targetY-peer.y)*.24;}
+ for(const [id,peer] of peers){
+  const motion=onlineMode&&now-(peer.realtimeAt??-Infinity)<750?realtime?.motion.position(id,now):null;
+  peer.visual=motion;
+  if(motion){peer.x=motion.x;peer.y=motion.y;}
+  else if(onlineMode)advancePeer(peer,now,dt);
+  else{peer.x+=(peer.targetX-peer.x)*.24;peer.y+=(peer.targetY-peer.y)*.24;}
+  const gait=motion||peer;
   if(window.CompanionFollowers){
    peer.companion??=window.CompanionFollowers.create();
    peer.companion.sync(peer.walkCompanion===undefined?peer.player?.walkCompanion:peer.walkCompanion);
-   peer.companion.update(dt/1000,peer);
+   peer.companion.update(dt/1000,{x:peer.x,y:peer.y,dir:gait.dir,moving:gait.moving,running:gait.running});
    if(peer.companion.key&&peer.companion.body)items.push({...peer.companion.body,kind:'presenceCompanion',drawType:'presence',companion:peer.companion});
   }
-  peer.walkPhase=(peer.walkPhase||0)+(peer.moving?dt/1000*13*(peer.running?360/220:1):0);
+  peer.walkPhase=(peer.walkPhase||0)+(gait.moving?dt/1000*13*(gait.running?360/220:1):0);
   items.push({x:peer.x,y:peer.y,kind:'presencePlayer',drawType:'presence',peer});
  }
  return items;
@@ -86,7 +92,8 @@ function objects(){
 function drawObject(c,item,sx,sy,scale){
  if(item.kind==='presenceCompanion'){item.companion.draw(c,sx,sy,scale);return;}
  const p=item.peer;p.hitbox={x:sx(p.x),y:sy(p.y),scale};
- p.sprite.draw(c,sx(p.x),sy(p.y),156*scale,p.dir,p.walkPhase,p.moving,p.running);
+ const gait=p.visual||p;
+ p.sprite.draw(c,sx(p.x),sy(p.y),156*scale,gait.dir,p.walkPhase,gait.moving,gait.running);
 }
 function drawLabels(c,sx,sy,scale){for(const p of peers.values()){
  p.hitbox={x:sx(p.x),y:sy(p.y),scale};

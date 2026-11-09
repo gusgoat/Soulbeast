@@ -16,9 +16,9 @@ if(room){
  const style=document.createElement('link');style.rel='stylesheet';style.href='online-party-run.css?v=dungeon-flow-20261106';document.head.append(style);
  document.body.append(document.getElementById('partyControls').content.cloneNode(true));
  document.querySelector('header').append(document.getElementById('leaveParty'));
- await import('./online-party-run.mjs?v=party-combat-parity-20261107');
+ await import('./online-party-run.mjs?v=smooth-peers-1');
 }else{
- for(const src of ['/Soulbeast/tools/labyrinth-demo/party-presence.js', '../town-walk-demo/walk-presence.js?v=party-at-entrance-1', '/Soulbeast/tools/town-walk-demo/social-scene.js?v=friend-consent-20261104', 'world.js?v=dungeon-joystick-1'])await new Promise((resolve,reject)=>{
+ for(const src of ['/Soulbeast/tools/labyrinth-demo/party-presence.js', '../town-walk-demo/walk-presence.js?v=smooth-peers-1', '/Soulbeast/tools/town-walk-demo/social-scene.js?v=friend-consent-20261104', 'world.js?v=dungeon-joystick-1'])await new Promise((resolve,reject)=>{
   const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=reject;document.body.append(script);
  });
 }
