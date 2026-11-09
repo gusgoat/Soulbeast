@@ -8148,7 +8148,7 @@ if(params.has('partyBattle')&&parent!==window){const kingdomFight=params.has('ki
  const partyPresented=new Set(),partyAcknowledged=new Set();
  function partyRewardLines(run,code){if(kingdomFight)return run.reward?['รางวัลรอบนี้ส่งไปที่จดหมาย']:run.result==='expired'?['หมดเวลาของกิจกรรมบอสอาณาจักร']:[];const r=run.rewards?.[code];if(!r)return run.result==='win'?['กำลังยืนยันรางวัลจากเซิร์ฟเวอร์…']:[];const lines=['ได้รับ '+fmt(r.gold||0)+' เหรียญ','ได้รับ EXP '+fmt(r.xp||0)];for(const [id,qty]of Object.entries(r.parts||{})){const [sp,part]=id.split('|');lines.push(itemIcon(id,44)+' '+esc(SP[sp]?.parts?.[Number(part)]?.[0]||id)+' ×'+qty)}for(const up of r.levelUps||[])lines.push('เลเวลอัป! '+esc(SP[up.name]?.n||up.name)+' · Lv '+up.from+' → '+up.to);return lines;}
 
- let state, selectedEnemy, selectedAlly, turnKey, hideCommands=false, effectTurn=kingdomFight?0:-1;
+ let state, selectedEnemy, selectedAlly, turnKey, hideCommands=false, effectTurn=kingdomFight?0:-1,shownResult;
  const app=document.getElementById('app');
  const soloRender=render;
  if(dungeonFloor?.battleArt){const image=new Image();image.src=dungeonFloor.battleArt;}
@@ -8162,7 +8162,7 @@ if(params.has('partyBattle')&&parent!==window){const kingdomFight=params.has('ki
  function draw(){
   if(!state)return;
   const {run,code,auto,clockOffset,member}=state,b=run.battle,w=run.waiting;
-  const own=w?.ownerCode===code, active=run.status==='active', available=canCommand();
+  const own=w?.ownerCode===code, active=run.status==='active'||(!kingdomFight&&!!run.presentation), available=canCommand();
   const oldScroll=app.querySelector('main')?.scrollTop||0;
   const enemy=b.enemies.findIndex(u=>u.id===selectedEnemy&&u.hp>0);
   const ally=b.allies.findIndex(u=>u.id===selectedAlly);
@@ -8203,7 +8203,16 @@ if(params.has('partyBattle')&&parent!==window){const kingdomFight=params.has('ki
     card.disabled=!valid;
    }
   }
-  if(!active){const done=main.querySelector('[data-a="bt"][data-v="done"]');if(done)done.textContent='เดินต่อ';}
+  if(!active){
+   const done=main.querySelector('[data-a="bt"][data-v="done"]');
+   if(done){
+    done.textContent=!kingdomFight&&run.result==='win'?'ยืนยันและเดินต่อ':'เดินต่อ';
+    if(!kingdomFight&&shownResult!==run.id){
+     shownResult=run.id;
+     requestAnimationFrame(()=>{if(state?.run.id===run.id)app.querySelector('[data-a="bt"][data-v="done"]')?.scrollIntoView?.({block:'nearest'});});
+    }
+   }
+  }
   if(b.log?.length){const log=document.createElement('div');log.className='log';for(const line of b.log.slice(-4)){const row=document.createElement('p');row.textContent=typeof line==='string'?line:line.text||'';log.append(row);}main.append(log);}
   main.scrollTop=oldScroll;
  }
@@ -8218,7 +8227,7 @@ if(params.has('partyBattle')&&parent!==window){const kingdomFight=params.has('ki
   if(!state||button.disabled)return;
   const action=button.dataset.a,value=button.dataset.v;
   const {run,code}=state,w=run.waiting;
-  if(action==='bt'&&value==='done'){send('party-battle-done');return;}
+  if(action==='bt'&&value==='done'){if(kingdomFight||run.status!=='active'&&!run.presentation&&!MotionTimeline.busy())send('party-battle-done');return;}
   if(run.status!=='active')return;
   if(kingdomFight&&action==='kingdomWithdraw'){send('kingdom-boss-withdraw');return;}if(action==='partyAuto'){send('party-battle-auto',{enabled:!state.auto});return;}
   if(action==='battleCommands'){hideCommands=!hideCommands;draw();return;}

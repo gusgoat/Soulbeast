@@ -3,19 +3,23 @@ export function localPartyWorld(){
  const enemies=new Map(),effects=new Map();
  let boss=null;
  function reset(){enemies.clear();effects.clear();boss=null;}
- function receive(world,code,now){
+ function receive(world,code,now,serverTime){
   for(const [id,e] of Object.entries(world.enemies||{})){
    if(e.state!=='roaming'){enemies.delete(id);continue;}
    if(!enemies.has(id)&&e.position)enemies.set(id,{...e,position:{...e.position},home:{...(e.home||e.position)},index:0});
   }
   for(const t of world.traps||[]){
-   let effect=effects.get(t.id);
-   if(!effect){
-    if(t.eligible?.includes(code)&&!t.resolved?.includes(code)){
-     effect={...t,deadline:now+2000,remaining:2,burst:0,armed:true};effects.set(t.id,effect);
-    }else effects.set(t.id,{...t,done:true,resolved:true,remaining:0,burst:0});
-   }else if(t.state!=='hidden')effect.armed=true;
-   if(effect&&(!t.eligible?.includes(code)||t.resolved?.includes(code)))effect.resolved=true;
+   const eligible=t.eligible?.includes(code)&&!t.resolved?.includes(code);
+   const effect=effects.get(t.id);
+   if(!eligible){
+    if(effect?.done)effect.resolved=true;
+    else effects.set(t.id,{...t,done:true,resolved:true,remaining:0,burst:0});
+    continue;
+   }
+   if(!effect?.armed){
+    const delay=Math.max(0,t.explodeAt-serverTime);
+    effects.set(t.id,{...effect,...t,deadline:now+delay,remaining:delay/1000,burst:0,armed:true,resolved:false});
+   }
   }
  }
  function step(actor,target,speed,dt,nav){
@@ -47,8 +51,8 @@ export function localPartyWorld(){
   }
   for(const effect of effects.values()){
    if(effect.done){effect.burst=Math.max(0,effect.burst-dt);continue;}
-   effect.remaining=Math.max(0,(effect.deadline-now)/1000);
-   if(effect.remaining===0){effect.done=true;effect.burst=.8;effect.hitPosition={...position};}
+   effect.remaining=Math.max(effect.armed?0:.05,(effect.deadline-now)/1000);
+   if(effect.armed&&effect.remaining===0){effect.done=true;effect.burst=.8;effect.hitPosition={...position};}
   }
  }
  function trigger(placements,position,nav,now){

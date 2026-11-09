@@ -1,3 +1,5 @@
+import '../../tools/labyrinth-demo/traps.js';
+const {RADIUS}=globalThis.DungeonTraps;
 const statuses={poison:'poison',fire:'burn',electric:'static',ice:'freeze'};
 export function createPartyTraps(placements){
  const ids=new Set();
@@ -20,7 +22,7 @@ export function advancePartyTraps(traps,members,now,metric=(a,b)=>Math.hypot(a.x
   if(t.state!=='armed'||now<t.explodeAt)continue;
   t.state='spent';t.hit=[];
   for(const p of members){
-   if(!eligible(p)||!within(p,t,290))continue;
+   if(!eligible(p)||!within(p,t,RADIUS))continue;
    if(t.type==='blast'){
     if(!Number.isFinite(p.maxHp)||p.maxHp<=0)throw Error('invalid_member_vitals');
     p.hp=Math.max(0,p.hp-Math.max(1,Math.round(p.maxHp*.1)));

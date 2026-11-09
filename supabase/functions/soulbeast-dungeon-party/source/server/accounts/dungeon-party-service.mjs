@@ -7,7 +7,7 @@ import {initializePartyWorld,advancePartyWorld,advancePartyBoss} from './dungeon
 import {movePartyMember} from './dungeon-party-movement.mjs';
 import {soloStart,applySoloResult} from './dungeon-party-solo-start.mjs';
 import {simulateSolo,SOLO_EVENT_LIMIT} from '../../../solo-combat.mjs';
-const snapshotActions=new Set(['claim','bossContact','battleCommand','battleAuto','battleReady','tick','soloFinish']);
+const snapshotActions=new Set(['claim','bossContact','battleCommand','battleAuto','battleReady','tick','soloFinish','trapArm','trapResolve']);
 
 // Storage and combat are server adapters. The transaction must atomically persist
 // battle state, member vitals, progression and reward receipts.
@@ -109,7 +109,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
      // The movement server checks physical contact, not a client-supplied position.
      if(!(room.localExploration?localEnemyContact(room,me,data.enemy,data.enemyPosition,await combat.navigation(room)):combat.contact(room,actor,data.enemy)))throw Error('enemy_out_of_reach');
      const id=uuid(),enemy=claimEnemy(floor,data.enemy,actor,id);
-     room.battles??={};room.battles[id]=await combat.createSolo(room,me,enemy,id);
+     room.battles??={};room.battles[id]=await combat.createSolo(room,me,enemy,id);me.lastBattleId=id;
      if(data.localCombatVersion===1){const run=room.battles[id];run.localCombatVersion=1;run.initialAuto=!!room.autoPlayers?.[actor];}
      result={battle:id};break;
     }
@@ -134,6 +134,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
      // Build from each member's current server vitals, after interrupt processing.
      const enemies=scaleBossTeam(await combat.bossTeam(floor.floor),room.startedSize);
      room.battles??={};room.battles[id]=await combat.createBoss(room,enemies,id);
+     for(const member of room.members)if(room.battles[id].participants.includes(member.code))member.lastBattleId=id;
      // Persistent transition lets a member returning from an iframe or a lost
      // socket switch battles too. Never depend solely on a broadcast arriving.
      room.battleTransition={revision:(room.revision||0)+1,battle:id,

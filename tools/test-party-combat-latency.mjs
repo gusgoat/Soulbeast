@@ -6,6 +6,9 @@ import {dungeonPartyService} from '../supabase/functions/soulbeast-dungeon-party
 import {partySnapshot} from '../supabase/functions/soulbeast-dungeon-party/source/server/accounts/dungeon-party-snapshot.mjs';
 import {createFloor} from '../supabase/functions/soulbeast-dungeon-party/source/tools/labyrinth-demo/online-party-rules.mjs';
 import {partyRunController} from './labyrinth-demo/online-party-controller.mjs';
+import {resolveLocalTrap} from '../supabase/functions/soulbeast-dungeon-party/source/server/accounts/dungeon-party-local.mjs';
+import {partyMapAdapter} from '../supabase/functions/soulbeast-dungeon-party/source/server/accounts/dungeon-party-map.mjs';
+import {localPartyWorld} from './labyrinth-demo/online-party-local.mjs';
 
 const engine=createEngine(createWorkbook(),createUtilities(()=>{},()=>{})).partyCombat;
 const member=code=>({code,name:code,hp:300,mp:70,exploring:true,save:{P:{
@@ -78,6 +81,11 @@ assert.equal(room.members[0].save.P.items.godSeal,1);
 assert.equal(room.members[0].save.P.pets[0].privateProperty,'keep');
 assert.equal((await call('A','soloFinish',result)).snapshot.battle.status,'finished');
 assert.equal(payouts,1,'retry cannot pay twice');
+room.battles['zz-old-uuid']={...room.battles[claim.battle],id:'zz-old-uuid',finishedAt:now-1000};
+assert.equal(partySnapshot(room,'A',now).battle.id,claim.battle,'a one-hit victory stays selected even if an older UUID sorts last');
+delete room.members[0].lastBattleId;
+assert.equal(partySnapshot(room,'A',now).battle.id,claim.battle,'a room created before this patch still gets its latest result');
+delete room.battles['zz-old-uuid'];
 
 const second=await call('A','claim',{enemy:'bandit:0',localCombatVersion:1});
 floor.kills={shadow:floor.rules.shadows,bandit:floor.rules.bandits};floor.doorOpen=true;
@@ -96,4 +104,18 @@ assert.equal(wait,350);
 now+=wait;
 await call('B','tick',{battle:boss.battle});
 assert(room.battles[boss.battle].waiting||room.battles[boss.battle].battle.turns>0);
+const map=partyMapAdapter(),nav=map.navigation({floor:1}),flat=map.map(1).flatten;
+const radius=globalThis.DungeonTraps.RADIUS;
+const trap={id:'mine-trap',x:0,y:0,type:'blast',eligible:['A'],resolved:[],state:'armed',explodeAt:2000};
+const visual=localPartyWorld();
+visual.receive({traps:[trap]},'A',400,1300);
+const outside={x:0,y:(radius+1)/flat};
+visual.update(.01,outside,nav,{},outside,1099);
+assert(!visual.request(),'the visual has not reached the explosion time');
+visual.update(.01,outside,nav,{},outside,1100);
+assert.deepEqual(visual.request(),{action:'trapResolve',trap:trap.id,position:outside});
+for(const [position,hit] of [[outside,false],[{x:radius+1,y:0},false],[{x:0,y:(radius-1)/flat},true],[{x:radius-1,y:0},true]]){
+ const m={code:'A',position,hp:100,maxHp:100,exploring:true};
+ assert.equal(resolveLocalTrap({dungeon:{traps:[structuredClone(trap)]}},m,trap.id,2000,nav).hit,hit);
+}
 console.log('PASS party latency: one response to contact, deterministic local capture and single settlement, duplicate/forged result rejection, and shared boss turns at '+wait+' ms after readiness.');

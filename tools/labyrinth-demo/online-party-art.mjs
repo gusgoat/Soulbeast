@@ -60,7 +60,16 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
   if(prop.key.startsWith('native:'))sprite(prop.key.slice(7),prop,prop.w);
   else LivingEnvironment.draw(ctx,prop,q.x,q.y,s,time,position);
  }});
- for(const t of traps){if(!t.remaining&&!t.burst)continue;const q=screen(t);ctx.strokeStyle=({blast:'#ffb354',poison:'#73ee6d',fire:'#ff5d37',electric:'#db82ff',ice:'#7bdfff'})[t.type];ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(q.x,q.y,174,174*F,0,0,Math.PI*2);ctx.stroke();}
+ for(const t of traps){
+  if(!t.remaining&&!t.burst)continue;
+  // screen() already flattens Y, just like nav.distance(). Only camera zoom
+  // applies to the blast radius in these projected units.
+  const q=screen(t),radius=DungeonTraps.RADIUS*s,color=DungeonTraps.types[t.type]?.color||'#ffb354';
+  ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;
+  ctx.beginPath();ctx.arc(q.x,q.y,radius,0,Math.PI*2);
+  ctx.globalAlpha=t.burst ? .35 : .1;ctx.fill();ctx.globalAlpha=1;ctx.stroke();
+  ctx.restore();
+ }
  for(const e of local.enemies.values())if(visible(e.position))draws.push({y:e.position.y,run:()=>{const im=art[e.kind==='bandit'?'bandit':'shadow'];if(!im)return;const q=screen(e.position),f=e.moving?Math.floor(e.phase||0)%8:0,z=(e.kind==='bandit'?135:115)*s;ctx.save();ctx.translate(q.x,q.y);ctx.scale(e.facing||1,1);ctx.drawImage(im,f%4*256,Math.floor(f/4)*256,256,256,-z/2,-z*.92,z,z);ctx.restore();}});
  const bp=local.boss||world.bossPosition||map.boss;
  if(world.boss!=='defeated'&&visible(bp))draws.push({y:bp.y,run:()=>{const q=screen(bp);if(boss.current)boss.draw(ctx,q.x,q.y,Math.min(cfg.bossSize||260,330)*s,2,time,!!world.doorOpen);else sprite('boss',bp,125);label(bp,cfg.bossName);}});

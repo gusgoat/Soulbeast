@@ -1,9 +1,9 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
 import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
-import {partyArt} from './online-party-art.mjs?v=party-controls-2-20261107';
+import {partyArt} from './online-party-art.mjs?v=party-victory-traps-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=admin-session-20261107';
-import {partyScene} from './online-party-scene.mjs?v=smooth-peers-1';
-import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
+import {partyScene} from './online-party-scene.mjs?v=party-victory-traps-1';
+import {localPartyWorld} from './online-party-local.mjs?v=party-victory-traps-1';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
 import {partyRunController} from './online-party-controller.mjs?v=party-combat-latency-1';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
@@ -49,13 +49,13 @@ function offerReturn(city,automatic=false){
  if(automatic)void button.onclick();
 }
 const menus=partyMenu({canOpen:()=>ready&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{keys.clear();selfMoving=false;}});
-let clockOffset=0, shownBattle=null, battleFrameReady=false, visibleBattleId=null, soloFinishTimer;
+let clockOffset=0, shownBattle=null, battleFrameReady=false, visibleBattleId=null, victory=null, queuedBattle=null;
 const battleFrame=$('partyBattleFrame');let warmFloor;
 function warmBattleFrame(){
  const floor=config?.id||'mine-floor-1';
  if(warmFloor===floor)return;
  warmFloor=floor;battleFrameReady=false;
- battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-combat-latency-1&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
+ battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-victory-traps-1&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
 }
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
@@ -70,8 +70,9 @@ addEventListener('message',event=>{
  if(message.type==='party-battle-visible'){visibleBattleId=shownBattle.id;
   if(shownBattle.localCombatVersion)localCombat?.visible(shownBattle.id);
   else if(nextPulse!==Infinity)nextPulse=performance.now();return;}
- if(message.type==='party-battle-done'&&shownBattle.status!=='active'){
-  seenBattle=shownBattle.id;drawBattle(null);window.focus();return;
+ if(message.type==='party-battle-done'&&shownBattle.status!=='active'&&!shownBattle.presentation){
+  const next=queuedBattle;queuedBattle=null;victory=null;
+  seenBattle=shownBattle.id;keys.clear();drawBattle(next);if(!next)window.focus();return;
  }
  if(message.type==='party-battle-presented'){
   if(shownBattle.localCombatVersion)localCombat?.presented(shownBattle.id,message.turn,message.sequence);
@@ -97,19 +98,20 @@ addEventListener('message',event=>{
  }
 });
 function drawBattle(run,local=false){
+ if(victory&&run?.id!==victory.id){if(run)queuedBattle=run;return;}
+ if(victory&&run?.status==='active')return;
  if(!local&&run?.localCombatVersion&&run.status==='active'&&localCombat?.active(run.id))return;
  if(!local&&run?.status==='finished'&&localCombat?.active(run.id))localCombat.stop(null);
  if(!run||(run.status!=='active'&&seenBattle===run.id)){
-  clearTimeout(soloFinishTimer);soloFinishTimer=null;
   shownBattle=null;$('battle').hidden=true;$('battleError').hidden=true;
-  if(run?.kind==='solo'){seenBattle=run.id;keys.clear();}
+  if(run)keys.clear();
   return;
  }
  if(menus.open)menus.close();
  if(shownBattle?.id!==run.id){
-  clearTimeout(soloFinishTimer);soloFinishTimer=null;
   visibleBattleId=null;warmBattleFrame();
  }
+ if(run.status==='finished'&&run.result==='win'&&!run.presentation)victory=run;
  shownBattle=run;$('battle').hidden=false;sendBattle();
 
 }
@@ -117,14 +119,14 @@ const view={
  loadFloor(floor){config=MineFloors.get(floor);warmBattleFrame();maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);sceneAudio.setFloor(config,maze);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
  vitals:members=>vitals.update(members),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);menus.update(me);},
- world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
-  localWorld.receive(world,connection.code,performance.now());
+ world(data,serverTime){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
+  localWorld.receive(world,connection.code,performance.now(),serverTime);
   if(!trapPlacements.length)trapPlacements=DungeonTraps.create(maze,nav,{}, {seed:config.seed+71371,count:35}).list;
 
   $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · กับดักเหลือ ${trapPlacements.length-(world.traps||[]).filter(t=>t.state==='spent').length} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
- stopSolo(){localCombat?.stop(null);keys.clear();$('battle').hidden=true;},enterBoss(){keys.clear();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
- respawn(destination,reason){freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
+ stopSolo(){localCombat?.stop(null);keys.clear();if(!victory)$('battle').hidden=true;},enterBoss(){keys.clear();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
+ respawn(destination,reason){victory=null;queuedBattle=null;drawBattle(null);freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
   // Navigation is restricted to our own town page; never use a server-supplied URL.
   const city=typeof destination==='string'?destination:destination?.city;
   offerReturn(reason==='left'?null:city,true);},

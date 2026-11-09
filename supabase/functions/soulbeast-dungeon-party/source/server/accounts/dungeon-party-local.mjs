@@ -1,3 +1,5 @@
+import '../../tools/labyrinth-demo/traps.js';
+const {RADIUS}=globalThis.DungeonTraps;
 // Exploration is client animated. Transactions arbitrate shared interactions.
 export function acceptLocalPosition(room,member,data,nav){
  if(data.floor!==room.floor)throw Error('movement_wrong_floor');
@@ -27,7 +29,7 @@ export function resolveLocalTrap(room,member,id,now,nav){
  if(t.resolved?.includes(member.code))return {hit:false,alreadyResolved:true};
  if(now<t.explodeAt)throw Error('trap_not_due');
  t.state='spent';t.resolved??=[];t.resolved.push(member.code);
- if(member.hp<=0||!member.exploring||nav.distance(member.position,t)>290)return {hit:false,type:t.type};
+ if(member.hp<=0||!member.exploring||nav.distance(member.position,t)>RADIUS)return {hit:false,type:t.type};
  const before=member.hp;
  if(t.type==='blast')member.hp=Math.max(0,member.hp-Math.max(1,Math.round(member.maxHp*.1)));
  else{

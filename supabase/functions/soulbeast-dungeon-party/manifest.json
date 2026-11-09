@@ -2,7 +2,7 @@
   "files": [
     {
       "file": "source/server/accounts/dungeon-party-local.mjs",
-      "sha256": "5caea6e8d6b6f1d2ab47a186e4c4928f680f9047156168509e0da010fa47e284"
+      "sha256": "b4e518b5d328707b174a03c2cca24c98071598b473fc3703147029761fcebfa3"
     },
     {
       "file": "source/tools/labyrinth-demo/online-party-rules.mjs",
@@ -14,11 +14,11 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-traps.mjs",
-      "sha256": "fe0d70c0e7a7b88091fb328cc145b9fda2b79d247556a7ca4c71e84e1ee4de6b"
+      "sha256": "6e83e3873a2aa9ebdece606defab2a72f69a29ed9a772614ba946fb37ba0722c"
     },
     {
       "file": "source/server/accounts/dungeon-party-snapshot.mjs",
-      "sha256": "acad612347f1f1b0888661cdd7518be1a4c8cdade15e375e2818ef4c01e3247a"
+      "sha256": "e86eebe43519bd0eef85990ff04d77c1fecf9cfe9be6232c3a8b9bbb712359e2"
     },
     {
       "file": "source/server/accounts/dungeon-party-world.mjs",
@@ -30,7 +30,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-service.mjs",
-      "sha256": "21def1b6f9cd447b25fdc402b485a83bdfd477750a307b6506fb87f768637296"
+      "sha256": "cc344ba79aa34681b8253dc45c86290ae7aa7280fa707bae93625aa35b6d2cb3"
     },
     {
       "file": "source/server/accounts/dungeon-party-store.mjs",

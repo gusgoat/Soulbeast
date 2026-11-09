@@ -18,8 +18,10 @@ export function partySnapshot(room,code,serverTime,includeSolo=false){
  if(!room.members.some(m=>m.code===code))throw Error('party_not_member');
  const floor=room.dungeon;
  const member=room.members.find(m=>m.code===code);
- const run=Object.values(room.battles||{}).find(b=>b.status==='active'&&b.participants?.includes(code))||
-   Object.values(room.battles||{}).reverse().find(b=>b.participants?.includes(code)&&b.status==='finished');
+ const mine=Object.values(room.battles||{}).filter(b=>b.participants?.includes(code));
+ const recent=mine.find(b=>b.id===member.lastBattleId&&b.status==='finished');
+ const run=mine.find(b=>b.status==='active')||recent||mine.filter(b=>b.status==='finished').sort((a,b)=>
+  (b.finishedAt??b.startedAt??0)-(a.finishedAt??a.startedAt??0)||(b.startedAt??0)-(a.startedAt??0))[0];
  return {
   ...pick(room,['id','host','state','floor','startedSize','completed','localExploration']),revision:room.revision||0,serverTime,
   members:room.members.map(m=>pick(m,['code','name','cls','level','gender','avatar','country','hp','mp','maxHp','maxMp','online','position','exploring','ailments'])),
