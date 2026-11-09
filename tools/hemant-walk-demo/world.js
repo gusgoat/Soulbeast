@@ -18,7 +18,15 @@ for(const [id,file]of Object.entries(files)){const im=new Image();im.src=file.st
 const avatar=window.sealerSprites.create();const syncAvatar=()=>avatar.sync().catch(e=>console.error('Player animation:',e));
 const compactRendering=matchMedia("(pointer: coarse)").matches;
 let lastPaint=-Infinity;
-function resize(){W=innerWidth;H=innerHeight;const dpr=Math.min(devicePixelRatio||1,compactRendering?1:2);canvas.width=W*dpr;canvas.height=H*dpr;c.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
+function resize(){
+ W=innerWidth;H=innerHeight;
+ // Keep touch screens sharper without scaling the whole map to the panel's full DPR.
+ const touchLimit=Math.max(1,Math.min(1.5,Math.sqrt(900000/Math.max(1,W*H))));
+ const dpr=Math.min(devicePixelRatio||1,compactRendering?touchLimit:2);
+ canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+ c.setTransform(canvas.width/Math.max(1,W),0,0,canvas.height/Math.max(1,H),0,0);
+}
+addEventListener('resize',resize);resize();
 const zoom=()=>overview?Math.min((W-32)/data.width,(H-245)/(data.height*F)):.72;
 const sx=x=>(x-(overview?data.width/2:cam.x))*zoom()+W/2,sy=y=>(y-(overview?data.height/2:cam.y))*F*zoom()+H*(overview?.53:.57);
 function ellipse(ctx,x,y,rx,ry,color){ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()}
