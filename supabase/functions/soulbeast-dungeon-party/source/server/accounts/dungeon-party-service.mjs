@@ -5,6 +5,9 @@ import {createPartyTraps,advancePartyTraps,visiblePartyTraps} from './dungeon-pa
 import {partySnapshot,partyBattleSnapshot} from './dungeon-party-snapshot.mjs';
 import {initializePartyWorld,advancePartyWorld,advancePartyBoss} from './dungeon-party-world.mjs';
 import {movePartyMember} from './dungeon-party-movement.mjs';
+import {soloStart,applySoloResult} from './dungeon-party-solo-start.mjs';
+import {simulateSolo,SOLO_EVENT_LIMIT} from '../../../solo-combat.mjs';
+const snapshotActions=new Set(['claim','bossContact','battleCommand','battleAuto','battleReady','tick','soloFinish']);
 
 // Storage and combat are server adapters. The transaction must atomically persist
 // battle state, member vitals, progression and reward receipts.
@@ -31,9 +34,9 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
    if(!floor.banditRoster8){const placements=await combat.enemyPlacements(floor.floor);for(let i=0;i<8;i++){const id='bandit:'+i;if(!floor.enemies[id]&&placements[id]){const p=placements[id];floor.enemies[id]={kind:'bandit',state:'roaming',battle:null,position:{x:p.x,y:p.y},home:{x:p.x,y:p.y},patrol:p.patrol};}}floor.banditRoster8=true;room.revision=(room.revision||0)+1;}
 
    if(data.requestId!==undefined&&(!/^[a-zA-Z0-9-]{1,128}$/.test(data.requestId)||typeof data.requestId!=='string'))throw Error('bad_request_id');
-   const fingerprint=JSON.stringify(Object.fromEntries(Object.keys(data).filter(k=>k!=='requestId').sort().map(k=>[k,data[k]])));
+   const fingerprint=action==='soloFinish'?'':JSON.stringify(Object.fromEntries(Object.keys(data).filter(k=>k!=='requestId').sort().map(k=>[k,data[k]])));
    const receipt=data.requestId&&Object.hasOwn(room.receipts||{},data.requestId)&&room.receipts[data.requestId];
-   if(receipt){if(receipt.actor!==actor||receipt.action!==action||receipt.fingerprint!==fingerprint)throw Error('request_mismatch');return receipt.result;}
+   if(receipt){if(receipt.actor!==actor||receipt.action!==action||receipt.fingerprint!==fingerprint)throw Error('request_mismatch');return snapshotActions.has(action)?{...receipt.result,snapshot:partySnapshot(room,actor,now(),true)}:receipt.result;}
    if(data.localExploration===true&&!room.localExploration){
     room.localExploration=true;room.revision=(room.revision||0)+1;
    }
@@ -52,7 +55,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
    }
    let result;
    switch(action){
-    case 'status':return partySnapshot(room,actor,now());
+    case 'status':return partySnapshot(room,actor,now(),data.soloStart!==false);
     case 'inventory':{
      if(!me.exploring||me.hp<=0||Object.values(room.battles||{}).some(b=>b.status==='active'&&b.participants.includes(actor)))throw Error('already_fighting');
      const inventory=await combat.inventory(room,me,data);if(!data.op)return inventory;result={changed:true};break;
@@ -82,7 +85,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
      if(action==='pulse'){
       if(!room.localExploration&&data.movement&&me.exploring&&!Object.values(room.battles||{}).some(b=>b.status==='active'&&b.participants.includes(actor)))
        movePartyMember(room,me,data.movement,now(),await combat.navigation(room),await combat.movementSpeed(room,me));
-      for(const battle of Object.values(room.battles||{}))if(battle.status==='active'||battle.presentation){
+      for(const battle of Object.values(room.battles||{}))if(!battle.localCombatVersion&&(battle.status==='active'||battle.presentation)){
        await combat.advance(room,battle);await finishBattle(battle);
       }
      }
@@ -107,6 +110,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
      if(!(room.localExploration?localEnemyContact(room,me,data.enemy,data.enemyPosition,await combat.navigation(room)):combat.contact(room,actor,data.enemy)))throw Error('enemy_out_of_reach');
      const id=uuid(),enemy=claimEnemy(floor,data.enemy,actor,id);
      room.battles??={};room.battles[id]=await combat.createSolo(room,me,enemy,id);
+     if(data.localCombatVersion===1){const run=room.battles[id];run.localCombatVersion=1;run.initialAuto=!!room.autoPlayers?.[actor];}
      result={battle:id};break;
     }
     case 'openDoor':
@@ -136,13 +140,36 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
       interrupted,participants:room.members.map(member=>member.code),floor:floor.floor};
      result={battle:id,interrupted};break;
     }
+    case 'soloFinish':{
+     const run=room.battles?.[data.battle];
+     if(!run?.localCombatVersion||run.participants[0]!==actor||run.status==='interrupted')throw Error('battle_not_member');
+     if(run.status==='finished'){result={battle:run.id};break;}
+     if(!Array.isArray(data.events)||!data.events.length||data.events.length>SOLO_EVENT_LIMIT)throw Error('invalid_solo_result');
+     let sim;
+     try{sim=simulateSolo(soloStart(room,run,me));for(const event of data.events)await sim.apply(event);}
+     catch{throw Error('invalid_solo_result');}
+     const resume=sim.run.status==='active'&&data.events.length>=SOLO_EVENT_LIMIT-16&&!sim.run.presentation&&!sim.run.loading;
+     if((!resume&&(sim.run.status!=='finished'||sim.run.presentation||sim.run.result!==data.result))||sim.member.hp!==data.hp||sim.member.mp!==data.mp)throw Error('invalid_solo_result');
+     applySoloResult(me,sim.member);
+     room.autoPlayers??={};room.autoPlayers[actor]=sim.auto;
+     Object.assign(run,sim.run);
+     if(resume){
+      delete run.localCombatVersion;delete run.loading;delete run.presentation;
+      run.nextTurnAt=now()+350;if(run.waiting)run.waiting.deadline=now()+12000;
+     }else{delete run.presentation;delete run.waiting;delete run.loading;run.finishedAt=now();await finishBattle(run);}
+     result={battle:run.id};break;
+    }
     case 'battleReady':
     case 'battleCommand':
     case 'battleAuto':
     case 'tick':{
      const battle=room.battles?.[data.battle];
-     if(!battle||!battle.participants.includes(actor))throw Error('battle_not_member');
+     if(!battle||!battle.participants.includes(actor)||battle.localCombatVersion&&battle.status==='active')throw Error('battle_not_member');
      if(battle.status!=='active'&&!(battle.presentation&&['battleReady','tick'].includes(action))){result={battle:partyBattleSnapshot(battle)};break;}
+     // Multiple viewers can request the same due turn. Don't write or broadcast
+     // another revision when one viewer has already advanced it.
+     if(action==='tick'&&battle.status==='active'&&!battle.loading&&!battle.presentation&&now()<(battle.waiting?.deadline??battle.nextTurnAt))
+      return {snapshot:partySnapshot(room,actor,now())};
      // Advance only turns due by server time; manual turns retain their deadline.
      if(action==='battleReady')await combat.ready(room,battle,actor,data);
      else if(action==='battleCommand')await combat.choose(room,battle,actor,data);
@@ -161,11 +188,11 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
     }
     default:throw Error('bad_party_action');
    }
-   if(data.requestId){room.receipts??={};room.receipts[data.requestId]={actor,action,fingerprint,result:structuredClone(result)};}
+   if(data.requestId&&action!=='soloFinish'){room.receipts??={};room.receipts[data.requestId]={actor,action,fingerprint,result:structuredClone(result)};}
    room.revision=(room.revision||0)+1;
    if(action==='pulse')return partySnapshot(room,actor,now());
    // Return the same allowlisted view already sent over realtime in this committed reply.
-   if(['battleCommand','battleAuto','battleReady','tick'].includes(action))return {...result,snapshot:partySnapshot(room,actor,now())};
+   if(snapshotActions.has(action))return {...result,snapshot:partySnapshot(room,actor,now(),action==='claim')};
    return result;
   });
  };

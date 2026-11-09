@@ -23,7 +23,7 @@ Deno.serve(async(request:Request)=>{
  // Environment is pinned server-side: a test build cannot operate live characters.
  if(request.method==='POST'){
   const len=Number(request.headers.get('content-length')||0);
-  if(len>8192)return new Response(null,{status:413});
+  if(len>32768)return new Response(null,{status:413});
   // The actual bounded read and bearer verification remain in the HTTP adapter.
  }
  return app.handle(request);

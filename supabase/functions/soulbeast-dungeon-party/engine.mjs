@@ -36,7 +36,8 @@ function createUtilities(hashBytes, randomUUID) {
  };
 }
 
-function createEngine(workbook, Utilities) {
+function createEngine(workbook, Utilities, random=()=>globalThis.Math.random()) {
+const Math=Object.assign(Object.create(globalThis.Math),{random});
 const SpreadsheetApp=workbook.SpreadsheetApp;
 const ContentService={MimeType:{JSON:'json'},createTextOutput:t=>({setMimeType(){return {getContent:()=>t};}})};
 let held=false;const LockService={getScriptLock:()=>({tryLock(){held=true;return true},hasLock:()=>held,releaseLock(){held=false;}})};

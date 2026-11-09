@@ -1,11 +1,17 @@
 // Mutations stay ordered. Read-only refreshes never hold up a manual command.
 export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},onResult=()=>{},localExploration=false,getPosition=()=>null,canAdvanceBattle=()=>true}){
- let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null,commands=[],reading=false,snapshotAt=0;
+ let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null,commands=[],reading=false,snapshotAt=0,soloKnown=null;
  async function refresh(next){
   next??=await connection.run(roomId,'status',localExploration?{localExploration:true}:{});
   if(closed)return;
   if(!next||next.id!==roomId)throw Error('invalid_party_snapshot');
-  if(snapshot&&next.revision<snapshot.revision)return;
+  if(snapshot&&next.revision<snapshot.revision){
+   if(next.soloStart?.run.id===snapshot.battle?.id&&snapshot.battle?.status==='active'){
+    soloKnown=next.soloStart.run.id;onState({...snapshot,soloStart:next.soloStart},path);
+   }
+   return;
+  }
+  if(next.soloStart)soloKnown=next.soloStart.run.id;
   await scene.receiveState(next);if(snapshot&&next.revision<snapshot.revision)return;snapshot=next;snapshotAt=Date.now();seq=Math.max(seq,next.movementSeq||0);
   if(next.departure||next.state==='closed'){path=[];await motion?.close();motion=null;onState(next);return;}
   const key=JSON.stringify([next.floor,next.members.map(m=>m.code).sort()]);
@@ -28,14 +34,15 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   try{await work();return true;}catch(error){path=[];onError(error);return false;}finally{busy=false;if(!closed)queueMicrotask(()=>{if(commands.length){const job=commands.shift();void lane(job.work).then(job.resolve);}else if(pendingState)void drain();});}
  }
  async function drain(){if(busy||closed||!pendingState)return;const next=pendingState;pendingState=null;return lane(()=>refresh(next));}
+ const serverNow=()=>snapshot?.serverTime+Math.max(0,Date.now()-snapshotAt);
  function manualWait(){
   const w=snapshot?.battle?.waiting;
-  return snapshot?.battle?.status==='active'&&!snapshot.battle.presentation&&w&&!snapshot.autoPlayers?.[w.ownerCode]&&w.deadline>snapshot.serverTime+Math.max(0,Date.now()-snapshotAt)+200;
+  return snapshot?.battle?.status==='active'&&!snapshot.battle.presentation&&w&&!snapshot.autoPlayers?.[w.ownerCode]&&w.deadline>serverNow()+120;
  }
  async function readStatus(){
   if(reading||closed)return false;reading=true;
   try{
-   const next=await connection.run(roomId,'status',localExploration?{localExploration:true}:{});
+   const next=await connection.run(roomId,'status',{...(localExploration?{localExploration:true}:{}),...(soloKnown&&snapshot?.battle?.id===soloKnown?{soloStart:false}:{})});
    if(closed||snapshot&&next.revision<snapshot.revision)return false;
    if(!pendingState||next.revision>pendingState.revision)pendingState=next;
    if(!busy&&!commands.length)await drain();return true;
@@ -57,17 +64,18 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    path.push({x:point.x,y:point.y});return true;
   },
   broadcast(position,moving,running){if(!closed&&snapshot?.state==='active'&&snapshot.battle?.status!=='active')motion?.send(position,moving,running);},
-  pulse:()=>manualWait()?readStatus():lane(async()=>{
+  pulse:()=>(snapshot?.battle?.localCombatVersion&&snapshot.battle.status==='active')||manualWait()||(snapshot?.battle?.presentation?.deadline>serverNow())?readStatus():lane(async()=>{
    if(!snapshot)return refresh();
    if(snapshot.departure||snapshot.state==='closed')return;
-   if(snapshot.battle?.status==='active'){
+   if(snapshot.battle?.status==='active'||snapshot.battle?.presentation){
     if(!canAdvanceBattle(snapshot.battle))return refresh();
+    if(snapshot.battle.loading&&!snapshot.battle.loading.pending.includes(connection.code))return refresh();
     if(snapshot.battle.loading?.pending?.includes(connection.code)){const result=await connection.run(roomId,'battleReady',{battle:snapshot.battle.id,presentationVersion:2});await refresh(result.snapshot);return;}
    }
    if(localExploration){
     // Advance my encounter directly. A failing unrelated solo battle must not
     // roll back this player's turn through the room-wide pulse transaction.
-    if(snapshot.battle?.status==='active'){
+    if(snapshot.battle?.status==='active'||snapshot.battle?.presentation){
      const result=await connection.run(roomId,'tick',{battle:snapshot.battle.id});
      await refresh(result.snapshot);return;
     }
@@ -97,6 +105,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
     if(['trap_unavailable','trap_out_of_reach','enemy_out_of_reach','boss_out_of_reach','enemy_unavailable','door_out_of_reach','stairs_out_of_reach','chest_out_of_reach','spring_out_of_reach'].includes(error.message)){
      await refresh();return;
     }
+    if(action==='soloFinish'&&['battle_not_member','party_not_member'].includes(error.message)){await refresh();return;}
     throw error;
    }
    await refresh();
@@ -105,7 +114,14 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    if(busy)commands.push({work,resolve});else void lane(work).then(resolve);
   }),
   get state(){return snapshot;},get busy(){return busy;},
-  get pollDelay(){const w=snapshot?.battle?.waiting;return manualWait()?Math.max(100,Math.min(5000,w.deadline-snapshot.serverTime-Math.max(0,Date.now()-snapshotAt))):snapshot?.battle?.status==='active'?750:5000;},
+  get pollDelay(){
+   const b=snapshot?.battle;
+   if(b?.localCombatVersion||!(b?.status==='active'||b?.presentation))return 5000;
+   if(!canAdvanceBattle(b)||b.presentation)return 750;
+   if(b.loading)return b.loading.pending.includes(connection.code)?0:750;
+   if(manualWait())return Math.max(100,Math.min(5000,b.waiting.deadline-serverNow()));
+   return Math.max(100,Math.min(750,(b.waiting?.deadline??b.nextTurnAt)-serverNow()||100));
+  },
   async close(){closed=true;path=[];for(const job of commands.splice(0))job.resolve(false);scene.close();await motion?.close();motion=null;}
  };
 }

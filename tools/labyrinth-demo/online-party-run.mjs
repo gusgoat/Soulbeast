@@ -5,7 +5,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=
 import {partyScene} from './online-party-scene.mjs?v=smooth-peers-1';
 import {localPartyWorld} from './online-party-local.mjs?v=solo-ui-2';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
-import {partyRunController} from './online-party-controller.mjs?v=party-combat-parity-20261107';
+import {partyRunController} from './online-party-controller.mjs?v=party-combat-latency-1';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
@@ -13,7 +13,19 @@ const localWorld=localPartyWorld();let trapPlacements=[];
 const sceneAudio=partyAudio();
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
-let nextPulse=0,nextContact=0,heartbeatTimer;
+let nextPulse=0,nextContact=0,heartbeatTimer,localCombat;
+void import('./online-party-solo.mjs?v=party-combat-latency-1').then(({localPartyCombat})=>{
+ localCombat=localPartyCombat({publish:run=>drawBattle(run,true),finish:data=>controller.command('soloFinish',data),report:failure});
+ if(controller?.state?.battle?.localCombatVersion)syncLocal(controller.state);
+}).catch(()=>{});
+function syncLocal(state){
+ const active=state.battle?.status==='active'&&state.battle.localCombatVersion===1;
+ localCombat?.stop(active?state.battle.id:null);
+ if(active&&state.soloStart)void localCombat?.start(state.soloStart).then(()=>{
+  if(visibleBattleId===state.battle.id)localCombat.visible(state.battle.id);
+ }).catch(failure);
+}
+addEventListener('visibilitychange',()=>{if(!document.hidden)localCombat?.resumed();});
 $('action').hidden=false;$('action').disabled=true;$('action').textContent='สำรวจ / เปิดประตู';
 const asset=value=>{try{const u=new URL(String(value).replace(/^\//,''),base);return u.origin===base.origin?u.href:null;}catch{return null;}};
 let portraits={};void fetch(new URL('party-portraits.json',import.meta.url)).then(r=>r.json()).then(v=>{portraits=v;if(controller?.state?.battle)drawBattle(controller.state.battle);}).catch(()=>{});
@@ -38,24 +50,38 @@ function offerReturn(city,automatic=false){
 }
 const menus=partyMenu({canOpen:()=>ready&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{keys.clear();selfMoving=false;}});
 let clockOffset=0, shownBattle=null, battleFrameReady=false, visibleBattleId=null, soloFinishTimer;
-const battleFrame=$('partyBattleFrame');
+const battleFrame=$('partyBattleFrame');let warmFloor;
+function warmBattleFrame(){
+ const floor=config?.id||'mine-floor-1';
+ if(warmFloor===floor)return;
+ warmFloor=floor;battleFrameReady=false;
+ battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-combat-latency-1&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
+}
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
  battleFrame.contentWindow.postMessage({type:'party-battle-state',run:shownBattle,code:connection.code,
-  auto:!!controller?.state?.autoPlayers?.[connection.code],clockOffset,member:me},location.origin);
+  auto:localCombat?.active(shownBattle.id)?localCombat.auto():!!controller?.state?.autoPlayers?.[connection.code],clockOffset:localCombat?.active(shownBattle.id)?0:clockOffset,member:me},location.origin);
 }
 addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==battleFrame.contentWindow)return;
  const message=event.data;
  if(message?.type==='party-battle-ready'){battleFrameReady=true;sendBattle();return;}
  if(!shownBattle||$('battle').hidden||message?.battle!==shownBattle.id)return;
- if(message.type==='party-battle-visible'){visibleBattleId=shownBattle.id;return;}
+ if(message.type==='party-battle-visible'){visibleBattleId=shownBattle.id;
+  if(shownBattle.localCombatVersion)localCombat?.visible(shownBattle.id);
+  else if(nextPulse!==Infinity)nextPulse=performance.now();return;}
  if(message.type==='party-battle-done'&&shownBattle.status!=='active'){
   seenBattle=shownBattle.id;drawBattle(null);window.focus();return;
  }
- if(message.type==='party-battle-presented'){void controller.command('battleReady',{battle:shownBattle.id,turn:message.turn,sequence:message.sequence});return;}
+ if(message.type==='party-battle-presented'){
+  if(shownBattle.localCombatVersion)localCombat?.presented(shownBattle.id,message.turn,message.sequence);
+  else void controller.command('battleReady',{battle:shownBattle.id,turn:message.turn,sequence:message.sequence});return;
+ }
  if(shownBattle.status!=='active')return;
- if(message.type==='party-battle-auto')void controller.command('battleAuto',{battle:shownBattle.id,enabled:!!message.enabled});
+ if(message.type==='party-battle-auto'){
+  if(shownBattle.localCombatVersion)localCombat?.setAuto(shownBattle.id,!!message.enabled);
+  else void controller.command('battleAuto',{battle:shownBattle.id,enabled:!!message.enabled});
+ }
  if(message.type==='party-battle-command'){
   const turn=shownBattle.waiting;
   const battleId=shownBattle.id;
@@ -63,14 +89,16 @@ addEventListener('message',event=>{
    if(shownBattle?.id===battleId)battleFrame.contentWindow.postMessage({type:'party-battle-command-result',battle:battleId,request:message.request,ok},location.origin);
   };
   if(turn?.ownerCode!==connection.code||message.turn!==turn.turn||message.actor!==turn.actor){reply(false);return;}
-  void controller.command('battleCommand',{battle:battleId,actor:turn.actor,turn:turn.turn,presentationVersion:2,skill:message.skill,item:message.item,seal:message.seal,escape:message.escape,swap:message.swap,target:message.target,friend:message.friend}).then(ok=>{
-   reply(ok);
-   if(!ok)void controller.refresh();
-  });
+  const command={battle:battleId,actor:turn.actor,turn:turn.turn,presentationVersion:2,skill:message.skill,item:message.item,seal:message.seal,escape:message.escape,swap:message.swap,target:message.target,friend:message.friend};
+  const local=shownBattle.localCombatVersion===1;
+  const choice=local?localCombat?.command(battleId,command):controller.command('battleCommand',command);
+  if(!choice){reply(false);return;}
+  void choice.then(ok=>{reply(ok);if(!ok&&!local)void controller.refresh();});
  }
 });
-function drawBattle(run){
- const continuing=shownBattle?.id===run?.id;
+function drawBattle(run,local=false){
+ if(!local&&run?.localCombatVersion&&run.status==='active'&&localCombat?.active(run.id))return;
+ if(!local&&run?.status==='finished'&&localCombat?.active(run.id))localCombat.stop(null);
  if(!run||(run.status!=='active'&&seenBattle===run.id)){
   clearTimeout(soloFinishTimer);soloFinishTimer=null;
   shownBattle=null;$('battle').hidden=true;$('battleError').hidden=true;
@@ -80,14 +108,13 @@ function drawBattle(run){
  if(menus.open)menus.close();
  if(shownBattle?.id!==run.id){
   clearTimeout(soloFinishTimer);soloFinishTimer=null;
-  battleFrameReady=false;visibleBattleId=null;
-  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-combat-parity-20261107&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(config?.id||'mine-floor-1')}`;
+  visibleBattleId=null;warmBattleFrame();
  }
  shownBattle=run;$('battle').hidden=false;sendBattle();
 
 }
 const view={
- loadFloor(floor){config=MineFloors.get(floor);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);sceneAudio.setFloor(config,maze);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
+ loadFloor(floor){config=MineFloors.get(floor);warmBattleFrame();maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);sceneAudio.setFloor(config,maze);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
  vitals:members=>vitals.update(members),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);menus.update(me);},
  world(data){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
@@ -96,7 +123,7 @@ const view={
 
   $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · กับดักเหลือ ${trapPlacements.length-(world.traps||[]).filter(t=>t.state==='spent').length} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
- stopSolo(){keys.clear();$('battle').hidden=true;},enterBoss(){keys.clear();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
+ stopSolo(){localCombat?.stop(null);keys.clear();$('battle').hidden=true;},enterBoss(){keys.clear();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
  respawn(destination,reason){freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
   // Navigation is restricted to our own town page; never use a server-supplied URL.
   const city=typeof destination==='string'?destination:destination?.city;
@@ -131,10 +158,10 @@ try{
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
   // Reconcile the overlay even if the scene already consumed this revision.
-  drawBattle(state.battle);
+  syncLocal(state);drawBattle(state.battle);
   $('battleError').hidden=true;
   if(!position&&member?.position)position={...member.position};
-  if(state.battle?.status==='active'&&nextPulse!==Infinity)nextPulse=Math.min(nextPulse,performance.now()+750);
+  if((state.battle?.status==='active'||state.battle?.presentation)&&nextPulse!==Infinity)nextPulse=Math.min(nextPulse,performance.now()+controller.pollDelay);
   ready=!!position;if(ready)window.WalkLoading.ready();$('retry').hidden=true;$('action').disabled=!ready;
 
  }});
@@ -185,7 +212,7 @@ try{
    }
    const confirmed=position;
    if(!controller.busy&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
-    if(target){nextContact=now+500;void controller.command('claim',{enemy:target[0],enemyPosition:{...target[1].position}});}
+    if(target){nextContact=now+500;void controller.command('claim',{enemy:target[0],enemyPosition:{...target[1].position},...(localCombat?{localCombatVersion:1}:{})});}
     else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,localWorld.boss||world.bossPosition||maze.boss)<65&&nav.clear(confirmed,localWorld.boss||world.bossPosition||maze.boss)){
      nextContact=now+500;void controller.command('bossContact',{enemyPosition:{...(localWorld.boss||maze.boss)}});
     }}

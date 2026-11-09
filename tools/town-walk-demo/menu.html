@@ -8151,6 +8151,7 @@ if(params.has('partyBattle')&&parent!==window){const kingdomFight=params.has('ki
  let state, selectedEnemy, selectedAlly, turnKey, hideCommands=false, effectTurn=kingdomFight?0:-1;
  const app=document.getElementById('app');
  const soloRender=render;
+ if(dungeonFloor?.battleArt){const image=new Image();image.src=dungeonFloor.battleArt;}
  const scenery=BattleScenery.resolve;
  BattleScenery.resolve=function(b,...args){
   const scene=scenery.call(this,b,...args),floor=dungeonFloor;
