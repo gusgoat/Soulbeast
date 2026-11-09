@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="th">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#100f1a">
+ <meta name="colosseum-server" content="">
+ <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
+ <title>โคลอสเซียม · SoulBeast</title>
+ <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+ <main id="lobby">
+  <header><img src="../../assets/ui/soulbeast-logo-transparent-v3.webp" alt="SoulBeast">
+   <p class="eyebrow">THE TWIN ARENA</p><h1>โคลอสเซียม</h1>
+   <p>ศึกเขาวงกต · โหมดทีมและเอาตัวรอด</p>
+  </header>
+  <div id="entry" class="panel">
+   <form id="entry-form">
+    <fieldset id="demo-profile">
+     <label>ชื่อผู้ผนึก<input id="name" maxlength="20" required autocomplete="off" placeholder="ชื่อในสนามทดลอง"></label>
+     <div class="pair"><label>อาชีพ<select id="cls"></select></label><label>เลเวล<input id="level" type="number" value="20" min="1" max="60"></label></div>
+    </fieldset>
+    <p id="selected-profile" hidden></p>
+    <button type="submit" value="create">สร้างห้องทีม</button>
+    <button type="submit" value="survival">สร้างห้องเอาตัวรอด · 2–10 คน</button>
+    <button type="submit" value="survivalPractice" class="practice">ทดลองเอาตัวรอด 10 คน <small>คุณ 1 คน · คู่แข่งบอท 9 ตัว</small></button>
+    <button type="submit" value="practice" id="practice" class="practice">ทดลอง 5 ต่อ 5 กับบอท <small>เล่นคนเดียว · เพื่อนบอท 4 · คู่แข่งบอท 5</small></button>
+    <div class="join"><input id="code" placeholder="รหัสห้อง 8 ตัว" aria-label="รหัสห้อง" maxlength="8" autocomplete="off" autocapitalize="characters">
+    <button type="submit" value="join">เข้าร่วมห้อง</button></div>
+   </form>
+  </div>
+  <div id="room" class="panel" hidden>
+   <div class="room-title"><div>รหัสห้อง <strong id="room-code"></strong></div><button id="copy" class="secondary">คัดลอกลิงก์</button></div>
+   <div id="rosters" class="pair"></div>
+   <div class="pair"><button id="ready">ยืนยันพร้อม</button><button id="start">เปิดประตูสนาม</button></div>
+   <button id="leave" class="secondary">ออกจากห้อง</button>
+  </div>
+  <p id="notice" role="status"></p>
+  <a id="country-return" hidden>กลับแผนที่ประเทศ</a>
+  <footer>ทีมละ 1–5 คน · 12 นาที · ฐานย่อย 10 คะแนน · ฐานใหญ่ 15 คะแนน</footer>
+ </main>
+ <section id="arena" hidden aria-label="สนามโคลอสเซียม">
+  <canvas id="world" aria-label="สนามเขาวงกต"></canvas>
+  <div id="scoreboard">
+   <div class="blue"><small id="blue-label">ไพลิน</small><strong id="blue">100</strong></div>
+   <time id="clock">12:00</time>
+   <div class="red"><small id="red-label">ทับทิม</small><strong id="red">100</strong></div>
+  </div>
+  <div id="signal" role="status" hidden></div>
+  <button id="map" class="map" aria-label="ขยายมินิแมป"><canvas id="mini"></canvas><span>แผนที่สนาม ↗</span></button>
+  <div id="objectives">
+   <span id="chest-count"></span><span id="boss-clock"></span>
+   <details id="survival-standings" hidden>
+    <summary id="survival-points">คะแนนคุณ 0</summary>
+    <ol id="survival-ranks" aria-label="อันดับคะแนนผู้รอด"></ol>
+   </details>
+   <time id="elimination-clock" hidden></time>
+   <section class="team-vitals" aria-label="HP ทีมเรา">
+    <strong id="vitals-label">HP ทีมเรา</strong><ul id="team-hp"></ul><span id="own-mp"></span>
+   </section>
+   <button id="leave-practice" class="secondary" hidden>ออกจากโหมดทดลอง</button>
+  </div>
+  <dialog id="large-map"><form method="dialog"><button class="secondary" aria-label="ปิดแผนที่">✕</button></form>
+   <h2>แผนที่สนาม</h2><canvas id="full-map"></canvas>
+   <p id="map-legend">◆ ฐานใหญ่ · □ ฐานย่อย · ● ทีมเรา · ◎ ตำแหน่งคุณ</p>
+   <p id="map-chests"></p>
+  </dialog>
+  <p id="boss-announcement" role="status"></p>
+  <p id="event" role="status"></p>
+  <div id="stick" aria-label="จอยเดิน"><div id="thumb"></div></div>
+  <button id="raid" hidden>จู่โจมฐาน</button>
+  <section id="battle" hidden aria-label="ฉากต่อสู้"></section>
+  <div id="battle-vfx" aria-hidden="true"></div>
+  <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
+ </section>
+ <script type="module" src="./client.mjs"></script>
+</body>
+</html>

@@ -3889,7 +3889,9 @@ const cwSaveBase=saveGame_;saveGame_=function(d){
 };
 const cwLoadBase=loadGame_;loadGame_=function(d){const result=JSON.parse(cwLoadBase(d).getContent());if(result.ok){const m=cwMember(code_(d.code));if(m){const data=JSON.parse(result.data);data.P.country=m.country;result.data=JSON.stringify(data);}}return json_(result);};
 
-return {dispatch(packet){if(packet?.action==='country_job_tick'&&packet._internalCountryJob===true){cwTick();return {ok:true};}if(/^(country_|mail_)/.test(packet?.action||''))return cwDispatch(packet);if(packet?.action==='account_retire_check'){try{const auth=pvpSaveAuth_(packet);if(pvpFindActive_(auth.code)||wbExisting_(auth.code))return {ok:false,error:'finish other battle'};return {ok:true};}catch(e){return {ok:false,error:e.message||String(e)};}}return JSON.parse((packet===null?doGet():doPost({postData:{contents:JSON.stringify(packet)}})).getContent());}};
+return {colosseum:()=>({profile:pvpTeam_,gear:npcEq,shadow:wildUnit,rareBeasts:()=>gachaPools().rare,skill:pvpSkill,act,turnStart,takeFreeForm,auto:pvpAutoChoice_,
+ career:cls=>pvpOwn_(CLS,cls)?{base:baseOf(cls),name:CLS[cls].n}:null,childrenOf,
+ bind(battle){S={P:{gold:0},battle};},speed:u=>eff(u,'spd'),cost:costOf,cooldown:cooldownOf}),dispatch(packet){if(packet?.action==='country_job_tick'&&packet._internalCountryJob===true){cwTick();return {ok:true};}if(/^(country_|mail_)/.test(packet?.action||''))return cwDispatch(packet);if(packet?.action==='account_retire_check'){try{const auth=pvpSaveAuth_(packet);if(pvpFindActive_(auth.code)||wbExisting_(auth.code))return {ok:false,error:'finish other battle'};return {ok:true};}catch(e){return {ok:false,error:e.message||String(e)};}}return JSON.parse((packet===null?doGet():doPost({postData:{contents:JSON.stringify(packet)}})).getContent());}};
 }
 
 const SB_TABLES=['Leaderboard','Saves','PVPRooms','PVPCommands','Camps','CampTransfers','WorldRooms','WorldEntries','WorldRewards','PvpWagers','Coupons','PlayerDirectory','CouponCredits','GachaTransactions','Friends','FriendChallenges','GuildState'];
@@ -3953,6 +3955,10 @@ function createGameService({rpc,hash=sbHash,utilities=createUtilities(s=>sha256(
 
 
 
+if(typeof window==='undefined'){
+ globalThis.SoulbeastColosseumEngine=()=>createEngine(createWorkbook(),createUtilities(()=>{throw Error('Account operations are disabled');},()=>crypto.randomUUID())).colosseum();
+ return;
+}
 const workbookKey='soulbeast-walk-war-workbook-v1',code='WALKWARPREVIEW01',pin='123456';
 let queue=Promise.resolve();
 async function run(P,packet){
