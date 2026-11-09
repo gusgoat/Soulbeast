@@ -7,7 +7,7 @@
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
  <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=public-rooms-1">
+ <link rel="stylesheet" href="./style.css?v=bot-lobbies-1">
 </head>
 <body>
  <main id="lobby">
@@ -75,11 +75,12 @@
   <p id="boss-announcement" role="status"></p>
   <p id="event" role="status"></p>
   <div id="stick" aria-label="จอยเดิน"><div id="thumb"></div></div>
+  <button id="walk-sound" class="secondary" type="button" aria-label="เสียงโคลอสเซียม" hidden></button>
   <button id="raid" hidden>จู่โจมฐาน</button>
   <section id="battle" hidden aria-label="ฉากต่อสู้"></section>
   <div id="battle-vfx" aria-hidden="true"></div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=public-rooms-1"></script>
+ <script type="module" src="./client.mjs?v=bot-lobbies-1"></script>
 </body>
 </html>

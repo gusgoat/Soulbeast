@@ -39,7 +39,7 @@ export function serve({loadCharacter=null,siteOrigin=null,lobbyReconnectMs=LOBBY
     room.players=room.players.filter(p=>p.connected||now-(p.disconnectedAt??now)<lobbyReconnectMs);
     if(room.players.length!==before)changed.add(room);
    }
-   if((room.phase==='lobby'&&(now-room.created>LOBBY_TTL||room.players.length===0))||
+   if((room.phase==='lobby'&&(now-room.created>LOBBY_TTL||!room.host))||
       (room.phase==='finished'&&now-room.finishedAt>FINISH_TTL)){
     closeRoom(room);
     continue;
@@ -103,13 +103,13 @@ export function serve({loadCharacter=null,siteOrigin=null,lobbyReconnectMs=LOBBY
       peer.player=null;peer.room=null;
       send(peer,{type:'left'});
       ws.close(1000,'left');
-      if(!room.players.length)closeRoom(room);
+      if(!room.host)closeRoom(room);
       else for(const q of peers)if(q.room===room)push(q,now);
       return;
      }
      room.command(peer.player,m,now);
      if(m.type==='chest')send(peer,{type:'chest-result',id:m.id});
-     if(room.eventSerial!==serial||room.phase!==phase)for(const q of peers)if(q.room===room)push(q,now);
+     if(phase==='lobby'||room.eventSerial!==serial||room.phase!==phase)for(const q of peers)if(q.room===room)push(q,now);
      return;
     }
     let character=null;

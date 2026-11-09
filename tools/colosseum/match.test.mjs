@@ -20,6 +20,37 @@ function checkAura(unit,reference,active){
  }
 }
 
+Deno.test('the host fills team and survival vacancies with ready bots without replacing human seats',()=>{
+ const {r,p}=match();
+ const [host,guest]=p;
+ r.command(guest,{type:'team',side:0},0);
+ let rejected=false;
+ try{r.command(guest,{type:'addBot',side:1},0);}catch{rejected=true;}
+ ok(rejected);
+ for(let i=0;i<2;i++)r.command(host,{type:'addBot',side:1},0);
+ const bots=r.players.filter(u=>u.bot);
+ eq(bots.map(u=>[u.side,u.lv,u.ready]),[[1,host.lv,true],[1,host.lv,true]]);
+ eq(r.snapshot(host,0).canManageBots,true);
+ eq(r.snapshot(guest,0).canManageBots,false);
+ start(r,p);
+ eq(r.phase,'match');
+
+ const solo=new Match('SURVIVAL',0,()=>.5,'survival');
+ const owner=solo.join({name:'Host',cls:'mage',lv:42});
+ for(let i=0;i<9;i++)solo.command(owner,{type:'addBot'},0);
+ const generated=solo.players.filter(u=>u.bot);
+ ok(new Set(generated.map(u=>u.baseCls)).size>=6);
+ ok(new Set(generated.flatMap(u=>u.bot.loadout.pets.map(p=>p.sp))).size>=9);
+ ok(new Set(generated.map(u=>u.bot.loadout.eq.weapon)).size>=5);
+ for(const u of generated)ok(demoProfile(u,0).some(p=>p.sp));
+ rejected=false;
+ try{solo.command(owner,{type:'addBot'},0);}catch{rejected=true;}
+ ok(rejected);
+ solo.command(owner,{type:'removeBot',id:generated[0].id},0);
+ eq(solo.players.length,9);
+ eq(solo.host,owner.id);
+});
+
 Deno.test('mirror, connected arena, all spawn and base cells accessible',()=>{
  const origin=21*COLS+2;
  for(const [y,row] of maze.entries())for(const [x,open] of row.entries()){

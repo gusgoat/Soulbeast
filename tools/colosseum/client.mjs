@@ -1,10 +1,11 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, distance} from './arena.mjs';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, portraitAtlas, sealerGender} from './scene.mjs?v=career-art';
-import {battlePresentation} from './battle-presentation.mjs';
-import pvpCardArt from './pvp-card-art.mjs';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=career-art';
+import {battlePresentation} from './battle-presentation.mjs?v=battle-parity-1';
+import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
+const battleAsset=path=>path?.replace(/^\/assets\//,assets);
 const $=id=>document.getElementById(id);
 const node=(tag,content,className)=>{
  const e=document.createElement(tag);if(content!=null)e.textContent=content;if(className)e.className=className;return e;
@@ -15,6 +16,7 @@ const mapDialog=$('large-map'), channel='soulbeast-colosseum-session';
 let ws,state,battle,me,local,lastInput='',seq=0,offset=0,stick={x:0,y:0,id:null},retry,packet;
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
 let showBattleLog=false;
+const battleUpdates=[];
 let pendingChest=null, pendingMoves=[], correction=null, oneWay=0, bestRtt=Infinity;
 function acceptPong(message){
  const rtt=performance.now()-message.echo;
@@ -49,7 +51,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=public-rooms-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=bot-lobbies-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -136,21 +138,7 @@ async function connect(payload){
     setTimeout(()=>{if(ws?.readyState===WebSocket.OPEN)$('signal').hidden=true;},1800);
    }else $('notice').textContent=m.message;
   }else if(m.type==='state')applyState(m);
-  else if(m.type==='battle'){
-   if(m.battle?.id!==battle?.id){
-    presentation.setActive(false);
-    showBattleLog=false;
-    delete $('battle').dataset.battleId;
-    delete $('battle').dataset.last;
-   }
-   if(m.battle?.id!==battle?.id||m.battle?.turn!==battle?.turn||m.battle?.auto!==battle?.auto||m.battle?.finished){
-    selected=null;pendingTurn=null;
-   }
-   presentation.holdHp(battle,m.battle);
-   battle=m.battle;battleKey='';
-   if(battle)renderBattle();
-   else hideBattle();
-  }
+  else if(m.type==='battle')receiveBattle(m.battle);
  };
  socket.onclose=event=>{
   if(ws!==socket)return;
@@ -168,11 +156,42 @@ async function connect(payload){
  socket.onerror=()=>{};
  if(useWorker){store(null);send({type:payload.type,character:selectedCharacter});}
 }
+function receiveBattle(next){
+ if(presentation.busy){
+  const queued=battleUpdates.at(-1);
+  if(battleUpdates.length&&queued?.id===next?.id&&queued?.last?.n===next?.last?.n)
+   battleUpdates[battleUpdates.length-1]=next;
+  else battleUpdates.push(next);
+  return;
+ }
+ if(next?.id!==battle?.id){
+  presentation.setActive(false);
+  showBattleLog=false;
+  delete $('battle').dataset.battleId;
+  delete $('battle').dataset.last;
+ }
+ if(next?.id!==battle?.id||next?.turn!==battle?.turn||next?.auto!==battle?.auto||next?.finished){
+  selected=null;pendingTurn=null;
+ }
+ presentation.holdHp(battle,next);
+ battle=next;battleKey='';
+ if(battle)renderBattle();
+ else hideBattle();
+}
+function continueBattle(){
+ if(battleUpdates.length)receiveBattle(battleUpdates.shift());
+ else if(me?.phase!=='battle'||state.phase!=='match')hideBattle();
+ else{battleKey='';renderBattle();}
+}
 function hideBattle(){
+ if(presentation.busy)return;
  $('battle').hidden=true;
  presentation.setActive(false);
 }
 function reset(message='',clearInvite=false){
+ battleUpdates.length=0;
+ presentation.walk(false);
+ presentation.setActive(false);
  hideBattle();
  opening=leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;
  if(clearInvite){
@@ -232,17 +251,15 @@ function applyState(next){
  if(me.phase!=='battle'||state.phase!=='match')hideBattle();
 }
 function renderLobby(){
- const key=JSON.stringify([state.players,state.canStart,state.host]);if(key===lobbyKey)return;lobbyKey=key;
+ const key=JSON.stringify([state.players,state.canStart,state.host,state.canManageBots]);if(key===lobbyKey)return;lobbyKey=key;
  $('room-code').textContent=state.code;
  $('public-room-label').hidden=!state.isPublic;
  const p=own();
  if(state.mode==='survival'){
   const box=node('div',null,'roster'), list=node('ul');
   box.append(node('h2',`เอาตัวรอด · ${state.players.length}/10 คน`),list);
-  for(const u of state.players){
-   const li=node('li',`${u.name} · Lv ${u.lv}${u.ready?' ✓':''}${u.connected?'':' · หลุด'}`);
-   li.dataset.ready=String(u.ready);list.append(li);
-  }
+  list.append(...state.players.map(lobbySeat));
+  if(state.canManageBots)box.append(addBotButton(null,state.players.length>=10));
   $('rosters').replaceChildren(box);$('rosters').classList.add('survival');
  }else{
  $('rosters').classList.remove('survival');
@@ -250,11 +267,9 @@ function renderLobby(){
   const list=state.players.filter(u=>u.side===i), box=node('div',null,'roster');box.style.setProperty('--team',COLORS[i]);
   box.append(node('h2',`${name} · ${list.length}/5`));
   const ul=node('ul');
-  for(const u of list){
-   const li=node('li',`${u.name} · Lv ${u.lv} ${u.ready?' ✓':''}${!u.connected?' · หลุด':''}`);
-   li.title=u.name;li.dataset.ready=String(u.ready);ul.append(li);
-  }
+  ul.append(...list.map(lobbySeat));
   box.append(ul);
+  if(state.canManageBots)box.append(addBotButton(i,list.length>=5));
   if(p.side!==i){
    const btn=node('button',`ย้ายไปทีม${name}`,'secondary');btn.disabled=list.length>=5;btn.onclick=()=>send({type:'team',side:i});box.append(btn);
   }
@@ -264,12 +279,24 @@ function renderLobby(){
  $('ready').textContent=p.ready?'ยกเลิกพร้อม':'ยืนยันพร้อม';
  $('start').hidden=p.id!==state.host;$('start').disabled=!state.canStart;
 }
+function lobbySeat(u){
+ const li=node('li',`${u.name} · Lv ${u.lv}${u.bot?' · '+(u.className||CLASSES[u.baseCls]||''):u.ready?' ✓':''}${u.connected?'':' · หลุด'}`);
+ li.dataset.ready=String(u.ready);
+ if(u.bot&&state.canManageBots){
+  const remove=node('button','เอาออก','secondary remove-bot');
+  remove.setAttribute('aria-label','เอา '+u.name+' ออกจากห้อง');
+  remove.onclick=()=>send({type:'removeBot',id:u.id});
+  li.append(remove);
+ }
+ return li;
+}
+function addBotButton(side,full){
+ const button=node('button',side===null?'เพิ่มบอท':`เพิ่มบอททีม${TEAMS[side]}`,'secondary add-bot');
+ button.disabled=full;
+ button.onclick=()=>send({type:'addBot',side});
+ return button;
+}
 const classEmblems={swordsman:'sword',archer:'bow',mage:'arcane',summoner:'summon'};
-// Portraits are used if a PvP pose fails to load.
-const pvpBeastPortraits={
- kappa:['713641b7a7553676be240c65','461fcea3e3fa6c0c6318da75','12b411b09447cf597f811d0e'],
- griffin:['03b84fa7a9db969df7f0cadd','4bdcac1f711d739ebbdf4bc3','6064ba55eee573df4a91f79d'],
-};
 const statusLabels={burn:'ไฟไหม้',poison:'พิษ',para:'อัมพาต',sleep:'หลับ',freeze:'แช่แข็ง',
  confuse:'สับสน',charm:'หลงเสน่ห์',chill:'หนาวเย็น',static:'ไฟฟ้าสถิต',love:'หลงรัก'};
 function frameArt(unit){
@@ -277,14 +304,12 @@ function frameArt(unit){
  return assets+'ui/element-card-scenes/element-'+(unit.types?.[0]||'normal')+'.webp';
 }
 function combatPose(unit){
+ if(unit.form&&pvpCardArt['form:'+unit.form])return pvpCardArt['form:'+unit.form];
  if(unit.kind==='player'){
-  const key=`${unit.cls}-${sealerGender(unit)}`;
-  const existing=pvpCardArt[key];
-  if(existing)return existing;
-  const pose=phase=>`/assets/beasts/motion/${key}-${phase}-v1.webp`;
-  return {motion:'breathe',idle:pose('idle'),windup:pose('windup'),melee:pose('melee'),hit:pose('hit')};
+  return pvpCardArt[`${unit.cls}-${sealerGender(unit)}`];
  }
- return pvpCardArt[`${unit.sp}:${unit.evo||0}`];
+ const form=unit.evo||0,pose=pvpCardArt[`${unit.sp}:${form}`];
+ return pose||(beastPortraits[unit.sp]?.[form]?undefined:pvpCardArt[`${unit.sp}:0`]);
 }
 function unitCard(unit,current,selectable,choose){
  const card=node(selectable?'button':'div',null,'card');
@@ -293,35 +318,35 @@ function unitCard(unit,current,selectable,choose){
  card.dataset.unitId=unit.id;
  card.dataset.dead=String(unit.hp<=0);
  card.dataset.current=String(unit.id===current);
- card.dataset.frame=unit.kind==='player'?'black':pvpBeastPortraits[unit.sp]?['white','green','blue'][unit.evo||0]||'white':'purple';
+ card.dataset.frame=unit.kind==='player'?'black':beastPortraits[unit.sp]?.length>1?['white','green','blue'][unit.evo||0]||'white':'purple';
  card.style.setProperty('--painted-card-bg',`url("${frameArt(unit)}")`);
  if(selectable){card.classList.add('battle-target');card.onclick=choose;}
  const face=node('span',null,'battle-face');
  const pose=combatPose(unit);
- const atlas=pose?null:portraitAtlas(unit);
- const art=node(atlas?'span':'img',null,atlas?'atlas-portrait':null);
- if(atlas){
-  art.style.backgroundImage=`url("${portrait(unit)}")`;
-  art.style.backgroundSize='400% 400%';
-  art.style.backgroundPosition=`${atlas.x}% ${atlas.y}%`;
- }else{
-  const portraits=pvpBeastPortraits[unit.sp];
-  const asset=portraits?.[unit.evo||0]||portraits?.[0];
-  const fallback=asset?assets+'media/'+asset+'.webp':portrait(unit);
-  art.src=pose?.idle?.replace(/^\/assets\//,assets)||fallback;
-  art.alt='';
-  if(pose){
-   art.dataset.pvpIdle=pose.motion;
-   art.dataset.pose='idle';
-   for(const phase of ['idle','melee','windup','hit'])if(pose[phase])art.dataset[phase]=pose[phase].replace(/^\/assets\//,assets);
-   art.dataset.power=pose.idle.endsWith('-idle-v1.webp')?pose.idle.replace(/^\/assets\//,assets).replace('-idle-v1.webp','-power-v1.webp'):assets+'portraits/motion/summoner-male-power-front-v2.webp';
-  }
-  art.onerror=()=>{
-   delete art.dataset.pvpIdle;
-   if(art.getAttribute('src')===fallback){art.onerror=null;art.removeAttribute('src');}
-   else art.src=fallback;
-  };
+ const art=node('img');
+ const portraits=beastPortraits[unit.sp];
+ const fallback=unit.sp?battleAsset(portraits?.[unit.evo||0]||portraits?.[0]):portrait(unit);
+ const source=battleAsset(pose?.idle)||fallback;
+ art.alt='';
+ if(source)art.src=source;
+ if(pose?.idle){
+  art.dataset.pvpIdle=pose.motion||'breathe';
+  art.dataset.pose='idle';
+  for(const phase of ['idle','melee','windup','hit','threat','power','meleeEffect'])
+   if(pose[phase])art.dataset[phase]=battleAsset(pose[phase]);
+  if(pose.origin)art.dataset.origin=pose.origin.join(',');
+  if(pose.windupDuration)art.dataset.windupDuration=pose.windupDuration;
  }
+ art.onerror=()=>{
+  const phase=art.dataset.pose;
+  if(phase&&phase!=='idle'){
+   delete art.dataset[phase];art.dataset.pose='idle';art.src=art.dataset.idle;
+  }else{
+   delete art.dataset.pvpIdle;art.onerror=null;
+   if(fallback&&art.getAttribute('src')!==fallback)art.src=fallback;
+   else art.removeAttribute('src');
+  }
+ };
  face.append(art);
  const name=node('b',unit.name);
  const meters=[['HP',unit.hp,unit.maxHp],['MP',unit.mp,unit.maxMp]].map(([label,value,max])=>{
@@ -362,16 +387,16 @@ function skillButton(skill,enabled,onClick){
  return button;
 }
 function renderBattle(){
- if(!battle||me?.phase!=='battle'||state.phase!=='match')return;
- const b=battle, can=b.commands.length>0&&now>=b.openAt&&now<b.deadline&&pendingTurn!==b.turn;
+ const panel=$('battle'),inCombat=me?.phase==='battle'&&state?.phase==='match';
+ if(!battle||(!inCombat&&panel.hidden))return;
+ const b=battle,effectKey=`${b.id}:${b.last?.n??0}`,playEffect=panel.dataset.last!==effectKey&&!!b.last;
+ const can=inCombat&&!playEffect&&!presentation.busy&&!battleUpdates.length&&b.commands.length>0&&now>=b.openAt&&now<b.deadline&&pendingTurn!==b.turn;
  const inFog=!insideFogSafe(state.zone,me.x,me.y);
  const key=`${b.id}:${b.turn}:${b.last?.n}:${b.finished}:${b.auto}:${can}:${selected?.id}:${pendingTurn}:${inFog}`;
  if(battleKey===key)return;
- const panel=$('battle');
  const first=panel.dataset.battleId!==b.id;
  const previousStage=panel.querySelector('.battle-stage')?.scrollTop||0;
  const previousCommands=panel.querySelector('.commands')?.scrollTop||0;
- const effectKey=`${b.id}:${b.last?.n??0}`, playEffect=$('battle').dataset.last!==effectKey&&!!b.last;
  battleKey=key;panel.dataset.last=effectKey;panel.dataset.battleId=b.id;panel.hidden=false;
  presentation.setActive(true);
  const isPvp=b.teams[1].length>0;
@@ -424,6 +449,7 @@ function renderBattle(){
  soundButton.setAttribute('aria-pressed',String(presentation.enabled));
  soundButton.onclick=()=>{
   presentation.toggle();
+  syncWalkSound();
   soundButton.textContent=presentation.enabled?'ปิดเสียง':'เปิดเสียง';
   soundButton.setAttribute('aria-pressed',String(presentation.enabled));
  };
@@ -465,9 +491,10 @@ function renderBattle(){
  presentation.syncPoses();
  if(!first)stage.scrollTop=previousStage;
  if(!first&&!selected)cmds.scrollTop=previousCommands;
- if(playEffect)presentation.action(b.last,b.effects||[],b.fx||[],()=>{
+ if(playEffect)presentation.action(b.last,b.effects||[],b.fx||[],b.finished,()=>{
   battleKey='';renderBattle();
- });
+ },continueBattle);
+ else if(battleUpdates.length&&!presentation.busy)continueBattle();
 }
 
 for(const [id,name] of Object.entries(CLASSES))$('cls').add(new Option(name,id));
@@ -610,7 +637,9 @@ function frame(t){
  if(state&&local&&state.phase!=='lobby'){
   now=t+offset;
   const solo=state.mode==='survival',zone=state.zone;
+  const startX=local.x,startY=local.y;
   const [dx,dy]=direction();if(dx||dy)walkInArena(scene.arena,zone,local,dx,dy,dt);
+  const stepped=Math.hypot(local.x-startX,local.y-startY)>.02;
   if(correction){
    const weight=Math.min(1,dt*10),cx=correction.x*weight,cy=correction.y*weight;
    const x=local.x+cx,y=local.y+cy;
@@ -639,6 +668,8 @@ function frame(t){
   $('event').textContent=healing?[heal.source,heal.hp?`HP +${heal.hp}`:'',heal.mp?`MP +${heal.mp}`:'',heal.cleansed?'ล้างสถานะผิดปกติ':''].filter(Boolean).join(' · '):event?.text??'';
   const walking=state.phase==='match'&&me.phase==='walk';
   $('stick').hidden=!walking;$('map').hidden=!walking;
+  $('walk-sound').hidden=!walking;
+  presentation.walk(walking,stepped?(scene.arena.bushAt(local)!==null?'leaves':'stone'):null);
   $('objectives').hidden=!walking;
   $('leave-practice').hidden=!state.practice;
   const treasure=`หีบเหลือ ${state.chestsLeft}/${state.chestsTotal??CHEST_COUNT}`;
@@ -654,7 +685,7 @@ function frame(t){
    lastMap=t;
   }
   const ended=state.phase==='finished',dead=me.phase==='dead';
-  $('overlay').hidden=!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
+  $('overlay').hidden=(!$('battle').hidden)||!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
   if(ended||dead){
    if(solo){
     $('overlay-title').textContent=ended?(state.winner===me.id?'คุณรอดเป็นคนสุดท้าย!':state.winnerName?'จบการประลอง':'เสมอ'):'คุณตกรอบ';
@@ -678,5 +709,13 @@ function frame(t){
  }
  requestAnimationFrame(frame);
 }
+function syncWalkSound(){
+ const button=$('walk-sound');
+ button.textContent=presentation.enabled?'🔊':'🔇';
+ button.setAttribute('aria-pressed',String(presentation.enabled));
+ button.title=presentation.enabled?'ปิดเสียงโคลอสเซียม':'เปิดเสียงโคลอสเซียม';
+}
+$('walk-sound').onclick=()=>{presentation.toggle();syncWalkSound();};
+syncWalkSound();
 if(onlineEnabled&&saved())connect(saved());
 requestAnimationFrame(frame);

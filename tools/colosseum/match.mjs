@@ -1,9 +1,9 @@
 import {ASSIST, BASES, BASE_AURA_RANGE, BASE_RAID_LIMIT, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS,
  TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=colosseum-ranges';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=bot-lobbies-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs';
+import {resetBotRoute, stepBot} from './practice.mjs?v=bot-lobbies-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -15,6 +15,7 @@ const SURVIVAL_POINTS={chest:5,player:20,beast:10};
 const count=(r,side)=>r.players.filter(p=>p.side===side).length;
 const safeName=name=>String(name??'').trim().replace(/[\u0000-\u001f\u007f]/g,'').slice(0,20)||'ผู้ผนึก';
 const assert=(ok,message)=>{if(!ok)throw Error(message);};
+const BOT_ROLES=['guard','raider','scout','hunter','escort'];
 const SHADOW_SPAWNS=[
  [8,13,'qilin'],[11,21,'fenrir'],[7,29,'tempest_lynx'],[12,37,'pegasus'],[10,5,'unicorn'],
 ];
@@ -25,17 +26,18 @@ const OBJECT_SITES=maze.flatMap((row,y)=>row.flatMap((walk,x)=>{
 export class Match {
  constructor(code,now,random=Math.random,mode='team'){
   this.code=code;this.created=now;this.players=[];this.score=[100,100];this.phase='lobby';this.events=[];
-  this.battles=new Map();this.shadows=[];this.chests=[];this.bosses=[];this.battleSerial=0;this.eventSerial=0;this.random=random;
+  this.battles=new Map();this.shadows=[];this.chests=[];this.bosses=[];this.battleSerial=0;this.eventSerial=0;this.botSerial=0;this.random=random;
   this.solo=mode==='survival';
   this.arena=this.solo?SURVIVAL_ARENA:TEAM_ARENA;
   this.sites=this.solo?SURVIVAL_SITES:OBJECT_SITES;
   this.bases=this.solo?[]:BASES.map(base=>({...base,remaining:BASE_RAID_LIMIT}));
   this.traps=createArenaTraps();
  }
- join(profile,character=null){
+ join(profile,character=null,assignedSide=null){
   assert(this.phase==='lobby'&&this.players.length<10,'ห้องเต็มหรือเริ่มแล้ว');
   assert(!character||!this.players.some(p=>p.character?.code===character.code),'ตัวละครนี้อยู่ในห้องแล้ว');
-  const side=this.solo||count(this,0)<=count(this,1)?0:1;
+  const side=this.solo?0:assignedSide??(count(this,0)<=count(this,1)?0:1);
+  assert(this.solo||((side===0||side===1)&&count(this,side)<5),'ทีมนี้เต็มแล้ว');
   const cls=character?.cls||(Object.hasOwn(CLASSES,profile.cls)||profile.botCareer&&careerInfo(profile.cls)?profile.cls:'swordsman');
   const career=careerInfo(cls);
   assert(career,'อาชีพของตัวละครไม่ถูกต้อง');
@@ -47,9 +49,22 @@ export class Match {
   }
   this.players.push(p);return p;
  }
- get host(){return this.players[0]?.id;}
+ get host(){return this.players.find(p=>!p.bot)?.id;}
+ addBot(side,level){
+  assert(this.phase==='lobby'&&this.players.length<10,'ห้องเต็มหรือเริ่มแล้ว');
+  assert(this.solo||((side===0||side===1)&&count(this,side)<5),'ทีมนี้เต็มแล้ว');
+  const others=this.players.filter(p=>p.bot),teammates=others.filter(p=>p.side===side);
+  const role=BOT_ROLES.find(role=>!teammates.some(p=>p.bot.role===role))||BOT_ROLES[others.length%BOT_ROLES.length];
+  const loadout=botLoadout('บอท '+(this.botSerial+1),level,others,this.random);
+  const bot=this.join({...loadout,botCareer:true},null,side);
+  this.botSerial++;
+  bot.gender=loadout.gender;
+  bot.ready=true;
+  bot.bot={loadout,role,patrol:0,lane:Math.floor(this.random()*2),routeSeed:Math.floor(this.random()*4096)};
+  return bot;
+ }
  canStart(){
-  return this.phase==='lobby'&&(this.solo?this.players.length>=2:count(this,0)>0&&count(this,0)===count(this,1))&&this.players.every(p=>p.ready&&p.connected);
+  return this.phase==='lobby'&&Boolean(this.host)&&(this.solo?this.players.length>=2:count(this,0)>0&&count(this,0)===count(this,1))&&this.players.every(p=>p.ready&&p.connected);
  }
  note(text,now,type='activity'){
   this.events.push({id:++this.eventSerial,text,at:now,type});if(this.events.length>6)this.events.shift();
@@ -172,6 +187,18 @@ export class Match {
   if(this.phase==='lobby'){
    if(m.type==='leave'){this.players=this.players.filter(x=>x!==p);return;}
    if(m.type==='ready'){p.ready=Boolean(m.ready);return;}
+   if(m.type==='addBot'||m.type==='removeBot'){
+    assert(p.id===this.host,'หัวหน้าห้องเท่านั้นที่จัดบอทได้');
+    if(m.type==='addBot'){
+     assert(this.solo||m.side===0||m.side===1,'เลือกทีมของบอทก่อน');
+     this.addBot(this.solo?0:m.side,p.lv);
+    }else{
+     const bot=this.players.find(q=>q.bot&&q.id===m.id);
+     assert(bot,'ไม่พบบอทในห้อง');
+     this.players=this.players.filter(q=>q!==bot);
+    }
+    return;
+   }
    if(m.type==='team'){
     assert(!this.solo,'โหมดเอาตัวรอดไม่มีทีม');
     assert(m.side===0||m.side===1,'เลือกทีมไม่ถูกต้อง');
@@ -494,7 +521,8 @@ export class Match {
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
     ...(!this.solo&&ally&&!visible&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });
-  return {type:'state',me:p.id,code:this.code,phase:this.phase,practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
+  return {type:'state',me:p.id,code:this.code,phase:this.phase,practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),
+   ...(this.phase==='lobby'?{canManageBots:this.host===p.id}:{}),score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
    ...(this.solo?{mode:'survival',zone:this.zone,survivors:this.players.filter(player=>player.phase!=='dead').length,
     nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,eliminationCause:p.eliminationCause,
     winnerName:this.players.find(player=>player.id===this.winner)?.name}:{}),

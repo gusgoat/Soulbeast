@@ -97,9 +97,14 @@ Deno.test('public lobbies reuse a character seat, confirm leaving and expire dis
   const b=await enter('player-b',{type:'join',code:first.room});
   const joined=await wait(b,m=>m.type==='state'&&m.players.length===2);
   eq(joined.code,first.room);
+  b.send({type:'addBot',side:0});
+  eq((await wait(b,m=>m.type==='error'&&m.action==='addBot')).message,'หัวหน้าห้องเท่านั้นที่จัดบอทได้');
+  duplicate.send({type:'addBot',side:1});
+  const withBot=await wait(b,m=>m.type==='state'&&m.players.some(p=>p.bot));
+  eq(withBot.players.filter(p=>p.bot).map(p=>[p.side,p.lv,p.ready]),[[1,character.lv,true]]);
   duplicate.send({type:'leave'});
   await wait(duplicate,m=>m.type==='left');
-  const promoted=await wait(b,m=>m.type==='state'&&m.players.length===1);
+  const promoted=await wait(b,m=>m.type==='state'&&m.canManageBots&&m.players.some(p=>p.bot));
   eq(promoted.host,joined.me);
   b.close();
   await new Promise(resolve=>setTimeout(resolve,450));

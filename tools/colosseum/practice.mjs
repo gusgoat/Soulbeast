@@ -1,80 +1,79 @@
-import {CHEST_TARGET, COLS, FLAT, RAID_TARGET, SPEED, TEAM_ARENA, canSeeOpponent, cellCenter, clearPath, distance, indexAt, nextCell} from './arena.mjs';
+import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, SPEED, TEAM_ARENA, canSeeOpponent, cellCenter, distance, indexAt, nextCell} from './arena.mjs';
+import {inSight} from './sight.mjs';
 import {fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {botCareer} from './combat.mjs';
-
-const CLASS_BY_SEAT = ['swordsman', 'archer', 'mage', 'summoner', 'swordsman'];
-const BOT_NAMES = [
- ['อรุณ', 'ลูน่า', 'นภา', 'วายุ', 'ธารา'],
- ['ไอริส', 'ราตรี', 'อัคคี', 'พราย', 'ศิลา'],
-];
-const ROLE_BY_SEAT = ['guard', 'raider', 'scout', 'raider', 'hunter'];
 
 export function startPractice(match, profile, now, character=null) {
  const player = match.join(profile,character);
  player.ready = true;
- for (let i = 1; i < 10; i++) {
-  // Alternate name pools for variety. Team practice also uses alternating sides.
-  const side = i % 2;
-  const seat = Math.floor(i / 2);
-  const bot = match.join({
-   name: BOT_NAMES[side][seat],
-   cls: botCareer(seat === 0 ? player.cls : CLASS_BY_SEAT[seat],player.lv,i),
-   botCareer: true,
-   lv: player.lv,
-  });
-  bot.ready = true;
-  bot.bot = {role: ROLE_BY_SEAT[seat], seat, patrol: 0};
- }
+ for (let i = 1; i < 10; i++) match.addBot(match.solo?0:i%2,player.lv);
  match.practice = true;
  match.start(now);
  return player;
 }
 
-function patrolPoint(bot) {
- const points = [[9,13], [15,6], [9,29], [15,38]];
- const [x, y] = points[bot.bot.patrol % points.length];
- return cellCenter(bot.side === 0 ? x : COLS - 1 - x, y);
+const patrolTiles=TEAM_ARENA.maze.flatMap((row,y)=>row.flatMap((open,x)=>{
+ const point=cellCenter(x,y);
+ return open&&TEAM_ARENA.fits(point.x,point.y)?[{...point,col:x,row:y}]:[];
+}));
+const nearestTo=(bot,points)=>points.reduce((best,p)=>!best||distance(bot,p)<distance(bot,best)?p:best,null);
+function patrolPoint(bot){
+ const brain=bot.bot,upper=(brain.lane+Math.floor(brain.patrol/2))%2===0;
+ const guard=brain.role==='guard';
+ const points=patrolTiles.filter(p=>{
+  const col=bot.side===0?p.col:COLS-1-p.col;
+  return (upper?p.row<17:p.row>25)&&col>=3&&col<=(guard?12:Math.floor(COLS*.63));
+ });
+ return points[(brain.routeSeed+brain.patrol*19)%points.length];
 }
 
-function chooseObjective(match, bot) {
- const {role, seat} = bot.bot;
- if (role === 'guard') {
-  const opponent = match.players.find(player => player.side !== bot.side && player.phase === 'walk' &&
-   player.connected && distance(bot, player) <= 550 && canSeeOpponent(bot, player) && clearPath(bot, player));
-  if (opponent) return {type: 'intercept', point: opponent};
-  const x = bot.bot.patrol % 2 === 0 ? 6 : 10;
-  return {type: 'patrol', point: cellCenter(bot.side === 0 ? x : COLS - 1 - x, 21)};
+function chooseObjective(match,bot,now){
+ const {role,lane,patrol,skipPoint}=bot.bot;
+ const pick=points=>nearestTo(bot,points.filter(p=>p!==skipPoint||now>=bot.bot.skipUntil));
+ const own=match.bases.filter(base=>base.side===bot.side&&base.remaining>0);
+ const low=bot.hp<bot.maxHp*.58||bot.mp<bot.maxMp*.34,afflicted=Object.keys(bot.ailments).length>0;
+ const heal=pick(low?own:afflicted?own.filter(base=>base.main&&distance(bot,base)<900):[]);
+ if(heal)return {type:'healBase',point:heal};
+
+ const visible=p=>inSight(bot,p)&&canSeeOpponent(bot,p);
+ const opponents=match.players.filter(p=>p.side!==bot.side&&p.connected&&p.phase==='walk'&&now>=p.safeUntil&&visible(p));
+ const allies=match.players.filter(p=>p!==bot&&p.side===bot.side&&p.connected&&p.phase==='walk');
+ const opponent=pick(opponents);
+ if(opponent&&(role==='guard'||role==='escort'||role==='hunter'&&bot.hp>bot.maxHp*.78))
+  return {type:'intercept',point:opponent};
+
+ const active=p=>p.phase==='walk'&&!p.claimed&&now>=(p.safeUntil||0)&&visible(p);
+ const boss=role==='hunter'&&pick(match.bosses.filter(active));
+ if(boss)return {type:'hunt',point:boss};
+ const chest=pick(match.chests.filter(p=>!p.opened&&visible(p)&&(role!=='guard'||distance(bot,p)<160)));
+ if(chest)return {type:'chest',point:chest};
+ const shadow=role==='hunter'&&pick(match.shadows.filter(active));
+ if(shadow)return {type:'hunt',point:shadow};
+
+ if(role==='escort'){
+  const partner=pick(allies.filter(p=>!p.bot&&distance(bot,p)>180&&distance(bot,p)<720));
+  if(partner)return {type:'escort',point:partner};
  }
- // Scouts explore, while hunters divert to a nearby boss. Raiders split
- // between the upper and lower routes so a whole team does not move as one.
- if (role === 'hunter') {
-  const boss = match.bosses.find(candidate => candidate.phase === 'walk' && distance(bot, candidate) <= 1100);
-  if (boss) return {type: 'boss', point: boss};
+ if(role==='raider'||role==='scout'&&patrol%4===3){
+  const targets=match.bases.filter(base=>base.side!==bot.side&&base.remaining>0);
+  const preferred=targets.filter(base=>base.id===`${1-bot.side}-${lane===0?1:3}`);
+  const raid=pick(preferred)||pick(targets);
+  if(raid)return {type:'raid',point:raid};
  }
- if (role === 'scout' || role === 'hunter') {
-  const chests = match.chests.filter(chest => !chest.opened && distance(bot, chest) <= 1650);
-  chests.sort((a, b) => distance(bot, a) - distance(bot, b));
-  if (chests.length) return {type: 'chest', point: chests[0]};
- }
- if (role === 'scout' && bot.bot.patrol % 3 !== 2) return {type: 'patrol', point: patrolPoint(bot)};
- const baseIndex = role === 'raider' ? (seat === 1 ? 1 : 3) : 2;
- const targets=match.bases.filter(base=>base.side!==bot.side&&base.remaining>0);
- const base=targets.find(base=>base.id===`${1-bot.side}-${baseIndex}`)||
-  targets.sort((a,b)=>distance(bot,a)-distance(bot,b))[0];
- return base?{type:'raid',point:base}:{type:'patrol',point:patrolPoint(bot)};
+ return {type:'patrol',point:patrolPoint(bot)};
 }
 
 function currentObjective(match, bot, now) {
  const brain = bot.bot;
  const goal = brain.goal;
  const expired = goal?.type === 'chest' && goal.point.opened ||
-  goal?.type === 'raid' && !goal.point.remaining ||
-  goal?.type === 'boss' && (goal.point.claimed || goal.point.phase !== 'walk') ||
-  goal?.type === 'intercept' && (goal.point.phase !== 'walk' || !canSeeOpponent(bot, goal.point));
+  ['raid','healBase'].includes(goal?.type) && !goal.point.remaining ||
+  goal?.type === 'hunt' && (goal.point.claimed || goal.point.phase !== 'walk') ||
+  goal?.type === 'intercept' && (goal.point.phase !== 'walk' || !canSeeOpponent(bot, goal.point)) ||
+  goal?.type === 'escort' && (goal.point.phase !== 'walk' || distance(bot,goal.point)<145);
  if (!goal || expired || now >= brain.planAt) {
   if (expired) brain.waypoint = null;
-  brain.goal = chooseObjective(match, bot);
-  brain.planAt = now + 1800;
+  brain.goal = chooseObjective(match,bot,now);
+  brain.planAt = now+1200+brain.routeSeed%700;
  }
  return brain.goal;
 }
@@ -190,11 +189,12 @@ export function stepBot(match, bot, now, dt) {
  if (match.solo) return stepSurvivalBot(match,bot,now,dt);
  const brain = bot.bot;
  const {type, point} = currentObjective(match, bot, now);
- const canInteract = type === 'raid' ? RAID_TARGET(bot, point) : type === 'chest' && CHEST_TARGET(bot, point);
+ const canInteract = type==='raid'?RAID_TARGET(bot,point):type==='healBase'?HEAL_TARGET(bot,point):
+  type==='chest'&&CHEST_TARGET(bot,point);
  if (canInteract) {
   match.command(bot, {type, id: point.id}, now);
   brain.goal = null;
-  if (brain.role === 'scout' && type === 'raid') brain.patrol++;
+  if(type==='raid'){brain.lane=1-brain.lane;brain.patrol++;}
   return;
  }
  if (type === 'patrol' && distance(bot, point) < 12) {
@@ -202,7 +202,13 @@ export function stepBot(match, bot, now, dt) {
   brain.goal = null;
   return;
  }
+ const x=bot.x,y=bot.y;
  walkToward(bot, point, dt);
+ if(Math.hypot(bot.x-x,bot.y-y)>.02)brain.blockedAt=null;
+ else if(now-(brain.blockedAt??=now)>700){
+  brain.skipPoint=point;brain.skipUntil=now+3500;
+  brain.patrol++;brain.goal=null;brain.waypoint=null;brain.blockedAt=null;
+ }
 }
 
 export function resetBotRoute(bot) {
@@ -210,4 +216,5 @@ export function resetBotRoute(bot) {
  bot.bot.waypoint = null;
  bot.bot.goal = null;
  bot.bot.retryAt = 0;
+ bot.bot.blockedAt = null;
 }

@@ -3889,7 +3889,19 @@ const cwSaveBase=saveGame_;saveGame_=function(d){
 };
 const cwLoadBase=loadGame_;loadGame_=function(d){const result=JSON.parse(cwLoadBase(d).getContent());if(result.ok){const m=cwMember(code_(d.code));if(m){const data=JSON.parse(result.data);data.P.country=m.country;result.data=JSON.stringify(data);}}return json_(result);};
 
-return {colosseum:()=>({profile:pvpTeam_,gear:npcEq,shadow:wildUnit,rareBeasts:()=>gachaPools().rare,skill:pvpSkill,act,turnStart,takeFreeForm,auto:pvpAutoChoice_,
+function colosseumBotEquipment(cls,lv,random){
+ const equipment=npcEq(cls,lv),weapon=clsWeapon(cls);
+ for(const [slot] of SLOTS){
+  if(!equipment[slot]&&random()>.55)continue;
+  const eligible=Object.entries(EQ).filter(([,it])=>it.slot===slot&&it.lv<=lv&&it.lv>=lv-18&&
+   !it.legend&&!it.worldLegend&&!it.special&&(slot!=='weapon'||it.wt===weapon));
+  if(eligible.length)equipment[slot]=eligible[Math.floor(random()*eligible.length)][0];
+ }
+ return equipment;
+}
+return {colosseum:()=>({profile:pvpTeam_,gear:npcEq,botEquipment:colosseumBotEquipment,
+ baseCareers:()=>Object.keys(CLS).filter(cls=>baseOf(cls)===cls),petLimit:cls=>Math.min(3,clsSum(cls)),
+ botBeasts:()=>{const {beast,rare}=gachaPools();return [...beast,...rare];},shadow:wildUnit,rareBeasts:()=>gachaPools().rare,skill:pvpSkill,act,turnStart,takeFreeForm,auto:pvpAutoChoice_,
  career:cls=>pvpOwn_(CLS,cls)?{base:baseOf(cls),name:CLS[cls].n}:null,childrenOf,
  bind(battle){S={P:{gold:0},battle};},speed:u=>eff(u,'spd'),cost:costOf,cooldown:cooldownOf}),dispatch(packet){if(packet?.action==='country_job_tick'&&packet._internalCountryJob===true){cwTick();return {ok:true};}if(/^(country_|mail_)/.test(packet?.action||''))return cwDispatch(packet);if(packet?.action==='account_retire_check'){try{const auth=pvpSaveAuth_(packet);if(pvpFindActive_(auth.code)||wbExisting_(auth.code))return {ok:false,error:'finish other battle'};return {ok:true};}catch(e){return {ok:false,error:e.message||String(e)};}}return JSON.parse((packet===null?doGet():doPost({postData:{contents:JSON.stringify(packet)}})).getContent());}};
 }

@@ -1,5 +1,5 @@
-import {Match} from './match.mjs?v=public-rooms-1';
-import {startPractice} from './practice.mjs';
+import {Match} from './match.mjs?v=bot-lobbies-1';
+import {startPractice} from './practice.mjs?v=bot-lobbies-1';
 
 let room,player,timer,last,frame=0,battleKey;
 const send=message=>postMessage(message);

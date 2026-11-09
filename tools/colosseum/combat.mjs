@@ -1,7 +1,6 @@
-import '../hemant-walk-demo/war-engine.generated.js';
+import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-bot-loadouts-1';
 import rareArt from './rare-art.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
-delete globalThis.SoulbeastColosseumEngine;
 const ACT_MS=12_000, SHOW_MS=850;
 const BOT_ACT_MS=500;
 const BASE_AURA_MULTIPLIER=1.2;
@@ -39,6 +38,26 @@ export function botCareer(cls,level,variant){
  const final=core.childrenOf(branch);
  return final[variant%Math.max(1,final.length)]||branch;
 }
+const botClasses=core.baseCareers();
+const botBeasts=core.botBeasts();
+const sample=(list,random)=>list[Math.floor(random()*list.length)];
+export function botLoadout(name,lv,others,random){
+ const baseUsed=new Set(others.map(p=>p.baseCls));
+ const unusedClasses=botClasses.filter(cls=>!baseUsed.has(cls));
+ const base=sample(unusedClasses.length?unusedClasses:botClasses,random);
+ const cls=botCareer(base,lv,Math.floor(random()*144)),gender=random()<.5?'male':'female';
+ const usedBeasts=new Set(others.flatMap(p=>p.bot.loadout.pets.map(pet=>pet.sp)));
+ const pool=botBeasts.filter(sp=>!usedBeasts.has(sp));
+ const pets=[];
+ for(let i=0;i<core.petLimit(cls);i++){
+  const options=(pool.length?pool:botBeasts).filter(sp=>!pets.some(pet=>pet.sp===sp));
+  const sp=sample(options.length?options:botBeasts.filter(id=>!pets.some(pet=>pet.sp===id)),random);
+  pets.push({uid:i+1,sp,lv,pts:{hp:lv-1,spd:lv-1}});
+ }
+ const party=pets.map(pet=>pet.uid);
+ const pts={hp:lv-1,patk:lv-1,matk:lv-1,spd:lv-1};
+ return {name,lv,cls,gender,eq:core.botEquipment(cls,lv,random),pts,pets,party,carried:party.slice()};
+}
 export function bossUnit(p){
  const u=core.shadow(p.sp,p.lv,0);
  const boosts={hp:2,mp:2,pdef:1.5,mdef:1.5,patk:1.5,matk:1.5,spd:1.25};
@@ -49,9 +68,10 @@ export function bossUnit(p){
  return u;
 }
 export function demoProfile(p,seat){
- if(p.character){
-  const {team}=core.profile(structuredClone(p.character),seat);
-  if(['male','female'].includes(p.character.gender))team[0].gender=p.character.gender;
+ const profile=p.character||p.bot?.loadout;
+ if(profile){
+  const {team}=core.profile(structuredClone(profile),seat);
+  if(['male','female'].includes(profile.gender))team[0].gender=profile.gender;
   return team;
  }
  const sp=careerInfo(p.cls)?.base==='summoner'?['kappa','griffin']:['kappa'];

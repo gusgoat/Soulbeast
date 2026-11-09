@@ -14,7 +14,6 @@ export const sealerGender=u=>['male','female'].includes(u.gender)?u.gender:u.cls
 export const portrait=u=>u.sp
  ? rareArt[u.sp]?.portrait?.replace(/^\/assets\//,assets)??assets+'companions/'+u.sp+'.webp'
  : siteAsset(catalog[u.cls]?.[sealerGender(u)]?.portrait);
-export const portraitAtlas=u=>rareArt[u.sp]?.referenceAtlas;
 const atlases=new Map(), beastArt=new Map(), rareAtlases=new Map();
 function getAtlas(player){
  const gender=sealerGender(player);
