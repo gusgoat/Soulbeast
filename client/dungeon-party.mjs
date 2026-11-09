@@ -5,9 +5,10 @@ export function connectDungeonParty({storage=localStorage,session=sessionStorage
  if(!context?.code)throw Error('login_required');
  const client=connectAccounts(()=>{},storage);
  async function call(action,{room=null,ready=null,joinCode=null}={}){
-  const rpc=joinCode?'sb_dungeon_party_join':'sb_dungeon_party_command';
+  const publicAction={createPublic:'create',joinPublic:'join',publicStatus:'status'}[action];
+  const rpc=publicAction?'sb_dungeon_party_public':joinCode?'sb_dungeon_party_join':'sb_dungeon_party_command';
   const actor={p_env:context.environment,p_code:context.code};
-  const body=joinCode?{...actor,p_join_code:joinCode}:{...actor,p_action:action,p_room:room,p_ready:ready};
+  const body=publicAction?{...actor,p_action:publicAction,p_room:room}:joinCode?{...actor,p_join_code:joinCode}:{...actor,p_action:action,p_room:room,p_ready:ready};
   const response=await fetch(accountRealtimeConfig.url+'/rest/v1/rpc/'+rpc,{
    method:'POST',headers:{apikey:accountRealtimeConfig.key,Authorization:'Bearer '+await client.sessions.token(),
     'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(15000)

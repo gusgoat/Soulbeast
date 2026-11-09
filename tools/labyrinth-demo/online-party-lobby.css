@@ -21,3 +21,5 @@ button{min-height:48px;touch-action:manipulation}.primary,#start{background:#665
 .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#leave{grid-column:1/-1;background:#3a2430}#resume{grid-column:1/-1}
 button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #ffdc87;outline-offset:3px}
 [hidden]{display:none!important}
+
+#publicRoomLabel{color:#a6e6cc}

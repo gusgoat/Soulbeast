@@ -7,7 +7,7 @@
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
  <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css">
+ <link rel="stylesheet" href="./style.css?v=public-rooms-1">
 </head>
 <body>
  <main id="lobby">
@@ -22,6 +22,11 @@
      <div class="pair"><label>อาชีพ<select id="cls"></select></label><label>เลเวล<input id="level" type="number" value="20" min="1" max="60"></label></div>
     </fieldset>
     <p id="selected-profile" hidden></p>
+    <fieldset id="public-rooms">
+     <legend>ห้องสาธารณะ</legend>
+     <label>โหมด <select id="public-mode"><option value="team">โหมดทีม</option><option value="survival">โหมดเอาตัวรอด</option></select></label>
+     <div class="pair"><button type="submit" value="createPublic">สร้างห้องสาธารณะ</button><button class="secondary" type="submit" value="joinPublic">เข้าร่วมห้องสาธารณะ</button></div>
+    </fieldset>
     <button type="submit" value="create">สร้างห้องทีม</button>
     <button type="submit" value="survival">สร้างห้องเอาตัวรอด · 2–10 คน</button>
     <button type="submit" value="survivalPractice" class="practice">ทดลองเอาตัวรอด 10 คน <small>คุณ 1 คน · คู่แข่งบอท 9 ตัว</small></button>
@@ -31,6 +36,7 @@
    </form>
   </div>
   <div id="room" class="panel" hidden>
+   <p id="public-room-label" hidden>ห้องสาธารณะ</p>
    <div class="room-title"><div>รหัสห้อง <strong id="room-code"></strong></div><button id="copy" class="secondary">คัดลอกลิงก์</button></div>
    <div id="rosters" class="pair"></div>
    <div class="pair"><button id="ready">ยืนยันพร้อม</button><button id="start">เปิดประตูสนาม</button></div>
@@ -74,6 +80,6 @@
   <div id="battle-vfx" aria-hidden="true"></div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=room-lifecycle-1"></script>
+ <script type="module" src="./client.mjs?v=public-rooms-1"></script>
 </body>
 </html>

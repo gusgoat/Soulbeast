@@ -494,7 +494,7 @@ export class Match {
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
     ...(!this.solo&&ally&&!visible&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });
-  return {type:'state',me:p.id,code:this.code,phase:this.phase,practice:Boolean(this.practice),host:this.host,canStart:this.canStart(),score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
+  return {type:'state',me:p.id,code:this.code,phase:this.phase,practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
    ...(this.solo?{mode:'survival',zone:this.zone,survivors:this.players.filter(player=>player.phase!=='dead').length,
     nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,eliminationCause:p.eliminationCause,
     winnerName:this.players.find(player=>player.id===this.winner)?.name}:{}),

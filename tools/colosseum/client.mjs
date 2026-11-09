@@ -49,7 +49,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=career-art',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=public-rooms-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -234,6 +234,7 @@ function applyState(next){
 function renderLobby(){
  const key=JSON.stringify([state.players,state.canStart,state.host]);if(key===lobbyKey)return;lobbyKey=key;
  $('room-code').textContent=state.code;
+ $('public-room-label').hidden=!state.isPublic;
  const p=own();
  if(state.mode==='survival'){
   const box=node('div',null,'roster'), list=node('ul');
@@ -493,7 +494,7 @@ $('entry-form').onsubmit=event=>{
  if(gameWeb&&!selectedCharacter){location.assign('../../accounts.html');return;}
  if(type==='join'&&!/^[A-F0-9]{8}$/.test(code)){$('notice').textContent='กรอกรหัสห้อง 8 ตัวก่อน';return;}
  if(ws){const old=ws;ws=null;old.close();}
- connect({type,code,name:$('name').value,cls:$('cls').value,lv:$('level').value});
+ connect({type,code,mode:$('public-mode').value,name:$('name').value,cls:$('cls').value,lv:$('level').value});
 };
 $('ready').onclick=()=>{if(!leaving)send({type:'ready',ready:!own()?.ready});};
 $('start').onclick=()=>{if(!leaving)send({type:'start'});};

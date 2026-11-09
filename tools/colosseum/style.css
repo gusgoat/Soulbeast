@@ -154,3 +154,6 @@ dialog p{margin-top:10px;font-size:.82em}
 @media (prefers-reduced-motion:reduce){.battle-fx-impact,.battle-fx-number,.battle-face [data-pvp-idle]{animation:none}}
 
 #demo-profile:not([hidden]){display:grid;gap:.7rem;border:0;padding:0;margin:0;min-width:0}
+
+#public-rooms{display:grid;gap:8px;min-width:0;margin:0;border:1px solid #796746;border-radius:9px;padding:10px}
+#public-room-label{color:#a6e6cc}

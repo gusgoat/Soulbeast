@@ -120,7 +120,7 @@ export function serve({loadCharacter=null,siteOrigin=null,lobbyReconnectMs=LOBBY
      character=entry.character;
     }
     const code=String(m.code||'').trim().toUpperCase();
-    if(character&&['create','survival','join'].includes(m.type)){
+    if(character&&['create','survival','join','createPublic','joinPublic'].includes(m.type)){
      // Opening the arena in another tab must not claim a second seat.
      for(const room of rooms.values()){
       if(room.phase==='finished'||room.practice)continue;
@@ -128,19 +128,26 @@ export function serve({loadCharacter=null,siteOrigin=null,lobbyReconnectMs=LOBBY
       if(existing){assign(peer,room,existing);return;}
      }
     }
+    if(['createPublic','joinPublic'].includes(m.type)&&!['team','survival'].includes(m.mode))throw Error('กรุณาเลือกโหมดการแข่งขัน');
     if(m.type==='resume'){
      const room=rooms.get(code);
      const p=typeof m.token==='string'&&room?.players.find(x=>!x.bot&&x.token===m.token);
      if(!p||(character&&p.character?.code!==character.code))throw Error('ห้องเดิมหมดอายุหรือไม่พบผู้เล่น');
      assign(peer,room,p);
-    }else if(['create','practice','survival','survivalPractice'].includes(m.type)){
+    }else if(['create','practice','survival','survivalPractice','createPublic'].includes(m.type)){
      if(rooms.size>=MAX_ROOMS)throw Error('ห้องเต็มชั่วคราว');
      let key;do{key=crypto.randomUUID().slice(0,8).toUpperCase();}while(rooms.has(key));
      const practice=m.type==='practice'||m.type==='survivalPractice';
-     const survival=m.type==='survival'||m.type==='survivalPractice';
+     const survival=m.type==='survival'||m.type==='survivalPractice'||(m.type==='createPublic'&&m.mode==='survival');
      const room=new Match(key,now,Math.random,survival?'survival':'team');
+     room.isPublic=m.type==='createPublic';
      const p=practice?startPractice(room,m,now,character):room.join(m,character);
      rooms.set(key,room);assign(peer,room,p);
+    }else if(m.type==='joinPublic'){
+     const room=[...rooms.values()].filter(r=>r.isPublic&&r.phase==='lobby'&&r.solo===(m.mode==='survival')&&
+      r.players.length<10&&r.players.every(p=>p.connected)).sort((a,b)=>b.players.length-a.players.length||a.created-b.created)[0];
+     if(!room)throw Error('ยังไม่มีห้องสาธารณะที่ว่างในโหมดนี้ ลองสร้างห้องสาธารณะเพื่อรอผู้เล่นคนอื่น');
+     assign(peer,room,room.join(m,character));
     }else if(m.type==='join'){
      const room=rooms.get(code);if(!room)throw Error('ไม่พบห้อง');
      assign(peer,room,room.join(m,character));

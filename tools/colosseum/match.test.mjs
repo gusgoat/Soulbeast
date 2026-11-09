@@ -389,6 +389,27 @@ Deno.test('two WebSocket sessions join, start, move and resume their own seat',a
   eq(freeForAll.survivors,10);eq(freeForAll.players.filter(p=>p.bot).length,9);
   const exit=new Promise(resolve=>survival.ws.addEventListener('close',resolve,{once:true}));
   survival.send({type:'leavePractice'});eq((await exit).reason,'left');
+  const privateLobby=await open();privateLobby.send({type:'create',name:'Private'});
+  const privateState=await wait(privateLobby,m=>m.type==='state');
+  eq(privateState.isPublic,false);
+  const finder=await open();finder.send({type:'joinPublic',mode:'team',name:'Guest'});
+  await wait(finder,m=>m.type==='error');
+  const teamLobby=await open();teamLobby.send({type:'createPublic',mode:'team',name:'Team host'});
+  const teamState=await wait(teamLobby,m=>m.type==='state');
+  eq(teamState.isPublic,true);
+  const wrongMode=await open();wrongMode.send({type:'joinPublic',mode:'survival',name:'Wrong mode'});
+  await wait(wrongMode,m=>m.type==='error');
+  const survivalLobby=await open();survivalLobby.send({type:'createPublic',mode:'survival',name:'Survival host'});
+  const survivalState=await wait(survivalLobby,m=>m.type==='state');
+  eq(survivalState.mode,'survival');eq(survivalState.isPublic,true);
+  const guest=await open();guest.send({type:'joinPublic',mode:'team',name:'Guest'});
+  eq((await wait(guest,m=>m.type==='welcome')).room,teamState.code);
+  await wait(guest,m=>m.type==='state'&&m.players.length===2);
+  guest.send({type:'ready',ready:true});teamLobby.send({type:'ready',ready:true});
+  await wait(teamLobby,m=>m.canStart);teamLobby.send({type:'start'});
+  await wait(guest,m=>m.phase==='match');
+  const late=await open();late.send({type:'joinPublic',mode:'team',name:'Late'});
+  await wait(late,m=>m.type==='error');
  }finally{
   await Promise.all(sockets.map(ws=>ws.readyState===WebSocket.CLOSED?null:new Promise(resolve=>{ws.addEventListener('close',resolve,{once:true});ws.close();})));
   abort.abort();await server.finished;
