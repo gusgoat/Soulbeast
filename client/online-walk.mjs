@@ -1,6 +1,6 @@
 export {mountSaveNotice} from './walk-save-notice.mjs?v=save-safe-20261106';
 import {mergeWalkPlayer,backupWalkDraft,backupActiveWalk} from './walk-save-merge.mjs?v=save-safe-20261106';
-import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=admin-session-20261107';
+import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=gacha-recovery-1';
 
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
@@ -248,10 +248,22 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
    else await saveWalk();
    const result = await send(action, extra);
    if (draw) {
+    syncRevision();
     const snapshot = JSON.parse(result.data);
-    if (snapshot.P?.code !== context.code || !result.accountSaveAt) throw Error('bad data');
+    const revision = Number(result.accountSaveAt);
+    if (snapshot.P?.code !== context.code || !Number.isFinite(revision) || revision <= 0) throw Error('bad data');
+    if (revision < context.revision) throw Error('gacha stale');
+    const current = JSON.parse(sessionStorage.getItem(playerKey)||'null');
+    if (current?.code !== context.code) throw Error('character_not_owned');
+    const merged = mergeWalkPlayer(context.snapshot.P, current, snapshot.P);
+    if (!merged.ok) {
+     backup(current,'gacha-recovery-conflict');
+     throw Error('save_conflict');
+    }
+    const player = {...merged.player, gsAt:revision};
     context.snapshot = snapshot;
-    sessionStorage.setItem(playerKey, JSON.stringify(snapshot.P));
+    sessionStorage.setItem(playerKey, JSON.stringify(player));
+    result.data = JSON.stringify({...snapshot,P:player});
    }
    if (result.accountSaveAt) {
     context.revision = result.accountSaveAt;

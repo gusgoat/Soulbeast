@@ -3816,7 +3816,7 @@ const WALK_ONLINE=!!sessionStorage.getItem('soulbeast-online-walk-v1');
 const SHEET_URL=String(window.SHEET_URL||'').trim();
 let walkAccountConnection;
 async function getWalkAccountConnection(){
- return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=three-languages-1',location.href).href)).connectOnlineWalk(walkStorage);
+ return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=gacha-recovery-1',location.href).href)).connectOnlineWalk(walkStorage);
 }
 async function walkAccountPost(packet){
  const {action,pin,cpin,...extra}=packet;
@@ -4648,7 +4648,7 @@ function gachaPools(){const items=Object.keys(CON).filter(k=>!CON[k].rareLoot&&C
 function gachaGrant(P,rewards){P.items=P.items||{};P.owned=P.owned||[];P.pets=P.pets||[];P.gachaLegendPets=P.gachaLegendPets||{};for(const r of rewards){if(r.type==='item')P.items[r.key]=(P.items[r.key]||0)+1;else if(r.type==='gear'){P.owned.push(r.key);if(EQ[r.key].legend){P.legend=P.legend||{};P.legend[r.key]=1;}}else{const pet=JSON.parse(JSON.stringify(r.pet));if(P.pets.some(p=>p.uid===pet.uid))throw Error('pet uid collision');P.pets.push(pet);P.seen=P.seen||{};P.caught=P.caught||{};P.seen[pet.sp]=1;P.caught[pet.sp]=1;if(SP[pet.sp].legendary)P.gachaLegendPets[pet.uid]=pet.sp;}}return P;}
 
 const COMMUNITY={busy:false,error:'',friends:[],online:[],incoming:null,serverTime:0,code:'',ready:false,match:null};
-const GACHA={busy:false,coupons:null,totalDraws:0,rarePity:0,legendPity:0,solarPity:0,rewards:[],error:'',pending:null};
+const GACHA={busy:false,coupons:null,totalDraws:0,rarePity:0,legendPity:0,solarPity:0,rewards:[],error:''};
 const ct=(th,en,zh)=>GAME_LANGUAGE==='en'?en:GAME_LANGUAGE==='zh-CN'?zh:th;
 const ctext=(th,en,zh)=>`<span translate="no">${ct(th,en,zh)}</span>`;
 function communityError(message){const errors={
@@ -4671,8 +4671,78 @@ function gachaPendingKey(){
  return 'soulbeast_walk_gacha_pending:'+ctx.environment+':'+ctx.owner+':'+ctx.code;
 }
 function gachaReadPending(){try{const p=JSON.parse((WALK_ONLINE?walkStorage:localStorage).getItem(gachaPendingKey())||'null');return p?.endpoint===SHEET_URL?p:null;}catch(e){return null;}}
-function gachaStorePending(p){GACHA.pending=p;try{const storage=WALK_ONLINE?walkStorage:localStorage;if(p)storage.setItem(gachaPendingKey(),JSON.stringify(p));else storage.removeItem(gachaPendingKey());}catch(e){}}
-async function gachaCall(draw=0){if(GACHA.busy||COMMUNITY.busy||!S.P)return;if(!SHEET_URL&&!WALK_ONLINE){toast(communityError('bad action'));return;}if(communityBattleBusy()){toast(communityError('finish other battle'));return;}GACHA.busy=true;GACHA.error='';if(draw||gachaReadPending()){GACHA.rewards=[];ReleaseGacha.start();}render();try{let pending=gachaReadPending();if(draw||pending){if(!pending){if(WALK_ONLINE){save();await (await getWalkAccountConnection()).flush(true);}else await communitySave();pending={endpoint:SHEET_URL,request:crypto.randomUUID(),count:draw};gachaStorePending(pending);}const r=await lbPost({action:'gacha_draw',gachaRulesVersion:3,...communityAuth(),request:pending.request,count:pending.count});if(!r.ok)throw Error(r.error);communityApplyData(r.data,r.accountSaveAt);Object.assign(GACHA,{coupons:r.coupons,totalDraws:r.totalDraws,rarePity:r.rarePity,legendPity:r.legendPity,solarPity:r.solarPity||0,rewards:(r.rewards||[]).map(r=>r.type==='pet'?{...r,category:SP[r.key].solar?'solarBeast':SP[r.key].legendary?'legendBeast':SP[r.key].rare?'rare':'beast'}:r)});gachaStorePending(null);await ReleaseGacha.finish(GACHA.rewards);}else{if(!WALK_ONLINE)await communitySave();const r=await lbPost({action:'gacha_status',...communityAuth()});if(!r.ok)throw Error(r.error);Object.assign(GACHA,{coupons:r.coupons,totalDraws:r.totalDraws,rarePity:r.rarePity,legendPity:r.legendPity,solarPity:r.solarPity||0});}}catch(e){GACHA.error=communityError(e.message);toast(GACHA.error);}finally{ReleaseGacha.stop();GACHA.busy=false;render();}}
+function gachaStorePending(p){try{const storage=WALK_ONLINE?walkStorage:localStorage;if(p)storage.setItem(gachaPendingKey(),JSON.stringify(p));else storage.removeItem(gachaPendingKey());return true;}catch{return false;}}
+function gachaTemporaryError(error){
+ return [429,502,503,504].includes(error.status)||['account_service_unavailable','busy'].includes(error.message)||error.name==='TypeError';
+}
+async function gachaPost(action,extra={}){
+ const send=async()=>{
+  const result=WALK_ONLINE
+   ?await (await getWalkAccountConnection()).social(action,extra)
+   :await lbPost({action,...communityAuth(),...extra});
+  if(!result.ok)throw Error(result.error);
+  return result;
+ };
+ const started=Date.now();
+ try{return await send();}catch(error){
+  if(!WALK_ONLINE||!gachaTemporaryError(error)||Date.now()-started>5000)throw error;
+  await onlinePause(650);
+  return send();
+ }
+}
+function gachaError(error,pending){
+ if(gachaTemporaryError(error)||['TimeoutError','AbortError'].includes(error.name)){
+  return pending
+   ?ct('ยังไม่ได้รับผลจากเซิร์ฟเวอร์ กดตรวจผลสุ่มที่ค้างเพื่อตรวจรายการเดิมโดยไม่หักคูปองซ้ำ','The server has not returned the result. Recover the pending draw to check the same request without paying again.','服务器尚未返回结果。请恢复原抽奖，不会重复扣券。')
+   :ct('ระบบกาชาตอบกลับช้า กรุณาลองอีกครั้ง','The gachapon service is slow to respond. Please try again.','扭蛋服务响应较慢，请重试。');
+ }
+ if(error.message==='gacha_storage_unavailable')return ct('เกมบันทึกรายการสุ่มในเบราว์เซอร์ไม่ได้ กรุณาอนุญาตให้เว็บไซต์จัดเก็บข้อมูลแล้วลองอีกครั้ง','The browser could not store the draw. Allow site storage and try again.','浏览器无法保存抽奖记录，请允许网站存储后重试。');
+ if(error.message==='save inventory full')return ct('เซฟมีไอเท็มเต็ม กรุณาจัดการไอเท็มก่อนสุ่มอีกครั้ง','The save inventory is full. Free some space before drawing again.','存档背包已满，请整理后重试。');
+ return communityError(error.message);
+}
+async function gachaCall(draw=0){
+ if(GACHA.busy||(!WALK_ONLINE&&COMMUNITY.busy)||!S.P)return;
+ if(!SHEET_URL&&!WALK_ONLINE){toast(communityError('bad action'));return;}
+ if(communityBattleBusy()){toast(communityError('finish other battle'));return;}
+ let pending=gachaReadPending();
+ GACHA.busy=true;
+ GACHA.error='';
+ try{
+  if(draw||pending){GACHA.rewards=[];ReleaseGacha.start();}
+  render();
+  let result;
+  if(draw||pending){
+   if(!pending){
+    if(WALK_ONLINE){save();await (await getWalkAccountConnection()).flush(true);}
+    else await communitySave();
+    const next={endpoint:SHEET_URL,request:crypto.randomUUID(),count:draw};
+    if(!gachaStorePending(next)&&WALK_ONLINE)throw Error('gacha_storage_unavailable');
+    pending=next;
+   }
+   // A new transport request re-reads the durable draw receipt with the latest save.
+   const transport=WALK_ONLINE?{_sbRequest:crypto.randomUUID()}:{};
+   result=await gachaPost('gacha_draw',{gachaRulesVersion:3,request:pending.request,count:pending.count,...transport});
+   communityApplyData(result.data,result.accountSaveAt);
+   GACHA.rewards=(result.rewards||[]).map(r=>r.type==='pet'?{...r,category:SP[r.key].solar?'solarBeast':SP[r.key].legendary?'legendBeast':SP[r.key].rare?'rare':'beast'}:r);
+   gachaStorePending(null);
+   ReleaseGacha.finish(GACHA.rewards);
+  }else{
+   if(!WALK_ONLINE)await communitySave();
+   result=await gachaPost('gacha_status');
+  }
+  const {coupons,totalDraws,rarePity,legendPity,solarPity=0}=result;
+  Object.assign(GACHA,{coupons,totalDraws,rarePity,legendPity,solarPity});
+ }catch(error){
+  // These responses are reached only after the server checks for an existing draw.
+  if(pending&&['not enough coupons','save inventory full'].includes(error.message)){
+   gachaStorePending(null);
+   pending=null;
+   if(error.message==='not enough coupons')GACHA.coupons=null;
+  }
+  GACHA.error=gachaError(error,pending);
+  toast(GACHA.error);
+ }finally{ReleaseGacha.stop();GACHA.busy=false;render();}
+}
 const GACHA_NAMES={item:['ไอเท็มทั่วไป','Common Items','普通物品'],premium:['ไอเท็มราคาแพง','Premium Items','高级物品'],beast:['อสูรทั่วไป','Common Beasts','普通妖兽'],gear:['อุปกรณ์ทั่วไป','Common Equipment','普通装备'],craft:['อุปกรณ์หลอม','Crafted Equipment','锻造装备'],legendGear:['อุปกรณ์ในตำนานทั่วไป','Ordinary Legendary Equipment','普通传说装备'],eclipseGear:['อุปกรณ์ตำนานสุริยคราส','Eclipse Legendary Equipment','日蚀传说装备'],rare:['อสูรหายาก','Rare Beasts','稀有妖兽'],legendBeast:['อสูรในตำนาน','Legendary Beasts','传说妖兽'],solarBeast:['อสูรตำนานสุริยคราส','Eclipse Legendary Beasts','日蚀传说妖兽'],eternal:['ผนึกนิรันดร์','Eternal Seal','永恒封印']};
 function gachaRewardCard(r){const pet=r.type==='pet',name=pet?SP[r.key].n:r.type==='gear'?EQ[r.key].n:CON[r.key].n,art=pet?portrait(r.key,56):itemIcon(r.key,56),rare=['solarBeast','rare','legendBeast','eclipseGear','legendGear','craft','eternal'].includes(r.category);return `<article class="card gacha-result ${rare?'gacha-special':''}">${art}<b>${esc(name)}</b><small translate="no">${ct(...GACHA_NAMES[r.category])}</small>${pet?`<small translate="no">${ct('Lv1 · ส่งเข้าค่าย','Lv1 · Sent to camp','Lv1 · 已送入营地')}</small>`:''}</article>`;}
 
@@ -4756,9 +4826,9 @@ setInterval(()=>{if(WALK_ONLINE||!S.P||!SHEET_URL||document.hidden||COMMUNITY.bu
 
 /* Presentation only: server receipts, odds, inventory and save schema remain unchanged. */
 const ReleaseGacha={charging:null,
- start(){this.stop();this.started=Date.now();ExtraAudio.play('charge');this.charging=Music.tracks.a1||null;},
+ start(){this.stop();ExtraAudio.play('charge');this.charging=Music.tracks.a1||null;},
  stop(){if(this.charging){this.charging.audio.pause();this.charging.audio.currentTime=0;}this.charging=null;},
- async finish(rewards){gachaReceiptSound(rewards);const wait=Math.max(0,1200-(Date.now()-(this.started||Date.now())));if(wait&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)await new Promise(resolve=>setTimeout(resolve,wait));this.stop();if(!rewards.some(r=>['gold','red'].includes(gachaRevealColor(r))))ExtraAudio.play('quest');}
+ finish(rewards){gachaReceiptSound(rewards);this.stop();if(!rewards.some(r=>['gold','red'].includes(gachaRevealColor(r))))ExtraAudio.play('quest');}
 };
 function gachaSortedRewards(rewards){const weights=Object.fromEntries(GACHA_RATES);return rewards.map((r,i)=>({r,i})).sort((a,b)=>(weights[a.r.category]??10000)-(weights[b.r.category]??10000)||a.i-b.i).map(x=>x.r);}
 function releaseArtButton(screen,image,title,sub){return `<button class="release-art-button" data-a="go" data-v="${screen}"><img src="assets/ui/${image}.webp" alt="" loading="lazy"><span><b translate="no">${title}</b><small translate="no">${sub}</small></span></button>`;}
@@ -8213,7 +8283,7 @@ communityCall=async function(action='social_sync',extra={}){
   Object.assign(COMMUNITY,{friends:r.friends||[],friendRequests:r.friendRequests||{incoming:[],outgoing:[]},online:r.online||[],incoming:r.incoming||null,serverTime:r.serverTime,ready:true,code:ensureCode()});
   if(action==='friend_challenge'){friendWaitingUntil=Date.now()+65000;toast('ส่งคำท้าแล้ว · รอเพื่อนยอมรับคำท้า');}
   const sameRoom=r.match?.room?.id===PVP.room?.id;
-  if(online&&r.match&&(!communityBattleBusy()||sameRoom)){
+  if(online&&r.match&&!GACHA.busy&&(!communityBattleBusy()||sameRoom)){
    friendWaitingUntil=0;PVP.code=ensureCode();PVP.pending=null;S.screen='pvp';
    pvpReceive(r.match);COMMUNITY.incoming=null;pvpSessionSave();pvpSchedule();render();
    // A failed acknowledgement must never hide an already-created room.
@@ -8225,7 +8295,7 @@ communityCall=async function(action='social_sync',extra={}){
 };
 handlers.friendChallenge=id=>{if(communityBattleBusy())return toast(communityError('finish other battle'));return WALK_ONLINE?communityCall('friend_challenge',{target:id}):parent.postMessage({type:'walk-peer-action',action:'challenge',target:id},location.origin);};
 setInterval(()=>{
- if(!WALK_ONLINE||document.hidden||COMMUNITY.busy||communityBattleBusy())return;
+ if(!WALK_ONLINE||document.hidden||COMMUNITY.busy||GACHA.busy||communityBattleBusy())return;
  const interval=S.screen==='friends'||friendWaitingUntil>Date.now()?4000:10000;
  if(Date.now()-friendSyncAt>=interval)communityCall();
 },1000);
