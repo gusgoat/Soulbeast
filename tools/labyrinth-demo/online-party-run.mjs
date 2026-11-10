@@ -1,5 +1,5 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
-import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
+import {partyMenu} from './online-party-menu.mjs?v=three-languages-1';
 import {partyArt} from './online-party-art.mjs?v=walk-shields-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=walk-shields-1';
 import {partyScene} from './online-party-scene.mjs?v=party-victory-traps-1';
@@ -56,7 +56,7 @@ function warmBattleFrame(){
  const floor=config?.id||'mine-floor-1';
  if(warmFloor===floor)return;
  warmFloor=floor;battleFrameReady=false;
- battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=game-clock-1&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
+ battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=three-languages-1&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
 }
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
@@ -169,7 +169,7 @@ try{
 
  }});
  $('leaveParty').onclick=async()=>{
-  if(!window.confirm('ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับหน้าปากถ้ำหรือไม่?'))return;
+  if(!window.confirm(window.SoulbeastLocale?.text('ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับหน้าปากถ้ำหรือไม่?')??'ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับหน้าปากถ้ำหรือไม่?'))return;
   const button=$('leaveParty');button.disabled=true;
   try{
    while(controller.busy)await new Promise(resolve=>setTimeout(resolve,50));

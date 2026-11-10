@@ -97,7 +97,7 @@ $('joinPublic').onclick=()=>update('joinPublic');$('retryLobby').onclick=()=>upd
  if(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)){void update('join',{room:id});return;}
  $('status').textContent='กรุณาใส่รหัสห้อง 8 ตัวตามที่หัวหน้าห้องส่งให้';};
 $('ready').onclick=()=>update('ready',{ready:!room.members.find(m=>m.code===connection.code)?.ready});
-$('start').onclick=()=>update('start');$('leave').onclick=()=>{if(room?.state!=='active'||window.confirm('ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?'))void update('leave');};$('resume').onclick=resume;
+$('start').onclick=()=>update('start');$('leave').onclick=()=>{if(room?.state!=='active'||window.confirm(window.SoulbeastLocale?.text('ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?')??'ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?'))void update('leave');};$('resume').onclick=resume;
 $('copy').onclick=async()=>{if(!room?.joinCode)return;try{await navigator.clipboard.writeText(room.joinCode);$('status').textContent='คัดลอกรหัสห้องแล้ว';}catch{$('status').textContent='เลือกและคัดลอกรหัสห้องด้านบนได้เลย';}};
 try{connection=connectDungeonParty();walkSave=connectOnlineWalk();void update();
  timer=setInterval(pollRoom,5000);

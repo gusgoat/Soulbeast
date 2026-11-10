@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="th" data-skip-web-intro>
-<head><link rel="preload" as="image" href="/Soulbeast/assets/ui/online-hourglass.webp"><link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/loading-screen.css?v=loading-art-20261103"><script src="/Soulbeast/tools/town-walk-demo/loading-screen.js?v=loading-art-20261103"></script><script src="/Soulbeast/tools/town-walk-demo/music-channel.js?v=single-music-20261103"></script><base href="/Soulbeast/"><script>window.CW_PREVIEW_MODE=true;</script>
+<head><script src="/Soulbeast/client/game-locale-extra.js?v=three-languages-1"></script><script src="/Soulbeast/client/game-locale.js?v=three-languages-1"></script><link rel="preload" as="image" href="/Soulbeast/assets/ui/online-hourglass.webp"><link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/loading-screen.css?v=loading-art-20261103"><script src="/Soulbeast/tools/town-walk-demo/loading-screen.js?v=loading-art-20261103"></script><script src="/Soulbeast/tools/town-walk-demo/music-channel.js?v=single-music-20261103"></script><base href="/Soulbeast/"><script>window.CW_PREVIEW_MODE=true;</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#10121b">
@@ -4254,10 +4254,10 @@ skillPicture=function(u,sk,id){
 };
 
 
-const GAME_TRANSLATIONS=SoulbeastContent.GAME_TRANSLATIONS();
-const LANGUAGE_KEY='soulbeast_supabase_test_language_v1';
+const GAME_TRANSLATIONS=window.SoulbeastLocale?.extend(SoulbeastContent.GAME_TRANSLATIONS())||SoulbeastContent.GAME_TRANSLATIONS();
+const LANGUAGE_KEY='sealbeast_language_v1';
 const LANGUAGE_NAMES=SoulbeastContent.LANGUAGE_NAMES();
-let GAME_LANGUAGE='th';
+let GAME_LANGUAGE=window.SoulbeastLocale?.get()||'th';
 try{const stored=localStorage.getItem(LANGUAGE_KEY);if(Object.hasOwn(LANGUAGE_NAMES,stored))GAME_LANGUAGE=stored;}catch(e){}
 const LANGUAGE_KEYS=[...new Set(Object.values(GAME_TRANSLATIONS).flatMap(dict=>Object.keys(dict)))].sort((a,b)=>b.length-a.length);
 const LANGUAGE_PATTERN=new RegExp(LANGUAGE_KEYS.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
@@ -4274,7 +4274,7 @@ function translateGameText(value,lang=GAME_LANGUAGE,protectNames=true){
  if(protectNames)for(const name of languagePlayerNames())if(source.includes(name)){const token='\uE000'+held.length+'\uE001';held.push(name);source=source.split(name).join(token);}
  const key=lang+'\n'+source;let out=LANGUAGE_TEXT_CACHE.get(key);
  if(out===undefined){
-  out=source.replace(LANGUAGE_PATTERN,s=>lang==='en'?' '+(GAME_TRANSLATIONS[lang][s]||s)+' ':GAME_TRANSLATIONS[lang][s]||s);
+  out=window.SoulbeastLocale?.replaceKnown(source,GAME_TRANSLATIONS[lang],LANGUAGE_PATTERN,lang)??source.replace(LANGUAGE_PATTERN,s=>lang==='en'?' '+(GAME_TRANSLATIONS[lang][s]||s)+' ':GAME_TRANSLATIONS[lang][s]||s);
   if(lang==='en')out=out.replace(/[^\S\n]+/g,' ').replace(/[ \t]+([,.!?])/g,'$1');
   if(/[ก-๙]/.test(out))LANGUAGE_MISSING.add(source);
   LANGUAGE_TEXT_CACHE.set(key,out);
@@ -4282,16 +4282,16 @@ function translateGameText(value,lang=GAME_LANGUAGE,protectNames=true){
  return out.replace(/\uE000(\d+)\uE001/g,(_,i)=>held[Number(i)]||'');
 }
 function languagePanel(){return `<div class="card stack language-panel"><label for="gameLanguage"><b>ภาษา</b></label><select id="gameLanguage" aria-label="ภาษาที่ใช้แสดงผล">${Object.entries(LANGUAGE_NAMES).map(([value,label])=>`<option value="${value}" translate="no" ${GAME_LANGUAGE===value?'selected':''}>${label}</option>`).join('')}</select><small class="sub">ภาษาเปลี่ยนทันทีและบันทึกไว้ในเครื่องนี้</small></div>`;}
-function setGameLanguage(lang){
+function setGameLanguage(lang,persist=true){
  if(!Object.hasOwn(LANGUAGE_NAMES,lang))return false;
- GAME_LANGUAGE=lang;try{localStorage.setItem(LANGUAGE_KEY,lang);}catch(e){}
+ GAME_LANGUAGE=lang;if(persist){if(window.SoulbeastLocale)window.SoulbeastLocale.set(lang);else try{localStorage.setItem(LANGUAGE_KEY,lang);}catch(e){}}
  render();applyGameLanguage(document.body);return true;
 }
 function languageSkip(el){return !el||!!el.closest('script,style,[contenteditable="true"],[translate="no"],[data-user-content]');}
 function localizeGameElement(el){
  if(languageSkip(el))return;
  let attrs=LANGUAGE_ATTRS.get(el);if(!attrs){attrs={};LANGUAGE_ATTRS.set(el,attrs);}
- for(const key of ['title','placeholder','aria-label','alt']){
+ for(const key of ['title','placeholder','aria-label','aria-valuetext','alt']){
   const current=el.getAttribute(key);if(current==null)continue;
   let record=attrs[key];if(!record||record.last!==current)record=attrs[key]={source:current,last:current};
   const translated=translateGameText(record.source,GAME_LANGUAGE,false);
@@ -4323,6 +4323,7 @@ render=function(){languageBaseRender();applyGameLanguage(document.getElementById
 const languageBaseToast=toast;
 toast=function(text){languageBaseToast(text);if(document.body?.querySelectorAll)for(const node of document.body.querySelectorAll('.toast'))applyGameLanguage(node);};
 document.addEventListener('change',event=>{if(event.target?.id==='gameLanguage')setGameLanguage(event.target.value);});
+window.addEventListener('soulbeast-language-change',event=>{if(event.detail!==GAME_LANGUAGE)setGameLanguage(event.detail,false);});
 if(typeof MutationObserver!=='undefined'&&document.body){
  const observer=new MutationObserver(records=>{
   for(const record of records){
@@ -6251,7 +6252,7 @@ handlers.webIntroReplay=()=>WEB_INTRO.open(()=>{render();Sound.sync();},true);co
   });
  }
 };const AccountManagement={
- credits(){return '<footer class="card stack creator-credits" translate="no"><b>SoulBeast Created by GusTheGoat</b><span>ติดต่อ Line official: @soulbeast</span><span>Line openchat: SoulBeast Game</span><span>Page Facebook: SoulbBeast Game official</span></footer>';},
+ credits(){return '<footer class="card stack creator-credits"><b>SoulBeast Created by GusTheGoat</b><span>ติดต่อ Line official: @soulbeast</span><span>Line openchat: SoulBeast Game</span><span>Page Facebook: SoulbBeast Game official</span></footer>';},
  clean(){IMG={};if(S.P)delete S.P.profile;for(const u of [...(S.battle?.allies||[]),...(S.battle?.enemies||[])]){if(u.skills)u.skills=u.skills.filter(id=>SK[id]);if(['electric','ground'].includes(u.enchant)){delete u.enchant;delete u.enchantTurns;}}}
 };
 const accountManagementMigrate=migrate;

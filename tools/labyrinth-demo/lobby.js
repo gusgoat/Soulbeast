@@ -67,7 +67,13 @@ function friendCard(row,me,friends){
  }
  const info=document.createElement('div');
  info.className='friend-info';
- for(const text of [p.name+(row.simulated?' · ตัวช่วยจำลอง':''),(sealerSpriteCatalog[p.cls]?.name||p.cls)+' · Lv '+p.lv,
+ const identity=document.createElement('p'),name=document.createElement('span');
+ name.dataset.userContent='';
+ name.textContent=p.name;
+ identity.append(name);
+ if(row.simulated)identity.append(' · ตัวช่วยจำลอง');
+ info.append(identity);
+ for(const text of [(sealerSpriteCatalog[p.cls]?.name||p.cls)+' · Lv '+p.lv,
   'คู่หูล่าสุด: '+(companion?(art?.name||companion.sp)+' Lv '+companion.lv:'ยังไม่ได้จัดคู่หู')]){
   const line=document.createElement('p');
   line.textContent=text;
@@ -98,8 +104,9 @@ function render(){
  const rows=online?remoteRows:api.list(),friends=online?[]:api.friends();
  const simulated=DungeonSimulatedFriend.forPlayer(me);
  const current=selected===simulated?.id?simulated:rows.find(r=>r.id===selected);
- $('identity').textContent=me.name+' · '+(sealerSpriteCatalog[me.cls]?.name||me.cls)+' · Lv '+me.lv+
-  (me.dungeonLobbyDemo?' · ผู้ผนึกทดสอบสำหรับแท็บนี้':'');
+ const ownName=document.createElement('span');ownName.dataset.userContent='';ownName.textContent=me.name;
+ $('identity').replaceChildren(ownName,' · '+(sealerSpriteCatalog[me.cls]?.name||me.cls)+' · Lv '+me.lv+
+  (me.dungeonLobbyDemo?' · ผู้ผนึกทดสอบสำหรับแท็บนี้':''));
  $('enter').disabled=entering||Boolean(selected&&!eligible(current,me));
  $('enter').textContent=selected?'เข้าดันเจี้ยนพร้อมเพื่อน':'เข้าดันเจี้ยนคนเดียว';
  $('clearFriend').hidden=!selected;

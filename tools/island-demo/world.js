@@ -188,6 +188,7 @@ function stampProp(o,x,y){
  }else if(asset[o.art])stamp(asset[o.art],x,y,size);
 }
 function label(text,x,y){
+ text=window.SoulbeastLocale?.text(text)??text;
  ctx.font='600 13px Tahoma';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#0a1726';
  ctx.strokeText(text,x,y);ctx.fillStyle='#fff3d0';ctx.fillText(text,x,y);
 }
@@ -378,7 +379,7 @@ function openFrame(id,screen='bag',quickItem){
  const mount=()=>{
   if($('townDialog').open)close();
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title=id?'เหตุการณ์บนเกาะ':'กระเป๋าผู้ผนึก';
-  const query=new URLSearchParams({city:country+'-capital',v:'game-clock-1',walkScene:'island',screen:id?'town':screen});
+  const query=new URLSearchParams({city:country+'-capital',v:'three-languages-1',walkScene:'island',screen:id?'town':screen});
   if(quickItem)query.set('quickItem',quickItem);
   if(id){query.set('island',country);query.set('islandEncounter',id);}
   frame.src=screen==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+query;

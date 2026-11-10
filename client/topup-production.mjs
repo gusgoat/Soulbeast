@@ -7,7 +7,7 @@ const client=connectAccounts(()=>boot()),api=paymentApi(client);let lang='th',st
 const t=k=>shopText(k,lang),text=(th,en,zh)=>[th,en,zh][lang==='en'?1:lang==='zh-CN'?2:0];
 function notice(s){$('notice').textContent=s;}
 function render(){
- document.documentElement.lang=lang;$('title').textContent=t('title');$('terms').textContent=t('terms');$('support').textContent=t('support');
+ document.documentElement.lang=lang;$('purchasePolicy').textContent=text('เงื่อนไขการซื้อและคืนเงิน','Purchase and refund policy','购买与退款说明');$('title').textContent=t('title');$('terms').textContent=t('terms');$('support').textContent=t('support');
  $('account').innerHTML=state?'<p>'+esc(state.email||client.user?.email||'')+'</p><button id="logout">'+text('ออกจากบัญชี','Sign out','退出')+'</button><button id="requestDelete">'+text('ขอลบบัญชี','Request account deletion','申请删除账户')+'</button>':'<h2>'+text('เข้าด้วยบัญชีเกมเดิม','Sign in with your game account','使用游戏账户登录')+'</h2><form id="login"><label>Email<input id="email" type="email" autocomplete="username" required></label><label>'+text('รหัสผ่าน','Password','密码')+'<input id="password" type="password" autocomplete="current-password" required></label><button '+(busy?'disabled':'')+'>'+text('เข้าสู่ระบบ','Sign in','登录')+'</button></form><a href="./accounts.html">'+text('สมัครบัญชี / ลืมรหัสผ่าน','Create account / forgot password','注册/忘记密码')+'</a>';
  const chars=state?.characters||[];if(!chars.some(c=>c.code===target))target=chars[0]?.code||'';
  $('characters').innerHTML=state?'<label>'+t('recipient')+'<select id="recipient">'+chars.map(c=>'<option value="'+esc(c.code)+'" '+(target===c.code?'selected':'')+'>'+esc(c.name)+' · '+esc(c.code)+'</option>').join('')+'</select></label>':'';
@@ -24,4 +24,17 @@ function go(o){if(o.settled){notice(t(o.status==='credited'?'received':'review')
 async function sync(){state=await api('status');if(state.debt)notice(t('review'));}
 async function run(fn){if(busy)return;busy=true;render();return withLoading(document.querySelector('main'),t('checking'),async()=>{try{await fn();}catch(e){notice(['billing_review_required'].includes(e.message)?t('review'):e.message==='provider_not_configured'||e.message==='purchases_disabled'?t('unavailable'):t('failed'));}finally{busy=false;render();}});}
 async function boot(){return withLoading(document.querySelector('main'),t('loading'),async()=>{try{catalog=await api('catalog');if(client.sessions.read()){await client.identity();await sync();const id=new URL(location.href).searchParams.get('order');if(/^[a-f0-9-]{36}$/i.test(id||'')){const r=await api('refresh',{order_id:id});notice(t(r.order?.status==='credited'?'received':r.order?.settled?'review':'pending'));await sync();}else notice(catalog.enabled.stripe?t('title'):t('unavailable'));}else notice(catalog.enabled.stripe?t('title'):t('unavailable'));}catch{notice(t('unavailable'));}render();});}
-lang=localStorage.getItem('soulbeast_shop_language')||'th';$('shopLanguage').value=lang;$('shopLanguage').onchange=e=>{const previous=lang,old=$('notice').textContent;lang=e.target.value;for(const k of ['unavailable','received','pending','failed','review','title'])if(shopText(k,previous)===old)notice(t(k));localStorage.setItem('soulbeast_shop_language',lang);render();};await boot();
+function changeLanguage(next){
+ if(!['th','en','zh-CN'].includes(next)||next===lang)return;
+ const previous=lang,old=$('notice').textContent;
+ lang=next;$('shopLanguage').value=lang;
+ for(const k of ['unavailable','received','pending','failed','review','title']){
+  if(shopText(k,previous)===old)notice(t(k));
+ }
+ render();
+}
+lang=window.SoulbeastLocale?.get()||'th';
+$('shopLanguage').value=lang;
+$('shopLanguage').onchange=e=>{window.SoulbeastLocale?.set(e.target.value);changeLanguage(e.target.value);};
+addEventListener('soulbeast-language-change',event=>changeLanguage(event.detail));
+await boot();

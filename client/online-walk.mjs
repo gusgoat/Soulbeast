@@ -194,6 +194,12 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
   syncRevision();
   return client.request('/rest/v1/rpc/sb_colosseum_rank_mail',{p_read:id},await client.sessions.token());
  }:null;
+ const dismissedMail=async(ids=[])=>{
+  syncRevision();
+  return client.request('/rest/v1/rpc/sb_walk_mail_dismiss',{
+   p_env:context.environment,p_code:context.code,p_ids:ids,
+  },await client.sessions.token());
+ };
  const send = (action, extra) => client.game(action, {...extra, code: context.code}, context.environment);
  async function island(action, {country,visitId,resumeOnly}){
   return lock(async()=>{
@@ -265,7 +271,7 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
    identity:async()=>client.request('/rest/v1/rpc/'+(context.environment==='live'?'sb_walk_live_identity':'sb_walk_test_identity'),{p_code:context.code},await client.sessions.token())
   });
  };
- return {flush, reloadWalk, heartbeat, walkRanks, invitations, island, social, socialTarget, walkRealtimeTest, openWalkRealtime, colosseumRankMail};
+ return {flush, reloadWalk, heartbeat, walkRanks, invitations, island, social, socialTarget, walkRealtimeTest, openWalkRealtime, colosseumRankMail, dismissedMail};
 }
 
 export function mountDungeonInvitations(connection, peers) {

@@ -248,7 +248,7 @@ $('cancel-rank-queue').onclick=()=>{
 };
 function abandonRanked(){
  if(!state?.ranked||state.phase!=='match')return;
- if(!confirm('ออกก่อนจบจะเสีย 2 แต้มและถูกระงับการเล่นจัดอันดับ ต้องการออกจากแมตช์หรือไม่?'))return;
+ if(!confirm(window.SoulbeastLocale?.text('ออกก่อนจบจะเสีย 2 แต้มและถูกระงับการเล่นจัดอันดับ ต้องการออกจากแมตช์หรือไม่?')??'ออกก่อนจบจะเสีย 2 แต้มและถูกระงับการเล่นจัดอันดับ ต้องการออกจากแมตช์หรือไม่?'))return;
  if(!send({type:'rankLeave'})){
   $('signal').textContent='กำลังเชื่อมต่อกลับเข้าสนาม…';
   $('signal').hidden=false;

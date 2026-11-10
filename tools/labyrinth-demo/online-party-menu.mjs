@@ -32,7 +32,13 @@ export function partyMenu({request,refresh,getFloor,onOpen,canOpen}){
  feedback.querySelector('[data-close]').onclick=close;retry.onclick=()=>void load();
  const menuTabs=new Set(['hero','team','bag','friends','mail','settings','coupon']);
  const inventoryTabs=new Set(['hero','team','bag']);
- function syncHud(){if(!member)return;for(const frame of hud)frame.contentWindow?.postMessage({type:'party-hud-state',member,gold:data?.gold},location.origin);}
+ function syncHud(){
+  if(!member)return;
+  const player=data?.player;
+  const lead=player?.party?.map(uid=>player.pets?.find(p=>String(p.uid)===String(uid))).find(Boolean);
+  const companion=player?(lead?{sp:lead.sp,form:Number(lead.form)||0}:null):undefined;
+  for(const frame of hud)frame.contentWindow?.postMessage({type:'party-hud-state',member,gold:data?.gold,companion},location.origin);
+ }
  for(const frame of hud)frame.addEventListener('load',syncHud);
  function open(screen){
   if(!canOpen()||busy)return;
@@ -42,7 +48,7 @@ export function partyMenu({request,refresh,getFloor,onOpen,canOpen}){
   tab=screen;panel.hidden=false;onOpen(true);
   const inventory=inventoryTabs.has(tab);
   const country=['blue','green','red'].includes(member?.country)?member.country:'blue';
-  const params=new URLSearchParams({v:'party-solo-ui-2',screen:tab,dungeon:getFloor()||'mine-floor-1',country,city:country+'-capital'});
+  const params=new URLSearchParams({v:'three-languages-1',screen:tab,dungeon:getFloor()||'mine-floor-1',country,city:country+'-capital'});
   params.set(inventory?'partyInventory':'partyAux','1');
   aux.src=tab==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+params;
   if(inventory){data=null;void load();}
