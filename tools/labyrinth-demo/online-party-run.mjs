@@ -56,7 +56,7 @@ function warmBattleFrame(){
  const floor=config?.id||'mine-floor-1';
  if(warmFloor===floor)return;
  warmFloor=floor;battleFrameReady=false;
- battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=projectile-2&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
+ battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=game-clock-1&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
 }
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
@@ -234,6 +234,7 @@ const moveKeys=new Set(['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','Arrow
 addEventListener('keydown',e=>{if(!menus.open&&moveKeys.has(e.key)){e.preventDefault();keys.add(e.key);}});addEventListener('keyup',e=>keys.delete(e.key));
 addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();freeze();}else void controller?.refresh();});
 addEventListener('pagehide',()=>{freeze();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();sceneAudio.dispose();void controller?.close();});
+const daylight=CountryDaylight.create('dungeon');
 function render(){
  const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,1.5);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#07131c';ctx.fillRect(0,0,w,h);
  if(!maze||!position)return;
@@ -248,6 +249,7 @@ function render(){
   else partyRankPending=false;
  }
  visuals.draw(ctx,w,h,focus,{...position,dir:selfDir,phase:selfPhase,moving:selfMoving},me,peers,world,localWorld,controller?.state?.chestClaims,traps,performance.now()/1000,partyRanks);
+ daylight.draw(ctx,w,h,CountryDaylight.at(Date.now()));
 }
 
 // Cache static maze pixels; only markers refresh at 5 Hz.

@@ -23,7 +23,7 @@ export function createDungeonPartyApp({pool,createEngine,verifyToken,origins,env
     const method=combatEngine[key];
     return typeof method==='function'?method.bind(combatEngine):method;
    }});
-   const enemies=partyEnemyAdapter({engine}),rewards=partyRewardAdapter({engine,map});
+   const enemies=partyEnemyAdapter({engine,now:()=>serverNow}),rewards=partyRewardAdapter({engine,map});
    return {...map,...enemies,...partyCombatRuntime({engine,soloEnemies:enemies.soloEnemies,now:()=>serverNow,turnMs:350}),...rewards,
     evacuate:partyRespawnAdapter({engine}),
     inventory(room,member,data){const result=engine.inventory(member.save.P,data.op||null,data);

@@ -18,7 +18,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-snapshot.mjs",
-      "sha256": "e86eebe43519bd0eef85990ff04d77c1fecf9cfe9be6232c3a8b9bbb712359e2"
+      "sha256": "8b84555f8812dfbe550e80b72ca80f5615d01ef0ad17b6ae9865b2763e998c21"
     },
     {
       "file": "source/server/accounts/dungeon-party-world.mjs",
@@ -66,11 +66,11 @@
     },
     {
       "file": "source/tools/labyrinth-demo/encounter-rules.js",
-      "sha256": "73a9833bf11b005f96b18134c6118a8e62cb132e3940b6d7829c207ed8a1655a"
+      "sha256": "9dfbdf74e680fb64a26c7802b4ce525938452f6b3d3992fc51d6abeeaf479add"
     },
     {
       "file": "source/server/accounts/dungeon-party-enemies.mjs",
-      "sha256": "fd6f2a7313b21fbf290e118425ef04b05dcc0f97439fd00a3421921e8e371806"
+      "sha256": "cdfb2a0e34cb7b584f41e44e84fe2ca40ad9039c4f9441d58cce3ed3a5cf9885"
     },
     {
       "file": "source/server/accounts/dungeon-party-combat-runtime.mjs",
@@ -90,7 +90,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-app.mjs",
-      "sha256": "ed6389c869abda36b9e75fcc179939292d449ba0e72047ee36b9eaa0df25aeca"
+      "sha256": "f59313fa6abf121626f1096c74d8230761df27949ac0c30d6346ae9d200b031b"
     },
     {
       "file": "solo-combat.mjs",
@@ -99,6 +99,10 @@
     {
       "file": "source/server/accounts/dungeon-party-solo-start.mjs",
       "sha256": "a78f0c8b7cf7deb28b0f937f1135ec258f3cd3c72aa95927cccdfffa74a37fe7"
+    },
+    {
+      "file": "source/tools/town-walk-demo/game-clock.js",
+      "sha256": "c09df928c53abba74c520eb10105c89c46dc405799ff5010e7d34f5907bd9a05"
     }
   ]
 }

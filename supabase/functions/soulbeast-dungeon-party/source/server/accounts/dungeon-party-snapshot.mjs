@@ -9,7 +9,7 @@ export function partyBattleSnapshot(run){
    allies:(b.allies||[]).map(publicUnit),enemies:(b.enemies||[]).map(publicUnit),
    log:(b.log||[]).slice(-20),effects:(b.effects||[]).slice(-32)}:null};
 }
-function publicUnit(u){return pick(u,['id','ownerCode','side','kind','name','cls','gender','sp','evo','img','lv','hp','mp','st','types','stab','form','status','buffs','taunt','boss','bossHelper','temporary','captured','class10Barrier','archerVeil','elementalBarrierHits']);}
+function publicUnit(u){return pick(u,['id','ownerCode','side','kind','name','cls','gender','sp','evo','img','lv','hp','mp','st','types','stab','form','status','buffs','taunt','boss','bossHelper','nightAura','temporary','captured','class10Barrier','archerVeil','elementalBarrierHits']);}
 // Explicit allowlist: room storage also contains saves, credentials and receipts.
 // Never serialize that storage object directly to a player or broadcast channel.
 export function partySnapshot(room,code,serverTime,includeSolo=false){

@@ -231,6 +231,7 @@ function drawWaves(){
  }
  ctx.restore();
 }
+const daylight=CountryDaylight.create(country);
 function draw(){
  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=colors.deep;ctx.fillRect(0,0,width,height);
  ctx.drawImage(ground,sx(0),sy(0),data.width*zoom,data.height*F*zoom);
@@ -273,6 +274,7 @@ function draw(){
   }
  }
  traps.draw(ctx,o=>({x:sx(o.x),y:sy(o.y)}),F);
+ daylight.draw(ctx,width,height,CountryDaylight.at(Date.now()));
 }
 function drawMap(c){
  const w=c.canvas.width,h=c.canvas.height,ratio=Math.min(w/data.width,h/(data.height*F));
@@ -376,7 +378,7 @@ function openFrame(id,screen='bag',quickItem){
  const mount=()=>{
   if($('townDialog').open)close();
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title=id?'เหตุการณ์บนเกาะ':'กระเป๋าผู้ผนึก';
-  const query=new URLSearchParams({city:country+'-capital',v:'projectile-2',walkScene:'island',screen:id?'town':screen});
+  const query=new URLSearchParams({city:country+'-capital',v:'game-clock-1',walkScene:'island',screen:id?'town':screen});
   if(quickItem)query.set('quickItem',quickItem);
   if(id){query.set('island',country);query.set('islandEncounter',id);}
   frame.src=screen==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+query;

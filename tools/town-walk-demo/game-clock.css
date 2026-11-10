@@ -1,0 +1,16 @@
+.game-clock {
+ display: inline-block;
+ box-sizing: border-box;
+ max-width: 100%;
+ margin: 4px auto 2px;
+ padding: 3px 7px;
+ border: 1px solid #bd9e61;
+ border-radius: 7px;
+ background: #101b29eb;
+ color: #ffdf9f;
+ font: 600 clamp(10px, 2.6vw, 13px)/1.25 system-ui, sans-serif;
+ font-variant-numeric: tabular-nums;
+ white-space: nowrap;
+ pointer-events: none;
+}
+.game-clock[data-phase="night"] { color: #cbe7ff; border-color: #7799bd; }

@@ -133,7 +133,7 @@ function items(p,rng=Math.random){
 const encounterRates=[['form1',30],['form2',20],['form3',20],['rare',25],['legend',5]];
 const chestRates=[['rare',40],['craft',30],['legend',20],['eclipse',10]];
 function weighted(rates,rng=Math.random){
- let value=chance(rng)*100;
+ let value=chance(rng)*rates.reduce((total,[,weight])=>total+weight,0);
  for(const [id,weight] of rates){if(value<weight)return id;value-=weight;}
  return rates.at(-1)[0];
 }
@@ -184,8 +184,12 @@ function shadowCatalog(species,affinities){
 function plan(country,encounter,catalog,rng=Math.random){
  const cfg=islands[country],{species,classes,affinities}=catalog;
  const {kind,lv}=encounter;
+ const clock=typeof module!=='undefined'?require('../town-walk-demo/game-clock.js'):g.SoulBeastClock;
+ const phase=clock.at(Number.isFinite(encounter.at)?encounter.at:Date.now()).encounter;
  if(kind==='boss')return [{sp:cfg.boss,lv:60,aura:'island'},{sp:cfg.helper,lv:60,helper:true}];
- const groups=pools(species,affinities),available=[...groups.common,...groups[country]];
+ const allGroups=pools(species,affinities);
+ const groups=Object.fromEntries(Object.entries(allGroups).map(([region,ids])=>[region,clock.filter(ids,phase)]));
+ const available=[...groups.common,...groups[country]];
  const ordinary=id=>!species[id].rare&&!species[id].legendary;
  const legendary=id=>!!species[id].legendary;
  if(kind==='portal'){
@@ -199,8 +203,9 @@ function plan(country,encounter,catalog,rng=Math.random){
  }
  const countryRules=typeof module==='undefined'?g.hemantEncounterRules:require('../hemant-walk-demo/encounter-rules.js');
  const byTier=shadowGroups(groups,country,species);
+ const activeRates=encounterRates.filter(([tier])=>byTier[tier].length);
  return Array.from({length:countryRules.rollShadowCount(rng)},()=>{
-  const tier=weighted(encounterRates,rng);
+  const tier=weighted(activeRates,rng);
   const sp=choose(choose(byTier[tier],rng)||[],rng);
   if(!sp)throw Error('Missing island encounter pool '+tier);
   return {sp,lv,tier};
@@ -216,7 +221,7 @@ function aura(unit){
 function begin(p,country,id,kind,lv){
  const s=state(p,country);
  if(!s.visit||s.visit.pending||s.visit.cleared[id]||p.hp<=0)return false;
- s.visit.pending={id,kind,lv};
+ s.visit.pending={id,kind,lv,at:Date.now()};
  return true;
 }
 function finish(p,country,id,result,{bossRewards=true}={}){

@@ -1,12 +1,13 @@
 import '../../tools/labyrinth-demo/progression.js';
 import '../../tools/labyrinth-demo/floors.js';
+import '../../tools/town-walk-demo/game-clock.js';
 import '../../tools/labyrinth-demo/encounter-rules.js';
 // These are normal dungeon values. Party scaling is applied once by the service.
-export function partyEnemyAdapter({engine,random=Math.random}){
+export function partyEnemyAdapter({engine,random=Math.random,now=Date.now}){
  return {
   soloEnemies(room,enemy){
    const floor=globalThis.MineFloors.get(room.floor);
-   const plan=globalThis.DungeonEncounterRules.plan(null,enemy.kind,engine.catalog(),floor,random);
+   const plan=globalThis.DungeonEncounterRules.plan(null,enemy.kind,engine.catalog(),floor,random,now());
    return plan.units.map((spec,i)=>{
     if(spec.type==='human')return engine.human(spec.cls,spec.lv,'e'+i);
     const unit=engine.beast(spec.sp,spec.lv,'e'+i);
@@ -16,7 +17,7 @@ export function partyEnemyAdapter({engine,random=Math.random}){
      unit.hp=unit.st.hp;unit.dungeonShadow=true;
     }
     if(spec.type==='pet'){unit.kind='npcpet';unit.name+='ของโจร';}
-    return unit;
+    return spec.nightAura?globalThis.SoulBeastClock.applyNightAura(unit):unit;
    });
   },
   bossTeam(number){
