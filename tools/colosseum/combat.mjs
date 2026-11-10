@@ -1,4 +1,4 @@
-import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-bot-loadouts-1';
+import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-ranks-1';
 import rareArt from './rare-art.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
 const ACT_MS=12_000, SHOW_MS=850;
@@ -91,7 +91,7 @@ export function makeCombat(id,teams,shadow,now,auraOwners=new Map()){
  const b={id,kind:shadow?'hunt':'pvp',round:0,turns:0,turn:0,cur:null,queue:[],deadline:0,
   teams:teams.map(t=>t.map(p=>p.id)),roster:roster.map(p=>p.id),botOwners:roster.map(p=>Boolean(p.bot)),beastId:shadow?.id,
   allies:[],enemies:[],log:[],fx:[],effects:[],fallen:[],finished:false,releasedAt:0,autoOwners:new Set(),autoVersion:0,
-  baseAuraOwners:auraOwners};
+  baseAuraOwners:auraOwners,colosseumFalls:new Map()};
  for(const [side,team] of teams.entries()) for(const p of team){
   const list=side?b.enemies:b.allies;
   for(const u of demoProfile(p,roster.indexOf(p))){
@@ -161,9 +161,9 @@ export function combatAction(b,player,command,now){
  core.bind(b);
  const u=find(b,b.cur), target=find(b,command.target);
  if(!u||b.roster[u.owner]!==player||!activeSkill(u,command.skill)||(command.target!=null&&!target))return false;
- return perform(b,u,command.skill,target,now);
+ return perform(b,u,command.skill,target,now,true);
 }
-function perform(b,u,id,target,now){
+function perform(b,u,id,target,now,active=false){
  const charged=u.charging;
  if(charged){id=charged.id;target=find(b,charged.tid);u.charging=null;u.pendingStealthChargeCrit=!!charged.stealthCrit;}
  const sk=core.skill(id);if(!sk)return false;
@@ -172,8 +172,15 @@ function perform(b,u,id,target,now){
  if(target&&!list.includes(target)&&!charged)return false;
  const aim=list.includes(target)?target:list[0];
  const friend=sk.tg==='self'?u:support?aim:u;
+ const before=b.onContribution&&active?new Map(units(b).map(target=>[target.id,{hp:target.hp,buffs:target.buffs.length,statuses:Object.keys(target.status).length}])):null;
  b.effects=[];b.fx=[];
  if(!core.act(u,id,support?enemies(b,u)[0]:aim,friend,!!charged))return false;
+ if(before&&units(b).some(target=>{
+  const previous=before.get(target.id);
+  if(!previous)return false;
+  if(target.side!==u.side)return target.hp<previous.hp||Object.keys(target.status).length>previous.statuses;
+  return target.owner!==u.owner&&(target.hp>previous.hp||target.buffs.length>previous.buffs);
+ }))b.onContribution(b.roster[u.owner]);
  syncBaseAura(b);
  b.last={actor:u.id,target:aim?.id,skill:sk.n,skillId:id,...actionVisual(u,id,sk),element:sk.el,n:(b.last?.n||0)+1};
  if(!core.takeFreeForm(u)){b.turns++;next(b,now);}
@@ -189,9 +196,10 @@ export function advanceCombat(b,now){
  const move=core.auto(u);
  const sk=core.skill(move.id);
  const target=['heal','buff'].includes(sk?.t)?move.friend:move.target;
- if(u.charging&&perform(b,u,u.charging.id,undefined,now))return;
- if(activeSkill(u,move.id)&&perform(b,u,move.id,target,now))return;
- if(perform(b,u,'attack',enemies(b,u)[0],now))return;
+ const active=b.autoOwners.has(b.roster[u.owner]);
+ if(u.charging&&perform(b,u,u.charging.id,undefined,now,active))return;
+ if(activeSkill(u,move.id)&&perform(b,u,move.id,target,now,active))return;
+ if(perform(b,u,'attack',enemies(b,u)[0],now,active))return;
  b.turns++;next(b,now);
 }
 export function combatView(b,player){

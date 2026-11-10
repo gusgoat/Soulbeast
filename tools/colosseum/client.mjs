@@ -1,7 +1,8 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-repair-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-repair-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=shields-2';
+import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {battlePresentation} from './battle-presentation.mjs?v=skill-effects-1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
@@ -16,6 +17,7 @@ const mapDialog=$('large-map'), channel='soulbeast-colosseum-session';
 let ws,state,battle,me,local,lastInput='',seq=0,offset=0,stick={x:0,y:0,id:null},retry,packet;
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
 let showBattleLog=false;
+let resultKey='';
 const battleUpdates=[];
 const spectatorPan={x:0,y:0};
 let spectatorDrag=null;
@@ -46,7 +48,7 @@ function replayMovement(player,snapshot){
 const gameWeb=location.pathname.toLowerCase().startsWith('/soulbeast/');
 const serverURL=document.querySelector('meta[name="colosseum-server"]').content;
 const params=new URLSearchParams(location.search);
-let selectedCharacter=null,accountContext=null;
+let selectedCharacter=null,accountContext=null,selectedRating=null;
 try{
  selectedCharacter=JSON.parse(sessionStorage.getItem('soulbeast-walk-preview-player-v1')||'null');
  accountContext=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');
@@ -55,7 +57,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=pet-vitals-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=colosseum-ranks-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -90,9 +92,9 @@ async function waitForHost(base,payload){
  }
  throw Error('เซิร์ฟเวอร์ยังเปิดไม่สำเร็จ กรุณาลองอีกครั้ง');
 }
-let opening=false,leaving=false,leaveTimer;
+let opening=false,queued=false,leaving=false,leaveTimer;
 function updateEntryControls(){
- $('country-return').hidden=!$('country-return').hasAttribute('href')||opening||Boolean(state);
+ $('country-return').hidden=!$('country-return').hasAttribute('href')||opening||queued||Boolean(state);
  for(const button of $('entry-form').querySelectorAll('button[type="submit"]')){
   button.disabled=opening||(!onlineEnabled&&!practiceType(button.value));
  }
@@ -112,6 +114,11 @@ async function connect(payload){
    $('notice').textContent='กำลังเปิดเซิร์ฟเวอร์สนาม อาจใช้เวลาประมาณหนึ่งนาที…';
    await waitForHost(base,payload);
    if(packet!==payload)return;
+   if(payload.type==='ranked'){
+    const ready=await fetch(new URL('/ranked-health',base),{cache:'no-store',signal:AbortSignal.timeout(10_000)});
+    if(ready.status!==204)throw Error('ระบบจัดอันดับยังไม่พร้อม กรุณาลองใหม่อีกครั้ง');
+    if(packet!==payload)return;
+   }
    ticket=await onlineTicket(base);
    if(packet!==payload)return;
    $('notice').textContent='กำลังเชื่อมต่อสนาม…';
@@ -126,16 +133,20 @@ async function connect(payload){
  socket.onmessage=({data})=>{
   if(ws!==socket)return;
   const m=JSON.parse(data);
-  if(m.type==='welcome'){
+  if(m.type==='rankQueue'){
+   showRankQueue(m);
+  }else if(m.type==='welcome'){
+   queued=false;
+   $('rank-queue').hidden=true;
    seq=Math.max(seq,m.seq);if(!socket.local)store({type:'resume',code:m.room,token:m.token});
    send({type:'ping',echo:performance.now()});
    $('signal').hidden=true;$('notice').textContent='';
-  }else if(m.type==='left'){reset('',true);}
+  }else if(m.type==='left'){reset(m.message||'',true);}
   else if(m.type==='pong'){acceptPong(m);}
   else if(m.type==='chest-result'){pendingChest=null;}
   else if(m.type==='error'){
    if(m.action==='chest')pendingChest=null;
-   if(opening){reset(m.message);return;}
+   if(opening||queued&&m.action==='ranked'){reset(m.message);return;}
    if(m.action==='leave'){leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;}
    if(state?.phase==='match'){
     $('signal').textContent=m.message;$('signal').hidden=false;
@@ -158,7 +169,7 @@ async function connect(payload){
   }else if(packet&&state?.phase!=='finished')reset('เชื่อมต่อสนามไม่ได้ ลองอีกครั้ง');
  };
  socket.onerror=()=>{};
- if(useWorker){store(null);send({type:payload.type,character:selectedCharacter});}
+ if(useWorker){store(null);send({type:payload.type,character:selectedCharacter,rating:selectedRating});}
 }
 function receiveBattle(next){
  if(presentation.busy){
@@ -198,7 +209,7 @@ function reset(message='',clearInvite=false){
  presentation.walk(false);
  presentation.setActive(false);
  hideBattle();
- opening=leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;
+ opening=queued=leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;
  if(clearInvite){
   $('code').value='';
   const url=new URL(location.href);
@@ -207,11 +218,79 @@ function reset(message='',clearInvite=false){
  store(null);packet=null;clearTimeout(retry);const current=ws;ws=null;current?.close();
  state=me=local=battle=null;actors.clear();scene.camera=null;lobbyKey='';battleKey='';teamHpKey='';survivalRankKey='';lastInput='';
  pendingMoves=[];pendingChest=null;correction=null;
+ resultKey='';
+ $('match-results').hidden=true;
  $('survival-standings').open=false;
- $('arena').hidden=$('room').hidden=true;$('lobby').hidden=$('entry').hidden=false;$('notice').textContent=message;
+ $('arena').hidden=$('room').hidden=$('rank-queue').hidden=true;$('lobby').hidden=$('entry').hidden=false;$('notice').textContent=message;
  updateEntryControls();
  if(mapDialog.open)mapDialog.close();
 }
+function showRankQueue(message){
+ const first=!queued;
+ opening=false;
+ queued=true;
+ store({type:'ranked',mode:message.mode});
+ $('entry').hidden=$('room').hidden=true;
+ $('rank-queue').hidden=false;
+ $('notice').textContent='';
+ $('rank-queue-title').textContent=message.mode==='team'?'ค้นหาแมตช์ทีม 5 ต่อ 5':'ค้นหาแมตช์เอาตัวรอด 10 คน';
+ const count=message.count+' / 10 ผู้เล่นที่เข้ากลุ่มได้';
+ if($('rank-queue-count').textContent!==count)$('rank-queue-count').textContent=count;
+ const elapsed=message.elapsed;
+ $('rank-queue-detail').textContent=elapsed<240_000?'ขยายช่วงระดับโล่ใน '+clock(240_000-elapsed):
+  elapsed<360_000?'กำลังค้นหาข้ามระดับโล่ · เติมบอทได้ใน '+clock(360_000-elapsed):
+  message.mode==='team'?'กำลังจัดผู้เล่นจริงให้เท่ากันทั้งสองทีมก่อนเติมบอท':'กำลังจัดแมตช์และเติมบอท';
+ updateEntryControls();
+ if(first)$('cancel-rank-queue').focus();
+}
+$('cancel-rank-queue').onclick=()=>{
+ if(!send({type:'cancelRank'}))reset();
+};
+function abandonRanked(){
+ if(!state?.ranked||state.phase!=='match')return;
+ if(!confirm('ออกก่อนจบจะเสีย 2 แต้มและถูกระงับการเล่นจัดอันดับ ต้องการออกจากแมตช์หรือไม่?'))return;
+ if(!send({type:'rankLeave'})){
+  $('signal').textContent='กำลังเชื่อมต่อกลับเข้าสนาม…';
+  $('signal').hidden=false;
+ }
+}
+$('rank-leave').onclick=abandonRanked;
+$('rank-leave-respawn').onclick=abandonRanked;
+
+const rankDate=value=>new Date(value).toLocaleString('th-TH',{timeZone:'Asia/Bangkok',dateStyle:'short',timeStyle:'short'});
+async function loadRankMail(id=null){
+ const status=$('rank-mail-status'),list=$('rank-mail-list');
+ status.textContent='กำลังโหลดจดหมาย…';
+ try{
+  const {connectAccounts}=await import('../../client/account-client.mjs?v=admin-session-20261107');
+  const client=connectAccounts(()=>{});
+  const rows=await client.request('/rest/v1/rpc/sb_colosseum_rank_mail',{p_read:id},await client.sessions.token());
+  status.textContent=rows.length?'':'ยังไม่มีจดหมาย';
+  if(id){
+   const row=rows.find(message=>message.id===id);
+   if(!row){list.replaceChildren();return;}
+   const reason=row.violation==='abandon'?'ออกก่อนจบแมตช์':'ทำคะแนนต่ำกว่า 20 และไม่มีการช่วยต่อสู้';
+   const block=row.permanent?'ระงับการเล่นจัดอันดับถาวร':'ระงับการเล่นถึง '+rankDate(row.blocked_until);
+   const back=node('button','กลับกล่องจดหมาย','secondary');
+   back.onclick=()=>void loadRankMail();
+   list.replaceChildren(node('h3',reason),node('p',rankDate(row.at)),
+    node('p',block),node('p','แต้มที่ได้ในแมตช์ '+row.delta+' · ครั้งที่ '+row.daily_count+' ของวัน และ '+row.monthly_count+' ของเดือน'),back);
+  }else{
+   list.replaceChildren(...rows.map(row=>{
+    const letter=node('button',(row.read?'':'● ')+'จดหมายเตือน · '+rankDate(row.at),'secondary');
+    letter.onclick=()=>void loadRankMail(row.id);
+    return letter;
+   }));
+  }
+ }catch{
+  status.textContent='โหลดจดหมายไม่สำเร็จ ลองเปิดอีกครั้ง';
+ }
+}
+$('open-rank-mail').onclick=()=>{
+ $('rank-mail').showModal();
+ $('rank-mail-list').replaceChildren();
+ void loadRankMail();
+};
 function applyState(next){
  const arrival=performance.now();
  const entering=opening||!state;
@@ -228,6 +307,8 @@ function applyState(next){
  $('entry').hidden=true;$('room').hidden=false;
  if(state.phase==='lobby'){renderLobby();return;}
  me=own();
+ if(state.rankSaved&&Number.isFinite(me?.rating))selectedRating=me.rating;
+ renderMatchResults();
  if(!me||!Number.isFinite(me.x))return;
  const solo=state.mode==='survival';
  scene.arena=solo?SURVIVAL_ARENA:TEAM_ARENA;
@@ -245,7 +326,7 @@ function applyState(next){
   const err=distance(local,expected);
   if(err>145||!scene.arena.fits(local.x,local.y)){local.x=expected.x;local.y=expected.y;correction=null;}
   else correction=err>7?{x:expected.x-local.x,y:expected.y-local.y}:null;
-  for(const k of ['phase','connected','safeUntil','repairingBase'])local[k]=me[k];
+  for(const k of ['phase','connected','safeUntil','repairingBase','rating'])local[k]=me[k];
  }
  const visible=[...next.players.filter(p=>p.id!==me.id&&Number.isFinite(p.x)&&p.connected&&p.phase!=='dead'),...next.shadows,...next.bosses];
  const ids=new Set(visible.map(p=>p.id));
@@ -262,6 +343,92 @@ function applyState(next){
  if((state.phase!=='match'||me.phase!=='walk'&&!state.spectating)&&mapDialog.open)mapDialog.close();
  if(!viewingBattle())hideBattle();
 }
+function shieldIcon(score){
+ const shield=shieldFor(score);
+ if(!shield)return null;
+ const icon=node('img',null,'rank-shield');
+ icon.src=shieldUrl(shield);
+ icon.dataset.rank=shield.id;
+ icon.alt=icon.title=shield.name;
+ icon.width=24;
+ icon.height=24;
+ return icon;
+}
+function playerName(name,score){
+ const label=node('span',null,'rank-name');
+ const badge=shieldIcon(score);
+ if(badge)label.append(badge);
+ label.append(name);
+ return label;
+}
+function scoreTable(label,headings,rows){
+ const table=node('table',null,'rank-table');
+ table.append(node('caption',label));
+ const header=node('tr');
+ for(const heading of headings){
+  const cell=node('th',heading);
+  cell.scope='col';
+  header.append(cell);
+ }
+ const thead=node('thead');
+ thead.append(header);
+ const tbody=node('tbody');
+ for(const row of rows){
+  const tr=node('tr');
+  for(const value of row){
+   const cell=node('td');
+   cell.append(value);
+   tr.append(cell);
+  }
+  tbody.append(tr);
+ }
+ table.append(thead,tbody);
+ return table;
+}
+function renderMatchResults(){
+ const panel=$('match-results');
+ panel.hidden=state.phase!=='finished';
+ if(panel.hidden)return;
+ const key=JSON.stringify([state.finishedAt,state.results,state.rankDelta,state.rankSaved,state.rankingAvailable,state.rankPending,state.placement,me?.rating]);
+ if(key===resultKey)return;
+ resultKey=key;
+ const sections=(state.results||[]).map((team,i)=>{
+  const rows=team.map(p=>{
+   const name=playerName(p.name,state.players.find(player=>player.id===p.id)?.rating??p.rating);
+   if(p.mvp)name.append(node('small','MVP','mvp-label'));
+   return [name,String(p.points),String(p.kills)];
+  });
+  return scoreTable(TEAMS[i],['ผู้เล่น','คะแนน','สังหาร'],rows);
+ });
+ if(state.rankDelta!=null){
+  const delta=state.rankDelta>0?'+'+state.rankDelta:String(state.rankDelta);
+  const message=state.rankSaved?'แต้มสะสม '+delta+' · รวม '+me.rating
+   :state.rankingAvailable?'กำลังบันทึกแต้มสะสม '+delta:'แต้มสะสมยังไม่พร้อมใช้งาน';
+  sections.push(node('p',message,'rank-result'));
+ }else if(state.reason!=='error'){
+  sections.push(node('p',state.rankPending?'กำลังตรวจสอบผลจัดอันดับ…':'แมตช์นี้ไม่คิดแต้มสะสม','rank-result'));
+ }
+ panel.replaceChildren(...sections);
+}
+$('open-rankings').onclick=async()=>{
+ const dialog=$('rankings'), note=$('rankings-note'), list=$('rankings-list');
+ list.replaceChildren();
+ note.textContent='กำลังโหลดกระดานคะแนน…';
+ dialog.showModal();
+ try{
+  const base=gameWeb?serverURL:location.origin;
+  const response=await fetch(new URL('/rankings',base),{signal:AbortSignal.timeout(15_000)});
+  const result=await response.json();
+  if(!response.ok)throw Error(result.error);
+  if(!result.rows.length){note.textContent='ยังไม่มีผลการแข่งที่คิดแต้มสะสม';return;}
+  note.textContent='';
+  list.append(scoreTable('อันดับโคลอสเซียม',['อันดับ','ผู้เล่น','แต้มสะสม'],
+   result.rows.map(row=>[String(row.rank),playerName(row.name,row.score),String(row.score)])));
+ }catch{
+  note.textContent='โหลดกระดานคะแนนไม่สำเร็จ ลองเปิดอีกครั้ง';
+ }
+};
+
 function renderLobby(){
  const key=JSON.stringify([state.players,state.canStart,state.host,state.canManageBots]);if(key===lobbyKey)return;lobbyKey=key;
  $('room-code').textContent=state.code;
@@ -294,6 +461,8 @@ function renderLobby(){
 function lobbySeat(u){
  const li=node('li',`${u.name} · Lv ${u.lv}${u.bot?' · '+(u.className||CLASSES[u.baseCls]||''):u.ready?' ✓':''}${u.connected?'':' · หลุด'}`);
  li.dataset.ready=String(u.ready);
+ const badge=shieldIcon(u.rating);
+ if(badge)li.prepend(badge);
  if(u.bot&&state.canManageBots){
   const remove=node('button','เอาออก','secondary remove-bot');
   remove.setAttribute('aria-label','เอา '+u.name+' ออกจากห้อง');
@@ -363,6 +532,8 @@ function unitCard(unit,current,selectable,choose){
  };
  face.append(art);
  const name=node('b',unit.name);
+ const badge=unit.kind==='player'&&shieldIcon(state.players.find(p=>p.id===battle?.roster[unit.owner])?.rating);
+ if(badge)name.prepend(badge);
  const meters=[['HP',unit.hp,unit.maxHp],['MP',unit.mp,unit.maxMp]].map(([label,value,max])=>{
   const meter=node('meter',null,label.toLowerCase());
   meter.min=0;meter.max=Math.max(1,max);meter.value=value;
@@ -500,6 +671,11 @@ function renderBattle(){
   }));
  }
  if(cmds.childElementCount)footer.append(cmds);
+ if(state.ranked&&!watch&&!b.finished){
+  const leave=node('button','ออกจากแมตช์จัดอันดับ','secondary battle-rank-leave');
+  leave.onclick=abandonRanked;
+  footer.append(leave);
+ }
  host.append(footer);
  panel.replaceChildren(host);
  presentation.syncPoses();
@@ -511,6 +687,25 @@ function renderBattle(){
  else if(battleUpdates.length&&!presentation.busy)continueBattle();
 }
 
+function showSelectedProfile(){
+ const label=selectedCharacter.name+' · Lv '+selectedCharacter.lv;
+ $('selected-profile').replaceChildren(playerName(label,selectedRating));
+}
+async function loadSelectedRating(){
+ try{
+  const {accountRealtimeConfig:{url,key}}=await import('../../client/account-client.mjs?v=admin-session-20261107');
+  const response=await fetch(new URL('/rest/v1/rpc/sb_colosseum_rating',url),{
+   method:'POST',headers:{apikey:key,'Content-Type':'application/json'},
+   body:JSON.stringify({p_code:accountContext.code}),signal:AbortSignal.timeout(8000),
+  });
+  if(!response.ok)return;
+  const rating=await response.json();
+  if(!Number.isInteger(rating)||selectedRating!==null)return;
+  selectedRating=rating;
+  showSelectedProfile();
+  if(ws?.local)send({type:'displayRating',rating});
+ }catch{}
+}
 for(const [id,name] of Object.entries(CLASSES))$('cls').add(new Option(name,id));
 const fromLink=params.get('room'),country=params.get('country')||selectedCharacter?.country;
 if(['blue','green','red'].includes(country)){
@@ -518,8 +713,12 @@ if(['blue','green','red'].includes(country)){
 }
 if(selectedCharacter){
  $('demo-profile').hidden=$('demo-profile').disabled=true;
- $('selected-profile').textContent=`${selectedCharacter.name} · Lv ${selectedCharacter.lv}`;
+ showSelectedProfile();
  $('selected-profile').hidden=false;
+}
+if(gameWeb&&accountContext?.environment==='live'&&selectedCharacter){
+ $('open-rank-mail').hidden=false;
+ void loadSelectedRating();
 }
 if(!onlineEnabled){
  $('code').disabled=true;
@@ -529,13 +728,13 @@ updateEntryControls();
 if(/^[A-F0-9]{8}$/i.test(fromLink??''))$('code').value=fromLink.toUpperCase();
 $('entry-form').onsubmit=event=>{
  event.preventDefault();
- if(opening||state)return;
+ if(opening||queued||state)return;
  const type=event.submitter?.value??'create',code=$('code').value.trim().toUpperCase();
  if(!practiceType(type)&&!onlineEnabled)return;
  if(gameWeb&&!selectedCharacter){location.assign('../../accounts.html');return;}
  if(type==='join'&&!/^[A-F0-9]{8}$/.test(code)){$('notice').textContent='กรอกรหัสห้อง 8 ตัวก่อน';return;}
  if(ws){const old=ws;ws=null;old.close();}
- connect({type,code,mode:$('public-mode').value,name:$('name').value,cls:$('cls').value,lv:$('level').value});
+ connect({type,code,mode:$(type==='ranked'?'rank-mode':'public-mode').value,name:$('name').value,cls:$('cls').value,lv:$('level').value});
 };
 $('ready').onclick=()=>{if(!leaving)send({type:'ready',ready:!own()?.ready});};
 $('start').onclick=()=>{if(!leaving)send({type:'start'});};
@@ -715,7 +914,7 @@ function frame(t){
   $('arena').toggleAttribute('data-spectating',Boolean(watch));
   $('spectator').hidden=!watch;
   if(watch){
-   const label=`ชม ${watch.name}`;
+   const label=`${state.placement?'อันดับ '+state.placement+' · ':''}ชม ${watch.name}`;
    if($('spectator-name').textContent!==label)$('spectator-name').textContent=label;
    const canSwitch=state.players.filter(p=>p.connected&&p.phase!=='dead').length>1;
    $('spectator-prev').disabled=$('spectator-next').disabled=!canSwitch;
@@ -733,6 +932,7 @@ function frame(t){
    $('base-repair-progress').value=Math.min(BASE_REPAIR_MS-1,elapsed)/BASE_REPAIR_MS;
   }
   $('leave-practice').hidden=!state.practice;
+  $('rank-leave').hidden=!state.ranked||!walking;
   const treasure=`หีบเหลือ ${state.chestsLeft}/${state.chestsTotal??CHEST_COUNT}`;
   $('chest-count').textContent=treasure;$('map-chests').textContent=treasure;
   $('boss-clock').textContent=solo?(!insideFogSafe(zone,focus.x,focus.y)?'อยู่ในหมอกพิษ · เสีย HP 2%/วิ':zone.nextAt?`หมอกเข้ามาอีก ${clock(zone.nextAt-now)}`:'หมอกปกคลุมทั้งสนาม'):
@@ -746,13 +946,14 @@ function frame(t){
    lastMap=t;
   }
   const ended=state.phase==='finished',dead=me.phase==='dead';
+  $('rank-leave-respawn').hidden=ended||solo||!dead||!state.ranked;
   $('overlay').hidden=(!$('battle').hidden)||Boolean(watch)||!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
   if(ended||dead){
    if(solo){
     $('overlay-title').textContent=ended?(state.winner===me.id?'คุณรอดเป็นคนสุดท้าย!':state.winnerName?'จบการประลอง':'เสมอ'):'คุณตกรอบ';
     const result=ended?(state.winnerName?`${state.winnerName} เป็นผู้รอดคนสุดท้าย`:state.reason==='error'?'สนามยุติการเล่น':'ผู้เล่นคนสุดท้ายล้มพร้อมกัน'):
      `เหลือผู้รอด ${state.survivors} คน`;
-    $('overlay-text').textContent=[state.eliminationCause,result,Number.isFinite(me.points)?`คะแนนคุณ ${me.points}`:''].filter(Boolean).join(' · ');
+    $('overlay-text').textContent=[state.placement?'อันดับ '+state.placement:'',state.eliminationCause,result,Number.isFinite(me.points)?`คะแนนคุณ ${me.points}`:''].filter(Boolean).join(' · ');
    }else{
     $('overlay-title').textContent=ended?(state.winner===-1?'เสมอ':state.winner===me.side?'ทีมคุณชนะ!':'ทีมคุณแพ้'):'ผู้ผนึกล้มลง';
     $('overlay-text').textContent=ended?`${state.reason==='base-captured'?`${TEAMS[state.winner]} ยึดฐานใหญ่ · `:state.reason==='error'?'สนามยุติการเล่น · ':''}${TEAMS[0]} ${state.score[0]} : ${state.score[1]} ${TEAMS[1]}`:`เกิดใหม่ที่ฐานใหญ่ใน ${clock(state.respawnAt-now)}`;

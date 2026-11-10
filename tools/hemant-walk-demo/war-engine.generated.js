@@ -1042,7 +1042,7 @@ CON.godSeal={n:'ผนึกของพระเจ้า',d:'จับอส�
 for(const cls of Object.keys(CLS))if(!NPC.some(n=>n.cls===cls)){const tier=CLS[cls].p?(CLS[CLS[cls].p].p?2:1):0,lv=tier===0?18:tier===1?32:55;NPC.push({n:'ผู้ท้าชิง '+CLS[cls].n,cls,lv,pets:[[Object.keys(SP)[NPC.length%Object.keys(SP).length],lv]],gold:Math.round(lv*lv*12)})}
 /* Per-unit cooldown: cd=1 blocks the next personal turn. */
 function cooldownOf(u,id){return Math.max(0,(u.cooldowns||{})[id]||0)}
-function endUnitTurn(u){if(!u||u.hp<=0)return;for(const d of (u.dots||[])){const m=typeMult(d.el,u.types);if(m>0)hurt(u,Math.max(1,Math.round(u.st.hp*d.rate*m)));d.turns--;blog(u.name+' ได้รับผล '+d.n)}u.dots=(u.dots||[]).filter(d=>d.turns>0);}
+function endUnitTurn(u){if(!u||u.hp<=0)return;for(const d of (u.dots||[])){const m=typeMult(d.el,u.types);if(m>0)hurt(u,Math.max(1,Math.round(u.st.hp*d.rate*m)),'bad',d.colosseumOwner);d.turns--;blog(u.name+' ได้รับผล '+d.n)}u.dots=(u.dots||[]).filter(d=>d.turns>0);}
 function beginUnitTurn(u){u.freeFormUsed=false;u.freeFormPending=false;u.cooldowns=u.cooldowns||{};for(const k in u.cooldowns)u.cooldowns[k]=Math.max(0,u.cooldowns[k]-1);if(u.enchantTurns>0&&!--u.enchantTurns)delete u.enchant;if(u.immuneTurns>0&&!--u.immuneTurns)delete u.immune;if(u.summonLife!=null&&!--u.summonLife){u.hp=0;blog(u.name+' หมดเวลาอัญเชิญ');return true}return false}
 // An enchanted attack keeps its own non-neutral element and adds the sword element.
 // Neutral is replaced; repeated elements never stack. Support skills are unaffected.
@@ -1123,26 +1123,26 @@ function trySummonerSoulRevive(u){
  blog(pet.name+' สละพลังชีวิตให้ '+u.name+' ฟื้นคืนชีพด้วย HP 30% (1 ครั้งต่อการต่อสู้)');
  fxAdd(pet,'สละชีวิต','bad');fxAdd(u,'คืนชีพ 30%','good');vfx('heal',u.id);return true;
 }
-function hurt(u,d,c='bad'){if(isWorldBattle()&&u.immortalWorld){const b=B(),damage=Math.max(0,Math.min(1e12,Math.round(Number(d)||0)));b.damageTotal=(b.damageTotal||0)+damage;const owner=b.wbDamageOwner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;u.hp=u.st.hp;fxAdd(u,'-'+damage,c);return;}const wasAlive=u.hp>0;u.hp=Math.max(0,u.hp-d);fxAdd(u,'-'+d,c);
- if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status={};blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else if(wasAlive&&trySummonerSoulRevive(u)){/* revived before settlement */}else{blog(`${u.name} ล้มลง`);if(wasAlive)Sound.cry(u.sp,true)}}}
+function hurt(u,d,c='bad',sourceOwner){if(isWorldBattle()&&u.immortalWorld){const b=B(),damage=Math.max(0,Math.min(1e12,Math.round(Number(d)||0)));b.damageTotal=(b.damageTotal||0)+damage;const owner=b.wbDamageOwner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;u.hp=u.st.hp;fxAdd(u,'-'+damage,c);return;}const wasAlive=u.hp>0;u.hp=Math.max(0,u.hp-d);fxAdd(u,'-'+d,c);
+ if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status={};blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else if(wasAlive&&trySummonerSoulRevive(u)){/* revived before settlement */}else{blog(`${u.name} ล้มลง`);if(wasAlive){B().colosseumFalls?.set(u.id,sourceOwner);Sound.cry(u.sp,true)}}}}
 function heal(u,a){const v=Math.min(u.st.hp-u.hp,Math.round(a));if(v>0){u.hp+=v;fxAdd(u,'+'+v,'good')}return v}
 function turnStartBase(u){const s=u.status;
  u.buffs.forEach(x=>x.tn--);u.buffs=u.buffs.filter(x=>x.tn>0);if(u.taunt>0&&!isWorldBattle())u.taunt--;
  if(hasPas(u,'regen')&&u.hp<u.st.hp)heal(u,u.st.hp*(isBalancedPvp()?.035:.06));
  if(hasPas(u,'mpregen'))u.mp=Math.min(u.st.mp,u.mp+Math.round(u.st.mp*.08));
- for(const k of ['burn','poison'])if(s[k]){const d=Math.max(1,Math.round(u.st.hp*(k==='burn'?.06:.08)));blog(`${u.name} ${k==='burn'?'โดนไฟเผา':'โดนพิษกัดกร่อน'} เสีย ${d} HP`);hurt(u,d);if(u.hp<=0)return true}
+ for(const k of ['burn','poison'])if(s[k]){const d=Math.max(1,Math.round(u.st.hp*(k==='burn'?.06:.08)));blog(`${u.name} ${k==='burn'?'โดนไฟเผา':'โดนพิษกัดกร่อน'} เสีย ${d} HP`);hurt(u,d,'bad',u.colosseumStatusOwners?.[k]);if(u.hp<=0)return true}
  if(s.freeze){s.freeze--;blog(`${u.name} ถูกแช่แข็ง ขยับไม่ได้`);if(s.freeze<=0){delete s.freeze;blog(`น้ำแข็งที่ห่อหุ้ม ${u.name} ละลายแล้ว`)}return true}
  if(s.sleep){s.sleep--;if(s.sleep<=0){delete s.sleep;blog(`${u.name} ตื่นขึ้นแล้ว`)}else{blog(`${u.name} หลับปุ๋ย...`);fxAdd(u,'Zzz','muted');return true}}
  let skip=null;
  if(s.para&&Math.random()<.25)skip=`${u.name} เป็นอัมพาต ขยับตัวไม่ได้`;
  else if(s.love&&Math.random()<.45)skip=`${u.name} หลงรักจนเหม่อลอย ไม่ยอมโจมตี`;
- else if(s.confuse&&Math.random()<.35){const d=Math.max(1,Math.round(u.st.hp*.06));skip=`${u.name} มึนงง ทำร้ายตัวเอง ${d} HP`;hurt(u,d)}
+ else if(s.confuse&&Math.random()<.35){const d=Math.max(1,Math.round(u.st.hp*.06));skip=`${u.name} มึนงง ทำร้ายตัวเอง ${d} HP`;hurt(u,d,'bad',u.colosseumStatusOwners?.confuse)}
  for(const k of ['burn','poison','chill','static','love','confuse','charm','para'])if(s[k]){s[k]--;if(s[k]<=0){delete s[k];blog(`${u.name} หายจากอาการ${STS[k].n}`)}}
  if(skip){blog(skip);return true}return false}
-function applyStatus(t,k,ch){if(t.hp<=0||t.status[k])return;if(IMM[k]&&t.types.some(x=>IMM[k].includes(x)))return;
+function applyStatus(t,k,ch,source){if(t.hp<=0||t.status[k])return;if(IMM[k]&&t.types.some(x=>IMM[k].includes(x)))return;
  if(t.pas.some(p=>PAS[p]&&PAS[p].imm&&PAS[p].imm.includes(k)))return;
  if((k==='freeze'||k==='sleep')&&(t.status.freeze||t.status.sleep))return;
- if(Math.random()<ch){t.status[k]=STS[k].d();blog(`${t.name} ${STS[k].n}!`);fxAdd(t,STS[k].n,'mp')}}
+ if(Math.random()<ch){t.status[k]=STS[k].d();if(B().colosseumFalls)(t.colosseumStatusOwners??={})[k]=source?.owner;blog(`${t.name} ${STS[k].n}!`);fxAdd(t,STS[k].n,'mp')}}
 function addBuffs(x,sk){if(sk.bf)for(const k in sk.bf)x.buffs.push({st:k,amt:sk.bf[k],tn:(sk.tn||3)+1});if(sk.pas)x.buffs.push({pas:sk.pas,tn:(sk.tn||3)+1})}
 function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,sk);
  if(!free){if(cost&&u.mp<cost){blog(`MP ไม่พอสำหรับ ${sk.n}`);return false}
@@ -1241,7 +1241,7 @@ function hitOne(u,sk,t,scale,areaCount=0){
  if(m===0){blog(`ไม่มีผลต่อ ${t.name}`);fxAdd(t,'×0','muted');vfx('miss',t.id);return}
  if(!sk.acc||sk.acc<100)if(Math.random()*100>hitChance(u,t,sk)){blog(`${t.name} หลบได้`);fxAdd(t,'พลาด','muted');vfx('miss',t.id);return}
  const tx=hasPas(u,'toxin')?1.5:1;
- if(!dmgT){if(class10BlockHit(u,sk,t,false))return;vfx('debuff',t.id,{el:sk.el,c:sk.el?null:'#a07ad8'});addBuffs(t,{bf:sk.bf,tn:sk.tn});if(sk.bf)fxAdd(t,'↓','bad');if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*tx);return}
+ if(!dmgT){if(class10BlockHit(u,sk,t,false))return;vfx('debuff',t.id,{el:sk.el,c:sk.el?null:'#a07ad8'});addBuffs(t,{bf:sk.bf,tn:sk.tn});if(sk.bf)fxAdd(t,'↓','bad');if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*tx,u);return}
  const type=sk.t==='auto'?u.atkType:sk.t;if((type==='p'&&t.immune==='p')||(type==='m'&&t.immune==='m')){blog(t.name+' ป้องกันสมบูรณ์');vfx('buff',t.id);return}if(class10BlockHit(u,sk,t,true))return;if(type==='h'&&t.immune)scale*=.5;let atk,def;
  if(type==='h'){atk=(eff(u,'patk')+eff(u,'matk'))/2;def=(eff(t,'pdef')+eff(t,'mdef'))/2}else{atk=eff(u,type==='p'?'patk':'matk');def=eff(t,type==='p'?'pdef':'mdef')}
  if(sk.trueD)def=0;def*=1-Math.min(.8,(sk.pi||0)+(hasPas(u,'pierce')?.25:0)+frontlinePierce(u,t));
@@ -1255,20 +1255,20 @@ function hitOne(u,sk,t,scale,areaCount=0){
  if(hasPas(t,'sturdy')&&t.hp===t.st.hp&&d>=t.hp&&t.hp>1){d=t.hp-1;blog(`${t.name} อึดทนไว้ได้!`)}
  blog(`→ ${t.name} ${d} ดาเมจ${crit?' คริติคอล!':''}${m>1?' ได้ผลดีมาก':m<1?' ไม่ค่อยได้ผล':''}`);
  vfx('hit',t.id,{skill:VSKID.get(sk)||sk._pvpId,el:sk.el,phys:type!=='m',crit});
- if(isWorldBattle()&&t.immortalWorld)B().wbDamageOwner=u.owner;hurt(t,d);if(sk.dot&&t.hp>0){t.dots=t.dots||[];t.dots=t.dots.filter(x=>x.n!==sk.dot.n);t.dots.push({...sk.dot,rate:sk.dot.rate*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):1)})}
+ if(isWorldBattle()&&t.immortalWorld)B().wbDamageOwner=u.owner;hurt(t,d,'bad',u.owner);if(sk.dot&&t.hp>0){t.dots=t.dots||[];t.dots=t.dots.filter(x=>x.n!==sk.dot.n);t.dots.push({...sk.dot,...(B().colosseumFalls?{colosseumOwner:u.owner}:{}),rate:sk.dot.rate*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):1)})}
  const ls=(sk.ls||0)+(hasPas(u,'lifesteal')?.15:0);if(ls&&u.hp>0)heal(u,d*ls);
  if(hasPas(u,'manadrain'))u.mp=Math.min(u.st.mp,u.mp+Math.round(d*.08));
  if(sk.steal)steal(u,t);
  if(sk.gold&&u.kind==='player'){const g=u.lv*8;S.P.gold+=g;blog(`ได้ ${g} เหรียญ`)}
- reflectShieldDamage(u,t,d);if((type==='p'||type==='h')&&u.hp>0){const tf=(hasPas(t,'counter50')||hasPas(t,'reflect50'))?0:hasPas(t,'thorns2')?.4:hasPas(t,'thorns')?.25:0;if(tf){const r=Math.max(1,Math.round(d*tf));blog(`${u.name} โดนสะท้อน ${r}`);if(isWorldBattle()&&u.immortalWorld)B().wbDamageOwner=t.owner;hurt(u,r)}
-  if(hasPas(t,'flameBody')&&Math.random()<.25)applyStatus(u,'burn',1);if(hasPas(t,'staticbody')&&Math.random()<.25)applyStatus(u,'para',1);
-  const pt=hasPas(u,'poisonTouch2')?.5:hasPas(u,'poisonTouch')?.25:0;if(pt)applyStatus(t,'poison',pt*tx);
+ reflectShieldDamage(u,t,d);if((type==='p'||type==='h')&&u.hp>0){const tf=(hasPas(t,'counter50')||hasPas(t,'reflect50'))?0:hasPas(t,'thorns2')?.4:hasPas(t,'thorns')?.25:0;if(tf){const r=Math.max(1,Math.round(d*tf));blog(`${u.name} โดนสะท้อน ${r}`);if(isWorldBattle()&&u.immortalWorld)B().wbDamageOwner=t.owner;hurt(u,r,'bad',t.owner)}
+  if(hasPas(t,'flameBody')&&Math.random()<.25)applyStatus(u,'burn',1,t);if(hasPas(t,'staticbody')&&Math.random()<.25)applyStatus(u,'para',1);
+  const pt=hasPas(u,'poisonTouch2')?.5:hasPas(u,'poisonTouch')?.25:0;if(pt)applyStatus(t,'poison',pt*tx,u);
   if(t.hp>0&&u.hp>0&&hasPas(t,'counter')&&!t._ctr&&Math.random()<.25){t._ctr=1;blog(`${t.name} สวนกลับ!`);hitOne(t,SK.attack,u,1);t._ctr=0}}
  if(t.hp<=0)return;
  if(t.status.sleep){delete t.status.sleep;blog(`${t.name} สะดุ้งตื่น!`)}
  if(t.status.freeze&&attackHasElement(u,sk,'fire')){delete t.status.freeze;blog(`ไฟละลายน้ำแข็งของ ${t.name}`)}
  if(sk.bf)addBuffs(t,{bf:sk.bf,tn:sk.tn});
- if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):scale<1?.7:1)*tx)}
+ if(sk.st)for(const k in sk.st)applyStatus(t,k,sk.st[k]*(sk.all?areaTotalBudget(areaCount)/Math.max(1,areaCount):scale<1?.7:1)*tx,u)}
 
 /* Mist expansion: additive species/skills; no changes to existing pets or saves. */
 const MIST_RARE_DEFS=[
@@ -1615,7 +1615,7 @@ function bossSummonLegends(u,count){const b=B(),pool=Object.keys(SP).filter(k=>S
 const balanceBossAct=act;act=function(u,id,t,a,free){const b=B(),prior=b?.balanceDamageActor;if(b&&isWorldBattle())b.balanceDamageActor={side:u.side,owner:u.owner};try{if(id==='boss_legend_call')return bossSummonLegends(u,u.immortalWorld?2:1);return balanceBossAct(u,id,t,a,free);}finally{if(b)b.balanceDamageActor=prior;}};
 function worldAttackTarget(b){return b.enemies.find(x=>x.bossHelper&&x.hp>0)||b.enemies[0];}
 
-const balanceHurt=hurt;hurt=function(u,d,c='bad'){const beforeHp=u.hp;balanceHurt(u,d,c);if(isWorldBattle()&&u.bossHelper&&B().balanceDamageActor?.side==='ally'){const b=B(),damage=Math.max(0,beforeHp-u.hp);b.damageTotal=(b.damageTotal||0)+damage;const owner=b.balanceDamageActor.owner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;}if(u.bossHelper&&u.hp<=0&&!B().enemies.some(x=>x.bossHelper&&x.hp>0)){const boss=B().enemies.find(x=>x.id===u.summonedBy);if(boss)boss.legendDeadAt=boss.legendTurn||0;}};
+const balanceHurt=hurt;hurt=function(u,d,c='bad',sourceOwner){const beforeHp=u.hp;balanceHurt(u,d,c,sourceOwner);if(isWorldBattle()&&u.bossHelper&&B().balanceDamageActor?.side==='ally'){const b=B(),damage=Math.max(0,beforeHp-u.hp);b.damageTotal=(b.damageTotal||0)+damage;const owner=b.balanceDamageActor.owner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;}if(u.bossHelper&&u.hp<=0&&!B().enemies.some(x=>x.bossHelper&&x.hp>0)){const boss=B().enemies.find(x=>x.id===u.summonedBy);if(boss)boss.legendDeadAt=boss.legendTurn||0;}};
 
 
 const balanceWorldBoss=wbBoss_;wbBoss_=function(){const u=balanceWorldBoss();u.st.patk=Math.max(1,Math.round(u.st.patk*.5));u.st.matk=Math.max(1,Math.round(u.st.matk*.5));u.skills.push('boss_legend_call');return u;};
@@ -2029,7 +2029,7 @@ chooseAutoReflect=function(u){
  if(u.hp/u.st.hp<.4&&u.skills.some(id=>SK[id]?.t==='heal'&&!cooldownOf(u,id)&&costOf(u,SK[id])<=u.mp))return null;
  return foesOf(u).some(x=>x.hp>0&&x.skills.some(id=>class10Damaging(SK[id])))?'ms_gladiator10':null;
 };
-function reflectShieldDamage(u,t,d){if(!hasPas(t,'reflect50')||u.hp<=0)return;const n=Math.max(1,Math.round(d*.5));blog(u.name+' โดนโล่สะท้อน '+n);if(isWorldBattle()&&u.immortalWorld)B().wbDamageOwner=t.owner;hurt(u,n);}
+function reflectShieldDamage(u,t,d){if(!hasPas(t,'reflect50')||u.hp<=0)return;const n=Math.max(1,Math.round(d*.5));blog(u.name+' โดนโล่สะท้อน '+n);if(isWorldBattle()&&u.immortalWorld)B().wbDamageOwner=t.owner;hurt(u,n,'bad',t.owner);}
 
 // Counter stance, shadow interception and mercenary level revision.
 delete SK.gl_counter.bf;
@@ -2040,7 +2040,7 @@ PAS.shadow_guard={n:'เงารับเคราะห์',d:'Lv10: เมื
 CLS.thief.pas.push('shadow_guard');
 const counterShadowUnit=unit;unit=function(o){const u=counterShadowUnit(o);if(u.lv<10)u.pas=u.pas.filter(k=>k!=='shadow_guard');return u;};
 const counterShadowAct=act;act=function(u,id,...args){const ok=counterShadowAct(u,id,...args);if(ok&&(id==='gl_counter'||id==='ms_gladiator10'))u.buffs=u.buffs.filter(x=>x.pas!==(id==='gl_counter'?'reflect50':'counter50'));return ok;};
-reflectShieldDamage=function(u,t,d){if(!(hasPas(t,'counter50')||hasPas(t,'reflect50'))||u.hp<=0)return;const n=Math.max(1,Math.round(d*.5));blog(u.name+' โดนสะท้อน '+n);if(isWorldBattle()&&u.immortalWorld)B().wbDamageOwner=t.owner;hurt(u,n);};
+reflectShieldDamage=function(u,t,d){if(!(hasPas(t,'counter50')||hasPas(t,'reflect50'))||u.hp<=0)return;const n=Math.max(1,Math.round(d*.5));blog(u.name+' โดนสะท้อน '+n);if(isWorldBattle()&&u.immortalWorld)B().wbDamageOwner=t.owner;hurt(u,n,'bad',t.owner);};
 chooseAutoReflect=function(u){
  if(!u||u.hp<=0||u.temporary||!u.cls||baseOf(u.cls)!=='gladiator'||hasPas(u,'counter50')||hasPas(u,'reflect50'))return null;
  if(u.hp/u.st.hp<.4&&u.skills.some(id=>SK[id]?.t==='heal'&&!cooldownOf(u,id)&&costOf(u,SK[id])<=u.mp))return null;

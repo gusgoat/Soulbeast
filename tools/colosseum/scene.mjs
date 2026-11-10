@@ -1,4 +1,5 @@
 import '../town-walk-demo/sealer-sprite-catalog.js';
+import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-repair-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
@@ -7,7 +8,79 @@ import rareArt from './rare-art.mjs';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
 const TILE=CELL*FLAT;
 const img=url=>Object.assign(new Image(),{src:url});
+const shieldImages=new Map();
 const ready=i=>i?.complete&&i.naturalWidth>0;
+const shieldEffects={
+ diamond:{color:'#79dfff',glow:.42,period:2800},
+ guardian:{color:'#58f0a1',glow:.55,period:3200},
+ legend:{color:'#b583ff',glow:.64,period:2700},
+ eclipse:{color:'#ff6a28',glow:.82,period:2050},
+};
+const shieldGlows=new Map();
+const reducedShieldMotion=matchMedia('(prefers-reduced-motion: reduce)');
+
+function shieldGlow(id,color){
+ if(!shieldGlows.has(id)){
+  const canvas=document.createElement('canvas');
+  canvas.width=canvas.height=40;
+  const ctx=canvas.getContext('2d');
+  const glow=ctx.createRadialGradient(20,20,2,20,20,20);
+  glow.addColorStop(0,color);
+  glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow;
+  ctx.fillRect(0,0,40,40);
+  shieldGlows.set(id,canvas);
+ }
+ return shieldGlows.get(id);
+}
+
+function shieldSpark(ctx,x,y,r){
+ ctx.beginPath();
+ ctx.moveTo(x-r,y);
+ ctx.lineTo(x,y-r*.25);
+ ctx.lineTo(x+r*.25,y-r);
+ ctx.lineTo(x+r*.35,y-r*.15);
+ ctx.lineTo(x+r,y);
+ ctx.lineTo(x+r*.3,y+r*.25);
+ ctx.lineTo(x,y+r);
+ ctx.lineTo(x-r*.25,y+r*.25);
+ ctx.closePath();
+ ctx.fill();
+}
+
+function drawRankShield(ctx,badge,id,x,y,now){
+ const effect=shieldEffects[id];
+ if(!effect||reducedShieldMotion.matches){
+  ctx.drawImage(badge,x,y,22,22);
+  return;
+ }
+ const phase=(now%effect.period)/effect.period;
+ const angle=phase*2*Math.PI;
+ const pulse=.5+.5*Math.cos(angle);
+ const alpha=ctx.globalAlpha;
+ ctx.save();
+ ctx.globalAlpha=alpha*effect.glow*(.24+.76*pulse);
+ const glowSize=24+pulse*(id==='eclipse'?9:5);
+ ctx.drawImage(shieldGlow(id,effect.color),x+11-glowSize/2,y+11-glowSize/2,glowSize,glowSize);
+ ctx.globalAlpha=alpha;
+ ctx.drawImage(badge,x,y,22,22);
+ ctx.fillStyle=id==='diamond'?'#eaffff':'#fff0af';
+ if(id==='eclipse'){
+  ctx.globalAlpha=alpha*(.50+.40*pulse);
+  for(const offset of [0,Math.PI]){
+   shieldSpark(ctx,x+11+Math.cos(angle+offset)*9.5,y+11+Math.sin(angle+offset)*8.5,1.15+pulse*.45);
+  }
+ }else if(id==='legend'){
+  ctx.globalAlpha=alpha*pulse**3;
+  shieldSpark(ctx,x+4,y+7+pulse*3,1.7);
+  shieldSpark(ctx,x+18,y+7+pulse*3,1.7);
+ }else if(id==='diamond'){
+  ctx.globalAlpha=alpha*Math.sin(Math.PI*phase)**8;
+  shieldSpark(ctx,x+5+12*phase,y+5+4*phase,2.6);
+ }
+ ctx.restore();
+}
+
 const catalog=globalThis.sealerSpriteCatalog;
 const siteAsset=path=>path?.replace(/^\/Soulbeast\/assets\//,assets);
 export const sealerGender=u=>['male','female'].includes(u.gender)?u.gender:u.cls==='swordsman'?'male':'female';
@@ -340,11 +413,17 @@ export class Scene{
   c.fillStyle='#17202b';c.font='bold 20px sans-serif';c.textAlign='center';c.fillText(b.main?'◆':'✦',x,y-43);
   this.label(label,x,y+22,color);
  }
- label(text,x,y,color){
+ label(text,x,y,color,rating,now=0){
   const c=this.c;
   c.textAlign='center';c.font='bold 15px system-ui,sans-serif';
-  const w=c.measureText(text).width+12;
-  c.fillStyle='#15101de6';c.fillRect(x-w/2,y-15,w,19);c.fillStyle=color;c.fillText(text,x,y);
+  const shield=shieldFor(rating);
+  if(shield&&!shieldImages.has(shield.id))shieldImages.set(shield.id,img(shieldUrl(shield)));
+  const badge=shield&&shieldImages.get(shield.id);
+  const extra=badge?22:0;
+  const w=c.measureText(text).width+12+extra;
+  c.fillStyle='#15101de6';c.fillRect(x-w/2,y-16,w,21);
+  if(ready(badge))drawRankShield(c,badge,shield.id,x-w/2+3,y-17,now);
+  c.fillStyle=color;c.fillText(text,x+extra/2,y);
  }
  actor(p,now,isMe){
   const c=this.c,x=p.x,y=p.y*FLAT,color=p.sp?(p.boss?'#ffc479':p.rare?'#eed079':'#bd9af3'):
@@ -395,7 +474,7 @@ export class Scene{
     }
    }
    if(!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
-   this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,y-88,isMe?'#fff2af':color);
+   this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,y-88,isMe?'#fff2af':color,p.rating,now);
   }
   c.restore();
  }

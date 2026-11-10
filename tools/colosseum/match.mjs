@@ -1,7 +1,8 @@
 import {ASSIST, BASES, BASE_AURA_RANGE, BASE_REPAIR_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS, canRaidBase,
  TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=base-repair-1';
+import {teamResults} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=pet-vitals-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=colosseum-ranks-1';
 import rareArt from './rare-art.mjs';
 import {resetBotRoute, stepBot} from './practice.mjs?v=pet-vitals-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
@@ -27,7 +28,7 @@ const OBJECT_SITES=maze.flatMap((row,y)=>row.flatMap((walk,x)=>{
 }));
 export class Match {
  constructor(code,now,random=Math.random,mode='team'){
-  this.code=code;this.created=now;this.players=[];this.score=[100,100];this.phase='lobby';this.events=[];
+  this.code=code;this.id=crypto.randomUUID();this.created=now;this.players=[];this.score=[100,100];this.phase='lobby';this.events=[];
   this.battles=new Map();this.shadows=[];this.chests=[];this.bosses=[];this.battleSerial=0;this.eventSerial=0;this.botSerial=0;this.random=random;
   this.solo=mode==='survival';
   this.arena=this.solo?SURVIVAL_ARENA:TEAM_ARENA;
@@ -62,7 +63,7 @@ export class Match {
   }
   this.players.push(p);return p;
  }
- get host(){return this.players.find(p=>!p.bot)?.id;}
+ get host(){return this.ranked?null:this.players.find(p=>!p.bot)?.id;}
  addBot(side,level){
   assert(this.phase==='lobby'&&this.players.length<10,'ห้องเต็มหรือเริ่มแล้ว');
   assert(this.solo||((side===0||side===1)&&count(this,side)<5),'ทีมนี้เต็มแล้ว');
@@ -105,7 +106,7 @@ export class Match {
      [spawn]=edgeSpawns.splice(index,1);assigned.push(spawn);
      Object.assign(p,{points:0,scoreAt:now});
     }
-    Object.assign(p,{spawn,maxHp:hero.st.hp,maxMp:hero.st.mp});
+    Object.assign(p,{earned:0,kills:0,spawn,maxHp:hero.st.hp,maxMp:hero.st.mp});
     this.respawn(p,now);
    });
    SHADOW_SPAWNS.forEach(([x,y,sp],i)=>{
@@ -187,12 +188,21 @@ export class Match {
   this.teleport(p,now);
  }
  finish(winner,reason,now){
+  if(this.phase==='finished')return;
   this.phase='finished';this.winner=winner;this.reason=reason;this.finishedAt=now;
+  if(this.solo){
+   const survivor=this.players.find(p=>p.id===winner);
+   if(survivor)survivor.placement=1;
+  }else if(reason!=='error'){
+   this.results=teamResults(this.players);
+  }
   this.battles.clear();
  }
  checkScore(now){
   if(this.solo){
    const living=this.players.filter(p=>p.phase!=='dead');
+   const rank=Math.max(2,living.length+1);
+   for(const player of this.players)if(player.eliminatedAt===now)player.placement=rank;
    if(living.length<=1)this.finish(living[0]?.id??-1,'survival',now);
    return;
   }
@@ -250,7 +260,7 @@ export class Match {
    assert(canRaidBase(p.side,b,this.bases),b.main?'ต้องยึดฐานกลางที่เชื่อมอยู่ก่อน':'ต้องยึดฐานเล็กที่เชื่อมอยู่ก่อน');
    b.remaining--;
    const captured=b.remaining===0;
-   this.score[p.side]+=b.points;this.score[b.side]=Math.max(0,this.score[b.side]-b.points);
+   this.earn(p,b.points);this.score[b.side]=Math.max(0,this.score[b.side]-b.points);
    if(captured){b.side=p.side;b.remaining=b.maxDurability/2;this.clearBaseRepairs(b.id);}
    this.teleport(p,now);
    this.note(`${p.name} ${captured?'ยึด':'จู่โจม'}${b.label} · ${TEAMS[p.side]} +${b.points}`,now);
@@ -277,7 +287,7 @@ export class Match {
     this.recover(p,p,.15,now,`หีบสมบัติ · +${c.points} คะแนน`);
     this.note(`${p.name} เปิดหีบ · +${c.points} คะแนน`,now);
    }else{
-    this.score[p.side]+=c.points;
+    this.earn(p,c.points);
     this.note(`${p.name} เปิดหีบ · ${TEAMS[p.side]} +${c.points}`,now);
    }
   }else if((m.type==='combat'||m.type==='combatAuto')&&p.phase==='battle'){
@@ -303,6 +313,10 @@ export class Match {
    if(aura)auraOwners.set(p.id,aura);
   }
   const id=String(++this.battleSerial), battle=makeCombat(id,teams,neutral?b:null,now,auraOwners);
+  if(this.ranked)battle.onContribution=id=>{
+   const player=this.players.find(p=>p.id===id);
+   if(player?.connected&&!player.retired)player.helpedFight=true;
+  };
   if(b.boss)battle.bossSide=a.side;
   if(neutral)battle.huntSide=a.side;
   this.battles.set(id,battle);
@@ -311,10 +325,19 @@ export class Match {
    if(p.repair)p.repair.lastAt=null;
   }
  }
+ earn(player,points){
+  player.earned+=points;
+  this.score[player.side]+=points;
+ }
+ combatCredit(battle,unit){
+  if(!unit)return null;
+  const owner=battle.colosseumFalls?.get(unit.id);
+  return this.players.find(p=>p.id===battle.roster[owner])??null;
+ }
  fall(p,now,cause=''){
   p.phase='dead';
   delete p.repair;
-  if(this.solo){p.eliminationCause=cause;this.note(`${p.name} ตกรอบ${cause?' · '+cause:''}`,now);return;}
+  if(this.solo){p.eliminationCause=cause;p.eliminatedAt=now;this.note(`${p.name} ตกรอบ${cause?' · '+cause:''}`,now);return;}
   p.respawnAt=now+RESPAWN_MS;
   this.score[p.side]=Math.max(0,this.score[p.side]-10);
   this.note(`${p.name} ล้มลง · ${TEAMS[p.side]} −10`,now);
@@ -325,6 +348,9 @@ export class Match {
    const p=this.players.find(x=>x.id===id);
    if(!p||p.battle!==b.id||p.phase==='dead')continue;
    this.savePetVitals(p,b);
+   const hero=[...b.allies,...b.enemies].find(u=>u.kind==='player'&&u.sealer===id);
+   const credit=this.combatCredit(b,hero);
+   if(!b.beastId&&credit&&credit!==p&&(this.solo||credit.side!==p.side))credit.kills++;
    this.fall(p,now);changed=true;
    if(this.solo&&!b.beastId){
     const winner=[...b.allies,...b.enemies].find(u=>u.kind==='player'&&u.sealer!==id&&u.hp>0);
@@ -353,7 +379,8 @@ export class Match {
   }
   if(!b.boss&&b.beastId&&b.enemies[0]?.hp<=0&&!b.beastScored){
    b.beastScored=true;
-   this.score[b.huntSide]+=BEAST_POINTS;
+   const credit=this.combatCredit(b,b.enemies[0])??this.players.find(p=>p.id===b.teams[0][0]);
+   this.earn(credit,BEAST_POINTS);
    this.note(`${TEAMS[b.huntSide]} ล่า${b.enemies[0].name}สำเร็จ · +${BEAST_POINTS}`,now);
   }
   if(b.boss){
@@ -362,7 +389,8 @@ export class Match {
     beast.hp=unit.hp;beast.mp=unit.mp;
     if(unit.hp<=0&&!beast.claimed){
      beast.claimed=true;beast.phase='defeated';const side=b.bossSide;
-     this.score[side]+=BOSS_POINTS;this.score[1-side]=Math.max(0,this.score[1-side]-BOSS_POINTS);
+     const credit=this.combatCredit(b,unit)??this.players.find(p=>p.id===b.teams[0][0]);
+     this.earn(credit,BOSS_POINTS);this.score[1-side]=Math.max(0,this.score[1-side]-BOSS_POINTS);
      const minutes=Math.round((this.nextBossAt-(this.ends-MATCH_MS))/60_000);
      const next=this.nextBossAt<this.ends?`เกิดอีกครั้งเมื่อนาทีที่ ${minutes}`:'ไม่มีบอสเกิดเพิ่มในรอบนี้';
      this.note(`${TEAMS[side]} สังหาร${beast.label} · ${TEAMS[side]} +20 / ${TEAMS[1-side]} −20 · คะแนน ${this.score[0]} : ${this.score[1]} · ${next}`,now,'boss');
@@ -551,7 +579,7 @@ export class Match {
    }
   }
   for(const p of this.players){
-   if(!this.solo&&p.phase==='dead'&&now>=p.respawnAt)this.respawn(p,now);
+   if(!this.solo&&!p.retired&&p.phase==='dead'&&now>=p.respawnAt)this.respawn(p,now);
    if(p.phase!=='walk'||!p.connected)continue;
    if(p.bot)stepBot(this,p,now,dt);
    else{
@@ -612,15 +640,16 @@ export class Match {
    const ally=this.solo?q===p:side===p.side;
    const visible=q===p||q===spectating||(inSight(viewer,q)&&(ally||canSeeOpponent(viewer,q)));
    const teamHp=ally?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
-   return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),...teamHp,
+   return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),rating:q.rating,...teamHp,
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
     ...(!this.solo&&ally&&visible?{repairingBase:repairing(q)?q.repair.baseId:null}:{}),
     ...(!this.solo&&ally&&!visible&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });
-  return {type:'state',me:p.id,code:this.code,phase:this.phase,practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),
+  return {type:'state',me:p.id,code:this.code,phase:this.phase,ranked:Boolean(this.ranked),practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),
    ...(this.phase==='lobby'?{canManageBots:this.host===p.id}:{}),score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
+   ...(this.phase==='finished'?{results:this.results,rankDelta:p.rankDelta,rankSaved:p.rankSaved,rankingAvailable:this.rankingAvailable,rankPending:this.ranked&&!this.rankEvaluated}:{}),
    ...(this.solo?{mode:'survival',zone:this.zone,survivors:this.players.filter(player=>player.phase!=='dead').length,
-    nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,eliminationCause:p.eliminationCause,spectating:spectating?.id,
+    nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,placement:p.placement,eliminationCause:p.eliminationCause,spectating:spectating?.id,
     winnerName:this.players.find(player=>player.id===this.winner)?.name}:{}),
    bases:this.bases,
    traps:this.traps.controller.list.flatMap(({id,x,y,type})=>{

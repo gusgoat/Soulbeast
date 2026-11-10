@@ -1,4 +1,4 @@
-import {Match} from './match.mjs?v=pet-vitals-1';
+import {Match} from './match.mjs?v=colosseum-ranks-1';
 import {startPractice} from './practice.mjs?v=pet-vitals-1';
 
 let room,player,timer,last,frame=0,battleKey;
@@ -17,6 +17,7 @@ self.onmessage=({data})=>{
    const code=crypto.randomUUID().slice(0,8).toUpperCase();
    const next=new Match(code,now,Math.random,data.type==='survivalPractice'?'survival':'team');
    player=startPractice(next,{},now,data.character);
+   player.rating=Number.isInteger(data.rating)?data.rating:undefined;
    room=next;last=now;
    send({type:'welcome',room:code,seq:player.seq});
    push(now);
@@ -26,6 +27,8 @@ self.onmessage=({data})=>{
     if(++frame%2===0||room.phase==='finished')push(now);
     if(room.phase==='finished')clearInterval(timer);
    },50);
+  }else if(data.type==='displayRating'){
+   if(Number.isInteger(data.rating))player.rating=data.rating;
   }else if(data.type==='leavePractice'){
    clearInterval(timer);send({type:'left'});close();
   }else if(data.type==='ping')send({type:'pong',echo:data.echo,now});

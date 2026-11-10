@@ -10,7 +10,7 @@ input,select{min-width:0;max-width:100%;background:#131722;border:1px solid #796
 #lobby{max-width:670px;margin:auto;padding:clamp(10px,4vw,34px);min-height:100dvh}
 body:has(#lobby:not([hidden])){background:linear-gradient(#10101ad0,#0f1019 85%),url('../../assets/ui/battle-scenes/arena-v2.webp') center top / cover fixed}
 #lobby header{text-align:center}
-#lobby img{width:min(285px,65vw);height:95px;object-fit:contain}
+#lobby header img{width:min(285px,65vw);height:95px;object-fit:contain}
 h1,h2,p{margin:.25em 0 .6em}
 h1{font-size:clamp(34px,8vw,61px);line-height:1.05;color:#ffda91;text-shadow:0 2px 0 #74441e}
 .eyebrow{letter-spacing:.28em;font-size:.69rem;color:#ddbb77}
@@ -169,3 +169,54 @@ dialog p{margin-top:10px;font-size:.82em}
 
 #public-rooms{display:grid;gap:8px;min-width:0;margin:0;border:1px solid #796746;border-radius:9px;padding:10px}
 #public-room-label{color:#a6e6cc}
+
+#open-rankings{margin-top:12px;width:100%}
+#rankings{box-sizing:border-box;width:min(calc(100% - 24px),520px);max-height:85dvh;overflow:auto;background:#141a28;color:#fff0ca;border:1px solid #987849;border-radius:14px}
+#rankings form{float:right}
+#rankings::backdrop{background:#0009}
+#overlay:has(#match-results:not([hidden])){display:flex;flex-direction:column;align-items:center;justify-content:safe center}
+#match-results{display:grid;gap:9px;width:min(100%,560px);margin:0 auto 10px}
+.rank-table{width:100%;border-collapse:collapse;table-layout:fixed;text-align:center;font-variant-numeric:tabular-nums}
+.rank-table caption{color:#ffda96;font-weight:700;text-align:left;padding:5px 7px}
+.rank-table :is(th,td){padding:5px 6px;border-bottom:1px solid #98784955}
+.rank-table th{color:#ffda96;font-size:.82rem}
+#match-results .rank-table :is(th,td):first-child{width:62%;text-align:left}
+#rankings-list .rank-table :is(th,td):nth-child(2){width:59%;text-align:left}
+.rank-name{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;overflow-wrap:anywhere}
+.rank-shield{width:24px;height:24px;object-fit:contain;vertical-align:middle;flex:none}
+.roster .rank-shield,.card .rank-shield{width:18px;height:18px;margin-inline-end:3px}
+.mvp-label{background:#886426;color:#fff3bf;border-radius:4px;padding:1px 4px;font-size:.7rem}
+.rank-result{margin:3px 0;color:#ffdc95}
+
+@media (prefers-reduced-motion: no-preference){
+ .rank-shield[data-rank="diamond"]{animation:shield-diamond 2.8s ease-in-out infinite}
+ .rank-shield[data-rank="guardian"]{animation:shield-guardian 3.2s ease-in-out infinite}
+ .rank-shield[data-rank="legend"]{animation:shield-legend 2.7s ease-in-out infinite}
+ .rank-shield[data-rank="eclipse"]{animation:shield-eclipse 2.05s ease-in-out infinite}
+}
+@keyframes shield-diamond{
+ 0%,36%,68%,100%{filter:brightness(1) drop-shadow(0 0 1px #75d6ff66)}
+ 51%{filter:brightness(1.36) drop-shadow(1px -1px 2px #a4f6ff)}
+}
+@keyframes shield-guardian{
+ 0%,100%{filter:brightness(1) drop-shadow(0 0 1px #4ded9d66)}
+ 50%{filter:brightness(1.18) drop-shadow(0 0 3px #4ded9dbb)}
+}
+@keyframes shield-legend{
+ 0%,100%{filter:brightness(1.04) drop-shadow(0 0 1px #c084ff88)}
+ 50%{filter:brightness(1.26) drop-shadow(1px -1px 3px #f6c3ffa8) drop-shadow(-1px 1px 1px #ffe29496)}
+}
+@keyframes shield-eclipse{
+ 0%,100%{filter:brightness(1.06) drop-shadow(-1px 0 2px #ff4524aa) drop-shadow(1px 0 2px #ffbe4366)}
+ 45%{filter:brightness(1.30) drop-shadow(2px -1px 4px #ff6424d6) drop-shadow(-1px 1px 2px #ffca4eb0)}
+ 70%{filter:brightness(1.14) drop-shadow(-1px 1px 3px #ff3522c9) drop-shadow(1px -1px 1px #ffd96996)}
+}
+
+#rank-entry{display:grid;gap:8px;border:1px solid #ba8d48;border-radius:9px;margin:0;padding:10px}
+#rank-queue{text-align:center}
+#rank-queue>img{display:block;width:100%;height:clamp(145px,42vw,250px);object-fit:cover;border:1px solid #987849;border-radius:9px;margin-bottom:15px}
+#rank-queue-count{font-weight:750;color:#ffdc95}
+#open-rank-mail{margin-top:12px;width:100%}
+#rank-mail{width:min(calc(100% - 24px),520px);max-height:85dvh;overflow:auto}
+#rank-mail-list{display:grid;gap:7px}
+#rank-leave,#rank-leave-respawn,.battle-rank-leave{pointer-events:auto;min-height:32px;padding:.2rem .45rem;font-size:.76rem}

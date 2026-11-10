@@ -10,6 +10,8 @@ services:
     dockerContext: .
     healthCheckPath: /healthz
     envVars:
+      - key: SB_COLOSSEUM_RANK_KEY
+        sync: false
       - key: SB_COLOSSEUM_SITE_ORIGIN
         value: https://gusgoat.github.io
       - key: SB_COLOSSEUM_ACCOUNT_URL

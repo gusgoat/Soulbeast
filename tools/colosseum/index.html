@@ -7,7 +7,7 @@
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
  <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=base-repair-1">
+ <link rel="stylesheet" href="./style.css?v=rank-queue-1">
 </head>
 <body>
  <main id="lobby">
@@ -22,6 +22,11 @@
      <div class="pair"><label>อาชีพ<select id="cls"></select></label><label>เลเวล<input id="level" type="number" value="20" min="1" max="60"></label></div>
     </fieldset>
     <p id="selected-profile" hidden></p>
+    <fieldset id="rank-entry">
+     <legend>จัดอันดับ</legend>
+     <label>โหมด <select id="rank-mode"><option value="team">ทีม 5 ต่อ 5</option><option value="survival">เอาตัวรอด 10 คน</option></select></label>
+     <button type="submit" value="ranked">ค้นหาแมตช์จัดอันดับ</button>
+    </fieldset>
     <fieldset id="public-rooms">
      <legend>ห้องสาธารณะ</legend>
      <label>โหมด <select id="public-mode"><option value="team">โหมดทีม</option><option value="survival">โหมดเอาตัวรอด</option></select></label>
@@ -34,7 +39,28 @@
     <div class="join"><input id="code" placeholder="รหัสห้อง 8 ตัว" aria-label="รหัสห้อง" maxlength="8" autocomplete="off" autocapitalize="characters">
     <button type="submit" value="join">เข้าร่วมห้อง</button></div>
    </form>
+   <button id="open-rank-mail" class="secondary" type="button" hidden>จดหมายจัดอันดับ</button>
+   <button id="open-rankings" class="secondary" type="button">กระดานคะแนนโคลอสเซียม</button>
   </div>
+  <section id="rank-queue" class="panel" hidden>
+   <img src="../../assets/ui/battle-scenes/arena-v2.webp" alt="สนามโคลอสเซียม">
+   <h2 id="rank-queue-title">กำลังค้นหาผู้เล่น</h2>
+   <p id="rank-queue-count" role="status"></p>
+   <p id="rank-queue-detail"></p>
+   <button id="cancel-rank-queue" class="secondary" type="button">ยกเลิกการค้นหา</button>
+  </section>
+  <dialog id="rank-mail">
+   <form method="dialog"><button class="secondary" aria-label="ปิดจดหมาย">✕</button></form>
+   <h2>จดหมายจัดอันดับ</h2>
+   <p id="rank-mail-status" role="status"></p>
+   <div id="rank-mail-list"></div>
+  </dialog>
+  <dialog id="rankings">
+   <form method="dialog"><button class="secondary" aria-label="ปิดกระดานคะแนน">✕</button></form>
+   <h2>กระดานคะแนนโคลอสเซียม</h2>
+   <p id="rankings-note" role="status"></p>
+   <div id="rankings-list"></div>
+  </dialog>
   <div id="room" class="panel" hidden>
    <p id="public-room-label" hidden>ห้องสาธารณะ</p>
    <div class="room-title"><div>รหัสห้อง <strong id="room-code"></strong></div><button id="copy" class="secondary">คัดลอกลิงก์</button></div>
@@ -69,6 +95,7 @@
    <section class="team-vitals" aria-label="HP ทีมเรา">
     <strong id="vitals-label">HP ทีมเรา</strong><ul id="team-hp"></ul><span id="own-mp"></span>
    </section>
+   <button id="rank-leave" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button>
    <button id="leave-practice" class="secondary" hidden>ออกจากโหมดทดลอง</button>
   </div>
   <dialog id="large-map"><form method="dialog"><button class="secondary" aria-label="ปิดแผนที่">✕</button></form>
@@ -89,8 +116,8 @@
    <button id="spectator-next" class="secondary" aria-label="ชมคนถัดไป">›</button>
    <button id="spectator-leave" class="secondary">กลับห้อง</button>
   </div>
-  <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
+  <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" hidden></div><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=pet-vitals-1"></script>
+ <script type="module" src="./client.mjs?v=rank-queue-2"></script>
 </body>
 </html>
