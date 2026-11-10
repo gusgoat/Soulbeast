@@ -1,10 +1,11 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-repair-1';
+import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=team-base-rules-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
 import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=player-nameplates-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
 import {battlePresentation} from './battle-presentation.mjs?v=projectile-2';
+import {bindWalkJoystick} from './walk-joystick.mjs?v=1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
 const battleAsset=path=>path?.replace(/^\/assets\//,assets);
@@ -15,7 +16,7 @@ const node=(tag,content,className)=>{
 const scene=new Scene($('world')), actors=new Map(), keys=new Set();
 const presentation=battlePresentation($('battle-vfx'));
 const mapDialog=$('large-map'), channel='soulbeast-colosseum-session';
-let ws,state,battle,me,local,lastInput='',seq=0,offset=0,stick={x:0,y:0,id:null},retry,packet;
+let ws,state,battle,me,local,lastInput='',seq=0,offset=0,retry,packet;
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
 let showBattleLog=false;
 let resultKey='';
@@ -58,7 +59,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=colosseum-ranks-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=team-base-rules-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -217,6 +218,7 @@ function reset(message='',clearInvite=false){
   if(url.searchParams.has('room')){url.searchParams.delete('room');history.replaceState(history.state,'',url);}
  }
  store(null);packet=null;clearTimeout(retry);const current=ws;ws=null;current?.close();
+ release();
  state=me=local=battle=null;actors.clear();scene.camera=null;lobbyKey='';battleKey='';teamHpKey='';survivalRankKey='';lastInput='';
  pendingMoves=[];pendingChest=null;correction=null;
  resultKey='';
@@ -792,6 +794,20 @@ $('copy').onclick=async()=>{
  catch{$('notice').textContent=link.href;}
 };
 $('map').onclick=()=>{release();mapDialog.showModal();};
+const objectivesPanel=$('objectives-panel'),objectivesToggle=$('objectives-toggle');
+function updateObjectivesToggle(){
+ const expanded=!objectivesPanel.hidden,language=window.SoulbeastLocale?.get();
+ const labels=language==='en'?['Show information panel','Hide information panel']:
+  language==='zh-CN'?['显示信息栏','隐藏信息栏']:['แสดงแถบข้อมูล','ซ่อนแถบข้อมูล'];
+ const label=labels[Number(expanded)];
+ objectivesToggle.textContent=expanded?'‹':'›';
+ objectivesToggle.setAttribute('aria-expanded',String(expanded));
+ objectivesToggle.setAttribute('aria-label',label);
+ objectivesToggle.title=label;
+}
+objectivesToggle.onclick=()=>{objectivesPanel.hidden=!objectivesPanel.hidden;updateObjectivesToggle();};
+addEventListener('soulbeast-language-change',updateObjectivesToggle);
+updateObjectivesToggle();
 function objective(){
  if(!me||state.phase!=='match'||me.phase!=='walk')return null;
  if(now>=me.safeUntil){
@@ -807,8 +823,8 @@ function objective(){
  }
  if(!state.vitals)return null;
  const friendly=state.bases.find(b=>HEAL_TARGET(me,b));
- return friendly?{type:'healBase',id:friendly.id,label:friendly.main?'ฟื้นเต็มทั้งทีม + ล้างสถานะ':'ฟื้น HP/MP ทั้งทีม 30%',
-  disabled:me.hp>=me.maxHp&&state.vitals.mp>=state.vitals.maxMp&&!(friendly.main&&state.vitals.ailments.length)}:null;
+ return friendly?{type:'healBase',id:friendly.id,label:'ฟื้นเต็มทั้งทีม + ล้างสถานะ',
+  disabled:me.hp>=me.maxHp&&state.vitals.mp>=state.vitals.maxMp&&!state.vitals.ailments.length}:null;
 }
 $('raid').onclick=()=>{
  const target=objective();
@@ -854,22 +870,14 @@ addEventListener('keyup',e=>{if(keys.delete(e.key.toLowerCase())&&me?.phase==='w
 addEventListener('blur',release);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)release();});
 function release(){
- keys.clear();stick={x:0,y:0,id:null};$('thumb').style.transform='';
+ keys.clear();stick.reset();
  if(me?.phase==='walk')sendMove(0,0);
 }
-function pointer(e){
- const bounds=$('stick').getBoundingClientRect(),r=bounds.width*.34;
- let dx=(e.clientX-bounds.left-bounds.width/2)/r,dy=(e.clientY-bounds.top-bounds.height/2)/r;
- const mag=Math.hypot(dx,dy);
- if(mag<.13)dx=dy=0;else if(mag>1){dx/=mag;dy/=mag;}
- stick.x=dx;stick.y=dy;$('thumb').style.transform=`translate(${dx*r}px,${dy*r}px)`;
-}
-$('stick').onpointerdown=e=>{
- if(stick.id!==null||me?.phase!=='walk')return;
- $('stick').setPointerCapture(e.pointerId);stick.id=e.pointerId;pointer(e);sendMove(...direction());
-};
-$('stick').onpointermove=e=>{if(stick.id===e.pointerId)pointer(e);};
-for(const type of ['pointerup','pointercancel','lostpointercapture'])$('stick').addEventListener(type,e=>{if(stick.id===e.pointerId)release();});
+const sendDirection=()=>sendMove(...direction());
+const stick=bindWalkJoystick($('stick'),$('thumb'),{
+ canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!mapDialog.open,
+ onStart:sendDirection,onStop:sendDirection
+});
 function direction(){
  if(!me||me.phase!=='walk'||state?.phase!=='match'||mapDialog.open||ws?.readyState!==WebSocket.OPEN)return [0,0];
  const k=(...names)=>Number(names.some(name=>keys.has(name)));

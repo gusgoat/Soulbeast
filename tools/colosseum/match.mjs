@@ -1,10 +1,10 @@
-import {ASSIST, BASES, BASE_AURA_RANGE, BASE_REPAIR_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS, canRaidBase,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=base-repair-1';
+import {ASSIST, BASES, BASE_AURA_RANGE, BASE_REPAIR_MS, BASE_REPAIR_POINTS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAMS, canRaidBase,
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=team-base-rules-1';
 import {teamResults} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=colosseum-ranks-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=pet-vitals-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=team-base-rules-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -271,12 +271,10 @@ export class Match {
    else this.checkScore(now);
   }else if(m.type==='healBase'){
    const base=this.bases.find(x=>x.id===m.id);
-   assert(p.connected&&p.phase==='walk'&&base?.remaining>0&&HEAL_TARGET(p,base),'ต้องอยู่ใกล้ฐานของทีมที่ยังไม่ถูกทำลาย');
-   const hp=p.hp,mp=p.mp,cleansed=base.main&&Object.keys(p.ailments).length>0;
-   p.hp=base.main?p.maxHp:Math.min(p.maxHp,hp+Math.round(p.maxHp*.3));
-   p.mp=base.main?p.maxMp:Math.min(p.maxMp,mp+Math.round(p.maxMp*.3));
-   if(base.main)p.ailments={};
-   const pets=this.recoverPets(p,base.main?1:.3,base.main);
+   assert(p.connected&&p.phase==='walk'&&base&&HEAL_TARGET(p,base),'ต้องอยู่ใกล้ฐานใหญ่ของทีมที่ยังไม่ถูกทำลาย');
+   const hp=p.hp,mp=p.mp,cleansed=Object.keys(p.ailments).length>0;
+   p.hp=p.maxHp;p.mp=p.maxMp;p.ailments={};
+   const pets=this.recoverPets(p,1,true);
    if(p.hp!==hp||p.mp!==mp||cleansed||pets.petsRecovered){
     p.baseHeal={hp:p.hp-hp,mp:p.mp-mp,cleansed,at:now,...pets};
    }
@@ -546,11 +544,12 @@ export class Match {
    const repair=p.repair??={baseId:base.id,elapsed:0,lastAt:null};
    if(repair.lastAt!==null)repair.elapsed+=Math.max(0,now-repair.lastAt);
    repair.lastAt=now;
-   const points=Math.floor(repair.elapsed/BASE_REPAIR_MS);
-   if(!points)continue;
-   base.remaining=Math.min(base.maxDurability,base.remaining+points);
+   const restored=Math.min(base.maxDurability-base.remaining,Math.floor(repair.elapsed/BASE_REPAIR_MS));
+   if(!restored)continue;
+   base.remaining+=restored;
+   p.earned+=restored*BASE_REPAIR_POINTS;
    if(base.remaining===base.maxDurability)this.clearBaseRepairs(base.id);
-   else repair.elapsed-=points*BASE_REPAIR_MS;
+   else repair.elapsed-=restored*BASE_REPAIR_MS;
   }
  }
  tick(now,dt){

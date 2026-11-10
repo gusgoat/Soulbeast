@@ -85,18 +85,21 @@ Deno.test('only enemy bases in reach score, teleport immediately, zero ends the 
  rejected=false;try{r.command(a,{type:'raid',id:mini.id},4001);}catch{rejected=true;}ok(rejected);
  r.score[1]=2;Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},10000);eq(r.score,[110,0]);eq(r.winner,0);
 });
-Deno.test('friendly castles heal the player with 30% or a full cleanse; enemy, distant and ruined castles refuse',()=>{
+Deno.test('only the standing friendly main base heals HP and MP and cleanses ailments',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
- const [main,small]=r.bases.filter(base=>base.side===a.side);
- const enemy=r.bases.find(base=>base.side!==a.side);
+ const own=r.bases.filter(base=>base.side===a.side);
+ const main=own.find(base=>base.main);
+ const enemy=r.bases.find(base=>base.main&&base.side!==a.side);
  const tryHeal=(base,now)=>r.command(a,{type:'healBase',id:base.id},now);
  const denied=base=>{let rejected=false;try{tryHeal(base,3000);}catch{rejected=true;}ok(rejected);};
- denied(small);Object.assign(a,{x:enemy.x,y:enemy.y});denied(enemy);
- Object.assign(a,{x:small.x,y:small.y,hp:1,mp:0,ailments:{poison:2}});
- tryHeal(small,4000);eq(a.hp,1+Math.round(a.maxHp*.3));eq(a.mp,Math.round(a.maxMp*.3));eq(a.ailments,{poison:2});
- a.hp=a.maxHp-1;tryHeal(small,4100);eq(a.hp,a.maxHp);
- small.remaining=0;denied(small);
- Object.assign(a,{x:main.x,y:main.y,hp:1,mp:0});
+ Object.assign(a,{x:enemy.x,y:enemy.y,hp:1,mp:0,ailments:{poison:2}});
+ denied(main);denied(enemy);
+ for(const base of own.filter(base=>!base.main)){
+  Object.assign(a,{x:base.x,y:base.y});
+  denied(base);eq([a.hp,a.mp,a.ailments],[1,0,{poison:2}]);
+ }
+ Object.assign(a,{x:main.x,y:main.y});
+ main.remaining=0;denied(main);main.remaining=main.maxDurability;
  tryHeal(main,4200);eq(a.hp,a.maxHp);eq(a.mp,a.maxMp);eq(a.ailments,{});
  eq(r.snapshot(a,4200).baseHeal,{hp:a.maxHp-1,mp:a.maxMp,cleansed:true,at:4200});
  eq(r.score,[100,100]);eq(main.remaining,8);
@@ -116,15 +119,17 @@ Deno.test('base repair counts 15 seconds of walking inside the ring and discards
  eq(base.remaining,1);eq(r.snapshot(a,32999).baseRepair?.elapsed,14999);
  r.tick(33000,0);
  eq(base.remaining,2);eq(r.snapshot(a,33000).baseRepair?.elapsed,0);
+ eq(a.earned,5);
  r.tick(40000,0);a.x+=1;r.tick(40001,0);
  eq(r.snapshot(a,40001).baseRepair,undefined);
  a.x-=1;r.tick(42000,0);r.tick(56999,0);
  eq(base.remaining,2);
  r.tick(57000,0);r.tick(72000,0);
  eq(base.remaining,4);eq(r.snapshot(a,72000).baseRepair,undefined);
+ eq([a.earned,b.earned],[15,0]);
  eq(r.score,[100,100]);
 });
-Deno.test('pet HP and MP carry to the next fight and team bases can revive downed pets',()=>{
+Deno.test('pet HP and MP carry to the next fight and only the main base revives pets',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
  r.encounter(a,b,3000);
  const fight=r.battles.get(a.battle),pets=fight.allies.filter(u=>u.kind==='pet');
@@ -137,14 +142,13 @@ Deno.test('pet HP and MP carry to the next fight and team bases can revive downe
  Object.assign(rematch,{finished:true,releasedAt:9000});r.tick(9000,0);
  const small=r.bases.find(x=>x.side===a.side&&x.tier==='small');
  Object.assign(a,{x:small.x,y:small.y});
- r.command(a,{type:'healBase',id:small.id},10000);
- const revived=a.petVitals.get(pets[0].uid);
- eq([revived.hp,revived.mp],[Math.round(revived.maxHp*.3),Math.round(revived.maxMp*.3)]);
- eq(a.baseHeal.petsRevived,1);
+ let rejected=false;try{r.command(a,{type:'healBase',id:small.id},10000);}catch{rejected=true;}
+ ok(rejected);eq(a.petVitals.get(pets[0].uid).hp,0);
  const capital=r.bases.find(x=>x.side===a.side&&x.main);
  Object.assign(a,{x:capital.x,y:capital.y});
  r.command(a,{type:'healBase',id:capital.id},11000);
  eq([...a.petVitals.values()].map(v=>[v.hp===v.maxHp,v.mp===v.maxMp]),[[true,true],[true,true]]);
+ eq(a.baseHeal.petsRevived,1);
 });
 Deno.test('only current owners can repair and simultaneous repairs stop at maximum',()=>{
  const {r,p:[a,b,mate]}=match(4);start(r,r.players);r.shadows=[];
@@ -155,16 +159,17 @@ Deno.test('only current owners can repair and simultaneous repairs stop at maxim
  eq(r.snapshot(b,3000).baseRepair,undefined);
  eq(r.snapshot(b,3000).players.find(p=>p.id===a.id).repairingBase,undefined);
  eq(r.snapshot(a,3000).players.find(p=>p.id===mate.id).repairingBase,base.id);
- r.tick(18000,0);
+ r.tick(34000,0);
  eq(base.remaining,4);
- eq(r.snapshot(a,18000).baseRepair,undefined);eq(r.snapshot(mate,18000).baseRepair,undefined);
- base.remaining=1;r.tick(19000,0);
- eq(r.snapshot(a,19000).baseRepair?.elapsed,0);
- b.safeUntil=0;r.command(b,{type:'raid',id:base.id},20000);
+ eq(r.snapshot(a,34000).baseRepair,undefined);eq(r.snapshot(mate,34000).baseRepair,undefined);
+ eq([a.earned,b.earned,mate.earned],[5,0,0]);eq(r.score,[100,100]);
+ base.remaining=1;r.tick(35000,0);
+ eq(r.snapshot(a,35000).baseRepair?.elapsed,0);
+ b.safeUntil=0;r.command(b,{type:'raid',id:base.id},36000);
  Object.assign(b,{x:base.x,y:base.y});
- r.tick(20001,0);
- eq(r.snapshot(a,20001).baseRepair,undefined);
- eq(r.snapshot(b,20001).baseRepair,{id:base.id,elapsed:0});
+ r.tick(36001,0);
+ eq(r.snapshot(a,36001).baseRepair,undefined);
+ eq(r.snapshot(b,36001).baseRepair,{id:base.id,elapsed:0});
 });
 Deno.test('team snapshots expose live fight HP to teammates only and preserve HP, MP and ailments between fights',()=>{
  const {r,p:[a,b,mate,other]}=match(4);start(r,[a,b,mate,other]);

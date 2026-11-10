@@ -7,7 +7,7 @@
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
  <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=mode-cards-1">
+ <link rel="stylesheet" href="./style.css?v=compact-hud-1">
 </head>
 <body>
  <main id="lobby">
@@ -117,6 +117,8 @@
   <div id="signal" role="status" hidden></div>
   <button id="map" class="map" aria-label="ขยายมินิแมป"><canvas id="mini"></canvas><span>แผนที่สนาม ↗</span></button>
   <div id="objectives">
+   <button id="objectives-toggle" type="button" class="secondary" aria-controls="objectives-panel" aria-expanded="true" aria-label="ซ่อนแถบข้อมูล" translate="no">‹</button>
+   <div id="objectives-panel">
    <span id="chest-count"></span><span id="boss-clock"></span>
    <div id="base-repair" hidden>
     <span id="base-repair-label"></span>
@@ -132,6 +134,7 @@
    </section>
    <button id="rank-leave" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button>
    <button id="leave-practice" class="secondary" hidden>ออกจากโหมดทดลอง</button>
+   </div>
   </div>
   <dialog id="large-map"><form method="dialog"><button class="secondary" aria-label="ปิดแผนที่">✕</button></form>
    <h2>แผนที่สนาม</h2><canvas id="full-map"></canvas>
@@ -153,6 +156,6 @@
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" hidden></div><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=player-nameplates-1"></script>
+ <script type="module" src="./client.mjs?v=compact-hud-1"></script>
 </body>
 </html>

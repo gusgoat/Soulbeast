@@ -1,5 +1,5 @@
-import {Match} from './match.mjs?v=colosseum-ranks-1';
-import {startPractice} from './practice.mjs?v=pet-vitals-1';
+import {Match} from './match.mjs?v=team-base-rules-1';
+import {startPractice} from './practice.mjs?v=team-base-rules-1';
 
 let room,player,timer,last,frame=0,battleKey;
 const send=message=>postMessage(message);

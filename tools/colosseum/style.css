@@ -43,22 +43,25 @@ footer,#notice{text-align:center;font-size:.85rem;color:#e4c898;margin-top:14px}
 #signal{top:72px;color:#ffdc93;min-width:65%}
 #event{bottom:max(136px,23dvh);max-width:92vw;width:max-content;font-size:.83rem}
 #event:empty{display:none}
-#objectives{position:absolute;left:10px;top:max(76px,calc(env(safe-area-inset-top) + 65px));display:grid;gap:3px;padding:.35rem .55rem;border:1px solid #9b795c;border-radius:8px;background:#161b28e8;color:#fce1a6;font-size:.72em;pointer-events:none}
+#objectives{position:absolute;left:max(8px,env(safe-area-inset-left));top:max(76px,calc(env(safe-area-inset-top) + 65px));pointer-events:none}
+#objectives-panel{width:clamp(112px,32vw,154px);display:grid;grid-template-columns:minmax(0,1fr);gap:2px;padding:5px 6px;border:1px solid #9b795c;border-radius:8px;background:#161b28dc;color:#fce1a6;font-size:clamp(10px,2.8vw,12px);line-height:1.2;overflow-wrap:anywhere}
+#objectives-toggle{position:absolute;left:calc(100% + 4px);top:0;width:36px;min-height:36px;padding:0;line-height:1;font-size:1.35rem;pointer-events:auto;touch-action:manipulation}
+#objectives-toggle[aria-expanded=false]{position:static}
 #base-repair{display:grid;gap:3px;margin:.2rem 0;padding:.3rem .4rem;border:1px solid #80c8a1;border-radius:6px;background:#203e39;color:#d5ffe6}
 #base-repair progress{display:block;width:100%;height:7px;accent-color:#81eca9}
-#survival-standings{width:clamp(130px,36vw,188px);pointer-events:auto}
+#survival-standings{min-width:0;pointer-events:auto}
 #survival-standings summary{padding:3px 0;color:#fff0b7;font-weight:700;cursor:pointer}
-#survival-ranks{list-style:none;margin:2px 0;padding:0;max-height:min(28dvh,190px);overflow:auto;overscroll-behavior:contain}
+#survival-ranks{list-style:none;margin:2px 0;padding:0;max-height:min(20dvh,135px);overflow:auto;overscroll-behavior:contain}
 #survival-ranks li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;padding:2px 0}
 #survival-ranks li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #survival-ranks li[aria-current=true]{color:#fff0b7}
 #elimination-clock,.battle-survival-score{color:#ffbd97;font-variant-numeric:tabular-nums}
 .battle-survival-score{margin:0;font-size:.72rem}
-.team-vitals{width:clamp(130px,36vw,188px);display:grid;gap:4px;margin-top:3px;padding-top:5px;border-top:1px solid #a78b5b66}
-.team-vitals ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.team-vitals{display:grid;gap:2px;margin-top:2px;padding-top:3px;border-top:1px solid #a78b5b66}
+.team-vitals ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
 .team-vitals li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 4px;line-height:1.15;font-variant-numeric:tabular-nums}
 .team-vitals li span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.team-vitals meter{grid-column:1/-1;width:100%;height:5px;appearance:none;border:0;background:#070e17;border-radius:4px}
+.team-vitals meter{grid-column:1/-1;width:100%;height:4px;appearance:none;border:0;background:#070e17;border-radius:4px}
 .team-vitals meter::-webkit-meter-bar{border:0;background:#070e17;border-radius:4px}
 .team-vitals meter::-webkit-meter-optimum-value{background:#68d39a;border-radius:4px}
 .team-vitals meter::-moz-meter-bar{background:#68d39a;border-radius:4px}
@@ -75,8 +78,10 @@ dialog form{float:right}
 dialog h2{font-size:1.15em;padding:5px}
 dialog canvas{display:block;width:min(68vw,48dvh,400px);height:auto;margin:auto}
 dialog p{margin-top:10px;font-size:.82em}
-#stick{position:absolute;left:max(15px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));width:clamp(100px,26vw,132px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#54473888,#151825bd 70%);border:2px solid #b98f58;display:grid;place-items:center;touch-action:none;user-select:none;box-shadow:inset 0 0 0 5px #d4a96622}
-#thumb{width:42%;aspect-ratio:1;border:2px solid #ffe2a2;border-radius:50%;background:radial-gradient(circle,#ffdf8c,#a36737 30%,#262334 75%);pointer-events:none}
+#stick{position:absolute;left:max(15px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));width:clamp(100px,26vw,132px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;touch-action:none;user-select:none;isolation:isolate}
+#stick::before{content:'';position:absolute;inset:0;background:url('../../assets/ui/walk-skin-20261103/joystick-base.png.webp') center/100% 100% no-repeat;opacity:.78;pointer-events:none;z-index:-1}
+#stick.active::before{opacity:.95}
+#thumb{width:42%;aspect-ratio:1;background:url('../../assets/ui/walk-skin-20261103/joystick-knob.png.webp') center/100% 100% no-repeat;filter:drop-shadow(0 3px 4px #0008);pointer-events:none}
 #raid{position:absolute;right:max(15px,env(safe-area-inset-right));bottom:max(23px,env(safe-area-inset-bottom));max-width:57vw}
 #walk-sound{position:absolute;right:max(15px,env(safe-area-inset-right));bottom:max(78px,calc(env(safe-area-inset-bottom) + 60px));width:42px;min-height:42px;padding:0;border-radius:50%}
 #raid[data-action=healBase]{background:#203e39;color:#d7ffd8;border-color:#91cda5}

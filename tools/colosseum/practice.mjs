@@ -1,4 +1,4 @@
-import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, SPEED, TEAM_ARENA, canRaidBase, canSeeOpponent, cellCenter, distance, indexAt, nextCell} from './arena.mjs?v=base-raid-1';
+import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, SPEED, TEAM_ARENA, canRaidBase, canSeeOpponent, cellCenter, distance, indexAt, nextCell} from './arena.mjs?v=team-base-rules-1';
 import {inSight} from './sight.mjs';
 import {fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -29,10 +29,10 @@ function patrolPoint(bot){
 function chooseObjective(match,bot,now){
  const {role,lane,patrol,skipPoint}=bot.bot;
  const pick=points=>nearestTo(bot,points.filter(p=>p!==skipPoint||now>=bot.bot.skipUntil));
- const own=match.bases.filter(base=>base.side===bot.side&&base.remaining>0);
+ const healingBases=match.bases.filter(base=>base.main&&base.side===bot.side&&base.remaining>0);
  const lowVitals=u=>u.hp<u.maxHp*.58||u.mp<u.maxMp*.34;
  const low=lowVitals(bot)||[...bot.petVitals.values()].some(lowVitals),afflicted=Object.keys(bot.ailments).length>0;
- const heal=pick(low?own:afflicted?own.filter(base=>base.main&&distance(bot,base)<900):[]);
+ const heal=pick(low?healingBases:afflicted?healingBases.filter(base=>distance(bot,base)<900):[]);
  if(heal)return {type:'healBase',point:heal};
 
  const visible=p=>inSight(bot,p)&&canSeeOpponent(bot,p);
@@ -69,7 +69,7 @@ function currentObjective(match, bot, now) {
  const goal = brain.goal;
  const expired = goal?.type === 'chest' && goal.point.opened ||
   goal?.type==='raid'&&!canRaidBase(bot.side,goal.point,match.bases) ||
-  goal?.type==='healBase'&&goal.point.side!==bot.side ||
+  goal?.type==='healBase'&&(goal.point.side!==bot.side||!goal.point.main||goal.point.remaining<=0) ||
   goal?.type === 'hunt' && (goal.point.claimed || goal.point.phase !== 'walk') ||
   goal?.type === 'intercept' && (goal.point.phase !== 'walk' || !canSeeOpponent(bot, goal.point)) ||
   goal?.type === 'escort' && (goal.point.phase !== 'walk' || distance(bot,goal.point)<145);
