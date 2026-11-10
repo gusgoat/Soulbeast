@@ -1,4 +1,12 @@
 /* Shared coupon artwork and captions for the website and packaged Android shop. */
+.coupon-contact{padding:16px;margin:0 0 16px;border:1px solid #75623e;border-radius:12px;background:#132a39}
+.coupon-contact h2{font-size:1.1rem;margin:0 0 6px;color:#ffe3a7}
+.coupon-contact p{margin:0 0 8px}
+.coupon-contact a{display:inline-flex;flex-direction:column;align-items:center;gap:6px;max-width:100%;padding:8px 8px 10px;border:1px solid #a4dbac;border-radius:8px;color:#d9ffe0;background:#204632;text-decoration:none;font-weight:700}
+.coupon-contact a img{display:block;width:min(100%,170px);height:auto;object-fit:contain}
+.coupon-contact-copy:not([lang="th"]){display:none}
+html:is([lang="en"],[lang="zh-CN"]) .coupon-contact-copy[lang="th"]{display:none}
+html[lang="en"] .coupon-contact-copy[lang="en"],html[lang="zh-CN"] .coupon-contact-copy[lang="zh-CN"]{display:block}
 #packs.packs{display:block}
 .coupon-pack-section{margin:22px 0;padding:0;border:0;background:none;border-radius:0}
 .coupon-pack-section>h2,.coupon-pack-section>h3{margin:0 0 14px;color:#f4d593;font-size:21px;line-height:1.4}

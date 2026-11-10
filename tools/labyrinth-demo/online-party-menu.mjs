@@ -48,7 +48,7 @@ export function partyMenu({request,refresh,getFloor,onOpen,canOpen}){
   tab=screen;panel.hidden=false;onOpen(true);
   const inventory=inventoryTabs.has(tab);
   const country=['blue','green','red'].includes(member?.country)?member.country:'blue';
-  const params=new URLSearchParams({v:'quest-content-1',screen:tab,dungeon:getFloor()||'mine-floor-1',country,city:country+'-capital'});
+  const params=new URLSearchParams({v:'quest-editorial-2',screen:tab,dungeon:getFloor()||'mine-floor-1',country,city:country+'-capital'});
   params.set(inventory?'partyInventory':'partyAux','1');
   aux.src=tab==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+params;
   if(inventory){data=null;void load();}

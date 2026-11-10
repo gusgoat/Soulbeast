@@ -152,7 +152,7 @@
  }
  function loadContent(){
   if(lang==='th'||contentLoading)return;
-  contentLoading=fetch(new URL('client/game-locale-content.json?v=1',base))
+  contentLoading=fetch(new URL('client/game-locale-content.json?v=2',base))
    .then(response=>{
     if(!response.ok)throw Error('locale_content_unavailable');
     return response.json();
