@@ -6,7 +6,11 @@
 .party-menu-feedback{position:absolute;z-index:1;inset:auto 12px max(85px,env(safe-area-inset-bottom));padding:10px;background:#102535;color:#fff0ca;border:1px solid #a98954;border-radius:8px}
 .party-menu-feedback button{margin:5px}
 #battleError{position:absolute;bottom:0;left:0;right:0;margin:0;padding:8px;background:#29151e;color:#ffd7c1}
-#action:disabled{opacity:.5}
+html[data-dungeon-mode="party"] #action{width:clamp(62px,17vw,82px);aspect-ratio:1;padding:0;border:0;border-radius:50%;background:transparent url('../../assets/ui/world-polish-20261103/icon-explore.png.webp') center/contain no-repeat;box-shadow:none}
+html[data-dungeon-mode="party"] #action:disabled{opacity:.5}
+html[data-dungeon-mode="party"] #action:not(:disabled):active{filter:brightness(1.15)}
+html[data-dungeon-mode="party"]:has(#joystick.active) #action{pointer-events:none}
+html[data-dungeon-mode="party"] #joystick,html[data-dungeon-mode="party"] #joystick *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 [hidden]{display:none!important}
 
 [data-dungeon-mode="party"] .walk-audio-toggle{bottom:calc(96px + env(safe-area-inset-bottom))!important;right:14px}

@@ -6,6 +6,7 @@ import {partyScene} from './online-party-scene.mjs?v=party-victory-traps-1';
 import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
 import {partyRunController} from './online-party-controller.mjs?v=party-save-latency-2';
+import {bindWalkJoystick} from '../colosseum/walk-joystick.mjs?v=1';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
@@ -27,14 +28,24 @@ function syncLocal(state){
  }).catch(failure);
 }
 addEventListener('visibilitychange',()=>{if(!document.hidden)localCombat?.resumed();});
-$('action').hidden=false;$('action').disabled=true;$('action').textContent='สำรวจ / เปิดประตู';
+const actionButton=$('action'),actionLabel='สำรวจ / เปิดประตู';
+actionButton.hidden=false;actionButton.disabled=true;actionButton.title=actionLabel;actionButton.setAttribute('aria-label',actionLabel);
 const asset=value=>{try{const u=new URL(String(value).replace(/^\//,''),base);return u.origin===base.origin?u.href:null;}catch{return null;}};
 let portraits={};void fetch(new URL('party-portraits.json',import.meta.url)).then(r=>r.json()).then(v=>{portraits=v;if(controller?.state?.battle)drawBattle(controller.state.battle);}).catch(()=>{});
 function portrait(unit){const key=unit.sp||unit.img;if(unit.cls&&!unit.sp)return sealerSpriteCatalog[unit.cls]?.[unit.gender==='male'?'male':'female']?.portrait;return portraits[key+':'+(unit.evo||0)]||portraits[key]||(String(key).includes('/')?key:null);}
 function picture(value){const src=asset(value);if(!src)return null;if(!images.has(src)){const im=new Image();im.src=src;images.set(src,im);}const im=images.get(src);return im.complete&&im.naturalWidth?im:null;}
 let noticeTimer;
 function notice(text){const toast=$('toast');toast.textContent=text;toast.style.opacity=1;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>toast.style.opacity=0,4000);}
-function freeze(){ready=false;keys.clear();$('action').disabled=true;}
+const stick=$('joystick'),knob=stick.querySelector('b');
+knob.textContent='';
+for(const type of ['selectstart','contextmenu'])document.addEventListener(type,event=>{
+ if(stick.classList.contains('active')||stick.contains(event.target))event.preventDefault();
+},true);
+const joystick=bindWalkJoystick(stick,knob,{
+ canStart:()=>ready&&!DungeonFeedback.isOpen&&!menus.open&&$('battle').hidden&&$('mapPanel').hidden&&!window.WalkControls?.editing
+});
+function clearMovement(){keys.clear();joystick.reset();}
+function freeze(){ready=false;clearMovement();$('action').disabled=true;}
 function offerReturn(city,automatic=false){
  $('leaveParty').hidden=true;$('retry').hidden=true;
  const button=$('returnHome');button.hidden=false;button.textContent=city?'ไปโรงพยาบาลเมืองหลวง':'กลับหน้าดันเจี้ยน';
@@ -49,7 +60,7 @@ function offerReturn(city,automatic=false){
  };
  if(automatic)void button.onclick();
 }
-const menus=partyMenu({canOpen:()=>ready&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{keys.clear();selfMoving=false;}});
+const menus=partyMenu({canOpen:()=>ready&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{clearMovement();selfMoving=false;}});
 let clockOffset=0, shownBattle=null, battleFrameReady=false, visibleBattleId=null, victory=null, queuedBattle=null;
 const battleFrame=$('partyBattleFrame');let warmFloor;
 function warmBattleFrame(){
@@ -76,7 +87,7 @@ addEventListener('message',event=>{
   else if(nextPulse!==Infinity)nextPulse=performance.now();return;}
  if(message.type==='party-battle-done'&&shownBattle.status!=='active'&&!shownBattle.presentation){
   const next=queuedBattle;queuedBattle=null;victory=null;
-  seenBattle=shownBattle.id;keys.clear();drawBattle(next);if(!next)window.focus();return;
+  seenBattle=shownBattle.id;clearMovement();drawBattle(next);if(!next)window.focus();return;
  }
  if(message.type==='party-battle-presented'){
   if(shownBattle.localCombatVersion)localCombat?.presented(shownBattle.id,message.turn,message.sequence);
@@ -108,12 +119,12 @@ function drawBattle(run,local=false){
  if(!local&&run?.status==='finished'&&localCombat?.active(run.id))localCombat.stop(null);
  if(!run||(run.status!=='active'&&seenBattle===run.id)){
   shownBattle=null;$('battle').hidden=true;$('battleError').hidden=true;
-  if(run)keys.clear();
+  if(run)clearMovement();
   return;
  }
  if(menus.open)menus.close();
  if(shownBattle?.id!==run.id){
-  visibleBattleId=null;warmBattleFrame();
+  clearMovement();visibleBattleId=null;warmBattleFrame();
  }
  if(run.status==='finished'&&run.result==='win'&&!run.presentation)victory=run;
  shownBattle=run;$('battle').hidden=false;sendBattle();
@@ -129,7 +140,7 @@ const view={
 
   $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · กับดักเหลือ ${trapPlacements.length-(world.traps||[]).filter(t=>t.state==='spent').length} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
- stopSolo(){localCombat?.stop(null);keys.clear();if(!victory)$('battle').hidden=true;},enterBoss(){keys.clear();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
+ stopSolo(){localCombat?.stop(null);clearMovement();if(!victory)$('battle').hidden=true;},enterBoss(){clearMovement();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
  respawn(destination,reason){victory=null;queuedBattle=null;drawBattle(null);freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
   // Navigation is restricted to our own town page; never use a server-supplied URL.
   const city=typeof destination==='string'?destination:destination?.city;
@@ -159,7 +170,7 @@ try{
  connection=connectDungeonParty();const roomId=new URL(location.href).searchParams.get('room');
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
  const scene=partyScene({code:connection.code,roomId,view});
- controller=partyRunController({onResult:async(action,result)=>{if(action==='chest'){keys.clear();await DungeonFeedback.reward(result)}if(action==='trapResolve'&&result?.hit){keys.clear();await DungeonFeedback.trap(result.type,result.damage?'เสีย '+result.damage+' HP':'')}},canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
+ controller=partyRunController({onResult:async(action,result)=>{if(action==='chest'){clearMovement();await DungeonFeedback.reward(result)}if(action==='trapResolve'&&result?.hit){clearMovement();await DungeonFeedback.trap(result.type,result.damage?'เสีย '+result.damage+' HP':'')}},canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
   clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
@@ -212,8 +223,8 @@ try{
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;selfMoving=false;
   if(!DungeonFeedback.isOpen&&$('battle').hidden&&!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
-   let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
-   let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
+   const dx=joystick.x+Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
+   const dy=joystick.y+Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0&&!contactPending;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
     if(nav.clear(position,point)&&controller.move(point,position))position=point;}
@@ -249,7 +260,7 @@ try{
 }catch(error){failure(error);}
 const moveKeys=new Set(['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight']);
 addEventListener('keydown',e=>{if(!menus.open&&moveKeys.has(e.key)){e.preventDefault();keys.add(e.key);}});addEventListener('keyup',e=>keys.delete(e.key));
-addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();freeze();}else void controller?.refresh();});
+addEventListener('blur',clearMovement);document.addEventListener('visibilitychange',()=>{if(document.hidden)freeze();else void controller?.refresh();});
 addEventListener('pagehide',()=>{freeze();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();sceneAudio.dispose();void controller?.close();});
 const daylight=CountryDaylight.create('dungeon');
 function render(){
@@ -300,7 +311,7 @@ function drawMinimap(target){
  for(const peer of peers.values())if(peer.member.exploring!==false)mark(peer,'person','#78deed',12);
  mark(position,'person','#fff3a0',14);
 }
-function showMap(open){vitals.setHidden(open);$('mapPanel').hidden=!open;keys.clear();miniAt=0;renderMinimap();}
+function showMap(open){vitals.setHidden(open);$('mapPanel').hidden=!open;clearMovement();miniAt=0;renderMinimap();}
 $('mapButton').onclick=()=>showMap(true);
 $('closeMap').onclick=()=>showMap(false);
 $('guide').onclick=()=>notice('เดินสำรวจพร้อมเพื่อน · กด E เพื่อสำรวจ · กด M เพื่อเปิดแผนที่');
@@ -310,7 +321,3 @@ addEventListener('keydown',event=>{
  if(event.key==='Escape'&&!$('mapPanel').hidden)showMap(false);
  if(event.key.toLowerCase()==='e'&&$('mapPanel').hidden)$('action').click();
 });
-
-const stick=$('joystick'),knob=stick.querySelector('b');
-function stickMove(e){const r=stick.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,d=Math.hypot(x,y),limit=r.width*.28,ratio=d?Math.min(1,limit/d):0;knob.style.transform=`translate(${x*ratio}px,${y*ratio}px)`;keys.clear();if(d>8){if(x/d>.35)keys.add('ArrowRight');if(x/d<-.35)keys.add('ArrowLeft');if(y/d>.35)keys.add('ArrowDown');if(y/d<-.35)keys.add('ArrowUp');}}
-stick.onpointerdown=e=>{stick.setPointerCapture(e.pointerId);stickMove(e);};stick.onpointermove=e=>{if(stick.hasPointerCapture(e.pointerId))stickMove(e);};stick.onpointerup=stick.onpointercancel=()=>{keys.clear();knob.style.transform='';};
