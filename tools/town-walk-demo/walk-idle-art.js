@@ -1,6 +1,26 @@
 (function(g){
  'use strict';
- const frameEnds=[.65,1.02,1.48,1.84];
+ const frameEnds=[.37,.83,1.19];
+ const idleTimers=new WeakMap();
+ const nextIdle=time=>time+4+Math.random()*4;
+
+ function greetNpc(npc,time){
+  idleTimers.set(npc,{started:time,next:nextIdle(time)});
+ }
+
+ function idleFrame(npc,time){
+  let timer=idleTimers.get(npc);
+  if(!timer){
+   timer={started:-Infinity,next:nextIdle(time)};
+   idleTimers.set(npc,timer);
+  }
+  if(time>=timer.next){
+   greetNpc(npc,time);
+   timer=idleTimers.get(npc);
+  }
+  const frame=frameEnds.findIndex(end=>time-timer.started<end);
+  return frame<0?0:frame+1;
+ }
  const atlasRoot='/Soulbeast/assets/ui/npc-idle-v2/';
  const atlases=new Map(),motions=new WeakMap();
  const reducedMotion=g.matchMedia('(prefers-reduced-motion: reduce)');
@@ -38,14 +58,13 @@
   return motion;
  }
 
- function drawNpc(ctx,image,source,x,y,width,height,time,phase=0){
+ function drawNpc(ctx,image,source,x,y,width,height,time,npc){
   if(!image.naturalWidth)return;
   const motion=time!=null&&!reducedMotion.matches?motionFor(image,source):null;
   if(motion?.atlas.naturalWidth){
    const {atlas,row}=motion,cell=atlas.naturalWidth/4;
    if((row+1)*cell<=atlas.naturalHeight){
-    const elapsed=((time+phase)%frameEnds[3]+frameEnds[3])%frameEnds[3];
-    const frame=frameEnds.findIndex(end=>elapsed<end);
+    const frame=npc?idleFrame(npc,time):0;
     ctx.drawImage(atlas,frame*cell,row*cell,cell,cell,x+(width-height)/2,y,height,height);
     return;
    }
@@ -85,5 +104,5 @@
   ctx.drawImage(frame.canvas,x,y-bleed,width,height+2*bleed);
  }
 
- g.WalkIdleArt={drawNpc,drawFlag};
+ g.WalkIdleArt={drawNpc,drawFlag,greetNpc};
 })(window);
