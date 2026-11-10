@@ -69,12 +69,13 @@ begin
         and lower(coupon->>7) in ('true','1','yes','banned')
      )
   ), loadouts as materialized (
-   select d.id, public.sb_dungeon_helper_loadout(saved) as player
+   select d.id, public.sb_dungeon_helper_loadout(saved) as player,coalesce(r.score,0) as rating
    from public.sb_engine_tables t cross join lateral jsonb_array_elements(t.rows) saved
    join directory d on d.code=saved->>0
+   left join public.sb_colosseum_ratings r on p_env='live' and r.code=d.code
    where t.environment=p_env and t.name='Saves'
   )
-  select coalesce(jsonb_agg(jsonb_build_object('id',id,'player',player)
+  select coalesce(jsonb_agg(jsonb_build_object('id',id,'player',player||jsonb_build_object('colosseumRating',rating))
          order by player->>'name',id),'[]'::jsonb)
   from loadouts where player is not null
  );

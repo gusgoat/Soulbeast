@@ -1,7 +1,7 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
 import {partyMenu} from './online-party-menu.mjs?v=shared-shell-2';
-import {partyArt} from './online-party-art.mjs?v=party-boss-facing-1';
-import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=admin-session-20261107';
+import {partyArt} from './online-party-art.mjs?v=walk-shields-1';
+import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=walk-shields-1';
 import {partyScene} from './online-party-scene.mjs?v=party-victory-traps-1';
 import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
@@ -13,6 +13,7 @@ const localWorld=localPartyWorld();let trapPlacements=[];
 const sceneAudio=partyAudio();
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
+let partyRanks={},partyRankPoll=0,partyRankPending=false;
 let nextPulse=0,nextContact=0,heartbeatTimer,localCombat;
 void import('./online-party-solo.mjs?v=party-combat-latency-1').then(({localPartyCombat})=>{
  localCombat=localPartyCombat({publish:run=>drawBattle(run,true),finish:data=>controller.command('soloFinish',data),report:failure});
@@ -238,7 +239,15 @@ function render(){
  if(!maze||!position)return;
  const focus=camera||position;
  const screen=p=>({x:w/2+(p.x-focus.x)*scale,y:h/2+(p.y-focus.y)*scale*F});
- visuals.draw(ctx,w,h,focus,{...position,dir:selfDir,phase:selfPhase,moving:selfMoving},me,peers,world,localWorld,controller?.state?.chestClaims,traps,performance.now()/1000);
+ if(!partyRankPending&&performance.now()>=partyRankPoll&&connection?.walkRanks&&me?.code){
+  partyRankPending=true;partyRankPoll=performance.now()+30_000;
+  const roomId=new URLSearchParams(location.search).get('room');
+  if(roomId)void connection.walkRanks(roomId).then(result=>{
+   if(result)partyRanks={...result.peers,[connection.code]:result.own};
+  }).catch(()=>{}).finally(()=>{partyRankPending=false;});
+  else partyRankPending=false;
+ }
+ visuals.draw(ctx,w,h,focus,{...position,dir:selfDir,phase:selfPhase,moving:selfMoving},me,peers,world,localWorld,controller?.state?.chestClaims,traps,performance.now()/1000,partyRanks);
 }
 
 // Cache static maze pixels; only markers refresh at 5 Hz.

@@ -1,8 +1,8 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-repair-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=shields-2';
-import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=bottom-shield-1';
+import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {battlePresentation} from './battle-presentation.mjs?v=skill-effects-1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
@@ -307,7 +307,10 @@ function applyState(next){
  $('entry').hidden=true;$('room').hidden=false;
  if(state.phase==='lobby'){renderLobby();return;}
  me=own();
- if(state.rankSaved&&Number.isFinite(me?.rating))selectedRating=me.rating;
+ if(state.rankSaved&&Number.isFinite(me?.rating)&&selectedRating!==me.rating){
+  selectedRating=me.rating;
+  renderRankProfile();
+ }
  renderMatchResults();
  if(!me||!Number.isFinite(me.x))return;
  const solo=state.mode==='survival';
@@ -687,9 +690,26 @@ function renderBattle(){
  else if(battleUpdates.length&&!presentation.busy)continueBattle();
 }
 
+function renderRankProfile(){
+ const rating=selectedRating??0,shield=shieldFor(rating);
+ for(const [image,text] of [['mode-rank-shield','mode-rank-text'],['queue-rank-shield','queue-rank-text']]){
+  $(image).replaceChildren(shieldIcon(rating));
+  $(text).textContent=shield.name+' · '+rating+' แต้ม';
+ }
+}
+function renderRankLadder(){
+ const list=$('rank-ladder-list');
+ list.replaceChildren(...SHIELDS.map((shield,i)=>{
+  const item=node('li');
+  const upper=SHIELDS[i+1]?.minimum-1;
+  const range=i===0?'10 แต้มลงไป':i===SHIELDS.length-1?'101 แต้มขึ้นไป':shield.minimum+'–'+upper+' แต้ม';
+  item.append(shieldIcon(i===0?0:shield.minimum),node('b',shield.name),node('small',range));
+  return item;
+ }));
+}
 function showSelectedProfile(){
  const label=selectedCharacter.name+' · Lv '+selectedCharacter.lv;
- $('selected-profile').replaceChildren(playerName(label,selectedRating));
+ $('selected-profile').textContent=label;
 }
 async function loadSelectedRating(){
  try{
@@ -702,10 +722,12 @@ async function loadSelectedRating(){
   const rating=await response.json();
   if(!Number.isInteger(rating)||selectedRating!==null)return;
   selectedRating=rating;
-  showSelectedProfile();
+  renderRankProfile();
   if(ws?.local)send({type:'displayRating',rating});
  }catch{}
 }
+renderRankProfile();
+renderRankLadder();
 for(const [id,name] of Object.entries(CLASSES))$('cls').add(new Option(name,id));
 const fromLink=params.get('room'),country=params.get('country')||selectedCharacter?.country;
 if(['blue','green','red'].includes(country)){

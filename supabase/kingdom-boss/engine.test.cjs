@@ -28,12 +28,31 @@ assert.equal(act(0,'poll',{fight:a.fight.id,turn:0}).fight.turn,1);
 assert.equal(act(1,'poll',{fight:b.fight.id,turn:-1}).fight.battle.enemies[0].hp,after.event.hp);
 // Defeat the second player with a real enemy turn, then walk back in the same round.
 const stateRow=book.tables.GuildState.find(r=>r[0]==='kb:'+round);
+const growthKeys=['patk','matk','pdef','mdef'];
+const startStats=b.fight.battle.enemies[0].st;
+const forceBossTurn=(fightId)=>{
+ const state=JSON.parse(stateRow[1]),battle=state.fights[fightId].battle;
+ battle.queue=[battle.enemies[0].id];
+ for(const ally of battle.allies)ally.hp=100000;
+ stateRow[1]=JSON.stringify(state);now+=600;
+};
+let growing=b;
+for(const bonus of [10,20]){
+ forceBossTurn(b.fight.id);
+ const previous=growing.fight.turn;
+ growing=act(1,'poll',{fight:b.fight.id,turn:previous});
+ assert.equal(growing.fight.turn,previous+1);
+ for(const key of growthKeys)assert.equal(growing.fight.battle.enemies[0].st[key],Math.round(startStats[key]*(100+bonus)/100),key+' at +'+bonus+'%');
+ assert.equal(act(1,'poll',{fight:b.fight.id,turn:previous}).fight.turn,previous+1);
+}
+const other=act(0,'poll',{fight:a.fight.id,turn:-1});
+for(const key of growthKeys)assert.equal(other.fight.battle.enemies[0].st[key],after.fight.battle.enemies[0].st[key],'the other fight keeps its own boss power');
 const setupLoss=JSON.parse(stateRow[1]),losingBattle=setupLoss.fights[b.fight.id].battle;
 losingBattle.queue=[losingBattle.enemies[0].id];
 for(const ally of losingBattle.allies){ally.hp=1;ally.st.pdef=0;ally.st.mdef=0;ally.st.spd=0;}
 losingBattle.enemies[0].st.patk=50000;losingBattle.enemies[0].st.matk=50000;
 stateRow[1]=JSON.stringify(setupLoss);
-let loss=b;
+let loss=growing;
 for(let tries=0;tries<15&&loss.fight.status==='active';tries++){
  now+=600;loss=act(1,'poll',{fight:b.fight.id,turn:loss.fight.turn});
 }
@@ -44,6 +63,7 @@ assert.equal(approach.fight,null,'walking back does not reopen the old fight');
 now+=4100;
 const returned=act(1,'move',{map:first.event.country,...ctx.kingdomBossIdlePosition(approach.event.home,approach.event.idleSince,now)});
 assert.equal(returned.fight.kind,'boss');assert.notEqual(returned.fight.id,b.fight.id);
+for(const key of growthKeys)assert.equal(returned.fight.battle.enemies[0].st[key],startStats[key],'new fight starts at base power');
 assert.equal(returned.respawn,null);assert.equal(returned.fight.battle.enemies[0].hp,loss.event.hp);
 assert.equal(act(1,'poll',{fight:b.fight.id,turn:-1}).fight,null,'a stale poll cannot advance or retrieve the new fight');
 // Reduce the boss to 1 HP only in this isolated workbook; verify a real attack ends the round.

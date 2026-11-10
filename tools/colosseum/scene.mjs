@@ -413,17 +413,16 @@ export class Scene{
   c.fillStyle='#17202b';c.font='bold 20px sans-serif';c.textAlign='center';c.fillText(b.main?'◆':'✦',x,y-43);
   this.label(label,x,y+22,color);
  }
- label(text,x,y,color,rating,now=0){
+ label(text,x,y,color,rating=null,now=0){
   const c=this.c;
   c.textAlign='center';c.font='bold 15px system-ui,sans-serif';
   const shield=shieldFor(rating);
   if(shield&&!shieldImages.has(shield.id))shieldImages.set(shield.id,img(shieldUrl(shield)));
   const badge=shield&&shieldImages.get(shield.id);
-  const extra=badge?22:0;
-  const w=c.measureText(text).width+12+extra;
+  const w=c.measureText(text).width+12;
   c.fillStyle='#15101de6';c.fillRect(x-w/2,y-16,w,21);
-  if(ready(badge))drawRankShield(c,badge,shield.id,x-w/2+3,y-17,now);
-  c.fillStyle=color;c.fillText(text,x+extra/2,y);
+  if(ready(badge))drawRankShield(c,badge,shield.id,x-10,y-4,now);
+  c.fillStyle=color;c.fillText(text,x,y);
  }
  actor(p,now,isMe){
   const c=this.c,x=p.x,y=p.y*FLAT,color=p.sp?(p.boss?'#ffc479':p.rare?'#eed079':'#bd9af3'):
@@ -474,7 +473,7 @@ export class Scene{
     }
    }
    if(!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
-   this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,y-88,isMe?'#fff2af':color,p.rating,now);
+   this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,y-88,isMe?'#fff2af':color,p.rating??0,now);
   }
   c.restore();
  }

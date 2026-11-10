@@ -7,7 +7,7 @@
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
  <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=rank-queue-1">
+ <link rel="stylesheet" href="./style.css?v=rank-profile-1">
 </head>
 <body>
  <main id="lobby">
@@ -21,7 +21,11 @@
      <label>ชื่อผู้ผนึก<input id="name" maxlength="20" required autocomplete="off" placeholder="ชื่อในสนามทดลอง"></label>
      <div class="pair"><label>อาชีพ<select id="cls"></select></label><label>เลเวล<input id="level" type="number" value="20" min="1" max="60"></label></div>
     </fieldset>
-    <p id="selected-profile" hidden></p>
+    <section class="rank-profile" aria-label="โล่จัดอันดับปัจจุบัน">
+     <div id="mode-rank-shield" class="rank-feature"></div>
+     <p id="mode-rank-text" class="rank-feature-text"></p>
+     <p id="selected-profile" hidden></p>
+    </section>
     <fieldset id="rank-entry">
      <legend>จัดอันดับ</legend>
      <label>โหมด <select id="rank-mode"><option value="team">ทีม 5 ต่อ 5</option><option value="survival">เอาตัวรอด 10 คน</option></select></label>
@@ -41,9 +45,19 @@
    </form>
    <button id="open-rank-mail" class="secondary" type="button" hidden>จดหมายจัดอันดับ</button>
    <button id="open-rankings" class="secondary" type="button">กระดานคะแนนโคลอสเซียม</button>
+   <section class="rank-ladder" aria-labelledby="rank-ladder-heading">
+    <h2 id="rank-ladder-heading">ลำดับโล่จัดอันดับ</h2>
+    <ol id="rank-ladder-list"></ol>
+   </section>
   </div>
   <section id="rank-queue" class="panel" hidden>
-   <img src="../../assets/ui/battle-scenes/arena-v2.webp" alt="สนามโคลอสเซียม">
+   <div class="rank-queue-art">
+    <img src="../../assets/ui/battle-scenes/arena-v2.webp" alt="สนามโคลอสเซียม">
+    <div class="rank-feature rank-queue-feature">
+     <div id="queue-rank-shield"></div>
+     <p id="queue-rank-text" class="rank-feature-text"></p>
+    </div>
+   </div>
    <h2 id="rank-queue-title">กำลังค้นหาผู้เล่น</h2>
    <p id="rank-queue-count" role="status"></p>
    <p id="rank-queue-detail"></p>
@@ -118,6 +132,6 @@
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" hidden></div><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=rank-queue-2"></script>
+ <script type="module" src="./client.mjs?v=rank-profile-1"></script>
 </body>
 </html>

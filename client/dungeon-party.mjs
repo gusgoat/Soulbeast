@@ -33,7 +33,9 @@ export function connectDungeonParty({storage=localStorage,session=sessionStorage
   session.removeItem(partySessionKey);
   return snapshot.P;
  }
- return {code:context.code,call,run,restoreWalk,config:accountRealtimeConfig,token:()=>client.sessions.token(),environment:context.environment};
+ const walkRanks=async room=>context.environment==='live'?client.request('/rest/v1/rpc/sb_colosseum_walk_ratings',
+  {p_code:context.code,p_scene:'dungeon:'+room+':1',p_peer_ids:[]},await client.sessions.token()):null;
+ return {code:context.code,call,run,restoreWalk,walkRanks,config:accountRealtimeConfig,token:()=>client.sessions.token(),environment:context.environment};
 }
 // Each authenticated member owns its own private broadcast topic. Read access is
 // limited to the same active room, and movement never settles combat or rewards.

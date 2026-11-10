@@ -32,6 +32,7 @@ function kbStart(s,f){
  if(f.kind==='pvp')teams[1].forEach(u=>u.side='enemy');
  f.battle={kind:'kingdomBoss',allies:teams[0],enemies:f.kind==='boss'?[kbBoss(s)]:teams[1],round:1,turns:0,queue:[],cur:null,log:[],fx:[],effects:[]};
  f.nextAt=f.started;f.touched=f.started;
+ if(f.kind==='boss')f.bossPowerTurns=0;
 }
 function kbFinish(s,now){
  if(s.status!=='defeated')return;
@@ -51,7 +52,20 @@ function kbAdvance(s,f,now){
  if(!b.queue.length){if(b.turns)b.round++;b.queue=[...b.allies,...b.enemies].filter(u=>u.hp>0).sort((a,z)=>eff(z,'spd')-eff(a,'spd')).map(u=>u.id);}
  let u;while(b.queue.length&&!u){const next=uById(b.queue.shift());if(next?.hp>0)u=next;}
  b.fx=[];b.effects=[];
- if(u){b.cur=u.id;if(!turnStart(u)){const move=pvpAutoChoice_(u);if(!act(u,move.id,move.target,move.friend))act(u,'rest',null,u);}b.turns++;}
+ if(u){
+  b.cur=u.id;
+  if(u===boss){
+   f.bossPowerTurns=(f.bossPowerTurns??0)+1;
+   const bonus=10*f.bossPowerTurns;
+   for(const stat of ['patk','matk','pdef','mdef'])boss.st[stat]=Math.round(s.stats[stat]*(100+bonus)/100);
+   b.log.push(boss.name+' เพิ่มพลังโจมตีและป้องกันเป็น +'+bonus+'%');
+  }
+  if(!turnStart(u)){
+   const move=pvpAutoChoice_(u);
+   if(!act(u,move.id,move.target,move.friend))act(u,'rest',null,u);
+  }
+  b.turns++;
+ }
  b.log=b.log.slice(-12);f.nextAt=now+450;f.touched=now;
  if(boss){
   kingdomBossResolve(s,f.id,f.turn,{damage:Math.max(0,s.hp-boss.hp),mp:boss.mp,defeated:!alive(b.allies),left:b.turns>=180},now,{dropPart:s.species+'|0'});

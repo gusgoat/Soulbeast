@@ -214,7 +214,20 @@ dialog p{margin-top:10px;font-size:.82em}
 
 #rank-entry{display:grid;gap:8px;border:1px solid #ba8d48;border-radius:9px;margin:0;padding:10px}
 #rank-queue{text-align:center}
-#rank-queue>img{display:block;width:100%;height:clamp(145px,42vw,250px);object-fit:cover;border:1px solid #987849;border-radius:9px;margin-bottom:15px}
+ .rank-queue-art{position:relative;isolation:isolate;margin-bottom:15px}
+.rank-queue-art>img{display:block;width:100%;height:clamp(200px,55vw,280px);object-fit:cover;border:1px solid #987849;border-radius:9px}
+.rank-queue-art::after{content:'';position:absolute;inset:1px;border-radius:8px;background:radial-gradient(ellipse at center,#10151cd9,#15101d66 70%);pointer-events:none}
+.rank-profile{text-align:center;margin-bottom:4px}
+.rank-feature .rank-shield{display:block;width:clamp(104px,30vw,144px);height:auto;aspect-ratio:1;margin:auto}
+.rank-feature-text{margin:4px 0;color:#ffdc95;font-weight:750}
+.rank-queue-feature{position:absolute;z-index:1;inset:0;display:grid;place-content:center;pointer-events:none}
+.rank-ladder{margin-top:18px}
+.rank-ladder h2{font-size:1rem}
+#rank-ladder-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0;margin:0;list-style:none}
+#rank-ladder-list li{display:grid;grid-template-rows:52px auto 1fr;justify-items:center;align-items:center;gap:3px;padding:4px 2px;text-align:center;border:1px solid #98784955;border-radius:8px}
+#rank-ladder-list .rank-shield{width:48px;height:48px}
+#rank-ladder-list b{font-size:.74rem;line-height:1.15}
+#rank-ladder-list small{font-size:.68rem;color:#dfc595}
 #rank-queue-count{font-weight:750;color:#ffdc95}
 #open-rank-mail{margin-top:12px;width:100%}
 #rank-mail{width:min(calc(100% - 24px),520px);max-height:85dvh;overflow:auto}

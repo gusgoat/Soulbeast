@@ -1,3 +1,4 @@
+import {drawWalkRank} from '../town-walk-demo/walk-rank-badge.mjs?v=1';
 // Visual-only adapter: never changes party state or waits for network movement.
 const root=new URL('../../',import.meta.url);
 export function partyArt(){
@@ -25,7 +26,7 @@ for(const c of m.cells){const h=(c.cx*127+c.cy*991)%119;if(h===0)props.push({...
 for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['library-10-45','dining-30-43','dining-30-17'].includes(o.group)){props.splice(i,1);continue}if(!m.roomAt(o)&&m.grid[Math.floor(o.y/m.cell)]?.[Math.floor(o.x/m.cell)]===1&&['cart','support','supplies'].includes(o.name))props.splice(i,1)}
  if(c.theme!=='lava')for(const fraction of [.2,.55,.83]){const p=m.river[Math.floor(m.river.length*fraction)];if(p)props.push({...p,name:'waterfall',size:235});}
  }
- function draw(ctx,w,h,focus,position,me,peers,world,local,chests,traps,time){
+ function draw(ctx,w,h,focus,position,me,peers,world,local,chests,traps,time,ranks){
  if(!map)return;const s=.9,F=map.flatten,C=map.cell,screen=p=>({x:w/2+(p.x-focus.x)*s,y:h/2+(p.y-focus.y)*s*F});
  const visible=p=>{const q=screen(p);return q.x>-190&&q.x<w+190&&q.y>-80&&q.y<h+230;};
  ctx.fillStyle='#111b20';ctx.fillRect(0,0,w,h);
@@ -85,7 +86,7 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
  if(!world.doorOpen)draws.push({y:gate.y,run:()=>{sprite('door',gate,290);label(gate,'ประตูห้องบอส');}});
  for(const [p,n,z,text]of [[map.exit,'entrance',230,'ทางออก'],[map.stairs,'stairs',300,'ชั้นถัดไป'],[map.mini,'well',cfg.wellSize||330,'บ่อน้ำศักดิ์สิทธิ์']])if(visible(p))draws.push({y:p.y,run:()=>{sprite(n,p,z,n==='stairs'&&world.boss!=='defeated'?.58:1);if(n==='well'&&art.well){const q=screen(p);LiquidEffects.well(ctx,q.x,q.y,z*s,time,cfg.theme);}label(p,text);}});
  for(const c of map.chests)if(visible(c))draws.push({y:c.y,run:()=>{sprite(c.big?'grand-chest':'chest',c,c.big?200:88,chests?.[c.id]?.4:1);if(chests?.[c.id])label(c,'เปิดแล้ว');}});
- function person(p,m){if(m?.exploring===false||!visible(p))return;const key=m?.code||'self';let a=avatars.get(key);if(!a){a=sealerSprites.create();avatars.set(key,a);}void a.sync(m||{cls:'swordsman',gender:'male'}).catch(()=>{});draws.push({y:p.y,run:()=>{const q=screen(p);a.draw(ctx,q.x,q.y,145*s,p.dir||0,p.phase||0,!!p.moving);label({...p,y:p.y-155},m?.name||'ผู้ผนึก');}});}
+ function person(p,m){if(m?.exploring===false||!visible(p))return;const key=m?.code||'self';let a=avatars.get(key);if(!a){a=sealerSprites.create();avatars.set(key,a);}void a.sync(m||{cls:'swordsman',gender:'male'}).catch(()=>{});draws.push({y:p.y,run:()=>{const q=screen(p);a.draw(ctx,q.x,q.y,145*s,p.dir||0,p.phase||0,!!p.moving);const plate={...p,y:p.y-155};label(plate,m?.name||'ผู้ผนึก');const tag=screen(plate);drawWalkRank(ctx,tag.x,tag.y+22,ranks?.[m?.code]??0);}});}
  for(const p of peers.values())person(p,p.member);person(position,me);
  draws.sort((a,b)=>a.y-b.y);for(const d of draws)d.run();
  if(!shadeCache||shadeCache.w!==w||shadeCache.h!==h){
