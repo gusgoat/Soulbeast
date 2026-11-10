@@ -4,3 +4,9 @@ body{background:#263e50}.hero{background:linear-gradient(90deg,#142c45ed,#17384a
 .overview .tools{top:auto;bottom:100px;right:12px;flex-direction:row}
 
 .close-overview{position:fixed;top:90px;right:12px;z-index:8;width:44px;height:44px;padding:0;border:1px solid #d9b767;border-radius:10px;background:#15384ff5;color:#fff0bf;font:28px Tahoma;box-shadow:0 3px 12px #0006;cursor:pointer}.close-overview[hidden]{display:none}
+
+.map > #area,
+.map > #walkRealtimeStatus,
+.map > .map-legend {
+  display: none;
+}
