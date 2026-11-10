@@ -3,6 +3,7 @@ import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TA
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
 import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=bottom-shield-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
+import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
 import {battlePresentation} from './battle-presentation.mjs?v=projectile-2';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
@@ -114,8 +115,8 @@ async function connect(payload){
    $('notice').textContent='กำลังเปิดเซิร์ฟเวอร์สนาม อาจใช้เวลาประมาณหนึ่งนาที…';
    await waitForHost(base,payload);
    if(packet!==payload)return;
-   if(payload.type==='ranked'){
-    const ready=await fetch(new URL('/ranked-health',base),{cache:'no-store',signal:AbortSignal.timeout(10_000)});
+   if(payload.type==='ranked'||payload.type==='createRankTeam'){
+    const ready=await fetch(new URL(payload.type==='ranked'?'/ranked-health':'/ranked-team-health',base),{cache:'no-store',signal:AbortSignal.timeout(10_000)});
     if(ready.status!==204)throw Error('ระบบจัดอันดับยังไม่พร้อม กรุณาลองใหม่อีกครั้ง');
     if(packet!==payload)return;
    }
@@ -261,6 +262,9 @@ const entryForm=$('entry-form');
 const selectedMode=()=>entryForm.elements.mode.value;
 function updateModeOptions(){
  const survival=selectedMode()==='survival';
+ $('ranked-solo').textContent=survival?'ค้นหาแมตช์เอาตัวรอด':'ค้นหาแมตช์คนเดียว';
+ $('ranked-premade').hidden=survival;
+ $('ranked-premade-hint').hidden=survival;
  $('create-private').textContent=survival?'สร้างห้องเอาตัวรอด':'สร้างห้องทีม';
  $('practice-label').textContent=survival?'ทดลองเอาตัวรอด 10 คน':'ทดลอง 5 ต่อ 5 กับบอท';
  $('practice-detail').textContent=survival?'คุณ 1 คน · คู่แข่งบอท 9 ตัว':'เล่นคนเดียว · เพื่อนบอท 4 · คู่แข่งบอท 5';
@@ -398,11 +402,18 @@ function renderMatchResults(){
 }
 
 function renderLobby(){
- const key=JSON.stringify([state.players,state.canStart,state.host,state.canManageBots]);if(key===lobbyKey)return;lobbyKey=key;
+ const key=JSON.stringify([state.players,state.canStart,state.host,state.canManageBots,state.premade,state.rankSearching]);if(key===lobbyKey)return;lobbyKey=key;
  $('room-code').textContent=state.code;
  $('public-room-label').hidden=!state.isPublic;
+ $('rank-team-label').hidden=!state.premade;
  const p=own();
- if(state.mode==='survival'){
+ if(state.premade){
+  const box=node('div',null,'roster'),list=node('ul');
+  box.append(node('h2',`ทีมของคุณ · ${state.players.length}/5`),list);
+  list.append(...state.players.map(lobbySeat));
+  if(state.canManageBots)box.append(addBotButton(0,state.players.length>=5,'เพิ่มบอท'));
+  $('rosters').replaceChildren(box);$('rosters').classList.add('survival');
+ }else if(state.mode==='survival'){
   const box=node('div',null,'roster'), list=node('ul');
   box.append(node('h2',`เอาตัวรอด · ${state.players.length}/10 คน`),list);
   list.append(...state.players.map(lobbySeat));
@@ -423,8 +434,17 @@ function renderLobby(){
   return box;
  }));
  }
+ const status=$('rank-team-status');
+ status.hidden=!state.premade;
+ if(state.premade){
+  const detail=state.rankSearching?'กำลังค้นหาทีมคู่แข่ง…':'รอผู้เล่นทุกคนกดพร้อมและจัดทีมให้ครบ 5 ที่นั่ง';
+  status.textContent='แต้มรวมของทีม '+premadeRankTotal(state)+' · '+detail;
+ }
  $('ready').textContent=p.ready?'ยกเลิกพร้อม':'ยืนยันพร้อม';
- $('start').hidden=p.id!==state.host;$('start').disabled=!state.canStart;
+ $('ready').disabled=Boolean(state.rankSearching);
+ $('start').hidden=p.id!==state.host;
+ $('start').textContent=state.premade?(state.rankSearching?'ยกเลิกการค้นหา':'เริ่มค้นหาแมตช์ทีม'):'เปิดประตูสนาม';
+ $('start').disabled=state.premade?!(state.rankSearching||state.canSearchRankTeam):!state.canStart;
 }
 function lobbySeat(u){
  const li=node('li',`${u.name} · Lv ${u.lv}${u.bot?' · '+(u.className||CLASSES[u.baseCls]||''):u.ready?' ✓':''}${u.connected?'':' · หลุด'}`);
@@ -439,8 +459,8 @@ function lobbySeat(u){
  }
  return li;
 }
-function addBotButton(side,full){
- const button=node('button',side===null?'เพิ่มบอท':`เพิ่มบอททีม${TEAMS[side]}`,'secondary add-bot');
+function addBotButton(side,full,label=side===null?'เพิ่มบอท':`เพิ่มบอททีม${TEAMS[side]}`){
+ const button=node('button',label,'secondary add-bot');
  button.disabled=full;
  button.onclick=()=>send({type:'addBot',side});
  return button;
@@ -728,7 +748,9 @@ $('entry-form').onsubmit=event=>{
  connect({type,code,mode,name:$('name').value,cls:$('cls').value,lv:$('level').value});
 };
 $('ready').onclick=()=>{if(!leaving)send({type:'ready',ready:!own()?.ready});};
-$('start').onclick=()=>{if(!leaving)send({type:'start'});};
+$('start').onclick=()=>{
+ if(!leaving)send({type:state?.premade?(state.rankSearching?'rankTeamCancel':'rankTeamStart'):'start'});
+};
 $('leave').onclick=()=>{
  if(leaving||state?.phase!=='lobby')return;
  if(!send({type:'leave'})){reset('ออกจากหน้าห้องแล้ว เซิร์ฟเวอร์จะคืนที่นั่งหลังหมดเวลารอเชื่อมต่อ',true);return;}

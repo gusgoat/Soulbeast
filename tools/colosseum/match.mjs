@@ -78,7 +78,10 @@ export class Match {
   return bot;
  }
  canStart(){
-  return this.phase==='lobby'&&Boolean(this.host)&&(this.solo?this.players.length>=2:count(this,0)>0&&count(this,0)===count(this,1))&&this.players.every(p=>p.ready&&p.connected);
+  return !this.premade&&this.phase==='lobby'&&Boolean(this.host)&&(this.solo?this.players.length>=2:count(this,0)>0&&count(this,0)===count(this,1))&&this.players.every(p=>p.ready&&p.connected);
+ }
+ canSearchRankTeam(){
+  return this.premade&&this.phase==='lobby'&&Boolean(this.host)&&this.players.length===5&&this.players.every(p=>p.side===0&&p.ready&&p.connected);
  }
  note(text,now,type='activity'){
   this.events.push({id:++this.eventSerial,text,at:now,type});if(this.events.length>6)this.events.shift();
@@ -646,7 +649,9 @@ export class Match {
     ...(!this.solo&&ally&&!visible&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });
   return {type:'state',me:p.id,code:this.code,phase:this.phase,ranked:Boolean(this.ranked),practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),
-   ...(this.phase==='lobby'?{canManageBots:this.host===p.id}:{}),score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
+   ...(this.phase==='lobby'?{canManageBots:this.host===p.id&&this.rankSearch==null}:{}),
+   ...(this.premade&&this.phase==='lobby'?{premade:true,rankSearching:this.rankSearch!=null,canSearchRankTeam:this.canSearchRankTeam()}:{}),
+   score:this.score,now,ends:this.ends,winner:this.winner,reason:this.reason,
    ...(this.phase==='finished'?{results:this.results,rankDelta:p.rankDelta,rankSaved:p.rankSaved,rankingAvailable:this.rankingAvailable,rankPending:this.ranked&&!this.rankEvaluated}:{}),
    ...(this.solo?{mode:'survival',zone:this.zone,survivors:this.players.filter(player=>player.phase!=='dead').length,
     nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,placement:p.placement,eliminationCause:p.eliminationCause,spectating:spectating?.id,

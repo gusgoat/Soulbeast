@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="th">
-<head><script src="/Soulbeast/client/game-locale-extra.js?v=three-languages-1"></script><script src="/Soulbeast/client/game-locale.js?v=three-languages-1" data-translate-page></script>
+<head><script src="/Soulbeast/client/game-locale-extra.js?v=rank-team-1"></script><script src="/Soulbeast/client/game-locale.js?v=three-languages-1" data-translate-page></script>
  <meta charset="utf-8">
  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
  <meta name="theme-color" content="#100f1a">
@@ -41,7 +41,9 @@
     </fieldset>
     <fieldset id="rank-entry">
      <legend>จัดอันดับ</legend>
-     <button type="submit" value="ranked">ค้นหาแมตช์จัดอันดับ</button>
+     <button id="ranked-solo" type="submit" value="ranked">ค้นหาแมตช์คนเดียว</button>
+     <button id="ranked-premade" type="submit" value="createRankTeam" class="secondary">สร้างทีมจัดอันดับกับเพื่อน</button>
+     <small id="ranked-premade-hint">จัดทีมให้ครบ 5 ที่นั่งด้วยเพื่อนหรือบอท แล้วค้นหาเฉพาะทีมที่จัดมาเอง</small>
     </fieldset>
     <fieldset id="public-rooms">
      <legend>ห้องสาธารณะ</legend>
@@ -94,8 +96,10 @@
   </dialog>
   <div id="room" class="panel" hidden>
    <p id="public-room-label" hidden>ห้องสาธารณะ</p>
+   <p id="rank-team-label" hidden>ห้องจัดอันดับทีมจัดเอง</p>
    <div class="room-title"><div>รหัสห้อง <strong id="room-code"></strong></div><button id="copy" class="secondary">คัดลอกลิงก์</button></div>
    <div id="rosters" class="pair"></div>
+   <p id="rank-team-status" role="status" hidden></p>
    <div class="pair"><button id="ready">ยืนยันพร้อม</button><button id="start">เปิดประตูสนาม</button></div>
    <button id="leave" class="secondary">ออกจากห้อง</button>
   </div>
@@ -149,6 +153,6 @@
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" hidden></div><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=three-languages-1"></script>
+ <script type="module" src="./client.mjs?v=rank-team-1"></script>
 </body>
 </html>

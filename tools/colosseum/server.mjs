@@ -1,20 +1,20 @@
 import {Match} from './match.mjs';
 import {demoProfile,settleCombat} from './combat.mjs?v=colosseum-ranks-1';
 import {matchRankChanges,teamResults} from './ranking.mjs';
-import {balanceRankedTeams,compatiblePlayers,rankedBanMessage,rankedGroup,RANKED_RECONNECT_MS} from './matchmaking.mjs';
+import {balanceRankedTeams,compatiblePlayers,premadeRankPair,rankedBanMessage,rankedGroup,RANKED_RECONNECT_MS} from './matchmaking.mjs';
 import {startPractice} from './practice.mjs';
 import {createRankingStore} from './ranking-store.mjs';
 import {createAccountLoader} from './account-auth.mjs';
 
 const TYPES={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8',
  '.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg','.mp3':'audio/mpeg'};
-const STATIC=new Set(['index.html','client.mjs','ranking.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','battle-effects.generated.mjs','pvp-card-art.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js']);
+const STATIC=new Set(['index.html','client.mjs','ranking.mjs','matchmaking.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','battle-effects.generated.mjs','pvp-card-art.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js']);
 const ROOT=new URL('../../',import.meta.url);
 const TICK=50, LOBBY_TTL=30*60_000, LOBBY_RECONNECT_MS=60_000, FINISH_TTL=5*60_000;
 const MAX_ROOMS=32, MAX_CONNECTIONS=160;
 
 export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReconnectMs=LOBBY_RECONNECT_MS,rankedReconnectMs=RANKED_RECONNECT_MS,...options}={}){
- const rooms=new Map(), peers=new Set(),tickets=new Map(),rankedQueue=new Map();
+ const rooms=new Map(), peers=new Set(),tickets=new Map(),rankedQueue=new Map(),rankRoomAliases=new Map();
  let rankProbe=null,rankProbeAt=0;
  function rankedReady(){
   if(!ranking?.enabled)return Promise.resolve(false);
@@ -71,7 +71,7 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
  }
  function roomCode(){
   let code;
-  do{code=crypto.randomUUID().slice(0,8).toUpperCase();}while(rooms.has(code));
+  do{code=crypto.randomUUID().slice(0,8).toUpperCase();}while(rooms.has(code)||rankRoomAliases.has(code));
   return code;
  }
  function queueStatus(entry,now){
@@ -124,6 +124,64 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
   }
   for(const entry of rankedQueue.values())if(entry.peer)queueStatus(entry,now);
  }
+ function processPremadeQueue(now){
+  while(true){
+   const pair=premadeRankPair([...rooms.values()],now);
+   if(!pair)return;
+   const match=new Match(roomCode(),now);
+   match.ranked=true;
+   match.rankingAvailable=true;
+   const seats=new Map([...peers].filter(peer=>pair.includes(peer.room)&&peer.player).map(peer=>[peer.player.id,peer]));
+   try{
+    match.players=pair.flatMap((lobby,side)=>lobby.players.map(player=>({...structuredClone(player),side})));
+    if(match.players.some(player=>!player.bot&&seats.get(player.id)?.ws.readyState!==WebSocket.OPEN))throw Error('disconnected');
+    match.start(now);
+   }catch(error){
+    for(const lobby of pair)lobby.rankSearch=null;
+    for(const peer of seats.values())send(peer,{type:'error',action:'rankTeamStart',message:'เริ่มแมตช์จัดอันดับไม่สำเร็จ กรุณาค้นหาใหม่'});
+    console.error('Premade ranked match setup failed:',error.message);
+    continue;
+   }
+   for(const lobby of pair){
+    rooms.delete(lobby.code);
+    rankRoomAliases.set(lobby.code,match);
+   }
+   rooms.set(match.code,match);
+   for(const player of match.players)if(!player.bot)assign(seats.get(player.id),match,player);
+  }
+ }
+ async function joinPremade(peer,character,target,create){
+  if(!ranking?.enabled||!character)throw Error('ระบบจัดอันดับต้องใช้ตัวละครออนไลน์');
+  const status=await ranking.status(character.code);
+  if(peer.ws.readyState!==WebSocket.OPEN)return;
+  if(!status?.account)throw Error('ตรวจสอบสิทธิ์จัดอันดับไม่สำเร็จ');
+  const blocked=rankedBanMessage(status);
+  if(blocked)throw Error(blocked);
+  const account=status.account;
+  if(rankedQueue.has(account))throw Error('ออกจากคิวสุ่มจัดอันดับก่อนเข้าทีมจัดเอง');
+  for(const room of rooms.values()){
+   if(!room.ranked&&!room.premade){
+    if(room.phase!=='finished'&&!room.practice&&room.players.some(p=>p.character?.code===character.code))throw Error('ออกจากห้องเดิมก่อนเข้าทีมจัดอันดับ');
+    continue;
+   }
+   const existing=room.players.find(p=>p.character?.colosseumAccount===account);
+   if(!existing)continue;
+   if(room.phase==='finished'&&room.rankEvaluated&&!room.rankWrites?.has(existing.character.code))continue;
+   if(existing.character.code===character.code&&!existing.retired&&(create||room===target)){
+    assign(peer,room,existing);
+    return;
+   }
+   throw Error('บัญชีนี้อยู่ในห้องหรือแมตช์จัดอันดับแล้ว');
+  }
+  if(create&&rooms.size>=MAX_ROOMS)throw Error('ห้องเต็มชั่วคราว');
+  const lobby=create?new Match(roomCode(),Date.now()):target;
+  if(!create&&(rooms.get(lobby?.code)!==lobby||!lobby?.premade||lobby.rankSearch!=null))throw Error('ห้องนี้กำลังค้นหาแมตช์หรือปิดแล้ว');
+  lobby.premade=true;
+  const player=lobby.join({}, {...character,colosseumAccount:account},0);
+  player.rating=Number(status.rating)||0;
+  if(create)rooms.set(lobby.code,lobby);
+  assign(peer,lobby,player);
+ }
  async function joinRankQueue(peer,character,mode){
   if(!ranking?.enabled||!character)throw Error('ระบบจัดอันดับต้องใช้ตัวละครออนไลน์');
   if(!['team','survival'].includes(mode))throw Error('กรุณาเลือกโหมดการแข่งขัน');
@@ -133,6 +191,7 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
   const account=status.account,now=Date.now(),blocked=rankedBanMessage(status);
   character.colosseumAccount=account;
   for(const room of rooms.values()){
+   if(room.premade&&room.players.some(p=>p.character?.colosseumAccount===account))throw Error('ออกจากห้องทีมจัดเองก่อนเข้าคิวสุ่มจัดอันดับ');
    if(!room.ranked)continue;
    const existing=room.players.find(p=>p.character?.colosseumAccount===account);
    if(!existing)continue;
@@ -174,13 +233,14 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
  }
  function closeRoom(room){
   rooms.delete(room.code);
+  for(const [alias,target] of rankRoomAliases)if(target===room)rankRoomAliases.delete(alias);
   for(const peer of peers)if(peer.room===room)peer.ws.close(1000,'room closed');
  }
  let last=Date.now(), frame=0,lastQueue=0;
  const timer=setInterval(()=>{
   const now=Date.now(),dt=Math.min(.10,(now-last)/1000);last=now;
   const changed=new Set();
-  if(now-lastQueue>=1000){lastQueue=now;processQueues(now);}
+  if(now-lastQueue>=1000){lastQueue=now;processQueues(now);processPremadeQueue(now);}
   for(const [ticket,entry] of tickets)if(now>=entry.until)tickets.delete(ticket);
   for(const room of rooms.values()){
    if(room.phase==='lobby'){
@@ -233,7 +293,10 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
    if(peer.player){
     peer.player.disconnectedWhileActive=peer.room.ranked&&peer.room.phase==='match'&&(!peer.room.solo||peer.player.phase!=='dead');
     peer.player.connected=false;peer.player.disconnectedAt=Date.now();peer.player.dx=peer.player.dy=0;
-    if(peer.room.phase==='lobby')peer.player.ready=false;
+    if(peer.room.phase==='lobby'){
+     peer.player.ready=false;
+     if(peer.room.premade)peer.room.rankSearch=null;
+    }
    }
   });
   ws.addEventListener('error',()=>{});
@@ -276,8 +339,22 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
      }
      if(m.type==='chest'&&(peer.player.appliedSeq??-1)<peer.player.seq){peer.pendingChest??=m;return;}
      const room=peer.room,serial=room.eventSerial,phase=room.phase;
+     if(room.premade&&phase==='lobby'){
+      if(m.type==='rankTeamStart'||m.type==='rankTeamCancel'){
+       if(room.host!==peer.player.id)throw Error('เฉพาะหัวหน้าห้องเท่านั้นที่เริ่มหรือยกเลิกการค้นหาได้');
+       if(m.type==='rankTeamStart'){
+        if(!room.canSearchRankTeam())throw Error('จัดทีมให้ครบ 5 ที่นั่ง และให้ผู้เล่นทุกคนกดพร้อม');
+        room.rankSearch??=now;
+       }else room.rankSearch=null;
+       for(const q of peers)if(q.room===room)push(q,now);
+       return;
+      }
+      if(m.type==='team'||m.type==='start'||m.type==='addBot'&&m.side!==0)throw Error('ห้องจัดอันดับทีมจัดเองมีทีมเดียว');
+      if(room.rankSearch!=null&&m.type!=='leave')throw Error('ยกเลิกค้นหาก่อนแก้ไขทีม');
+     }
      if(m.type==='leave'){
       if(phase!=='lobby')throw Error('การแข่งขันเริ่มแล้ว');
+      if(room.premade)room.rankSearch=null;
       room.command(peer.player,m,now);
       peer.player=null;peer.room=null;
       send(peer,{type:'left'});
@@ -300,6 +377,12 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
      character=entry.character;
     }
     const code=String(m.code||'').trim().toUpperCase();
+    const target=rooms.get(code);
+    if(m.type==='createRankTeam'||m.type==='join'&&target?.premade){
+     peer.joining=true;
+     try{await joinPremade(peer,character,target,m.type==='createRankTeam');}finally{peer.joining=false;}
+     return;
+    }
     if(character&&['create','survival','join','createPublic','joinPublic'].includes(m.type)){
      // Opening the arena in another tab must not claim a second seat.
      for(const room of rooms.values()){
@@ -315,7 +398,7 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
     }
     if(['createPublic','joinPublic'].includes(m.type)&&!['team','survival'].includes(m.mode))throw Error('กรุณาเลือกโหมดการแข่งขัน');
     if(m.type==='resume'){
-     const room=rooms.get(code);
+     const room=rooms.get(code)||rankRoomAliases.get(code);
      const p=typeof m.token==='string'&&room?.players.find(x=>!x.bot&&x.token===m.token);
      if(!p||(character&&p.character?.code!==character.code))throw Error('ห้องเดิมหมดอายุหรือไม่พบผู้เล่น');
      assign(peer,room,p);
@@ -347,7 +430,7 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
   if(url.pathname==='/healthz'&&['GET','HEAD'].includes(req.method)){
    return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':siteOrigin||'*','Cache-Control':'no-store'}});
   }
-  if(url.pathname==='/ranked-health'&&['GET','HEAD'].includes(req.method)){
+  if(['/ranked-health','/ranked-team-health'].includes(url.pathname)&&['GET','HEAD'].includes(req.method)){
    return new Response(null,{status:await rankedReady()?204:503,
     headers:{'Access-Control-Allow-Origin':siteOrigin||'*','Cache-Control':'no-store'}});
   }
@@ -383,7 +466,7 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
   const path=url.pathname==='/'?'index.html':url.pathname.slice(1);
   const contentType=TYPES[path.match(/\.[a-z0-9]+$/i)?.[0]];
   const asset=path.startsWith('assets/')&&/^assets\/[a-z0-9_./-]+$/i.test(path)&&!path.split('/').some(x=>x.startsWith('.'));
-  const atlas=/^art\/(?:(swordsman|archer|mage|summoner)-(idle|run)|tall-grass-v1|tall-hedge-v2|maze-wall-v1|stone-base-v1|arena-(crowd|paving|column|ruins)-v1|(?:ice|fire)-castle-(?:main|small)-v1)\.webp$/.test(path);
+  const atlas=/^art\/(?:(swordsman|archer|mage|summoner)-(idle|run)|tall-grass-v1|tall-hedge-v2|maze-wall-v1|stone-base-v1|arena-(crowd|paving|column|ruins)-v1|mode-(team|survival)-v1|(?:ice|fire)-castle-(?:main|small)-v1)\.webp$/.test(path);
   const effectStyles=path==='game-styles.afa6a43765a67ae5.css';
   if(!contentType||!(STATIC.has(path)||asset||atlas||effectStyles))return new Response('Not found',{status:404});
   const location=asset||effectStyles?new URL(path,ROOT):new URL(path.includes('/')&&STATIC.has(path)?'../'+path:path,import.meta.url);

@@ -28,6 +28,23 @@ export function rankedGroup(entries,mode,now){
  return null;
 }
 
+export function premadeRankTotal(room){
+ return room.players.reduce((sum,p)=>p.bot?sum:sum+(p.rating||0),0);
+}
+
+export function premadeRankPair(rooms,now){
+ const waiting=rooms.filter(room=>room.rankSearch!=null&&room.canSearchRankTeam()).sort((a,b)=>a.rankSearch-b.rankSearch);
+ for(const [index,first] of waiting.entries()){
+  const total=premadeRankTotal(first);
+  const limit=Math.min(100,25*(1+Math.floor((now-first.rankSearch)/60_000)));
+  const distance=room=>Math.abs(total-premadeRankTotal(room));
+  const other=waiting.slice(index+1).filter(room=>distance(room)<=limit)
+   .sort((a,b)=>distance(a)-distance(b)||a.rankSearch-b.rankSearch)[0];
+  if(other)return [first,other];
+ }
+ return null;
+}
+
 export function balanceRankedTeams(entries,random=Math.random){
  const half=entries.length/2,total=entries.reduce((sum,p)=>sum+p.rating,0);
  let best=Infinity,choices=[];

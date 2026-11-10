@@ -1,7 +1,7 @@
 import {strict as assert} from 'node:assert';
 import {Match} from './match.mjs';
 import {serve} from './server.mjs';
-import {balanceRankedTeams,compatiblePlayers,rankedGroup,RANKED_EXPAND_MS,RANKED_FILL_MS} from './matchmaking.mjs';
+import {balanceRankedTeams,compatiblePlayers,premadeRankPair,rankedGroup,RANKED_EXPAND_MS,RANKED_FILL_MS} from './matchmaking.mjs';
 import {SHIELDS,shieldFor,matchRankChanges} from './ranking.mjs';
 
 function populate(mode,count){
@@ -173,6 +173,90 @@ Deno.test('ranked socket starts ten humans without a host, reconnects, and penal
   group[2].ws.close();
   await wait(()=>writes.find(row=>row.code==='rank-2'));
   assert.deepEqual(writes.map(row=>row.code),['rank-0','rank-2']);
+ }finally{
+  await Promise.all(sockets.map(ws=>ws.readyState===WebSocket.CLOSED?null:new Promise(resolve=>{
+   ws.addEventListener('close',resolve,{once:true});ws.close();
+  })));
+  abort.abort();
+  await server.finished;
+ }
+});
+
+Deno.test('premade matchmaking picks the closest team total and expands without mixing queues',()=>{
+ const team=(ratings,rankSearch=1000)=>({rankSearch,canSearchRankTeam:()=>true,players:ratings.map(rating=>({rating}))});
+ const first=team([50,45]),far=team([160],2000),close=team([85],3000),closer=team([89],4000);
+ assert.deepEqual(premadeRankPair([far,close,first,closer],5000),[first,closer]);
+ assert.equal(premadeRankPair([first,far],5000),null);
+ assert.deepEqual(premadeRankPair([first,far],121000),[first,far]);
+ assert.equal(premadeRankPair([first,team([500],2000)],400000),null);
+});
+
+Deno.test('premade rooms keep friends together, allow bots, and never match the solo queue',async()=>{
+ const origin='https://game.example',abort=new AbortController(),sockets=[];
+ const profile={lv:42,cls:'kensei',gender:'female',eq:{weapon:'wp_sword5'},pts:{},pets:[{uid:1,sp:'kappa',lv:20,pts:{}}],party:[1],carried:[1]};
+ const ratings={alpha:20,friend:19,beta:40,solo:39};
+ const server=serve({port:0,signal:abort.signal,onListen(){},siteOrigin:origin,
+  loadCharacter:async(_token,code)=>({...profile,code,name:code}),
+  ranking:{enabled:true,rating:async code=>ratings[code]??0,
+   status:async code=>({account:code.replace(/-alt$/,''),rating:ratings[code]??0}),commit:async()=>[]},
+ });
+ const host='127.0.0.1:'+server.addr.port;
+ async function wait(test){
+  for(let i=0;i<250;i++){
+   const value=test();
+   if(value)return value;
+   await new Promise(resolve=>setTimeout(resolve,20));
+  }
+  throw Error('Timed out waiting for premade message');
+ }
+ async function enter(code,command){
+  const response=await fetch('http://'+host+'/ticket',{method:'POST',headers:{Origin:origin,Authorization:'Bearer fixture','Content-Type':'application/json'},body:JSON.stringify({code})});
+  const {ticket}=await response.json();
+  assert(ticket);
+  const ws=new WebSocket('ws://'+host+'/ws',{headers:{Origin:origin}}),messages=[];
+  sockets.push(ws);
+  ws.onmessage=({data})=>messages.push(JSON.parse(data));
+  await new Promise((resolve,reject)=>{ws.onopen=resolve;ws.onerror=reject;});
+  const peer={ws,messages,send:msg=>ws.send(JSON.stringify(msg)),state:()=>messages.findLast(m=>m.type==='state')};
+  peer.send({...command,ticket});
+  return peer;
+ }
+ try{
+  const alpha=await enter('alpha',{type:'createRankTeam'});
+  const a=await wait(()=>alpha.messages.find(m=>m.type==='welcome'));
+  const friend=await enter('friend',{type:'join',code:a.room});
+  const f=await wait(()=>friend.messages.find(m=>m.type==='welcome'));
+  const beta=await enter('beta',{type:'createRankTeam'});
+  await wait(()=>beta.state()?.premade);
+  const solo=await enter('solo',{type:'ranked',mode:'team'});
+  await wait(()=>solo.messages.find(m=>m.type==='rankQueue'));
+  const alternate=await enter('alpha-alt',{type:'ranked',mode:'team'});
+  assert.match((await wait(()=>alternate.messages.find(m=>m.type==='error'))).message,/ออกจากห้องทีมจัดเอง/);
+  alpha.send({type:'rankTeamStart'});
+  await wait(()=>alpha.messages.find(m=>m.type==='error'&&m.action==='rankTeamStart'));
+  for(const player of [alpha,friend,beta])player.send({type:'ready',ready:true});
+  for(const [host,count] of [[alpha,3],[beta,4]])for(let i=0;i<count;i++)host.send({type:'addBot',side:0});
+  await wait(()=>alpha.state()?.canSearchRankTeam&&beta.state()?.canSearchRankTeam);
+  alpha.send({type:'rankTeamStart'});
+  await wait(()=>alpha.state()?.rankSearching);
+  alpha.send({type:'rankTeamCancel'});
+  await wait(()=>alpha.state()?.rankSearching===false);
+  beta.send({type:'rankTeamStart'});
+  await wait(()=>beta.state()?.rankSearching);
+  assert.equal(alpha.state().phase,'lobby');
+  alpha.send({type:'rankTeamStart'});
+  const match=await wait(()=>{const state=alpha.state();return state?.phase==='match'&&state;});
+  assert.equal(match.ranked,true);
+  assert.equal(match.players.length,10);
+  assert.equal(match.players.filter(p=>p.bot).length,7);
+  assert.equal(match.players.find(p=>p.name==='alpha').side,match.players.find(p=>p.name==='friend').side);
+  assert.notEqual(match.players.find(p=>p.name==='alpha').side,match.players.find(p=>p.name==='beta').side);
+  assert.equal(solo.messages.find(m=>m.type==='welcome'),undefined);
+  assert.equal(solo.messages.findLast(m=>m.type==='rankQueue').count,1);
+  friend.ws.close();
+  const resumed=await enter('friend',{type:'resume',code:f.room,token:f.token});
+  await wait(()=>resumed.state()?.phase==='match');
+  assert.equal(resumed.state().code,match.code);
  }finally{
   await Promise.all(sockets.map(ws=>ws.readyState===WebSocket.CLOSED?null:new Promise(resolve=>{
    ws.addEventListener('close',resolve,{once:true});ws.close();
