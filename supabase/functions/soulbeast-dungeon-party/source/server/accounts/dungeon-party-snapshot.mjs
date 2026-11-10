@@ -35,6 +35,7 @@ export function partySnapshot(room,code,serverTime,includeSolo=false){
   hasActiveBattles:Object.values(room.battles||{}).some(b=>b.status==='active'),
   autoPlayers:structuredClone(room.autoPlayers||{}),
   movementSeq:room.members.find(m=>m.code===code)?.movement?.seq||0,
+  savePending:!!member.pendingSaveDigest,
   battle:partyBattleSnapshot(run),
   ...(includeSolo&&run?.localCombatVersion===1&&run.status==='active'?{soloStart:soloStart(room,run,member)}:{})
  };

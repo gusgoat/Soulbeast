@@ -11,7 +11,7 @@ import {broadcastPartyState} from './dungeon-party-broadcast.mjs';
 // One engine instance per transaction: never share mutable lexical battle state
 // across concurrent requests. Authentication and the database pool are injected
 // by the host; no credentials or live/test defaults are embedded in this module.
-export function createDungeonPartyApp({pool,createEngine,verifyToken,origins,environment,report,uuid,broadcast=false}){
+export function createDungeonPartyApp({pool,createEngine,verifyToken,origins,environment,report,waitUntil,uuid,broadcast=false}){
  const map=partyMapAdapter();
  const command=dungeonPartyStore({pool,uuid,publish:broadcast?broadcastPartyState:undefined,
   initialize:(tx,context)=>partySaveRepository({engine:createEngine(),spawnPoint:map.spawnPoint}).initialize(tx,context),
@@ -35,5 +35,5 @@ export function createDungeonPartyApp({pool,createEngine,verifyToken,origins,env
    };
   }
  });
- return {command,handle:dungeonPartyHttp({verifyToken,command,origins,environment,report})};
+ return {command,handle:dungeonPartyHttp({verifyToken,command,origins,environment,report,waitUntil})};
 }

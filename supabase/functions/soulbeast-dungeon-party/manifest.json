@@ -18,7 +18,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-snapshot.mjs",
-      "sha256": "8b84555f8812dfbe550e80b72ca80f5615d01ef0ad17b6ae9865b2763e998c21"
+      "sha256": "be36ba51607e7418f42c55e1a13c6386bc64f40cccce138153bfa3ad4dd6943d"
     },
     {
       "file": "source/server/accounts/dungeon-party-world.mjs",
@@ -34,15 +34,15 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-store.mjs",
-      "sha256": "098ca76c68607b9d4813f466fd60c2b04a9f380ed8f0494fb41f0e3cb93d769d"
+      "sha256": "b4f8b587faa904045c65d1623817e8827192e5a7a30201ae73fc87bebdf57937"
     },
     {
       "file": "source/server/accounts/dungeon-party-http.mjs",
-      "sha256": "d732ed130e575c7f996a94c643064e7b47c8594ab7a3c29a0d9d42711cbd04fc"
+      "sha256": "7bda01d23551289f2725351c9decfcea90762771a75a14147fa06dbd9219b5a6"
     },
     {
       "file": "source/server/accounts/dungeon-party-saves.mjs",
-      "sha256": "4c408a72fcb555ab869f864ca99af9a649ffbe0114cca465e0965b1ee07bcb74"
+      "sha256": "18bbebd39a824930ac5c17448eb583210cd86818ccddf52fa37e202331b36aae"
     },
     {
       "file": "source/tools/labyrinth-demo/progression.js",
@@ -90,7 +90,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-app.mjs",
-      "sha256": "f59313fa6abf121626f1096c74d8230761df27949ac0c30d6346ae9d200b031b"
+      "sha256": "d28d92e993b9855978b44c1715dd58c616eeaa01987fdf0528c9d7eec05ba45d"
     },
     {
       "file": "solo-combat.mjs",

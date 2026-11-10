@@ -39,29 +39,48 @@ export function partySaveRepository({engine,spawnPoint}){
    }
    return {members};
   },
-  async persist(tx,{environment,roomId,serverNow},room,participants){
+  async persist(tx,{environment,roomId,serverNow,deferCode,flushCode,flushAll,background},room,participants){
    // Only dirty saves take the legacy engine lock. It is also the lock used by
    // existing account commits; bump its revision so stale snapshots retry.
-   const dirty=[];
+   const dirty=[],deferred=[];
+   let pendingChanged=false;
+   const clearPending=member=>{
+    if(member.pendingSaveDigest){delete member.pendingSaveDigest;pendingChanged=true;}
+   };
    for(const member of participants){
     const p=member.save?.P;if(!p)throw Error('server_save_required');
     Object.assign(p,{hp:member.hp,mp:member.mp,ailments:structuredClone(member.ailments||{})});
-    if(await digest(member.save)!==member.saveDigest)dirty.push(member);
+    const nextDigest=await digest(member.save);
+    if(member.pendingSaveDigest&&nextDigest===member.pendingSaveDigest&&!flushAll&&member.code!==flushCode)continue;
+    if(nextDigest===member.saveDigest){clearPending(member);continue;}
+    (member.code===deferCode?deferred:dirty).push({member,nextDigest});
    }
-   if(!dirty.length)return;
-   const control=await tx.query('select mode from public.sb_engine_control where environment=$1 for update',[environment]);
+   if(deferred.length){
+    const rows=await read(tx,environment,deferred.map(({member})=>member.code));
+    for(const {member,nextDigest} of deferred){
+     const old=rows.get(member.code);
+     if(await digest(decodePartySave(old))!==member.saveDigest)throw Error('party_save_conflict');
+     encodePartySave(old,member.save,serverNow); // Check the account save fits before confirming the result.
+     member.pendingSaveDigest=nextDigest;
+     pendingChanged=true;
+    }
+   }
+   if(!dirty.length)return pendingChanged;
+   const control=await tx.query('select mode from public.sb_engine_control where environment=$1 for update'+(background?' nowait':''),[environment]);
    if(control.rows[0]?.mode!==environment)throw Error('world_not_ready');
-   const rows=await read(tx,environment,dirty.map(m=>m.code));
+   const rows=await read(tx,environment,dirty.map(({member})=>member.code));
    await tx.query("select set_config('soulbeast.party_writer',$1,true)",[roomId]);
-   for(const member of dirty){
+   for(const {member,nextDigest} of dirty){
     const old=rows.get(member.code);
     if(await digest(decodePartySave(old))!==member.saveDigest)throw Error('party_save_conflict');
     const next=encodePartySave(old,member.save,serverNow);
     await tx.query(`update public.sb_engine_tables set rows=(select jsonb_agg(case when e.r->>0=$2 then $3::jsonb else e.r end order by e.i)
      from jsonb_array_elements(rows) with ordinality e(r,i)) where environment=$1 and name='Saves'`,[environment,member.code,JSON.stringify(next)]);
-    member.saveDigest=await digest(member.save);
+    member.saveDigest=nextDigest;
+    clearPending(member);
    }
    await tx.query('update public.sb_engine_control set revision=revision+1 where environment=$1',[environment]);
+   return pendingChanged;
   }
  };
 }

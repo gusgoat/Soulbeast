@@ -50,6 +50,19 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
  }
  return {
   refresh:()=>snapshot?readStatus():lane(refresh),
+  async flushSave(){
+   if(closed||!snapshot?.savePending)return;
+   // Account persistence does not occupy the gameplay command lane.
+   try{
+    const result=await connection.run(roomId,'flushSave');
+    const next=result.snapshot;
+    if(closed||!next||next.revision<=snapshot.revision)return;
+    if(!pendingState||next.revision>pendingState.revision)pendingState=next;
+    if(!busy&&!commands.length)await drain();
+   }catch(error){
+    if(['login_required','character_not_owned'].includes(error.message))onError(error);
+   }
+  },
   // Renderer supplies traversed points, not an arbitrary end-point through walls.
   move(point,previous){
    if(closed||!snapshot||snapshot.departure||snapshot.state!=='active'||snapshot.battle?.status==='active')return false;

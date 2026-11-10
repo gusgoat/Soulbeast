@@ -5,7 +5,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=
 import {partyScene} from './online-party-scene.mjs?v=party-victory-traps-1';
 import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
-import {partyRunController} from './online-party-controller.mjs?v=party-combat-latency-1';
+import {partyRunController} from './online-party-controller.mjs?v=party-save-latency-2';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
 const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
@@ -14,9 +14,9 @@ const sceneAudio=partyAudio();
 let camera=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
 let partyRanks={},partyRankPoll=0,partyRankPending=false;
-let nextPulse=0,nextContact=0,heartbeatTimer,localCombat;
+let nextPulse=0,nextContact=0,contactPending=false,nextSave=0,saving=false,savePending=false,heartbeatTimer,localCombat;
 void import('./online-party-solo.mjs?v=party-combat-latency-1').then(({localPartyCombat})=>{
- localCombat=localPartyCombat({publish:run=>drawBattle(run,true),finish:data=>controller.command('soloFinish',data),report:failure});
+ localCombat=localPartyCombat({publish:run=>drawBattle(run,true),finish:data=>controller.command('soloFinish',{...data,deferAccountSave:true}),report:failure});
  if(controller?.state?.battle?.localCombatVersion)syncLocal(controller.state);
 }).catch(()=>{});
 function syncLocal(state){
@@ -57,6 +57,9 @@ function warmBattleFrame(){
  if(warmFloor===floor)return;
  warmFloor=floor;battleFrameReady=false;
  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=quest-editorial-2&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
+ const backdrop=new Image();
+ backdrop.src=asset(config?.battleArt||'assets/ui/battle-scenes/training-v2.webp');
+ void backdrop.decode?.().catch(()=>{});
 }
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
@@ -162,6 +165,8 @@ try{
   const member=state.members.find(m=>m.code===connection.code);
   // Reconcile the overlay even if the scene already consumed this revision.
   syncLocal(state);drawBattle(state.battle);
+  if(state.savePending&&!savePending)nextSave=performance.now()+750;
+  savePending=!!state.savePending;
   $('battleError').hidden=true;
   if(!position&&member?.position)position={...member.position};
   if((state.battle?.status==='active'||state.battle?.presentation)&&nextPulse!==Infinity)nextPulse=Math.min(nextPulse,performance.now()+controller.pollDelay);
@@ -190,11 +195,18 @@ try{
   else notice('เดินเข้าใกล้หีบ บ่อน้ำ ประตูห้องบอส หรือประตูชั้นถัดไป');
  };
  void controller.refresh();
- // Combat progression must not depend on the canvas drawing successfully.
+ function pulseIfDue(){
+  if(document.hidden||!ready||contactPending||controller.busy||performance.now()<nextPulse)return;
+  nextPulse=Infinity;
+  void controller.pulse().finally(()=>{nextPulse=performance.now()+controller.pollDelay;});
+ }
+ // Walking submits its pulse after checking contact in the current frame.
+ // Combat progression is independent of the canvas.
  heartbeatTimer=setInterval(()=>{
-  if(!document.hidden&&ready&&!controller.busy&&performance.now()>=nextPulse){
-   nextPulse=Infinity;
-   void controller.pulse().finally(()=>{nextPulse=performance.now()+controller.pollDelay;});
+  if(!$('battle').hidden||menus.open||!$('mapPanel').hidden||DungeonFeedback.isOpen||performance.now()-last>250) pulseIfDue();
+  if(!document.hidden&&ready&&savePending&&!saving&&!contactPending&&!controller.busy&&performance.now()>=nextSave){
+   saving=true;
+   void controller.flushSave().finally(()=>{saving=false;nextSave=performance.now()+1500;});
   }
  },100);
  function frame(now){
@@ -202,7 +214,7 @@ try{
   if(!DungeonFeedback.isOpen&&$('battle').hidden&&!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
    let dx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    let dy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
-   const length=Math.hypot(dx,dy),moving=length>0;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
+   const length=Math.hypot(dx,dy),moving=length>0&&!contactPending;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
    if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
     if(nav.clear(position,point)&&controller.move(point,position))position=point;}
    controller.broadcast({...position,dir:selfDir},moving,false);
@@ -210,16 +222,21 @@ try{
    localWorld.trigger(trapPlacements,position,nav,now);
    traps=[...localWorld.effects.values()];
    const trapRequest=localWorld.request();
-   if(trapRequest&&!controller.busy&&now>=nextContact){
+   if(trapRequest&&!contactPending&&!controller.busy&&now>=nextContact){
     nextContact=now+750;void controller.command(trapRequest.action,{trap:trapRequest.trap,position:trapRequest.position});
    }
    const confirmed=position,bossPosition=localWorld.boss?.position||world.bossPosition||maze.boss;
-   if(!controller.busy&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
-    if(target){nextContact=now+500;void controller.command('claim',{enemy:target[0],enemyPosition:{...target[1].position},...(localCombat?{localCombatVersion:1}:{})});}
-    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,bossPosition)<65&&nav.clear(confirmed,bossPosition)){
+   if(!trapRequest&&!contactPending&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
+    if(target&&!controller.state.savePending){
+     contactPending=true;nextContact=now+500;
+     void controller.command('claim',{floor:controller.state.floor,enemy:target[0],enemyPosition:{...target[1].position},...(localCombat?{localCombatVersion:1}:{})})
+      .finally(()=>{contactPending=false;});
+    }
+    else if(!controller.busy&&world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,bossPosition)<65&&nav.clear(confirmed,bossPosition)){
      nextContact=now+500;void controller.command('bossContact',{enemyPosition:{...bossPosition}});
     }}
   }
+  if($('battle').hidden) pulseIfDue();
   if(position){
    if(!camera)camera={...position};
    const follow=1-Math.exp(-dt*24);

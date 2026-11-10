@@ -9,7 +9,9 @@ const apiKey=required('SUPABASE_ANON_KEY');
 const environment=required('DUNGEON_PARTY_ENV');
 if(!['test','live'].includes(environment))throw new Error('Invalid party environment');
 const pool=new Pool({connectionString:required('SUPABASE_DB_URL'),max:2,idleTimeoutMillis:20000,connectionTimeoutMillis:5000,statement_timeout:10000});
+const background=(globalThis as typeof globalThis&{EdgeRuntime?:{waitUntil(task:Promise<unknown>):void}}).EdgeRuntime;
 const app=createDungeonPartyApp({pool,environment,uuid:randomUUID,broadcast:true,
+ waitUntil:background?.waitUntil.bind(background),
  createEngine:()=>createEngine(createWorkbook(),createUtilities((value:string)=>createHash('sha256').update(value).digest(),randomUUID)).partyCombat,
  origins:required('DUNGEON_PARTY_ORIGINS').split(',').map(v=>v.trim()).filter(Boolean),
  async verifyToken(token:string){

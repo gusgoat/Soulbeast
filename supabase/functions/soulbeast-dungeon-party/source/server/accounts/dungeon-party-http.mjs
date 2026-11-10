@@ -1,10 +1,10 @@
-const actions=new Set(['inventory','status','pulse','move','claim','openDoor','bossContact','tick','nextFloor','worldTick','battleCommand','battleAuto','battleReady','chest','heal','leave','trapArm','trapResolve','soloFinish']);
-const publicErrors=new Set(['invalid_inventory_action','login_required','character_not_owned','party_not_member','party_unavailable',
+const actions=new Set(['inventory','status','pulse','move','claim','openDoor','bossContact','tick','nextFloor','worldTick','battleCommand','battleAuto','battleReady','chest','heal','leave','trapArm','trapResolve','soloFinish','flushSave']);
+const publicErrors=new Set(['invalid_inventory_action','login_required','character_not_owned','party_not_member','party_unavailable','party_save_busy',
  'trap_unavailable','trap_not_due','trap_out_of_reach','enemy_unavailable','already_fighting','boss_battle_active','enemy_out_of_reach','door_out_of_reach',
  'floor_quota_incomplete','boss_out_of_reach','boss_door_closed','boss_unavailable',
  'battle_not_member','stairs_out_of_reach','boss_not_defeated','player_defeated','bad_request_id','request_mismatch',
  'movement_wrong_floor','bad_movement','not_your_turn','stale_turn','battle_presenting','invalid_skill','invalid_item','invalid_capture','invalid_summon','invalid_escape','pet_capacity','invalid_target','invalid_auto_mode','invalid_solo_result','chest_locked','chest_out_of_reach','spring_out_of_reach']);
-export function dungeonPartyHttp({verifyToken,command,origins,environment,report=()=>{}}){
+export function dungeonPartyHttp({verifyToken,command,origins,environment,waitUntil,report=()=>{}}){
  const allowed=new Set(origins);
  return async request=>{
   const origin=request.headers.get('origin');
@@ -37,7 +37,24 @@ export function dungeonPartyHttp({verifyToken,command,origins,environment,report
    return reply(400,{ok:false,error:'bad_request'});
   try{
    // Account identity comes solely from a verified bearer token, never JSON.
-   const result=await command({accountId:identity.id,environment:packet.environment,code:packet.code},packet.room,packet.action,packet.data||{});
+   const actor={accountId:identity.id,environment:packet.environment,code:packet.code};
+   const result=await command(actor,packet.room,packet.action,packet.data||{});
+   if(waitUntil&&packet.action==='soloFinish'&&result.snapshot?.savePending){
+    const pendingSave=(async()=>{
+     for(const delay of [0,500,1500]){
+      if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
+      try{await command(actor,packet.room,'flushSave');return;}
+      catch(error){
+       if(['party_unavailable','party_not_member'].includes(error.message))return;
+       if(error.message!=='party_save_busy'&&error.code!=='57014'){
+        report({kind:'dungeon_party_error',action:'flushSave',error});return;
+       }
+      }
+     }
+    })();
+    try{waitUntil(pendingSave);}
+    catch(error){report({kind:'dungeon_party_error',action:'flushSave',error});}
+   }
    return reply(200,{ok:true,result});
   }catch(error){
    if(publicErrors.has(error.message))return reply(error.message==='character_not_owned'||error.message==='party_not_member'?403:409,{ok:false,error:error.message});

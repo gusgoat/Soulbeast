@@ -81,6 +81,44 @@ assert.equal(room.members[0].save.P.items.godSeal,1);
 assert.equal(room.members[0].save.P.pets[0].privateProperty,'keep');
 assert.equal((await call('A','soloFinish',result)).snapshot.battle.status,'finished');
 assert.equal(payouts,1,'retry cannot pay twice');
+
+// A contact detected during a pulse is sent as soon as the pulse completes.
+// While a committed room result is being saved to the account, the map and
+// other room commands stay usable.
+const gate=()=>Promise.withResolvers();
+const pulseGate=gate(),saveGate=gate(),wireActions=[];
+const walking={...claim.snapshot,revision:1,battle:null,soloStart:undefined,savePending:false};
+const finished={...walking,revision:4,savePending:true};
+const responsive=partyRunController({
+ connection:{code:'A',async run(_id,action){
+  wireActions.push(action);
+  if(action==='status')return walking;
+  if(action==='pulse')return pulseGate.promise;
+  if(action==='claim')return {...claim,snapshot:{...claim.snapshot,revision:3}};
+  if(action==='soloFinish')return {snapshot:finished};
+  if(action==='flushSave')return saveGate.promise;
+  assert.fail(action);
+ }},
+ roomId:'room',scene:{receiveState(){},close(){}},openMotion:async()=>({close(){}}),localExploration:true,onError:assert.fail
+});
+await responsive.refresh();
+const pulse=responsive.pulse();
+const contact=responsive.command('claim',{enemy:'shadow:0'});
+assert.deepEqual(wireActions,['status','pulse']);
+pulseGate.resolve({...walking,revision:2});
+assert(await pulse);
+assert(await contact);
+assert.deepEqual(wireActions,['status','pulse','claim']);
+assert(await responsive.command('soloFinish',result));
+const saving=responsive.flushSave();
+assert.equal(responsive.busy,false);
+assert(responsive.move({x:20,y:20},{x:19,y:20}));
+assert.equal(responsive.state.savePending,true);
+saveGate.resolve({snapshot:{...finished,revision:5,savePending:false}});
+await saving;
+assert.equal(responsive.state.savePending,false);
+await responsive.close();
+
 room.battles['zz-old-uuid']={...room.battles[claim.battle],id:'zz-old-uuid',finishedAt:now-1000};
 assert.equal(partySnapshot(room,'A',now).battle.id,claim.battle,'a one-hit victory stays selected even if an older UUID sorts last');
 delete room.members[0].lastBattleId;
