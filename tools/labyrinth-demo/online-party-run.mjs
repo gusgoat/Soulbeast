@@ -1,6 +1,6 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
 import {partyMenu} from './online-party-menu.mjs?v=quest-editorial-2';
-import {partyArt} from './online-party-art.mjs?v=walk-shields-1';
+import {partyArt} from './online-party-art.mjs?v=player-nameplates-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=walk-shields-1';
 import {partyScene} from './online-party-scene.mjs?v=party-victory-traps-1';
 import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';

@@ -86,7 +86,28 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
  if(!world.doorOpen)draws.push({y:gate.y,run:()=>{sprite('door',gate,290);label(gate,'ประตูห้องบอส');}});
  for(const [p,n,z,text]of [[map.exit,'entrance',230,'ทางออก'],[map.stairs,'stairs',300,'ชั้นถัดไป'],[map.mini,'well',cfg.wellSize||330,'บ่อน้ำศักดิ์สิทธิ์']])if(visible(p))draws.push({y:p.y,run:()=>{sprite(n,p,z,n==='stairs'&&world.boss!=='defeated'?.58:1);if(n==='well'&&art.well){const q=screen(p);LiquidEffects.well(ctx,q.x,q.y,z*s,time,cfg.theme);}label(p,text);}});
  for(const c of map.chests)if(visible(c))draws.push({y:c.y,run:()=>{sprite(c.big?'grand-chest':'chest',c,c.big?200:88,chests?.[c.id]?.4:1);if(chests?.[c.id])label(c,'เปิดแล้ว');}});
- function person(p,m){if(m?.exploring===false||!visible(p))return;const key=m?.code||'self';let a=avatars.get(key);if(!a){a=sealerSprites.create();avatars.set(key,a);}void a.sync(m||{cls:'swordsman',gender:'male'}).catch(()=>{});draws.push({y:p.y,run:()=>{const q=screen(p);a.draw(ctx,q.x,q.y,145*s,p.dir||0,p.phase||0,!!p.moving);const plate={...p,y:p.y-155};label(plate,m?.name||'ผู้ผนึก');const tag=screen(plate);drawWalkRank(ctx,tag.x,tag.y+22,ranks?.[m?.code]??0);}});}
+ function person(p,m){
+  if(m?.exploring===false||!visible(p))return;
+  const key=m?.code||'self',player=m||{cls:'swordsman',gender:'male'};
+  let a=avatars.get(key);
+  if(!a){a=sealerSprites.create();avatars.set(key,a);}
+  void a.sync(player).catch(()=>{});
+  draws.push({y:p.y,run:()=>{
+   const q=screen(p),size=145*s;
+   a.draw(ctx,q.x,q.y,size,p.dir||0,p.phase||0,!!p.moving);
+   const {cls,gender}=sealerSprites.identity(player);
+   const entry=a.current??sealerSpriteCatalog[cls]?.[gender];
+   // Idle breathing can stretch the rendered sprite by up to 0.9%.
+   const top=q.y-size*(entry?.renderScale||1)*(entry?.anchor?.[1]??.962)*1.009;
+   const name=m?.name||'ผู้ผนึก',badge=27;
+   ctx.font='12px Tahoma';ctx.textAlign='center';
+   const width=ctx.measureText(name).width,left=q.x-(width+badge+5)/2;
+   drawWalkRank(ctx,left+badge/2,top-21,ranks?.[m?.code]??0,badge);
+   const nameX=left+badge+5+width/2,nameY=top-17;
+   ctx.lineWidth=3;ctx.strokeStyle='#05121e';ctx.strokeText(name,nameX,nameY);
+   ctx.fillStyle='#ffe7af';ctx.fillText(name,nameX,nameY);
+  }});
+ }
  for(const p of peers.values())person(p,p.member);person(position,me);
  draws.sort((a,b)=>a.y-b.y);for(const d of draws)d.run();
  if(!shadeCache||shadeCache.w!==w||shadeCache.h!==h){

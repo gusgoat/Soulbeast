@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-repair-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=bottom-shield-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=player-nameplates-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
 import {battlePresentation} from './battle-presentation.mjs?v=projectile-2';

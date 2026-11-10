@@ -419,10 +419,11 @@ export class Scene{
   const shield=shieldFor(rating);
   if(shield&&!shieldImages.has(shield.id))shieldImages.set(shield.id,img(shieldUrl(shield)));
   const badge=shield&&shieldImages.get(shield.id);
-  const w=c.measureText(text).width+12;
-  c.fillStyle='#15101de6';c.fillRect(x-w/2,y-16,w,21);
-  if(ready(badge))drawRankShield(c,badge,shield.id,x-10,y-4,now);
-  c.fillStyle=color;c.fillText(text,x,y);
+  const shieldSpace=shield?30:0,w=c.measureText(text).width+12+shieldSpace;
+  const left=x-w/2;
+  c.fillStyle='#15101de6';c.fillRect(left,y-16,w,21);
+  if(ready(badge))drawRankShield(c,badge,shield.id,left+5,y-17,now);
+  c.fillStyle=color;c.fillText(text,x+shieldSpace/2,y);
  }
  actor(p,now,isMe){
   const c=this.c,x=p.x,y=p.y*FLAT,color=p.sp?(p.boss?'#ffc479':p.rare?'#eed079':'#bd9af3'):
@@ -457,8 +458,9 @@ export class Scene{
   }else{
    const atlas=getAtlas(p);
    const pose=moving?'run':'idle';
+   const entry=atlas?.entry;
+   const [ax,ay]=entry?.anchor||[.5,.962],size=145*(entry?.renderScale||1);
    if(atlas){
-    const {entry}=atlas;
     const sheet=atlas[pose]??=img(siteAsset(moving?(entry.run||entry.walk):entry.idle));
     if(ready(sheet)){
      const layout=moving?(entry.runLayout||entry.walkLayout):entry.idleLayout;
@@ -468,12 +470,12 @@ export class Scene{
      const col=moving?Math.floor(prev.phase*rate*cols/8)%cols:prev.dir%cols;
      const row=moving?prev.dir:Math.floor(prev.dir/cols);
      const width=sheet.naturalWidth/cols, height=sheet.naturalHeight/rows;
-     const [ax,ay]=entry.anchor||[.5,.962],size=145*(entry.renderScale||1);
      c.drawImage(sheet,col*width,row*height,width,height,x-size*ax,y-size*ay,size,size);
     }
    }
    if(!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
-   this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,y-88,isMe?'#fff2af':color,p.rating??0,now);
+   const spriteTop=y-(atlas?size*ay:55);
+   this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,spriteTop-16,isMe?'#fff2af':color,p.rating??0,now);
   }
   c.restore();
  }
