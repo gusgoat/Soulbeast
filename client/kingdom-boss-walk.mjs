@@ -140,7 +140,7 @@ function mount(scene,context){
   fight=data.fight;fight.round=data.event.id;fight.respawn=data.respawn;fight.hospital=data.hospital;
   sessionStorage.setItem(doneKey,JSON.stringify({id:fight.id,round:fight.round}));
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title='ต่อสู้กิจกรรมบอสอาณาจักร';
-  frame.src=new URL('../tools/town-walk-demo/menu.html?v=kingdom-boss-patrol-1&partyBattle=1&kingdomBoss=1&city='+scene.country+'-capital',import.meta.url);
+  frame.src=new URL('../tools/town-walk-demo/menu.html?v=projectile-2&partyBattle=1&kingdomBoss=1&city='+scene.country+'-capital',import.meta.url);
   frame.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000;background:#122b40';
   scene.pause();button.hidden=true;document.body.append(frame);
  }

@@ -3871,6 +3871,12 @@ handlers.accountCharacters=()=>{save();location.assign('./accounts-staging.html'
  later(fn,ms,epoch=this.epoch){const id=setTimeout(()=>{this.timers.delete(id);if(epoch===this.epoch)fn();},BattleSpeed.ms(ms));this.timers.add(id);return id;},
  clear(){this.epoch++;for(const t of this.timers)clearTimeout(t);this.timers.clear();for(const f of [...this.live])f();this.live.clear();document.getElementById('vfx')?.querySelectorAll('.battle-fx-owned').forEach(n=>n.remove());},
  watch(){if(this.observer||typeof MutationObserver==='undefined')return;this.observer=new MutationObserver(()=>{if(this.screen!==S.screen){this.clear();return;}for(const f of [...this.live])if(f.stale?.())f();});this.observer.observe(document.getElementById('app'),{childList:true,subtree:true});},
+ castVisual(L,at,profile){
+  if(!at||profile.id==='attack'||!SK[profile.id])return;
+  if(profile.effect){this.eclipseCast(L,at,profile);return;}
+  spellBurst(L,{k:'cast',skill:profile.id},at.x,at.y);
+  this.spawn(L,'seal',at.x,at.y,profile,{'--size':'62px'});
+ },
  spawn(L,shape,x,y,p,vars={}){const n=vSpawn(L,'battle-fx-owned sig-fx sig-'+shape,[x,y],p.color,null,{'--a':p.accent,'--size':Math.min(window.innerWidth<620?112:170,92+(p.signature?35:0))+'px','--theta':p.seed%180+'deg','--dx':'0px','--dy':'-25px','--duration':'720ms','--life-ms':820,'--wait':'0ms',...vars});if(n){n.dataset.skill=p.id;n.dataset.theme=p.theme;n.setAttribute('aria-hidden','true');}return n;},
  travel(L,from,to,p,melee=false){
   if(!from||!to||![from.x,from.y,to.x,to.y].every(Number.isFinite))return 0;
@@ -4309,7 +4315,10 @@ const MotionTimeline={
    // Reserve through projectile arrival, all multi-hit impacts and the target's recovery pose.
    const span=charging?windup+150:mode==='melee'?2400:windup+2600+targets.length*65;
    CharacterMotion.schedule(()=>{
-    if(cast)vSpawn(L,'vx-cast',null,cast.c||'#d9b35b',cast.n||SK[skill]?.n);
+    if(cast){
+     vSpawn(L,'vx-cast',null,cast.c||'#d9b35b',cast.n||SK[skill]?.n);
+     BattleEffects.castVisual(L,BattleEffects.anchor(source),profile);
+    }
     if(charging){CharacterMotion.phase(source,'windup',windup);CharacterMotion.schedule(()=>this.arrive(source),windup);return;}
     if(a&&mode==='support')CharacterMotion.phase(source,a.assets.threat?'threat':'windup',windup);
     if(a&&mode==='blade')CharacterMotion.phase(source,'melee',900);

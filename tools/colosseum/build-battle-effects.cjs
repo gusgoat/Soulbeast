@@ -37,7 +37,7 @@ const renderer = section('const BattleEffects={', ' // Old online/replay packets
  .replace(/\s*const arena=from\.node\.closest[^\n]+\n[^\n]+/, '\n  const box=from.board;')
  .replace(',screen=S.screen;let animation', ';let animation')
  .replace('cleanup.stale=()=>S.screen!==screen||!L.isConnected;', '');
-const effects = section(' spawn(L,shape', ' flush(){\n', menu.slice(menu.indexOf('const BattleEffects={')))
+const effects = section(' castVisual(L,at,profile)', ' flush(){\n', menu.slice(menu.indexOf('const BattleEffects={')))
  .replace("const screen=S.screen;let done", "let done")
  .replace('cleanup.stale=()=>S.screen!==screen||!L.isConnected||(melee&&!from.node.isConnected);', '')
  .replace(/const arena=to\.node\.closest[^;]+;const shell=/, 'const box=to.board;const shell=')
@@ -78,11 +78,7 @@ export function battleEffects(layer,after){
    if(id==='attack')return 'melee';
    return profile.painted?.asset==='crescent'?'blade':profile.mode==='melee'?'melee':'ranged';
   },
-  cast(profile,at){
-   if(!at||profile.id==='attack')return;
-   if(profile.effect){vfx.eclipseCast(layer,at,profile);return;}
-   spellBurst(layer,{k:'cast',skill:profile.id},at.x,at.y);
-  },
+  cast(profile,at){vfx.castVisual(layer,at,profile);},
   travel(profile,from,to,actor,target){
    vfx.currentSource=actor;
    vfx.currentTarget=target;

@@ -226,6 +226,12 @@ function renderer(){return {
   if(node.animate){animation=node.animate(frames,{duration,easing:'linear',fill:'both'});animation.playbackRate=this.animationRate();animation.onfinish=cleanup;}else node.style.transform=transform(dx,dy);
   this.later(cleanup,duration+80);return arrival;
  },
+ castVisual(L,at,profile){
+  if(!at||profile.id==='attack'||!SK[profile.id])return;
+  if(profile.effect){this.eclipseCast(L,at,profile);return;}
+  spellBurst(L,{k:'cast',skill:profile.id},at.x,at.y);
+  this.spawn(L,'seal',at.x,at.y,profile,{'--size':'62px'});
+ },
  spawn(L,shape,x,y,p,vars={}){const n=vSpawn(L,'battle-fx-owned sig-fx sig-'+shape,[x,y],p.color,null,{'--a':p.accent,'--size':Math.min(window.innerWidth<620?112:170,92+(p.signature?35:0))+'px','--theta':p.seed%180+'deg','--dx':'0px','--dy':'-25px','--duration':'720ms','--life-ms':820,'--wait':'0ms',...vars});if(n){n.dataset.skill=p.id;n.dataset.theme=p.theme;n.setAttribute('aria-hidden','true');}return n;},
  travel(L,from,to,p,melee=false){
   if(!from||!to||![from.x,from.y,to.x,to.y].every(Number.isFinite))return 0;
@@ -319,11 +325,7 @@ export function battleEffects(layer,after){
    if(id==='attack')return 'melee';
    return profile.painted?.asset==='crescent'?'blade':profile.mode==='melee'?'melee':'ranged';
   },
-  cast(profile,at){
-   if(!at||profile.id==='attack')return;
-   if(profile.effect){vfx.eclipseCast(layer,at,profile);return;}
-   spellBurst(layer,{k:'cast',skill:profile.id},at.x,at.y);
-  },
+  cast(profile,at){vfx.castVisual(layer,at,profile);},
   travel(profile,from,to,actor,target){
    vfx.currentSource=actor;
    vfx.currentTarget=target;

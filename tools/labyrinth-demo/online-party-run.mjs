@@ -56,7 +56,7 @@ function warmBattleFrame(){
  const floor=config?.id||'mine-floor-1';
  if(warmFloor===floor)return;
  warmFloor=floor;battleFrameReady=false;
- battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=party-victory-traps-1&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
+ battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=projectile-2&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
 }
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;

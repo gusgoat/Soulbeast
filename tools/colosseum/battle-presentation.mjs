@@ -1,4 +1,4 @@
-import {battleEffects} from './battle-effects.generated.mjs?v=projectile-1';
+import {battleEffects} from './battle-effects.generated.mjs?v=projectile-2';
 
 const assets = new URL('../../assets/',import.meta.url).pathname;
 // Reuse the sounds and painted projectiles from the game's PvP presentation.
@@ -121,10 +121,12 @@ export function battlePresentation(layer){
   const card=Array.from(document.querySelectorAll('#battle [data-unit-id]')).find(node=>node.dataset.unitId===id);
   if(!card)return null;
   const portrait=card.querySelector('.battle-face');
+  if(!portrait)return null;
   const face=portrait.getBoundingClientRect(),art=portrait.querySelector('img');
   const bounds=layer.getBoundingClientRect();
   const board=card.closest('.battle-stage').getBoundingClientRect();
-  const [ax,ay]=art?.dataset.origin?.split(',').map(Number)||[50,50];
+  const [originX,originY]=art?.dataset.origin?.split(',').map(Number)||[];
+  const ax=Number.isFinite(originX)?originX:50,ay=Number.isFinite(originY)?originY:50;
   const y=Math.max(board.top+8,Math.min(board.bottom-8,face.top+face.height/2));
   const sourceY=Math.max(board.top+8,Math.min(board.bottom-8,face.top+face.height*ay/100));
   return {x:face.left+face.width/2-bounds.left,y:y-bounds.top,width:face.width,height:face.height,portrait,card,art,
@@ -239,13 +241,13 @@ export function battlePresentation(layer){
    const k=numberKind(entry);
    if(k==='hit'||k==='heal')impacts.push({id:entry.id,k,number:entry,secondary:true});
   }
-  const firstTarget=impacts.find(e=>e.id!==actor);
+  const firstTarget=impacts.find(e=>e.id!==last.actor);
   const contact=motion==='melee'?meleeFlight(last.actor,origin,anchor(firstTarget?.id??last.target)):0;
   const data=origin?.art?.dataset;
   const windup=Math.round((Number(data?.windupDuration)||.36)*1000);
   const release=reduced.matches?0:motion==='blade'?300:ranged||support?windup:contact;
   if(!contact)showPose(last.actor,support&&data?.threat?'threat':motion==='ranged'||support?'windup':'melee',Math.max(release,350));
-  if(ranged||support)effects.cast(profile,origin);
+  effects.cast(profile,origin);
   after(()=>{
    if(motion==='ranged'&&data?.power&&origin)
     effectImage(data.power,origin.source,'battle-fx-impact battle-fx-release',380);
