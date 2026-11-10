@@ -379,7 +379,7 @@ function openFrame(id,screen='bag',quickItem){
  const mount=()=>{
   if($('townDialog').open)close();
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title=id?'เหตุการณ์บนเกาะ':'กระเป๋าผู้ผนึก';
-  const query=new URLSearchParams({city:country+'-capital',v:'three-languages-1',walkScene:'island',screen:id?'town':screen});
+  const query=new URLSearchParams({city:country+'-capital',v:'quest-content-1',walkScene:'island',screen:id?'town':screen});
   if(quickItem)query.set('quickItem',quickItem);
   if(id){query.set('island',country);query.set('islandEncounter',id);}
   frame.src=screen==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+query;

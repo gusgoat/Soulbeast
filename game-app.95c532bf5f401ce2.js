@@ -1785,6 +1785,10 @@ const languageBaseToast=toast;
 toast=function(text){languageBaseToast(text);if(document.body?.querySelectorAll)for(const node of document.body.querySelectorAll('.toast'))applyGameLanguage(node);};
 document.addEventListener('change',event=>{if(event.target?.id==='gameLanguage')setGameLanguage(event.target.value);});
 window.addEventListener('soulbeast-language-change',event=>{if(event.detail!==GAME_LANGUAGE)setGameLanguage(event.detail,false);});
+window.addEventListener('soulbeast-locale-content-ready',()=>{
+ LANGUAGE_TEXT_CACHE.clear();
+ applyGameLanguage(document.body);
+});
 if(typeof MutationObserver!=='undefined'&&document.body){
  const observer=new MutationObserver(records=>{
   for(const record of records){
