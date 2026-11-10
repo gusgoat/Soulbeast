@@ -3,7 +3,7 @@ import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TA
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
 import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=bottom-shield-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
-import {battlePresentation} from './battle-presentation.mjs?v=skill-effects-1';
+import {battlePresentation} from './battle-presentation.mjs?v=projectile-1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
 const battleAsset=path=>path?.replace(/^\/assets\//,assets);

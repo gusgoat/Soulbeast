@@ -1,4 +1,4 @@
-import {battleEffects} from './battle-effects.generated.mjs?v=1';
+import {battleEffects} from './battle-effects.generated.mjs?v=projectile-1';
 
 const assets = new URL('../../assets/',import.meta.url).pathname;
 // Reuse the sounds and painted projectiles from the game's PvP presentation.
@@ -218,7 +218,7 @@ export function battlePresentation(layer){
   const skillId=last.skillId||events.find(e=>e.k==='cast'||e.k==='charge')?.skill||
    events.find(e=>e.skill)?.skill||effects.skillByName(last.skill);
   const profile=effects.profile(skillId,actor);
-  if(profile.painted)preload(new URL('../../'+profile.painted.path,import.meta.url).href);
+  effects.prepareProjectile(profile);
   const motion=effects.motion(skillId,profile);
   if(events.some(event=>event.k==='charge')){
    showPose(last.actor,'windup',550);play('charge');

@@ -6631,7 +6631,6 @@ async function openAccountCharacters(create=false){
 handlers.reset=()=>openAccountCharacters(true);
 handlers.doreset=handlers.reset;
 handlers.accountCharacters=()=>openAccountCharacters();const BattleEffects={
- // PNGs load on first use and use the browser cache; no bulk texture downloads at login.
  recipes:{"solar_pentadrake_s1":{"mode":"melee","motif":"dragon","color":"#ff6b32","accent":"#ffeaaa","focus":"fang","particle":"flame","layout":"cross","count":3,"shots":1,"finale":false,"beat":57},"solar_pentadrake_s2":{"mode":"beam","motif":"dragon","color":"#ff6b32","accent":"#ffeaaa","focus":"flame","particle":"star","layout":"spiral","count":5,"shots":1,"finale":false,"beat":66},"solar_pentadrake_s3":{"mode":"melee","motif":"dragon","color":"#ff6b32","accent":"#ffeaaa","focus":"wing","particle":"petal","layout":"fan","count":5,"shots":1,"finale":false,"beat":75},"solar_pentadrake_s4":{"mode":"support","motif":"dragon","color":"#ff6b32","accent":"#ffeaaa","focus":"shield","particle":"flame","layout":"crown","count":5,"shots":1,"finale":false,"beat":84},"solar_pentadrake_s5":{"mode":"projectile","motif":"dragon","color":"#ff6b32","accent":"#ffeaaa","focus":"flame","particle":"fang","layout":"fan","count":5,"shots":5,"finale":false,"beat":93},"solar_pentadrake_s6":{"mode":"field","motif":"dragon","color":"#ff6b32","accent":"#ffeaaa","focus":"eclipse","particle":"comet","layout":"crown","count":5,"shots":1,"finale":true,"beat":102},"solar_mortivar_s1":{"mode":"projectile","motif":"lich","color":"#a97aff","accent":"#9fffa1","focus":"soul","particle":"star","layout":"spiral","count":3,"shots":1,"finale":false,"beat":57},"solar_mortivar_s2":{"mode":"beam","motif":"lich","color":"#a97aff","accent":"#9fffa1","focus":"eye","particle":"soul","layout":"cross","count":4,"shots":1,"finale":false,"beat":66},"solar_mortivar_s3":{"mode":"field","motif":"lich","color":"#a97aff","accent":"#9fffa1","focus":"web","particle":"soul","layout":"spiral","count":5,"shots":1,"finale":false,"beat":75},"solar_mortivar_s4":{"mode":"support","motif":"lich","color":"#a97aff","accent":"#9fffa1","focus":"seal","particle":"chain","layout":"orbit","count":4,"shots":1,"finale":false,"beat":84},"solar_mortivar_s5":{"mode":"projectile","motif":"lich","color":"#a97aff","accent":"#9fffa1","focus":"vine","particle":"comet","layout":"cross","count":5,"shots":1,"finale":false,"beat":93},"solar_mortivar_s6":{"mode":"field","motif":"lich","color":"#a97aff","accent":"#9fffa1","focus":"eclipse","particle":"soul","layout":"crown","count":6,"shots":1,"finale":true,"beat":102},"solar_aureolith_s1":{"mode":"melee","motif":"bastion","color":"#ffd675","accent":"#9fefff","focus":"crack","particle":"bolt","layout":"cross","count":3,"shots":1,"finale":false,"beat":57},"solar_aureolith_s2":{"mode":"support","motif":"bastion","color":"#ffd675","accent":"#9fefff","focus":"shield","particle":"arrow","layout":"inward","count":4,"shots":1,"finale":false,"beat":66},"solar_aureolith_s3":{"mode":"beam","motif":"bastion","color":"#ffd675","accent":"#9fefff","focus":"chain","particle":"bolt","layout":"cross","count":3,"shots":1,"finale":false,"beat":75},"solar_aureolith_s4":{"mode":"support","motif":"bastion","color":"#ffd675","accent":"#9fefff","focus":"shield","particle":"seal","layout":"fan","count":4,"shots":1,"finale":false,"beat":84},"solar_aureolith_s5":{"mode":"support","motif":"bastion","color":"#ffd675","accent":"#9fefff","focus":"halo","particle":"crack","layout":"inward","count":5,"shots":1,"finale":false,"beat":93},"solar_aureolith_s6":{"mode":"support","motif":"bastion","color":"#ffd675","accent":"#9fefff","focus":"shield","particle":"bolt","layout":"crown","count":6,"shots":1,"finale":true,"beat":102},"solar_heliotheon_s1":{"mode":"melee","motif":"deity","color":"#ffe98b","accent":"#ffffff","focus":"arrow","particle":"star","layout":"cross","count":3,"shots":1,"finale":false,"beat":57},"solar_heliotheon_s2":{"mode":"beam","motif":"deity","color":"#ffe98b","accent":"#ffffff","focus":"bolt","particle":"halo","layout":"crown","count":3,"shots":1,"finale":false,"beat":66},"solar_heliotheon_s3":{"mode":"support","motif":"deity","color":"#ffe98b","accent":"#ffffff","focus":"wing","particle":"star","layout":"fan","count":5,"shots":1,"finale":false,"beat":75},"solar_heliotheon_s4":{"mode":"melee","motif":"deity","color":"#ffe98b","accent":"#ffffff","focus":"cut","particle":"comet","layout":"cross","count":4,"shots":1,"finale":false,"beat":84},"solar_heliotheon_s5":{"mode":"support","motif":"deity","color":"#ffe98b","accent":"#ffffff","focus":"halo","particle":"petal","layout":"spiral","count":5,"shots":1,"finale":false,"beat":93},"solar_heliotheon_s6":{"mode":"field","motif":"deity","color":"#ffe98b","accent":"#ffffff","focus":"seal","particle":"wing","layout":"crown","count":6,"shots":1,"finale":true,"beat":102},"solar_ferroth_s1":{"mode":"melee","motif":"demon","color":"#e74e79","accent":"#c5abed","focus":"cut","particle":"crack","layout":"cross","count":3,"shots":1,"finale":false,"beat":57},"solar_ferroth_s2":{"mode":"projectile","motif":"demon","color":"#e74e79","accent":"#c5abed","focus":"eclipse","particle":"soul","layout":"spiral","count":4,"shots":1,"finale":false,"beat":66},"solar_ferroth_s3":{"mode":"support","motif":"demon","color":"#e74e79","accent":"#c5abed","focus":"shield","particle":"chain","layout":"inward","count":5,"shots":1,"finale":false,"beat":75},"solar_ferroth_s4":{"mode":"melee","motif":"demon","color":"#e74e79","accent":"#c5abed","focus":"wing","particle":"cut","layout":"fan","count":5,"shots":1,"finale":false,"beat":84},"solar_ferroth_s5":{"mode":"beam","motif":"demon","color":"#e74e79","accent":"#c5abed","focus":"chain","particle":"star","layout":"inward","count":5,"shots":1,"finale":false,"beat":93},"solar_ferroth_s6":{"mode":"field","motif":"demon","color":"#e74e79","accent":"#c5abed","focus":"eclipse","particle":"cut","layout":"cross","count":6,"shots":1,"finale":true,"beat":102},"solar_cryostag_s1":{"mode":"projectile","motif":"antlers","color":"#b4f4dc","accent":"#d7eeff","focus":"vine","particle":"petal","layout":"fan","count":4,"shots":3,"finale":false,"beat":57},"solar_cryostag_s2":{"mode":"projectile","motif":"antlers","color":"#b4f4dc","accent":"#d7eeff","focus":"arrow","particle":"comet","layout":"cross","count":3,"shots":1,"finale":false,"beat":66},"solar_cryostag_s3":{"mode":"support","motif":"antlers","color":"#b4f4dc","accent":"#d7eeff","focus":"halo","particle":"petal","layout":"spiral","count":5,"shots":1,"finale":false,"beat":75},"solar_cryostag_s4":{"mode":"support","motif":"antlers","color":"#b4f4dc","accent":"#d7eeff","focus":"vine","particle":"shield","layout":"crown","count":4,"shots":1,"finale":false,"beat":84},"solar_cryostag_s5":{"mode":"melee","motif":"antlers","color":"#b4f4dc","accent":"#d7eeff","focus":"crack","particle":"comet","layout":"fan","count":5,"shots":1,"finale":false,"beat":93},"solar_cryostag_s6":{"mode":"support","motif":"antlers","color":"#b4f4dc","accent":"#d7eeff","focus":"wing","particle":"soul","layout":"inward","count":6,"shots":1,"finale":true,"beat":102},"solar_raijaku_s1":{"mode":"projectile","motif":"feather","color":"#89edff","accent":"#e4a2ff","focus":"arrow","particle":"bolt","layout":"cross","count":3,"shots":1,"finale":false,"beat":57},"solar_raijaku_s2":{"mode":"melee","motif":"feather","color":"#89edff","accent":"#e4a2ff","focus":"wing","particle":"petal","layout":"fan","count":5,"shots":1,"finale":false,"beat":66},"solar_raijaku_s3":{"mode":"support","motif":"feather","color":"#89edff","accent":"#e4a2ff","focus":"orbit","particle":"eye","layout":"fan","count":6,"shots":1,"finale":false,"beat":75},"solar_raijaku_s4":{"mode":"projectile","motif":"feather","color":"#89edff","accent":"#e4a2ff","focus":"eye","particle":"bolt","layout":"fan","count":2,"shots":2,"finale":false,"beat":84},"solar_raijaku_s5":{"mode":"beam","motif":"feather","color":"#89edff","accent":"#e4a2ff","focus":"orbit","particle":"wing","layout":"spiral","count":5,"shots":1,"finale":false,"beat":93},"solar_raijaku_s6":{"mode":"field","motif":"feather","color":"#89edff","accent":"#e4a2ff","focus":"wing","particle":"bolt","layout":"fan","count":7,"shots":1,"finale":true,"beat":102},"solar_thalassyr_s1":{"mode":"melee","motif":"serpent","color":"#57d5ff","accent":"#c3ffed","focus":"fang","particle":"wave","layout":"cross","count":3,"shots":1,"finale":false,"beat":57},"solar_thalassyr_s2":{"mode":"beam","motif":"serpent","color":"#57d5ff","accent":"#c3ffed","focus":"seal","particle":"wave","layout":"spiral","count":4,"shots":1,"finale":false,"beat":66},"solar_thalassyr_s3":{"mode":"support","motif":"serpent","color":"#57d5ff","accent":"#c3ffed","focus":"halo","particle":"wave","layout":"inward","count":5,"shots":1,"finale":false,"beat":75},"solar_thalassyr_s4":{"mode":"field","motif":"serpent","color":"#57d5ff","accent":"#c3ffed","focus":"wave","particle":"vine","layout":"orbit","count":5,"shots":1,"finale":false,"beat":84},"solar_thalassyr_s5":{"mode":"beam","motif":"serpent","color":"#57d5ff","accent":"#c3ffed","focus":"cut","particle":"petal","layout":"cross","count":5,"shots":1,"finale":false,"beat":93},"solar_thalassyr_s6":{"mode":"field","motif":"serpent","color":"#57d5ff","accent":"#c3ffed","focus":"orbit","particle":"wave","layout":"spiral","count":7,"shots":1,"finale":true,"beat":102}},
  bladeSlashSkills:new Set(['gl_quake','ms_gladiator20','wl_split','ms_swordsman60','ms_swordsman30','ke_thousand','ms_merchant30','ws_mace3','bs_hammer','ms_godhammer','te_judge','sb_thunder','ws_axe3','solar_ferroth_s4','solar_pentadrake_s3','solar_heliotheon_s6','s_cyclops','ground_m2','fairy_m2']),
  // Named waves follow their painted skill art where its palette differs from the element default.
@@ -6709,7 +6708,28 @@ handlers.accountCharacters=()=>openAccountCharacters();const BattleEffects={
   }
   return {asset,kind,tier,scale:1+tier*.35,tint,advanced:asset.endsWith('-high'),emission:asset==='water-high'?{x:.01,y:.575,end:.99}:asset==='fire-high'?{x:.01,y:.575,end:.99}:asset==='electric-high'?{x:.03,y:.47,end:.97}:this.arcaneAsset(asset)?{x:asset==='holy-high'?.06:asset==='dragon-high'?.03:.02,y:asset==='holy-high'?.52:asset==='ghost-high'?.51:.5,end:.98}:null,path:'assets/vfx/projectiles/'+(this.arcaneAsset(asset)?'v5/':asset.endsWith('-high')?'v4/':['shuriken','music','meteor','crescent'].includes(asset)?'v3/':'v2/')+asset+'.png.webp'};
  },
- paintedTravel(L,from,to,p){
+ // Keep decoded projectile images by URL. A cold or failed image uses the live vector effect.
+ projectileImages:new Map(),
+ projectileUrl(path){return path;},
+ animationRate(){return BattleSpeed.rate();},
+ prepareProjectile(art){
+  if(!art||typeof Image==='undefined')return null;
+  const url=this.projectileUrl(art.path);
+  let entry=this.projectileImages.get(url);
+  if(entry)return entry;
+  const image=new Image();
+  entry={image,ready:false};
+  this.projectileImages.set(url,entry);
+  image.onload=()=>{if(!image.decode)entry.ready=image.naturalWidth>0;};
+  image.src=url;
+  if(image.decode){
+   image.decode().then(()=>{entry.ready=image.naturalWidth>0;}).catch(()=>{});
+  }else if(image.complete){
+   entry.ready=image.naturalWidth>0;
+  }
+  return entry;
+ },
+ paintedTravel(L,from,to,p,image){
   const art=p.painted,dx=to.x-from.x,dy=to.y-from.y,distance=Math.hypot(dx,dy),beam=art.kind==='beam',vortex=art.kind==='vortex',eruption=art.kind==='eruption';
   const arena=from.node.closest?.('.battle-vitals,.online-combat-board,.demo-arena,.projectile-demo-board'),rect=arena?.getBoundingClientRect();
   const box=rect&&rect.width>0?rect:{left:Math.max(0,Math.min(from.x,to.x)-100),top:Math.max(0,Math.min(from.y,to.y)-100),width:Math.abs(dx)+200,height:Math.abs(dy)+200};
@@ -6721,14 +6741,14 @@ handlers.accountCharacters=()=>openAccountCharacters();const BattleEffects={
   const breadth=Math.min(eruption?175:art.kind==='meteor'?190:vortex?(art.advanced?165:148):beam?(art.advanced?130:115):145,Math.max(eruption?72:art.kind==='meteor'?86:vortex?54:beam?34:42,(from.size||44)*(vortex?1.2:beam?.5:.9))*art.scale);
   Object.assign(node.style,{left:from.x-box.left+'px',top:from.y-box.top+'px',width:(eruption?breadth*1.25:beam?distance:breadth*(vortex||['meteor','music','crescent','shuriken'].includes(art.asset)?1:1.6))+'px',height:(eruption?breadth*1.15:['meteor','music','crescent','shuriken'].includes(art.asset)?breadth:vortex?breadth*1.35:beam?Math.min(breadth,distance*.5):breadth*.66)+'px'});
   node.style.setProperty('--c',p.color);node.style.setProperty('--a',p.accent);node.style.setProperty('--angle',Math.atan2(dy,dx)*180/Math.PI+'deg');
-  const image=document.createElement('img');image.src=art.path;image.alt='';image.draggable=false;image.style.filter=art.tint;if(beam&&art.emission){const q=art.emission;image.style.left=(-q.x/(q.end-q.x)*100)+'%';image.style.width=(100/(q.end-q.x))+'%';image.style.top=((.5-q.y)*100)+'%';}node.appendChild(image);shell.appendChild(node);L.appendChild(shell);
+  image=image.cloneNode(false);image.onload=null;image.alt='';image.draggable=false;image.style.filter=art.tint;if(beam&&art.emission){const q=art.emission;image.style.left=(-q.x/(q.end-q.x)*100)+'%';image.style.width=(100/(q.end-q.x))+'%';image.style.top=((.5-q.y)*100)+'%';}node.appendChild(image);shell.appendChild(node);L.appendChild(shell);
   const duration=eruption?900:beam?750:art.kind==='meteor'?850:560,arrival=eruption?360:beam?420:duration,screen=S.screen;let animation,done=false;
-  const cleanup=()=>{if(done)return;done=true;animation?.cancel();shell.remove();this.live.delete(cleanup);};cleanup.stale=()=>S.screen!==screen||!from.node.isConnected||!to.node.isConnected;this.live.add(cleanup);
+  const cleanup=()=>{if(done)return;done=true;animation?.cancel();shell.remove();this.live.delete(cleanup);};cleanup.stale=()=>S.screen!==screen||!L.isConnected;this.live.add(cleanup);
   const transform=(x,y)=>'translate(calc('+(art.kind==='meteor'?'-80%':'-50%')+' + '+x+'px),calc('+(art.kind==='meteor'?'-80%':'-50%')+' + '+y+'px))'+(vortex||art.kind==='meteor'||art.asset==='music'?'':' rotate(var(--angle))');
   const beamPose='translateY(-50%) rotate(var(--angle))';
   const eruptPose='translate(-50%,-75%)';
   const frames=eruption?[{transform:eruptPose+' scale(.25)',opacity:0,offset:0},{transform:eruptPose+' scale(1)',opacity:1,offset:.4},{transform:eruptPose+' scale(1.08)',opacity:1,offset:.78},{transform:eruptPose+' scale(1.15)',opacity:0,offset:1}]:beam?[{transform:beamPose,clipPath:'inset(0 100% 0 0)',opacity:1,offset:0},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:1,offset:arrival/duration},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:1,offset:.85},{transform:beamPose,clipPath:'inset(0 0% 0 0)',opacity:0,offset:1}]:[{transform:transform(0,0),opacity:0,offset:0},{opacity:1,offset:.08},{opacity:1,offset:.88},{transform:transform(travelX,travelY),opacity:0,offset:1}];
-  if(node.animate){animation=node.animate(frames,{duration,easing:'linear',fill:'both'});animation.onfinish=cleanup;}else node.style.transform=transform(dx,dy);
+  if(node.animate){animation=node.animate(frames,{duration,easing:'linear',fill:'both'});animation.playbackRate=this.animationRate();animation.onfinish=cleanup;}else node.style.transform=transform(dx,dy);
   this.later(cleanup,duration+80);return arrival;
  },
  // Old online/replay packets carry cast origins; new local packets carry exact source IDs.
@@ -6758,21 +6778,27 @@ handlers.accountCharacters=()=>openAccountCharacters();const BattleEffects={
  watch(){if(this.observer||typeof MutationObserver==='undefined')return;this.observer=new MutationObserver(()=>{if(this.screen!==S.screen){this.clear();return;}for(const f of [...this.live])if(f.stale?.())f();});this.observer.observe(document.getElementById('app'),{childList:true,subtree:true});},
  spawn(L,shape,x,y,p,vars={}){const n=vSpawn(L,'battle-fx-owned sig-fx sig-'+shape,[x,y],p.color,null,{'--a':p.accent,'--size':Math.min(window.innerWidth<620?112:170,92+(p.signature?35:0))+'px','--theta':p.seed%180+'deg','--dx':'0px','--dy':'-25px','--duration':'720ms','--life-ms':820,'--wait':'0ms',...vars});if(n){n.dataset.skill=p.id;n.dataset.theme=p.theme;n.setAttribute('aria-hidden','true');}return n;},
  travel(L,from,to,p,melee=false){
-  if(!from||!to)return 0;if(Math.hypot(to.x-from.x,to.y-from.y)<4)return 0;
+  if(!from||!to||![from.x,from.y,to.x,to.y].every(Number.isFinite))return 0;
+  const dx=to.x-from.x,dy=to.y-from.y;
+  if(Math.hypot(dx,dy)<4)return 0;
   const shots=melee||p.echo?1:(p.hits||1),stagger=80;
-  if(shots>1)for(let i=1;i<shots;i++)this.later(()=>{if(from.node.isConnected&&to.node.isConnected)this.travel(L,from,to,{...p,echo:true});},i*stagger);
-  if(!melee&&p.painted)return this.paintedTravel(L,from,to,p)+(shots-1)*stagger;
-  const dx=to.x-from.x,dy=to.y-from.y,duration=melee?680:p.mode==='beam'?350:400;
+  if(shots>1)for(let i=1;i<shots;i++)this.later(()=>{
+   if(L.isConnected)this.travel(L,from,to,{...p,echo:true});
+  },i*stagger);
+  const raster=melee?null:this.prepareProjectile(p.painted);
+  if(raster?.ready)return this.paintedTravel(L,from,to,p,raster.image)+(shots-1)*stagger;
+  if(!melee&&p.painted?.kind==='beam')p={...p,mode:'beam'};
+  const duration=melee?680:p.mode==='beam'?350:400;
   const node=document.createElement('div');node.className='vx battle-fx-owned '+(melee?'battle-portrait-flight':p.mode==='beam'?'battle-skill-beam':'battle-projectile projectile-'+p.projectile);node.dataset.skill=p.id;node.dataset.source=this.currentSource||'';node.dataset.target=this.currentTarget||'';node.setAttribute('aria-hidden','true');
   Object.assign(node.style,{left:from.x+'px',top:from.y+'px'});node.style.setProperty('--c',p.color);node.style.setProperty('--a',p.accent);node.style.setProperty('--angle',Math.atan2(dy,dx)*180/Math.PI+'deg');node.style.setProperty('--distance',Math.hypot(dx,dy)+'px');
   if(p.effect&&!melee){node.className+=' eclipse-flight eclipse-flight-'+p.effect.motif;node.dataset.recipe=p.id;if(p.mode!=='beam')node.className+=' eclipse-motif-'+p.effect.motif;}
   const previous=from.node.style.opacity;
   if(melee){node.style.width=from.size+'px';node.style.height=from.size+'px';const copy=from.node.cloneNode(true);for(const el of [copy,...copy.querySelectorAll('*')]){el.removeAttribute('id');el.removeAttribute('data-u');el.removeAttribute('data-a');el.removeAttribute('data-v');el.removeAttribute('tabindex');}node.appendChild(copy);from.node.style.opacity='.15';}
   L.appendChild(node);const screen=S.screen;let done=false,animation;
-  const cleanup=()=>{if(done)return;done=true;animation?.cancel();if(melee)from.node.style.opacity=previous;node.remove();this.live.delete(cleanup);};cleanup.stale=()=>S.screen!==screen||!from.node.isConnected||!to.node.isConnected;this.live.add(cleanup);
+  const cleanup=()=>{if(done)return;done=true;animation?.cancel();if(melee)from.node.style.opacity=previous;node.remove();this.live.delete(cleanup);};cleanup.stale=()=>S.screen!==screen||!L.isConnected||(melee&&!from.node.isConnected);this.live.add(cleanup);
   const transform=(x,y,scale=1)=>'translate(calc(-50% + '+x+'px),calc(-50% + '+y+'px)) scale('+scale+')';
   const frames=melee?[{transform:transform(0,0),opacity:1,offset:0},{transform:transform(-dx*.06,-dy*.06,1.08),offset:.13},{transform:transform(dx,dy,1.14),offset:.48},{transform:transform(dx,dy,1.08),offset:.58},{transform:transform(0,0),opacity:1,offset:1}]:p.mode==='beam'?[{opacity:0,transform:'translateY(-50%) rotate(var(--angle)) scaleX(0)'},{opacity:1,transform:'translateY(-50%) rotate(var(--angle)) scaleX(1)',offset:.35},{opacity:0,transform:'translateY(-50%) rotate(var(--angle)) scaleX(1)'}]:[{transform:transform(0,0)+' rotate(var(--angle))',opacity:0},{opacity:1,offset:.12},{transform:transform(dx,dy)+' rotate(var(--angle))',opacity:1,offset:.92},{transform:transform(dx,dy)+' rotate(var(--angle))',opacity:0}];
-  if(node.animate){animation=node.animate(frames,{duration,easing:melee?'cubic-bezier(.3,0,.3,1)':'linear',fill:'both'});animation.onfinish=cleanup;}
+  if(node.animate){animation=node.animate(frames,{duration,easing:melee?'cubic-bezier(.3,0,.3,1)':'linear',fill:'both'});animation.playbackRate=this.animationRate();animation.onfinish=cleanup;}
   else{node.style.transform=transform(dx,dy);}
   this.later(cleanup,duration+100);return (melee?Math.round(duration*.48):p.mode==='beam'?110:Math.round(duration*.92))+(shots-1)*stagger;
  },
@@ -7093,7 +7119,14 @@ const CharacterMotion={
  },
  mode(skill,u){if(/^(item|seal|summon):/.test(skill))return 'support';const sk=SK[skill]||{};if(['buff','heal','rest','revert','form','summon','debuff','status'].includes(sk.t)||sk.summon)return 'support';if(skill==='attack')return 'melee';const profile=BattleEffects.profile(skill,u);return profile.painted?.asset==='crescent'?'blade':profile.mode==='melee'?'melee':'ranged';},
  landed(e){return e.k==='hit'&&e.motionLanded!==false&&!e.miss&&!e.blocked&&!e.immune;},
- emission(from){const card=from?.node.closest?.('.battle-motion'),body=card?.querySelector('.um-body');if(!body)return from;const r=body.getBoundingClientRect(),css=getComputedStyle(card);return {...from,x:r.left+r.width*parseFloat(css.getPropertyValue('--um-x'))/100,y:r.top+r.height*parseFloat(css.getPropertyValue('--um-y'))/100};},
+ emission(from){
+  const card=from?.node.closest?.('.battle-motion'),body=card?.querySelector('.um-body');
+  if(!body)return from;
+  const rect=body.getBoundingClientRect(),css=getComputedStyle(card);
+  const x=parseFloat(css.getPropertyValue('--um-x')),y=parseFloat(css.getPropertyValue('--um-y'));
+  if(!rect.width||!rect.height||!Number.isFinite(x)||!Number.isFinite(y))return from;
+  return {...from,x:rect.left+rect.width*x/100,y:rect.top+rect.height*y/100};
+ },
  contact(from,to){
   const a=from.getBoundingClientRect(),b=to.getBoundingClientRect(),ax=a.left+a.width/2,ay=a.top+a.height/2,bx=b.left+b.width/2,by=b.top+b.height/2;
   const d=Math.hypot(bx-ax,by-ay)||1,space=Math.max(a.width,a.height)/2+Math.max(b.width,b.height)/2+3,travel=Math.max(0,d-space);
@@ -7192,6 +7225,8 @@ const MotionTimeline={
   let offset=Math.max(0,this.until-Date.now())*BattleSpeed.rate();
   for(const list of groups.values()){
    const cast=list.find(e=>e.k==='cast'||e.k==='charge'),first=list[0],source=cast?.id||first.source,skill=cast?.skill||first.skill||'attack',actor=BattleEffects.actor(source),a=CharacterMotion.resolve(actor),mode=CharacterMotion.mode(skill,actor),targets=list.filter(e=>['hit','miss','heal','buff','debuff'].includes(e.k));
+   const profile=BattleEffects.profile(skill,actor);
+   BattleEffects.prepareProjectile(profile.painted);
    const charging=cast?.k==='charge',commandEffect=/^(item|seal|summon):/.test(skill);
    const windup=commandEffect?0:charging?(a?.windupDuration||1)*1000:a?(mode==='blade'?300:mode==='ranged'?(a.windupDuration||1)*1000:mode==='support'?(a.assets.threat?1800:(a.windupDuration||1)*1000):0):0;
    // Reserve through projectile arrival, all multi-hit impacts and the target's recovery pose.
@@ -7207,7 +7242,7 @@ const MotionTimeline={
      this.sound(skill,actor,list.some(e=>e.crit));
      if(a&&mode==='ranged')CharacterMotion.phase(source,'power',(a.powerDuration||.75)*1000);
      const seen=new Map(),arrivals=new Map();
-     for(const e of targets){const n=seen.get(e.id)||0;seen.set(e.id,n+1);const from=BattleEffects.anchor(source),to=BattleEffects.anchor(e.id),p=BattleEffects.profile(skill,actor);if(!to)continue;
+     for(const e of targets){const n=seen.get(e.id)||0;seen.set(e.id,n+1);const from=BattleEffects.anchor(source),to=BattleEffects.anchor(e.id),p=profile;if(!to)continue;
       if(!arrivals.has(e.id)){let delay=mode==='melee'?contact:0;if(!commandEffect&&mode!=='melee'&&from&&e.id!==source)delay=BattleEffects.travel(L,CharacterMotion.emission(from),to,{...p,mode:p.mode==='beam'?'beam':'projectile'});arrivals.set(e.id,delay);}
       CharacterMotion.schedule(()=>{if(e.k!=='miss'||!deferredTargets?.has(e.id))this.arrive(e.id);const current=BattleEffects.anchor(e.id);if(!current)return;if(CharacterMotion.landed(e))CharacterMotion.phase(e.id,'hit',1500);if(e.k==='miss')BattleEffects.spawn(L,'target',current.x,current.y,{...p,color:'#9a97ab'});else BattleEffects.impact(L,e,current,p);},arrivals.get(e.id)+n*65);
      }
@@ -7236,7 +7271,7 @@ battleLater=function(fn,ms){return timelineLater(function wait(){if(MotionTimeli
 const timelineEnd=checkEnd;
 checkEnd=function(...args){if(MotionTimeline.busy())return false;return timelineEnd(...args);};
 const timelineReset=CharacterMotion.reset;
-CharacterMotion.reset=function(){timelineReset.call(this);MotionTimeline.until=0;MotionTimeline.held.clear();MotionTimeline.away.clear();MotionTimeline.dead.clear();};
+CharacterMotion.reset=function(){timelineReset.call(this);BattleEffects.clear();MotionTimeline.until=0;MotionTimeline.held.clear();MotionTimeline.away.clear();MotionTimeline.dead.clear();};
 const timelineSync=CharacterMotion.sync;
 CharacterMotion.sync=function(){timelineSync.call(this);for(const [n]of this.instances)n.classList.toggle('motion-away',MotionTimeline.away.has(n.dataset.motionUnit));};
 CharacterMotion.flush=function(){MotionTimeline.flush();};
