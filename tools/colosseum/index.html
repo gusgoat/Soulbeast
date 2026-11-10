@@ -7,7 +7,7 @@
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
  <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=rank-profile-1">
+ <link rel="stylesheet" href="./style.css?v=mode-cards-1">
 </head>
 <body>
  <main id="lobby">
@@ -26,25 +26,33 @@
      <p id="mode-rank-text" class="rank-feature-text"></p>
      <p id="selected-profile" hidden></p>
     </section>
+    <fieldset class="mode-picker">
+     <legend>เลือกโหมด</legend>
+     <div class="pair">
+      <label class="mode-option">
+       <input type="radio" name="mode" value="team" checked>
+       <span class="mode-card"><img src="./art/mode-team-v1.webp" width="810" height="540" alt=""><strong>โหมดทีม</strong><small>ไพลิน ปะทะ ทับทิม</small></span>
+      </label>
+      <label class="mode-option">
+       <input type="radio" name="mode" value="survival">
+       <span class="mode-card"><img src="./art/mode-survival-v1.webp" width="810" height="540" alt=""><strong>เอาตัวรอด</strong><small>เหลือรอดเป็นคนสุดท้าย</small></span>
+      </label>
+     </div>
+    </fieldset>
     <fieldset id="rank-entry">
      <legend>จัดอันดับ</legend>
-     <label>โหมด <select id="rank-mode"><option value="team">ทีม 5 ต่อ 5</option><option value="survival">เอาตัวรอด 10 คน</option></select></label>
      <button type="submit" value="ranked">ค้นหาแมตช์จัดอันดับ</button>
     </fieldset>
     <fieldset id="public-rooms">
      <legend>ห้องสาธารณะ</legend>
-     <label>โหมด <select id="public-mode"><option value="team">โหมดทีม</option><option value="survival">โหมดเอาตัวรอด</option></select></label>
      <div class="pair"><button type="submit" value="createPublic">สร้างห้องสาธารณะ</button><button class="secondary" type="submit" value="joinPublic">เข้าร่วมห้องสาธารณะ</button></div>
     </fieldset>
-    <button type="submit" value="create">สร้างห้องทีม</button>
-    <button type="submit" value="survival">สร้างห้องเอาตัวรอด · 2–10 คน</button>
-    <button type="submit" value="survivalPractice" class="practice">ทดลองเอาตัวรอด 10 คน <small>คุณ 1 คน · คู่แข่งบอท 9 ตัว</small></button>
-    <button type="submit" value="practice" id="practice" class="practice">ทดลอง 5 ต่อ 5 กับบอท <small>เล่นคนเดียว · เพื่อนบอท 4 · คู่แข่งบอท 5</small></button>
+    <button type="submit" value="create" id="create-private">สร้างห้องทีม</button>
+    <button type="submit" value="practice" id="practice" class="practice"><span id="practice-label">ทดลอง 5 ต่อ 5 กับบอท</span> <small id="practice-detail">เล่นคนเดียว · เพื่อนบอท 4 · คู่แข่งบอท 5</small></button>
     <div class="join"><input id="code" placeholder="รหัสห้อง 8 ตัว" aria-label="รหัสห้อง" maxlength="8" autocomplete="off" autocapitalize="characters">
     <button type="submit" value="join">เข้าร่วมห้อง</button></div>
    </form>
-   <button id="open-rank-mail" class="secondary" type="button" hidden>จดหมายจัดอันดับ</button>
-   <button id="open-rankings" class="secondary" type="button">กระดานคะแนนโคลอสเซียม</button>
+   <button id="open-rules" class="secondary" type="button">กติกา</button>
    <section class="rank-ladder" aria-labelledby="rank-ladder-heading">
     <h2 id="rank-ladder-heading">ลำดับโล่จัดอันดับ</h2>
     <ol id="rank-ladder-list"></ol>
@@ -63,17 +71,26 @@
    <p id="rank-queue-detail"></p>
    <button id="cancel-rank-queue" class="secondary" type="button">ยกเลิกการค้นหา</button>
   </section>
-  <dialog id="rank-mail">
-   <form method="dialog"><button class="secondary" aria-label="ปิดจดหมาย">✕</button></form>
-   <h2>จดหมายจัดอันดับ</h2>
-   <p id="rank-mail-status" role="status"></p>
-   <div id="rank-mail-list"></div>
-  </dialog>
-  <dialog id="rankings">
-   <form method="dialog"><button class="secondary" aria-label="ปิดกระดานคะแนน">✕</button></form>
-   <h2>กระดานคะแนนโคลอสเซียม</h2>
-   <p id="rankings-note" role="status"></p>
-   <div id="rankings-list"></div>
+  <dialog id="rules" aria-labelledby="rules-heading">
+   <form method="dialog"><button class="secondary" aria-label="ปิดกติกา">✕</button></form>
+   <h2 id="rules-heading">กติกาโคลอสเซียม</h2>
+   <section data-rules-mode="team">
+    <h3>โหมดทีม</h3>
+    <ul>
+     <li>ทีมไพลินและทีมทับทิมมีฝ่ายละ 1–5 คน เริ่มที่ฝ่ายละ 100 คะแนน แข่ง 12 นาที ฝ่ายที่มีคะแนนมากกว่าชนะเมื่อหมดเวลา หรือชนะทันทีเมื่อยึดฐานใหญ่ได้หรือทำให้อีกฝ่ายเหลือ 0 คะแนน</li>
+     <li>จู่โจมฐานเล็ก กลาง และใหญ่ได้ 5, 10 และ 15 คะแนนตามลำดับ และอีกฝ่ายเสียคะแนนเท่ากัน ยึดฐานที่เชื่อมกันจากเล็กไปกลางแล้วไปใหญ่</li>
+     <li>เมื่อผู้ผนึกล้ม ทีมเสีย 10 คะแนน และเกิดใหม่หลัง 30 วินาที เปิดหีบหรือปราบอสูรเพื่อเพิ่มคะแนน บอสปรากฏทุก 2 นาที ทีมที่ปราบได้จะได้ 20 คะแนนและอีกฝ่ายเสีย 20 คะแนน</li>
+    </ul>
+   </section>
+   <section data-rules-mode="survival" hidden>
+    <h3>เอาตัวรอด</h3>
+    <ul>
+     <li>ผู้เล่น 2–10 คนสู้กันแบบตัวใครตัวมัน ผู้รอดคนสุดท้ายชนะ</li>
+     <li>เปิดหีบได้ 5 คะแนน ชนะอสูรได้ 10 คะแนน ชนะผู้ผนึกได้ 20 คะแนน ทุก 2 นาทีผู้รอดที่มีคะแนนต่ำสุดจะตกรอบ</li>
+     <li>วงปลอดภัยหดทุก 30 วินาที เมื่ออยู่นอกวงจะเสีย HP 2% ของค่าสูงสุดต่อวินาที</li>
+    </ul>
+   </section>
+   <p>เฉพาะแมตช์จัดอันดับเท่านั้นที่คิดแต้มสะสม การออกจากแมตช์ก่อนจบอาจถูกหักแต้มและระงับการเข้าคิว</p>
   </dialog>
   <div id="room" class="panel" hidden>
    <p id="public-room-label" hidden>ห้องสาธารณะ</p>
@@ -84,7 +101,7 @@
   </div>
   <p id="notice" role="status"></p>
   <a id="country-return" hidden>กลับแผนที่ประเทศ</a>
-  <footer>ทีมละ 1–5 คน · 12 นาที · ฐานย่อย 10 คะแนน · ฐานใหญ่ 15 คะแนน</footer>
+  <footer>ทีม 1–5 คนต่อฝ่าย · เอาตัวรอด 2–10 คน</footer>
  </main>
  <section id="arena" hidden aria-label="สนามโคลอสเซียม">
   <canvas id="world" aria-label="สนามเขาวงกต"></canvas>
@@ -132,6 +149,6 @@
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" hidden></div><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=projectile-2"></script>
+ <script type="module" src="./client.mjs?v=mode-cards-1"></script>
 </body>
 </html>

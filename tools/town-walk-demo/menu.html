@@ -3816,7 +3816,7 @@ const WALK_ONLINE=!!sessionStorage.getItem('soulbeast-online-walk-v1');
 const SHEET_URL=String(window.SHEET_URL||'').trim();
 let walkAccountConnection;
 async function getWalkAccountConnection(){
- return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=admin-session-20261107',location.href).href)).connectOnlineWalk(walkStorage);
+ return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=colosseum-menu-1',location.href).href)).connectOnlineWalk(walkStorage);
 }
 async function walkAccountPost(packet){
  const {action,pin,cpin,...extra}=packet;
@@ -3824,8 +3824,9 @@ async function walkAccountPost(packet){
   return await (await getWalkAccountConnection()).social(action,extra);
  }catch(error){return {ok:false,error:error.message};}
 }
+const COLOSSEUM_LEADER={rows:[],loading:false,error:false};
 const LB={rows:null,busy:0,lastKey:'',lastAt:0,err:''};
-const LBTAB={score:{n:'คะแนนสะสม',v:r=>fmt(r.score||0)+' คะแนน',k:r=>r.score||0},lv:{n:'เลเวล',v:r=>`Lv ${r.level}`,k:r=>r.level*1e9+(r.exp||0)},
+const LBTAB={colosseum:{n:'โคลอสเซียม'},score:{n:'คะแนนสะสม',v:r=>fmt(r.score||0)+' คะแนน',k:r=>r.score||0},lv:{n:'เลเวล',v:r=>`Lv ${r.level}`,k:r=>r.level*1e9+(r.exp||0)},
  zone:{n:'ด่านไกลสุด',v:r=>r.clears?`ปราบจอมมาร ${r.clears} ครั้ง`:(r.zoneName||`ด่าน ${r.zone}`),k:r=>(r.clears||0)*1e6+(r.zone||0)*1e3+r.level},
  caught:{n:'จับอสูร',v:r=>`${r.caught} ชนิด`,k:r=>r.caught*1e4+r.seen},
  seen:{n:'ค้นพบอสูร',v:r=>`${r.seen} ชนิด`,k:r=>r.seen*1e4+r.caught},
@@ -3834,7 +3835,7 @@ function pid(){const P=S.P;if(!P.pid){const a=new Uint8Array(12);try{crypto.getR
 function lbEntry(){const P=S.P,zm=clamp(P.zoneMax,1,6),seen=Object.keys(P.seen).filter(k=>SP[k]&&!SP[k].noseal).length;
  return {score:S.P.score||0,profile:'',gender:P.gender,id:pid(),name:String(P.name).slice(0,20),cls:P.cls,clsName:CLS[P.cls].n,lv:P.lv,exp:P.exp,zone:zm,zoneName:ZN[zm-1].n,seen,caught:Object.keys(P.caught).filter(k=>SP[k]).length,legend:Object.keys(P.legend||{}).length,clear:P.cleared||0}}
 async function sheetRequest(options){const c=new AbortController(),timer=setTimeout(()=>c.abort(),25000);try{const r=await fetch(SHEET_URL, {...options,signal:c.signal});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(!j||typeof j.ok!=='boolean')throw new Error('Invalid response');return j}finally{clearTimeout(timer)}}
-async function lbPost(body){if(WALK_ONLINE&&/^(country_|camp_|wb_|guild_|tower_|gacha_(?:status|draw)$)/.test(body.action))return walkAccountPost(body);return sheetRequest({method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})}
+async function lbPost(body){if(WALK_ONLINE&&/^(country_|camp_|wb_|guild_|tower_|mail_(?:list|read)$|gacha_(?:status|draw)$)/.test(body.action))return walkAccountPost(body);return sheetRequest({method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})}
 async function lbSubmit(force){if(!SHEET_URL||!S.P||S.P.lbOff)return;
  if(LB.pending){await LB.pending;if(!force)return;if(!S.P||S.P.lbOff)return}
  const e=lbEntry(),key=JSON.stringify(e);
@@ -7444,7 +7445,7 @@ function countryPlayerFlag(place){const id=S.P?.country,c=COUNTRY_WAR_MAP.countr
 function countryTerrain(id){return ({snow:'หิมะ',volcano:'ภูเขาไฟ',forest:'ป่า',coast:'ชายฝั่งและเกาะ',mountain:'ภูเขา'})[id]||id;}
 function countryChoices(action){return COUNTRY_WAR_MAP.countries.map(c=>'<button class="btn cw-country-choice" data-a="'+action+'" data-v="'+c.id+'" aria-pressed="'+(S.ui.country===c.id)+'" '+(COUNTRY_WAR.busy?'disabled':'')+'>'+countryFlag(c.id)+'<b>'+esc(c.name)+'</b></button>').join('');}
 function countryPlace(id){return COUNTRY_WAR_MAP.nodes.find(n=>n.id===id)?.placeName||id;}
-function countryReset(){if(COUNTRY_WAR.code!==S.P?.code){Object.assign(COUNTRY_WAR,{code:S.P?.code||'',data:null,busy:false,error:'',selected:'',pending:null,mail:[],message:'',room:null,mailChecked:'',mapLeft:0,mapTop:0});COUNTRY_WAR.replaySerial++;}}
+function countryReset(){if(COUNTRY_WAR.code!==S.P?.code){Object.assign(COUNTRY_WAR,{code:S.P?.code||'',data:null,busy:false,error:'',selected:'',pending:null,mail:[],rankMail:[],rankMailError:false,message:'',room:null,mailChecked:'',mapLeft:0,mapTop:0});COUNTRY_WAR.replaySerial++;}}
 const COUNTRY_ERRORS={'country physical travel required':'ยกเลิกการเดินทางผ่านเมนูแล้ว กรุณาเดินไปสถานที่จริง','country bad location':'ไม่พบสถานที่นี้','country visit required':'ต้องเดินไปติดต่อที่ว่าการ หรือหน้าสถานที่เป้าหมายก่อน','country frontier required':'เป้าหมายยังไม่ติดพื้นที่ที่ประเทศเราครองอยู่','country bad pets':'รายการอสูรไม่ถูกต้อง กรุณาเลือกใหม่','bad pet':'ไม่พบอสูรที่เลือก','pet at camp':'เลือกได้เฉพาะอสูรที่พกติดตัว','too many pets':'เลือกอสูรเกินจำนวนที่อาชีพใช้ได้','country required':'กรุณาเลือกประเทศก่อน','country immutable':'ประเทศของตัวละครเปลี่ยนไม่ได้','country daily limit':'เลือกป้องกันหรือโจมตีวันนี้แล้ว เริ่มวันใหม่เวลา 00:00 ไทย','country base full':'ปลายทางเต็มแล้ว ไม่ได้ใช้สิทธิ์วันนี้','country adjacent required':'เดินทางได้เฉพาะสถานที่ที่มีเส้นทางเชื่อมโดยตรง','country enemy base':'ฐานนี้เป็นของฝ่ายตรงข้าม ต้องเลือกโจมตี','country siege required':'ต้องยึดจุดที่เชื่อมอยู่ให้ได้อย่างน้อย 2/4 ก่อนโจมตี','country target protected':'โจมตีฐานของประเทศตัวเองไม่ได้','country dead until tomorrow':'เสียชีวิตแล้ว รอเกิดใหม่วันถัดไป เวลา 00:00 ไทย','country guard full':'สล็อตป้องกันเมืองหลวงเต็ม 32 คนแล้ว ยังไม่ใช้แอคชั่นวันนี้','country guard healing locked':'ผู้ลงป้องกันเมืองหลวงเปลี่ยนทีมเพื่อฟื้นพลังไม่ได้ ต้องรอเกิดใหม่','country capital only':'เปลี่ยนทีมได้เฉพาะที่เมืองหลวง','country automatic only':'โหมดนี้ใช้การต่อสู้อัตโนมัติ ห้ามใช้ยาและคำสั่งสกิลเอง','mail not found':'ไม่พบจดหมายนี้','bad country action':'โปรดอัปเดตเซิร์ฟเวอร์สงครามประเทศก่อน'};
 async function countryCall(action,extra={},silent=false){
  countryReset();if(COUNTRY_WAR.busy)return;const code=S.P.code;COUNTRY_WAR.busy=true;COUNTRY_WAR.error='';if(!silent)render();
@@ -7504,7 +7505,35 @@ function vCountryWar(){countryReset();const d=COUNTRY_WAR.data,me=d?.me;const he
 
 function countryBattleView(){const r=COUNTRY_WAR.room,b=r.battle,terrain=r.terrain||b.terrain||COUNTRY_WAR_MAP.nodes.find(n=>n.id===r.target)?.terrain||'forest',attack=r.attackers||new Set(b.allies.map(u=>u.owner)).size,defend=r.defenders||new Set(b.enemies.map(u=>u.owner)).size;return '<section id="countryBattle" class="card stack cw-battle" style="--cw-field:url(assets/ui/country-war/battle-'+terrain+'-v1.webp)"><header><h3>'+esc(countryPlace(r.target))+' · '+attack+' VS '+defend+'</h3><small>'+esc(countryTerrain(terrain))+' · อัตโนมัติพร้อมอสูรตาม PVP</small></header><div class="cw-arena">'+compactOnlineSide(b.enemies,'ฝ่ายป้องกัน','countrywar',r,false)+'<div class="cw-battle-divider"><b>'+(r.replaying?'กำลังแสดงการต่อสู้อัตโนมัติ':esc(r.reason))+'</b></div>'+compactOnlineSide(b.allies,'ฝ่ายโจมตี','countrywar',r,true)+'</div><details class="cw-battle-log"><summary>บันทึกการต่อสู้</summary><div class="log">'+b.log.slice(-4).map(s=>'<p>'+esc(s)+'</p>').join('')+'</div></details>'+(r.replaying?'<button class="btn" data-a="cwSkip">ข้ามรีเพลย์</button>':'<p>'+(r.captured?'ยึดฐานสำเร็จ':r.remaining?'ยังมีผู้ป้องกันอีก '+r.remaining+' คน':'ฐานยังไม่เปลี่ยนเจ้าของ')+'</p>')+'</section>';}
 function countryReplay(room){const serial=++COUNTRY_WAR.replaySerial,frames=room.replay?.frames||[],battle=room.replay?JSON.parse(JSON.stringify(room.replay.initial)):room.battle;COUNTRY_WAR.room={...room,battle,replaying:!!frames.length};let i=0;const step=()=>{if(serial!==COUNTRY_WAR.replaySerial||!['countrywar'].includes(S.screen)){COUNTRY_WAR.room=room;return;}if(window.BattleReady&&!BattleReady.ready(battle)){render();BattleReady.wait(battle).then(step);return;}if(MotionTimeline.busy()){setTimeout(step,60);return;}const f=frames[i++];if(!f){COUNTRY_WAR.room=room;render();return;}const prior=JSON.parse(JSON.stringify(COUNTRY_WAR.room));applyClass10Replay(battle,f);for(const [id,hp,mp,status,taunt]of f.units||[]){const u=[...battle.allies,...battle.enemies].find(u=>u.id===id);if(u)Object.assign(u,{hp,mp,status,taunt});}Object.assign(battle,{cur:f.cur,round:f.round,turns:f.turns,log:f.log,effects:f.effects});COUNTRY_WAR.room.rev++;render();onlineSkillEffects(prior,COUNTRY_WAR.room,'countrywar');setTimeout(step,BattleSpeed.ms(650));};if(frames.length){step();(window.requestAnimationFrame||setTimeout)(()=>document.getElementById('countryBattle')?.scrollIntoView({block:'start',behavior:'instant'}));}}
-function vMail(){countryReset();const mail=COUNTRY_WAR.mail,current=mail.find(m=>m.id===COUNTRY_WAR.message);return '<div class="stack"><div class="row wrap mail-toolbar"><h2 class="grow">จดหมายระบบ</h2><button class="btn sm" data-a="cwMailRefresh">ตรวจจดหมาย</button><button class="btn sm" data-a="cwEnter">สงครามประเทศ</button><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div>'+(COUNTRY_WAR.error?'<p role="alert">'+esc(COUNTRY_WAR.error)+'</p>':'')+(COUNTRY_WAR.busy?'<p role="status">กำลังตรวจจดหมาย…</p>':'')+(current?'<section class="card stack"><h3>'+esc(current.subject)+'</h3><small>จาก '+esc(current.from)+' · '+esc(new Date(current.at).toLocaleString('th-TH',{timeZone:'Asia/Bangkok'}))+'</small><p>'+(current.kind==='monthly'?'รางวัลรายเดือน · อันดับ '+current.rank+' · '+current.score+' คะแนน<br>รีเซ็ตฐานแล้ว ทุกคนกลับเมืองหลวงพร้อม HP/MP เต็ม':esc(current.kind==='daily'?'รางวัลรายวัน':'รางวัลรายสัปดาห์')+'จาก '+(current.pool.capitals??0)+' เมืองหลวง · '+current.pool.cities+' เมือง · '+current.pool.villages+' หมู่บ้าน แบ่งให้ผู้มีสิทธิ์ '+current.members+' ตัวละคร')+'</p><b>ได้รับ '+fmt(current.gold)+' เหรียญ + '+current.coupons+' คูปอง</b><small>'+countryFractions(current)+'</small><p>โอนรางวัลเข้าบัญชีตัวละครแล้ว ไม่ต้องกดรับซ้ำ</p><button class="btn" data-a="cwMailBack">ย้อนกลับกล่องจดหมาย</button></section>':mail.map(m=>'<button class="btn cw-mail-row" data-a="cwMailRead" data-v="'+esc(m.id)+'"><b>'+(m.read?'':'● ')+esc(m.subject)+'</b><small>'+esc(m.from)+' · '+esc(m.week)+'</small></button>').join('')||'<p>ยังไม่มีจดหมาย</p>')+'</div>';}
+function rankMailDate(value){
+ return new Date(value).toLocaleString('th-TH',{timeZone:'Asia/Bangkok',dateStyle:'short',timeStyle:'short'});
+}
+let rankMailRequest=0;
+async function loadColosseumRankMail(id=null){
+ if(!WALK_ONLINE)return;
+ const code=S.P?.code,request=++rankMailRequest;
+ const current=()=>S.P?.code===code&&request===rankMailRequest;
+ try{
+  const connection=await getWalkAccountConnection();
+  if(!connection?.colosseumRankMail)return;
+  const rows=await connection.colosseumRankMail(id);
+  if(!Array.isArray(rows))throw Error('rank_mail_unavailable');
+  if(current()){
+   COUNTRY_WAR.rankMail=rows.map(row=>({
+    ...row, id:'colosseum:'+row.id, kind:'colosseum', from:'โคลอสเซียม',
+    subject:row.violation==='abandon'?'คำเตือนจัดอันดับ: ออกก่อนจบแมตช์':'คำเตือนจัดอันดับ: คะแนนต่ำและไม่ได้ช่วยต่อสู้',
+    week:rankMailDate(row.at),
+   }));
+   COUNTRY_WAR.rankMailError=false;
+  }
+ }catch{if(current())COUNTRY_WAR.rankMailError=true;}
+ finally{if(current()&&S.screen==='mail')render();}
+}
+function renderColosseumRankMail(row){
+ const penalty=row.permanent?'ระงับการเล่นจัดอันดับถาวร':row.blocked_until?'ระงับการเล่นถึง '+rankMailDate(row.blocked_until):'';
+ return '<section class="card stack"><h3>'+esc(row.subject)+'</h3><small>จาก โคลอสเซียม · '+esc(row.week)+'</small><p>'+esc(penalty)+'</p><p>แต้มที่ได้ในแมตช์ '+fmt(row.delta)+' · ครั้งที่ '+fmt(row.daily_count)+' ของวัน และ '+fmt(row.monthly_count)+' ของเดือน</p><button class="btn" data-a="cwMailBack">ย้อนกลับกล่องจดหมาย</button></section>';
+}
+function vMail(){countryReset();const mail=[...COUNTRY_WAR.mail,...(COUNTRY_WAR.rankMail||[])].sort((a,b)=>new Date(b.at)-new Date(a.at)),current=mail.find(m=>m.id===COUNTRY_WAR.message);return '<div class="stack"><div class="row wrap mail-toolbar"><h2 class="grow">จดหมายระบบ</h2><button class="btn sm" data-a="cwMailRefresh">ตรวจจดหมาย</button><button class="btn sm" data-a="cwEnter">สงครามประเทศ</button><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div>'+(COUNTRY_WAR.error?'<p role="alert">'+esc(COUNTRY_WAR.error)+'</p>':'')+(COUNTRY_WAR.busy?'<p role="status">กำลังตรวจจดหมาย…</p>':'')+(COUNTRY_WAR.rankMailError?'<p role="status">โหลดจดหมายโคลอสเซียมไม่สำเร็จ กดตรวจจดหมายเพื่อลองใหม่</p>':'')+(current?.kind==='colosseum'?renderColosseumRankMail(current):current?'<section class="card stack"><h3>'+esc(current.subject)+'</h3><small>จาก '+esc(current.from)+' · '+esc(new Date(current.at).toLocaleString('th-TH',{timeZone:'Asia/Bangkok'}))+'</small><p>'+(current.kind==='monthly'?'รางวัลรายเดือน · อันดับ '+current.rank+' · '+current.score+' คะแนน<br>รีเซ็ตฐานแล้ว ทุกคนกลับเมืองหลวงพร้อม HP/MP เต็ม':esc(current.kind==='daily'?'รางวัลรายวัน':'รางวัลรายสัปดาห์')+'จาก '+(current.pool.capitals??0)+' เมืองหลวง · '+current.pool.cities+' เมือง · '+current.pool.villages+' หมู่บ้าน แบ่งให้ผู้มีสิทธิ์ '+current.members+' ตัวละคร')+'</p><b>ได้รับ '+fmt(current.gold)+' เหรียญ + '+current.coupons+' คูปอง</b><small>'+countryFractions(current)+'</small><p>โอนรางวัลเข้าบัญชีตัวละครแล้ว ไม่ต้องกดรับซ้ำ</p><button class="btn" data-a="cwMailBack">ย้อนกลับกล่องจดหมาย</button></section>':mail.map(m=>'<button class="btn cw-mail-row" data-a="cwMailRead" data-v="'+esc(m.id)+'"><b>'+(m.read?'':'● ')+esc(m.subject)+'</b><small>'+esc(m.from)+' · '+esc(m.week)+'</small></button>').join('')||'<p>ยังไม่มีจดหมาย</p>')+'</div>';}
 handlers.cwEnter=async()=>{if(S.zone||S.battle){toast('ออกจากป่าหรือจบการต่อสู้ก่อนเข้าสงครามประเทศ');return;}countryReset();go('countrywar');await gsSave(true);await countryCall('country_status');};
 handlers.cwIsland=id=>{
  if(!countryFerries.some(ferry=>ferry.id===id))return;
@@ -7522,7 +7551,16 @@ handlers.cwPetPick=v=>{if(!countryCanEditTeam()||!Array.isArray(COUNTRY_WAR.petP
 handlers.cwPetCancel=()=>{if(COUNTRY_WAR.busy)return;COUNTRY_WAR.petPicks=null;render();};
 handlers.cwPetSave=async()=>{if(!countryCanEditTeam()||!Array.isArray(COUNTRY_WAR.petPicks))return;const code=S.P.code,petIds=COUNTRY_WAR.petPicks.slice();if(!petIds.length&&COUNTRY_WAR_MAP.nodes.find(n=>n.id===COUNTRY_WAR.data.me.location)?.type!=='capital'){toast('เลือกอสูรอย่างน้อย 1 ตัว');return;}const saved=await gsSave(true);if(saved?.ok===false||S.P.code!==code)return;const result=await countryCall('country_team',{petIds});if(result?.ok&&S.P.code===code){COUNTRY_WAR.petPicks=null;render();}};
 handlers.cwSkip=()=>{COUNTRY_WAR.replaySerial++;COUNTRY_WAR.room=COUNTRY_WAR.data?.last;render();};
-handlers.cwMail=()=>{countryReset();go('mail');return countryCall('mail_list');};handlers.cwMailRefresh=()=>countryCall('mail_list');handlers.cwMailRead=mail=>{COUNTRY_WAR.message=mail;return countryCall('mail_read',{mail});};handlers.cwMailBack=()=>{COUNTRY_WAR.message='';render();};
+handlers.cwMail=()=>{countryReset();go('mail');return handlers.cwMailRefresh();};
+handlers.cwMailRefresh=()=>Promise.all([countryCall('mail_list'),loadColosseumRankMail()]);
+handlers.cwMailRead=mail=>{
+ COUNTRY_WAR.message=mail;
+ if(mail.startsWith('colosseum:')){
+  render();
+  return loadColosseumRankMail(mail.slice('colosseum:'.length));
+ }
+ return countryCall('mail_read',{mail});
+};handlers.cwMailBack=()=>{COUNTRY_WAR.message='';render();};
 const countryTown=vTown;vTown=function(){const html=countryTown();if(!window.SOULBEAST_ACCOUNTS&&!window.CW_PREVIEW_MODE)return html;countryReset();return '<section class="card stack"><button class="cw-activity" data-a="cwEnter"><img src="assets/ui/country-war/activity-v1.webp" alt="" width="2172" height="724"><span><b>สงครามอาณาจักร</b><small>สามอาณาจักร · ยึดครองและป้องกันฐาน</small></span></button><div class="row"><button class="btn" data-a="cwMail">จดหมาย'+(COUNTRY_WAR.mail.some(m=>!m.read)?' ●':'')+'</button></div><small>'+esc(countryName(S.P.country))+' · ประเทศของตัวละครเปลี่ยนไม่ได้</small></section>'+html;};
 const countryStart=vStart;vStart=function(){const html=countryStart();if(!window.SOULBEAST_ACCOUNTS&&!window.CW_PREVIEW_MODE)return html;return html.replace('<div class="card stack"><h3>เลือกอาชีพ','<div class="card stack"><h3>เลือกอาณาจักร</h3><div class="cw-country-options">'+countryChoices('cwCreateCountry')+'</div><select id="newCharacterCountry" aria-label="เลือกประเทศของตัวละคร" required><option value="" '+(!S.ui.country?'selected':'')+' disabled>เลือกประเทศ</option>'+COUNTRY_WAR_MAP.countries.map(c=>'<option value="'+c.id+'" '+(S.ui.country===c.id?'selected':'')+'>'+esc(c.name)+'</option>').join('')+'</select><small>เลือกแล้วเปลี่ยนประเทศไม่ได้ ใช้ในโหมดสงครามประเทศ</small></div><div class="card stack"><h3>เลือกอาชีพ');};
 const countryNew=handlers.newgame;handlers.newgame=function(...args){const nation=document.getElementById('newCharacterCountry')?.value||S.ui.country;if((window.SOULBEAST_ACCOUNTS||window.CW_PREVIEW_MODE)&&!COUNTRY_WAR_MAP.countries.some(c=>c.id===nation)){toast('กรุณาเลือกประเทศก่อนสร้างตัวละคร');return false;}const out=countryNew(...args);if(S.P&&nation){S.P.country=nation;save();}return out;};
@@ -8043,11 +8081,44 @@ vLeader=function(){return walkLeaderViewWithEndpoint()};
 function walkLeaderViewWithEndpoint(){
  // The original view requires a configured endpoint; render its ranking body with
  // a dedicated read-only local view instead of enabling unrelated online writes.
- const tab=S.ui.lb||'score',T=LBTAB[tab],rows=(LB.rows||[]).filter(r=>Number.isFinite(r.level)).sort((a,b)=>T.k(b)-T.k(a)).slice(0,20);
+ const tab=S.ui.lb||'score',T=LBTAB[tab];
+ if(tab==='colosseum')return colosseumLeaderView();
+ const rows=(LB.rows||[]).filter(r=>Number.isFinite(r.level)).sort((a,b)=>T.k(b)-T.k(a)).slice(0,20);
  return '<div class="stack"><h2>หอเกียรติยศ</h2><p class="sub">อันดับผู้เล่นออนไลน์ · ตัวละครทดสอบในเครื่องไม่ส่งคะแนนเข้ากระดานจริง</p><div class="tabs">'+Object.entries(LBTAB).map(([k,t])=>'<button class="'+(tab===k?'on':'')+'" data-a="lbtab" data-v="'+k+'">'+esc(t.n)+'</button>').join('')+'</div>'+(LB.err?'<p role="alert">'+esc(LB.err)+'</p>':'')+(LB.busy?'<p>กำลังโหลดอันดับ...</p>':rows.map((r,i)=>'<div class="item lbrow"><b class="lbn">'+(i+1)+'</b>'+portrait('cls:'+(CLS[r.cls]?r.cls:'swordsman'),34,{gender:r.gender})+'<div class="grow"><b>'+esc(r.name||'ผู้ผนึก')+'</b><small>'+esc(r.clsName||'')+' · Lv '+r.level+'</small></div><b>'+esc(T.v(r))+'</b></div>').join('')||'<p>ยังไม่มีอันดับให้แสดง</p>')+'<button class="btn" data-a="lbload" '+(LB.busy?'disabled':'')+'>รีเฟรช</button></div>';
 }
-lbLoad=async function(){if(LB.busy)return;LB.busy=1;LB.err='';render();const wait=window.WalkLoading?.begin('กำลังโหลดอันดับผู้เล่น…');try{if(!window.WALK_LEADER_URL)throw Error('ยังไม่ได้ตั้งค่ากระดานออนไลน์');const response=await fetch(window.WALK_LEADER_URL,{method:'GET',headers:{apikey:SB_KEY,'x-soulbeast-environment':'live'},cache:'no-store',signal:AbortSignal.timeout(25000)});const data=await response.json();if(!response.ok||!data.ok||!Array.isArray(data.rows))throw Error('โหลดอันดับไม่สำเร็จ');LB.rows=data.rows;}catch(e){LB.err='โหลดอันดับออนไลน์ไม่สำเร็จ กรุณาตรวจอินเทอร์เน็ตแล้วกดรีเฟรช';LB.rows=LB.rows||[];}finally{wait?.finish();LB.busy=0;render()}};
+async function colosseumLeaderLoad(){
+ if(COLOSSEUM_LEADER.loading){render();return;}
+ Object.assign(COLOSSEUM_LEADER,{loading:true,error:false});
+ render();
+ try{
+  const response=await fetch('https://soulbeast-colosseum.onrender.com/rankings',{cache:'no-store',signal:AbortSignal.timeout(15000)});
+  if(!response.ok)throw Error('ranking_unavailable');
+  const result=await response.json();
+  if(!Array.isArray(result.rows))throw Error('ranking_unavailable');
+  const {shieldFor,shieldUrl}=await import(new URL('../colosseum/ranking.mjs?v=shields-2',location.href).href);
+  COLOSSEUM_LEADER.rows=result.rows.map(({rank,name,score})=>{
+   const shield=shieldFor(score);
+   return {rank,name,score,shield:shield?.name,icon:shield?shieldUrl(shield):''};
+  });
+ }catch{COLOSSEUM_LEADER.error=true;}
+ finally{COLOSSEUM_LEADER.loading=false;if(S.screen==='leader'&&S.ui.lb==='colosseum')render();}
+}
+function colosseumLeaderView(){
+ const {rows,loading,error}=COLOSSEUM_LEADER;
+ const tabs=Object.entries(LBTAB).map(([key,tab])=>'<button class="'+(key==='colosseum'?'on':'')+'" data-a="lbtab" data-v="'+key+'">'+esc(tab.n)+'</button>').join('');
+ const message=loading?'<p role="status">กำลังโหลดอันดับโคลอสเซียม…</p>':error?'<p role="alert">โหลดอันดับโคลอสเซียมไม่สำเร็จ กดรีเฟรชเพื่อลองใหม่</p>':rows.length?'':'<p>ยังไม่มีผลการแข่งที่คิดแต้มสะสม</p>';
+ const list=rows.map(row=>'<div class="item lbrow"><b class="lbn">'+esc(row.rank)+'</b>'+(row.icon?'<img src="'+esc(row.icon)+'" width="34" height="34" alt="'+esc(row.shield)+'">':'')+'<b class="grow">'+esc(row.name||'ผู้ผนึก')+'</b><b class="num">'+fmt(row.score)+' แต้ม</b></div>').join('');
+ return '<div class="stack"><h2>หอเกียรติยศ</h2><div class="tabs">'+tabs+'</div>'+message+'<div class="lst">'+list+'</div><button class="btn sm" data-a="lbload" '+(loading?'disabled':'')+'>รีเฟรช</button></div>';
+}
+handlers.lbtab=key=>{
+ S.ui.lb=key;
+ if(key==='colosseum')return colosseumLeaderLoad();
+ if(LB.rows===null)return lbLoad();
+ render();
+};
+lbLoad=async function(){if(S.ui.lb==='colosseum')return colosseumLeaderLoad();if(LB.busy)return;LB.busy=1;LB.err='';render();const wait=window.WalkLoading?.begin('กำลังโหลดอันดับผู้เล่น…');try{if(!window.WALK_LEADER_URL)throw Error('ยังไม่ได้ตั้งค่ากระดานออนไลน์');const response=await fetch(window.WALK_LEADER_URL,{method:'GET',headers:{apikey:SB_KEY,'x-soulbeast-environment':'live'},cache:'no-store',signal:AbortSignal.timeout(25000)});const data=await response.json();if(!response.ok||!data.ok||!Array.isArray(data.rows))throw Error('โหลดอันดับไม่สำเร็จ');LB.rows=data.rows;}catch(e){LB.err='โหลดอันดับออนไลน์ไม่สำเร็จ กรุณาตรวจอินเทอร์เน็ตแล้วกดรีเฟรช';LB.rows=LB.rows||[];}finally{wait?.finish();LB.busy=0;render()}};
 if(S.screen==='leader')lbLoad();
+if(S.screen==='mail'&&WALK_ONLINE)void handlers.cwMailRefresh();
 
 CON.fusionSeal={n:'ผนึกรวมร่าง',d:'สิทธิ์ถาวรเฉพาะตัวละคร · แปลงกายเป็นอสูรที่พกติดตัวบนแผนที่ประเทศ · ซื้อด้วยคูปองเท่านั้น',rareLoot:true,bagAction:'useFusion',bagDisabled:()=>params.get('walkScene')!=='country'||!!(S.battle&&!S.battle.over)};
 ITEM_ART.fusionSeal='assets/world-quests/beast-fusion-seal-v1.png.webp';

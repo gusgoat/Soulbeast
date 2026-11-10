@@ -257,40 +257,23 @@ function abandonRanked(){
 $('rank-leave').onclick=abandonRanked;
 $('rank-leave-respawn').onclick=abandonRanked;
 
-const rankDate=value=>new Date(value).toLocaleString('th-TH',{timeZone:'Asia/Bangkok',dateStyle:'short',timeStyle:'short'});
-async function loadRankMail(id=null){
- const status=$('rank-mail-status'),list=$('rank-mail-list');
- status.textContent='กำลังโหลดจดหมาย…';
- try{
-  const {connectAccounts}=await import('../../client/account-client.mjs?v=admin-session-20261107');
-  const client=connectAccounts(()=>{});
-  const rows=await client.request('/rest/v1/rpc/sb_colosseum_rank_mail',{p_read:id},await client.sessions.token());
-  status.textContent=rows.length?'':'ยังไม่มีจดหมาย';
-  if(id){
-   const row=rows.find(message=>message.id===id);
-   if(!row){list.replaceChildren();return;}
-   const reason=row.violation==='abandon'?'ออกก่อนจบแมตช์':'ทำคะแนนต่ำกว่า 20 และไม่มีการช่วยต่อสู้';
-   const block=row.permanent?'ระงับการเล่นจัดอันดับถาวร':'ระงับการเล่นถึง '+rankDate(row.blocked_until);
-   const back=node('button','กลับกล่องจดหมาย','secondary');
-   back.onclick=()=>void loadRankMail();
-   list.replaceChildren(node('h3',reason),node('p',rankDate(row.at)),
-    node('p',block),node('p','แต้มที่ได้ในแมตช์ '+row.delta+' · ครั้งที่ '+row.daily_count+' ของวัน และ '+row.monthly_count+' ของเดือน'),back);
-  }else{
-   list.replaceChildren(...rows.map(row=>{
-    const letter=node('button',(row.read?'':'● ')+'จดหมายเตือน · '+rankDate(row.at),'secondary');
-    letter.onclick=()=>void loadRankMail(row.id);
-    return letter;
-   }));
-  }
- }catch{
-  status.textContent='โหลดจดหมายไม่สำเร็จ ลองเปิดอีกครั้ง';
+const entryForm=$('entry-form');
+const selectedMode=()=>entryForm.elements.mode.value;
+function updateModeOptions(){
+ const survival=selectedMode()==='survival';
+ $('create-private').textContent=survival?'สร้างห้องเอาตัวรอด':'สร้างห้องทีม';
+ $('practice-label').textContent=survival?'ทดลองเอาตัวรอด 10 คน':'ทดลอง 5 ต่อ 5 กับบอท';
+ $('practice-detail').textContent=survival?'คุณ 1 คน · คู่แข่งบอท 9 ตัว':'เล่นคนเดียว · เพื่อนบอท 4 · คู่แข่งบอท 5';
+ for(const section of $('rules').querySelectorAll('[data-rules-mode]')){
+  section.hidden=section.dataset.rulesMode!==selectedMode();
  }
 }
-$('open-rank-mail').onclick=()=>{
- $('rank-mail').showModal();
- $('rank-mail-list').replaceChildren();
- void loadRankMail();
-};
+entryForm.addEventListener('change',event=>{
+ if(event.target.name==='mode')updateModeOptions();
+});
+updateModeOptions();
+$('open-rules').onclick=()=>$('rules').showModal();
+
 function applyState(next){
  const arrival=performance.now();
  const entering=opening||!state;
@@ -413,24 +396,6 @@ function renderMatchResults(){
  }
  panel.replaceChildren(...sections);
 }
-$('open-rankings').onclick=async()=>{
- const dialog=$('rankings'), note=$('rankings-note'), list=$('rankings-list');
- list.replaceChildren();
- note.textContent='กำลังโหลดกระดานคะแนน…';
- dialog.showModal();
- try{
-  const base=gameWeb?serverURL:location.origin;
-  const response=await fetch(new URL('/rankings',base),{signal:AbortSignal.timeout(15_000)});
-  const result=await response.json();
-  if(!response.ok)throw Error(result.error);
-  if(!result.rows.length){note.textContent='ยังไม่มีผลการแข่งที่คิดแต้มสะสม';return;}
-  note.textContent='';
-  list.append(scoreTable('อันดับโคลอสเซียม',['อันดับ','ผู้เล่น','แต้มสะสม'],
-   result.rows.map(row=>[String(row.rank),playerName(row.name,row.score),String(row.score)])));
- }catch{
-  note.textContent='โหลดกระดานคะแนนไม่สำเร็จ ลองเปิดอีกครั้ง';
- }
-};
 
 function renderLobby(){
  const key=JSON.stringify([state.players,state.canStart,state.host,state.canManageBots]);if(key===lobbyKey)return;lobbyKey=key;
@@ -739,7 +704,6 @@ if(selectedCharacter){
  $('selected-profile').hidden=false;
 }
 if(gameWeb&&accountContext?.environment==='live'&&selectedCharacter){
- $('open-rank-mail').hidden=false;
  void loadSelectedRating();
 }
 if(!onlineEnabled){
@@ -751,12 +715,17 @@ if(/^[A-F0-9]{8}$/i.test(fromLink??''))$('code').value=fromLink.toUpperCase();
 $('entry-form').onsubmit=event=>{
  event.preventDefault();
  if(opening||queued||state)return;
- const type=event.submitter?.value??'create',code=$('code').value.trim().toUpperCase();
+ const action=event.submitter?.value??'create',mode=selectedMode(),code=$('code').value.trim().toUpperCase();
+ let type=action;
+ if(mode==='survival'){
+  if(action==='create')type='survival';
+  if(action==='practice')type='survivalPractice';
+ }
  if(!practiceType(type)&&!onlineEnabled)return;
  if(gameWeb&&!selectedCharacter){location.assign('../../accounts.html');return;}
  if(type==='join'&&!/^[A-F0-9]{8}$/.test(code)){$('notice').textContent='กรอกรหัสห้อง 8 ตัวก่อน';return;}
  if(ws){const old=ws;ws=null;old.close();}
- connect({type,code,mode:$(type==='ranked'?'rank-mode':'public-mode').value,name:$('name').value,cls:$('cls').value,lv:$('level').value});
+ connect({type,code,mode,name:$('name').value,cls:$('cls').value,lv:$('level').value});
 };
 $('ready').onclick=()=>{if(!leaving)send({type:'ready',ready:!own()?.ready});};
 $('start').onclick=()=>{if(!leaving)send({type:'start'});};
