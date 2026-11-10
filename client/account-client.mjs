@@ -86,7 +86,7 @@ export class AccountClient{
  async resetPassword(password){if(!this.recovery)throw Error('login_required');await this.request('/auth/v1/user',{password},await this.sessions.token(),'PUT');this.recovery=false;}
  async game(action,extra={},env='test'){
   const gacha=action==='gacha_draw'||action==='gacha_status';
-  const signal=gacha?AbortSignal.timeout(15000):null;
+  const signal=gacha?AbortSignal.timeout(action==='gacha_draw'?25000:15000):null;
   const post=token=>this.fetcher(BASE+'/functions/v1/soulbeast-accounts',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+token,'Content-Type':'application/json','x-soulbeast-environment':env},body:JSON.stringify({action,...extra}),signal:signal??AbortSignal.timeout(60000)});
   let r=await post(await (action==='save'&&env==='live'?this.verifySession():this.sessions.token()));if(r.status===401)r=await post(await this.verifySession());
   let v;
