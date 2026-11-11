@@ -40,3 +40,9 @@ dialog.production-shop::backdrop{background:#020a12bb;backdrop-filter:blur(4px)}
 .request-wait-panel p{font-size:17px;line-height:1.6;margin:0;color:#f3e2b5}
 @keyframes requestFloat{50%{transform:translateY(-7px);filter:drop-shadow(0 0 12px #72d2eeaa)}}@keyframes requestOrbit{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.request-wait-art img,.request-wait-art:after{animation:none}}
+
+#qrTopup { width: min(94vw, 31rem); max-height: 90dvh; overflow: auto; background: #0b2030; color: #f8e9c9; border: 1px solid #a6844e; border-radius: 12px; padding: 1rem; }
+#qrTopup::backdrop { background: #061421cc; }
+#qrTopup .merchant-qr { display: block; width: min(100%, 265px); height: auto; margin: 1rem auto; }
+#qrTopup p, #manualHistory li { overflow-wrap: anywhere; }
+#qrTopup input { max-width: 100%; }

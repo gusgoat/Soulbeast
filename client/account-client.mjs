@@ -53,7 +53,7 @@ export class AccountClient{
  }
  async request(path,body,token,method='POST'){
   const r=await this.fetcher(BASE+path,{method,headers:{apikey:KEY,'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(45000)}),v=await r.json();
-  if(!r.ok||v.ok===false||v.error)throw Object.assign(Error(v.error_description||v.msg||v.error||'request_failed'),{code:v.error_code||v.code||v.error,status:r.status});return v;
+  if(!r.ok||v.ok===false||v.error)throw Object.assign(Error(v.error_description||v.msg||v.error||v.message||'request_failed'),{code:v.error_code||v.code||v.error,status:r.status});return v;
  }
  async acceptCallback(hash){
   const p=new URLSearchParams(hash.replace(/^#/,''));

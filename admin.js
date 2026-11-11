@@ -13,11 +13,11 @@ async function request(path,body,token){let response;try{response=await fetch(AP
 async function gameClient(){if(!sharedGameClient){const {AccountClient}=await import('./client/account-client.mjs?v=admin-session-20261107');sharedGameClient=new AccountClient({storage:localStorage,gameSession:false,lock:fn=>navigator.locks?.request?navigator.locks.request('soulbeast_shop_test_auth_v1-refresh',fn):fn()});}return sharedGameClient;}
 async function useGameSession(email=null){const c=await gameClient();if(!c.sessions.read())return false;const cachedEmail=c.sessions.read()?.user?.email;if(email&&cachedEmail&&cachedEmail.toLowerCase()!==email.toLowerCase())return false;const user=await c.identity();if(email&&user.email?.toLowerCase()!==email.toLowerCase())return false;const existing=session;session={...c.sessions.read(),sharedGame:true};try{await enter();sessionStorage.removeItem(STORE);notice('ใช้เซสชันเกมเดิมเข้าสู่แอดมินแล้ว · ไม่ล็อกเอาต์เกม');return true;}catch(e){session=existing;throw e;}}
 async function refreshSession(){if(session?.sharedGame){const c=await gameClient();await c.sessions.token(true);session={...c.sessions.read(),sharedGame:true};return;}if(!session?.refresh_token)throw Error('invalid_credentials');const next=await request('/auth/v1/token?grant_type=refresh_token',{refresh_token:session.refresh_token});setSession(next);}
-async function rpc(action,payload={}){if(session?.sharedGame){const c=await gameClient();session={...c.sessions.read(),access_token:await c.sessions.token(),sharedGame:true};}if(!session?.access_token)throw Error('invalid_credentials');try{return await request('/rest/v1/rpc/sb_mobile_admin',{p_action:action,p_payload:payload},session.access_token);}catch(e){if(e.status===401){await refreshSession();return request('/rest/v1/rpc/sb_mobile_admin',{p_action:action,p_payload:payload},session.access_token);}throw e;}}
+async function rpc(action,payload={},name='sb_mobile_admin'){if(session?.sharedGame){const c=await gameClient();session={...c.sessions.read(),access_token:await c.sessions.token(),sharedGame:true};}if(!session?.access_token)throw Error('invalid_credentials');try{return await request('/rest/v1/rpc/'+name,{p_action:action,[name==='sb_manual_topup_admin'?'p_data':'p_payload']:payload},session.access_token);}catch(e){if(e.status===401){await refreshSession();return request('/rest/v1/rpc/'+name,{p_action:action,[name==='sb_manual_topup_admin'?'p_data':'p_payload']:payload},session.access_token);}throw e;}}
 async function working(fn){if(busy)return;busy=true;$('busy').hidden=false;$('busy').showModal();const buttons=[...document.querySelectorAll('button')].map(b=>[b,b.disabled]);buttons.forEach(([b])=>b.disabled=true);try{await fn();}catch(e){notice(message(e),true);}finally{buttons.forEach(([b,d])=>b.disabled=d);busy=false;$('busy').close();$('busy').hidden=true;updateDeleteEnabled();}}
-function clearPrivateView(){players=[];selected=null;prepared=null;confirmation=null;adminEmail='';pending=null;$('players').textContent='';$('history').textContent='';$('dashboard').hidden=true;$('logout').hidden=true;$('auth').hidden=false;$('recovery').hidden=true;for(const d of document.querySelectorAll('dialog[open]'))d.close();}
+function clearPrivateView(){players=[];selected=null;prepared=null;confirmation=null;adminEmail='';pending=null;$('players').textContent='';clearTopups();$('history').textContent='';$('dashboard').hidden=true;$('logout').hidden=true;$('auth').hidden=false;$('recovery').hidden=true;for(const d of document.querySelectorAll('dialog[open]'))d.close();}
 function restoreIntent(){try{const p=JSON.parse(sessionStorage.getItem(INTENT)||'null');pending=p?.email===adminEmail?p:null;}catch{pending=null;}}
-async function enter(){const id=await rpc('identity');adminEmail=id.email;$('identity').textContent=adminEmail;$('auth').hidden=true;$('recovery').hidden=true;$('dashboard').hidden=false;$('logout').hidden=false;restoreIntent();await loadPlayers();if(pending)notice('มีรายการที่ยังไม่ทราบผล กรุณาตรวจรายการค้างก่อนทำรายการใหม่',true);}
+async function enter(){const id=await rpc('identity');adminEmail=id.email;$('identity').textContent=adminEmail;$('auth').hidden=true;$('recovery').hidden=true;$('dashboard').hidden=false;$('logout').hidden=false;restoreIntent();await loadPlayers();await loadTopupsSafely();if(pending)notice('มีรายการที่ยังไม่ทราบผล กรุณาตรวจรายการค้างก่อนทำรายการใหม่',true);}
 async function loadPlayers(){const r=await rpc('players');players=r.players;$('playerCount').textContent=players.length;$('bannedCount').textContent=players.filter(p=>p.banned===true).length;$('updatedAt').textContent=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});renderPlayers();}
 function renderPlayers(){const query=$('search').value.toLocaleLowerCase(),sort=$('sort').value,list=players.filter(p=>[p.name,p.code,p.class].some(x=>String(x||'').toLocaleLowerCase().includes(query))).slice();list.sort((a,b)=>sort==='name'?String(a.name).localeCompare(String(b.name),'th'):Number(b[sort]||0)-Number(a[sort]||0)||String(a.code).localeCompare(String(b.code)));$('players').innerHTML=list.length?list.map(p=>`<article class="player"><div class="player-head"><h3>${esc(p.name||'ไร้ชื่อ')}</h3><span class="badge ${p.banned?'banned':''}">${p.banned?'ถูกแบน':'ปกติ'}</span></div><p class="code">${esc(p.code)}</p><p class="muted">Lv ${esc(p.level)} · ${esc(p.class)}</p><div class="metrics"><div><span>คะแนน</span><b>${fmt(p.score)}</b></div><div><span>คูปอง</span><b>${fmt(p.coupons)}</b></div><div><span>เงิน</span><b>${fmt(p.gold)}</b></div><div><span>อสูรตำนาน / อุปกรณ์ตำนาน</span><b>${fmt(p.legendaryPets)} / ${fmt(p.legendaryGear)}</b></div></div><p class="fine">ออนไลน์ล่าสุด ${p.lastOnline?esc(new Date(p.lastOnline).toLocaleString('th-TH')):'ยังไม่มีข้อมูล'}${p.inactiveProtected?' · ยกเว้นลบอัตโนมัติ':''}</p>${p.coupons==null?'<p class="fine">ยังไม่มีบัญชีคูปอง</p>':''}<button class="quiet" data-player="${esc(p.code)}">ดูข้อมูล / จัดการ</button></article>`).join(''):'<div class="panel muted">ไม่พบผู้เล่นตามคำค้น</div>';}
 function openPlayer(code){selected=players.find(p=>p.code===code);if(!selected)return;prepared=null;$('manageNotice')?.remove();$('selectedName').textContent=selected.name;$('selectedCode').textContent=selected.code;$('selectedInfo').textContent=`Lv ${selected.level} · ${selected.class} · คะแนน ${fmt(selected.score)} · คูปอง ${fmt(selected.coupons)}`;$('couponForm').reset();$('banReason').value='';$('banTitle').textContent=selected.banned?'สถานะ: ถูกแบน':'สถานะ: ปกติ';$('banButton').textContent=selected.banned?'ปลดแบนผู้เล่น':'แบนผู้เล่น';$('deleteStage').hidden=true;$('deleteCode').value='';$('deleteAgree').checked=false;updateDeleteEnabled();$('manage').showModal();}
@@ -46,5 +46,84 @@ $('deleteCode').addEventListener('input',updateDeleteEnabled);$('deleteAgree').a
 $('deleteForm').addEventListener('submit',e=>{e.preventDefault();if(!prepared||$('deleteCode').value!==selected.code||!$('deleteAgree').checked)return;working(()=>mutate('confirm_delete',{code:selected.code,confirmation:$('deleteCode').value,token:prepared.token}));});
 for(const d of document.querySelectorAll('dialog'))d.addEventListener('cancel',e=>{if(busy)e.preventDefault();});
 $('historyRefresh').addEventListener('click',()=>working(async()=>{const r=await rpc('history');$('history').innerHTML=r.events.length?r.events.map(e=>`<div class="history-entry"><b>${esc(e.code)}</b> · ${esc(e.operation==='permanent-delete'?'ลบไอดีถาวร':e.banned_before!==e.banned_after?(e.banned_after?'แบนผู้เล่น':'ปลดแบนผู้เล่น'):'ปรับคูปอง')}${e.coupons_before!=null?` · ${fmt(e.coupons_before)} → ${fmt(e.coupons_after)} คูปอง`:''}<small>${esc(new Date(e.created_at).toLocaleString('th-TH'))} · ${esc(e.event_id)}</small></div>`).join(''):'<p class="muted">ยังไม่มีรายการ</p>';}));
+let reviewedTopup=null, slipUrl=null;
+const topupApi=(action,data={})=>rpc(action,data,'sb_manual_topup_admin');
+const topupStatus={pending:'รอตรวจยอด',credited:'ส่งคูปองแล้ว',rejected:'ไม่อนุมัติ'};
+const topupPrice=satang=>new Intl.NumberFormat('th-TH',{style:'currency',currency:'THB'}).format(satang/100);
+function topupLabel(order){
+ const name=players.find(player=>player.code===order.code)?.name;
+ const pack=order.promotion?'แพ็กราคาพิเศษ (ครั้งเดียวต่อตัวละคร)':'แพ็กปกติ';
+ return `${pack} ${fmt(order.coupons)} คูปอง · ยอดที่ต้องได้รับ ${topupPrice(order.amount_satang)} · ${name?name+' · ':''}${order.code}`;
+}
+function clearSlip(){
+ if(slipUrl)URL.revokeObjectURL(slipUrl);
+ slipUrl=null;reviewedTopup=null;
+ $('topupSlipImage').removeAttribute('src');$('topupSlipImage').hidden=true;
+ $('topupDetails').textContent='';$('topupFeedback').textContent='';
+ $('topupApproval').reset();$('topupRejection').reset();
+}
+function clearTopups(){clearSlip();$('topupList').replaceChildren();$('topupCount').textContent='';}
+async function loadTopupsSafely(){
+ try{await loadTopups();}catch{$('topupList').replaceChildren();$('topupCount').textContent='โหลดรายการเติมผ่าน QR ไม่สำเร็จ';}
+}
+async function loadTopups(){
+ const data=await topupApi('list');
+ $('topupCount').textContent=`รอตรวจ ${fmt(data.pending_count)} รายการ`;
+ $('topupList').replaceChildren();
+ for(const order of data.orders){
+  const item=document.createElement('article');item.className='history-entry';
+  const title=document.createElement('b');title.textContent=topupLabel(order);
+  const details=document.createElement('p');details.textContent=`${topupStatus[order.status]} · ${new Date(order.submitted_at).toLocaleString('th-TH')} · แพ็ก ${order.pack_id} · ${order.id}`;
+  const button=document.createElement('button');button.className='quiet';button.textContent=order.status==='pending'?'เปิดสลิปและตรวจยอด':'ดูสลิปและรายละเอียด';
+  button.onclick=()=>openTopup(order);
+  item.append(title,details,button);$('topupList').append(item);
+ }
+}
+async function openTopup(order){
+ const dialog=$('topupReview');
+ clearSlip();reviewedTopup=order;
+ $('topupDetails').textContent=topupLabel(order)+' · '+order.id+(order.bank_reference?' · เลขอ้างอิง '+order.bank_reference:'')+(order.rejection_reason?' · '+order.rejection_reason:'');
+ $('topupApproval').hidden=true;$('topupRejection').hidden=true;
+ $('topupFeedback').textContent='กำลังโหลดสลิป…';dialog.showModal();
+ try{
+  const slip=await topupApi('slip',{order_id:order.id});
+  if(reviewedTopup!==order||!dialog.open)return;
+  if(!['image/png','image/jpeg'].includes(slip?.mime))throw Error('invalid_slip');
+  slipUrl=URL.createObjectURL(new Blob([Uint8Array.from(atob(slip.content),c=>c.charCodeAt(0))],{type:slip.mime}));
+  $('topupSlipImage').src=slipUrl;$('topupSlipImage').hidden=false;
+  $('topupApproval').hidden=order.status!=='pending';$('topupRejection').hidden=order.status!=='pending';$('topupFeedback').textContent='';
+ }catch{if(reviewedTopup===order)$('topupFeedback').textContent='เปิดสลิปไม่สำเร็จ กรุณาปิดแล้วลองใหม่';}
+}
+let decidingTopup=false;
+async function decideTopup(action,data){
+ if(decidingTopup||!reviewedTopup)return;
+ decidingTopup=true;
+ const buttons=[...$('topupReview').querySelectorAll('form button')];buttons.forEach(button=>button.disabled=true);
+ try{
+  const result=await topupApi(action,{order_id:reviewedTopup.id,...data});
+  $('topupReview').close();notice(topupStatus[result.status]);
+  await loadTopupsSafely();
+  if(result.status==='credited')try{await loadPlayers();}catch{}
+ }catch(error){
+  const messages={bank_reference_used:'เลขอ้างอิงนี้ใช้อนุมัติรายการอื่นแล้ว',amount_mismatch:'ยอดเงินจริงไม่ตรงกับราคาแพ็ก',bank_reference_required:'กรุณากรอกเลขอ้างอิงธุรกรรมให้ครบ',character_not_owned:'ไม่พบตัวละครผู้รับที่ใช้งานอยู่'};
+  $('topupFeedback').textContent=messages[error.message]||'บันทึกไม่สำเร็จ กรุณาอัปเดตรายการเพื่อตรวจผลก่อนลองอีกครั้ง';
+ }finally{decidingTopup=false;buttons.forEach(button=>button.disabled=false);}
+}
+$('topupRefresh').onclick=()=>working(loadTopupsSafely);
+setInterval(()=>{if(session&&adminEmail&&!busy&&!decidingTopup&&!document.hidden&&!$('topupReview').open)loadTopups().catch(()=>{});},30000);
+$('topupClose').onclick=()=>$('topupReview').close();
+$('topupReview').addEventListener('close',clearSlip);
+$('topupApproval').onsubmit=event=>{
+ event.preventDefault();
+ const amount=$('topupAmount').value.trim();
+ if(!/^\d{1,7}(?:\.\d{1,2})?$/.test(amount)){$('topupFeedback').textContent='กรอกยอดเงิน เช่น 99 หรือ 99.50';return;}
+ if(!$('topupChecked').checked)return;
+ const [baht,satang='']=amount.split('.');
+ decideTopup('approve',{amount_satang:Number(baht)*100+Number(satang.padEnd(2,'0')),bank_reference:$('topupBankRef').value.trim()});
+};
+$('topupRejection').onsubmit=event=>{
+ event.preventDefault();decideTopup('reject',{reason:$('topupRejectReason').value.trim()});
+};
+
 async function start(){try{$('useGameSession').hidden=!JSON.parse(localStorage.getItem('soulbeast_shop_test_auth_v1')||'null')?.access_token;}catch{}try{session=JSON.parse(sessionStorage.getItem(STORE)||'null');}catch{session=null;}const hash=new URLSearchParams(location.hash.slice(1));if(hash.has('access_token')){setSession({access_token:hash.get('access_token'),refresh_token:hash.get('refresh_token')});history.replaceState(null,'',location.pathname);if(hash.get('type')==='recovery'){/* The server verifies the recovery session when updating the password. */$('auth').hidden=true;$('recovery').hidden=false;return;}}if(session)await working(async()=>{try{await enter();}catch(e){if(e.status===401||e.code==='42501'||String(e.message).includes('admin_access_denied')){setSession(null);clearPrivateView();}throw e;}});}
 start();
