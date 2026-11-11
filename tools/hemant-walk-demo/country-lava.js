@@ -11,6 +11,7 @@ const vents=[
  [[-.23,.07],[.16,.22]],
  [[-.25,.14],[.24,-.15]]
 ];
+const volcanoVents=[[.54,.15,.11],[.31,.48,.06],[.70,.66,.06]];
 
 function create(data,nav,terrain){
  const pools=[],cracks=[],flatten=data.flatten;
@@ -132,13 +133,42 @@ function create(data,nav,terrain){
   }
  }
  function drawVolcanoHeat(ctx,x,y,width,height,time,compact,viewWidth,viewHeight){
-  const vents=[[.54,.15,.11],[.31,.48,.06],[.70,.66,.06]];
-  for(let i=0;i<(compact?2:vents.length);i++){
-   const [u,v,size]=vents[i];
+  for(let i=0;i<(compact?2:volcanoVents.length);i++){
+   const [u,v,size]=volcanoVents[i];
    heat(ctx,x+(u-.5)*width,y+(v-.94)*height,width*size,time,u*4,compact,viewWidth,viewHeight);
   }
  }
- return {pools,cracks,drawGround,drawGroundHeat,drawVolcanoHeat};
+ // Use the same pool art, projection and vent positions as the heat layer.
+ const lights=[];
+ function nightLights(scenery,sx,sy,z,w,h,images,effects){
+  lights.length=0;
+  if(data.countryId!=='red')return lights;
+  function add(x,y,rx,ry,seed,power){
+   if(x+rx>0&&x-rx<w&&y+ry>0&&y-ry<h)lights.push({x,y,rx,ry,seed,power});
+  }
+  for(const pool of pools){
+   const image=poolImage(pool,images);
+   if(!image?.naturalWidth)continue;
+   const width=pool.radius*2.15*z,height=width*image.naturalHeight/image.naturalWidth;
+   add(sx(pool.x),sy(pool.y)+.10*height,width*1.45,height*1.65,pool.seed,.92);
+  }
+  for(const crack of cracks){
+   if(!images.lavaFissure?.naturalWidth)break;
+   const width=crack.length*z;
+   add(sx(crack.x),sy(crack.y),width*.8,width*.27,crack.seed,.48);
+  }
+  for(const o of scenery){
+   if(o.kind!=='mountain'||o.border||!images.mountain?.naturalWidth)continue;
+   const width=o.w*z,height=width*images.mountain.naturalHeight/images.mountain.naturalWidth;
+   const x=sx(o.x),y=sy(o.y);
+   for(let i=0;i<(effects===2?volcanoVents.length:2);i++){
+    const [u,v,size]=volcanoVents[i],radius=width*size;
+    add(x+(u-.5)*width,y+(v-.94)*height,radius*2.8,radius*1.95,o.x*.002+i,.87);
+   }
+  }
+  return lights;
+ }
+ return {pools,cracks,drawGround,drawGroundHeat,drawVolcanoHeat,nightLights};
 }
 const api={art,create};g.CountryLava=api;
 if(typeof module!=='undefined')module.exports=api;
