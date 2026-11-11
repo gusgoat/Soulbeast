@@ -11,5 +11,15 @@ body.coupon-page{color:#edf2f5}
 .coupon-page #packs{padding:12px}
 .coupon-page .coupon-hero{display:block;width:min(100%,180px);height:auto;margin:16px auto;border-radius:12px}
 .coupon-page .coupon-topup-link{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid #d9b35b;border-radius:9px;background:#254552;color:#ffe1a0;font-weight:700;text-decoration:none}
+.coupon-page .coupon-invite,.coupon-page .invite-dialog button{min-height:44px;padding:0 14px;border:1px solid #d9b35b;border-radius:9px;background:#254552;color:#ffe1a0;font:inherit;cursor:pointer}
+.coupon-page .coupon-invite{margin:6px 6px 0}
+.coupon-page .coupon-invite[hidden]{display:none}
+.coupon-page .invite-dialog{box-sizing:border-box;width:min(30rem,calc(100vw - 1.5rem));max-height:calc(100dvh - 2rem);padding:1rem;overflow:auto;background:#0d2432;color:#ffe1a0;border:1px solid #d9b35b;border-radius:14px}
+.coupon-page .invite-dialog::backdrop{background:#050d17ba}
+.invite-dialog .invite-body{display:grid;gap:.55rem;margin-bottom:.8rem}
+.invite-dialog .invite-body p,.invite-dialog h2{margin:0}
+.invite-dialog .invite-copy-row{display:grid;gap:.3rem}
+.invite-dialog .invite-copy-row div{display:flex;gap:.5rem;align-items:center}
+.invite-dialog .invite-copy-row input{box-sizing:border-box;min-width:0;flex:1;min-height:44px;margin:0;padding:.4rem;color:#fff4dc;border:1px solid #887342;border-radius:6px;background:#071923;font:inherit}
 .coupon-page a.coupon-pack-button{display:grid;place-items:center;aspect-ratio:1;padding:8px;box-sizing:border-box;background:radial-gradient(ellipse at center,#2b536b66,transparent 72%)}
 @media(max-width:420px){.coupon-page .coupon-item{gap:9px;align-items:flex-start}.coupon-page .coupon-item>img{width:60px;height:60px;flex:none}.coupon-page #couponItems,.coupon-page #premiumNameplates{padding:10px}.coupon-page .coupon-pack-caption>strong{font-size:16px}.coupon-page .coupon-pack-price{font-size:19px}}

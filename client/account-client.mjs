@@ -78,9 +78,16 @@ export class AccountClient{
   this.sessions.save({...a,expires_at:a.expires_at||Math.floor(Date.now()/1000)+a.expires_in});
   this.user=user;this.onChange();
  }
- async signup(email,password){
-  if(this.gate.remaining())throw Error('email_wait');this.gate.wait();
-  return this.request('/auth/v1/signup?redirect_to='+encodeURIComponent(this.redirect),{email,password});
+ async signup(email,password,inviteCode=''){
+  const invite=String(inviteCode||'').trim().toUpperCase();
+  if(this.gate.remaining())throw Error('email_wait');
+  if(invite&&(!/^[0-9A-F]{16}$/.test(invite)||await this.request('/rest/v1/rpc/sb_referral_code_valid',{p_code:invite})!==true))
+   throw Object.assign(Error('invalid_referral_code'),{code:'invalid_referral_code'});
+  this.gate.wait();
+  return this.request('/auth/v1/signup?redirect_to='+encodeURIComponent(this.redirect),{email,password,...(invite?{data:{soulbeast_invite:invite}}:{})});
+ }
+ async referralStatus(characterCode){
+  return this.request('/rest/v1/rpc/sb_referral_status',{p_character:characterCode},await this.sessions.token());
  }
  async recover(email){if(this.gate.remaining())throw Error('email_wait');this.gate.wait();return this.request('/auth/v1/recover?redirect_to='+encodeURIComponent(this.redirect),{email});}
  async resetPassword(password){if(!this.recovery)throw Error('login_required');await this.request('/auth/v1/user',{password},await this.sessions.token(),'PUT');this.recovery=false;}

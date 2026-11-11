@@ -12,7 +12,7 @@
 <!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
 <script>if(location.hostname==='gusgoat.github.io'&&/^\/Soulbeast\/(?:index\.html)?$/.test(location.pathname))location.replace('./accounts.html'+location.search+location.hash);window.WALK_LEADER_URL="https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api";window.SHEET_URL="";</script>
 <link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
-<link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/quest-events.css?v=quest-touch-1"></head>
+<link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/quest-events.css?v=quest-touch-1"><script src="/Soulbeast/tools/town-walk-demo/walk-tutorial.js?v=1"></script></head>
 <body style="margin:0;height:100%">
 <title>ตำนานผนึกอสูร</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5397,7 +5397,7 @@ const forestSteal=steal;steal=function(u,t){if(S.battle?.towerRun){blog('หอ�
 function forestAutoLocked(){return !!S.zone&&S.P.lv<10;}
 const forestAutoAllowed=teamAutoAllowed;teamAutoAllowed=function(){return !forestAutoLocked()&&forestAutoAllowed();};
 const forestAutoUnit=teamAutoUnit;teamAutoUnit=function(u){return forestAutoLocked()&&u?.side==='ally'?false:forestAutoUnit(u);};
-const forestStartBattle=startBattle;startBattle=function(...args){if(S.zone&&S.P.lv<10){S.ui.autoTeam=false;S.ui.autoPet=false;}const out=forestStartBattle(...args);if(S.zone&&S.P.lv>=10&&!S.P.forestAutoIntroduced){S.P.forestAutoIntroduced=true;S.ui.forestAutoNotice=true;save();render();}return out;};
+const forestStartBattle=startBattle;startBattle=function(...args){if(S.zone&&S.P.lv<10){S.ui.autoTeam=false;S.ui.autoPet=false;}const out=forestStartBattle(...args);if(S.zone&&S.P.lv>=10&&!S.P.forestAutoIntroduced){S.P.forestAutoIntroduced=true;S.ui.forestAutoNotice=parent===window;save();render();}return out;};
 handlers.forestAutoNotice=function(){S.ui.forestAutoNotice=false;render();};
 const forestBattleView=vBattle;vBattle=function(){let html=forestBattleView();if(forestAutoLocked())html=html.replace(/<button\b[^>]*data-a="bt"[^>]*data-v="auto:1"[^>]*>[\s\S]*?<\/button>/g,'');if(S.ui.forestAutoNotice&&S.zone)html='<div class="card forest-auto-notice" role="status"><b>ปลดล็อกต่อสู้อัตโนมัติแล้ว!</b><p>เลเวล 10 ใช้ปุ่มออโต้ทีมให้ตัวละครและอสูรเลือกสกิลเองได้ กดปิดเพื่อกลับมาเล่นเอง</p><button class="btn sm" data-a="forestAutoNotice">เข้าใจแล้ว</button></div>'+html;return html;};
 function villageGearEligible(id){const it=EQ[id];return !!it&&it.slot==='weapon'&&!!it.craft&&!it.legend&&!it.worldLegend;}
@@ -6436,6 +6436,9 @@ const Tutorial={
  ready(){return this.enabled()&&!S.ui.trapNotice&&!S.ui.cinema&&!S.ui.confirm&&!this.online()&&!S.zone?.secretSession&&!S.zone?.riddleSession&&!S.zone?.specialSession&&!WorldTales.session();},
  update(){
   if(!this.enabled())return;const t=this.state(),b=S.battle;
+  if(this.forestBattle()&&t.done.battle&&!t.done.captureIntro&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(sealable)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)&&!t.active)this.set('captureIntro');
+  if(this.forestBattle()&&t.done.captureIntro&&!t.done.capture&&t.active==null&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(e=>sealable(e)&&e.hp/e.st.hp<=.5)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)){const index=b.enemies.findIndex(e=>sealable(e)&&e.hp/e.st.hp<=.5);b.target=index;this.set('capture');}
+  if(parent!==window)return;
   // Old saves can lack lesson flags even after real forest play. Entering from
   // the city shortcut must count too; do not require the nav hint's exact path.
   if(!t.reviewBasic){
@@ -6461,8 +6464,7 @@ const Tutorial={
   if(t.active==='world'&&S.screen==='world')this.set('worldTeam');
   if(t.active==='guildwar'&&S.screen==='guildwar')this.set('warTeam');
   if(b?.towerRun&&['tower','towerEnter'].includes(t.active))this.finish('tower');
-  if(this.forestBattle()&&t.done.battle&&!t.done.captureIntro&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(sealable)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)&&!t.active)this.set('captureIntro');
-  if(this.forestBattle()&&t.done.captureIntro&&!t.done.capture&&t.active==null&&uById(b.cur)?.kind==='player'&&b.menu!=='wait'&&b.enemies.some(e=>sealable(e)&&e.hp/e.st.hp<=.5)&&Object.keys(CON).some(k=>CON[k].seal&&S.P.items[k]>0)){const index=b.enemies.findIndex(e=>sealable(e)&&e.hp/e.st.hp<=.5);b.target=index;this.set('capture');}
+
   if(S.screen!=='town'||S.zone||b||t.active||S.ui.cinema||this.online())return;
   const d=t.done,lv=S.P.lv;
   if(t.firstBoss&&!d.hospital)return this.set('hospital');
@@ -6562,7 +6564,7 @@ const tutorialBattleLater=battleLater;battleLater=function(fn,ms){if(Tutorial.ho
 const tutorialEndBattle=endBattle;endBattle=function(res){const b=S.battle,t=Tutorial.state(),first=b&&!b.over&&res==='win'&&b.kind==='boss';const out=tutorialEndBattle(res);if(t&&first){t.firstBoss=true;save();}return out;};
 const tutorialCamp=vCamp;vCamp=function(){const a=Tutorial.state()?.active;return Tutorial.enabled()&&['raidDefense','raidPractice','raidResult'].includes(a)?activityBackdrop('camp','ค่ายครูฝึก · บทสอนจู่โจม')+(a==='raidDefense'?Tutorial.defenseView():Tutorial.practiceView()):tutorialCamp();};
 const tutorialCampHandler=handlers.camp;handlers.camp=function(...a){return Tutorial.openRaid()?undefined:tutorialCampHandler(...a);};
-const tutorialSettings=vSettings;vSettings=function(){const t=Tutorial.state();return tutorialSettings()+'<section class="card stack"><h3>บทสอนเล่นด้วยภาพ</h3><p>จำแยกแต่ละบทตามตัวละคร</p><button class="btn" data-a="tutorialToggle">'+(t?.enabled?'พักบทสอน':'เปิดบทสอน')+'</button><button class="btn" data-a="tutorialReview">ทบทวนปุ่มพื้นฐาน</button></section>';};
+const tutorialSettings=vSettings;vSettings=function(){const t=Tutorial.state();return tutorialSettings()+'<section class="card stack"><h3>บทสอนเล่นด้วยภาพ</h3><p>จำแยกแต่ละบทตามตัวละคร</p><button class="btn" data-a="tutorialToggle">'+(t?.enabled?'พักบทสอน':'เปิดบทสอน')+'</button><button class="btn" data-a="tutorialReview">เปิดคู่มือผู้ผนึก · 18 บท</button></section>';};
 Object.assign(handlers,{
  tutorialNext:()=>Tutorial.next(),tutorialSkip:()=>Tutorial.skip(),
  tutorialToggle:()=>{const t=Tutorial.state();if(!t)Tutorial.init();else t.enabled=!t.enabled;Tutorial.release();save();render();},
@@ -8315,21 +8317,8 @@ if(S.screen==='camp'&&S.P.lv>=10)campCall('camp_list');else if(S.screen==='camp'
 
 const localCampCall=campCall;campCall=async function(action,extra={}){const result=await localCampCall(action,extra);if(result?.ok&&action==='camp_register')toast('ตั้งอสูรเฝ้าค่ายแล้ว');if(result?.room?.status==='finished'&&result.room.winner===0){const seen=S.P.walkCampWins||=[];if(!seen.includes(result.room.id)){seen.push(result.room.id);if(seen.length>100)seen.shift();questEmit('activity',{target:'camp'});save()}}return result};
 
-/* First-created characters learn with the real allocation handlers, after the intro. */
-const statLessonActive=()=>S.P?.walkStatTutorial==='pending';
-const lessonHero=vHero;
-vHero=function(){const html=lessonHero();if(!statLessonActive()&&!S.ui.walkStatLessonComplete)return html;
- const primary=allocationPlan(null).primary;
- const panel=S.ui.walkStatLessonComplete?'<h2>อัปค่าสถานะสำเร็จแล้ว!</h2><p>พลังของผู้ผนึกเพิ่มขึ้นแล้ว ทุกครั้งที่เลเวลอัปจะได้แต้มเพิ่ม กลับมาเพิ่มค่าสถานะได้ที่เมนู “ตัวละคร” ด้านล่างเสมอ</p><button class="btn pri full" data-a="walkStatLessonFinish">พร้อมแล้ว · ไปเดินในเมือง</button>':'<h2>ก้าวแรกของผู้ผนึก · อัปค่าสถานะ</h2><p>ก่อนออกผจญภัย คุณมีแต้มคงเหลือ <b>'+Math.max(0,S.P.free||0)+' แต้ม</b> ใช้เพิ่มความแข็งแกร่งให้เหมาะกับอาชีพได้</p><p>ลองเพิ่ม <b>'+esc(LBL[primary])+'</b> ซึ่งเป็นค่าสำคัญของ'+esc(CLS[S.P.cls].n)+' ด้วยปุ่มด้านล่าง ใช้ 1 แต้มจริงจากแต้มที่มี</p><button class="btn pri full" data-a="walkStatLessonAdd" '+(S.P.free>0?'':'disabled')+'>+ '+esc(LBL[primary])+' · ใช้ 1 แต้ม</button><p class="sub">ในตารางค่าสถานะ กดปุ่ม + ข้างค่านั้นเพื่อเพิ่มทีละแต้ม หรือใช้ “จัดสรรแต้ม” ให้ระบบเลือกตามอาชีพ</p><button class="btn full" data-a="walkStatLessonTable">ดูตารางค่าสถานะ</button>';
- return '<section class="card stack" id="walkStatLesson" role="region" aria-label="บทสอนอัปค่าสถานะ" style="border-color:#e5bd66;box-shadow:0 0 18px #d3a24433">'+panel+'</section>'+html;
-};
-function finishStatLessonIfSpent(before){if(!statLessonActive()||!(S.P.free<before))return;S.P.walkStatTutorial='done';S.ui.walkStatLessonComplete=true;save();render();document.querySelector('main')?.scrollTo(0,0)}
-const lessonPoint=handlers.pt;handlers.pt=function(...args){const before=S.P.free,r=lessonPoint.apply(this,args);finishStatLessonIfSpent(before);return r};
-const lessonAuto=autoStats;autoStats=function(uid,...args){const before=S.P.free,r=lessonAuto.call(this,uid,...args);if(uid==='P')finishStatLessonIfSpent(before);return r};
-handlers.walkStatLessonAdd=()=>handlers.pt(allocationPlan(null).primary);
-handlers.walkStatLessonTable=()=>{S.ui.hero='stat';render();const panel=document.querySelector('[data-panel-art="stats"]');panel?.scrollIntoView({block:'start',behavior:'smooth'});if(panel){panel.style.outline='2px solid #e5bd66';panel.style.outlineOffset='3px'}};
-handlers.walkStatLessonFinish=()=>{S.ui.walkStatLessonComplete=false;save();parent.postMessage({type:'town-return'},location.origin)};
-if(statLessonActive()&&S.screen==='hero'){S.ui.hero='stat';if(!(S.P.free>0)){S.P.walkStatTutorial='done';S.ui.walkStatLessonComplete=true;save()}render()}
+// The illustrated guide is also available on demand in Settings.
+handlers.tutorialReview=()=>window.WalkTutorial.review();
 
 /* Dungeon companion snapshot only; medicines always belong to the host. */
 function dungeonBagFriend(){if(!dungeonFloor)return null;try{const team=JSON.parse(sessionStorage.getItem('soulbeast-dungeon-party-v1')||'null'),host=S.P.code||S.P.walkId||(S.P.name+'|'+S.P.cls+'|'+S.P.country),f=team?.friend;if(team?.host!==host||!f||!CLS[f.cls]||Math.abs(f.lv-S.P.lv)>10)return null;return {team,friend:f}}catch{return null}}
@@ -8804,5 +8793,5 @@ if(params.get('quickItem')==='teleportScroll'&&['country','island'].includes(par
 }
 }
 
-</script><script type="module" src="../../client/event-announcements.mjs?v=boss-portrait-1"></script></body>
+</script><script type="module" src="/Soulbeast/client/event-announcements.mjs?v=boss-portrait-1"></script></body>
 </html>

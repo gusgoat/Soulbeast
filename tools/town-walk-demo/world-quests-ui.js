@@ -4,7 +4,7 @@ let cachedRaw=null,cachedPlayer=null;
 function read(){try{const raw=sessionStorage.getItem(key);if(raw!==cachedRaw){cachedRaw=raw;cachedPlayer=JSON.parse(raw||'null')}return cachedPlayer}catch{return null}}
 function write(p){sessionStorage.setItem(key,JSON.stringify(p));if(p.walkId)localStorage.setItem('soulbeast-walk-save:'+p.walkId,JSON.stringify(p));for(const id of ['hudTop','hudBottom'])document.getElementById(id)?.contentWindow.postMessage({type:'walk-hud-refresh'},location.origin)}
 function emit(type,extra={}){const p=read();if(!p)return false;const V=window.WalkQuestEvents,before=V?.snapshot(p,D.quests),event={type,place,country:E.countryOf(place)||p.country,id:crypto.randomUUID(),...extra};const changed=E.emit(p,D.quests,event);write(p);if(changed&&V)V.push(V.changes(p,D.quests,before,event),{tray:type!=='talk'});return changed}
-let queryPlayer=null,activeQuests=[],trackedQuest=null,targetCache=new Map(),markerCache=new Map();
+let queryPlayer=null,activeQuests=[],trackedQuest=null,trackedLocation=null,targetCache=new Map(),markerCache=new Map();
 function queries(){
  const p=read();
  if(p!==queryPlayer){
@@ -12,6 +12,7 @@ function queries(){
   const s=p&&E.state(p);
   activeQuests=s?D.quests.filter(q=>s.accepted[q.id]&&!s.completed[q.id]):[];
   trackedQuest=activeQuests.find(q=>E.isTracking(p,q));
+  trackedLocation=E.trackedDestination(p,trackedQuest);
   targetCache.clear();
   markerCache.clear();
  }
@@ -137,5 +138,5 @@ function knownMenuSource(source){return !!source&&['townMenu','regionMenu','menu
 addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.type==='walk-player-saved'&&knownMenuSource(e.source)){const p=read();if(p){write(p);window.dispatchEvent(new Event('walk-player-saved'));}}});
 addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.type!=='walk-quest-events'||!knownMenuSource(e.source)||!e.source)return;const models=(Array.isArray(e.data.models)?e.data.models:[]).filter(m=>D.quests.some(q=>q.id===m.questId));window.WalkQuestEvents?.push(models)});
 addEventListener('pagehide',()=>{const p=read();if(p?.walkId)localStorage.setItem('soulbeast-walk-save:'+p.walkId,JSON.stringify(p))});
-window.townQuests={show,append,marker,markerStyle,target,targetStyle,drawTarget,emit,visit:target=>emit('visit',{target}),talk:target=>emit('talk',{target}),npcName:id=>D.npcs[place]?.[id],status:()=>{const p=read(),s=p&&E.state(p);return {accepted:Object.keys(s?.accepted||{}).length,completed:Object.keys(s?.completed||{}).length}},read,write};
+window.townQuests={show,append,marker,markerStyle,target,targetStyle,drawTarget,emit,visit:target=>emit('visit',{target}),talk:target=>emit('talk',{target}),npcName:id=>D.npcs[place]?.[id],status:()=>{const p=read(),s=p&&E.state(p);return {accepted:Object.keys(s?.accepted||{}).length,completed:Object.keys(s?.completed||{}).length}},destination:()=>{queries();return trackedLocation},read,write};
 })();

@@ -34,6 +34,27 @@ function current(p,q){
  if(!a||s.completed[q.id]||!validRoute(p,q)||!prerequisites(p,q)||!Number.isInteger(a.step)||a.step<0)return null;
  const o=steps(p,q)[a.step];return o?{a,o}:null;
 }
+function trackedDestination(p,q){
+ if(!p||!q||!isTracking(p,q)||!validRoute(p,q)||!prerequisites(p,q))return null;
+ const route=steps(p,q),step=state(p).accepted[q.id].step;
+ if(!Number.isInteger(step)||step<0||step>route.length)return null;
+ const o=route[step];
+ if(!o)return {country:countryOf(q.place)||q.country,place:q.place};
+ if(o.type==='dungeonBoss')return {country:'red',place:'seven-floor-dungeon'};
+ const country=objectiveCountry(q,o);
+ if(!country)return null;
+ const destination={country,place:o.place,zone:o.zone};
+ if(o.type==='defeat'||o.type==='chest')destination.onCountryMap=true;
+ return destination;
+}
+function trackedBorder(destination,country,gates,player,distance){
+ if(!destination?.country||destination.country===country)return null;
+ return gates.reduce((best,gate)=>gate.targetCountry===destination.country&&(!best||distance(player,gate)<distance(player,best))?gate:best,null);
+}
+function needsTownExit(destination,town){
+ return !!destination&&(destination.onCountryMap||destination.country!==countryOf(town)||
+  (destination.place!=null&&destination.place!==town&&!destination.place.startsWith(town+':'))||destination.zone!=null);
+}
 function searchDepth(o){return o.depth|| (o.target==='moon-gem'?3:2)}
 function matches(q,a,o,event){
  if(o.type!==event.type||event.questId!=null&&event.questId!==q.id)return false;
@@ -67,5 +88,5 @@ function claim(p,q,place,npc){
  if(s.tracked===q.id)delete s.tracked;
  grant(p,q);s.completed[q.id]=Date.now();delete s.accepted[q.id];p.gold=(p.gold||0)+gold;return true;
 }
-const api={state,available,blockedReason,steps,accept,emit,claim,isTarget,isTracking,toggleTracking,rewardList,rewardText,countryOf,objectiveCountry,searchObjectives};g.WalkQuestEngine=api;if(typeof module!=='undefined')module.exports=api;
+const api={state,available,blockedReason,steps,accept,emit,claim,isTarget,isTracking,toggleTracking,rewardList,rewardText,countryOf,objectiveCountry,searchObjectives,trackedDestination,trackedBorder,needsTownExit};g.WalkQuestEngine=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

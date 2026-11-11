@@ -1,0 +1,48 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const E=require('./town-walk-demo/quest-engine.js'),T=require('./town-walk-demo/walk-tutorial.js');
+require('./town-walk-demo/world-quests-data.js');
+const gem=global.WorldQuestData.quests.find(q=>q.id==='blue-capital:gem');
+const p={country:'blue',lv:60,gold:1000};
+assert(E.accept(p,gem));
+assert.equal(E.trackedDestination(p,gem),null);
+assert(E.toggleTracking(p,gem));
+const destination=E.trackedDestination(p,gem);
+assert.deepEqual(destination,{country:'green',place:undefined,zone:1});
+const gates=[{x:0,targetCountry:'red'},{x:15,targetCountry:'green'},{x:5,targetCountry:'green'}];
+const distance=(a,b)=>Math.abs(a.x-b.x);
+assert.equal(E.trackedBorder(destination,'blue',gates,{x:0},distance),gates[2]);
+assert.equal(E.trackedBorder(destination,'green',gates,{x:0},distance),null);
+assert(E.isTarget(p,[gem],{type:'place',zone:1,country:'green'}));
+assert(E.needsTownExit(destination,'blue-capital'));
+assert(E.needsTownExit(destination,'green-capital'));
+assert(!E.isTarget(p,[gem],{type:'place',zone:1,country:'blue'}));
+E.state(p).accepted[gem.id].step=gem.steps.length;
+assert.deepEqual(E.trackedDestination(p,gem),{country:'blue',place:'blue-capital'});
+assert(!E.needsTownExit(E.trackedDestination(p,gem),'blue-capital'));
+assert(E.needsTownExit(E.trackedDestination(p,gem),'blue-city-1'));
+assert(E.claim(p,gem,gem.place,gem.npc));
+assert.equal(E.trackedDestination(p,gem),null);
+
+const player={lv:3,free:5,pets:[],tutorial:{enabled:true},worldQuests:{accepted:{},completed:{}}};
+assert.equal(T.choose(player,{},{}),null);
+assert.equal(T.choose(player,{},{capital:true}).id,'board');
+player.worldQuests.accepted.intro={step:0};
+assert.equal(T.choose(player,{board:true},{}).id,'track');
+const seen={board:true,track:true};
+assert.equal(T.choose(player,seen,{}).id,'stats');seen.stats=true;
+assert.equal(T.choose(player,seen,{}).id,'shop');seen.shop=true;
+assert.equal(T.choose(player,seen,{}),null);
+player.worldQuests.tracked='intro';
+assert.equal(T.choose(player,seen,{}).id,'marker');seen.marker=true;
+assert.equal(T.choose({...player,forestClears:{1:1}},seen,{}),null);
+assert.equal(T.choose({...player,forestClears:{7:1}},seen,{}).id,'forge');
+assert.equal(T.choose(player,seen,{night:true}).id,'night');
+for(const [id,lv] of Object.entries({tower:8,auto:10,raid:12,village:15,guild:20,colosseum:22,promotion:25,kingdom:30,world:33,guildwar:35})){
+ assert.equal(T.choose({...player,lv:lv-1},seen,{}),null);
+ assert.equal(T.choose({...player,lv},seen,{}).id,id);
+ seen[id]=true;
+}
+assert.equal(T.choose({...player,tutorial:{enabled:false}},{},{capital:true}),null);
+assert.equal(T.lessons.length,18);
+for(const {art} of T.lessons)assert(fs.existsSync(path.resolve(__dirname,'../assets',art)),art);
+console.log('PASS cross-country quest, town exit, local target and return; illustrated lessons, level thresholds, and game art');
