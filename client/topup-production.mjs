@@ -1,10 +1,17 @@
 import {withLoading} from './online-loading.mjs';
-import {connectAccounts,accountError} from './account-client.mjs?v=qr-slip-2';
+import {connectAccounts,gameSessionId} from './account-client.mjs?v=qr-slip-2';
 import {paymentApi,shopText,couponArtwork,couponCount,couponPrice} from './production-shop.mjs';
 document.getElementById('shopBootWait')?.remove();
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const client=connectAccounts(()=>boot()),api=paymentApi(client);let lang='th',state=null,catalog=null,busy=false,target='';
-let manual=null, qrOrder=null;
+const client=connectAccounts(()=>queueMicrotask(accountChanged)),api=paymentApi(client);let lang='th',state=null,catalog=null,busy=false,target='';
+let manual=null, qrOrder=null, loadedSession=null;
+function sessionKey(){
+ const token=client.sessions.read()?.access_token;
+ return token?(gameSessionId(token)||token):null;
+}
+function accountChanged(){
+ if(!busy&&sessionKey()!==loadedSession)void boot();
+}
 const qr=$('qrTopup');
 const manualApi=async(action,data={})=>client.request('/rest/v1/rpc/sb_manual_topup',{p_action:action,p_data:data},await client.sessions.token());
 const t=k=>shopText(k,lang),text=(th,en,zh)=>[th,en,zh][lang==='en'?1:lang==='zh-CN'?2:0];
@@ -15,24 +22,53 @@ function render(){
  const chars=manual?.characters||[];if(!chars.some(c=>c.code===target))target=chars[0]?.code||'';
  $('characters').innerHTML=state?'<label>'+t('recipient')+'<select id="recipient">'+chars.map(c=>'<option value="'+esc(c.code)+'" '+(target===c.code?'selected':'')+'>'+esc(c.name)+' · '+esc(c.code)+'</option>').join('')+'</select></label>':'';
  $('packs').innerHTML=[true,false].map(promotion=>'<div class="coupon-pack-section"><h2>'+t(promotion?'promotions':'regular')+'</h2><div class="coupon-pack-grid">'+(catalog?.packs||[]).filter(p=>p.promotion===promotion).map(p=>{const used=p.promotion&&manual?.blocked_promotions?.some(o=>o.code===target&&o.pack_id===p.id);return '<article class="coupon-pack"><button class="coupon-pack-button" data-pack="'+p.id+'" aria-label="'+esc(t('buy')+' '+couponCount(p.coupons,lang)+' · '+couponPrice(p.amountSatang,lang)+' · '+(promotion?text('ซื้อได้ครั้งเดียวต่อตัวละคร','Once per character','每个角色限购一次'):t('repeat')))+'" '+(busy||!state||!target||!manual?.enabled||manual.debt||used?'disabled':'')+'><img src="'+couponArtwork(p.coupons)+'.webp'+'" width="512" height="512" alt="" decoding="async"></button><div class="coupon-pack-caption"><strong>'+couponCount(p.coupons,lang)+'</strong><span class="coupon-pack-price">'+esc(couponPrice(p.amountSatang,lang))+'</span><small>'+(promotion?text('ซื้อได้ครั้งเดียวต่อตัวละคร','Once per character','每个角色限购一次'):t('repeat'))+'</small><small class="coupon-pack-state">'+(used?t('used'):'')+'</small></div></article>';}).join('')+'</div></div>').join('');
- $('history').innerHTML=state?'<h2>'+t('history')+'</h2><button id="refresh">'+t('refresh')+'</button><ul class="orders">'+state.orders.map(o=>'<li><b>'+esc(o.pack_id)+' · '+o.amount_satang/100+' THB</b><p>'+esc(t(o.status))+' · '+esc(o.code)+'</p><small>'+esc(o.id)+'</small>'+(['reserved','open','pending'].includes(o.status)?'<button data-check="'+o.id+'">'+t('refresh')+'</button><button data-resume="'+o.id+'">'+text('ชำระรายการเดิม','Continue payment','继续付款')+'</button><button data-cancel="'+o.id+'">'+text('ยกเลิกรายการ','Cancel order','取消订单')+'</button>':'')+'</li>').join('')+'</ul>':'';
+ renderLegacyHistory();
  renderManual();
- $('login')?.addEventListener('submit',e=>{e.preventDefault();const email=$('email').value.trim(),password=$('password').value;$('password').value='';run(async()=>{await client.login(email,password);await sync();});});
+ $('login')?.addEventListener('submit',e=>{e.preventDefault();const email=$('email').value.trim(),password=$('password').value;$('password').value='';run(async()=>{await client.login(email,password);loadedSession=sessionKey();await sync();void loadLegacyHistory();});});
  $('requestDelete')?.addEventListener('click',()=>{if(confirm(text('ส่งคำขอลบบัญชีและข้อมูลตัวละครทั้งหมดให้ผู้ดูแลตรวจสอบ? รายการชำระเงินและข้อมูลธุรกรรมต้องตรวจสอบก่อนดำเนินการ','Request deletion of your account and all characters? Payment and transaction records require review before deletion.','申请删除账户及全部角色？删除前需审核付款与交易记录。')))run(async()=>{const r=await api('request_delete',{confirmed:true});notice(text('บันทึกคำขอแล้ว เลขที่ ','Request recorded: ','申请已记录：')+r.request_id);});});
- $('logout')?.addEventListener('click',()=>run(async()=>{await client.logout();state=null;manual=null;target='';}));$('recipient')?.addEventListener('change',e=>{target=e.target.value;render();});
- $('refresh')?.addEventListener('click',()=>run(sync));
- document.querySelectorAll('[data-pack]').forEach(b=>b.onclick=()=>run(async()=>{
-  const order=await manualApi('reserve',{pack_id:b.dataset.pack,code:target});
-  openQr(order);
-  await sync();
- }));
- document.querySelectorAll('[data-check],[data-resume],[data-cancel]').forEach(b=>b.onclick=()=>run(async()=>{const id=b.dataset.check||b.dataset.resume||b.dataset.cancel;const r=await api(b.dataset.cancel?'expire':'refresh',{order_id:id});if(b.dataset.resume)go(r.order);await sync();}));
+ $('logout')?.addEventListener('click',()=>run(async()=>{await client.logout();state=null;manual=null;target='';loadedSession=null;}));$('recipient')?.addEventListener('change',e=>{target=e.target.value;render();});
+ document.querySelectorAll('[data-pack]').forEach(button=>button.onclick=()=>reservePack(button.dataset.pack));
 }
+function renderLegacyHistory(){
+ $('history').innerHTML=state?'<h2>'+t('history')+'</h2><button id="refresh">'+t('refresh')+'</button><ul class="orders">'+state.orders.map(o=>'<li><b>'+esc(o.pack_id)+' · '+o.amount_satang/100+' THB</b><p>'+esc(t(o.status))+' · '+esc(o.code)+'</p><small>'+esc(o.id)+'</small>'+(['reserved','open','pending'].includes(o.status)?'<button data-check="'+o.id+'">'+t('refresh')+'</button><button data-resume="'+o.id+'">'+text('ชำระรายการเดิม','Continue payment','继续付款')+'</button><button data-cancel="'+o.id+'">'+text('ยกเลิกรายการ','Cancel order','取消订单')+'</button>':'')+'</li>').join('')+'</ul>':'';
+ $('refresh')?.addEventListener('click',()=>run(loadLegacyHistory));
+ document.querySelectorAll('[data-check],[data-resume],[data-cancel]').forEach(button=>button.onclick=()=>run(async()=>{
+  const id=button.dataset.check||button.dataset.resume||button.dataset.cancel;
+  const response=await api(button.dataset.cancel?'expire':'refresh',{order_id:id});
+  if(button.dataset.resume)go(response.order);
+  await loadLegacyHistory();
+ }));
+}
+async function loadLegacyHistory(){
+ const session=loadedSession;
+ try{
+  const legacy=await api('status');
+  if(state&&session===loadedSession&&session===sessionKey()){
+   state.orders=legacy.orders||[];
+   renderLegacyHistory();
+  }
+ }catch{/* The QR shop remains available if legacy history is unavailable. */}
+}
+async function reservePack(pack){
+ if(busy||!state||!target)return;
+ const code=target, session=loadedSession;
+ busy=true;
+ notice(text('กำลังสร้างรายการชำระผ่าน QR…','Creating your QR order…','正在创建二维码订单…'));
+ render();
+ try{
+  const order=await manualApi('reserve',{pack_id:pack,code});
+  if(session!==sessionKey())return;
+  manual.orders=[order,...manual.orders.filter(previous=>previous.id!==order.id)];
+  notice(t('title'));
+  openQr(order);
+ }catch(error){notice(error.message==='promotion_unavailable'?t('used'):t('failed'));}
+ finally{busy=false;render();accountChanged();}
+}
+
 function go(o){if(o.settled){notice(t(o.status==='credited'?'received':'review'));return;}if(o.checkout_url){const u=new URL(o.checkout_url);if(u.origin!=='https://checkout.stripe.com')throw Error('invalid_checkout_url');location.assign(u.href);}else notice(t('pending'));}
 async function sync(){
  manual=await manualApi('list');
- state={email:client.user?.email,orders:[]};
- try{state=await api('status');}catch{/* The legacy payment service is independent of QR orders. */}
+ state??={email:client.user?.email,orders:[]};
  if(manual.debt)notice(t('review'));
 }
 function orderLabel(o){return `${couponCount(o.coupons,lang)} · ${couponPrice(o.amount_satang,lang)} · ${o.code}`;}
@@ -99,8 +135,35 @@ $('qrSlipForm').onsubmit=async event=>{
  }catch{$('qrNotice').textContent=text('ส่งสลิปไม่สำเร็จ ลองส่งซ้ำหรือกดตรวจรายการเดิม','Could not submit. Retry or check the existing order.','提交失败，请重试或查看原订单。');}
  finally{button.disabled=!$('qrSlip').files.length;$('qrSlip').disabled=false;$('qrClose').disabled=false;}
 };
-async function run(fn){if(busy)return;busy=true;render();return withLoading(document.querySelector('main'),t('checking'),async()=>{try{await fn();}catch(e){notice(['billing_review_required'].includes(e.message)?t('review'):e.message==='provider_not_configured'||e.message==='purchases_disabled'||e.message==='manual_topup_unavailable'?t('unavailable'):e.message==='promotion_unavailable'?t('used'):t('failed'));}finally{busy=false;render();}});}
-async function boot(){return withLoading(document.querySelector('main'),t('loading'),async()=>{try{catalog=await api('catalog');if(client.sessions.read()){await client.identity();await sync();const id=new URL(location.href).searchParams.get('order');if(/^[a-f0-9-]{36}$/i.test(id||'')){const r=await api('refresh',{order_id:id});notice(t(r.order?.status==='credited'?'received':r.order?.settled?'review':'pending'));await sync();}else notice(manual?.enabled?t('title'):state?t('unavailable'):text('เข้าสู่ระบบเพื่อเลือกแพ็กคูปอง','Sign in to choose a pack','登录后选择礼包'));}else notice(manual?.enabled?t('title'):state?t('unavailable'):text('เข้าสู่ระบบเพื่อเลือกแพ็กคูปอง','Sign in to choose a pack','登录后选择礼包'));}catch{notice(t('unavailable'));}render();});}
+async function run(fn,label=t('checking')){
+ if(busy)return;
+ busy=true;render();
+ try{await withLoading(document.querySelector('main'),label,fn);}
+ catch(error){notice(error.message==='billing_review_required'?t('review'):error.message==='promotion_unavailable'?t('used'):t('failed'));}
+ finally{busy=false;render();accountChanged();}
+}
+async function boot(){
+ await run(async()=>{
+  if(loadedSession!==sessionKey()){
+   qr.close();state=null;manual=null;target='';
+  }
+  loadedSession=sessionKey();
+  const catalogReady=catalog?Promise.resolve():api('catalog').then(result=>{catalog=result;});
+  if(!loadedSession){
+   await catalogReady;
+   notice(text('เข้าสู่ระบบเพื่อเลือกแพ็กคูปอง','Sign in to choose a pack','登录后选择礼包'));
+   return;
+  }
+  await Promise.all([catalogReady,client.identity()]);
+  await sync();
+  notice(manual.debt?t('review'):manual.enabled?t('title'):t('unavailable'));
+  void loadLegacyHistory();
+  const id=new URL(location.href).searchParams.get('order');
+  if(/^[a-f0-9-]{36}$/i.test(id||'')){
+   void api('refresh',{order_id:id}).then(()=>loadLegacyHistory()).catch(()=>{});
+  }
+ },t('loading'));
+}
 function changeLanguage(next){
  if(!['th','en','zh-CN'].includes(next)||next===lang)return;
  const previous=lang,old=$('notice').textContent;
