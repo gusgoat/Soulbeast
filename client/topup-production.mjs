@@ -69,6 +69,9 @@ function openQr(order){
  $('qrOrder').textContent=orderLabel(order)+' · '+order.id;
  $('qrInstructions').textContent=text('สแกน QR ตำนานผนึกอสูร ตรวจชื่อผู้รับและโอนตามยอดที่แสดง แล้วแนบสลิปเพื่อให้ผู้ดูแลตรวจยอด','Scan the Soulbeast QR, verify the recipient, pay the exact total, then upload your receipt for review.','扫描 Soulbeast 二维码，核对收款方，按金额付款后上传凭证。');
  $('qrDownload').textContent=text('บันทึก QR ลงเครื่อง','Download QR','下载二维码');
+ $('qrChoose').textContent=text('แนบสลิป','Choose receipt','选择付款凭证');
+ $('qrSubmit').disabled=true;
+ qr.querySelector('.qr-scroll').scrollTop=0;
  $('qrSlipLabel').textContent=text('สลิป JPG หรือ PNG ขนาดไม่เกิน 2 MB','JPG or PNG receipt, up to 2 MB','上传 JPG 或 PNG 凭证，最大 2 MB');
  $('qrSubmit').textContent=text('ส่งสลิปให้ตรวจ','Submit receipt','提交凭证');$('qrClose').textContent=t('close');
  if(!qr.open)qr.showModal();
@@ -77,18 +80,24 @@ function base64(file){return new Promise((resolve,reject)=>{
  const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(file);
 });}
 $('qrClose').onclick=()=>qr.close();
+$('qrSlip').onchange=()=>{
+ const file=$('qrSlip').files[0];
+ const valid=Boolean(file&&['image/jpeg','image/png'].includes(file.type)&&file.size<=2097152);
+ $('qrSubmit').disabled=!valid;
+ $('qrNotice').textContent=valid?file.name:file?$('qrSlipLabel').textContent:'';
+};
 $('qrSlipForm').onsubmit=async event=>{
  event.preventDefault();
  const file=$('qrSlip').files[0],button=$('qrSubmit');
  if(button.disabled||!qrOrder)return;
  if(!file||!['image/jpeg','image/png'].includes(file.type)||file.size>2097152){$('qrNotice').textContent=$('qrSlipLabel').textContent;return;}
- button.disabled=true;$('qrClose').disabled=true;$('qrNotice').textContent=t('checking');
+ button.disabled=true;$('qrSlip').disabled=true;$('qrClose').disabled=true;$('qrNotice').textContent=t('checking');
  try{
   const result=await manualApi('submit',{order_id:qrOrder.id,mime:file.type,content:await base64(file)});
   qr.close();notice(statusLabel(result.status));
   try{await sync();}finally{render();}
  }catch{$('qrNotice').textContent=text('ส่งสลิปไม่สำเร็จ ลองส่งซ้ำหรือกดตรวจรายการเดิม','Could not submit. Retry or check the existing order.','提交失败，请重试或查看原订单。');}
- finally{button.disabled=false;$('qrClose').disabled=false;}
+ finally{button.disabled=!$('qrSlip').files.length;$('qrSlip').disabled=false;$('qrClose').disabled=false;}
 };
 async function run(fn){if(busy)return;busy=true;render();return withLoading(document.querySelector('main'),t('checking'),async()=>{try{await fn();}catch(e){notice(['billing_review_required'].includes(e.message)?t('review'):e.message==='provider_not_configured'||e.message==='purchases_disabled'||e.message==='manual_topup_unavailable'?t('unavailable'):e.message==='promotion_unavailable'?t('used'):t('failed'));}finally{busy=false;render();}});}
 async function boot(){return withLoading(document.querySelector('main'),t('loading'),async()=>{try{catalog=await api('catalog');if(client.sessions.read()){await client.identity();await sync();const id=new URL(location.href).searchParams.get('order');if(/^[a-f0-9-]{36}$/i.test(id||'')){const r=await api('refresh',{order_id:id});notice(t(r.order?.status==='credited'?'received':r.order?.settled?'review':'pending'));await sync();}else notice(manual?.enabled?t('title'):state?t('unavailable'):text('เข้าสู่ระบบเพื่อเลือกแพ็กคูปอง','Sign in to choose a pack','登录后选择礼包'));}else notice(manual?.enabled?t('title'):state?t('unavailable'):text('เข้าสู่ระบบเพื่อเลือกแพ็กคูปอง','Sign in to choose a pack','登录后选择礼包'));}catch{notice(t('unavailable'));}render();});}

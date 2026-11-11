@@ -41,8 +41,20 @@ dialog.production-shop::backdrop{background:#020a12bb;backdrop-filter:blur(4px)}
 @keyframes requestFloat{50%{transform:translateY(-7px);filter:drop-shadow(0 0 12px #72d2eeaa)}}@keyframes requestOrbit{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.request-wait-art img,.request-wait-art:after{animation:none}}
 
-#qrTopup { width: min(94vw, 31rem); max-height: 90dvh; overflow: auto; background: #0b2030; color: #f8e9c9; border: 1px solid #a6844e; border-radius: 12px; padding: 1rem; }
+#qrTopup { width: min(94vw, 31rem); max-height: 90dvh; padding: 0; overflow: hidden; background: #0b2030; color: #f8e9c9; border: 1px solid #a6844e; border-radius: 12px; }
 #qrTopup::backdrop { background: #061421cc; }
-#qrTopup .merchant-qr { display: block; width: min(100%, 265px); height: auto; margin: 1rem auto; }
-#qrTopup p, #manualHistory li { overflow-wrap: anywhere; }
-#qrTopup input { max-width: 100%; }
+#qrSlipForm { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: calc(90dvh - 2px); gap: 0; align-items: stretch; }
+#qrTopup .qr-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: .55rem .85rem; }
+#qrTopup h2 { margin: 0; font-size: clamp(1.05rem, 4.5vw, 1.4rem); }
+#qrTopup #qrClose { width: auto; flex: none; padding: 6px 10px; }
+#qrTopup .qr-scroll { overflow: auto; min-height: 0; padding: 0 .9rem; text-align: center; }
+#qrTopup p { margin: .35rem 0 .65rem; line-height: 1.45; overflow-wrap: anywhere; }
+#qrTopup .merchant-qr { display: block; width: min(100%, 235px); height: auto; margin: .6rem auto; }
+#qrTopup .qr-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem .5rem; align-items: stretch; padding: .65rem .85rem; border-top: 1px solid #526771; background: #132a39; }
+#qrTopup .qr-choose { position: relative; display: grid; place-items: center; min-height: 46px; padding: 6px; text-align: center; cursor: pointer; background: #193344; border: 1px solid #cfaf6c; border-radius: 8px; font-weight: bold; }
+#qrTopup .qr-choose:focus-within { outline: 3px solid #ffe6a3; outline-offset: 2px; }
+#qrTopup #qrSlip { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; opacity: 0; cursor: pointer; }
+#qrTopup #qrSubmit { width: 100%; padding: 6px; }
+#qrTopup #qrSlipLabel, #qrTopup #qrNotice { grid-column: 1 / -1; margin: 0; overflow-wrap: anywhere; }
+#qrTopup #qrNotice:empty { display: none; }
+#manualHistory li { overflow-wrap: anywhere; }
