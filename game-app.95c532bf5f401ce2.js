@@ -3468,7 +3468,7 @@ Secret.imageButton=function(d,index,label,act,value,detail=''){if(act==='secretC
 const detailSave=save;save=function(){if(S.P&&!S.zone)S.P.mp=Math.min(S.P.mp,pStats().mp);return detailSave();};const Tutorial={
  pending:null,frame:0,busy:false,practiceBusy:false,
  state(){return S.P?.tutorial?.v===1?S.P.tutorial:null;},
- enabled(){const t=this.state();return !!t&&t.enabled!==false;},
+ enabled(){const t=this.state();return !window.SOULBEAST_ACCOUNTS&&!!t&&t.enabled!==false;},
  init(){S.P.tutorial={v:1,enabled:true,done:{},active:'stats',firstBoss:false,raidClaimed:false};},
  store(){save();},
  set(id){const t=this.state();if(t&&t.active!==id){t.active=id;this.store();}},

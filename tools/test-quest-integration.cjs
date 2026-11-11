@@ -47,7 +47,7 @@ for(const entry of entries){
 }
 for(const script of scripts)new vm.Script(read(script),{filename:script});
 for(const launcher of ['tools/town-walk-demo/town.js','tools/hemant-walk-demo/world.js']){
- const src=read(launcher);assert(src.includes('menu.html?v=quest-journey-1'));
+ const src=read(launcher);assert(src.includes('menu.html?v=quest-journey-3'));
  assert(!src.includes('menu.html?v=teleport-open-20261106'));
 }
 console.log(`PASS four production entry points: ${refs} local references, ${scripts.size} external scripts + ${inline} inline blocks; fresh menu URLs`);

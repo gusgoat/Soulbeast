@@ -4,9 +4,14 @@
 .walk-lesson h2,.walk-lesson p{margin:0}
 .walk-lesson h2{font-size:clamp(1.28rem,5vw,1.75rem);line-height:1.3;color:#ffda91}
 .walk-lesson .walk-lesson-step{color:#b8d1df;font-size:.8rem}
-.walk-lesson-picture{position:relative;border:1px solid #b28b53;border-radius:10px;overflow:hidden;background:radial-gradient(ellipse,#284450,#0c202e 75%);height:min(32dvh,15rem)}
+.walk-lesson-picture{--lesson-image-height:min(32dvh,15rem);position:relative;border:1px solid #b28b53;border-radius:10px;overflow:hidden;background:radial-gradient(ellipse,#284450,#0c202e 75%);height:var(--lesson-image-height)}
 .walk-lesson-picture img{display:block;width:100%;height:100%;object-fit:contain}
-.walk-lesson-x{position:absolute;top:51%;left:49%;transform:translate(-50%,-50%);color:#ffdb32;text-shadow:0 2px 3px #111,0 0 10px #000;font:bold 3.3rem/1 sans-serif}
+.walk-lesson-highlight-frame{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.walk-lesson-highlight-frame[hidden]{display:none}
+.walk-lesson-highlight-box{position:relative;width:min(100%,calc(var(--lesson-image-height) * var(--art-ratio)))}
+.walk-lesson-highlight-border{position:absolute;box-sizing:border-box;border:clamp(2px,.6vw,4px) solid var(--highlight-color,#ff2828);border-radius:2px}
+.walk-lesson-highlight-border[data-shape="circle"]{border-radius:50%}
+.walk-lesson-highlight-border[data-shape="arrow"]{border:0;background:var(--highlight-color,#ff2828);clip-path:polygon(0 78%,60% 23%,45% 8%,100% 0,90% 54%,75% 39%,13% 100%)}
 .walk-lesson-controls{display:flex;justify-content:end;gap:.45rem;flex-wrap:wrap}
 .walk-lesson-controls button{min-height:44px;padding:.4rem .8rem;border:1px solid #ac8b51;border-radius:8px;background:#153445;color:#f7ead0;font:inherit;cursor:pointer}
 .walk-lesson-controls button:disabled{opacity:.45;cursor:default}

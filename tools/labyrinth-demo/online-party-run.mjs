@@ -45,6 +45,17 @@ const joystick=bindWalkJoystick(stick,knob,{
  canStart:()=>ready&&!DungeonFeedback.isOpen&&!menus.open&&$('battle').hidden&&$('mapPanel').hidden&&!window.WalkControls?.editing
 });
 function clearMovement(){keys.clear();joystick.reset();}
+const showShadowLesson=WalkTutorial.watchShadowSight({
+ actors:()=>localWorld.enemies.values(),
+ visible:enemy=>{
+  if(enemy.kind!=='shadow'||!enemy.position||!position||!maze)return false;
+  const focus=camera||position;
+  return Math.abs((enemy.position.x-focus.x)*.9)<innerWidth/2&&
+   Math.abs((enemy.position.y-focus.y)*.9*maze.flatten)<innerHeight/2;
+ },
+ read:()=>window.townQuests.read()||me,
+ stop:clearMovement,
+});
 function freeze(){ready=false;clearMovement();$('action').disabled=true;}
 function offerReturn(city,automatic=false){
  $('leaveParty').hidden=true;$('retry').hidden=true;
@@ -113,6 +124,7 @@ addEventListener('message',event=>{
  }
 });
 function drawBattle(run,local=false){
+ if(run?.status==='active')WalkTutorial.dismissShadow();
  if(victory&&run?.id!==victory.id){if(run)queuedBattle=run;return;}
  if(victory&&run?.status==='active')return;
  if(!local&&run?.localCombatVersion&&run.status==='active'&&localCombat?.active(run.id))return;
@@ -222,7 +234,7 @@ try{
  },100);
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;selfMoving=false;
-  if(!DungeonFeedback.isOpen&&$('battle').hidden&&!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'){
+  if(!WalkTutorial.active()&&!DungeonFeedback.isOpen&&$('battle').hidden&&!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'&&(contactPending||!showShadowLesson())){
    const dx=joystick.x+Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    const dy=joystick.y+Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
    const length=Math.hypot(dx,dy),moving=length>0&&!contactPending;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
