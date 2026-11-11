@@ -49,7 +49,7 @@ export function kingdomBossContact(from,to,targets){
   if(!hit||at<hit.at||(at===hit.at&&t.kind==='boss'))hit={...t,at};
  }return hit;
 }
-export function kingdomBossMove(s,actor,pos,now){
+export function kingdomBossMove(s,actor,pos,now,{deferFight=false}={}){
  const prior=s.players[actor.id];if(!kingdomBossPosition(s,actor,pos,now))return null;
  const self=s.players[actor.id],previousBoss={...s.position},previousTarget=s.chase?.id;
  const approach=prior?.map===self.map&&!prior.respawn&&now-prior.seen<=1250?{id:actor.id,from:prior}:null;
@@ -61,11 +61,35 @@ export function kingdomBossMove(s,actor,pos,now){
  const chased=previousTarget===actor.id&&s.chase?.id===actor.id&&kingdomBossContact(previousBoss,s.position,[{...self,kind:'boss',radius:48}]);
  const hit=kingdomBossContact(from,self,targets)||chased;
  if(!hit)return null;
- const id=s.id+':fight:'+s.rev, members=hit.kind==='boss'?[actor.id]:[actor.id,hit.id];
- const fight={id,kind:hit.kind,members,status:'active',started:now,turn:0};
+ const members=hit.kind==='boss'?[actor.id]:[actor.id,hit.id];
+ if(deferFight){
+  self.contact={id:s.id+':contact:'+s.rev,kind:hit.kind,members,expires:now+30000,
+   position:{x:hit.x,y:hit.y,dir:s.position.dir}};
+  if(s.chase?.id===actor.id)s.chase={returning:true};
+  bump(s);
+  return null;
+ }
+ return startKingdomBossFight(s,hit.kind,members,now);
+}
+function startKingdomBossFight(s,kind,members,now){
+ const id=s.id+':fight:'+s.rev;
+ const fight={id,kind,members,status:'active',started:now,turn:0};
  s.fights[id]=fight;for(const member of members)s.players[member].fight=id;
+ for(const member of members)delete s.players[member].contact;
  if(s.chase?.id&&members.includes(s.chase.id))s.chase={returning:true};
  bump(s);return fight;
+}
+export function kingdomBossConfirmContact(s,actorId,id,now){
+ const self=s.players[actorId],contact=self?.contact;
+ if(!live(s,now)||!contact||contact.id!==id||self.fight||self.respawn)return null;
+ delete self.contact;
+ if(now>=contact.expires)return null;
+ if(contact.kind==='pvp'){
+  const opponent=s.players[contact.members[1]];
+  if(!opponent||opponent.fight||opponent.respawn||opponent.map!==self.map||
+     opponent.country===self.country||now-opponent.seen>3000||dist(opponent,contact.position)>110)return null;
+ }
+ return startKingdomBossFight(s,contact.kind,contact.members,now);
 }
 function bossDirection(dx,dy){
  return (Math.round(-Math.atan2(dx,dy*.64)/(Math.PI/4))+8)%8;
@@ -85,7 +109,7 @@ export function kingdomBossPatrol(s,now,{approach=null}={}){
   if(now>=(s.restUntil||0)){
    const zone={...s.position,radius:KINGDOM_BOSS_AGGRO_RADIUS};
    const near=Object.entries(s.players).filter(([id,p])=>
-    p.map===s.country&&!p.fight&&!p.respawn&&now-p.seen<=1000&&
+    p.map===s.country&&!p.fight&&!p.respawn&&!(p.contact?.expires>now)&&now-p.seen<=1000&&
     (dist(s.position,p)<=zone.radius||(approach?.id===id&&kingdomBossContact(approach.from,p,[zone]))));
    near.sort((a,b)=>dist(s.position,a[1])-dist(s.position,b[1])||a[0].localeCompare(b[0]));
    if(near.length)s.chase={id:near[0][0],until:now+5000};

@@ -28,6 +28,33 @@ assert.equal(act(0,'poll',{fight:a.fight.id,turn:0}).fight.turn,1);
 assert.equal(act(1,'poll',{fight:b.fight.id,turn:-1}).fight.battle.enemies[0].hp,after.event.hp);
 // Defeat the second player with a real enemy turn, then walk back in the same round.
 const stateRow=book.tables.GuildState.find(r=>r[0]==='kb:'+round);
+// A late position packet may cross both the aggro and collision radii.
+// It must return a contact without creating a fight until the saved revision is confirmed.
+const contactCode='KBCONTACT0000001';
+const contactSave=structuredClone(starter);
+Object.assign(contactSave.P,{country:'blue',code:contactCode,name:'KB contact QA',lv:59});
+assert(send({action:'save',code:contactCode,pin,data:JSON.stringify(contactSave)}).ok);
+const position=JSON.parse(stateRow[1]).position;
+const request=extra=>send({action:'kingdom_boss_move',code:contactCode,pin,round,_kbTesting:true,...extra});
+const savedAt=()=>new Date(book.tables.Saves.find(r=>r[0]===contactCode)[5]).getTime();
+const near=request({map:first.event.country,x:position.x,y:position.y,deferFight:true});
+assert(near.ok,JSON.stringify(near));
+assert.equal(near.event.contactProtocol,1);
+assert.equal(near.fight,null);
+assert.equal(near.contact.kind,'boss');
+assert.equal(JSON.parse(stateRow[1]).players[contactCode].fight,null);
+const confirm=near.contact.id,stale=savedAt();
+now++;
+contactSave.P.lv=60;
+assert(send({action:'save',code:contactCode,pin,data:JSON.stringify(contactSave)}).ok);
+assert.notEqual(savedAt(),stale);
+assert.deepEqual({...request({confirmContact:confirm,expectedSaveAt:stale})},{ok:false,error:'save_conflict'});
+assert.equal(JSON.parse(stateRow[1]).players[contactCode].fight,null);
+const confirmed=request({confirmContact:confirm,expectedSaveAt:savedAt()});
+assert(confirmed.ok,JSON.stringify(confirmed));
+assert.equal(confirmed.fight.kind,'boss');
+assert.equal(confirmed.fight.battle.allies[0].lv,60);
+assert.equal(request({confirmContact:confirm,expectedSaveAt:savedAt()}).fight.id,confirmed.fight.id);
 const growthKeys=['patk','matk','pdef','mdef'];
 const startStats=b.fight.battle.enemies[0].st;
 const forceBossTurn=(fightId)=>{

@@ -48,10 +48,17 @@ function mount(scene,context){
  let event=null,sprite='',frame=null,fight=null,queued=null,lastMove=0,ready=false,visible=false,waitTurn=null,
   polling=null,requesting=false,withdrawing=false,stayClear=false,resumed=false,feedback=null;
  let health=null,healthWatch=null,realtimeClient=null,motion=null,playerPosition=null;
+ let impact=null;
+ const impactDuration=260;
  const sameMap=()=>event?.country===scene.country;
  const now=()=>window.SoulbeastKingdomBoss?.now()??Date.now();
  const active=()=>event?.status==='active'&&now()<event.end;
  function bossPosition(){
+  if(impact?.to){
+   const t=Math.max(0,Math.min(1,(performance.now()-impact.at)/impactDuration));
+   const {from,to}=impact;
+   return {x:from.x+(to.x-from.x)*t*t,y:from.y+(to.y-from.y)*t*t,dir:to.dir};
+  }
   if(!event?.position)return null;
   if(event.motion==='patrol'&&event.home)return kingdomBossIdlePosition(event.home,event.idleSince,now());
   if(!motion||event.motion==='patrol')return event.position;
@@ -121,6 +128,33 @@ function mount(scene,context){
  addEventListener('soulbeast-kingdom-boss-update',e=>sync(e.detail));
  sync(window.SoulbeastKingdomBoss?.event||null);
  const update=data=>{if(data.event)window.SoulbeastKingdomBoss?.accept(data.event);};
+ async function confirmContact(contact,round,from){
+  const arrival={...playerPosition};
+  const dx=arrival.x-from.x,dy=arrival.y-from.y,distance=Math.hypot(dx,dy*.64);
+  const reach=distance>25?(distance-25)/distance:0;
+  const entry={at:performance.now(),painted:contact.kind!=='boss',reply:null};
+  if(contact.kind==='boss'){
+   const dir=distance>1?(Math.round(-Math.atan2(dx,dy*.64)/(Math.PI/4))+8)%8:from.dir||0;
+   const to={x:from.x+dx*reach,y:from.y+dy*reach,dir};
+   // If the sprites already overlap, give the boss room for a short lunge.
+   const angle=dir*Math.PI/4;
+   const start=distance<46?{x:to.x+Math.sin(angle)*46,y:to.y-Math.cos(angle)*46/.64}:from;
+   Object.assign(entry,{from:start,to});
+  }
+  impact=entry;
+  scene.pause();
+  try{
+   await connection.flush(true);
+   const save=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');
+   if(save?.code!==context.code||save.environment!==context.environment||!(Number(save.revision)>0))throw Error('save_conflict');
+   const reply=await send('move',{round,confirmContact:contact.id,expectedSaveAt:Number(save.revision)});
+   update(reply);
+   if(reply.fight?.battle){entry.reply=reply;return;}
+   if(contact.kind==='boss'&&active())report('จังหวะเข้าต่อสู้หมดเวลา · ลองเดินเข้าหาบอสอีกครั้ง');
+  }finally{
+   if(!entry.reply){impact=null;scene.resume();}
+  }
+ }
  function report(text){
   feedback?.remove();const message=document.createElement('p');feedback=message;message.setAttribute('role','status');message.textContent=text;
   message.style.cssText='position:fixed;left:8px;right:8px;bottom:100px;z-index:10001;margin:auto;max-width:380px;padding:10px;background:#102831;color:#ffedb1;border:1px solid #e4bc68;border-radius:8px;text-align:center;pointer-events:none';
@@ -190,24 +224,32 @@ function mount(scene,context){
   if(distance>110)stayClear=false;
   const prior=readBattle(),resume=!resumed&&prior?.round===event.id&&!prior.done;
   if(queued){const next=queued;queued=null;show(next);if(frame)return;}
-  const near=distance<KINGDOM_BOSS_AGGRO_RADIUS+100||event.motion==='chase';
-  if(!resume&&(Math.min(distance,homeDistance)>540||stayClear||Date.now()-lastMove<(near?300:700)))return;
+  const near=distance<KINGDOM_BOSS_AGGRO_RADIUS+200||event.motion==='chase';
+  if(!resume&&(Math.min(distance,homeDistance)>540||stayClear||Date.now()-lastMove<(near?250:700)))return;
   const round=event.id;lastMove=Date.now();requesting=true;
   try{
    let data;
    if(resume){resumed=true;data=await send('poll',{round,fight:prior.id,turn:-1});}
    else{
-    if(near)await connection.flush(true);
     if(!scene.canMove()||event?.id!==round||document.hidden)return;
     const {x,y,running}=playerPosition;
-    data=await send('move',{round,map:scene.country,x,y,running});
+    data=await send('move',{round,map:scene.country,x,y,running,deferFight:true});
    }
-   update(data);if(data.fight)show(data);
-  }catch(error){lastMove=Date.now()+1200;if(distance<90)report(error.message==='save_conflict'?'บันทึกตัวละครก่อนเริ่มสู้กับบอส':'ยังเข้าร่วมไม่ได้ · ลองเดินเข้าหาบอสอีกครั้ง');}
+   const from=bossPosition()||boss;
+   update(data);
+   if(data.fight)show(data);
+   else if(data.contact&&data.event?.id===round&&scene.canMove()&&!document.hidden)await confirmContact(data.contact,round,from);
+  }catch(error){lastMove=Date.now()+1200;if(distance<90||error.message==='save_conflict')report(error.message==='save_conflict'?'บันทึกตัวละครก่อนเริ่มสู้กับบอส':'ยังเข้าร่วมไม่ได้ · ลองเดินเข้าหาบอสอีกครั้ง');}
   finally{requesting=false;}
  }
  window.walkKingdomBoss={tick(position,running){
   playerPosition={x:position.x,y:position.y,running};
+  if(impact){
+   if(impact.reply&&(impact.painted||!active()||!sameMap())){
+    const next=impact.reply;impact=null;scene.resume();show(next);
+   }
+   return;
+  }
   if(!requesting&&!frame)void move();
  },
  drawMinimap(context,worldWidth,worldHeight){
@@ -222,7 +264,7 @@ function mount(scene,context){
   if(!sameMap()||!active())return;
   const boss=bossPosition();if(!boss)return;
   const px=x(boss.x),py=y(boss.y);c.save();
-  const running=event.motion==='chase'||event.motion==='return';
+  const running=!!impact?.to||event.motion==='chase'||event.motion==='return';
   if(overview){drawBossMarker(c,px,py,10);}
   else if(!art?.draw(c,px,py,210*zoom,boss.dir||0,running?time*1.7:time,!!event.motion)){c.beginPath();c.arc(px,py,20*zoom,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.strokeStyle='#ffe283';c.stroke();}
   c.font='bold '+(overview?'13px':'14px')+' Tahoma';c.textAlign='center';c.lineWidth=4;c.strokeStyle='#081924';c.fillStyle='#ffe694';
@@ -232,5 +274,6 @@ function mount(scene,context){
    drawBossHealth(c,px,labelY+5,latest.hp,latest.maxHP);
   }
   c.restore();
+  if(!overview&&impact?.to&&performance.now()-impact.at>=impactDuration)impact.painted=true;
  }};
 }
