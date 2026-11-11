@@ -1,4 +1,4 @@
-import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-gear-20261111';
+import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-repair-1';
