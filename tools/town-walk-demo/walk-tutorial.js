@@ -198,10 +198,9 @@
   },
   {
    art:'ui/walk-tutorial/05-enter-stage.webp',
-   body:'เมื่อพร้อมแล้ว เลื่อนลงด้านล่างแล้วกด “เข้าสู่ด่าน” ตามด้วยชื่อป่า ตรงกรอบสีแดง เมื่อเข้าไปแล้วจะกดกลับเมืองจากเมนูปกติไม่ได้',
-   en:'When you’re ready, scroll down and tap Enter Stage followed by the forest name in the red box. Once inside, the regular menu cannot take you back to town.',
-   zh:'准备好后向下滚动，点击红框内带有森林名称的「进入关卡」。进入后无法通过普通菜单返回城镇。',
-   highlight:{size:[432,358],box:[13,286,419,72]},
+   body:'เมื่อพร้อมแล้ว กด “เข้าสู่ด่าน” ตามด้วยชื่อป่า ใต้รูปป่า ก่อนรายการอสูรที่พบได้ เมื่อเข้าไปแล้วจะกดกลับเมืองจากเมนูปกติไม่ได้',
+   en:'When you’re ready, tap Enter Stage under the forest image, above the list of beasts. Once inside, the regular menu cannot take you back to town.',
+   zh:'准备好后，在森林图片下方、异兽列表上方点击「进入关卡」。进入后无法通过普通菜单返回城镇。',
   },
  ];
  const forestWalk=lessons[5];

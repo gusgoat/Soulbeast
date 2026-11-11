@@ -7,6 +7,7 @@
 .forest-picture{position:relative;isolation:isolate;overflow:hidden;border-radius:9px;margin:0 0 14px}
 .forest-water-effect{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);pointer-events:none}
 .forest-original-art{display:block;width:100%;aspect-ratio:4/3;max-height:220px;object-fit:cover;border-radius:9px;margin:0;border:1px solid #b8a068}
+.forest-entry-action{display:block;width:100%}
 [data-forest-preview] h3{font-size:17px;line-height:1.5;margin:12px 0 6px}
 [data-forest-preview] h4{font-size:14px;color:#e9d39c;margin:14px 0 8px}
 .forest-discovery-key{font-size:11px!important;line-height:1.6!important;margin:6px 0 12px!important;color:#becdd0}

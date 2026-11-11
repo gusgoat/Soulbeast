@@ -119,7 +119,7 @@ async function verifyPlayback() {
   },
   BattleEffects: {
    enrich: effects => effects.map(effect => ({...effect, group: 0})),
-   anchor: () => ({x: 1, y: 1}), profile: () => ({}),
+   anchor: () => ({x: 1, y: 1}), profile: () => ({}), prepareProjectile() {},
    battle: () => c.CAMP.room.battle,
    actor: id => [...c.CAMP.room.battle.allies, ...c.CAMP.room.battle.enemies].find(u => u.id === id),
    spawn() {
