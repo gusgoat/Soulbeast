@@ -25,6 +25,11 @@ const sourceArt=new Set([
  'assets/town-walk-preview/wall-h-raw-v1.png.webp',
  'assets/town-walk-preview/wall-v-raw-v1.png.webp',
 ]);
+// The game streams these MP4s from Supabase Storage. Keep the WebP posters on Pages.
+const streamedVideos=new Set(['assets/video/soulbeast-intro-v2.mp4']);
+for(let zone=1;zone<=8;zone++){
+ for(const phase of ['before','after'])streamedVideos.add('assets/video/forest-story/zone-'+zone+'-'+phase+'.mp4');
+}
 const catalog='tools/rare-beast-walk-demo/catalog.js';
 const originals=new Set();
 const publishedCatalog=readFileSync(resolve(root,catalog),'utf8').replace(
@@ -36,12 +41,13 @@ const publishedCatalog=readFileSync(resolve(root,catalog),'utf8').replace(
  },
 );
 
-let bytes=0, count=0, omittedBytes=0;
+let bytes=0, count=0, omittedBytes=0, streamedBytes=0;
 const staged=[];
 for(const file of files){
  if(file.startsWith('.github/')||file==='tools/prepare-pages.mjs')continue;
  const source=resolve(root,file);
  const size=statSync(source).size;
+ if(streamedVideos.has(file)){streamedBytes+=size;continue;}
  if(sourceArt.has(file)||originals.has(file)){omittedBytes+=size;continue;}
  bytes+=file===catalog?Buffer.byteLength(publishedCatalog):size;
  staged.push({file,source});
@@ -56,4 +62,4 @@ for(const {file,source} of staged){
  if(file===catalog)writeFileSync(target,publishedCatalog);
  else copyFileSync(source,target);
 }
-console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art.`);
+console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video.`);
