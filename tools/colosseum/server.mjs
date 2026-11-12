@@ -8,7 +8,7 @@ import {createAccountLoader} from './account-auth.mjs';
 
 const TYPES={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8',
  '.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg','.mp3':'audio/mpeg'};
-const STATIC=new Set(['index.html','client.mjs','ranking.mjs','matchmaking.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','battle-effects.generated.mjs','pvp-card-art.mjs','walk-joystick.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js']);
+const STATIC=new Set(['index.html','client.mjs','ranking.mjs','matchmaking.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','battle-effects.generated.mjs','pvp-card-art.mjs','walk-joystick.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js','town-walk-demo/sealer-sprites.js']);
 const ROOT=new URL('../../',import.meta.url);
 const TICK=50, LOBBY_TTL=30*60_000, LOBBY_RECONNECT_MS=60_000, FINISH_TTL=5*60_000;
 const MAX_ROOMS=32, MAX_CONNECTIONS=160;

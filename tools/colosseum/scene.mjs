@@ -1,4 +1,5 @@
 import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
+import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-repair-1';
@@ -7,6 +8,7 @@ import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
 const TILE=CELL*FLAT;
+const WALL_HEIGHT=54;
 const img=url=>Object.assign(new Image(),{src:url});
 const shieldImages=new Map();
 const ready=i=>i?.complete&&i.naturalWidth>0;
@@ -166,7 +168,7 @@ function wallShape(arena,x,y){
   y===1||maze[y-1][x],x===cols-2||maze[y][x+1],
   y===rows-2||maze[y+1][x],x===1||maze[y][x-1],
  ];
- const curve=new Path2D(),ledges=new Path2D();
+ const curve=new Path2D(),ledges=new Path2D(),front=new Path2D();
  const inset=points.map((_,i)=>exposed[i]&&exposed[(i+3)%4]?19+hash(x*5+i,y)*13:0);
  const toward=(from,to,length)=>{
   const dx=to[0]-from[0],dy=to[1]-from[1],t=length/Math.hypot(dx,dy);
@@ -186,9 +188,22 @@ function wallShape(arena,x,y){
    ledges.quadraticCurveTo(...mid,...end);
    if(inset[next])ledges.quadraticCurveTo(...b,...after);
   }
+  if(i===2&&exposed[i]){
+   // Use the same curve for the stone cap and the foot of the wall.
+   const before=toward(a,points[1],inset[i]);
+   front.moveTo(...before);
+   if(inset[i])front.quadraticCurveTo(...a,...start);
+   front.quadraticCurveTo(...mid,...end);
+   if(inset[next])front.quadraticCurveTo(...b,...after);
+   front.lineTo(after[0],after[1]-WALL_HEIGHT);
+   if(inset[next])front.quadraticCurveTo(b[0],b[1]-WALL_HEIGHT,end[0],end[1]-WALL_HEIGHT);
+   front.quadraticCurveTo(mid[0],mid[1]-WALL_HEIGHT,start[0],start[1]-WALL_HEIGHT);
+   if(inset[i])front.quadraticCurveTo(a[0],a[1]-WALL_HEIGHT,before[0],before[1]-WALL_HEIGHT);
+   front.closePath();
+  }
  }
  curve.closePath();
- const shape={curve,ledges};
+ const shape={curve,ledges,front};
  walls.set(id,shape);
  return shape;
 }
@@ -288,7 +303,7 @@ export class Scene{
   const left=cam.x-w/2/zoom, top=cam.y-h/2/zoom, right=left+w/zoom, bottom=top+h/zoom;
   c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#241f26';c.fillRect(0,0,w,h);
   c.setTransform(dpr*zoom,0,0,dpr*zoom,-left*dpr*zoom,-top*dpr*zoom);
-  this.drawTerrain(left,top,right,bottom);
+  const walls=this.drawTerrain(left,top,right,bottom);
   const castles=bases.filter(b=>inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
   const repairs=new Set();
   for(const b of castles){
@@ -303,7 +318,11 @@ export class Scene{
   const alive=new Set(seen.map(p=>p.id));
   for(const id of this.anim.keys())if(!alive.has(id))this.anim.delete(id);
   const props=obstacles.filter(p=>inSight(me,p)&&p.x>=left-75&&p.x<=right+75&&p.y*FLAT>=top-80&&p.y*FLAT<=bottom+100);
-  for(const e of [...castles,...seen,...props].sort((a,b)=>a.y-b.y)){
+  for(const e of [...walls,...castles,...seen,...props].sort((a,b)=>a.y-b.y)){
+   if(e.wall){
+    this.wall(e.col,e.row,e.wall);
+    continue;
+   }
    if(e.main!==undefined){
     this.base(e,now);
     if(repairs.has(e.id))this.repairSparks(e,now);
@@ -360,8 +379,22 @@ export class Scene{
    c.strokeStyle='#675340';c.lineWidth=5;c.stroke(innerRim);
   }
   const x0=Math.max(1,Math.floor(left/CELL)-1),x1=Math.min(cols-1,Math.ceil(right/CELL)+1);
-  const y0=Math.max(1,Math.floor(top/TILE)-1),y1=Math.min(rows-1,Math.ceil(bottom/TILE)+1);
-  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)this.tile(x,y);
+  const y0=Math.max(1,Math.floor(top/TILE)-1),y1=Math.min(rows-1,Math.ceil((bottom+WALL_HEIGHT)/TILE)+1);
+  const walls=[];
+  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
+   if(this.arena.maze[y][x]){
+    this.tile(x,y);
+    continue;
+   }
+   const wall=wallShape(this.arena,x,y);
+   c.save();c.translate(x*CELL+3,y*TILE+6);
+   c.lineJoin='round';c.lineCap='round';
+   c.strokeStyle='#281b1945';c.lineWidth=22;c.stroke(wall.ledges);
+   c.strokeStyle='#281b196d';c.lineWidth=11;c.stroke(wall.ledges);
+   c.restore();
+   walls.push({col:x,row:y,y:(y+1)*CELL,wall});
+  }
+  return walls;
  }
  sightMask(me,left,top,right,bottom){
   const c=this.c,x=me.x,y=me.y*FLAT,r=SIGHT_RANGE;
@@ -392,30 +425,41 @@ export class Scene{
   c.strokeRect(min,min*FLAT,max-min,(max-min)*FLAT);
  }
  tile(x,y){
-  const {maze,bushAt}=this.arena;
+  const {bushAt}=this.arena;
   const c=this.c,px=x*CELL,py=y*TILE;
-  if(maze[y][x]){
-   if(x===15&&(this.arena===TEAM_ARENA||y===15)){
-    c.strokeStyle='#e0b66499';c.lineWidth=2;
-    c.beginPath();c.arc(px+CELL/2,py+TILE/2,32,0,Math.PI*2);c.stroke();
-    c.strokeRect(px+CELL/2-21,py+TILE/2-21,42,42);
-   }
-   if(bushAt({x:px+1,y:y*CELL+1})!==null)this.bush(px,py,x,y);
-   return;
+  if(x===15&&(this.arena===TEAM_ARENA||y===15)){
+   c.strokeStyle='#e0b66499';c.lineWidth=2;
+   c.beginPath();c.arc(px+CELL/2,py+TILE/2,32,0,Math.PI*2);c.stroke();
+   c.strokeRect(px+CELL/2-21,py+TILE/2-21,42,42);
   }
-  const {curve,ledges}=wallShape(this.arena,x,y);
+  if(bushAt({x:px+1,y:y*CELL+1})!==null)this.bush(px,py,x,y);
+ }
+ wall(x,y,{curve,ledges,front}){
+  const c=this.c,px=x*CELL,py=y*TILE;
   c.save();c.translate(px,py);
+  c.save();c.clip(front);
+  const faceTop=TILE-WALL_HEIGHT-18,faceHeight=WALL_HEIGHT+20;
+  c.fillStyle='#554438';c.fillRect(0,faceTop,CELL+1,faceHeight);
+  if(ready(wallArt)){
+   c.drawImage(wallArt,0,wallArt.naturalHeight*.71,wallArt.naturalWidth,wallArt.naturalHeight*.29,
+    0,faceTop,CELL+1,faceHeight);
+  }
+  const shade=c.createLinearGradient(0,faceTop,0,TILE);
+  shade.addColorStop(0,'#37261920');shade.addColorStop(.65,'#2e211c24');shade.addColorStop(1,'#1d1617a6');
+  c.fillStyle=shade;c.fillRect(0,faceTop,CELL+1,faceHeight);
+  c.restore();
+  c.translate(0,-WALL_HEIGHT);
   c.lineJoin='round';c.lineCap='round';
-  c.strokeStyle='#281b19a6';c.lineWidth=15;c.stroke(ledges);
   c.clip(curve);
   if(!this.stone&&ready(wallArt))this.stone=stonePattern(c);
   c.translate(-px,-py);
   c.fillStyle=this.stone||'#54463d';c.fillRect(px,py,CELL+1,TILE+1);
   c.translate(px,py);
-  c.strokeStyle='#261d1bcc';c.lineWidth=21;c.stroke(ledges);
-  c.strokeStyle='#a68662';c.lineWidth=9;c.stroke(ledges);
+  c.strokeStyle='#3c2d26';c.lineWidth=24;c.stroke(ledges);
+  c.strokeStyle='#ba9970';c.lineWidth=10;c.stroke(ledges);
+  c.strokeStyle='#dbc398';c.lineWidth=3;c.stroke(ledges);
   c.restore();
-  this.decorateWall(x,y,px,py);
+  this.decorateWall(x,y,px,py-WALL_HEIGHT);
  }
  decorateWall(x,y,px,py){
   const roll=hash(x+43,y+29);
@@ -576,7 +620,7 @@ export class Scene{
      const col=moving?Math.floor(prev.phase*rate*cols/8)%cols:prev.dir%cols;
      const row=moving?prev.dir:Math.floor(prev.dir/cols);
      const width=sheet.naturalWidth/cols, height=sheet.naturalHeight/rows;
-     c.drawImage(sheet,col*width,row*height,width,height,x-size*ax,y-size*ay,size,size);
+     globalThis.sealerSprites.drawColoredFrame(c,sheet,col*width,row*height,width,height,x-size*ax,y-size*ay,size,size);
     }
    }
    if(!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
