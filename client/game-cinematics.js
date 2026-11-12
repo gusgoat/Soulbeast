@@ -79,17 +79,16 @@
         loadClip();
       }
     }
-    async function tryPlay(current, allowMutedFallback = true) {
+    async function tryPlay(current) {
       play.hidden = true;
       try {
         await current.play();
-      } catch (error) {
+      } catch {
         if (video !== current) return;
-        if (allowMutedFallback && error.name === 'NotAllowedError' && !current.muted) {
-          current.muted = true;
-          return tryPlay(current, false);
-        }
         clearTimeout(timer);
+        play.textContent = current.muted || current.volume === 0
+          ? label('เล่นวิดีโอ', 'Play video', '播放影片')
+          : label('เล่นพร้อมเสียง', 'Play with sound', '有声播放');
         play.hidden = false;
       }
     }
