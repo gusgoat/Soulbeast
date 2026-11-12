@@ -273,9 +273,9 @@ dialog p{margin-top:10px;font-size:.82em}
  #battle .battle-controls{flex-wrap:wrap}
 }
 
-/* Keep the practice exit reachable when the objectives extend down to the joystick. */
+/* Keep the walking exit buttons reachable when the objectives extend down to the joystick. */
 @media (orientation:landscape) and (max-height:420px){
- #leave-practice{
+ #leave-practice,#rank-leave{
   position:fixed;left:calc(max(15px,env(safe-area-inset-left)) + clamp(100px,26vw,132px) + 12px);
   bottom:max(20px,env(safe-area-inset-bottom));min-height:44px;z-index:4;
  }
