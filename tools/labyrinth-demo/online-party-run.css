@@ -19,3 +19,22 @@ html[data-dungeon-mode="party"] #joystick,html[data-dungeon-mode="party"] #joyst
 [data-dungeon-mode="party"] aside{top:210px!important}
 
 [data-dungeon-mode="party"] .online-party-vitals{top:245px!important}
+
+@media (orientation:landscape) and (max-height:600px){
+ html[data-dungeon-mode="party"] #leaveParty{
+  position:fixed;top:var(--dungeon-top);right:calc(var(--dungeon-edge) + 182px);min-height:36px;
+ }
+ html[data-dungeon-mode="party"] #progress,
+ html[data-dungeon-mode="party"] .online-party-vitals{left:max(154px,27vw);right:170px;width:auto}
+ html[data-dungeon-mode="party"] #progress{
+  top:calc(var(--dungeon-top) + 42px);margin:0;padding:4px 7px;font-size:11px;overflow-wrap:anywhere;
+ }
+ html[data-dungeon-mode="party"] .online-party-vitals{
+  top:calc(var(--dungeon-top) + 86px)!important;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;
+ }
+ html[data-dungeon-mode="party"] .online-party-vitals[hidden]{display:none!important}
+ html[data-dungeon-mode="party"] .online-party-member{margin:0;padding:2px 5px;font-size:10px;line-height:1.2}
+ html[data-dungeon-mode="party"] .online-party-member meter{height:4px;margin:1px 0}
+ html[data-dungeon-mode="party"] .walk-audio-toggle{bottom:calc(var(--walk-bottom) + 14px)!important}
+}

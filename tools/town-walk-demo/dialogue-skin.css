@@ -45,3 +45,34 @@ body.dialogue-lobby main>header,body.dialogue-menu main>header{border:10px solid
 @media(max-height:600px){.npc-dialog-footer .npc-dialog-speaker>img,.npc-existing-bust{height:130px}.npc-dialog-footer{margin-top:6px}.npc-dialog-footer figcaption{font-size:9px}.npc-service-banner>img{height:140px}}
 
 .npc-dialog-footer{grid-template-columns:minmax(0,1fr) clamp(120px,38vw,185px)}.npc-dialog-footer .npc-dialog-speaker>img,.npc-existing-bust{height:190px}.npc-dialog-footer .npc-dialog-speaker>img{object-position:right bottom}@media(max-height:600px){.npc-dialog-footer .npc-dialog-speaker>img,.npc-existing-bust{height:145px}}
+
+/* Keep the speaker beside the scrollable conversation on short landscape screens. */
+@media (orientation:landscape) and (max-height:600px) and (pointer:coarse){
+ #townDialog.has-npc-speaker[open]{
+  display:grid;grid-template-columns:minmax(0,1fr) clamp(120px,22vw,180px);
+  align-content:start;align-items:start;column-gap:12px;
+  width:min(94vw,850px);max-height:calc(100dvh - 24px)!important;
+  padding:10px!important;overflow:auto!important;overscroll-behavior:contain;
+ }
+ #townDialog.has-npc-speaker[open]>:not(.npc-dialog-footer){grid-column:1;min-width:0}
+ #townDialog.has-npc-speaker #dialogTitle{font-size:clamp(18px,3.2vw,22px);margin:4px 0}
+ #townDialog.has-npc-speaker #dialogText{margin:4px 0 8px;overflow-wrap:anywhere}
+ #townDialog.has-npc-speaker #dialogChoices{
+  max-height:none;overflow:visible;overscroll-behavior:auto;padding:3px 3px 8px;
+ }
+ #townDialog.has-npc-speaker .npc-dialog-footer{
+  grid-column:2;grid-row:1 / span 6;position:sticky;top:0;align-self:start;
+  grid-template-columns:minmax(0,1fr);gap:6px;margin:0;
+ }
+ #townDialog.has-npc-speaker .npc-dialog-speaker{grid-row:1}
+ #townDialog.has-npc-speaker .npc-dialog-speaker>img,
+ #townDialog.has-npc-speaker .npc-existing-bust{height:clamp(58px,26dvh,140px)}
+ #townDialog.has-npc-speaker .npc-dialog-speaker>img{object-position:center bottom}
+ #townDialog.has-npc-speaker .npc-dialog-footer #closeDialog{padding:8px 10px!important;text-align:center}
+ #app.landscape-menu main .npc-service-banner{
+  grid-template-columns:minmax(0,1fr) clamp(64px,14vw,115px);
+  padding:4px 10px;margin-bottom:8px;
+ }
+ #app.landscape-menu main .npc-service-banner>img,
+ #app.landscape-menu main .npc-service-banner>.npc-existing-bust{height:clamp(46px,15dvh,88px)}
+}

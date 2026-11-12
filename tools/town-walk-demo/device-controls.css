@@ -9,3 +9,44 @@ html[data-walk-kind=dungeon] .joystick-on-right #action{left:14px!important;righ
 html[data-walk-kind=dungeon] #guide{position:absolute;left:0;top:70px;width:30px;height:30px;padding:3px;font-size:13px}
 
 .hud-top{height:72px!important}
+
+@media (orientation:landscape) and (max-height:600px){
+ body.town-walk{
+  --town-right:max(12px,env(safe-area-inset-right));
+  --town-top:calc(var(--walk-top) + max(10px,env(safe-area-inset-top)));
+  --town-map:clamp(58px,calc((100dvh - var(--walk-top) - var(--walk-bottom)) * .45),96px);
+ }
+ body.town-walk .map{right:var(--town-right)!important;top:var(--town-top)!important;width:var(--town-map)}
+ body.town-walk .map canvas{width:var(--town-map)!important;height:var(--town-map)!important}
+ body.town-walk .map #area,body.town-walk .map-legend{display:none}
+ body.town-walk .location{width:max(100px,calc(100% - 355px));max-width:40vw}
+ body.town-walk .walk-hud-toggle{top:var(--town-top);right:calc(var(--town-right) + var(--town-map) + 12px)}
+ body.town-walk .tools{
+  top:var(--town-top)!important;right:calc(var(--town-right) + var(--town-map) + 56px)!important;
+  width:auto;flex-direction:row!important;flex-wrap:nowrap;
+ }
+ body.town-walk .actions{right:calc(var(--town-right) + 112px)!important}
+ body.town-walk.joystick-on-right .actions{right:auto!important}
+ body.town-walk .walk-audio-toggle{right:var(--town-right)!important}
+ body.town-walk.overview .close-overview{top:var(--town-top)!important;right:var(--town-right)}
+ @media (min-height:285px){
+  body.town-walk.walk-hud-hidden:not(.overview) .tools{
+   top:calc(var(--town-top) + var(--town-map) + 12px)!important;right:var(--town-right)!important;
+  }
+ }
+ html[data-walk-kind="dungeon"] body{
+  --dungeon-top:calc(var(--walk-top) + max(10px,env(safe-area-inset-top)));
+  --dungeon-edge:max(12px,env(safe-area-inset-right));
+ }
+ html[data-walk-kind="dungeon"] body>header{top:var(--dungeon-top)!important}
+ html[data-walk-kind="dungeon"] #guide{
+  position:fixed;top:var(--dungeon-top);right:calc(var(--dungeon-edge) + 138px);left:auto;
+  width:36px;height:36px;
+ }
+ html[data-walk-kind="dungeon"] body>aside{top:var(--dungeon-top)!important;right:var(--dungeon-edge);width:88px!important}
+ html[data-walk-kind="dungeon"] .walk-hud-toggle{top:var(--dungeon-top);right:calc(var(--dungeon-edge) + 96px)}
+ html[data-walk-kind="dungeon"] #mapButton canvas{height:clamp(46px,17dvh,85px)!important}
+ html[data-walk-kind="dungeon"] aside .game-clock{font-size:10px;white-space:normal}
+ html[data-walk-kind="dungeon"] #action{right:calc(var(--dungeon-edge) + 88px)!important;max-width:66px}
+ html[data-walk-kind="dungeon"] .joystick-on-right #action{right:auto!important}
+}

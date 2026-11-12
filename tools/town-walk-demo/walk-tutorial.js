@@ -868,6 +868,7 @@
    dialog.remove();
    if(acknowledged)done();
    else if(!review)dismiss();
+   if(typeof g.Event==='function')doc.dispatchEvent(new g.Event('walk-lesson-closed'));
   },{once:true});
   dialog.showModal();presented();focusControls();
   return dialog;

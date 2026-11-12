@@ -20,3 +20,6 @@
 .tools{transform:translateY(75px)}
 
 .bottom-shade{display:none}
+
+body.town-walk .close-overview{position:fixed;top:calc(var(--walk-top, 0px) + 10px)!important;right:max(12px,env(safe-area-inset-right));z-index:8;min-height:44px;padding:6px 14px;border:1px solid #cfad67;border-radius:12px;background:#0c2732;color:#ffe7ad;font:inherit;font-weight:700;cursor:pointer}
+body.town-walk .close-overview[hidden]{display:none}
