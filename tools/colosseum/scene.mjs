@@ -114,6 +114,99 @@ const countryArt=[
  {tree:img(assets+'hemant-walk-preview/pine-v2.png.webp'),rock:img(assets+'dungeon-later-v1/snow-rock-v2.webp')},
  {tree:img(assets+'country-walk/red/tree.png.webp'),rock:img(assets+'dungeon-later-v1/lava-rock-v2.webp')},
 ];
+const terrainLayouts=new WeakMap();
+function terrainLayout(arena){
+ if(terrainLayouts.has(arena))return terrainLayouts.get(arena);
+ // Keep the curved seating outside the existing collision grid, including the corner corridors.
+ const x=CELL-118,y=TILE-83,width=arena.width-2*x,height=arena.height*FLAT-2*y;
+ const rx=365,ry=234;
+ const outline=inset=>{
+  const path=new Path2D();
+  path.roundRect(x+inset,y+inset,width-2*inset,height-2*inset,{x:rx-inset,y:ry-inset});
+  return path;
+ };
+ const floor=outline(0),outer=outline(-116),ring=new Path2D(outer);
+ ring.addPath(floor);
+ const seats=[];
+ const stamp=(px,py,angle)=>seats.push({x:px,y:py,angle});
+ const edge=(x1,y1,x2,y2,angle)=>{
+  const count=Math.ceil(Math.hypot(x2-x1,y2-y1)/115);
+  for(let i=0;i<count;i++){
+   const t=(i+.5)/count;
+   stamp(x1+(x2-x1)*t,y1+(y2-y1)*t,angle);
+  }
+ };
+ const margin=58;
+ edge(x+rx,y-margin,x+width-rx,y-margin,0);
+ edge(x+rx,y+height+margin,x+width-rx,y+height+margin,0);
+ edge(x-margin,y+ry,x-margin,y+height-ry,Math.PI/2);
+ edge(x+width+margin,y+ry,x+width+margin,y+height-ry,Math.PI/2);
+ for(const [cx,cy,start] of [
+  [x+rx,y+ry,Math.PI],[x+width-rx,y+ry,Math.PI*1.5],
+  [x+width-rx,y+height-ry,0],[x+rx,y+height-ry,Math.PI/2],
+ ])for(let i=0;i<6;i++){
+  const a=start+(i+.5)*Math.PI/12;
+  const dx=Math.cos(a),dy=Math.sin(a);
+  let angle=Math.atan2((ry+margin)*dx,-(rx+margin)*dy);
+  if(Math.abs(angle)>Math.PI/2)angle-=Math.sign(angle)*Math.PI;
+  stamp(cx+(rx+margin)*dx,cy+(ry+margin)*dy,angle);
+ }
+ const layout={floor,outer,ring,seats,mapRim:outline(-45),innerRim:outline(14),walls:new Map()};
+ terrainLayouts.set(arena,layout);
+ return layout;
+}
+
+function wallShape(arena,x,y){
+ const {walls}=terrainLayout(arena),id=y*arena.cols+x;
+ if(walls.has(id))return walls.get(id);
+ const {maze,cols,rows}=arena;
+ const points=[[0,0],[CELL+1,0],[CELL+1,TILE+1],[0,TILE+1]];
+ const normals=[[0,1],[-1,0],[0,-1],[1,0]];
+ const exposed=[
+  y===1||maze[y-1][x],x===cols-2||maze[y][x+1],
+  y===rows-2||maze[y+1][x],x===1||maze[y][x-1],
+ ];
+ const curve=new Path2D(),ledges=new Path2D();
+ const inset=points.map((_,i)=>exposed[i]&&exposed[(i+3)%4]?19+hash(x*5+i,y)*13:0);
+ const toward=(from,to,length)=>{
+  const dx=to[0]-from[0],dy=to[1]-from[1],t=length/Math.hypot(dx,dy);
+  return [from[0]+dx*t,from[1]+dy*t];
+ };
+ for(let i=0;i<4;i++){
+  const next=(i+1)%4,a=points[i],b=points[next];
+  const start=toward(a,b,inset[i]),end=toward(b,a,inset[next]);
+  const [nx,ny]=normals[i],dent=exposed[i]?7+hash(x+11*i,y+7)*13:0;
+  const mid=[(start[0]+end[0])/2+nx*dent,(start[1]+end[1])/2+ny*dent];
+  const after=toward(b,points[(i+2)%4],inset[next]);
+  if(i===0)curve.moveTo(...start);
+  curve.quadraticCurveTo(...mid,...end);
+  if(inset[next])curve.quadraticCurveTo(...b,...after);
+  if(exposed[i]){
+   ledges.moveTo(...start);
+   ledges.quadraticCurveTo(...mid,...end);
+   if(inset[next])ledges.quadraticCurveTo(...b,...after);
+  }
+ }
+ curve.closePath();
+ const shape={curve,ledges};
+ walls.set(id,shape);
+ return shape;
+}
+
+function stonePattern(ctx){
+ // Mirror the unframed center of the source art so neighboring walls share one surface.
+ const texture=document.createElement('canvas');
+ const size=180;
+ texture.width=texture.height=size*2;
+ const stone=texture.getContext('2d');
+ for(const x of [0,1])for(const y of [0,1]){
+  stone.setTransform(1-2*x,0,0,1-2*y,2*x*size,2*y*size);
+  stone.drawImage(wallArt,wallArt.naturalWidth*.16,wallArt.naturalHeight*.16,
+   wallArt.naturalWidth*.68,wallArt.naturalHeight*.44,0,0,size,size);
+ }
+ return ctx.createPattern(texture,'repeat');
+}
+
 const miniatures=new Map();
 function mapBackground(arena){
  if(miniatures.has(arena))return miniatures.get(arena);
@@ -121,7 +214,13 @@ function mapBackground(arena){
  const c=document.createElement('canvas');miniatures.set(arena,c);
  c.width=cols*8;c.height=rows*6;
  const m=c.getContext('2d');
- m.fillStyle='#151722';m.fillRect(0,0,c.width,c.height);
+ const {floor,mapRim}=terrainLayout(arena);
+ m.fillStyle='#11121b';m.fillRect(0,0,c.width,c.height);
+ m.save();
+ m.scale(8/CELL,6/TILE);
+ m.fillStyle='#8b7056';m.fill(mapRim);
+ m.fillStyle='#28232a';m.fill(floor);
+ m.restore();
  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(maze[y][x]){
   const bush=bushAt({x:(x+.5)*CELL,y:(y+.5)*CELL})!==null;
   m.fillStyle=bush?'#496c57':arena===SURVIVAL_ARENA?'#827965':x===Math.floor(cols/2)?'#a28b69':x<cols/2?'#4b626f':'#705856';
@@ -187,11 +286,9 @@ export class Scene{
   const cam=this.camera;
   cam.x+=(lookX-cam.x)*.18;cam.y+=(lookY-cam.y)*.18;
   const left=cam.x-w/2/zoom, top=cam.y-h/2/zoom, right=left+w/zoom, bottom=top+h/zoom;
-  c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#342930';c.fillRect(0,0,w,h);
+  c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#241f26';c.fillRect(0,0,w,h);
   c.setTransform(dpr*zoom,0,0,dpr*zoom,-left*dpr*zoom,-top*dpr*zoom);
-  const x0=Math.floor(left/CELL)-1,x1=Math.ceil(right/CELL)+1;
-  const y0=Math.floor(top/TILE)-1,y1=Math.ceil(bottom/TILE)+1;
-  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)this.tile(x,y,now);
+  this.drawTerrain(left,top,right,bottom);
   const castles=bases.filter(b=>inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
   const repairs=new Set();
   for(const b of castles){
@@ -218,6 +315,53 @@ export class Scene{
   }
   this.sightMask(me,left,top,right,bottom);
   if(zone?.step)this.fog(zone,left,top,right,bottom,now);
+ }
+ drawTerrain(left,top,right,bottom){
+  const c=this.c,{cols,rows,width,height}=this.arena;
+  const {floor,outer,ring,seats,innerRim}=terrainLayout(this.arena);
+  const nearEdge=left<CELL+24||right>width-CELL-24||top<TILE+24||bottom>height*FLAT-TILE-24;
+  if(nearEdge){
+   c.fillStyle='#504038';c.fill(outer);
+   if(ready(crowdArt)){
+    c.save();
+    c.clip(ring,'evenodd');
+    for(const seat of seats){
+     if(seat.x<left-112||seat.x>right+112||seat.y<top-112||seat.y>bottom+112)continue;
+     c.save();
+     c.translate(seat.x,seat.y);c.rotate(seat.angle);
+     c.drawImage(crowdArt,-66,-69,132,138);
+     c.restore();
+    }
+    c.restore();
+   }
+  }
+  c.save();
+  if(nearEdge)c.clip(floor);
+  if(!this.paving&&ready(pavingArt)){
+   this.paving=c.createPattern(pavingArt,'repeat');
+   this.paving?.setTransform(new DOMMatrix().scale(.68,.5));
+  }
+  const spanX=right-left,spanY=bottom-top;
+  c.fillStyle=this.paving||'#9b815c';c.fillRect(left,top,spanX,spanY);
+  const wash=c.createLinearGradient(0,0,width,0);
+  const survival=this.arena===SURVIVAL_ARENA;
+  wash.addColorStop(0,survival?'#33293946':'#25476263');
+  wash.addColorStop(.5,'#65442537');
+  wash.addColorStop(1,survival?'#33293946':'#77382659');
+  c.fillStyle=wash;c.fillRect(left,top,spanX,spanY);
+  c.restore();
+  if(nearEdge){
+   c.save();c.clip(floor);
+   c.strokeStyle='#38292070';c.lineWidth=100;c.stroke(floor);
+   c.strokeStyle='#38292065';c.lineWidth=56;c.stroke(floor);
+   c.restore();
+   c.strokeStyle='#332720';c.lineWidth=22;c.stroke(floor);
+   c.strokeStyle='#ad8b62';c.lineWidth=8;c.stroke(floor);
+   c.strokeStyle='#675340';c.lineWidth=5;c.stroke(innerRim);
+  }
+  const x0=Math.max(1,Math.floor(left/CELL)-1),x1=Math.min(cols-1,Math.ceil(right/CELL)+1);
+  const y0=Math.max(1,Math.floor(top/TILE)-1),y1=Math.min(rows-1,Math.ceil(bottom/TILE)+1);
+  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)this.tile(x,y);
  }
  sightMask(me,left,top,right,bottom){
   const c=this.c,x=me.x,y=me.y*FLAT,r=SIGHT_RANGE;
@@ -247,14 +391,10 @@ export class Scene{
   c.strokeStyle='#a8e876c0';c.lineWidth=3;
   c.strokeRect(min,min*FLAT,max-min,(max-min)*FLAT);
  }
- tile(x,y,now){
-  const {cols,rows,maze,bushAt}=this.arena;
-  const c=this.c,px=x*CELL,py=y*TILE,f=hash(x,y);
-  const stands=x<=0||x>=cols-1||y<=0||y>=rows-1;
-  if(stands){this.stand(px,py,x,y,now);return;}
+ tile(x,y){
+  const {maze,bushAt}=this.arena;
+  const c=this.c,px=x*CELL,py=y*TILE;
   if(maze[y][x]){
-   c.fillStyle=f<.5?'#655247':'#705a48';c.fillRect(px,py,CELL+1,TILE+1);
-   if(ready(pavingArt))c.drawImage(pavingArt,px,py,CELL+1,TILE+1);
    if(x===15&&(this.arena===TEAM_ARENA||y===15)){
     c.strokeStyle='#e0b66499';c.lineWidth=2;
     c.beginPath();c.arc(px+CELL/2,py+TILE/2,32,0,Math.PI*2);c.stroke();
@@ -263,26 +403,19 @@ export class Scene{
    if(bushAt({x:px+1,y:y*CELL+1})!==null)this.bush(px,py,x,y);
    return;
   }
-  if(ready(wallArt)){
-   c.drawImage(wallArt,px,py,CELL+1,TILE+1);
-   this.decorateWall(x,y,px,py);
-   return;
-  }
-  c.fillStyle='#48352e';c.fillRect(px,py,CELL+1,TILE+1);
-  c.fillStyle='#31252c';c.fillRect(px,py+TILE-25,CELL,25);
-  for(let j=0;j<3;j++)for(let i=0;i<4;i++){
-   const q=hash(4*x+i,3*y+j);
-   c.fillStyle=q>.5?'#8c7260':'#786354';c.fillRect(px+i*60+1,py+j*(TILE-25)/3+1,58,(TILE-25)/3-2);
-   c.fillStyle='#b7a38167';c.fillRect(px+i*60+2,py+j*(TILE-25)/3+2,56,3);
-  }
-  if(f>.66){
-   c.fillStyle='#b89d75';c.fillRect(px+8,py+8,15,15);c.fillRect(px+CELL-23,py+8,15,15);
-  }
-  if(f<.12){
-   const cx=px+CELL/2,cy=py+TILE/2;
-   c.fillStyle='#1e1520';c.fillRect(cx-16,cy-10,32,20);
-   this.flame(cx,cy,now+200*f);
-  }
+  const {curve,ledges}=wallShape(this.arena,x,y);
+  c.save();c.translate(px,py);
+  c.lineJoin='round';c.lineCap='round';
+  c.strokeStyle='#281b19a6';c.lineWidth=15;c.stroke(ledges);
+  c.clip(curve);
+  if(!this.stone&&ready(wallArt))this.stone=stonePattern(c);
+  c.translate(-px,-py);
+  c.fillStyle=this.stone||'#54463d';c.fillRect(px,py,CELL+1,TILE+1);
+  c.translate(px,py);
+  c.strokeStyle='#261d1bcc';c.lineWidth=21;c.stroke(ledges);
+  c.strokeStyle='#a68662';c.lineWidth=9;c.stroke(ledges);
+  c.restore();
+  this.decorateWall(x,y,px,py);
  }
  decorateWall(x,y,px,py){
   const roll=hash(x+43,y+29);
@@ -306,11 +439,10 @@ export class Scene{
  bush(px,py,x,y){
   const c=this.c;
   if(ready(grassArt)){
-   c.fillStyle='#405b3c60';c.fillRect(px,py,CELL,TILE);
+   c.fillStyle='#30412a75';c.beginPath();c.ellipse(px+CELL/2,py+TILE*.65,CELL*.48,TILE*.31,0,0,2*Math.PI);c.fill();
    c.save();
-   c.beginPath();c.rect(px,py-20,CELL,TILE+20);c.clip();
    if(x%2){c.translate(px*2+CELL,0);c.scale(-1,1);}
-   c.drawImage(grassArt,px-12,py-21,CELL+24,TILE+43);
+   c.drawImage(grassArt,px-4,py-19,CELL+8,TILE+33);
    c.restore();
    return;
   }
@@ -331,32 +463,6 @@ export class Scene{
   if(ready(treasure))c.drawImage(treasure,x-39,y-43,78,52);
   else{c.fillStyle='#8a4d24';c.fillRect(x-24,y-24,48,30);c.strokeStyle='#f2be6c';c.strokeRect(x-24,y-24,48,30);}
   this.label('หีบสมบัติ',x,y+21+Math.sin(now/450),'#ffdc90');
- }
- stand(px,py,x,y,now){
-  const c=this.c;
-  if(ready(crowdArt)){
-   c.drawImage(crowdArt,px,py,CELL+1,TILE+1);
-   const side=x<Math.floor(this.arena.cols/2)?0:1;
-   c.fillStyle=side?'#732c282d':'#123d792d';c.fillRect(px,py,CELL,TILE);
-   c.fillStyle='#b49461';c.fillRect(px,py+TILE-3,CELL,3);
-   return;
-  }
-  c.fillStyle='#3a3039';c.fillRect(px,py,CELL+1,TILE+1);
-  const team=x<this.arena.cols/2?0:1;
-  for(let row=0;row<4;row++){
-   const y0=py+row*TILE/4;
-   c.fillStyle=row%2?'#807061':'#695a54';c.fillRect(px,y0,CELL,TILE/4-4);
-   c.fillStyle='#362b33';c.fillRect(px,y0+TILE/4-4,CELL,4);
-   for(let i=0;i<11;i++){
-    const f=hash(x*11+i,y*4+row);if(f<.16)continue;
-    const qx=px+11+i*21+(row%2?3:0),qy=y0+18+(f>.55?Math.sin(now/210+f*32)*2.5:0);
-    c.fillStyle=['#9d6057','#5d7f9a','#a38e72','#745a87','#676e5a'][Math.floor(f*5)];
-    c.fillRect(qx-4,qy,8,11);
-    c.fillStyle=f>.55?'#b99176':'#946d5a';c.beginPath();c.arc(qx,qy-3,3.6,0,2*Math.PI);c.fill();
-    if(f>.84){c.strokeStyle=COLORS[team];c.lineWidth=2;c.beginPath();c.moveTo(qx+3,qy+4);c.lineTo(qx+10,qy-8);c.stroke();}
-   }
-  }
-  c.fillStyle='#b49461';c.fillRect(px,py+TILE-5,CELL,3);
  }
  flame(x,y,now){
   const c=this.c,r=12+2*Math.sin(now/85);
