@@ -8,6 +8,7 @@
  function mergeWalkPlayer(base,local,remote){
   const conflicts=[];
   function merge(a,b,c,path){
+   if(path==='walkTutorialSeen')return Object.fromEntries([a,b,c].flatMap(v=>Object.entries(v||{})).filter(([,seen])=>seen===true));
    if(equal(b,c))return copy(b);if(equal(a,b))return copy(c);if(equal(a,c))return copy(b);
    if(path==='pets'&&[a,b,c].every(v=>Array.isArray(v)&&v.every(p=>p&&Number.isSafeInteger(p.uid))&&new Set(v.map(p=>p.uid)).size===v.length)){
     const maps=[a,b,c].map(v=>new Map(v.map(p=>[p.uid,p]))),out=[];
@@ -24,6 +25,8 @@
    conflicts.push(path);return undefined;
   }
   const player=merge(clean(base),clean(local),clean(remote),'');
+  const tutorial=[base?.walkTutorialSeen,local?.walkTutorialSeen,remote?.walkTutorialSeen];
+  if(player&&tutorial.some(Boolean))player.walkTutorialSeen=merge(...tutorial,'walkTutorialSeen');
   return conflicts.length?{ok:false,conflicts}:{ok:true,player};
  }
  const backupKey=c=>'soulbeast_unsaved_walk_v2:'+c.environment+':'+c.owner+':'+c.code;

@@ -1293,6 +1293,7 @@ MIST_LEGEND_DEFS.forEach(([key,n,t,ref,pas,part,extra])=>{
 });
 Object.assign(SK,{"aegis_challenge":{"n":"คำรามท้าดารา","t":"buff","tg":"self","bf":{"pdef":0.4,"mdef":0.4},"taunt":3,"tn":3,"mp":14,"cd":3},"tricephal_breath":{"n":"ลมหายใจสามมหาภัย","t":"h","el":"dragon","pw":70,"hits":3,"mp":20,"cd":2},"aurora_spear":{"n":"หอกน้ำแข็งออโรรา","t":"m","el":"ice","pw":170,"st":{"freeze":0.25},"mp":15,"cd":2},"abyss_rend":{"n":"กรงเล็บฉีกสุญญตา","t":"p","el":"dark","pw":180,"ls":0.3,"mp":17,"cd":2},"selestia_blessing":{"n":"พรเทพีมหาคราส","t":"heal","tg":"team","pw":30,"cure":1,"mp":20,"cd":3},"aerelion_rune":{"n":"อัขระปีกดารา","t":"buff","tg":"self","bf":{"matk":0.4,"spd":0.2},"tn":3,"mp":16,"cd":3},"myriapod_venom":{"n":"เขี้ยวพิษกลืนโลก","t":"p","el":"poison","pw":85,"hits":2,"st":{"poison":0.6},"mp":18,"cd":2},"ygg_rootguard":{"n":"รากไม้พิทักษ์ดารา","t":"buff","tg":"self","bf":{"pdef":0.45,"mdef":0.35},"taunt":3,"tn":3,"mp":13,"cd":3}});
 
+globalThis.SoulbeastBeastNames?.apply(SP);
 const mistBaseCalcPet=calcPet;
 calcPet=function(p,wild=1){
  const sp=SP[p.sp];
@@ -1422,7 +1423,7 @@ function wbPlayer_(auth,seat,pets){return {code:auth.code,name:String(auth.P.nam
 function wbBoss_(){const u=wildUnit('demonlord',60,0,'อาซารอธ · จักรพรรดิสุริยคราส');u.id='worldboss';u.owner=-1;u.immortalWorld=true;u.pas=[];u.skills=['wb_claw','wb_flame','wb_lance','wb_storm'];u.st.hp=u.hp=1000000000;u.st.mp=u.mp=1000000;return u;}
 function wbStart_(r){if(r.status!=='starting'){if(r.status!=='lobby'||r.players.length<1||r.players.length>4||r.players.some(p=>!p.ready))pvpFail_('world ready');for(const p of r.players)if(wbUsed_(p.code)>=3)pvpFail_('world weekly limit');r.status='starting';r.startedWeek=wbWeek_();wbWrite_(r);}
  const sh=sheet_('WorldEntries',WB_ENTRY_HEAD);for(const p of r.players){const key=r.id+'-'+p.code;if(findRow_(sh,key)<0)sh.appendRow([key,p.code,r.id,r.startedWeek]);}
- r.battle={kind:'world',allies:r.players.flatMap(p=>p.team),enemies:[wbBoss_()],round:0,turns:0,bossTurns:0,queue:[],cur:null,damageTotal:0,damageBy:{},log:['เริ่มท้าทายอาซารอธ · บอสอมตะ'],fx:[],effects:[]};r.players.forEach(p=>delete p.team);r.status='active';r.rev++;r.deadline=0;wbNext_(r,Date.now());wbWrite_(r);}
+ r.battle={kind:'world',allies:r.players.flatMap(p=>p.team.slice(0,1+raidPetLimit_(p))),enemies:[wbBoss_()],round:0,turns:0,bossTurns:0,queue:[],cur:null,damageTotal:0,damageBy:{},log:['เริ่มท้าทายอาซารอธ · บอสอมตะ'],fx:[],effects:[]};r.players.forEach(p=>delete p.team);r.status='active';r.rev++;r.deadline=0;wbNext_(r,Date.now());wbWrite_(r);}
 function wbFinish_(r){if(r.status!=='active')return;r.status='finished';r.deadline=0;r.rev++;const score=Math.floor(r.battle.damageTotal/r.players.length/25);r.sharedScore=score;r.rewards=r.players.map(p=>p.forfeit?{gold:0,score:0,xp:0,power:0,loot:{},tier:0,chance:0}:balancePartyReward(r,score,Math.random(),Math.random()));blog('ทุกคนหมดสติ · จบการท้าทาย คะแนนต่อคน '+score);wbWrite_(r);wbSettle_(r);}
 function wbFlush_(){for(const row of sheet_(WB_ROOMS,WB_HEAD).getDataRange().getValues().slice(1)){if(row[1]==='reward_pending')wbSettle_(wbDecode_(row));}}
 function wbSettle_(r){if(r.status!=='finished'||!r.rewards||r.settled)return;const sh=sheet_('WorldRewards',WB_REWARD_HEAD);r.players.forEach((p,i)=>{const key=r.id+'-'+p.code;if(findRow_(sh,key)<0)sh.appendRow([key,p.code,r.id,JSON.stringify(r.rewards[i])]);});r.settled=true;wbWrite_(r);}
@@ -1694,7 +1695,7 @@ function gachaCombinedPity_(code){const rows=sheet_('GachaTransactions',COMMUNIT
 const gachaEclipseViewBase=communityGachaView_;communityGachaView_=function(code,rewards){const result=gachaEclipseViewBase(code,rewards);result.legendPity=gachaCombinedPity_(code);result.gachaRulesVersion=3;result.solarPity=gachaSolarPity_(code);result.solarGuarantee=300;result.sharedGuarantee=100;return result;};
 
 // Combat selections never change the persisted travelling party.
-function raidPetLimit_(raw){return baseOf(raw.cls)==='summoner'?3:clsSum(raw.cls);}
+function raidPetLimit_(raw){return clsSum(raw.cls);}
 function campInputPets_(raw,input){carryNormalize_(raw);const ids=Array.isArray(input)?input:[Number(input)];if(!ids.length||ids.length>raidPetLimit_(raw)||new Set(ids).size!==ids.length||ids.some(id=>!Number.isInteger(id)||!raw.carried.includes(id)))pvpFail_('camp pets selection');return ids;}
 function campDefenseIds_(raw,c){carryNormalize_(raw);return [...new Set(Array.isArray(c.pets)?c.pets:[c.pet])].filter(id=>raw.carried.includes(id)).slice(0,raidPetLimit_(raw));}
 function activityPetIds_(raw,ids,cap,allowEmpty=false){carryNormalize_(raw);if(!Array.isArray(ids)||(!allowEmpty&&!ids.length)||ids.length>cap||new Set(ids).size!==ids.length||ids.some(id=>!Number.isSafeInteger(id)||!raw.carried.includes(id)||!raw.pets.some(p=>p.uid===id)))pvpFail_('camp pets selection');return ids.slice();}
@@ -3802,6 +3803,28 @@ function cwCreateMember(code,P,country){
  if(!cwCountries.has(country))pvpFail_('country required');const old=cwMember(code);if(old){if(old.country!==country)pvpFail_('country immutable');return old;}
  const snapshot=pvpTeam_(cwClone(P),0);snapshot.team[0].gender=P.gender;const m={code,name:P.name,country,location:cwCountries.get(country).capitalId,joinedAt:Date.now(),lastActionDay:'',rulesVersion:2,capitalGuard:false,deadUntil:null,team:snapshot.team,goldFraction:{n:'0',d:'1'},couponFraction:{n:'0',d:'1'}};return cwPut(m);
 }
+function cwSyncHero(m,P){
+ const index=m.team.findIndex(u=>u.kind==='player'),old=m.team[index];
+ if(!old||!P)return;
+ const gender=['male','female'].includes(P.gender)?P.gender:undefined;
+ if(old.cls===P.cls&&old.lv===Number(P.lv)&&old.gender===gender&&old.name===P.name)return;
+ const previous=S;
+ try{
+  // Keep the registered party and the war-only vitals when the saved hero advances.
+  const hero=pvpTeam_({...P,party:[]},0).team[0];
+  hero.gender=gender;hero.id=old.id;
+  const rested=cwNodes.get(m.location)?.type==='capital'&&!m.capitalGuard&&!m.capitalWounded&&!m.deadUntil&&old.hp>0;
+  if(!rested){hero.hp=Math.min(old.hp,hero.st.hp);hero.mp=Math.min(old.mp,hero.st.mp);}
+  m.team[index]=hero;m.name=hero.name;
+ }catch(error){
+  // A legacy save that cannot build a legal fighter still keeps its registered team.
+  if(!['bad character','bad class','bad equipment','bad weapon','bad points','too many points'].includes(error.message))throw error;
+ }finally{S=previous;}
+}
+function cwSyncParticipant(m){
+ const saves=sheet_(SV_SHEET,SV_HEAD);
+ if(findRow_(saves,m.code)>0)cwSyncHero(m,campRaw_(m.code).P);
+}
 function cwFullHeal(m){for(const u of m.team){u.hp=u.st.hp;u.mp=u.st.mp;}return m;}
 function cwOwner(state,id){return state.locations[id]?.owner||cwNodes.get(id)?.country;}
 function cwResidents(state,id){return Object.values(state.members).filter(m=>m.location===id&&!m.deadUntil&&(cwNodes.get(id)?.type!=='capital'||m.capitalGuard));}
@@ -3842,7 +3865,7 @@ function cwDispatch(d){
   if(d.action==='mail_list')return {ok:true,messages:cwMailView(code),account:campAccount_(code),coupons:communitySyncCredits_(code).coupons};
   if(d.action==='mail_read'){const id=String(d.mail||''),mail=guildRead_(id);if(!mail||mail.code!==code||!id.startsWith('cw:mail:'+code+':'))pvpFail_('mail not found');mail.read=true;guildWrite_(id,mail);return {ok:true,messages:cwMailView(code)};}
   if(d.action==='country_choose'){if(m){if(m.country!==d.country)pvpFail_('country immutable');}else m=cwCreateMember(code,auth.P,String(d.country));if(!m.deadUntil){cwRecord(m);cwPut(m);}return cwView(code);}
-  if(d.action==='country_status'){if(m&&!m.deadUntil){cwRecord(m);cwPut(m);}return cwView(code);}
+  if(d.action==='country_status'){if(m&&!m.deadUntil){cwSyncHero(m,auth.P);cwRecord(m);cwPut(m);}return cwView(code);}
   if(!m)pvpFail_('country required');
   if(d.action==='country_entry'){const target=String(d.target||'');if(!cwTopology.canEnter(cwState(),m.country,target))pvpFail_('country enemy base');return {ok:true,target,owner:m.country};}
   if(m.deadUntil)pvpFail_('country dead until tomorrow');
@@ -3858,13 +3881,15 @@ function cwDispatch(d){
    if(cwOwner(state,target)!==m.country)pvpFail_('country enemy base');
    const capital=cwNodes.get(target).type==='capital',sameSlot=origin===target&&(!capital||m.capitalGuard);
    if(!sameSlot&&!cwTopology.hasRoom(state,target))pvpFail_(capital?'country guard full':'country base full');
-   cwCloseSlot(m);m.location=target;m.capitalGuard=capital;if(capital)m.capitalWounded=true;cwOpenSlot(m);cwRecord(m);m.lastActionDay=campDate_();m.lastAction='defend';cwSpentAction(m);cwPut(m);return cwView(code);
+   cwSyncHero(m,auth.P);cwCloseSlot(m);m.location=target;m.capitalGuard=capital;if(capital)m.capitalWounded=true;cwOpenSlot(m);cwRecord(m);m.lastActionDay=campDate_();m.lastAction='defend';cwSpentAction(m);cwPut(m);return cwView(code);
   }
   const friendly=cwOwner(state,target)===m.country;
   if(friendly||!cwTopology.canCapture(target))pvpFail_('country target protected');
   const requirement=cwTopology.attackRequirement(state,m.country,target);if(!requirement.connected)pvpFail_('country frontier required');if(!requirement.allowed)pvpFail_('country siege required');
   const helper=cwShuffle(cwResidents(state,origin).filter(x=>x.code!==code&&x.country===m.country&&cwAlive(x)))[0],attackers=[m,...(helper?[helper]:[])],defenders=cwShuffle(cwResidents(state,target).filter(x=>x.country!==m.country&&cwAlive(x))).slice(0,2);
+  cwSyncHero(m,auth.P);
   cwRecord(m);m.lastActionDay=campDate_();m.lastAction='attack';cwSpentAction(m);cwPut(m);
+  if(defenders.length){for(const member of [...attackers.slice(1),...defenders])cwSyncParticipant(member);}
   let room=defenders.length?cwCombat(attackers,defenders,target):null;
   const after=cwState(),remaining=cwResidents(after,target).filter(x=>x.country!==m.country&&cwAlive(x));let captured=false;
   if(!remaining.length&&(!room||room.winner===0)){guildWrite_('cw:l:'+target,{id:target,owner:m.country});captured=true;for(const actor of attackers){const current=cwMember(actor.code);if(cwAlive(current)&&current.location===origin&&cwTopology.hasRoom(cwState(),target)){cwCloseSlot(current);current.location=target;current.capitalGuard=cwNodes.get(target)?.type==='capital';if(current.capitalGuard)current.capitalWounded=true;cwOpenSlot(current);cwPut(current);}}}
@@ -3883,7 +3908,7 @@ const cwSaveBase=saveGame_;saveGame_=function(d){
   if(!m&&nation&&!cwCountries.has(nation))pvpFail_('country required');
   if(m)data.P.country=m.country;
   const result=JSON.parse(cwSaveBase({...d,data:JSON.stringify(data)}).getContent());
-  if(result.ok){if(!m&&nation){cwTick();cwCreateMember(code,campRaw_(code).P,nation);}else if(m){m.name=campRaw_(code).P.name;cwPut(m);}}
+  if(result.ok){if(!m&&nation){cwTick();cwCreateMember(code,campRaw_(code).P,nation);}else if(m){const player=campRaw_(code).P;cwSyncHero(m,player);m.name=player.name;cwPut(m);}}
   return json_(result);
  }catch(e){return json_({ok:false,error:e.message||String(e)});}
 };
@@ -3972,7 +3997,7 @@ if(typeof window==='undefined'){
  return;
 }
 const workbookKey='soulbeast-walk-war-workbook-v1',code='WALKWARPREVIEW01',pin='123456';
-let queue=Promise.resolve();
+let queue=Promise.resolve(),savedProfile;
 async function run(P,packet){
  let input;try{input=JSON.parse(sessionStorage.getItem(workbookKey)||'{}')}catch{input={}}
  const hashes=new Map();
@@ -3985,10 +4010,11 @@ async function run(P,packet){
   }throw Error('Preview hash preparation failed');
  }
  const rows=input.GuildState||[],hasMember=rows.some(row=>row[0]==='cw:m:'+code);
- if(!hasMember){
+ const profile=JSON.stringify([P.name,P.cls,P.lv,P.gender]);
+ if(!hasMember||profile!==savedProfile){
   const state={P:{...structuredClone(P),code,cpin:pin},ui:{},screen:'town'};
   const saved=await operation(input,{action:'save',code,pin,name:P.name||'ผู้ผนึกทดสอบ',lv:P.lv,data:JSON.stringify(state)});
-  if(!saved.result.ok)throw Error(saved.result.error);input=saved.tables;
+  if(!saved.result.ok)throw Error(saved.result.error);input=saved.tables;savedProfile=profile;sessionStorage.setItem(workbookKey,JSON.stringify(input));
  }
  const out=await operation(input,{...packet,code,pin});
  if(out.result.ok){sessionStorage.setItem(workbookKey,JSON.stringify(out.tables));window.walkWar?.update(out.result)}

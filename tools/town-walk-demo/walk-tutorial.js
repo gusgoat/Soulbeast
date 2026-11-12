@@ -724,21 +724,42 @@
  };
  function language(){return g.SoulbeastLocale?.get();}
  function tr(th,en,zh){return ({en,'zh-CN':zh})[language()]??th;}
- const asset='/Soulbeast/assets/', prefix='soulbeast-walk-tutorial-v1:';
+ const asset='/Soulbeast/assets/',prefix='soulbeast-walk-tutorial-v1:',playerKey='soulbeast-walk-preview-player-v1';
  const memory=new Map();
  function characterKey(p){
-  const id=p?.walkId||p?.characterId||p?.code;
+  const id=p?.code||p?.characterId||p?.walkId;
   return id?prefix+id:null;
+ }
+ function progressStorage(){return typeof walkStorage==='undefined'?g.localStorage:walkStorage;}
+ function localSeen(key){
+  try{return {...memory.get(key),...JSON.parse(progressStorage().getItem(key)||'null')}}
+  catch{return memory.get(key)||{}}
  }
  function seenFor(p){
   const key=characterKey(p);if(!key)return {};
-  try{return JSON.parse(g.localStorage.getItem(key)||'null')||memory.get(key)||{}}
-  catch{return memory.get(key)||{}}
+  const old=[...new Set([p.walkId,p.characterId])].filter(id=>id&&id!=='island-preview-v1'&&prefix+id!==key).map(id=>localSeen(prefix+id));
+  const seen=Object.assign({},...old,localSeen(key));
+  for(const {id} of lessons)if(p.walkTutorialSeen?.[id]===true||old.some(record=>record[id]===true))seen[id]=true;
+  if(lessons.some(({id})=>seen[id]===true&&p.walkTutorialSeen?.[id]!==true))store(p,seen);
+  return seen;
  }
  function store(p,seen){
   const key=characterKey(p);if(!key)return;
   memory.set(key,seen);
-  try{g.localStorage.setItem(key,JSON.stringify(seen))}catch{}
+  try{progressStorage().setItem(key,JSON.stringify(seen))}catch{}
+  const completed=Object.fromEntries(lessons.filter(({id})=>seen[id]===true).map(({id})=>[id,true]));
+  if(!Object.keys(completed).length)return;
+  p.walkTutorialSeen={...p.walkTutorialSeen,...completed};
+  try{
+   const active=JSON.parse(g.sessionStorage.getItem(playerKey)||'null');
+   if(characterKey(active)!==key||Object.keys(completed).every(id=>active.walkTutorialSeen?.[id]===true))return;
+   active.walkTutorialSeen={...active.walkTutorialSeen,...completed};
+   const serialized=JSON.stringify(active);
+   g.sessionStorage.setItem(playerKey,serialized);
+   if(active.walkId)progressStorage().setItem('soulbeast-walk-save:'+active.walkId,serialized);
+   g.dispatchEvent(new Event('walk-player-saved'));
+   if(g.parent!==g)g.parent.postMessage({type:'walk-player-saved'},g.location.origin);
+  }catch{}
  }
  function choose(p,seen,{capital=false,town=false,capitalDeparture=false,night=false}={}){
   if(!p||p.tutorial?.enabled===false)return null;
@@ -759,7 +780,7 @@
  function node(tag,cls,content){
   const el=g.document.createElement(tag);if(cls)el.className=cls;if(content)el.textContent=content;return el;
  }
- function show(lesson,{review=false,done=()=>{},dismiss=()=>{}}={}){
+ function show(lesson,{review=false,presented=()=>{},done=()=>{},dismiss=()=>{}}={}){
   const doc=g.document;if(doc.querySelector('.walk-lesson'))return;
   if(!doc.getElementById('walk-lesson-style')){
    const sheet=node('link');sheet.id='walk-lesson-style';sheet.rel='stylesheet';sheet.href='/Soulbeast/tools/town-walk-demo/walk-tutorial.css?v=5';doc.head.append(sheet);
@@ -781,7 +802,7 @@
   let index=lesson.number-1,pageIndex=0,acknowledged=false;
   // A lesson may supply pages with their own artwork and localized text.
   const pagesFor=l=>l.pages?.length?l.pages:[l];
-  const focusControls=()=> (next.hidden||next.disabled?close:next).focus();
+  const focusControls=()=> (next.hidden||next.disabled?close:next).focus({preventScroll:true});
   close.onclick=()=>{
    acknowledged=!review&&pageIndex===pagesFor(lessons[index]).length-1;
    dialog.close();
@@ -848,7 +869,7 @@
    if(acknowledged)done();
    else if(!review)dismiss();
   },{once:true});
-  dialog.showModal();focusControls();
+  dialog.showModal();presented();focusControls();
   return dialog;
  }
  function mount({read,capital=false,town=false,capitalDeparture=false,observesNight=false,blocked,stop}){
@@ -872,7 +893,8 @@
    if(!lesson)return;
    stop();
    show(lesson,{
-    done:()=>{store(p,{...seenFor(p),[lesson.id]:true});after=Date.now()+15_000},
+    presented:()=>store(p,{...seenFor(p),[lesson.id]:true}),
+    done:()=>{after=Date.now()+15_000},
     dismiss:()=>{after=Date.now()+15_000},
    });
   };
@@ -880,7 +902,7 @@
  }
  function showOnce(player,lesson){
   if(!characterKey(player)||player.tutorial?.enabled===false||seenFor(player)[lesson.id])return;
-  return show(lesson,{done:()=>store(player,{...seenFor(player),[lesson.id]:true})});
+  return show(lesson,{presented:()=>store(player,{...seenFor(player),[lesson.id]:true})});
  }
  function onEquipmentAvailable(player,catalog){
   const canEquip=player?.owned?.some(id=>{

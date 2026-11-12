@@ -1,5 +1,5 @@
 export {mountSaveNotice} from './walk-save-notice.mjs?v=save-safe-20261106';
-import {mergeWalkPlayer,backupWalkDraft,backupActiveWalk} from './walk-save-merge.mjs?v=save-safe-20261106';
+import {mergeWalkPlayer,backupWalkDraft,backupActiveWalk} from './walk-save-merge.mjs?v=lesson-progress-1';
 import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=gacha-recovery-1';
 
 const contextKey = 'soulbeast-online-walk-v1';

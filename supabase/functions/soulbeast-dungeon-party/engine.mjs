@@ -1,3 +1,4 @@
+import '../../../content/beast-names.js';
 // Account engine SHA256: fb3525aa70681a856f7ff2594e9c267b9c6780eaabde884314326a4f4fee96c7
 function createWorkbook(input = {}) {
  const tables = structuredClone(input), before = JSON.stringify(tables), handles = new Map();
@@ -1291,6 +1292,7 @@ MIST_LEGEND_DEFS.forEach(([key,n,t,ref,pas,part,extra])=>{
 });
 Object.assign(SK,{"aegis_challenge":{"n":"คำรามท้าดารา","t":"buff","tg":"self","bf":{"pdef":0.4,"mdef":0.4},"taunt":3,"tn":3,"mp":14,"cd":3},"tricephal_breath":{"n":"ลมหายใจสามมหาภัย","t":"h","el":"dragon","pw":70,"hits":3,"mp":20,"cd":2},"aurora_spear":{"n":"หอกน้ำแข็งออโรรา","t":"m","el":"ice","pw":170,"st":{"freeze":0.25},"mp":15,"cd":2},"abyss_rend":{"n":"กรงเล็บฉีกสุญญตา","t":"p","el":"dark","pw":180,"ls":0.3,"mp":17,"cd":2},"selestia_blessing":{"n":"พรเทพีมหาคราส","t":"heal","tg":"team","pw":30,"cure":1,"mp":20,"cd":3},"aerelion_rune":{"n":"อัขระปีกดารา","t":"buff","tg":"self","bf":{"matk":0.4,"spd":0.2},"tn":3,"mp":16,"cd":3},"myriapod_venom":{"n":"เขี้ยวพิษกลืนโลก","t":"p","el":"poison","pw":85,"hits":2,"st":{"poison":0.6},"mp":18,"cd":2},"ygg_rootguard":{"n":"รากไม้พิทักษ์ดารา","t":"buff","tg":"self","bf":{"pdef":0.45,"mdef":0.35},"taunt":3,"tn":3,"mp":13,"cd":3}});
 
+globalThis.SoulbeastBeastNames.apply(SP);
 const mistBaseCalcPet=calcPet;
 calcPet=function(p,wild=1){
  const sp=SP[p.sp];
@@ -1420,7 +1422,7 @@ function wbPlayer_(auth,seat,pets){return {code:auth.code,name:String(auth.P.nam
 function wbBoss_(){const u=wildUnit('demonlord',60,0,'อาซารอธ · จักรพรรดิสุริยคราส');u.id='worldboss';u.owner=-1;u.immortalWorld=true;u.pas=[];u.skills=['wb_claw','wb_flame','wb_lance','wb_storm'];u.st.hp=u.hp=1000000000;u.st.mp=u.mp=1000000;return u;}
 function wbStart_(r){if(r.status!=='starting'){if(r.status!=='lobby'||r.players.length<1||r.players.length>4||r.players.some(p=>!p.ready))pvpFail_('world ready');for(const p of r.players)if(wbUsed_(p.code)>=3)pvpFail_('world weekly limit');r.status='starting';r.startedWeek=wbWeek_();wbWrite_(r);}
  const sh=sheet_('WorldEntries',WB_ENTRY_HEAD);for(const p of r.players){const key=r.id+'-'+p.code;if(findRow_(sh,key)<0)sh.appendRow([key,p.code,r.id,r.startedWeek]);}
- r.battle={kind:'world',allies:r.players.flatMap(p=>p.team),enemies:[wbBoss_()],round:0,turns:0,bossTurns:0,queue:[],cur:null,damageTotal:0,damageBy:{},log:['เริ่มท้าทายอาซารอธ · บอสอมตะ'],fx:[],effects:[]};r.players.forEach(p=>delete p.team);r.status='active';r.rev++;r.deadline=0;wbNext_(r,Date.now());wbWrite_(r);}
+ r.battle={kind:'world',allies:r.players.flatMap(p=>p.team.slice(0,1+raidPetLimit_(p))),enemies:[wbBoss_()],round:0,turns:0,bossTurns:0,queue:[],cur:null,damageTotal:0,damageBy:{},log:['เริ่มท้าทายอาซารอธ · บอสอมตะ'],fx:[],effects:[]};r.players.forEach(p=>delete p.team);r.status='active';r.rev++;r.deadline=0;wbNext_(r,Date.now());wbWrite_(r);}
 function wbFinish_(r){if(r.status!=='active')return;r.status='finished';r.deadline=0;r.rev++;const score=Math.floor(r.battle.damageTotal/r.players.length/25);r.sharedScore=score;r.rewards=r.players.map(p=>p.forfeit?{gold:0,score:0,xp:0,power:0,loot:{},tier:0,chance:0}:balancePartyReward(r,score,Math.random(),Math.random()));blog('ทุกคนหมดสติ · จบการท้าทาย คะแนนต่อคน '+score);wbWrite_(r);wbSettle_(r);}
 function wbFlush_(){for(const row of sheet_(WB_ROOMS,WB_HEAD).getDataRange().getValues().slice(1)){if(row[1]==='reward_pending')wbSettle_(wbDecode_(row));}}
 function wbSettle_(r){if(r.status!=='finished'||!r.rewards||r.settled)return;const sh=sheet_('WorldRewards',WB_REWARD_HEAD);r.players.forEach((p,i)=>{const key=r.id+'-'+p.code;if(findRow_(sh,key)<0)sh.appendRow([key,p.code,r.id,JSON.stringify(r.rewards[i])]);});r.settled=true;wbWrite_(r);}
@@ -1717,7 +1719,7 @@ function gachaCombinedPity_(code){const rows=sheet_('GachaTransactions',COMMUNIT
 const gachaEclipseViewBase=communityGachaView_;communityGachaView_=function(code,rewards){const result=gachaEclipseViewBase(code,rewards);result.legendPity=gachaCombinedPity_(code);result.gachaRulesVersion=3;result.solarPity=gachaSolarPity_(code);result.solarGuarantee=300;result.sharedGuarantee=100;return result;};
 
 // Combat selections never change the persisted travelling party.
-function raidPetLimit_(raw){return baseOf(raw.cls)==='summoner'?3:clsSum(raw.cls);}
+function raidPetLimit_(raw){return clsSum(raw.cls);}
 function campInputPets_(raw,input){carryNormalize_(raw);const ids=Array.isArray(input)?input:[Number(input)];if(!ids.length||ids.length>raidPetLimit_(raw)||new Set(ids).size!==ids.length||ids.some(id=>!Number.isInteger(id)||!raw.carried.includes(id)))pvpFail_('camp pets selection');return ids;}
 function campDefenseIds_(raw,c){carryNormalize_(raw);return [...new Set(Array.isArray(c.pets)?c.pets:[c.pet])].filter(id=>raw.carried.includes(id)).slice(0,raidPetLimit_(raw));}
 function activityPetIds_(raw,ids,cap,allowEmpty=false){carryNormalize_(raw);if(!Array.isArray(ids)||(!allowEmpty&&!ids.length)||ids.length>cap||new Set(ids).size!==ids.length||ids.some(id=>!Number.isSafeInteger(id)||!raw.carried.includes(id)||!raw.pets.some(p=>p.uid===id)))pvpFail_('camp pets selection');return ids.slice();}

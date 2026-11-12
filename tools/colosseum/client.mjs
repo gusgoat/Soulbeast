@@ -572,6 +572,8 @@ function renderBattle(){
  const first=panel.dataset.battleId!==b.id;
  const previousStage=panel.querySelector('.battle-stage')?.scrollTop||0;
  const previousCommands=panel.querySelector('.commands')?.scrollTop||0;
+ const previousFooter=panel.dataset.battleTurn===String(b.turn)?panel.querySelector('.battle-footer')?.scrollTop||0:0;
+ panel.dataset.battleTurn=b.turn;
  battleKey=key;panel.dataset.last=effectKey;panel.dataset.battleId=b.id;panel.hidden=false;
  presentation.setActive(true);
  const isPvp=b.teams[1].length>0;
@@ -670,7 +672,7 @@ function renderBattle(){
  panel.replaceChildren(host);
  presentation.syncPoses();
  if(!first)stage.scrollTop=previousStage;
- if(!first&&!selected)cmds.scrollTop=previousCommands;
+ if(!first&&!selected){cmds.scrollTop=previousCommands;footer.scrollTop=previousFooter;}
  if(playEffect)presentation.action(b.last,[...b.allies,...b.enemies].find(unit=>unit.id===b.last.actor),b.effects||[],b.fx||[],b.finished,()=>{
   battleKey='';renderBattle();
  },continueBattle);

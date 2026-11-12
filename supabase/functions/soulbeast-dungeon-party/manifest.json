@@ -70,7 +70,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-enemies.mjs",
-      "sha256": "cdfb2a0e34cb7b584f41e44e84fe2ca40ad9039c4f9441d58cce3ed3a5cf9885"
+      "sha256": "1cb89f19b5261e2c2ecb9d208397af874631c9613cebb6bf7faa295414c5823d"
     },
     {
       "file": "source/server/accounts/dungeon-party-combat-runtime.mjs",

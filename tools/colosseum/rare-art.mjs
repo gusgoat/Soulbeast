@@ -1,5 +1,6 @@
+import '../../content/beast-names.js';
 // Derived from tools/rare-beast-walk-demo/catalog.js.
-export default {
+const rareArt={
  "qilin": {
   "name": "กิเลน",
   "portrait": "/assets/media/f52f778aef5eaa0b132732a2.webp",
@@ -513,3 +514,5 @@ export default {
   "cycle": 0.72
  }
 };
+for(const [id,art] of Object.entries(rareArt))art.name=globalThis.SoulbeastBeastNames.display(id,art.name);
+export default rareArt;

@@ -246,3 +246,29 @@ dialog p{margin-top:10px;font-size:.82em}
 #rules h3{margin-bottom:6px}
 #rules ul{margin:0;padding-inline-start:1.35rem}
 #rules li{margin-bottom:.55rem}
+
+/* Keep both sides visible while the command panel scrolls independently. */
+@media (orientation:landscape) and (max-height:600px) and (pointer:coarse){
+ #battle{
+  padding-inline:max(6px,env(safe-area-inset-left)) max(6px,env(safe-area-inset-right));
+ }
+ #battle .battle-inner{
+  width:100%;grid-template-columns:minmax(0,1.65fr) minmax(170px,1fr);
+  grid-template-rows:auto minmax(0,1fr);
+ }
+ #battle .battle-title{grid-column:1/-1}
+ #battle .battle-stage{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-content:start;align-items:start;
+ }
+ #battle .battle-side{position:relative;min-width:0;align-content:start}
+ #battle .battle-side+.battle-side::before{
+  content:"";position:absolute;inset:0 auto 0 -5px;width:2px;
+  background:linear-gradient(180deg,transparent,#eacb82 12% 88%,transparent);pointer-events:none;
+ }
+ #battle .battle-row{width:100%;grid-template-columns:repeat(min(var(--cols),2),minmax(0,1fr));grid-auto-rows:minmax(44px,auto)}
+ #battle .battle-side.solo .battle-row:has(.card:only-child){width:100%;max-width:210px;margin-inline:0}
+ #battle .battle-footer{display:flex;flex-direction:column;min-height:0;overflow:auto;overscroll-behavior:contain}
+ #battle .battle-footer>*{flex:none}
+ #battle .commands{max-height:none;overflow:visible}
+ #battle .battle-controls{flex-wrap:wrap}
+}

@@ -27,9 +27,9 @@ export function partyEnemyAdapter({engine,random=Math.random,now=Date.now}){
    for(const k of ['patk','matk'])boss.st[k]=Math.round(boss.st[k]*1.8);
    for(const k of ['hp','pdef','mdef'])boss.st[k]=Math.round(boss.st[k]*2.2);
    boss.st.spd=Math.round(boss.st.spd*1.25);boss.hp=boss.st.hp;boss.mp=boss.st.mp;
-   Object.assign(boss,{name:f.bossName,boss:true,dungeonBoss:true,bossAura:true,bossAuraVersion:'dungeon-v1'});
+   Object.assign(boss,{name:globalThis.SoulbeastBeastNames?.display(f.boss,f.bossName,f.bossForm||0)??f.bossName,boss:true,dungeonBoss:true,bossAura:true,bossAuraVersion:'dungeon-v1'});
    return [boss,...Array.from({length:3},(_,i)=>Object.assign(engine.beast(f.helper,f.helperLevel,'helper'+i,f.helperForm),{
-    name:f.helperName,bossHelper:true,dungeonMinion:true
+    name:globalThis.SoulbeastBeastNames?.display(f.helper,f.helperName,f.helperForm||0)??f.helperName,bossHelper:true,dungeonMinion:true
    }))];
   }
  };

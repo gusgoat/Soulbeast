@@ -1,3 +1,4 @@
+import '../../content/beast-names.js';
 import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-ranks-1';
 import rareArt from './rare-art.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
