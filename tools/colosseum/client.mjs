@@ -346,18 +346,13 @@ function shieldIcon(score){
  icon.height=24;
  return icon;
 }
-function playerName(name,score){
- const label=node('span',null,'rank-name');
- const badge=shieldIcon(score);
- if(badge)label.append(badge);
- label.append(name);
- return label;
-}
-function scoreTable(label,headings,rows){
+function scoreTable(label,side,team,players){
+ const card=node('div',null,'result-team');
+ card.dataset.side=side;
  const table=node('table',null,'rank-table');
  table.append(node('caption',label));
  const header=node('tr');
- for(const heading of headings){
+ for(const heading of ['ผู้เล่น','คะแนน','สังหาร']){
   const cell=node('th',heading);
   cell.scope='col';
   header.append(cell);
@@ -365,33 +360,42 @@ function scoreTable(label,headings,rows){
  const thead=node('thead');
  thead.append(header);
  const tbody=node('tbody');
- for(const row of rows){
+ for(const result of team){
+  const profile=players.get(result.id);
   const tr=node('tr');
-  for(const value of row){
-   const cell=node('td');
-   cell.append(value);
-   tr.append(cell);
+  tr.classList.toggle('result-mvp',result.mvp);
+  const player=node('th',null,'result-player');
+  player.scope='row';
+  const identity=node('div',null,'rank-name');
+  const name=node('span',result.name,'result-player-name');
+  name.setAttribute('data-user-content','');
+  const badge=shieldIcon(profile?.rating??result.rating);
+  if(badge)identity.append(badge);
+  identity.append(name);
+  if(result.mvp)identity.append(node('small','MVP','mvp-label'));
+  player.append(identity);
+  if(profile){
+   const career=profile.className||CLASSES[profile.baseCls]||CLASSES[profile.cls];
+   const detail=[career,Number.isFinite(profile.lv)?'Lv '+profile.lv:''].filter(Boolean).join(' · ');
+   if(detail)player.append(node('small',detail,'result-career'));
   }
+  tr.append(player,node('td',String(result.points),'result-points'),node('td',String(result.kills)));
   tbody.append(tr);
  }
  table.append(thead,tbody);
- return table;
+ card.append(table);
+ return card;
 }
 function renderMatchResults(){
  const panel=$('match-results');
  panel.hidden=state.phase!=='finished';
  if(panel.hidden)return;
- const key=JSON.stringify([state.finishedAt,state.results,state.rankDelta,state.rankSaved,state.rankingAvailable,state.rankPending,state.placement,me?.rating]);
+ const roster=state.results?state.players.map(({id,cls,baseCls,className,lv,rating})=>({id,cls,baseCls,className,lv,rating})):[];
+ const key=JSON.stringify([state.finishedAt,state.results,roster,state.rankDelta,state.rankSaved,state.rankingAvailable,state.rankPending,state.placement,me?.rating]);
  if(key===resultKey)return;
  resultKey=key;
- const sections=(state.results||[]).map((team,i)=>{
-  const rows=team.map(p=>{
-   const name=playerName(p.name,state.players.find(player=>player.id===p.id)?.rating??p.rating);
-   if(p.mvp)name.append(node('small','MVP','mvp-label'));
-   return [name,String(p.points),String(p.kills)];
-  });
-  return scoreTable(TEAMS[i],['ผู้เล่น','คะแนน','สังหาร'],rows);
- });
+ const players=new Map(roster.map(profile=>[profile.id,profile]));
+ const sections=(state.results||[]).map((team,i)=>scoreTable(TEAMS[i],i,team,players));
  if(state.rankDelta!=null){
   const delta=state.rankDelta>0?'+'+state.rankDelta:String(state.rankDelta);
   const message=state.rankSaved?'แต้มสะสม '+delta+' · รวม '+me.rating
