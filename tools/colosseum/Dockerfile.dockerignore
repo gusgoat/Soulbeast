@@ -6,3 +6,5 @@
 !tools/hemant-walk-demo/war-engine.generated.js
 !tools/labyrinth-demo/
 !tools/labyrinth-demo/traps.js
+!content/
+!content/beast-names.js
