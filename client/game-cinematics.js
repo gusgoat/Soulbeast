@@ -18,8 +18,18 @@
   };
   let active = false;
 
-  function show(queue, {muted = false, volume = 1, syncMusic}) {
-    if (!queue.length || active || typeof HTMLDialogElement === 'undefined') return;
+  async function playAutomatically(video, isCurrent = () => video.isConnected) {
+    try {
+      await video.play();
+    } catch (error) {
+      if (error.name !== 'NotAllowedError' || video.muted || !isCurrent()) throw error;
+      video.muted = true;
+      await video.play();
+    }
+  }
+
+  function show(queue, {muted = false, volume = 1, syncMusic, onFinish}) {
+    if (!queue.length || active || typeof HTMLDialogElement === 'undefined') return false;
     const dialog = document.createElement('dialog');
     dialog.className = 'game-cinematic';
     dialog.translate = false;
@@ -69,6 +79,7 @@
         const next = document.querySelector('[data-a="gachaRevealOne"][aria-pressed="false"], [data-a="gachaRevealAll"]:enabled, .gacha-draw-again:enabled');
         next?.focus({preventScroll: true});
       }
+      if (wasActive) onFinish?.();
     }
     function advance() {
       if (finished) return;
@@ -82,7 +93,7 @@
     async function tryPlay(current) {
       play.hidden = true;
       try {
-        await current.play();
+        await playAutomatically(current, () => video === current);
       } catch {
         if (video !== current) return;
         clearTimeout(timer);
@@ -130,11 +141,12 @@
       dialog.showModal();
     } catch {
       finish();
-      return;
+      return false;
     }
     active = true;
     syncMusic?.();
     loadClip();
+    return true;
   }
 
   function gacha(rewards, {nameFor, ...audio}) {
@@ -145,13 +157,21 @@
   }
 
   let inCountryWar = false;
+  let hostedWarIntro = new URLSearchParams(location.search).get('warIntroPlayed') === '1';
   function countryWar(entered, inBattle, audio) {
     const opening = entered && !inCountryWar;
     inCountryWar = entered;
-    if (opening && !inBattle) {
-      show([{title: label('สงครามอาณาจักร', 'Kingdom War', '王国战争'), path: 'kingdom-war/v1/intro.mp4'}], audio);
+    if (!opening) return;
+    if (hostedWarIntro) {
+      hostedWarIntro = false;
+      return;
     }
+    if (!inBattle) playCountryWar(audio);
   }
 
-  window.SoulbeastCinematics = {gacha, countryWar, isOpen: () => active};
+  function playCountryWar(audio) {
+    return show([{title: label('สงครามอาณาจักร', 'Kingdom War', '王国战争'), path: 'kingdom-war/v1/intro.mp4'}], audio);
+  }
+
+  window.SoulbeastCinematics = {gacha, countryWar, playCountryWar, playAutomatically, isOpen: () => active};
 })();
