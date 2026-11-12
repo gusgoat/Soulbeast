@@ -2,6 +2,7 @@ FROM denoland/deno:2.9.5
 
 WORKDIR /app
 COPY tools/colosseum/*.mjs ./tools/colosseum/
+COPY content/beast-names.js ./content/beast-names.js
 COPY tools/hemant-walk-demo/war-engine.generated.js ./tools/hemant-walk-demo/
 COPY tools/labyrinth-demo/traps.js ./tools/labyrinth-demo/
 
