@@ -9,6 +9,32 @@ import rareArt from './rare-art.mjs';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
 const TILE=CELL*FLAT;
 const WALL_HEIGHT=54;
+const WALK_SECTOR=Math.PI/4;
+
+export function updateWalkPose(pose,p,now){
+ const x=p.x,y=p.y*FLAT;
+ const dx=p.walkDX??x-pose.x,dy=p.walkDY??y-pose.y;
+ const distance=Math.hypot(dx,dy);
+ const elapsed=Math.max(1,now-pose.at);
+ const samePositionStream=pose.warp===p.warp;
+ const walking=(p.phase??'walk')==='walk';
+ if(!samePositionStream||now>=pose.movingUntil)pose.vx=pose.vy=0;
+ if(samePositionStream&&walking&&distance>.18&&distance<80){
+  // Smooth the observed velocity and keep a small margin between direction sectors.
+  const rate=1-Math.exp(-elapsed/(p.walkDX===undefined?68:35));
+  pose.vx+=(dx/elapsed-pose.vx)*rate;
+  pose.vy+=(dy/elapsed-pose.vy)*rate;
+  const heading=-Math.atan2(pose.vx,pose.vy);
+  const difference=heading-pose.dir*WALK_SECTOR;
+  const turn=Math.abs(Math.atan2(Math.sin(difference),Math.cos(difference)));
+  if(turn>WALK_SECTOR*.64)pose.dir=(Math.round(heading/WALK_SECTOR)+8)%8;
+  pose.phase+=distance/15;
+  pose.movingUntil=now+105;
+ }else if(!samePositionStream||!walking){
+  pose.movingUntil=0;
+ }
+ Object.assign(pose,{x,y,warp:p.warp,at:now});
+}
 const img=url=>Object.assign(new Image(),{src:url});
 const shieldImages=new Map();
 const ready=i=>i?.complete&&i.naturalWidth>0;
@@ -578,10 +604,9 @@ export class Scene{
  actor(p,now,isMe){
   const c=this.c,x=p.x,y=p.y*FLAT,color=p.sp?(p.boss?'#ffc479':p.rare?'#eed079':'#bd9af3'):
    this.arena===SURVIVAL_ARENA?(isMe?'#f1d680':'#ff827a'):COLORS[p.side];
-  const prev=this.anim.get(p.id)??{x,y,dir:0,phase:0,movingUntil:0,warp:p.warp};
-  const dx=x-prev.x,dy=y-prev.y,d=Math.hypot(dx,dy);
-  if(d>.2&&d<80&&prev.warp===p.warp){prev.dir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;prev.phase+=d/15;prev.movingUntil=now+105;}
-  Object.assign(prev,{x,y,warp:p.warp});this.anim.set(p.id,prev);
+  const prev=this.anim.get(p.id)??{x,y,dir:0,phase:0,movingUntil:0,warp:p.warp,at:now,vx:0,vy:0};
+  updateWalkPose(prev,p,now);
+  this.anim.set(p.id,prev);
   const moving=prev.movingUntil>now;
   c.save();if(!p.sp&&this.arena.bushAt(p)!==null)c.globalAlpha=.5;
   c.strokeStyle=color;c.fillStyle=p.boss?'#5d2150ad':'#100c1877';c.lineWidth=p.boss?3:isMe?3:1.5;

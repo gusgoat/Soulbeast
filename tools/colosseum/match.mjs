@@ -4,7 +4,7 @@ import {teamResults} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=colosseum-ranks-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=team-base-rules-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=base-defense-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -261,6 +261,19 @@ export class Match {
    const b=this.bases.find(x=>x.id===m.id);
    assert(fresh(p,now)&&b&&RAID_TARGET(p,b),'ต้องเข้าใกล้ฐานของฝ่ายตรงข้าม');
    assert(canRaidBase(p.side,b,this.bases),b.main?'ต้องยึดฐานกลางที่เชื่อมอยู่ก่อน':'ต้องยึดฐานเล็กที่เชื่อมอยู่ก่อน');
+   const guards=b.remaining<b.maxDurability?this.players.filter(q=>q.connected&&q.side===b.side&&
+    q.repair?.baseId===b.id&&(q.phase==='walk'||q.phase==='battle')&&distance(q,b)<=BASE_REPAIR_RANGE):[];
+   if(guards.length){
+    const {clearPath,canSeeOpponent}=this.arena;
+    const reachable=q=>canSeeOpponent(p,q)&&canSeeOpponent(q,p)&&clearPath(p,q);
+    const defender=nearest(p,guards.filter(q=>fresh(q,now)&&reachable(q)));
+    if(defender){
+     this.encounter(p,defender,now);
+     return;
+    }
+    if(p.bot)return {guard:nearest(p,guards.filter(q=>q.phase==='walk'&&canSeeOpponent(p,q)))};
+    throw Error('มีผู้ป้องกันกำลังซ่อมฐาน ต้องสู้กับผู้ป้องกันก่อนจู่โจมฐาน');
+   }
    b.remaining--;
    const captured=b.remaining===0;
    this.earn(p,b.points);this.score[b.side]=Math.max(0,this.score[b.side]-b.points);

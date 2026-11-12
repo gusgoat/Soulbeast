@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=team-base-rules-1';
+import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=team-base-rules-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=sealer-color-wall-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=steady-facing-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
 import {battlePresentation} from './battle-presentation.mjs?v=projectile-2';
@@ -59,7 +59,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=team-base-rules-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=base-defense-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -901,7 +901,11 @@ function frame(t){
   now=t+offset;
   const solo=state.mode==='survival',zone=state.zone;
   const startX=local.x,startY=local.y;
-  const [dx,dy]=direction();if(dx||dy)walkInArena(scene.arena,zone,local,dx,dy,dt);
+  const [dx,dy]=direction();
+  if(state.phase==='match'&&local.phase==='walk'&&(dx||dy))walkInArena(scene.arena,zone,local,dx,dy,dt);
+  // Corrections move the rendered position without changing the player's gait.
+  local.walkDX=local.x-startX;
+  local.walkDY=(local.y-startY)*FLAT;
   const stepped=Math.hypot(local.x-startX,local.y-startY)>.02;
   if(correction){
    const weight=Math.min(1,dt*10),cx=correction.x*weight,cy=correction.y*weight;

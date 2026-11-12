@@ -165,11 +165,49 @@ Deno.test('only current owners can repair and simultaneous repairs stop at maxim
  eq([a.earned,b.earned,mate.earned],[5,0,0]);eq(r.score,[100,100]);
  base.remaining=1;r.tick(35000,0);
  eq(r.snapshot(a,35000).baseRepair?.elapsed,0);
+ for(const defender of [a,mate])Object.assign(defender,defender.spawn);
  b.safeUntil=0;r.command(b,{type:'raid',id:base.id},36000);
  Object.assign(b,{x:base.x,y:base.y});
  r.tick(36001,0);
  eq(r.snapshot(a,36001).baseRepair,undefined);
  eq(r.snapshot(b,36001).baseRepair,{id:base.id,elapsed:0});
+});
+Deno.test('a raid challenges the player repairing the base before damaging it, including bot raids',()=>{
+ for(const useBot of [false,true]){
+  const {r,p:[defender]}=match(useBot?1:2);
+  const attacker=useBot?r.addBot(1,10):r.players[1];
+  start(r,r.players);r.shadows=[];
+  const base=r.bases.find(x=>x.side===defender.side&&x.tier==='small');
+  base.remaining=3;
+  Object.assign(defender,{x:base.x-34,y:base.y});
+  r.repairBases(3000);
+  Object.assign(attacker,{x:base.x+34,y:base.y,safeUntil:0});
+  ok(clearPath(defender,attacker));
+  if(useBot){
+   attacker.bot.goal={type:'raid',point:base};
+   r.tick(3100,0);
+  }else r.command(attacker,{type:'raid',id:base.id},3100);
+  eq(base.remaining,3);eq(r.score,[100,100]);
+  eq(attacker.phase,'battle');eq(attacker.battle,defender.battle);
+  eq(defender.repair.lastAt,null);
+  eq(attacker.x,base.x+34);
+ }
+});
+Deno.test('a base stays protected while its repairer is in another battle, until the repairer leaves',()=>{
+ const {r,p:[defender,attacker]}=match();start(r,r.players);r.shadows=[];
+ const base=r.bases.find(x=>x.side===defender.side&&x.tier==='small');
+ base.remaining=3;
+ Object.assign(defender,{x:base.x,y:base.y});
+ r.repairBases(3000);
+ defender.phase='battle';
+ defender.repair.lastAt=null;
+ Object.assign(attacker,{x:base.x+55,y:base.y,safeUntil:0});
+ let blocked=false;
+ try{r.command(attacker,{type:'raid',id:base.id},3100);}catch{blocked=true;}
+ ok(blocked);eq(base.remaining,3);eq(r.score,[100,100]);
+ Object.assign(defender,defender.spawn);
+ r.command(attacker,{type:'raid',id:base.id},3200);
+ eq(base.remaining,2);eq(r.score,[95,105]);
 });
 Deno.test('team snapshots expose live fight HP to teammates only and preserve HP, MP and ailments between fights',()=>{
  const {r,p:[a,b,mate,other]}=match(4);start(r,[a,b,mate,other]);

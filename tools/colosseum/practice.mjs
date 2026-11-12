@@ -192,13 +192,17 @@ export function stepBot(match, bot, now, dt) {
  if (match.solo) return stepSurvivalBot(match,bot,now,dt);
  const brain = bot.bot;
  const {type, point} = currentObjective(match, bot, now);
+ let destination=point;
  const canInteract = type==='raid'?RAID_TARGET(bot,point):type==='healBase'?HEAL_TARGET(bot,point):
   type==='chest'&&CHEST_TARGET(bot,point);
  if (canInteract) {
-  match.command(bot, {type, id: point.id}, now);
-  brain.goal = null;
-  if(type==='raid'&&point.side===bot.side)brain.patrol++;
-  return;
+  const blocked=match.command(bot, {type, id: point.id}, now);
+  if(!blocked){
+   brain.goal = null;
+   if(type==='raid'&&point.side===bot.side)brain.patrol++;
+   return;
+  }
+  destination=blocked.guard||point;
  }
  if (type === 'patrol' && distance(bot, point) < 12) {
   brain.patrol++;
@@ -206,7 +210,7 @@ export function stepBot(match, bot, now, dt) {
   return;
  }
  const x=bot.x,y=bot.y;
- walkToward(bot, point, dt);
+ walkToward(bot, destination, dt);
  if(Math.hypot(bot.x-x,bot.y-y)>.02)brain.blockedAt=null;
  else if(now-(brain.blockedAt??=now)>700){
   brain.skipPoint=point;brain.skipUntil=now+3500;
