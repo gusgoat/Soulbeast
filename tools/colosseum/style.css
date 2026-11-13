@@ -39,9 +39,11 @@ footer,#notice{text-align:center;font-size:.85rem;color:#e4c898;margin-top:14px}
 #scoreboard strong{font-size:1.4rem}
 .blue{color:#80d1ff}.red{color:#ff9188}
 #clock{font-variant-numeric:tabular-nums;font-weight:750}
-#signal,#event{position:absolute;left:50%;translate:-50%;text-align:center;background:#151a29e8;padding:.3rem .6rem;border-radius:8px;z-index:3;pointer-events:none}
+#signal,#event{ text-align:center;background:#151a29e8;padding:.3rem .6rem;border-radius:8px;pointer-events:none}
+#signal{position:absolute;left:50%;translate:-50%;z-index:3}
 #signal{top:72px;color:#ffdc93;min-width:65%}
-#event{bottom:max(136px,23dvh);max-width:92vw;width:max-content;font-size:.83rem}
+#arena-notices{position:absolute;z-index:6;left:50%;bottom:max(136px,23dvh);translate:-50%;width:max-content;max-width:min(88vw,430px);display:grid;gap:4px;justify-items:center;pointer-events:none}
+#event{font-size:.83rem}
 #event:empty{display:none}
 #objectives{position:absolute;left:max(8px,env(safe-area-inset-left));top:max(76px,calc(env(safe-area-inset-top) + 65px));pointer-events:none}
 #objectives-panel{width:clamp(112px,32vw,154px);display:grid;grid-template-columns:minmax(0,1fr);gap:2px;padding:5px 6px;border:1px solid #9b795c;border-radius:8px;background:#161b28dc;color:#fce1a6;font-size:clamp(10px,2.8vw,12px);line-height:1.2;overflow-wrap:anywhere}
@@ -68,7 +70,7 @@ footer,#notice{text-align:center;font-size:.85rem;color:#e4c898;margin-top:14px}
 #own-mp{color:#a4d7ff}
 .practice small{display:block;font-weight:500;margin-top:2px}
 #leave-practice{pointer-events:auto;margin-top:4px;min-height:36px;padding:.2rem .45rem}
-#boss-announcement{position:absolute;z-index:6;left:50%;top:max(76px,calc(env(safe-area-inset-top) + 65px));translate:-50%;width:max-content;max-width:88vw;text-align:center;background:#291b32ef;border:1px solid #bd8ad1;color:#ffe3a2;border-radius:8px;padding:.4rem .65rem;font-size:.8rem;pointer-events:none}
+#boss-announcement{text-align:center;background:#291b32ef;border:1px solid #bd8ad1;color:#ffe3a2;border-radius:8px;padding:.4rem .65rem;font-size:.8rem}
 #boss-announcement:empty{display:none}
 .map{position:absolute;right:10px;top:max(76px,calc(env(safe-area-inset-top) + 65px));padding:4px;display:grid;gap:4px;min-height:unset;background:#161c28;color:#e8d6ac;font-size:.7em}
 .map canvas{width:clamp(76px,20vw,131px);height:auto;display:block}
@@ -310,6 +312,7 @@ dialog p{margin-top:10px;font-size:.82em}
 
 /* Keep the walking exit buttons reachable when the objectives extend down to the joystick. */
 @media (orientation:landscape) and (max-height:420px){
+ #arena-notices{max-width:min(52vw,430px)}
  #leave-practice,#rank-leave{
   position:fixed;left:calc(max(15px,env(safe-area-inset-left)) + clamp(100px,26vw,132px) + 12px);
   bottom:max(20px,env(safe-area-inset-bottom));min-height:44px;z-index:4;
