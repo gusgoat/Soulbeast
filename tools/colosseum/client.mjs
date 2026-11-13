@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=siege-scoring-1';
+import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-fire-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=siege-scoring-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-recall-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
 import {battlePresentation} from './battle-presentation.mjs?v=projectile-2';
@@ -32,6 +32,7 @@ function acceptPong(message){
 }
 function replayMovement(player,snapshot){
  const predicted={x:player.x,y:player.y};
+ if(player.recallEndsAt)return predicted;
  const end=snapshot.now+oneWay;
  let at=snapshot.now,input=snapshot.input||[0,0];
  const advance=until=>{
@@ -59,7 +60,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=siege-scoring-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=base-fire-2',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -296,6 +297,7 @@ function applyState(next){
  $('entry').hidden=true;$('room').hidden=false;
  if(state.phase==='lobby'){renderLobby();return;}
  me=own();
+ if(me?.recallEndsAt&&!local?.recallEndsAt){release();pendingMoves=[];}
  if(state.rankSaved&&Number.isFinite(me?.rating)&&selectedRating!==me.rating){
   selectedRating=me.rating;
   renderRankProfile();
@@ -316,9 +318,9 @@ function applyState(next){
  }else{
   const expected=me.phase==='walk'?replayMovement(me,next):me;
   const err=distance(local,expected);
-  if(err>145||!scene.arena.fits(local.x,local.y)){local.x=expected.x;local.y=expected.y;correction=null;}
+  if(me.recallEndsAt||err>145||!scene.arena.fits(local.x,local.y)){local.x=expected.x;local.y=expected.y;correction=null;}
   else correction=err>7?{x:expected.x-local.x,y:expected.y-local.y}:null;
-  for(const k of ['phase','connected','safeUntil','repairingBase','rating'])local[k]=me[k];
+  for(const k of ['phase','connected','safeUntil','repairingBase','recallEndsAt','rating'])local[k]=me[k];
  }
  const visible=[...next.players.filter(p=>p.id!==me.id&&Number.isFinite(p.x)&&p.connected&&p.phase!=='dead'),...next.shadows,...next.bosses];
  const ids=new Set(visible.map(p=>p.id));
@@ -893,12 +895,17 @@ function release(){
  if(me?.phase==='walk')sendMove(0,0);
 }
 const sendDirection=()=>sendMove(...direction());
+$('base-recall-button').onclick=()=>{
+ if(me?.phase!=='walk'||state?.phase!=='match'||state.mode==='survival')return;
+ release();
+ send({type:me.recallEndsAt?'cancelRecall':'recallBase'});
+};
 const stick=bindWalkJoystick($('stick'),$('thumb'),{
- canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!state.baseRepair&&!mapDialog.open,
+ canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!me.recallEndsAt&&!state.baseRepair&&!mapDialog.open,
  onStart:sendDirection,onStop:sendDirection
 });
 function direction(){
- if(!me||me.phase!=='walk'||state?.phase!=='match'||state.baseRepair||mapDialog.open||ws?.readyState!==WebSocket.OPEN)return [0,0];
+ if(!me||me.phase!=='walk'||state?.phase!=='match'||me.recallEndsAt||state.baseRepair||mapDialog.open||ws?.readyState!==WebSocket.OPEN)return [0,0];
  const k=(...names)=>Number(names.some(name=>keys.has(name)));
  return [stick.x+k('d','arrowright')-k('a','arrowleft'),stick.y+k('s','arrowdown')-k('w','arrowup')].map(x=>Math.max(-1,Math.min(1,x)));
 }
@@ -954,7 +961,14 @@ function frame(t){
    heal.petsRecovered?`ฟื้นพลังอสูร ${heal.petsRecovered} ตัว`:'',heal.petsRevived?`ชุบอสูร ${heal.petsRevived} ตัว`:'',
    heal.cleansed?'ล้างสถานะผิดปกติ':''].filter(Boolean).join(' · '):event?.text??'';
   const walking=state.phase==='match'&&me.phase==='walk';
-  $('stick').hidden=!walking;$('map').hidden=!walking&&!watch;
+  const recall=walking&&me.recallEndsAt;
+  $('stick').hidden=!walking||Boolean(recall);$('map').hidden=!walking&&!watch;
+  $('base-recall').hidden=!walking||solo;
+  const recallButton=$('base-recall-button');
+  const recallLabel=recall?'ยกเลิกวาร์ป':'วาร์ปกลับฐานใหญ่';
+  if(recallButton.textContent!==recallLabel)recallButton.textContent=recallLabel;
+  $('base-recall-progress').hidden=!recall;
+  if(recall)$('base-recall-progress').value=Math.max(0,Math.min(1,1-(recall-now)/BASE_RECALL_MS));
   $('arena').toggleAttribute('data-spectating',Boolean(watch));
   $('spectator').hidden=!watch;
   if(watch){
@@ -981,7 +995,7 @@ function frame(t){
   $('chest-count').textContent=treasure;$('map-chests').textContent=treasure;
   $('boss-clock').textContent=solo?(!insideFogSafe(zone,focus.x,focus.y)?'อยู่ในหมอกพิษ · เสีย HP 2%/วิ':zone.nextAt?`หมอกเข้ามาอีก ${clock(zone.nextAt-now)}`:'หมอกปกคลุมทั้งสนาม'):
    state.nextBossAt?`บอสเกิดอีก ${clock(state.nextBossAt-now)}`:'ไม่มีบอสเกิดเพิ่ม';
-  const target=walking&&objective();
+  const target=walking&&!recall&&objective();
   $('raid').hidden=!target;
   if(target){const button=$('raid');button.textContent=target.label;button.dataset.action=target.type;button.disabled=Boolean(target.disabled);}
   if((walking||watch)&&t-lastMap>80){

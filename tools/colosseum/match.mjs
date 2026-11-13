@@ -1,10 +1,10 @@
-import {ASSIST, BASES, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_REPAIR_MS, BASE_REPAIR_POINTS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=siege-scoring-1';
+import {ASSIST, BASES, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_FIRE_STREAK_MS, BASE_FIRE_STREAK_BONUS, BASE_FIRE_MAX_MULTIPLIER, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_SCORE_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile,
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=base-fire-1';
 import {teamResults} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=siege-scoring-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=base-recall-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=siege-scoring-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=base-recall-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -151,6 +151,7 @@ export class Match {
    for(const id of event.hit){
     const player=this.players.find(p=>p.id===id);
     const damage=applyTrap(event.trap.type,player,player.maxHp);
+    if(damage)delete player.recallEndsAt;
     const label=trapTypes[event.trap.type].name;
     this.note(`${player.name} โดนกับดัก${label}${damage?` · −${damage} HP`:''}`,now);
     if(player.hp<=0)this.fall(player,now);
@@ -188,7 +189,7 @@ export class Match {
  }
  teleport(p,now){
   Object.assign(p,p.spawn,{phase:'walk',safeUntil:now+2500,dx:0,dy:0,warp:(p.warp||0)+1});
-  delete p.battle;delete p.respawnAt;delete p.repair;delete p.siege;delete p.baseRecovery;
+  delete p.battle;delete p.respawnAt;delete p.repair;delete p.siege;delete p.baseRecovery;delete p.recallEndsAt;
   resetBotRoute(p);
  }
  respawn(p,now){
@@ -259,19 +260,27 @@ export class Match {
   if(m.type==='move'){
    if(!Number.isSafeInteger(m.seq)||m.seq<=p.seq||!Number.isFinite(m.x)||!Number.isFinite(m.y))return;
    p.seq=m.seq;
-   if(p.phase==='walk'&&!p.repair){
+   if(p.phase==='walk'&&!p.repair&&!p.recallEndsAt){
     p.dx=Math.max(-1,Math.min(1,m.x));p.dy=Math.max(-1,Math.min(1,m.y));p.inputAt=now;
    }
+  }else if(m.type==='recallBase'){
+   const base=this.bases.find(base=>base.main&&base.side===p.side&&base.hp>0);
+   assert(!this.solo&&p.connected&&p.phase==='walk'&&base,'วาร์ปกลับฐานใหญ่ได้เฉพาะขณะเดินในโหมดทีม');
+   p.recallEndsAt??=now+BASE_RECALL_MS;
+   p.dx=p.dy=0;
+   delete p.repair;delete p.siege;
+  }else if(m.type==='cancelRecall'){
+   delete p.recallEndsAt;
   }else if(m.type==='repairBase'){
    const base=this.bases.find(b=>b.id===m.id);
-   assert(p.connected&&p.phase==='walk'&&base&&REPAIR_TARGET(p,base),'สายพ่อค้าต้องอยู่ใกล้ฐานฝ่ายตัวเองที่ HP ยังไม่เต็ม');
-   if(p.repair?.baseId!==base.id)p.repair={baseId:base.id,nextAt:now+BASE_REPAIR_MS};
+   assert(p.connected&&p.phase==='walk'&&!p.recallEndsAt&&base&&REPAIR_TARGET(p,base),'สายพ่อค้าต้องอยู่ใกล้ฐานฝ่ายตัวเองที่ HP ยังไม่เต็ม');
+   if(p.repair?.baseId!==base.id)p.repair={baseId:base.id,nextAt:now+BASE_REPAIR_MS,scoreTime:0};
    p.dx=p.dy=0;
   }else if(m.type==='stopRepair'){
    delete p.repair;
   }else if(m.type==='chest'){
    const c=this.chests.find(x=>x.id===m.id);
-   assert(fresh(p,now)&&c&&this.arena.chestInReach(p,c),'เข้าใกล้หีบก่อนเปิด');
+   assert(!p.recallEndsAt&&fresh(p,now)&&c&&this.arena.chestInReach(p,c),'เข้าใกล้หีบก่อนเปิด');
    assert(!c.opened,'มีคนเปิดหีบนี้แล้ว');
    c.opened=true;
    if(this.solo){
@@ -314,7 +323,7 @@ export class Match {
   this.battles.set(id,battle);
   for(const p of [...teams.flat(),...(neutral?[b]:[])]){
    p.phase='battle';p.battle=id;p.dx=p.dy=0;
-   delete p.siege;
+   delete p.siege;delete p.recallEndsAt;
    if(p.repair)p.repair.nextAt=null;
   }
   this.baseBolts=this.baseBolts.filter(bolt=>bolt.target.phase!=='battle');
@@ -332,10 +341,10 @@ export class Match {
  }
  fall(p,now,cause='',killer=null){
   p.phase='dead';
-  delete p.repair;
+  delete p.repair;delete p.recallEndsAt;
   if(this.solo){p.eliminationCause=cause;p.eliminatedAt=now;this.note(`${p.name} ตกรอบ${cause?' · '+cause:''}`,now);return;}
   p.respawnAt=now+RESPAWN_MS;
-  const points=killer?(killer.baseCls==='thief'?40:30):10;
+  const points=killer?(killer.baseCls==='thief'?40:30):20;
   if(killer)this.earn(killer,points);
   this.score[p.side]=Math.max(0,this.score[p.side]-points);
   const award=killer?`${killer.name} สังหาร ${p.name} · ${TEAMS[killer.side]} +${points}`:`${p.name} ล้มลง`;
@@ -568,9 +577,15 @@ export class Match {
   const pending=[];
   for(const bolt of this.baseBolts){
    if(bolt.at>now){pending.push(bolt);continue;}
-   const {target,warp,damage}=bolt;
-   if(!target.connected||target.phase!=='walk'||target.warp!==warp)continue;
-   target.hp=Math.max(0,target.hp-damage);
+   const {base,side,target,warp,damage}=bolt;
+   if(base.side!==side||!target.connected||target.phase!=='walk'||target.warp!==warp)continue;
+   const streaks=base.fireStreaks??=new Map();
+   const previous=streaks.get(target.id);
+   const bonusHits=previous&&bolt.at-previous.at<=BASE_FIRE_STREAK_MS?previous.bonusHits+1:0;
+   streaks.set(target.id,{at:bolt.at,bonusHits});
+   const multiplier=Math.min(BASE_FIRE_MAX_MULTIPLIER,1+bonusHits*BASE_FIRE_STREAK_BONUS);
+   target.hp=Math.max(0,target.hp-damage*multiplier);
+   delete target.recallEndsAt;
    if(!target.hp){this.fall(target,now);this.checkScore(now);}
    if(this.phase!=='match')return;
   }
@@ -586,7 +601,11 @@ export class Match {
      p.repair.nextAt??=now+BASE_REPAIR_MS;
      while(p.repair&&now>=p.repair.nextAt){
       base.hp++;
-      p.earned+=BASE_REPAIR_POINTS;
+      p.repair.scoreTime+=BASE_REPAIR_MS;
+      if(p.repair.scoreTime>=BASE_REPAIR_SCORE_MS){
+       p.earned++;
+       p.repair.scoreTime-=BASE_REPAIR_SCORE_MS;
+      }
       p.repair.nextAt+=BASE_REPAIR_MS;
       if(base.hp===base.maxHp)this.clearBaseRepairs(base.id);
      }
@@ -606,7 +625,7 @@ export class Match {
      this.recoverPets(p,ratio,false,undefined,true);
     }
    }
-   const base=!p.repair&&fresh(p,now)&&nearest(p,this.bases.filter(b=>RAID_TARGET(p,b)&&canRaidBase(p.side,b,this.bases)));
+   const base=!p.repair&&!p.recallEndsAt&&fresh(p,now)&&nearest(p,this.bases.filter(b=>RAID_TARGET(p,b)&&canRaidBase(p.side,b,this.bases)));
    if(!base){delete p.siege;continue;}
    const guards=this.players.filter(q=>q.connected&&q.repair?.baseId===base.id&&REPAIR_TARGET(q,base));
    if(guards.length){
@@ -622,15 +641,11 @@ export class Match {
   for(const [base,attackers] of attacks){
    if(this.phase!=='match')return;
    const active=attackers.filter(p=>fresh(p,now)&&p.side!==base.side);
-   const count=active.length;
-   if(!count||!canRaidBase(active[0].side,base,this.bases))continue;
+   if(!active.length||!canRaidBase(active[0].side,base,this.bases))continue;
    base.underAttack=true;
-   // Split the combined rate among the attackers so each additional player adds
-   // 50% to the group rate while their own career still affects their share.
-   const rate=(1+(count-1)*.5)/count;
    for(const p of active){
     if(base.side===p.side)break;
-    this.damageBase(base,p,rate,now);
+    this.damageBase(base,p,now);
     if(this.phase!=='match')return;
    }
   }
@@ -639,24 +654,32 @@ export class Match {
    const target=nearest(base,this.players.filter(p=>p.side!==base.side&&fresh(p,now)&&distance(base,p)<=BASE_FIRE_RANGE));
    if(!target)continue;
    base.fireAt=now+BASE_FIRE_MS;
-   const fraction=(base.points+1)*.02*(target.baseCls==='gladiator'?.5:1);
-   this.baseBolts.push({target,warp:target.warp,damage:target.maxHp*fraction,at:now+BASE_BOLT_MS});
+   const fraction=(base.points+1)*.04*(target.baseCls==='gladiator'?.5:1);
+   this.baseBolts.push({base,side:base.side,target,warp:target.warp,damage:target.maxHp*fraction,at:now+BASE_BOLT_MS});
    this.baseEffect('tower',base,target,now,BASE_BOLT_MS);
   }
  }
- damageBase(base,p,rate,now){
-  const {interval,effect}=siegeProfile(p);
-  if(p.siege?.id!==base.id)p.siege={id:base.id,at:now,progress:0,rate};
+ damageBase(base,p,now){
+  const {effect}=siegeProfile(p);
+  const career=p.baseCls||p.cls;
+  const hitDamage=career==='gladiator'||career==='thief'?BASE_ATTACK_HP/2:BASE_ATTACK_HP;
+  if(p.siege?.id!==base.id)p.siege={id:base.id,nextHitAt:now+BASE_ATTACK_MS,nextScoreAt:now+BASE_ATTACK_SCORE_MS};
   const siege=p.siege;
-  siege.progress+=(now-siege.at)*siege.rate;
-  siege.at=now;
-  siege.rate=rate;
-  while(siege.progress+1e-8>=interval){
-   siege.progress=Math.max(0,siege.progress-interval);
-   base.hp--;
-   this.baseEffect(effect,base,p,now,interval);
-   this.earn(p,base.points);
-   this.score[base.side]=Math.max(0,this.score[base.side]-base.points);
+  while(Math.min(siege.nextScoreAt,siege.nextHitAt)<=now){
+   if(siege.nextScoreAt<=siege.nextHitAt){
+    const endsWithCapture=base.hp<=hitDamage&&siege.nextScoreAt===siege.nextHitAt;
+    this.earn(p,base.points);
+    this.score[base.side]=Math.max(0,this.score[base.side]-base.points);
+    siege.nextScoreAt+=BASE_ATTACK_SCORE_MS;
+    if(!endsWithCapture){
+     this.checkScore(now);
+     if(this.phase!=='match')return;
+    }
+    continue;
+   }
+   siege.nextHitAt+=BASE_ATTACK_MS;
+   base.hp=Math.max(0,base.hp-hitDamage);
+   this.baseEffect(effect,base,p,now,BASE_ATTACK_MS);
    if(base.hp===0){
     this.baseEffect('collapse',base,{x:base.x,y:base.y},now,1050);
     const defender=base.side,loss=BASE_CAPTURE_LOSS[base.tier],bonus=loss/2;
@@ -665,6 +688,7 @@ export class Match {
     base.side=p.side;
     base.hp=base.maxHp/4;
     base.fireAt=now+BASE_FIRE_MS;
+    delete base.fireStreaks;
     base.underAttack=false;
     this.clearBaseRepairs(base.id);
     this.note(`${p.name} ยึด${base.label} · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}`,now);
@@ -706,7 +730,9 @@ export class Match {
   }
   for(const p of this.players){
    if(!this.solo&&!p.retired&&p.phase==='dead'&&now>=p.respawnAt)this.respawn(p,now);
+   if(!p.connected)delete p.recallEndsAt;
    if(p.phase!=='walk'||!p.connected)continue;
+   if(p.recallEndsAt){p.appliedSeq=p.seq;continue;}
    if(p.bot)stepBot(this,p,now,dt);
    else{
     if(!p.repair&&now-p.inputAt<900)walkInArena(this.arena,this.zone,p,p.dx,p.dy,dt);
@@ -745,7 +771,19 @@ export class Match {
     if(distance(b,patrol)<=10)b.patrolLeft=!b.patrolLeft;
    }
   }
-  if(!this.solo)this.siegeBases(now);
+  if(!this.solo){
+   this.siegeBases(now);
+   if(this.phase!=='match')return;
+   for(const p of this.players){
+    if(p.phase!=='walk'||!p.recallEndsAt||now<p.recallEndsAt)continue;
+    delete p.recallEndsAt;
+    const base=this.bases.find(base=>base.main&&base.side===p.side&&base.hp>0);
+    if(!base)continue;
+    Object.assign(p,{x:base.x,y:base.y,warp:(p.warp||0)+1,dx:0,dy:0});
+    delete p.baseRecovery;
+    resetBotRoute(p);
+   }
+  }
  }
  spectatorTarget(p){
   if(!this.solo||this.phase!=='match'||p.phase!=='dead')return null;
@@ -769,6 +807,7 @@ export class Match {
    return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),rating:q.rating,...teamHp,
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
     ...(!this.solo&&ally&&visible?{repairingBase:repairing(q)?q.repair.baseId:null}:{}),
+    ...(visible?{recallEndsAt:this.phase==='match'&&phase==='walk'&&connected?q.recallEndsAt??null:null}:{}),
     ...(!this.solo&&ally&&!visible&&phase==='walk'&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });
   return {type:'state',me:p.id,code:this.code,phase:this.phase,ranked:Boolean(this.ranked),practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),
@@ -779,7 +818,7 @@ export class Match {
    ...(this.solo?{mode:'survival',zone:this.zone,survivors:this.players.filter(player=>player.phase!=='dead').length,
     nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,placement:p.placement,eliminationCause:p.eliminationCause,spectating:spectating?.id,
     winnerName:this.players.find(player=>player.id===this.winner)?.name}:{}),
-   bases:this.bases.map(({fireAt,underAttack,...base})=>({...base,underAttack:base.side===p.side&&Boolean(underAttack)})),
+   bases:this.bases.map(({fireAt,fireStreaks,underAttack,...base})=>({...base,underAttack:base.side===p.side&&Boolean(underAttack)})),
    baseEffects:this.baseEffects.filter(e=>e.until>now&&inSight(viewer,e)),
 
    traps:this.traps.controller.list.flatMap(({id,x,y,type})=>{

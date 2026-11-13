@@ -28,15 +28,15 @@ Deno.test('ranked team stats exempt players who fought and ordinary rooms award 
  assert.deepEqual(room.results[0].map(({points,kills,mvp})=>({points,kills,mvp})),[
   {points:5,kills:1,mvp:true},{points:5,kills:0,mvp:false},
  ]);
- assert.deepEqual(matchRankChanges(room).map(row=>row.delta),[2,1,1,-1]);
+ assert.deepEqual(matchRankChanges(room).map(row=>row.delta),[2,1,-1]);
  const snapshot=room.snapshot(losingMvp,2000);
- assert.equal(snapshot.rankDelta,1);
+ assert.equal(snapshot.rankDelta,undefined);
  assert.equal(snapshot.results[1][0].name,losingMvp.name);
 
  const mixed=populate('team',4);
  mixed.players[2].bot={};
  mixed.finish(0,'zero',2000);
- assert.deepEqual(matchRankChanges(mixed).map(row=>row.code),['player-0','player-1','player-3']);
+ assert.deepEqual(matchRankChanges(mixed).map(row=>row.code),['player-0','player-3']);
  mixed.ranked=false;
  assert.deepEqual(matchRankChanges(mixed),[]);
  const draw=populate('team',2);

@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=siege-scoring-1';
+import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-recall-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -373,7 +373,10 @@ export class Scene{
    }
    if(e.x<left-160||e.x>right+160||e.y*FLAT<top-180||e.y*FLAT>bottom+100)continue;
    if(e.radius)this.drawProp(e);
-   else this.actor(e,now,e.id===me.id,attacks.get(e.id),baseById,serverTime);
+   else{
+    if(e.recallEndsAt)this.recallCircle(e,serverTime);
+    this.actor(e,now,e.id===me.id,attacks.get(e.id),baseById,serverTime);
+   }
   }
   this.drawBaseEffects(baseEffects,bases,seen,serverTime);
   for(const base of castles)this.drawBaseStatus(base);
@@ -559,6 +562,34 @@ export class Scene{
   light.addColorStop(0,'#ffaa5388');light.addColorStop(1,'#ffaa5300');c.fillStyle=light;c.fillRect(x-38,y-38,76,76);
   c.fillStyle='#ffb756';c.beginPath();c.ellipse(x,y-4,5,r,0,0,Math.PI*2);c.fill();
   c.fillStyle='#ffe7a9';c.beginPath();c.ellipse(x,y,2.5,6,0,0,Math.PI*2);c.fill();
+ }
+ recallCircle(player,now){
+  const c=this.c;
+  const progress=Math.max(0,Math.min(1,1-(player.recallEndsAt-now)/BASE_RECALL_MS));
+  const turn=progress*Math.PI*2;
+  c.save();
+  c.translate(player.x,player.y*FLAT);
+  c.scale(1,.59);
+  c.shadowBlur=12;
+  c.shadowColor='#77dfff';
+  c.lineWidth=2;
+  c.strokeStyle='#87e6ff';
+  c.fillStyle='#4baee942';
+  c.beginPath();c.arc(0,0,37,0,2*Math.PI);c.fill();c.stroke();
+  c.rotate(turn);
+  for(let i=0;i<2;i++){
+   c.beginPath();
+   for(let j=0;j<3;j++){
+    const angle=(i*Math.PI)+j*2*Math.PI/3;
+    const x=Math.cos(angle)*30,y=Math.sin(angle)*30;
+    if(j===0)c.moveTo(x,y);else c.lineTo(x,y);
+   }
+   c.closePath();c.stroke();
+  }
+  c.rotate(-turn);
+  c.strokeStyle='#fff1bd';c.lineWidth=4;
+  c.beginPath();c.arc(0,0,42,-Math.PI/2,turn-Math.PI/2);c.stroke();
+  c.restore();
  }
  repairRing(b,active){
   const c=this.c,x=b.x,y=b.y*FLAT;

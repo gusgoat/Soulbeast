@@ -84,6 +84,9 @@ dialog p{margin-top:10px;font-size:.82em}
 #thumb{width:42%;aspect-ratio:1;background:url('../../assets/ui/walk-skin-20261103/joystick-knob.png.webp') center/100% 100% no-repeat;filter:drop-shadow(0 3px 4px #0008);pointer-events:none}
 #raid{position:absolute;right:max(15px,env(safe-area-inset-right));bottom:max(23px,env(safe-area-inset-bottom));max-width:57vw}
 #walk-sound{position:absolute;right:max(15px,env(safe-area-inset-right));bottom:max(78px,calc(env(safe-area-inset-bottom) + 60px));width:42px;min-height:42px;padding:0;border-radius:50%}
+#base-recall{position:absolute;right:max(64px,calc(env(safe-area-inset-right) + 49px));bottom:max(78px,calc(env(safe-area-inset-bottom) + 60px));display:grid;gap:4px}
+#base-recall-button{min-height:42px;padding:.3rem .55rem;font-size:.81rem}
+#base-recall-progress{display:block;width:100%;height:9px;accent-color:#79dfff}
 #raid[data-action=healBase]{background:#203e39;color:#d7ffd8;border-color:#91cda5}
 #overlay,#battle{position:absolute;z-index:5;inset:0;overflow:auto;background:#0d111bdc}
 #overlay{display:grid;place-content:center;text-align:center;padding:15px}

@@ -35,7 +35,7 @@ export function matchRankChanges(room){
   const winner=player.side===room.winner;
   const isMvp=mvp.has(player.id);
   const result=room.winner===-1?0:room.solo?([3,2,2,1,1][rank-1]??-1):
-   isMvp?(winner?2:1):(winner?1:-1);
+   isMvp?(winner?2:0):(winner?1:-1);
   const violation=!room.solo&&player.earned<20&&!player.helpedFight?'inactive':null;
   if(!result&&!violation)return [];
   const delta=violation?Math.min(0,result):result;
