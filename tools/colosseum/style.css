@@ -200,6 +200,10 @@ dialog p{margin-top:10px;font-size:.82em}
 .rank-table tbody .result-points{color:#ffe09b}
 .rank-table .result-player{color:#fff0d0;line-height:1.28}
 .result-player-name{min-width:0;overflow-wrap:anywhere}
+.result-character{display:flex;align-items:center;gap:6px;min-width:0}
+.result-identity{min-width:0}
+.result-name{display:flex;flex-wrap:nowrap}
+.result-portrait{width:clamp(24px,8vw,34px);height:auto;aspect-ratio:1;flex:none;object-fit:cover;object-position:center 30%;border:1px solid var(--team-line);border-radius:7px;background:#101724}
 .result-career{display:block;margin-top:2px;color:var(--team-ink);font-size:.74rem;font-weight:500;overflow-wrap:anywhere}
 #match-results .rank-table :is(th,td):first-child{width:62%;text-align:left}
 .rank-name{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;overflow-wrap:anywhere}

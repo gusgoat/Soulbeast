@@ -7,7 +7,7 @@
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
  <script src="../town-walk-demo/walk-entry-guard.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=team-results-1">
+ <link rel="stylesheet" href="./style.css?v=base-hp-1">
 </head>
 <body>
  <main id="lobby">
@@ -79,8 +79,12 @@
    <section data-rules-mode="team">
     <h3>โหมดทีม</h3>
     <ul>
-     <li>ทีมไพลินและทีมทับทิมมีฝ่ายละ 1–5 คน เริ่มที่ฝ่ายละ 100 คะแนน แข่ง 12 นาที ฝ่ายที่มีคะแนนมากกว่าชนะเมื่อหมดเวลา หรือชนะทันทีเมื่อยึดฐานใหญ่ได้หรือทำให้อีกฝ่ายเหลือ 0 คะแนน</li>
-     <li>จู่โจมฐานเล็ก กลาง และใหญ่ได้ 5, 10 และ 15 คะแนนตามลำดับ และอีกฝ่ายเสียคะแนนเท่ากัน ยึดฐานที่เชื่อมกันจากเล็กไปกลางแล้วไปใหญ่</li>
+     <li>ทีมไพลินและทีมทับทิมมีฝ่ายละ 1–5 คน เริ่มที่ฝ่ายละ 500 คะแนน แข่ง 12 นาที ฝ่ายที่มีคะแนนมากกว่าชนะเมื่อหมดเวลา หรือชนะทันทีเมื่อยึดฐานใหญ่ได้หรือทำให้อีกฝ่ายเหลือ 0 คะแนน</li>
+     <li>ฐานเล็ก กลาง ใหญ่ มี 100 / 200 / 300 HP ตามลำดับ เข้าใกล้เพื่อโจมตีอัตโนมัติ ทุก 1 HP ที่ลดได้จะย้าย 1 / 2 / 3 คะแนนจากฝ่ายตรงข้าม และฐานที่ถูกยึดเริ่มที่ 25% HP</li>
+     <li>ฐานยิงตอบโต้เป้าหมายใกล้ที่สุดในระยะ 200 หน่วยทุกวินาที สายปืนและธนูยิงฐานได้ที่ 200 หน่วย สายเวทย์ อัญเชิญ และดรูอิดที่ 150 หน่วย อาชีพอื่นที่ 75 หน่วย</li>
+     <li>ฐานฝ่ายเดียวกันฟื้น HP/MP ให้ผู้ผนึกและอสูรในระยะ 150 หน่วยที่ 1% / 2% / 3% ต่อวินาที สายพ่อค้ากดซ่อมฐานได้ 1 HP ทุกครึ่งวินาที ได้ 2 คะแนนส่วนตัวต่อ HP และเดินได้อีกครั้งเมื่อหยุดซ่อมหรือฐานเต็ม</li>
+     <li>ฐานกลางแนวกลางของแต่ละทีมเชื่อมกับฐานเล็กสามจุด ต้องยึดอย่างน้อยหนึ่งจุดจึงจู่โจมฐานกลางนี้ได้</li>
+     <li>ผู้โจมตีฐานเดียวกันแต่ละคนที่เพิ่มเข้ามาช่วยเร่งอัตราลด HP ฐานอีก 50% สายนักดาบได้คะแนนจากการปิดฉากอสูรเงาและบอสเพิ่ม 25%</li>
      <li>เมื่อผู้ผนึกล้ม ทีมเสีย 10 คะแนน และเกิดใหม่หลัง 30 วินาที เปิดหีบหรือปราบอสูรเพื่อเพิ่มคะแนน บอสปรากฏทุก 2 นาที ทีมที่ปราบได้จะได้ 20 คะแนนและอีกฝ่ายเสีย 20 คะแนน</li>
     </ul>
    </section>
@@ -110,9 +114,9 @@
  <section id="arena" hidden aria-label="สนามโคลอสเซียม">
   <canvas id="world" aria-label="สนามเขาวงกต"></canvas>
   <div id="scoreboard">
-   <div class="blue"><small id="blue-label">ไพลิน</small><strong id="blue">100</strong></div>
+   <div class="blue"><small id="blue-label">ไพลิน</small><strong id="blue">500</strong></div>
    <time id="clock">12:00</time>
-   <div class="red"><small id="red-label">ทับทิม</small><strong id="red">100</strong></div>
+   <div class="red"><small id="red-label">ทับทิม</small><strong id="red">500</strong></div>
   </div>
   <div id="signal" role="status" hidden></div>
   <button id="map" class="map" aria-label="ขยายมินิแมป"><canvas id="mini"></canvas><span>แผนที่สนาม ↗</span></button>
@@ -145,7 +149,7 @@
   <p id="event" role="status"></p>
   <div id="stick" aria-label="จอยเดิน"><div id="thumb"></div></div>
   <button id="walk-sound" class="secondary" type="button" aria-label="เสียงโคลอสเซียม" hidden></button>
-  <button id="raid" hidden>จู่โจมฐาน</button>
+  <button id="raid" hidden>ซ่อมฐาน</button>
   <section id="battle" hidden aria-label="ฉากต่อสู้"></section>
   <div id="battle-vfx" aria-hidden="true"></div>
   <div id="spectator" hidden aria-label="ชมผู้รอดชีวิต">
@@ -156,6 +160,6 @@
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" hidden></div><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=team-results-1"></script>
+ <script type="module" src="./client.mjs?v=base-hp-1"></script>
 </body>
 </html>

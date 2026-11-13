@@ -2,8 +2,10 @@ export const COLS=31, ROWS=43, CELL=180, FLAT=.64;
 export const WIDTH=COLS*CELL, HEIGHT=ROWS*CELL;
 export const SPEED=246, RADIUS=21, CONTACT=50, ASSIST=400, RAID_RANGE=122;
 export const BEAST_SPEED_SCALE=.8;
+export const TEAM_SPEED=200, BASE_FIRE_RANGE=200, BASE_FIRE_MS=1000, BASE_BOLT_MS=280;
+export const TEAM_START_SCORE=500;
 export const BASE_AURA_RANGE=600;
-export const BASE_REPAIR_RANGE=150, BASE_REPAIR_MS=15_000, BASE_REPAIR_POINTS=5;
+export const BASE_REPAIR_RANGE=150, BASE_REPAIR_MS=500, BASE_REPAIR_POINTS=2;
 export const MATCH_MS=12*60_000, RESPAWN_MS=30_000;
 export const BOSS_INTERVAL=2*60_000, BOSS_POINTS=20, CHEST_COUNT=10;
 export const BEAST_POINTS=5;
@@ -54,16 +56,18 @@ function findBush(p,bushes){
  return bushes.find(b=>y===b.y&&x>=b.x&&x<b.x+b.w)?.id??null;
 }
 const baseSites=[
- [2,21,'large',8,30,[1,2]], [5,13,'medium',6,20,[3,4]], [6,29,'medium',6,20,[5,6]],
- [6,5,'small',4,10,[]], [10,13,'small',4,10,[]], [10,29,'small',4,10,[]], [6,37,'small',4,10,[]],
+ [2,21,'large',300,30,[1,2]], [5,13,'medium',200,20,[3,4]], [6,29,'medium',200,20,[5,6]],
+ [6,5,'small',100,10,[]], [10,13,'small',100,10,[]], [10,29,'small',100,10,[]], [6,37,'small',100,10,[]],
+ [10,21,'small',100,10,[],'ฐานเล็กแนวกลาง'],
+ [5,21,'medium',200,20,[4,5,7],'ฐานกลางแนวกลาง'],
 ];
-export const BASES=TEAMS.flatMap((team,side)=>baseSites.map(([x,y,tier,maxDurability,aura,children],i)=>({
- id:`${side}-${i}`,side,tier,maxDurability,aura,main:tier==='large',points:tier==='large'?15:tier==='medium'?10:5,
- label:tier==='large'?'ฐานใหญ่':tier==='medium'?`ฐานกลาง ${i}`:`ฐานเล็ก ${i-2}`,
+export const BASES=TEAMS.flatMap((team,side)=>baseSites.map(([x,y,tier,maxHp,aura,children,label],i)=>({
+ id:`${side}-${i}`,side,tier,maxHp,aura,main:tier==='large',points:tier==='large'?3:tier==='medium'?2:1,
+ label:label??(tier==='large'?'ฐานใหญ่':tier==='medium'?`ฐานกลาง ${i}`:`ฐานเล็ก ${i-2}`),
  links:children.map(child=>`${side}-${child}`),...cellCenter(side?COLS-1-x:x,y)
 })));
-export const canRaidBase=(side,base,bases)=>base.side!==side&&base.remaining>0&&
- (!base.links?.length||base.links.some(id=>bases.some(link=>link.id===id&&link.side===side&&link.remaining>0)));
+export const canRaidBase=(side,base,bases)=>base.side!==side&&base.hp>0&&
+ (!base.links?.length||base.links.some(id=>bases.some(link=>link.id===id&&link.side===side&&link.hp>0)));
 export const mainBase=side=>BASES.find(b=>b.main&&b.side===side);
 export const spawns=side=>[[-48,-52],[-48,52],[0,0],[48,-52],[48,52]].map(([dx,dy])=>({x:mainBase(side).x+(side?-dx:dx),y:mainBase(side).y+dy}));
 const propSites=maze.flatMap((row,y)=>row.slice(2,14).flatMap((open,i)=>{
@@ -85,6 +89,7 @@ export function createArena(grid,bushes,obstacles){
  const cellKey=(x,y)=>y*cols+x;
  const indexAt=({x,y})=>cellKey(Math.floor(x/CELL),Math.floor(y/CELL));
  const bushAt=p=>findBush(p,bushes);
+ const terrain={maze:grid,bushAt};
  const canSeeOpponent=(observer,subject)=>{
   const patch=bushAt(subject);
   return patch===null||bushAt(observer)===patch;
@@ -117,7 +122,7 @@ function move(p,dx,dy,dt,speed=SPEED,allow=()=>true){
  if(fits(p.x,y)&&allow(p.x,y))p.y=y;
 }
 function movePlayer(p,dx,dy,dt,allow){
- move(p,dx,dy,dt,bushAt(p)===null?SPEED:SPEED*.5,allow);
+ move(p,dx,dy,dt,walkSpeed(terrain,p),allow);
 }
 function nextCell(from,to){
  if(from===to)return to;
@@ -139,8 +144,18 @@ function nextCell(from,to){
 }
 export const TEAM_ARENA=createArena(maze,BUSHES,OBSTACLES);
 export const {bushAt,canSeeOpponent,passable,fits,clearPath,move,movePlayer,nextCell}=TEAM_ARENA;
-const baseInReach=(p,b)=>distance(p,b)<=RAID_RANGE&&clearPath(p,b);
-export const RAID_TARGET=(p,b)=>p.side!==b.side&&baseInReach(p,b);
-export const HEAL_TARGET=(p,b)=>b.main&&b.remaining>0&&p.side===b.side&&baseInReach(p,b);
+export function siegeProfile(p){
+ const cls=p.baseCls||p.cls;
+ if(cls==='gunner'||cls==='archer')return {range:200,interval:200,effect:cls};
+ if(cls==='mage'||cls==='summoner'||cls==='druid')return {range:150,interval:250,effect:'magic'};
+ return {range:75,interval:cls==='gladiator'?500:250,effect:'melee'};
+}
+export const RAID_TARGET=(p,b)=>p.side!==b.side&&distance(p,b)<=siegeProfile(p).range&&clearPath(p,b);
+export const HEAL_TARGET=(p,b)=>p.side===b.side&&b.hp>0&&distance(p,b)<=BASE_REPAIR_RANGE;
+export const REPAIR_TARGET=(p,b)=>(p.baseCls||p.cls)==='merchant'&&HEAL_TARGET(p,b)&&b.hp<b.maxHp;
+export function walkSpeed(arena,p){
+ const speed=arena.maze===maze?TEAM_SPEED*((p.baseCls||p.cls)==='thief'?1.2:1):SPEED;
+ return arena.bushAt(p)===null?speed:speed/2;
+}
 export const CHEST_TARGET=TEAM_ARENA.chestInReach;
 export const CLASSES={swordsman:'นักดาบ',archer:'นักธนู',mage:'นักเวทย์',summoner:'นักอัญเชิญ'};

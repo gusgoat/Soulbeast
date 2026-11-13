@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=team-base-rules-1';
+import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-hp-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=steady-facing-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-hp-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
 import {battlePresentation} from './battle-presentation.mjs?v=projectile-2';
@@ -59,7 +59,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=base-defense-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=base-hp-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -307,7 +307,7 @@ function applyState(next){
  $('blue-label').textContent=solo?'เหลือผู้รอด':'ไพลิน';
  $('red-label').textContent=solo?'พื้นที่ปลอดภัย':'ทับทิม';
  $('vitals-label').textContent=solo?'พลังของคุณ':'HP ทีมเรา';
- $('map-legend').textContent=solo?'กรอบเขียว พื้นที่ปลอดภัย · ◎ ตำแหน่งมุมมอง':'◆ ฐานใหญ่ · ▣ ฐานกลาง · □ ฐานเล็ก · เส้นแสดงฐานที่เชื่อมกัน';
+ $('map-legend').textContent=solo?'กรอบเขียว พื้นที่ปลอดภัย · ◎ ตำแหน่งมุมมอง':'◆ ฐานใหญ่ · ▣ ฐานกลาง · □ ฐานเล็ก · ! ฐานถูกโจมตี';
  renderTeamHp();
  renderSurvivalRank(solo);
  pendingMoves=pendingMoves.filter(move=>move.seq>next.ack);
@@ -366,19 +366,30 @@ function scoreTable(label,side,team,players){
   tr.classList.toggle('result-mvp',result.mvp);
   const player=node('th',null,'result-player');
   player.scope='row';
-  const identity=node('div',null,'rank-name');
+  const identity=node('div',null,'rank-name result-name');
   const name=node('span',result.name,'result-player-name');
   name.setAttribute('data-user-content','');
   const badge=shieldIcon(profile?.rating??result.rating);
   if(badge)identity.append(badge);
   identity.append(name);
-  if(result.mvp)identity.append(node('small','MVP','mvp-label'));
-  player.append(identity);
+  const details=node('div',null,'result-identity');
+  details.append(identity);
+  if(result.mvp)details.append(node('small','MVP','mvp-label'));
   if(profile){
    const career=profile.className||CLASSES[profile.baseCls]||CLASSES[profile.cls];
    const detail=[career,Number.isFinite(profile.lv)?'Lv '+profile.lv:''].filter(Boolean).join(' · ');
-   if(detail)player.append(node('small',detail,'result-career'));
+   if(detail)details.append(node('small',detail,'result-career'));
   }
+  const figure=node('div',null,'result-character');
+  const image=profile&&portrait(profile);
+  if(image){
+   const face=node('img',null,'result-portrait');
+   face.src=image;face.alt='';face.width=32;face.height=32;
+   face.addEventListener('error',()=>face.remove(),{once:true});
+   figure.append(face);
+  }
+  figure.append(details);
+  player.append(figure);
   tr.append(player,node('td',String(result.points),'result-points'),node('td',String(result.kills)));
   tbody.append(tr);
  }
@@ -390,7 +401,7 @@ function renderMatchResults(){
  const panel=$('match-results');
  panel.hidden=state.phase!=='finished';
  if(panel.hidden)return;
- const roster=state.results?state.players.map(({id,cls,baseCls,className,lv,rating})=>({id,cls,baseCls,className,lv,rating})):[];
+ const roster=state.results?state.players.map(({id,cls,baseCls,className,gender,lv,rating})=>({id,cls,baseCls,className,gender,lv,rating})):[];
  const key=JSON.stringify([state.finishedAt,state.results,roster,state.rankDelta,state.rankSaved,state.rankingAvailable,state.rankPending,state.placement,me?.rating]);
  if(key===resultKey)return;
  resultKey=key;
@@ -816,6 +827,9 @@ addEventListener('soulbeast-language-change',updateObjectivesToggle);
 updateObjectivesToggle();
 function objective(){
  if(!me||state.phase!=='match'||me.phase!=='walk')return null;
+ if(state.baseRepair)return {type:'stopRepair',label:'หยุดซ่อมฐาน'};
+ const repair=state.bases.find(b=>REPAIR_TARGET(me,b));
+ if(repair)return {type:'repairBase',id:repair.id,label:`ซ่อม${repair.label}`};
  if(now>=me.safeUntil){
   const chest=state.chests.find(c=>scene.arena.chestInReach(local||me,c));
   if(chest)return {type:'chest',id:chest.id,disabled:pendingChest===chest.id,
@@ -823,15 +837,14 @@ function objective(){
   const base=state.bases.find(b=>RAID_TARGET(me,b));
   if(base){
    const allowed=canRaidBase(me.side,base,state.bases);
-   return {type:'raid',id:base.id,disabled:!allowed,label:allowed?`จู่โจม${base.label} · ${base.remaining}/${base.maxDurability??4} · +${base.points}`:
+   return {disabled:true,label:allowed?`กำลังโจมตี${base.label} · ${base.hp}/${base.maxHp} HP`:
     base.main?'ยึดฐานกลางที่เชื่อมอยู่ก่อน':'ยึดฐานเล็กที่เชื่อมอยู่ก่อน'};
   }
  }
- if(!state.vitals)return null;
- const friendly=state.bases.find(b=>HEAL_TARGET(me,b));
- return friendly?{type:'healBase',id:friendly.id,label:'ฟื้นเต็มทั้งทีม + ล้างสถานะ',
-  disabled:me.hp>=me.maxHp&&state.vitals.mp>=state.vitals.maxMp&&!state.vitals.ailments.length}:null;
+ const friendly=state.bases.filter(b=>HEAL_TARGET(me,b)).sort((a,b)=>b.points-a.points)[0];
+ return friendly?{disabled:true,label:`เขตฟื้นพลัง${friendly.label} · ${friendly.points}% ต่อวินาที`}:null;
 }
+
 $('raid').onclick=()=>{
  const target=objective();
  if(target&&!target.disabled&&send({type:target.type,id:target.id})&&target.type==='chest')pendingChest=target.id;
@@ -844,11 +857,11 @@ function renderTeamHp(){
  teamHpKey=key;
  $('team-hp').replaceChildren(...team.map(p=>{
   const label=p.id===me.id?p.name+' (คุณ)':p.name;
-  const li=node('li'), name=node('span',label), value=node('span',`${p.hp}/${p.maxHp}`), bar=node('meter');
+  const li=node('li'), name=node('span',label), value=node('span',`${Math.ceil(p.hp)}/${p.maxHp}`), bar=node('meter');
   name.title=label;bar.max=p.maxHp;bar.value=p.hp;bar.setAttribute('aria-label',`HP ${label}`);
   li.append(name,value,bar);return li;
  }));
- $('own-mp').textContent=Number.isFinite(maxMp)?`MP คุณ ${mp}/${maxMp}`:'';
+ $('own-mp').textContent=Number.isFinite(maxMp)?`MP คุณ ${Math.ceil(mp)}/${maxMp}`:'';
 }
 function renderSurvivalRank(solo){
  const enabled=solo&&Number.isFinite(me.points);
@@ -881,11 +894,11 @@ function release(){
 }
 const sendDirection=()=>sendMove(...direction());
 const stick=bindWalkJoystick($('stick'),$('thumb'),{
- canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!mapDialog.open,
+ canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!state.baseRepair&&!mapDialog.open,
  onStart:sendDirection,onStop:sendDirection
 });
 function direction(){
- if(!me||me.phase!=='walk'||state?.phase!=='match'||mapDialog.open||ws?.readyState!==WebSocket.OPEN)return [0,0];
+ if(!me||me.phase!=='walk'||state?.phase!=='match'||state.baseRepair||mapDialog.open||ws?.readyState!==WebSocket.OPEN)return [0,0];
  const k=(...names)=>Number(names.some(name=>keys.has(name)));
  return [stick.x+k('d','arrowright')-k('a','arrowleft'),stick.y+k('s','arrowdown')-k('w','arrowup')].map(x=>Math.max(-1,Math.min(1,x)));
 }
@@ -911,7 +924,7 @@ function frame(t){
   local.walkDX=local.x-startX;
   local.walkDY=(local.y-startY)*FLAT;
   const stepped=Math.hypot(local.x-startX,local.y-startY)>.02;
-  if(correction){
+  if(correction&&!state.baseRepair){
    const weight=Math.min(1,dt*10),cx=correction.x*weight,cy=correction.y*weight;
    const x=local.x+cx,y=local.y+cy;
    if(scene.arena.fits(x,y)&&(!insideFogSafe(zone,local.x,local.y)||insideFogSafe(zone,x,y))){
@@ -927,7 +940,7 @@ function frame(t){
   }
   const all=[...actors.values(),...(local.phase==='dead'?[]:[local])];
   const watch=watchedPlayer(),focus=watch?(actors.get(watch.id)||watch):local;
-  scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null);
+  scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null,state.baseEffects);
   $('blue').textContent=solo?state.survivors:state.score[0];
   $('red').textContent=solo?`${Math.round(zone.remaining*100)}%`:state.score[1];
   $('clock').textContent=solo?(zone.nextAt?clock(zone.nextAt-(state.finishedAt??now)):'☠'):clock(state.ends-(state.finishedAt??now));
@@ -957,10 +970,10 @@ function frame(t){
   const repairBase=repair&&state.bases.find(b=>b.id===repair.id&&distance(local,b)<=BASE_REPAIR_RANGE);
   $('base-repair').hidden=!repairBase;
   if(repairBase){
-   const label=`กำลังซ่อม${repairBase.label} · ${repairBase.remaining}/${repairBase.maxDurability}`;
+   const label=`กำลังซ่อม${repairBase.label} · ${repairBase.hp}/${repairBase.maxHp}`;
    const text=$('base-repair-label');if(text.textContent!==label)text.textContent=label;
-   const elapsed=repair.elapsed+Math.min(150,Math.max(0,now-state.now));
-   $('base-repair-progress').value=Math.min(BASE_REPAIR_MS-1,elapsed)/BASE_REPAIR_MS;
+   const elapsed=BASE_REPAIR_MS-Math.max(0,repair.nextAt-now);
+   $('base-repair-progress').value=Math.max(0,Math.min(BASE_REPAIR_MS,elapsed))/BASE_REPAIR_MS;
   }
   $('leave-practice').hidden=!state.practice;
   $('rank-leave').hidden=!state.ranked||!walking;

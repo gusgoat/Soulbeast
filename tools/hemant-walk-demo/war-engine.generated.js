@@ -1123,7 +1123,7 @@ function trySummonerSoulRevive(u){
  blog(pet.name+' สละพลังชีวิตให้ '+u.name+' ฟื้นคืนชีพด้วย HP 30% (1 ครั้งต่อการต่อสู้)');
  fxAdd(pet,'สละชีวิต','bad');fxAdd(u,'คืนชีพ 30%','good');vfx('heal',u.id);return true;
 }
-function hurt(u,d,c='bad',sourceOwner){if(isWorldBattle()&&u.immortalWorld){const b=B(),damage=Math.max(0,Math.min(1e12,Math.round(Number(d)||0)));b.damageTotal=(b.damageTotal||0)+damage;const owner=b.wbDamageOwner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;u.hp=u.st.hp;fxAdd(u,'-'+damage,c);return;}const wasAlive=u.hp>0;u.hp=Math.max(0,u.hp-d);fxAdd(u,'-'+d,c);
+function hurt(u,d,c='bad',sourceOwner){if(isWorldBattle()&&u.immortalWorld){const b=B(),damage=Math.max(0,Math.min(1e12,Math.round(Number(d)||0)));b.damageTotal=(b.damageTotal||0)+damage;const owner=b.wbDamageOwner;if(Number.isInteger(owner)&&owner>=0)b.damageBy[owner]=(b.damageBy[owner]||0)+damage;u.hp=u.st.hp;fxAdd(u,'-'+damage,c);return;}if(u.owner===-1&&B().colosseumHuntBonus?.has(sourceOwner))d=Math.round(d*1.15);const wasAlive=u.hp>0;u.hp=Math.max(0,u.hp-d);fxAdd(u,'-'+d,c);
  if(u.hp<=0){if(hasPas(u,'rebirth')&&!u.reborn){u.reborn=1;u.hp=Math.round(u.st.hp*.4);u.status={};blog(`${u.name} ลุกขึ้นจากเถ้าถ่าน! ฟื้นคืนชีพ`);fxAdd(u,'คืนชีพ','good')}else if(wasAlive&&trySummonerSoulRevive(u)){/* revived before settlement */}else{blog(`${u.name} ล้มลง`);if(wasAlive){B().colosseumFalls?.set(u.id,sourceOwner);Sound.cry(u.sp,true)}}}}
 function heal(u,a){const v=Math.min(u.st.hp-u.hp,Math.round(a));if(v>0){u.hp+=v;fxAdd(u,'+'+v,'good')}return v}
 function turnStartBase(u){const s=u.status;

@@ -1,4 +1,4 @@
-import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, SPEED, TEAM_ARENA, canRaidBase, canSeeOpponent, cellCenter, distance, indexAt, nextCell} from './arena.mjs?v=team-base-rules-1';
+import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, canRaidBase, canSeeOpponent, cellCenter, distance, indexAt, nextCell, walkSpeed} from './arena.mjs?v=base-hp-1';
 import {inSight} from './sight.mjs';
 import {fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -29,11 +29,14 @@ function patrolPoint(bot){
 function chooseObjective(match,bot,now){
  const {role,lane,patrol,skipPoint}=bot.bot;
  const pick=points=>nearestTo(bot,points.filter(p=>p!==skipPoint||now>=bot.bot.skipUntil));
- const healingBases=match.bases.filter(base=>base.main&&base.side===bot.side&&base.remaining>0);
+ const healingBases=match.bases.filter(base=>base.side===bot.side&&base.hp>0);
  const lowVitals=u=>u.hp<u.maxHp*.58||u.mp<u.maxMp*.34;
- const low=lowVitals(bot)||[...bot.petVitals.values()].some(lowVitals),afflicted=Object.keys(bot.ailments).length>0;
- const heal=pick(low?healingBases:afflicted?healingBases.filter(base=>distance(bot,base)<900):[]);
- if(heal)return {type:'healBase',point:heal};
+ const low=lowVitals(bot)||[...bot.petVitals.values()].some(lowVitals);
+ const heal=low&&pick(healingBases);
+ if(heal)return {type:'recover',point:heal};
+ const repair=bot.baseCls==='merchant'&&pick(healingBases.filter(b=>b.hp<b.maxHp&&
+  !match.players.some(p=>p!==bot&&p.repair?.baseId===b.id)));
+ if(repair)return {type:'repairBase',point:repair};
 
  const visible=p=>inSight(bot,p)&&canSeeOpponent(bot,p);
  const opponents=match.players.filter(p=>p.side!==bot.side&&p.connected&&p.phase==='walk'&&now>=p.safeUntil&&visible(p));
@@ -69,7 +72,7 @@ function currentObjective(match, bot, now) {
  const goal = brain.goal;
  const expired = goal?.type === 'chest' && goal.point.opened ||
   goal?.type==='raid'&&!canRaidBase(bot.side,goal.point,match.bases) ||
-  goal?.type==='healBase'&&(goal.point.side!==bot.side||!goal.point.main||goal.point.remaining<=0) ||
+  (goal?.type==='recover'||goal?.type==='repairBase')&&(goal.point.side!==bot.side||goal.point.hp<=0||goal.type==='repairBase'&&goal.point.hp>=goal.point.maxHp) ||
   goal?.type === 'hunt' && (goal.point.claimed || goal.point.phase !== 'walk') ||
   goal?.type === 'intercept' && (goal.point.phase !== 'walk' || !canSeeOpponent(bot, goal.point)) ||
   goal?.type === 'escort' && (goal.point.phase !== 'walk' || distance(bot,goal.point)<145);
@@ -104,7 +107,7 @@ function walkStep(bot, point, dt, arena, zone) {
  const dy = (point.y - bot.y) * FLAT;
  const length = Math.hypot(dx, dy);
  if (length < 0.01) return;
- const speed = arena.bushAt(bot) === null ? SPEED : SPEED / 2;
+ const speed = walkSpeed(arena,bot);
  walkInArena(arena, zone, bot, dx / length, dy / length, Math.min(dt, length / speed));
 }
 
@@ -192,17 +195,15 @@ export function stepBot(match, bot, now, dt) {
  if (match.solo) return stepSurvivalBot(match,bot,now,dt);
  const brain = bot.bot;
  const {type, point} = currentObjective(match, bot, now);
- let destination=point;
- const canInteract = type==='raid'?RAID_TARGET(bot,point):type==='healBase'?HEAL_TARGET(bot,point):
-  type==='chest'&&CHEST_TARGET(bot,point);
- if (canInteract) {
-  const blocked=match.command(bot, {type, id: point.id}, now);
-  if(!blocked){
-   brain.goal = null;
-   if(type==='raid'&&point.side===bot.side)brain.patrol++;
-   return;
-  }
-  destination=blocked.guard||point;
+ if(bot.repair){
+  if(type==='repairBase'&&bot.repair.baseId===point.id)return;
+  match.command(bot,{type:'stopRepair'},now);
+ }
+ if((type==='raid'&&RAID_TARGET(bot,point))||(type==='recover'&&HEAL_TARGET(bot,point)))return;
+ if((type==='repairBase'&&REPAIR_TARGET(bot,point))||(type==='chest'&&CHEST_TARGET(bot,point))){
+  match.command(bot,{type,id:point.id},now);
+  brain.goal=null;
+  return;
  }
  if (type === 'patrol' && distance(bot, point) < 12) {
   brain.patrol++;
@@ -210,7 +211,7 @@ export function stepBot(match, bot, now, dt) {
   return;
  }
  const x=bot.x,y=bot.y;
- walkToward(bot, destination, dt);
+ walkToward(bot, point, dt);
  if(Math.hypot(bot.x-x,bot.y-y)>.02)brain.blockedAt=null;
  else if(now-(brain.blockedAt??=now)>700){
   brain.skipPoint=point;brain.skipUntil=now+3500;

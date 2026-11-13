@@ -1,5 +1,5 @@
 import '../../content/beast-names.js';
-import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-ranks-1';
+import '../hemant-walk-demo/war-engine.generated.js?v=base-hp-1';
 import rareArt from './rare-art.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
 const ACT_MS=12_000, SHOW_MS=850;
@@ -87,12 +87,13 @@ function syncBaseAura(b){
   u.baseAura=active;
  }
 }
-export function makeCombat(id,teams,shadow,now,auraOwners=new Map()){
+export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=false){
  const roster=teams.flat();
  const b={id,kind:shadow?'hunt':'pvp',round:0,turns:0,turn:0,cur:null,queue:[],deadline:0,
   teams:teams.map(t=>t.map(p=>p.id)),roster:roster.map(p=>p.id),botOwners:roster.map(p=>Boolean(p.bot)),beastId:shadow?.id,
   allies:[],enemies:[],log:[],fx:[],effects:[],fallen:[],finished:false,releasedAt:0,autoOwners:new Set(),autoVersion:0,
-  baseAuraOwners:auraOwners,colosseumFalls:new Map()};
+  baseAuraOwners:auraOwners,colosseumFalls:new Map(),
+  colosseumHuntBonus:new Set(teamSiege&&shadow?roster.flatMap((p,index)=>p.baseCls==='swordsman'?[index]:[]):[])};
  for(const [side,team] of teams.entries()) for(const p of team){
   const list=side?b.enemies:b.allies;
   for(const u of demoProfile(p,roster.indexOf(p))){
@@ -128,7 +129,11 @@ function checkEnd(b,now){
  return false;
 }
 export function settleCombat(b,now){
- if(!b.finished)checkEnd(b,now);
+ if(b.finished||checkEnd(b,now))return;
+ if(find(b,b.cur)?.hp<=0){
+  core.bind(b);
+  next(b,now);
+ }
 }
 function openTurn(b,u,now){
  b.turn++;b.openAt=now+SHOW_MS;

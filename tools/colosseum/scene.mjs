@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-repair-1';
+import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-hp-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -284,6 +284,7 @@ export function drawMap(canvas,state,players,me,zoom=1){
   if(zone.remaining){m.strokeStyle='#b4f081';m.lineWidth=zoom;m.strokeRect(mapX(zone.min),mapY(zone.min),mapX(zone.max-zone.min),mapY(zone.max-zone.min));}
  }
  const bases=state.bases??BASES;
+ const side=state.players.find(p=>p.id===state.me)?.side;
  for(const base of bases)for(const id of base.links||[]){
   const target=bases.find(b=>b.id===id);
   if(!target)continue;
@@ -295,8 +296,13 @@ export function drawMap(canvas,state,players,me,zoom=1){
   const r=(b.main?4.4:b.tier==='medium'?4:3)*zoom;
   m.fillStyle=COLORS[b.side];m.strokeStyle='#17131c';m.lineWidth=1.4*zoom;
   m.fillRect(-r,-r,r*2,r*2);m.strokeRect(-r,-r,r*2,r*2);m.restore();
+  if(b.underAttack&&b.side===side){
+   m.strokeStyle='#ffcf65';m.lineWidth=1.5*zoom;
+   m.beginPath();m.arc(mapX(b.x),mapY(b.y),(r/zoom+3)*zoom,0,2*Math.PI);m.stroke();
+   m.fillStyle='#fff2b3';m.font=`bold ${10*zoom}px sans-serif`;m.textAlign='center';
+   m.fillText('!',mapX(b.x)+8*zoom,mapY(b.y)-4*zoom);
+  }
  }
- const side=state.players.find(p=>p.id===state.me)?.side;
  const rendered=new Map(players.map(p=>[p.id,p]));
  const focus=state.spectating||state.me;
  for(const p of state.players)if((solo?p.id===focus:p.side===side)&&p.connected&&p.phase!=='dead'){
@@ -313,7 +319,7 @@ export function drawMap(canvas,state,players,me,zoom=1){
 }
 export class Scene{
  constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.camera=null;this.anim=new Map();this.traps=createArenaTraps();this.arena=TEAM_ARENA;}
- render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null,pan=null){
+ render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null,pan=null,baseEffects=[]){
   const canvas=this.canvas,c=this.c,w=canvas.clientWidth,h=canvas.clientHeight;
   if(!w||!h||!me)return;
   const dpr=Math.min(2,devicePixelRatio||1), zoom=Math.min(1.3,Math.max(.84,w/590))*1.08;
@@ -333,7 +339,7 @@ export class Scene{
   const castles=bases.filter(b=>inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
   const repairs=new Set();
   for(const b of castles){
-   if(b.side!==me.side||b.remaining>=b.maxDurability)continue;
+   if(b.side!==me.side||b.hp>=b.maxHp)continue;
    const active=entities.some(p=>p.repairingBase===b.id&&distance(p,b)<=BASE_REPAIR_RANGE);
    if(active)repairs.add(b.id);
    this.repairRing(b,active);
@@ -358,6 +364,7 @@ export class Scene{
    if(e.radius)this.drawProp(e);
    else this.actor(e,now,e.id===me.id);
   }
+  this.drawBaseEffects(baseEffects,bases,seen,serverTime);
   this.sightMask(me,left,top,right,bottom);
   if(zone?.step)this.fog(zone,left,top,right,bottom,now);
  }
@@ -562,9 +569,50 @@ export class Scene{
   }
   c.restore();
  }
+ baseHealth(b,x,y,color){
+  if(!b.maxHp)return;
+  const c=this.c,w=b.main?90:72;
+  c.fillStyle='#160e15';c.fillRect(x-w/2,y,w,7);
+  c.fillStyle=color;c.fillRect(x-w/2+1,y+1,(w-2)*(b.hp??b.maxHp)/b.maxHp,5);
+  c.strokeStyle='#d6b786';c.lineWidth=1;c.strokeRect(x-w/2,y,w,7);
+ }
+ drawBaseEffects(effects,bases,entities,now){
+  const c=this.c;
+  const colors={archer:'#ff963d',gunner:'#ffcb72',magic:'#aa90ff',melee:'#ffe1a3'};
+  for(const e of effects){
+   const base=bases.find(b=>b.id===e.baseId);
+   const player=entities.find(p=>p.id===e.playerId);
+   if(!base||!player||now>=e.until)continue;
+   const t=Math.max(0,(now-e.at)/(e.until-e.at));
+   const tower=e.kind==='tower',bx=base.x,by=base.y*FLAT-34;
+   const px=tower?player.x:e.x,py=(tower?player.y:e.y)*FLAT-40;
+   const x=tower?bx:px,y=tower?by:py,tx=tower?px:bx,ty=tower?py:by;
+   const dx=tx-x,dy=ty-y,angle=Math.atan2(dy,dx);
+   c.save();
+   c.translate(x+dx*t,y+dy*t);c.rotate(angle);
+   c.strokeStyle=colors[e.kind]??COLORS[e.side];c.fillStyle=c.strokeStyle;
+   c.shadowColor=c.strokeStyle;c.shadowBlur=11;c.lineWidth=tower?5:3;c.lineCap='round';
+   if(e.kind==='melee'){
+    c.globalAlpha=1-t;
+    c.beginPath();c.ellipse(0,0,21,31,0,-1.25,1.25);c.stroke();
+   }else if(e.kind==='gunner'){
+    c.beginPath();c.arc(0,0,7,0,2*Math.PI);c.fill();
+    c.globalAlpha=.55;c.beginPath();c.moveTo(-20,0);c.lineTo(-7,0);c.stroke();
+   }else{
+    c.beginPath();c.moveTo(-Math.min(tower?65:22,Math.hypot(dx,dy)*t),0);c.lineTo(0,0);c.stroke();
+    if(e.kind==='archer'){
+     c.beginPath();c.moveTo(-7,-4);c.lineTo(1,0);c.lineTo(-7,4);c.stroke();
+    }else{
+     c.fillStyle='#fff3dc';c.beginPath();c.arc(0,0,tower?3:4,0,2*Math.PI);c.fill();
+    }
+   }
+   c.restore();
+  }
+ }
  base(b,now){
   const c=this.c,x=b.x,y=b.y*FLAT,color=COLORS[b.side],r=b.main?74:b.tier==='medium'?59:47;
-  const label=`${b.label} · ${b.remaining??b.maxDurability??4}/${b.maxDurability??4}`;
+  const label=`${b.label} · ${b.hp??b.maxHp}/${b.maxHp} HP`;
+  this.baseHealth(b,x,y+12,color);
   const castle=baseArt[b.side][b.main?'main':'small'];
   if(ready(castle)){
    const width=b.main?225:b.tier==='medium'?177:136, height=width*castle.naturalHeight/castle.naturalWidth;
@@ -587,7 +635,7 @@ export class Scene{
   c.fillStyle='#a08568';c.fillRect(x-3,y-72,6,65);
   c.fillStyle=color;c.beginPath();c.moveTo(x-25,y-70);c.lineTo(x+25,y-70);c.lineTo(x+25,y-36);c.lineTo(x,y-23);c.lineTo(x-25,y-36);c.fill();
   c.fillStyle='#17202b';c.font='bold 20px sans-serif';c.textAlign='center';c.fillText(b.main?'◆':'✦',x,y-43);
-  this.label(label,x,y+22,color);
+  this.label(label,x,y+38,color);
  }
  label(text,x,y,color,rating=null,now=0){
   const c=this.c;

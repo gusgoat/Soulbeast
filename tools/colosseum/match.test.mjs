@@ -1,4 +1,4 @@
-import {ASSIST, BASES, BEAST_SPEED_SCALE, BOSS_INTERVAL, BUSHES, CELL, COLS, MATCH_MS, OBSTACLES, RADIUS, RESPAWN_MS, SPEED, bushAt, cellCenter, clearPath, distance, fits, maze, movePlayer, nextCell, spawns} from './arena.mjs';
+import {ASSIST, BASES, BASE_BOLT_MS, TEAM_SPEED, BOSS_INTERVAL, BUSHES, CELL, COLS, MATCH_MS, OBSTACLES, RADIUS, RESPAWN_MS, bushAt, cellCenter, clearPath, distance, fits, maze, movePlayer, nextCell, siegeProfile, spawns} from './arena.mjs';
 import {SIGHT_RANGE} from './sight.mjs';
 import {Match} from './match.mjs';
 import {bossUnit, combatAction, combatView, demoProfile, makeCombat, rareSpecies} from './combat.mjs';
@@ -63,151 +63,136 @@ Deno.test('mirror, connected arena, all spawn and base cells accessible',()=>{
  for(const p of [...BASES,...spawns(0),...spawns(1)])ok(fits(p.x,p.y));
  eq(maze.filter(row=>row[Math.floor(COLS/2)]).length,7);
  eq(BUSHES.length,40);eq(CELL,180);
- eq(BASES.map(base=>base.maxDurability),[8,6,6,4,4,4,4,8,6,6,4,4,4,4]);
+ eq(BASES.map(base=>base.maxHp),[300,200,200,100,100,100,100,100,200,300,200,200,100,100,100,100,100,200]);
  ok(OBSTACLES.every(prop=>!fits(prop.x,prop.y)));
  for(const b of BUSHES)for(let i=0;i<b.w;i++)ok(maze[b.y][b.x+i]);
+});
+Deno.test('each central medium base unlocks after capturing any one of its three linked small bases',()=>{
+ for(const side of [0,1])for(const child of [4,5,7]){
+  const {r,p}=match();start(r,p);
+  const attacker=p.find(p=>p.side!==side);
+  const medium=r.bases.find(b=>b.id===`${side}-8`);
+  const small=r.bases.find(b=>b.id===`${side}-${child}`);
+  eq(medium.links,[4,5,7].map(id=>`${side}-${id}`));
+  ok(medium.links.every(id=>r.bases.some(b=>b.id===id&&b.side===side&&b.tier==='small')));
+  const stage=(base,now)=>{
+   Object.assign(attacker,{x:base.x,y:base.y});
+   r.siegeBases(now);r.siegeBases(now+250);
+  };
+  stage(medium,3000);eq(medium.hp,200);
+  small.hp=1;stage(small,4000);
+  eq([small.side,small.hp],[attacker.side,25]);
+  stage(medium,5000);eq(medium.hp,199);
+ }
 });
 Deno.test('balanced rooms start at 1v1 and 5v5; 12 minutes, draw on tie',()=>{
  for(const n of [2,10]){
   const {r,p}=match(n);eq(r.canStart(),false);
-  start(r,p);eq(r.ends,12*60_000);eq(r.score,[100,100]);eq(r.shadows.length,10);
+  start(r,p);eq(r.ends,12*60_000);eq(r.score,[500,500]);eq(r.shadows.length,10);
   ok(r.shadows.every(b=>rareSpecies.includes(b.sp)&&b.lv===Math.round(10+(n-1)/2)&&fits(b.x,b.y)));
   r.tick(MATCH_MS,0);eq(r.winner,-1);
  }
  const {r,p}=match(3);for(const u of p)r.command(u,{type:'ready',ready:true},0);
  eq(r.canStart(),false);
 });
-Deno.test('only enemy bases in reach score, teleport immediately, zero ends the match',()=>{
- const {r,p:[a,b]}=match();
- start(r,[a,b]);const mini=BASES.find(x=>x.side!==a.side&&x.tier==='small'),main=BASES.find(x=>x.side!==a.side&&x.main);
- let rejected=false;try{r.command(a,{type:'raid',id:main.id},3000);}catch{rejected=true;}ok(rejected);
- Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},4000);eq(r.score,[105,95]);eq({x:a.x,y:a.y},a.spawn);
- rejected=false;try{r.command(a,{type:'raid',id:mini.id},4001);}catch{rejected=true;}ok(rejected);
- r.score[1]=2;Object.assign(a,{x:mini.x,y:mini.y});r.command(a,{type:'raid',id:mini.id},10000);eq(r.score,[110,0]);eq(r.winner,0);
-});
-Deno.test('only the standing friendly main base heals HP and MP and cleanses ailments',()=>{
+Deno.test('siege ticks apply career cadence, award points, show the warning to allies, and never teleport',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
- const own=r.bases.filter(base=>base.side===a.side);
- const main=own.find(base=>base.main);
- const enemy=r.bases.find(base=>base.main&&base.side!==a.side);
- const tryHeal=(base,now)=>r.command(a,{type:'healBase',id:base.id},now);
- const denied=base=>{let rejected=false;try{tryHeal(base,3000);}catch{rejected=true;}ok(rejected);};
- Object.assign(a,{x:enemy.x,y:enemy.y,hp:1,mp:0,ailments:{poison:2}});
- denied(main);denied(enemy);
- for(const base of own.filter(base=>!base.main)){
-  Object.assign(a,{x:base.x,y:base.y});
-  denied(base);eq([a.hp,a.mp,a.ailments],[1,0,{poison:2}]);
- }
- Object.assign(a,{x:main.x,y:main.y});
- main.remaining=0;denied(main);main.remaining=main.maxDurability;
- tryHeal(main,4200);eq(a.hp,a.maxHp);eq(a.mp,a.maxMp);eq(a.ailments,{});
- eq(r.snapshot(a,4200).baseHeal,{hp:a.maxHp-1,mp:a.maxMp,cleansed:true,at:4200});
- eq(r.score,[100,100]);eq(main.remaining,8);
+ const base=r.bases.find(base=>base.side===b.side&&base.tier==='small');
+ Object.assign(a,{x:base.x,y:base.y,baseCls:'archer'});
+ eq(siegeProfile(a),{range:200,interval:200,effect:'archer'});
+ r.siegeBases(3000);r.siegeBases(3199);eq(base.hp,100);
+ eq(r.snapshot(b,3199).bases.find(x=>x.id===base.id).underAttack,true);
+ eq(r.snapshot(a,3199).bases.find(x=>x.id===base.id).underAttack,false);
+ r.siegeBases(3200);eq(base.hp,99);eq(r.score,[501,499]);eq([a.x,a.y],[base.x,base.y]);
+ ok(r.baseEffects.some(e=>e.kind==='archer'));
+ r.score[b.side]=1;r.siegeBases(3400);eq(r.winner,a.side);eq(r.reason,'zero');
 });
-Deno.test('base repair counts 15 seconds of walking inside the ring and discards time on exit',()=>{
- const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
- const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');
- base.remaining=1;
- Object.assign(a,{x:base.x+150,y:base.y,safeUntil:100_000});
- r.tick(3000,0);r.tick(9000,0);
- eq(r.snapshot(a,9000).baseRepair,{id:base.id,elapsed:6000});
- r.encounter(a,b,9000);
- r.tick(23000,0);
- eq(base.remaining,1);eq(r.snapshot(a,23000).baseRepair,undefined);
- Object.assign(r.battles.get(a.battle),{finished:true,releasedAt:24000});
- r.tick(24000,0);r.tick(32999,0);
- eq(base.remaining,1);eq(r.snapshot(a,32999).baseRepair?.elapsed,14999);
- r.tick(33000,0);
- eq(base.remaining,2);eq(r.snapshot(a,33000).baseRepair?.elapsed,0);
- eq(a.earned,5);
- r.tick(40000,0);a.x+=1;r.tick(40001,0);
- eq(r.snapshot(a,40001).baseRepair,undefined);
- a.x-=1;r.tick(42000,0);r.tick(56999,0);
- eq(base.remaining,2);
- r.tick(57000,0);r.tick(72000,0);
- eq(base.remaining,4);eq(r.snapshot(a,72000).baseRepair,undefined);
- eq([a.earned,b.earned],[15,0]);
- eq(r.score,[100,100]);
-});
-Deno.test('pet HP and MP carry to the next fight and only the main base revives pets',()=>{
- const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
- r.encounter(a,b,3000);
- const fight=r.battles.get(a.battle),pets=fight.allies.filter(u=>u.kind==='pet');
- eq(pets.length,2);
- Object.assign(pets[0],{hp:0,mp:0});Object.assign(pets[1],{hp:9,mp:3});
- Object.assign(fight,{finished:true,releasedAt:4000});r.tick(4000,0);
- r.encounter(b,a,8000);
- const rematch=r.battles.get(a.battle);
- eq(rematch.allies.filter(u=>u.kind==='pet').map(u=>[u.hp,u.mp]),[[0,0],[9,3]]);
- Object.assign(rematch,{finished:true,releasedAt:9000});r.tick(9000,0);
- const small=r.bases.find(x=>x.side===a.side&&x.tier==='small');
- Object.assign(a,{x:small.x,y:small.y});
- let rejected=false;try{r.command(a,{type:'healBase',id:small.id},10000);}catch{rejected=true;}
- ok(rejected);eq(a.petVitals.get(pets[0].uid).hp,0);
- const capital=r.bases.find(x=>x.side===a.side&&x.main);
- Object.assign(a,{x:capital.x,y:capital.y});
- r.command(a,{type:'healBase',id:capital.id},11000);
- eq([...a.petVitals.values()].map(v=>[v.hp===v.maxHp,v.mp===v.maxMp]),[[true,true],[true,true]]);
- eq(a.baseHeal.petsRevived,1);
-});
-Deno.test('only current owners can repair and simultaneous repairs stop at maximum',()=>{
- const {r,p:[a,b,mate]}=match(4);start(r,r.players);r.shadows=[];
- const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');
- base.remaining=3;
- for(const p of [a,b,mate])Object.assign(p,{x:base.x,y:base.y,safeUntil:100_000});
- r.tick(3000,0);
- eq(r.snapshot(b,3000).baseRepair,undefined);
- eq(r.snapshot(b,3000).players.find(p=>p.id===a.id).repairingBase,undefined);
- eq(r.snapshot(a,3000).players.find(p=>p.id===mate.id).repairingBase,base.id);
- r.tick(34000,0);
- eq(base.remaining,4);
- eq(r.snapshot(a,34000).baseRepair,undefined);eq(r.snapshot(mate,34000).baseRepair,undefined);
- eq([a.earned,b.earned,mate.earned],[5,0,0]);eq(r.score,[100,100]);
- base.remaining=1;r.tick(35000,0);
- eq(r.snapshot(a,35000).baseRepair?.elapsed,0);
- for(const defender of [a,mate])Object.assign(defender,defender.spawn);
- b.safeUntil=0;r.command(b,{type:'raid',id:base.id},36000);
- Object.assign(b,{x:base.x,y:base.y});
- r.tick(36001,0);
- eq(r.snapshot(a,36001).baseRepair,undefined);
- eq(r.snapshot(b,36001).baseRepair,{id:base.id,elapsed:0});
-});
-Deno.test('a raid challenges the player repairing the base before damaging it, including bot raids',()=>{
- for(const useBot of [false,true]){
-  const {r,p:[defender]}=match(useBot?1:2);
-  const attacker=useBot?r.addBot(1,10):r.players[1];
-  start(r,r.players);r.shadows=[];
-  const base=r.bases.find(x=>x.side===defender.side&&x.tier==='small');
-  base.remaining=3;
-  Object.assign(defender,{x:base.x-34,y:base.y});
-  r.repairBases(3000);
-  Object.assign(attacker,{x:base.x+34,y:base.y,safeUntil:0});
-  ok(clearPath(defender,attacker));
-  if(useBot){
-   attacker.bot.goal={type:'raid',point:base};
-   r.tick(3100,0);
-  }else r.command(attacker,{type:'raid',id:base.id},3100);
-  eq(base.remaining,3);eq(r.score,[100,100]);
-  eq(attacker.phase,'battle');eq(attacker.battle,defender.battle);
-  eq(defender.repair.lastAt,null);
-  eq(attacker.x,base.x+34);
+Deno.test('base siege adds half the solo rate per additional attacker and splits points by damage dealt',()=>{
+ for(const [count,damage] of [[1,12],[2,18],[3,24]]){
+  const {r,p}=match(6);start(r,p);
+  const base=r.bases.find(b=>b.side===1&&b.tier==='small');
+  r.bases=[base];base.fireAt=Infinity;
+  const attackers=p.filter(u=>u.side===0).slice(0,count);
+  for(const u of attackers)Object.assign(u,{x:base.x,y:base.y,baseCls:'swordsman'});
+  for(let time=3000;time<=6000;time+=25)r.siegeBases(time);
+  eq(base.hp,100-damage);eq(r.score,[500+damage,500-damage]);
+  eq(attackers.map(u=>u.earned),Array(count).fill(damage/count));
  }
 });
-Deno.test('a base stays protected while its repairer is in another battle, until the repairer leaves',()=>{
- const {r,p:[defender,attacker]}=match();start(r,r.players);r.shadows=[];
- const base=r.bases.find(x=>x.side===defender.side&&x.tier==='small');
- base.remaining=3;
- Object.assign(defender,{x:base.x,y:base.y});
- r.repairBases(3000);
- defender.phase='battle';
- defender.repair.lastAt=null;
- Object.assign(attacker,{x:base.x+55,y:base.y,safeUntil:0});
- let blocked=false;
- try{r.command(attacker,{type:'raid',id:base.id},3100);}catch{blocked=true;}
- ok(blocked);eq(base.remaining,3);eq(r.score,[100,100]);
- Object.assign(defender,defender.spawn);
- r.command(attacker,{type:'raid',id:base.id},3200);
- eq(base.remaining,2);eq(r.score,[95,105]);
+Deno.test('base projectile locks the nearest sealer and hits even after they leave its range',()=>{
+ const {r,p:[a,b,c]}=match(4);start(r,r.players);
+ const base=r.bases.find(base=>base.side===b.side&&base.main);
+ r.bases=[base];
+ Object.assign(a,{x:base.x+70,y:base.y,baseCls:'gladiator'});
+ Object.assign(c,{x:base.x+120,y:base.y});
+ const {hp,maxHp}=a;
+ r.siegeBases(3000);eq(r.baseBolts[0].target.id,a.id);
+ a.x+=400;
+ r.siegeBases(3000+BASE_BOLT_MS);ok(Math.abs(a.hp-(hp-maxHp*.04))<.001);
+ eq(c.hp,c.maxHp);
+ eq(siegeProfile(a).interval,500);
+});
+Deno.test('merchant starts and stops repair, stays put, and earns two personal points per HP',()=>{
+ const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
+ const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');
+ base.hp=98;Object.assign(a,{x:base.x,y:base.y});
+ let denied=false;
+ try{r.command(a,{type:'repairBase',id:base.id},3000);}catch{denied=true;}
+ ok(denied);a.baseCls='merchant';
+ r.command(a,{type:'repairBase',id:base.id},3000);
+ r.command(a,{type:'move',seq:2,x:1,y:0},3300);
+ r.tick(3499,.05);eq(base.hp,98);eq(a.x,base.x);
+ r.tick(3500,.05);eq(base.hp,99);eq(a.earned,2);
+ r.command(a,{type:'stopRepair'},3550);
+ r.tick(4050,0);eq(base.hp,99);
+ r.command(a,{type:'repairBase',id:base.id},4100);
+ r.tick(4600,0);eq(base.hp,100);eq(a.repair,undefined);eq(a.earned,4);eq(r.score,[500,500]);
+});
+Deno.test('every friendly base restores walking sealers and revives their pets at its tier rate',()=>{
+ for(const [tier,ratio] of [['small',.01],['medium',.02],['large',.03]]){
+  const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
+  const base=r.bases.find(x=>x.side===a.side&&x.tier===tier);
+  r.bases=[base];Object.assign(a,{x:base.x,y:base.y,hp:a.maxHp/2,mp:0,ailments:{poison:2}});
+  const pet=a.petVitals.values().next().value;pet.hp=pet.mp=0;
+  r.siegeBases(3000);r.siegeBases(3999);eq(pet.hp,0);
+  r.siegeBases(4000);
+  ok(Math.abs(a.hp-a.maxHp*(.5+ratio))<.001);
+  eq([a.mp,pet.hp,pet.mp],[a.maxMp*ratio,pet.maxHp*ratio,pet.maxMp*ratio]);
+  eq(a.ailments,{poison:2});
+ }
+});
+Deno.test('a raider bot holds its attack position and damages a base through the same siege ticks',()=>{
+ const {r,p:[human]}=match(1),bot=r.addBot(1,10);
+ start(r,r.players);r.shadows=[];
+ const base=r.bases.find(b=>b.side===human.side&&b.tier==='small');
+ Object.assign(bot,{x:base.x,y:base.y});
+ Object.assign(bot.bot,{goal:{type:'raid',point:base},planAt:9000});
+ r.tick(3000,0);r.tick(3500,0);
+ ok(base.hp<100);eq(bot.x,base.x);
+});
+Deno.test('a merchant guarding a damaged base draws the bot into PvP before any siege damage',()=>{
+ const {r,p:[human]}=match(1),bot=r.addBot(1,10);
+ start(r,r.players);r.shadows=[];
+ const base=r.bases.find(b=>b.side===human.side&&b.tier==='small');
+ base.hp=80;
+ Object.assign(human,{x:base.x-34,y:base.y,baseCls:'merchant'});
+ Object.assign(bot,{x:base.x+34,y:base.y});
+ Object.assign(bot.bot,{goal:{type:'raid',point:base},planAt:9000});
+ r.command(human,{type:'repairBase',id:base.id},3000);
+ r.tick(3050,0);eq(bot.battle,human.battle);ok(bot.battle);
+ eq(base.hp,80);eq(r.score,[500,500]);eq(human.repair.nextAt,null);
+});
+Deno.test('team movement runs at 200 and thief at 240 with half speed in bushes',()=>{
+ const bush=BUSHES[0];
+ for(const [cls,speed] of [['mage',200],['thief',240]]){
+  const open={...cellCenter(5,21),baseCls:cls};
+  const inside={...cellCenter(bush.x,bush.y),baseCls:cls};
+  for(const [p,expected] of [[open,speed],[inside,speed/2]]){
+   const start=p.x;
+   movePlayer(p,1,0,.1);
+   ok(Math.abs(p.x-start-expected*.1)<.001);
+  }
+ }
 });
 Deno.test('team snapshots expose live fight HP to teammates only and preserve HP, MP and ailments between fights',()=>{
  const {r,p:[a,b,mate,other]}=match(4);start(r,[a,b,mate,other]);
@@ -223,9 +208,9 @@ Deno.test('team snapshots expose live fight HP to teammates only and preserve HP
  eq(next.hp,31);eq(next.mp,0);
 });
 Deno.test('PvP base aura is inclusive at 600 from the collision midpoint and requires a standing friendly base',()=>{
- for(const [range,remaining,active] of [[600,4,10],[601,4,0],[600,0,0]]){
+ for(const [range,hp,active] of [[600,4,10],[601,4,0],[600,0,0]]){
   const {r,p:[a,b]}=match();start(r,[a,b]);
-  const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');base.remaining=remaining;r.bases=[base];
+  const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');base.hp=hp;r.bases=[base];
   Object.assign(a,{x:base.x+range+20,y:base.y});Object.assign(b,{x:base.x+range-20,y:base.y});
   r.encounter(a,b,3000);
   const duel=r.battles.get(a.battle);
@@ -302,7 +287,7 @@ Deno.test('nearest ally within 400 units; allies alone never fight; far enemy co
  const duel=r.battles.get('1');eq(duel.teams,[[a.id,help.id],[b.id]]);
  ok(distance(a,help)<=ASSIST);
  duel.fallen.push(b.id);r.recordFalls(duel,4000);r.recordFalls(duel,4001);
- eq(r.score[1],90);eq(b.phase,'dead');eq(b.respawnAt,4000+RESPAWN_MS);
+ eq(r.score[1],490);eq(b.phase,'dead');eq(b.respawnAt,4000+RESPAWN_MS);
  r.tick(4000+RESPAWN_MS-1,0);eq(b.phase,'dead');
  r.tick(4000+RESPAWN_MS,0);eq(b.phase,'walk');eq({x:b.x,y:b.y},b.spawn);
 });
@@ -341,7 +326,7 @@ Deno.test('ten distinct random chest sites; only first opener earns 5–15 point
  eq(r.chests.length,10);eq(new Set(r.chests.map(c=>`${c.x}:${c.y}`)).size,10);
  ok(r.chests.every(c=>fits(c.x,c.y)&&c.points>=5&&c.points<=15));
  const c=r.chests[0];Object.assign(a,{x:c.x,y:c.y});Object.assign(b,{x:c.x,y:c.y});
- r.command(b,{type:'chest',id:c.id},3000);eq(r.score,[100,100+c.points]);
+ r.command(b,{type:'chest',id:c.id},3000);eq(r.score,[500,500+c.points]);
  let denied=false;try{r.command(a,{type:'chest',id:c.id},3000);}catch{denied=true;}
  ok(denied);eq(r.snapshot(a,3000).chestsLeft,9);eq(r.snapshot(a,3000).chests.some(x=>x.id===c.id),false);
 });
@@ -356,8 +341,21 @@ Deno.test('rare boss spawns every two minutes at the rounded average level and s
  const battle=r.battles.get(a.battle);
  ok(battle?.boss);eq(battle.enemies.length,1);eq(battle.enemies[0].st,bossUnit(beast).st);
  battle.enemies[0].hp=0;r.recordFalls(battle,BOSS_INTERVAL+2);r.recordFalls(battle,BOSS_INTERVAL+3);
- eq(r.score,[120,80]);ok(r.events.at(-1).text.includes('นาทีที่ 4'));eq(beast.phase,'defeated');
+ eq(r.score,[520,480]);ok(r.events.at(-1).text.includes('นาทีที่ 4'));eq(beast.phase,'defeated');
  r.tick(BOSS_INTERVAL*2,0);eq(r.bosses.length,1);ok(r.bosses[0].sp!==beast.sp);
+});
+Deno.test('swordsman line gains 25 percent more for finishing a shadow and a boss',()=>{
+ const {r,p:[a,b]}=match();start(r,[a,b]);
+ a.baseCls='swordsman';
+ r.encounter(a,r.shadows[0],3000,true);
+ const hunt=r.battles.get(a.battle);
+ hunt.enemies[0].hp=0;r.recordFalls(hunt,3100);r.recordFalls(hunt,3200);
+ eq(a.earned,6.25);eq(r.score,[506.25,500]);
+ r.rotateBosses(BOSS_INTERVAL);
+ r.encounter(a,r.bosses[0],BOSS_INTERVAL,true);
+ const boss=r.battles.get(a.battle);
+ boss.enemies[0].hp=0;r.recordFalls(boss,BOSS_INTERVAL+1);r.recordFalls(boss,BOSS_INTERVAL+2);
+ eq(a.earned,31.25);eq(r.score,[531.25,480]);
 });
 Deno.test('an undefeated boss is replaced at the deadline, even if a battle is active',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.tick(BOSS_INTERVAL,0);
@@ -366,7 +364,7 @@ Deno.test('an undefeated boss is replaced at the deadline, even if a battle is a
  const battle=r.battles.get(a.battle);ok(battle?.boss);
  r.command(a,{type:'combat',turn:battle.turn,skill:'attack',target:battle.enemies[0].id},2*BOSS_INTERVAL);
  eq(r.bosses.length,1);ok(r.bosses[0].id!==old.id&&r.bosses[0].sp!==old.sp);
- eq(battle.finished,true);eq(r.score,[100,100]);
+ eq(battle.finished,true);eq(r.score,[500,500]);
  r.tick(2*BOSS_INTERVAL+1500,0);eq(a.phase,'walk');eq(r.battles.has(battle.id),false);
 });
 Deno.test('opponents cannot see through bush borders; walking in foliage is half speed',()=>{
@@ -393,27 +391,17 @@ Deno.test('a creature breaks pursuit on entry into grass and returns to its star
  for(let time=3100;beast.returning&&time<=4000;time+=50)r.tick(time,.05);
  eq(beast.returning,false);ok(distance(beast,beast.home)<=10);
 });
-Deno.test('linked captures unlock only their own route and the capital wins above zero points',()=>{
+Deno.test('capturing a large base sets 25 percent HP and immediately wins above zero points',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
- const [capital,middle,other,small]=r.bases.filter(x=>x.side===1);
- r.score=[100,250];
- let now=3000;
- const raid=(base,player=a)=>{Object.assign(player,{x:base.x,y:base.y});r.command(player,{type:'raid',id:base.id},now+=3000);};
- const denied=base=>{let rejected=false;try{raid(base);}catch{rejected=true;}ok(rejected);};
- denied(middle);denied(capital);
- for(let i=0;i<4;i++)raid(small);
- eq([small.side,small.remaining],[0,2]);eq(r.snapshot(a,now).bases.length,14);eq(r.score,[120,230]);
- denied(other);denied(capital);
- for(let i=0;i<2;i++)raid(small,b);
- eq([small.side,small.remaining],[1,2]);denied(middle);
- for(let i=0;i<2;i++)raid(small);
- for(let i=0;i<6;i++)raid(middle);
- eq([middle.side,middle.remaining],[0,3]);eq(r.score,[180,170]);
- for(let i=0;i<8;i++)raid(capital);
- eq([capital.side,capital.remaining,r.winner,r.reason],[0,4,0,'base-captured']);
- eq(r.score,[300,50]);
+ const capital=r.bases.find(x=>x.side===b.side&&x.main);
+ r.bases.find(x=>x.id===capital.links[0]).side=a.side;
+ capital.hp=1;
+ Object.assign(a,{x:capital.x,y:capital.y});
+ r.siegeBases(3000);r.siegeBases(3250);
+ eq([capital.side,capital.hp,r.winner,r.reason],[a.side,75,a.side,'base-captured']);
+ eq(r.score,[503,497]);
 });
-Deno.test('a shadow acquires at 1000, runs 20% slower and returns after five seconds or beyond 2000',()=>{
+Deno.test('a shadow acquires at 1000, runs at 200 units per second and returns after five seconds or beyond 2000',()=>{
  for(const reason of ['time','distance']){
   const {r,p:[a,b]}=match();start(r,[a,b]);
   const beast=r.shadows[0];
@@ -423,19 +411,19 @@ Deno.test('a shadow acquires at 1000, runs 20% slower and returns after five sec
   r.tick(3000,0);eq(beast.pursuedId,undefined);
   a.x=beast.x+1000;r.tick(3100,0);eq(beast.pursuedId,a.id);
   a.x=beast.x+2000;r.tick(3200,.05);eq(beast.pursuedId,a.id);
-  ok(Math.abs(distance(beast,beast.home)-SPEED*BEAST_SPEED_SCALE*.05)<.001);
+  ok(Math.abs(distance(beast,beast.home)-TEAM_SPEED*.05)<.001);
   if(reason==='distance')a.x=beast.x+2001;
   r.tick(reason==='time'?8100:3300,0);eq(beast.pursuedId,undefined);
   r.tick(reason==='time'?8150:3350,.05);eq(distance(beast,beast.home),0);
  }
 });
-Deno.test('boss runs 20% slower, switches to the nearest visible sealer and patrols without a target',()=>{
+Deno.test('boss runs at 200 units per second, switches to the nearest visible sealer and patrols without a target',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
  a.id='sealer-z';b.id='sealer-a';
  const now=BOSS_INTERVAL; r.tick(now,0);
  const boss=r.bosses[0],at=cellCenter(15,21);Object.assign(boss,at,{home:at,nav:null});
  Object.assign(a,at,{x:at.x+330});Object.assign(b,at,{x:at.x-370});
- r.tick(now+50,.05);eq(boss.pursuedId,a.id);ok(Math.abs(distance(boss,at)-SPEED*BEAST_SPEED_SCALE*.05)<.001);
+ r.tick(now+50,.05);eq(boss.pursuedId,a.id);ok(Math.abs(distance(boss,at)-TEAM_SPEED*.05)<.001);
  b.x=2*boss.x-a.x;r.tick(now+100,0);eq(boss.pursuedId,a.id);
  r.tick(now+5100,0);eq(boss.pursuedId,a.id);
  b.x=at.x-170;r.tick(now+5150,0);eq(boss.pursuedId,b.id);
@@ -461,7 +449,7 @@ Deno.test('rare creature kill scores once and island traps are randomized ten pe
  const battle=r.battles.get(a.battle);
  eq(battle.allies[0].hp,a.maxHp-Math.round(a.maxHp*.1));
  battle.enemies[0].hp=0;r.recordFalls(battle,5500);r.recordFalls(battle,5600);
- eq(r.score,[105,100]);
+ eq(r.score,[505,500]);
 });
 Deno.test('solo practice starts with nine bots and runs normal objectives to a result',()=>{
  const r=new Match('1234AABB',0,()=>.5);
@@ -471,12 +459,10 @@ Deno.test('solo practice starts with nine bots and runs normal objectives to a r
  eq(view.players.filter(p=>p.side===0&&p.bot).length,4);
  eq(view.players.filter(p=>p.side===1&&p.bot).length,5);
  const bots=r.players.filter(p=>p.bot);
- const events=[];
- const note=r.note.bind(r);
- r.note=(text,...args)=>{events.push(text);note(text,...args);};
- let hasBotAttack=false;
+ let hasBotAttack=false,hasBotSiege=false;
  for(let time=50;r.phase==='match'&&time<=MATCH_MS;time+=50){
   r.tick(time,.05);
+  hasBotSiege||=r.baseEffects.some(effect=>effect.kind!=='tower'&&bots.some(bot=>bot.id===effect.playerId));
   if(!hasBotAttack){
    hasBotAttack=[...r.battles.values()].some(b=>{
     const actor=[...b.allies,...b.enemies].find(u=>u.id===b.last?.actor);
@@ -484,8 +470,8 @@ Deno.test('solo practice starts with nine bots and runs normal objectives to a r
    });
   }
  }
- eq(r.phase,'finished');ok(['zero','time'].includes(r.reason));
- ok(bots.some(p=>p.warp>1)&&events.some(text=>text.includes('จู่โจม')));
+ eq(r.phase,'finished');ok(['zero','time','base-captured'].includes(r.reason));
+ ok(hasBotSiege,'bots never besieged a base');
  ok(r.chests.some(c=>c.opened));ok(hasBotAttack);
  eq({x:human.x,y:human.y},human.spawn);
 });
