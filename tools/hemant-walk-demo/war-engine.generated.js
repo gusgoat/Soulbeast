@@ -1055,7 +1055,7 @@ function effectiveElement(u,sk){
 function attackHasElement(u,sk,el){const value=effectiveElement(u,sk);return Array.isArray(value)?value.includes(el):value===el;}
 function attackMultiplier(u,sk,t){return typeMult(effectiveElement(u,sk),t.types)*(attackHasElement(u,sk,'ground')&&hasPas(t,'levitate')?.25:1);}
 // Four positions per sealer (world raid) or side. Dead positions are reused.
-function battleSlotGroup(u,b=B()){if(!b)return [];const list=u.side==='ally'?b.allies:b.enemies;return b.kind==='world'&&u.side==='ally'?list.filter(x=>x.owner===u.owner):list;}
+function battleSlotGroup(u,b=B()){if(!b)return [];const list=u.side==='ally'?b.allies:b.enemies;return (b.colosseumOwnerSlots||b.kind==='world'&&u.side==='ally')?list.filter(x=>x.owner===u.owner):list;}
 function battleHasRoom(u,b=B()){return !!b&&battleSlotGroup(u,b).filter(x=>x.hp>0).length<4;}
 function battlePlaceUnit(u,n){
  const b=B(),list=sideOf(u),group=battleSlotGroup(u);if(group.filter(x=>x.hp>0).length>=4)return false;
@@ -3924,9 +3924,54 @@ function colosseumBotEquipment(cls,lv,random){
  }
  return equipment;
 }
+function colosseumFinisher(u,foes){
+ const visible=foes.filter(target=>!class10Invisible(target));
+ const forced=visible.find(target=>target.taunt>0);
+ const wounded=(forced?[forced]:visible)
+  .filter(target=>target.hp<=target.st.hp*.25)
+  .sort((a,b)=>Number(b.kind==='player')-Number(a.kind==='player')||a.hp-b.hp);
+ const attacks=u.skills.filter(id=>{
+  const sk=pvpSkill(id);
+  return class10Damaging(sk)&&!sk.all&&!sk.rt&&!sk.ct&&!sk.gc&&!cooldownOf(u,id)&&costOf(u,sk)<=u.mp;
+ });
+ for(const target of wounded){
+  const finishers=attacks.filter(id=>combatSkillScore(u,id,target,foes)>=target.hp);
+  finishers.sort((a,b)=>costOf(u,pvpSkill(a))-costOf(u,pvpSkill(b)));
+  if(finishers.length)return {id:finishers[0],target,friend:u};
+ }
+ return null;
+}
+function colosseumTeamBuff(u,foes){
+ const mates=sideOf(u).filter(unit=>unit.hp>unit.st.hp*.4);
+ if(u.hp<=u.st.hp*.4||mates.length<2||!foes.some(target=>target.hp>target.st.hp*.5))return null;
+ for(const id of u.skills){
+  const sk=pvpSkill(id);
+  if(sk?.t!=='buff'||sk.tg!=='team'||!sk.bf||sk.gc||cooldownOf(u,id)||costOf(u,sk)>u.mp*.4)continue;
+  const stats=Object.keys(sk.bf).filter(stat=>sk.bf[stat]>0);
+  const offense=stats.filter(stat=>stat==='patk'||stat==='matk'||stat==='crit');
+  const defense=stats.filter(stat=>stat==='pdef'||stat==='mdef');
+  const ready=mates.filter(unit=>{
+   const relevant=[...offense.filter(stat=>stat==='crit'||stat===(unit.atkType==='m'?'matk':'patk')),...defense];
+   return relevant.length&&relevant.every(stat=>!unit.buffs.some(buff=>buff.st===stat&&buff.amt>0&&buff.tn>0));
+  });
+  if(ready.length>=2)return {id,target:foes[0],friend:u};
+ }
+ return null;
+}
+function colosseumAuto(u){
+ const move=pvpAutoChoice_(u);
+ const sk=pvpSkill(move.id);
+ if(u.owner<0||sk?.t==='heal'||sk?.t==='rest')return move;
+ const foes=foesOf(u).filter(target=>target.hp>0);
+ const finisher=colosseumFinisher(u,foes);
+ if(finisher)return finisher;
+ if(!class10Damaging(sk)&&move.id!=='defend')return move;
+ const buff=colosseumTeamBuff(u,foes);
+ return buff||move;
+}
 return {colosseum:()=>({profile:pvpTeam_,gear:npcEq,botEquipment:colosseumBotEquipment,
  baseCareers:()=>Object.keys(CLS).filter(cls=>baseOf(cls)===cls),petLimit:cls=>Math.min(3,clsSum(cls)),
- botBeasts:()=>{const {beast,rare}=gachaPools();return [...beast,...rare];},shadow:wildUnit,rareBeasts:()=>gachaPools().rare,skill:pvpSkill,act,turnStart,takeFreeForm,auto:pvpAutoChoice_,
+ botBeasts:()=>{const {beast,rare}=gachaPools();return [...beast,...rare];},shadow:wildUnit,rareBeasts:()=>gachaPools().rare,skill:pvpSkill,act,turnStart,takeFreeForm,auto:colosseumAuto,
  career:cls=>pvpOwn_(CLS,cls)?{base:baseOf(cls),name:CLS[cls].n}:null,childrenOf,
  bind(battle){S={P:{gold:0},battle};},speed:u=>eff(u,'spd'),cost:costOf,cooldown:cooldownOf}),dispatch(packet){if(packet?.action==='country_job_tick'&&packet._internalCountryJob===true){cwTick();return {ok:true};}if(/^(country_|mail_)/.test(packet?.action||''))return cwDispatch(packet);if(packet?.action==='account_retire_check'){try{const auth=pvpSaveAuth_(packet);if(pvpFindActive_(auth.code)||wbExisting_(auth.code))return {ok:false,error:'finish other battle'};return {ok:true};}catch(e){return {ok:false,error:e.message||String(e)};}}return JSON.parse((packet===null?doGet():doPost({postData:{contents:JSON.stringify(packet)}})).getContent());}};
 }

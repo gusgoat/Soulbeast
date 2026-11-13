@@ -5,11 +5,12 @@ export const BEAST_SPEED_SCALE=.8;
 export const TEAM_SPEED=200, BASE_FIRE_RANGE=300, BASE_FIRE_MS=2000, BASE_BOLT_MS=280;
 export const BASE_ATTACK_MS=1000, BASE_ATTACK_HP=4;
 export const TEAM_START_SCORE=300;
+export const BASE_CONTROL_MS=30_000;
 export const BASE_AURA_RANGE=600;
 export const BASE_RECALL_MS=5000;
-export const BASE_REPAIR_RANGE=150, BASE_REPAIR_MS=500, BASE_REPAIR_SCORE_MS=1000, BASE_ATTACK_SCORE_MS=1000;
+export const BASE_REPAIR_RANGE=150, BASE_REPAIR_MS=500, BASE_REPAIR_SCORE_MS=2000, BASE_ATTACK_SCORE_MS=1000;
 export const MATCH_MS=12*60_000, RESPAWN_MS=30_000;
-export const BOSS_INTERVAL=2*60_000, BOSS_POINTS=30, CHEST_COUNT=10;
+export const BOSS_INTERVAL=2*60_000, BOSS_POINTS=60, CHEST_COUNT=10;
 export const BEAST_POINTS=5;
 export const TEAMS=['ไพลิน','ทับทิม'], COLORS=['#6ac9ff','#ff827a'];
 export const cellCenter=(x,y)=>({x:(x+.5)*CELL,y:(y+.5)*CELL});
@@ -58,10 +59,10 @@ function findBush(p,bushes){
  return bushes.find(b=>y===b.y&&x>=b.x&&x<b.x+b.w)?.id??null;
 }
 const baseSites=[
- [2,21,'large',300,30,[1,2]], [5,13,'medium',200,20,[3,4]], [6,29,'medium',200,20,[5,6]],
- [6,5,'small',100,10,[]], [10,13,'small',100,10,[]], [10,29,'small',100,10,[]], [6,37,'small',100,10,[]],
- [10,21,'small',100,10,[],'ฐานเล็กแนวกลาง'],
- [5,21,'medium',200,20,[4,5,7],'ฐานกลางแนวกลาง'],
+ [2,21,'large',180,30,[1,2]], [5,13,'medium',120,20,[3,4]], [6,29,'medium',120,20,[5,6]],
+ [6,5,'small',60,10,[]], [10,13,'small',60,10,[]], [10,29,'small',60,10,[]], [6,37,'small',60,10,[]],
+ [10,21,'small',60,10,[],'ฐานเล็กแนวกลาง'],
+ [5,21,'medium',120,20,[4,5,7],'ฐานกลางแนวกลาง'],
 ];
 export const BASES=TEAMS.flatMap((team,side)=>baseSites.map(([x,y,tier,maxHp,aura,children,label],i)=>({
  id:`${side}-${i}`,side,tier,maxHp,aura,main:tier==='large',points:tier==='large'?3:tier==='medium'?2:1,

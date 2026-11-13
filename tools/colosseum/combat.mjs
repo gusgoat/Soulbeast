@@ -1,5 +1,5 @@
 import '../../content/beast-names.js';
-import '../hemant-walk-demo/war-engine.generated.js?v=siege-scoring-1';
+import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-auto-1';
 import rareArt from './rare-art.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
 const ACT_MS=12_000, SHOW_MS=850;
@@ -92,7 +92,7 @@ export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=fa
  const b={id,kind:shadow?'hunt':'pvp',round:0,turns:0,turn:0,cur:null,queue:[],deadline:0,
   teams:teams.map(t=>t.map(p=>p.id)),roster:roster.map(p=>p.id),botOwners:roster.map(p=>Boolean(p.bot)),beastId:shadow?.id,
   allies:[],enemies:[],log:[],fx:[],effects:[],fallen:[],finished:false,releasedAt:0,autoOwners:new Set(),autoVersion:0,
-  baseAuraOwners:auraOwners,colosseumFalls:new Map(),
+  colosseumOwnerSlots:teamSiege,baseAuraOwners:auraOwners,colosseumFalls:new Map(),
   colosseumHuntBonus:new Set(teamSiege&&shadow?roster.flatMap((p,index)=>p.baseCls==='swordsman'?[index]:[]):[]),
   colosseumPvpCareers:teamSiege&&!shadow?roster.map(p=>p.baseCls):null};
  for(const [side,team] of teams.entries()) for(const p of team){
@@ -205,7 +205,7 @@ export function advanceCombat(b,now){
  const target=['heal','buff'].includes(sk?.t)?move.friend:move.target;
  const active=b.autoOwners.has(b.roster[u.owner]);
  if(u.charging&&perform(b,u,u.charging.id,undefined,now,active))return;
- if(activeSkill(u,move.id)&&perform(b,u,move.id,target,now,active))return;
+ if((u.owner>=0&&move.id==='rest'||activeSkill(u,move.id))&&perform(b,u,move.id,target,now,active))return;
  if(perform(b,u,'attack',enemies(b,u)[0],now,active))return;
  b.turns++;next(b,now);
 }

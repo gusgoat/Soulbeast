@@ -1,5 +1,5 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=team-balance-1';
+import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance, siegeProfile} from './arena.mjs?v=balance-summons-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
 import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-recall-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
@@ -60,7 +60,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=team-balance-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=combat-auto-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -836,15 +836,22 @@ function objective(){
   const chest=state.chests.find(c=>scene.arena.chestInReach(local||me,c));
   if(chest)return {type:'chest',id:chest.id,disabled:pendingChest===chest.id,
    label:pendingChest===chest.id?'กำลังเปิดหีบ…':state.mode==='survival'?'เปิดหีบ · +5 คะแนน':'เปิดหีบสมบัติ'};
-  const base=state.bases.find(b=>RAID_TARGET(me,b));
-  if(base){
-   const allowed=canRaidBase(me.side,base,state.bases);
-   return {disabled:true,label:allowed?`กำลังโจมตี${base.label} · ${base.hp}/${base.maxHp} HP`:
-    base.main?'ยึดฐานกลางที่เชื่อมอยู่ก่อน':'ยึดฐานเล็กที่เชื่อมอยู่ก่อน'};
-  }
+ }
+ const nearby=state.bases.filter(b=>b.side!==me.side&&b.hp>0&&distance(me,b)<=siegeProfile(me).range)
+  .sort((a,b)=>distance(me,a)-distance(me,b)||a.id.localeCompare(b.id));
+ const attacking=nearby.find(b=>b.id===state.siegeBaseId&&RAID_TARGET(me,b)&&canRaidBase(me.side,b,state.bases));
+ const base=attacking||nearby.find(b=>RAID_TARGET(me,b)&&canRaidBase(me.side,b,state.bases))||nearby[0];
+ if(base){
+  let label;
+  if(attacking)label=`กำลังโจมตี${base.label} · ${base.hp}/${base.maxHp} HP`;
+  else if(!canRaidBase(me.side,base,state.bases))label=base.main?'ยึดฐานกลางที่เชื่อมอยู่ก่อน':'ยึดฐานเล็กที่เชื่อมอยู่ก่อน';
+  else if(!RAID_TARGET(me,base))label='มีสิ่งกีดขวาง · ขยับให้เห็นป้อม';
+  else if(now<me.safeUntil)label='รอหมดเวลาคุ้มกันก่อนตีป้อม';
+  else label=`เตรียมโจมตี${base.label}`;
+  return {disabled:true,label};
  }
  const friendly=state.bases.filter(b=>HEAL_TARGET(me,b)).sort((a,b)=>b.points-a.points)[0];
- return friendly?{disabled:true,label:`เขตฟื้นพลัง${friendly.label} · ${friendly.points}% ต่อวินาที`}:null;
+ return friendly?{disabled:true,label:`เขตฟื้นพลัง${friendly.label} · ${friendly.points*3}% ต่อวินาที`}:null;
 }
 
 $('raid').onclick=()=>{

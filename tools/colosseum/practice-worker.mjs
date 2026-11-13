@@ -1,4 +1,4 @@
-import {Match} from './match.mjs?v=team-balance-1';
+import {Match} from './match.mjs?v=combat-auto-1';
 import {startPractice} from './practice.mjs?v=base-recall-1';
 
 let room,player,timer,last,frame=0,battleKey;
