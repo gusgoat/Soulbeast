@@ -2,13 +2,13 @@ export const COLS=31, ROWS=43, CELL=180, FLAT=.64;
 export const WIDTH=COLS*CELL, HEIGHT=ROWS*CELL;
 export const SPEED=246, RADIUS=21, CONTACT=50, ASSIST=400, RAID_RANGE=122;
 export const BEAST_SPEED_SCALE=.8;
-export const TEAM_SPEED=200, BASE_FIRE_RANGE=200, BASE_FIRE_MS=1000, BASE_BOLT_MS=280;
+export const TEAM_SPEED=200, BASE_FIRE_RANGE=300, BASE_FIRE_MS=1000, BASE_BOLT_MS=280;
 export const TEAM_START_SCORE=500;
 export const BASE_AURA_RANGE=600;
 export const BASE_REPAIR_RANGE=150, BASE_REPAIR_MS=500, BASE_REPAIR_POINTS=2;
 export const MATCH_MS=12*60_000, RESPAWN_MS=30_000;
-export const BOSS_INTERVAL=2*60_000, BOSS_POINTS=20, CHEST_COUNT=10;
-export const BEAST_POINTS=5;
+export const BOSS_INTERVAL=2*60_000, BOSS_POINTS=60, CHEST_COUNT=10;
+export const BEAST_POINTS=20;
 export const TEAMS=['ไพลิน','ทับทิม'], COLORS=['#6ac9ff','#ff827a'];
 export const cellCenter=(x,y)=>({x:(x+.5)*CELL,y:(y+.5)*CELL});
 export const distance=(a,b)=>Math.hypot(a.x-b.x,(a.y-b.y)*FLAT);
@@ -124,7 +124,7 @@ function move(p,dx,dy,dt,speed=SPEED,allow=()=>true){
 function movePlayer(p,dx,dy,dt,allow){
  move(p,dx,dy,dt,walkSpeed(terrain,p),allow);
 }
-function nextCell(from,to){
+function nextCell(from,to,canCross=()=>true){
  if(from===to)return to;
  const prev=new Int16Array(cols*rows).fill(-1);prev[from]=from;
  const q=[from];
@@ -132,7 +132,7 @@ function nextCell(from,to){
   const at=q[i], x=at%cols,y=Math.floor(at/cols);
   for(const [nx,ny] of [[x-1,y],[x+1,y],[x,y-1],[x,y+1]]){
    if(!grid[ny]?.[nx])continue;
-   const k=cellKey(nx,ny);if(prev[k]!==-1)continue;prev[k]=at;
+   const k=cellKey(nx,ny);if(prev[k]!==-1||!canCross(x,y,nx,ny))continue;prev[k]=at;
    if(k===to){let n=k;while(prev[n]!==from)n=prev[n];return n;}
    q.push(k);
   }
@@ -146,9 +146,9 @@ export const TEAM_ARENA=createArena(maze,BUSHES,OBSTACLES);
 export const {bushAt,canSeeOpponent,passable,fits,clearPath,move,movePlayer,nextCell}=TEAM_ARENA;
 export function siegeProfile(p){
  const cls=p.baseCls||p.cls;
- if(cls==='gunner'||cls==='archer')return {range:200,interval:200,effect:cls};
+ if(cls==='gunner'||cls==='archer')return {range:300,interval:200,effect:cls};
  if(cls==='mage'||cls==='summoner'||cls==='druid')return {range:150,interval:250,effect:'magic'};
- return {range:75,interval:cls==='gladiator'?500:250,effect:'melee'};
+ return {range:75,interval:cls==='gladiator'||cls==='thief'?500:250,effect:cls==='merchant'?'hammer':'melee'};
 }
 export const RAID_TARGET=(p,b)=>p.side!==b.side&&distance(p,b)<=siegeProfile(p).range&&clearPath(p,b);
 export const HEAL_TARGET=(p,b)=>p.side===b.side&&b.hp>0&&distance(p,b)<=BASE_REPAIR_RANGE;

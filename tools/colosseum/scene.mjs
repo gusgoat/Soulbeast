@@ -2,10 +2,11 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-hp-1';
+import {BASES, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=siege-scoring-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
+import pvpCardArt from './pvp-card-art.mjs?v=battle-parity-1';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
 const TILE=CELL*FLAT;
 const WALL_HEIGHT=54;
@@ -133,7 +134,14 @@ const wallArt=img('./art/maze-wall-v1.webp');
 const baseArt=['ice','fire'].map(theme=>({
  main:img(`./art/${theme}-castle-main-v1.webp`),
  small:img(`./art/${theme}-castle-small-v1.webp`),
+ damaged:Object.fromEntries(['small','medium','large'].map(tier=>[tier,
+  [75,50,25].map(hp=>img(`./art/${theme}-castle-${tier}-hp-${hp}.webp`))])),
 }));
+const siegeArt=Object.fromEntries(['archer','magic','gunner','melee','hammer','tower','collapse']
+ .map(kind=>[kind,img(`./art/siege-${kind}.webp`)]));
+const siegePoses=new Map();
+const damageSources=[[.46,.29],[.24,.55],[.72,.47],[.38,.68],[.62,.57],[.82,.65]];
+const damageFire=img('./art/siege-fire.webp'),damageSmoke=img('./art/siege-smoke.webp');
 const pavingArt=img('./art/arena-paving-v1.webp');
 const crowdArt=img('./art/arena-crowd-v1.webp');
 const columnArt=img('./art/arena-column-v1.webp');
@@ -347,6 +355,9 @@ export class Scene{
   for(const box of chests)if(inSight(me,box)&&box.x>left-55&&box.x<right+55&&box.y*FLAT>top-55&&box.y*FLAT<bottom+55)this.chest(box,now);
   drawArenaTraps(this.traps,c,traps.filter(trap=>inSight(me,trap)),serverTime,FLAT);
   const seen=entities.filter(p=>p.id===me.id||inSight(me,p));
+  const attacks=new Map(baseEffects.filter(e=>e.kind!=='tower'&&e.kind!=='collapse'&&e.until>serverTime)
+   .map(e=>[e.playerId,e]));
+  const baseById=new Map(bases.map(b=>[b.id,b]));
   const alive=new Set(seen.map(p=>p.id));
   for(const id of this.anim.keys())if(!alive.has(id))this.anim.delete(id);
   const props=obstacles.filter(p=>inSight(me,p)&&p.x>=left-75&&p.x<=right+75&&p.y*FLAT>=top-80&&p.y*FLAT<=bottom+100);
@@ -362,9 +373,10 @@ export class Scene{
    }
    if(e.x<left-160||e.x>right+160||e.y*FLAT<top-180||e.y*FLAT>bottom+100)continue;
    if(e.radius)this.drawProp(e);
-   else this.actor(e,now,e.id===me.id);
+   else this.actor(e,now,e.id===me.id,attacks.get(e.id),baseById,serverTime);
   }
   this.drawBaseEffects(baseEffects,bases,seen,serverTime);
+  for(const base of castles)this.drawBaseStatus(base);
   this.sightMask(me,left,top,right,bottom);
   if(zone?.step)this.fog(zone,left,top,right,bottom,now);
  }
@@ -576,14 +588,48 @@ export class Scene{
   c.fillStyle=color;c.fillRect(x-w/2+1,y+1,(w-2)*(b.hp??b.maxHp)/b.maxHp,5);
   c.strokeStyle='#d6b786';c.lineWidth=1;c.strokeRect(x-w/2,y,w,7);
  }
+ drawBaseDamage(x,y,width,height,level,now){
+  const c=this.c;
+  for(let i=0;i<(level+1)*2;i++){
+   const [u,v]=damageSources[i],px=x+(u-.5)*width,py=y-height*(1-v);
+   const rise=(now/1700+i*.37)%1;
+   const smokeSize=(30+rise*31+level*7)*width/150;
+   const flameSize=(25+level*7+Math.sin(now/70+i)*4)*width/150;
+   c.save();
+   if(ready(damageSmoke)){
+    c.globalAlpha=Math.sin(Math.PI*rise)*(.35+level*.12);
+    c.drawImage(damageSmoke,px-smokeSize*.5+rise*12,py-smokeSize-rise*60,smokeSize,smokeSize);
+   }
+   c.globalAlpha=.9;
+   if(ready(damageFire))c.drawImage(damageFire,px-flameSize*.5,py-flameSize,flameSize,flameSize);
+   else this.flame(px,py-9,now+i*93);
+   c.restore();
+  }
+ }
  drawBaseEffects(effects,bases,entities,now){
   const c=this.c;
   const colors={archer:'#ff963d',gunner:'#ffcb72',magic:'#aa90ff',melee:'#ffe1a3'};
   for(const e of effects){
    const base=bases.find(b=>b.id===e.baseId);
    const player=entities.find(p=>p.id===e.playerId);
-   if(!base||!player||now>=e.until)continue;
+   if(!base||now>=e.until)continue;
    const t=Math.max(0,(now-e.at)/(e.until-e.at));
+   const art=siegeArt[e.kind];
+   if(e.kind==='collapse'){
+    const size=(base.main?268:194)*(.55+t*.65);
+    c.save();c.globalAlpha=Math.sin(Math.PI*Math.min(.99,t*1.25+.08));
+    if(ready(art)){
+     const height=size*art.naturalHeight/art.naturalWidth;
+     c.drawImage(art,base.x-size/2,base.y*FLAT-height*.82,size,height);
+    }
+    else{
+     c.fillStyle='#ff9f42';
+     c.beginPath();c.arc(base.x,base.y*FLAT-38,size*.23,0,2*Math.PI);c.fill();
+    }
+    c.restore();
+    continue;
+   }
+   if(!player)continue;
    const tower=e.kind==='tower',bx=base.x,by=base.y*FLAT-34;
    const px=tower?player.x:e.x,py=(tower?player.y:e.y)*FLAT-40;
    const x=tower?bx:px,y=tower?by:py,tx=tower?px:bx,ty=tower?py:by;
@@ -592,7 +638,13 @@ export class Scene{
    c.translate(x+dx*t,y+dy*t);c.rotate(angle);
    c.strokeStyle=colors[e.kind]??COLORS[e.side];c.fillStyle=c.strokeStyle;
    c.shadowColor=c.strokeStyle;c.shadowBlur=11;c.lineWidth=tower?5:3;c.lineCap='round';
-   if(e.kind==='melee'){
+   if(ready(art)){
+    const melee=e.kind==='melee'||e.kind==='hammer';
+    const width=melee?108:tower?122:e.kind==='gunner'?78:91;
+    const height=width*art.naturalHeight/art.naturalWidth;
+    if(melee)c.globalAlpha=1-t*.82;
+    c.drawImage(art,-width*(melee?.46:.72),-height/2,width,height);
+   }else if(e.kind==='melee'||e.kind==='hammer'){
     c.globalAlpha=1-t;
     c.beginPath();c.ellipse(0,0,21,31,0,-1.25,1.25);c.stroke();
    }else if(e.kind==='gunner'){
@@ -609,11 +661,25 @@ export class Scene{
    c.restore();
   }
  }
+ baseAppearance(b){
+  const art=baseArt[b.side];
+  const ratio=(b.hp??b.maxHp)/b.maxHp;
+  const damage=ratio<=.25?2:ratio<=.5?1:ratio<=.75?0:-1;
+  const worn=art.damaged[b.tier]?.[damage];
+  const castle=ready(worn)?worn:art[b.main?'main':'small'];
+  return {castle,damage};
+ }
+ drawBaseStatus(b){
+  const {castle}=this.baseAppearance(b);
+  const width=b.main?225:b.tier==='medium'?177:136;
+  const height=ready(castle)?width*castle.naturalHeight/castle.naturalWidth:75;
+  const x=b.x,y=b.y*FLAT-height,color=COLORS[b.side];
+  this.baseHealth(b,x,y-15,color);
+  this.label(`${b.label} · ${b.hp??b.maxHp}/${b.maxHp} HP`,x,y-20,color);
+ }
  base(b,now){
   const c=this.c,x=b.x,y=b.y*FLAT,color=COLORS[b.side],r=b.main?74:b.tier==='medium'?59:47;
-  const label=`${b.label} · ${b.hp??b.maxHp}/${b.maxHp} HP`;
-  this.baseHealth(b,x,y+12,color);
-  const castle=baseArt[b.side][b.main?'main':'small'];
+  const {castle,damage}=this.baseAppearance(b);
   if(ready(castle)){
    const width=b.main?225:b.tier==='medium'?177:136, height=width*castle.naturalHeight/castle.naturalWidth;
    // Use the base's ground point for both the sprite and its contact shadow.
@@ -625,7 +691,7 @@ export class Scene{
    c.fillStyle=shadow;c.fillRect(-1,-1,2,2);
    c.restore();
    c.drawImage(castle,x-width/2,y-height,width,height);
-   this.label(label,x,y+38,color);
+   if(damage>=0)this.drawBaseDamage(x,y,width,height,damage,now);
    return;
   }
   c.fillStyle='#221c25c7';c.strokeStyle=color;c.lineWidth=2;
@@ -635,7 +701,6 @@ export class Scene{
   c.fillStyle='#a08568';c.fillRect(x-3,y-72,6,65);
   c.fillStyle=color;c.beginPath();c.moveTo(x-25,y-70);c.lineTo(x+25,y-70);c.lineTo(x+25,y-36);c.lineTo(x,y-23);c.lineTo(x-25,y-36);c.fill();
   c.fillStyle='#17202b';c.font='bold 20px sans-serif';c.textAlign='center';c.fillText(b.main?'◆':'✦',x,y-43);
-  this.label(label,x,y+38,color);
  }
  label(text,x,y,color,rating=null,now=0){
   const c=this.c;
@@ -649,7 +714,7 @@ export class Scene{
   if(ready(badge))drawRankShield(c,badge,shield.id,left+5,y-17,now);
   c.fillStyle=color;c.fillText(text,x+shieldSpace/2,y);
  }
- actor(p,now,isMe){
+ actor(p,now,isMe,attack,bases,serverTime){
   const c=this.c,x=p.x,y=p.y*FLAT,color=p.sp?(p.boss?'#ffc479':p.rare?'#eed079':'#bd9af3'):
    this.arena===SURVIVAL_ARENA?(isMe?'#f1d680':'#ff827a'):COLORS[p.side];
   const prev=this.anim.get(p.id)??{x,y,dir:0,phase:0,movingUntil:0,warp:p.warp,at:now,vx:0,vy:0};
@@ -683,7 +748,21 @@ export class Scene{
    const pose=moving?'run':'idle';
    const entry=atlas?.entry;
    const [ax,ay]=entry?.anchor||[.5,.962],size=145*(entry?.renderScale||1);
-   if(atlas){
+   const target=attack&&bases.get(attack.baseId);
+   const action=target&&pvpCardArt[`${p.cls}-${sealerGender(p)}`];
+   const progress=attack?Math.max(0,(serverTime-attack.at)/(attack.until-attack.at)):0;
+   const close=attack?.kind==='melee'||attack?.kind==='hammer';
+   const posePath=action&&(progress<.25?action.windup:close?action.melee:action.power);
+   if(posePath&&!siegePoses.has(posePath))siegePoses.set(posePath,img(posePath.replace(/^\/assets\//,assets)));
+   const strike=siegePoses.get(posePath);
+   if(ready(strike)){
+    const reach=Math.sin(Math.PI*Math.min(1,progress))*(close?14:5);
+    const direction=Math.sign(target.x-x)||1;
+    const height=size*.87,width=height*strike.naturalWidth/strike.naturalHeight;
+    c.save();c.translate(x+direction*reach,y);c.scale(direction,1);
+    c.drawImage(strike,-width/2,-height,width,height);
+    c.restore();
+   }else if(atlas){
     const sheet=atlas[pose]??=img(siteAsset(moving?(entry.run||entry.walk):entry.idle));
     if(ready(sheet)){
      const layout=moving?(entry.runLayout||entry.walkLayout):entry.idleLayout;
@@ -696,7 +775,7 @@ export class Scene{
      globalThis.sealerSprites.drawColoredFrame(c,sheet,col*width,row*height,width,height,x-size*ax,y-size*ay,size,size);
     }
    }
-   if(!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
+   if(!ready(strike)&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
    const spriteTop=y-(atlas?size*ay:55);
    this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,spriteTop-16,isMe?'#fff2af':color,p.rating??0,now);
   }

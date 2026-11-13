@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=base-hp-1';
+import {BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance} from './arena.mjs?v=siege-scoring-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-hp-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=siege-scoring-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
 import {battlePresentation} from './battle-presentation.mjs?v=projectile-2';
@@ -59,7 +59,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=base-hp-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=siege-scoring-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -938,7 +938,7 @@ function frame(t){
    const a=to===from?0:Math.max(0,Math.min(1,(renderAt-from.at)/(to.at-from.at)));
    p.x=from.x+(to.x-from.x)*a;p.y=from.y+(to.y-from.y)*a;
   }
-  const all=[...actors.values(),...(local.phase==='dead'?[]:[local])];
+  const all=[...actors.values(),...(local.phase==='dead'||!solo&&local.phase==='battle'?[]:[local])];
   const watch=watchedPlayer(),focus=watch?(actors.get(watch.id)||watch):local;
   scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null,state.baseEffects);
   $('blue').textContent=solo?state.survivors:state.score[0];
@@ -990,8 +990,10 @@ function frame(t){
    lastMap=t;
   }
   const ended=state.phase==='finished',dead=me.phase==='dead';
+  const showingCollapse=ended&&state.reason==='base-captured'&&state.baseEffects?.some(
+   effect=>effect.kind==='collapse'&&effect.until>now);
   $('rank-leave-respawn').hidden=ended||solo||!dead||!state.ranked;
-  $('overlay').hidden=(!$('battle').hidden)||Boolean(watch)||!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
+  $('overlay').hidden=(!$('battle').hidden)||Boolean(watch)||showingCollapse||!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
   if(ended||dead){
    if(solo){
     $('overlay-title').textContent=ended?(state.winner===me.id?'คุณรอดเป็นคนสุดท้าย!':state.winnerName?'จบการประลอง':'เสมอ'):'คุณตกรอบ';

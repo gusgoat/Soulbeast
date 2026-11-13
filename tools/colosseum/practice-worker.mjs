@@ -1,5 +1,5 @@
-import {Match} from './match.mjs?v=base-hp-1';
-import {startPractice} from './practice.mjs?v=base-hp-1';
+import {Match} from './match.mjs?v=siege-scoring-1';
+import {startPractice} from './practice.mjs?v=siege-scoring-1';
 
 let room,player,timer,last,frame=0,battleKey;
 const send=message=>postMessage(message);

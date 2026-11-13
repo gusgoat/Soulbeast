@@ -1,5 +1,5 @@
 import '../../content/beast-names.js';
-import '../hemant-walk-demo/war-engine.generated.js?v=base-hp-1';
+import '../hemant-walk-demo/war-engine.generated.js?v=siege-scoring-1';
 import rareArt from './rare-art.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
 const ACT_MS=12_000, SHOW_MS=850;
@@ -60,7 +60,7 @@ export function botLoadout(name,lv,others,random){
 }
 export function bossUnit(p){
  const u=core.shadow(p.sp,p.lv,0);
- const boosts={hp:2,mp:2,pdef:1.5,mdef:1.5,patk:1.5,matk:1.5,spd:1.25};
+ const boosts={hp:3,mp:3,pdef:2,mdef:2,patk:2,matk:2,spd:1.25};
  for(const [stat,multiplier] of Object.entries(boosts))u.st[stat]=Math.round(u.st[stat]*multiplier);
  u.hp=Math.max(0,Math.min(u.st.hp,p.hp??u.st.hp));
  u.mp=Math.max(0,Math.min(u.st.mp,p.mp??u.st.mp));
@@ -93,7 +93,8 @@ export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=fa
   teams:teams.map(t=>t.map(p=>p.id)),roster:roster.map(p=>p.id),botOwners:roster.map(p=>Boolean(p.bot)),beastId:shadow?.id,
   allies:[],enemies:[],log:[],fx:[],effects:[],fallen:[],finished:false,releasedAt:0,autoOwners:new Set(),autoVersion:0,
   baseAuraOwners:auraOwners,colosseumFalls:new Map(),
-  colosseumHuntBonus:new Set(teamSiege&&shadow?roster.flatMap((p,index)=>p.baseCls==='swordsman'?[index]:[]):[])};
+  colosseumHuntBonus:new Set(teamSiege&&shadow?roster.flatMap((p,index)=>p.baseCls==='swordsman'?[index]:[]):[]),
+  colosseumPvpCareers:teamSiege&&!shadow?roster.map(p=>p.baseCls):null};
  for(const [side,team] of teams.entries()) for(const p of team){
   const list=side?b.enemies:b.allies;
   for(const u of demoProfile(p,roster.indexOf(p))){

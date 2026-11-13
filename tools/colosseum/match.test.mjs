@@ -82,7 +82,10 @@ Deno.test('each central medium base unlocks after capturing any one of its three
   stage(medium,3000);eq(medium.hp,200);
   small.hp=1;stage(small,4000);
   eq([small.side,small.hp],[attacker.side,25]);
+  eq([attacker.earned,r.score[attacker.side],r.score[side]],[21,521,459]);
   stage(medium,5000);eq(medium.hp,199);
+  medium.hp=1;stage(medium,6000);
+  eq([medium.side,medium.hp,attacker.earned,r.score[attacker.side],r.score[side]],[attacker.side,50,55,555,395]);
  }
 });
 Deno.test('balanced rooms start at 1v1 and 5v5; 12 minutes, draw on tie',()=>{
@@ -99,7 +102,7 @@ Deno.test('siege ticks apply career cadence, award points, show the warning to a
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(base=>base.side===b.side&&base.tier==='small');
  Object.assign(a,{x:base.x,y:base.y,baseCls:'archer'});
- eq(siegeProfile(a),{range:200,interval:200,effect:'archer'});
+ eq(siegeProfile(a),{range:300,interval:200,effect:'archer'});
  r.siegeBases(3000);r.siegeBases(3199);eq(base.hp,100);
  eq(r.snapshot(b,3199).bases.find(x=>x.id===base.id).underAttack,true);
  eq(r.snapshot(a,3199).bases.find(x=>x.id===base.id).underAttack,false);
@@ -131,6 +134,62 @@ Deno.test('base projectile locks the nearest sealer and hits even after they lea
  r.siegeBases(3000+BASE_BOLT_MS);ok(Math.abs(a.hp-(hp-maxHp*.04))<.001);
  eq(c.hp,c.maxHp);
  eq(siegeProfile(a).interval,500);
+});
+Deno.test('thieves deal half siege damage per second and gain PvP damage only against eligible sealers',()=>{
+ eq(siegeProfile({baseCls:'thief'}).interval,2*siegeProfile({baseCls:'swordsman'}).interval);
+ const {r}=match();
+ const a=r.join({name:'Thief',cls:'thief',lv:25,botCareer:true});
+ const gunner=r.join({name:'Gunner',cls:'gunner',lv:25,botCareer:true});
+ const gladiator=r.join({name:'Gladiator',cls:'gladiator',lv:25,botCareer:true});
+ const core=globalThis.SoulbeastColosseumEngine(),random=Math.random;
+ const damage=(opponent,teamSiege,pet=false)=>{
+  const b=makeCombat('career',[[a],[opponent]],null,3000,new Map(),teamSiege);
+  const attacker=b.allies[0],target=b.enemies[pet?1:0];
+  attacker.st.patk=180;
+  attacker.st.matk=180;
+  attacker.st.acc=500;
+  target.hp=3000;
+  core.bind(b);
+  ok(core.act(attacker,'attack',target,attacker,true));
+  ok(target.hp<3000,b.log.join(' | '));
+  return 3000-target.hp;
+ };
+ try{
+  Math.random=()=>.5;
+  const normal=damage(gunner,false);
+  const boosted=damage(gunner,true);
+  ok(Math.abs(boosted-normal*1.15)<=1,`expected 15% more than ${normal}, got ${boosted}; thief line ${a.baseCls}`);
+  eq(damage(gladiator,true),damage(gladiator,false));
+  eq(damage(gunner,true,true),damage(gunner,false,true));
+ }finally{Math.random=random;}
+});
+Deno.test('entering combat cancels the turret projectile and hides the sealer until they return to the same spot',()=>{
+ const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
+ const base=r.bases.find(base=>base.side===b.side&&base.tier==='small');
+ r.bases=[base];
+ Object.assign(a,{x:base.x,y:base.y});Object.assign(b,{x:base.x+70,y:base.y});
+ const hp=a.hp;
+ r.siegeBases(3000);eq(r.baseBolts[0].target,a);
+ r.encounter(a,b,3050);
+ const battle=r.battles.get(a.battle);
+ eq(r.baseBolts.length,0);
+ r.siegeBases(3500);eq(base.hp,100);eq(a.hp,hp);
+ const teammate=r.snapshot(b,3500).players.find(p=>p.id===a.id);
+ eq(teammate.x,undefined);eq(teammate.mapX,undefined);
+ Object.assign(battle,{finished:true,releasedAt:4000});
+ r.tick(4000,0);eq(a.phase,'walk');eq([a.x,a.y],[base.x,base.y]);
+});
+Deno.test('shadows spawn outside turret range and creatures cannot cross through a 300-unit turret zone',()=>{
+ const {r,p}=match();start(r,p);
+ ok(r.shadows.every(beast=>!r.inBaseFireRange(beast)));
+ const base=r.bases[0];
+ r.bases=[base];
+ const beast={x:base.x+301,y:base.y};
+ const target={x:base.x,y:base.y};
+ ok(!r.beastPathAllowed(beast,target));
+ ok(!r.beastPathAllowed({x:base.x-301,y:base.y},beast));
+ r.moveBeast(beast,target,.1,200);
+ ok(!r.inBaseFireRange(beast));
 });
 Deno.test('merchant starts and stops repair, stays put, and earns two personal points per HP',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
@@ -291,6 +350,19 @@ Deno.test('nearest ally within 400 units; allies alone never fight; far enemy co
  r.tick(4000+RESPAWN_MS-1,0);eq(b.phase,'dead');
  r.tick(4000+RESPAWN_MS,0);eq(b.phase,'walk');eq({x:b.x,y:b.y},b.spawn);
 });
+Deno.test('team knockout transfers 30 points, or 40 for the thief who lands the final blow',()=>{
+ for(const [career,points] of [['swordsman',30],['thief',40]]){
+  const {r,p:[a,b]}=match();start(r,[a,b]);
+  a.baseCls=career;
+  r.encounter(a,b,3000);
+  const battle=r.battles.get(a.battle),target=battle.enemies.find(u=>u.sealer===b.id&&u.kind==='player');
+  target.hp=0;
+  battle.fallen.push(b.id);
+  battle.colosseumFalls.set(target.id,battle.roster.indexOf(a.id));
+  r.recordFalls(battle,3100);r.recordFalls(battle,3200);
+  eq(r.score,[500+points,500-points]);eq(a.earned,points);eq(a.kills,1);
+ }
+});
 Deno.test('combat command must be current, authorized and targeted to the appropriate side',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const at=cellCenter(15,21);Object.assign(a,at);Object.assign(b,at);r.tick(3000,0);
@@ -321,10 +393,10 @@ Deno.test('battle auto uses the active owner and can be toggled off without rese
  r.tick(openedAt+499,0);eq(duel.turn,turn);
  r.tick(openedAt+500,0);eq(duel.last.actor,active.id);
 });
-Deno.test('ten distinct random chest sites; only first opener earns 5–15 points',()=>{
+Deno.test('ten distinct random chest sites; only first opener earns 20–80 points',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  eq(r.chests.length,10);eq(new Set(r.chests.map(c=>`${c.x}:${c.y}`)).size,10);
- ok(r.chests.every(c=>fits(c.x,c.y)&&c.points>=5&&c.points<=15));
+ ok(r.chests.every(c=>fits(c.x,c.y)&&c.points>=20&&c.points<=80));
  const c=r.chests[0];Object.assign(a,{x:c.x,y:c.y});Object.assign(b,{x:c.x,y:c.y});
  r.command(b,{type:'chest',id:c.id},3000);eq(r.score,[500,500+c.points]);
  let denied=false;try{r.command(a,{type:'chest',id:c.id},3000);}catch{denied=true;}
@@ -341,7 +413,7 @@ Deno.test('rare boss spawns every two minutes at the rounded average level and s
  const battle=r.battles.get(a.battle);
  ok(battle?.boss);eq(battle.enemies.length,1);eq(battle.enemies[0].st,bossUnit(beast).st);
  battle.enemies[0].hp=0;r.recordFalls(battle,BOSS_INTERVAL+2);r.recordFalls(battle,BOSS_INTERVAL+3);
- eq(r.score,[520,480]);ok(r.events.at(-1).text.includes('นาทีที่ 4'));eq(beast.phase,'defeated');
+ eq(r.score,[560,440]);ok(r.events.at(-1).text.includes('นาทีที่ 4'));eq(beast.phase,'defeated');
  r.tick(BOSS_INTERVAL*2,0);eq(r.bosses.length,1);ok(r.bosses[0].sp!==beast.sp);
 });
 Deno.test('swordsman line gains 25 percent more for finishing a shadow and a boss',()=>{
@@ -350,12 +422,12 @@ Deno.test('swordsman line gains 25 percent more for finishing a shadow and a bos
  r.encounter(a,r.shadows[0],3000,true);
  const hunt=r.battles.get(a.battle);
  hunt.enemies[0].hp=0;r.recordFalls(hunt,3100);r.recordFalls(hunt,3200);
- eq(a.earned,6.25);eq(r.score,[506.25,500]);
+ eq(a.earned,25);eq(r.score,[525,500]);
  r.rotateBosses(BOSS_INTERVAL);
  r.encounter(a,r.bosses[0],BOSS_INTERVAL,true);
  const boss=r.battles.get(a.battle);
  boss.enemies[0].hp=0;r.recordFalls(boss,BOSS_INTERVAL+1);r.recordFalls(boss,BOSS_INTERVAL+2);
- eq(a.earned,31.25);eq(r.score,[531.25,480]);
+ eq(a.earned,100);eq(r.score,[600,440]);
 });
 Deno.test('an undefeated boss is replaced at the deadline, even if a battle is active',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.tick(BOSS_INTERVAL,0);
@@ -399,14 +471,15 @@ Deno.test('capturing a large base sets 25 percent HP and immediately wins above 
  Object.assign(a,{x:capital.x,y:capital.y});
  r.siegeBases(3000);r.siegeBases(3250);
  eq([capital.side,capital.hp,r.winner,r.reason],[a.side,75,a.side,'base-captured']);
- eq(r.score,[503,497]);
+ ok(r.baseEffects.some(e=>e.baseId===capital.id&&e.kind==='collapse'));
+ eq(r.score,[553,397]);eq(a.earned,53);
 });
 Deno.test('a shadow acquires at 1000, runs at 200 units per second and returns after five seconds or beyond 2000',()=>{
  for(const reason of ['time','distance']){
   const {r,p:[a,b]}=match();start(r,[a,b]);
   const beast=r.shadows[0];
   beast.home=cellCenter(3,21);Object.assign(beast,beast.home);
-  r.shadows=[beast];b.connected=false;
+  r.shadows=[beast];r.bases=[];b.connected=false;
   Object.assign(a,{x:beast.x+1001,y:beast.y});
   r.tick(3000,0);eq(beast.pursuedId,undefined);
   a.x=beast.x+1000;r.tick(3100,0);eq(beast.pursuedId,a.id);
@@ -449,7 +522,7 @@ Deno.test('rare creature kill scores once and island traps are randomized ten pe
  const battle=r.battles.get(a.battle);
  eq(battle.allies[0].hp,a.maxHp-Math.round(a.maxHp*.1));
  battle.enemies[0].hp=0;r.recordFalls(battle,5500);r.recordFalls(battle,5600);
- eq(r.score,[505,500]);
+ eq(r.score,[520,500]);
 });
 Deno.test('solo practice starts with nine bots and runs normal objectives to a result',()=>{
  const r=new Match('1234AABB',0,()=>.5);

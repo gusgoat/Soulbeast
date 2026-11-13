@@ -1,16 +1,17 @@
 import {ASSIST, BASES, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_REPAIR_MS, BASE_REPAIR_POINTS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=base-hp-1';
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=siege-scoring-1';
 import {teamResults} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=base-hp-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=siege-scoring-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=base-hp-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=siege-scoring-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const huntPoints=(p,points)=>p.baseCls==='swordsman'?points*1.25:points;
-const nearest=(p,list)=>list.slice().sort((a,b)=>distance(a,p)-distance(b,p)||a.id.localeCompare(b.id))[0];
+const BASE_CAPTURE_LOSS={small:40,medium:60,large:100};
+const nearest=(p,list)=>list.slice().sort((a,b)=>distance(a,p)-distance(b,p)||(a.id??'').localeCompare(b.id??''))[0];
 const partyPets=(battle,p)=>[...battle.allies,...battle.enemies].filter(u=>u.kind==='pet'&&u.sealer===p.id&&p.petVitals?.has(u.uid));
 const SHADOW_AGGRO=1000, SHADOW_LEASH=2000, SHADOW_CHASE_MS=5000;
 const SURVIVAL_CUT_INTERVAL=120_000;
@@ -115,14 +116,16 @@ export class Match {
     this.respawn(p,now);
    });
    SHADOW_SPAWNS.forEach(([x,y,sp],i)=>{
-    const home=this.solo?this.site(this.shadows,350):cellCenter(side?COLS-1-x:x,y);
+    const preferred=cellCenter(side?COLS-1-x:x,y);
+    const home=this.solo?this.site(this.shadows,350):this.inBaseFireRange(preferred)?
+     nearest(preferred,OBJECT_SITES.filter(point=>!this.shadows.some(s=>distance(s,point)<150))):preferred;
     this.shadows.push({sp,label:`${rareArt[sp].name}เงา`,rare:true,...home,home,id:`s${side}${i}`,lv,phase:'walk'});
    });
   }
   const chestCount=this.solo?SURVIVAL_CHEST_COUNT:CHEST_COUNT;
   for(let i=0;i<chestCount;i++){
    const spot=this.site([...this.chests,...this.shadows],220);
-   this.chests.push({id:`chest-${i}`,...spot,points:this.solo?SURVIVAL_POINTS.chest:5+Math.floor(this.random()*11),opened:false});
+   this.chests.push({id:`chest-${i}`,...spot,points:this.solo?SURVIVAL_POINTS.chest:20+Math.floor(this.random()*61),opened:false});
   }
   this.placeTraps();
   this.note('ประตูสนามเปิดแล้ว!',now);
@@ -311,8 +314,12 @@ export class Match {
   this.battles.set(id,battle);
   for(const p of [...teams.flat(),...(neutral?[b]:[])]){
    p.phase='battle';p.battle=id;p.dx=p.dy=0;
+   delete p.siege;
    if(p.repair)p.repair.nextAt=null;
   }
+  this.baseBolts=this.baseBolts.filter(bolt=>bolt.target.phase!=='battle');
+  this.baseEffects=this.baseEffects.filter(effect=>effect.kind==='collapse'||
+   !teams.some(team=>team.some(p=>p.id===effect.playerId)));
  }
  earn(player,points){
   player.earned+=points;
@@ -323,13 +330,16 @@ export class Match {
   const owner=battle.colosseumFalls?.get(unit.id);
   return this.players.find(p=>p.id===battle.roster[owner])??null;
  }
- fall(p,now,cause=''){
+ fall(p,now,cause='',killer=null){
   p.phase='dead';
   delete p.repair;
   if(this.solo){p.eliminationCause=cause;p.eliminatedAt=now;this.note(`${p.name} ตกรอบ${cause?' · '+cause:''}`,now);return;}
   p.respawnAt=now+RESPAWN_MS;
-  this.score[p.side]=Math.max(0,this.score[p.side]-10);
-  this.note(`${p.name} ล้มลง · ${TEAMS[p.side]} −10`,now);
+  const points=killer?(killer.baseCls==='thief'?40:30):10;
+  if(killer)this.earn(killer,points);
+  this.score[p.side]=Math.max(0,this.score[p.side]-points);
+  const award=killer?`${killer.name} สังหาร ${p.name} · ${TEAMS[killer.side]} +${points}`:`${p.name} ล้มลง`;
+  this.note(`${award} · ${TEAMS[p.side]} −${points}`,now);
  }
  recordFalls(b,now){
   let changed=false;
@@ -339,8 +349,9 @@ export class Match {
    this.savePetVitals(p,b);
    const hero=[...b.allies,...b.enemies].find(u=>u.kind==='player'&&u.sealer===id);
    const credit=this.combatCredit(b,hero);
-   if(!b.beastId&&credit&&credit!==p&&(this.solo||credit.side!==p.side))credit.kills++;
-   this.fall(p,now);changed=true;
+   const killer=!b.beastId&&credit&&credit!==p&&(this.solo||credit.side!==p.side)?credit:null;
+   if(killer)killer.kills++;
+   this.fall(p,now,'',killer);changed=true;
    if(this.solo&&!b.beastId){
     const winner=[...b.allies,...b.enemies].find(u=>u.kind==='player'&&u.sealer!==id&&u.hp>0);
     const survivor=winner&&this.players.find(player=>player.id===winner.sealer);
@@ -492,31 +503,57 @@ export class Match {
  }
  bossPatrol(boss){
   if(!boss.patrolTo||distance(boss,boss.patrolTo)<=10){
+   const {indexAt,nextCell,clearPath}=this.arena,from=indexAt(boss);
+   const canCross=(x,y,nx,ny)=>this.beastPathAllowed(cellCenter(x,y),cellCenter(nx,ny));
    const options=OBJECT_SITES.filter(point=>{
     const range=distance(boss,point);
-    return range>=300&&range<=1000;
+    return range>=300&&range<=1000&&!this.inBaseFireRange(point);
    });
-   boss.patrolTo=options[Math.floor(this.random()*options.length)];
+   const start=Math.floor(this.random()*options.length);
+   boss.patrolTo=null;
+   for(let i=0;i<options.length;i++){
+    const point=options[(start+i)%options.length];
+    if((clearPath(boss,point,RADIUS)&&this.beastPathAllowed(boss,point))||nextCell(from,indexAt(point),canCross)!==from){
+     boss.patrolTo=point;break;
+    }
+   }
   }
   return boss.patrolTo??boss.home;
+ }
+ inBaseFireRange(point){
+  return this.bases.some(base=>base.hp>0&&distance(base,point)<=BASE_FIRE_RANGE);
+ }
+ beastPathAllowed(a,b){
+  if(this.solo)return true;
+  // Distance to the closest point on the segment, in the same projected units as turret range.
+  const dx=b.x-a.x,dy=(b.y-a.y)*FLAT,length=dx*dx+dy*dy;
+  return this.bases.every(base=>{
+   const x=base.x-a.x,y=(base.y-a.y)*FLAT;
+   const t=length?Math.max(0,Math.min(1,(x*dx+y*dy)/length)):0;
+   return base.hp<=0||Math.hypot(x-t*dx,y-t*dy)>BASE_FIRE_RANGE;
+  });
  }
  moveBeast(beast,dest,dt,speed){
   const {clearPath,indexAt,cols,nextCell,move}=this.arena;
   if(distance(beast,dest)<=10)return;
   let aim=dest;
-  if(!clearPath(beast,dest,RADIUS)){
+  if(!clearPath(beast,dest,RADIUS)||!this.beastPathAllowed(beast,dest)){
    const from=indexAt(beast),to=indexAt(dest);
-   if(!beast.nav||beast.nav.to!==to||distance(beast,beast.nav.aim)<16){
+   if(!beast.nav||beast.nav.to!==to||beast.nav.aim&&distance(beast,beast.nav.aim)<16){
     const center=cellCenter(from%cols,Math.floor(from/cols));
-    const next=distance(beast,center)>16?from:nextCell(from,to);
-    beast.nav={to,aim:cellCenter(next%cols,Math.floor(next/cols))};
+    const needsCenter=distance(beast,center)>16&&this.beastPathAllowed(beast,center);
+    const next=needsCenter?from:nextCell(from,to,(x,y,nx,ny)=>
+     this.beastPathAllowed(cellCenter(x,y),cellCenter(nx,ny)));
+    beast.nav={to,aim:next!==from||needsCenter?cellCenter(next%cols,Math.floor(next/cols)):null};
    }
    aim=beast.nav.aim;
+   if(!aim)return;
   }else beast.nav=null;
   const dx=aim.x-beast.x,dy=(aim.y-beast.y)*FLAT;
   const length=Math.hypot(dx,dy);
   if(!this.solo&&this.arena.bushAt(beast)!==null)speed/=2;
-  if(length>0)move(beast,dx/length,dy/length,Math.min(dt,length/speed),speed);
+  if(length>0)move(beast,dx/length,dy/length,Math.min(dt,length/speed),speed,
+   (x,y)=>this.beastPathAllowed(beast,{x,y}));
  }
  clearBaseRepairs(id){
   for(const p of this.players)if(p.repair?.baseId===id)delete p.repair;
@@ -525,7 +562,6 @@ export class Match {
   const effect={id:++this.baseEffectSerial,kind,side:base.side,baseId:base.id,playerId:p.id,
    x:p.x,y:p.y,at:now,until:now+duration};
   this.baseEffects.push(effect);
-  return effect;
  }
  siegeBases(now){
   this.baseEffects=this.baseEffects.filter(e=>e.until>now);
@@ -533,13 +569,9 @@ export class Match {
   for(const bolt of this.baseBolts){
    if(bolt.at>now){pending.push(bolt);continue;}
    const {target,warp,damage}=bolt;
-   if(!target.connected||target.phase==='dead'||target.warp!==warp)continue;
-   const battle=target.phase==='battle'&&this.battles.get(target.battle);
-   const unit=this.battleHero(target)||target;
-   unit.hp=Math.max(0,unit.hp-damage);
-   target.hp=unit.hp;
-   if(battle){settleCombat(battle,now);this.recordFalls(battle,now);}
-   else if(!unit.hp){this.fall(target,now);this.checkScore(now);}
+   if(!target.connected||target.phase!=='walk'||target.warp!==warp)continue;
+   target.hp=Math.max(0,target.hp-damage);
+   if(!target.hp){this.fall(target,now);this.checkScore(now);}
    if(this.phase!=='match')return;
   }
   this.baseBolts=pending;
@@ -626,12 +658,16 @@ export class Match {
    this.earn(p,base.points);
    this.score[base.side]=Math.max(0,this.score[base.side]-base.points);
    if(base.hp===0){
+    this.baseEffect('collapse',base,{x:base.x,y:base.y},now,1050);
+    const defender=base.side,loss=BASE_CAPTURE_LOSS[base.tier],bonus=loss/2;
+    this.score[defender]=Math.max(0,this.score[defender]-loss);
+    this.earn(p,bonus);
     base.side=p.side;
     base.hp=base.maxHp/4;
     base.fireAt=now+BASE_FIRE_MS;
     base.underAttack=false;
     this.clearBaseRepairs(base.id);
-    this.note(`${p.name} ยึด${base.label} · ${TEAMS[p.side]}`,now);
+    this.note(`${p.name} ยึด${base.label} · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}`,now);
     if(base.main)this.finish(p.side,'base-captured',now);
     else this.checkScore(now);
     return;
@@ -691,7 +727,7 @@ export class Match {
     Object.assign(b,b.home,{phase:'walk',pursuedId:undefined,nav:null});
    }
    if(b.phase!=='walk'||now<(b.safeUntil??0))continue;
-   const players=this.players.filter(p=>fresh(p,now)&&bushAt(p)===null);
+   const players=this.players.filter(p=>fresh(p,now)&&bushAt(p)===null&&!this.inBaseFireRange(p));
    const target=b.boss?this.bossTarget(b,players):this.shadowTarget(b,players,now);
    if(b.pursuedId!==target?.id)b.nav=null;
    b.pursuedId=target?.id;
@@ -728,12 +764,12 @@ export class Match {
   const players=this.players.map(q=>{
    const {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,x,y,warp,safeUntil}=q;
    const ally=this.solo?q===p:side===p.side;
-   const visible=q===p||q===spectating||(inSight(viewer,q)&&(ally||canSeeOpponent(viewer,q)));
+   const visible=q===p||q===spectating||((this.solo||phase==='walk')&&inSight(viewer,q)&&(ally||canSeeOpponent(viewer,q)));
    const teamHp=ally?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
    return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),rating:q.rating,...teamHp,
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
     ...(!this.solo&&ally&&visible?{repairingBase:repairing(q)?q.repair.baseId:null}:{}),
-    ...(!this.solo&&ally&&!visible&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
+    ...(!this.solo&&ally&&!visible&&phase==='walk'&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
   });
   return {type:'state',me:p.id,code:this.code,phase:this.phase,ranked:Boolean(this.ranked),practice:Boolean(this.practice),isPublic:Boolean(this.isPublic),host:this.host,canStart:this.canStart(),
    ...(this.phase==='lobby'?{canManageBots:this.host===p.id&&this.rankSearch==null}:{}),
