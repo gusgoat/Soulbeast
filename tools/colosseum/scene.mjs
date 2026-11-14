@@ -7,6 +7,7 @@ import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
 import maleSiegeArt from './siege-male-catalog.mjs?v=1';
+import femaleSiegeArt from './siege-female-catalog.mjs?v=1';
 import pvpCardArt from './pvp-card-art.mjs?v=battle-parity-1';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
 const TILE=CELL*FLAT;
@@ -141,15 +142,20 @@ const baseArt=['ice','fire'].map(theme=>({
 const siegeArt=Object.fromEntries(['archer','magic','gunner','melee','hammer','tower','collapse']
  .map(kind=>[kind,img(`./art/siege-${kind}.webp`)]));
 const siegePoses=new Map();
-const maleSiegeSheets=new Map();
+const siegeCatalogs={male:maleSiegeArt,female:femaleSiegeArt};
+const siegeSheets=new Map();
 const siegeDirection=(dx,dy)=>(Math.round(-Math.atan2(dx,dy)/WALK_SECTOR)+8)%8;
 
-function maleSiegeSheet(player){
- if(sealerGender(player)!=='male'||!Object.hasOwn(maleSiegeArt,player.cls))return null;
- if(!maleSiegeSheets.has(player.cls)){
-  maleSiegeSheets.set(player.cls,img(new URL(`./art/siege-male-v1/${player.cls}.webp`,import.meta.url).href));
+function siegeSheet(player){
+ const gender=sealerGender(player);
+ const catalog=siegeCatalogs[gender];
+ if(!Object.hasOwn(catalog,player.cls))return null;
+ const key=`${gender}/${player.cls}`;
+ if(!siegeSheets.has(key)){
+  const image=img(new URL(`./art/siege-${gender}-v1/${player.cls}.webp`,import.meta.url).href);
+  siegeSheets.set(key,{image,...catalog[player.cls]});
  }
- return maleSiegeSheets.get(player.cls);
+ return siegeSheets.get(key);
 }
 const damageSources=[[.46,.29],[.24,.55],[.72,.47],[.38,.68],[.62,.57],[.82,.65]];
 const damageFire=img('./art/siege-fire.webp'),damageSmoke=img('./art/siege-smoke.webp');
@@ -791,8 +797,8 @@ export class Scene{
    const entry=atlas?.entry;
    const [ax,ay]=entry?.anchor||[.5,.962],size=145*(entry?.renderScale||1);
    const target=attack&&bases.get(attack.baseId);
-   const attackSheet=target&&maleSiegeSheet(p);
-   const directional=ready(attackSheet);
+   const attackSheet=target&&siegeSheet(p);
+   const directional=ready(attackSheet?.image);
    const action=target&&!directional&&pvpCardArt[`${p.cls}-${sealerGender(p)}`];
    const progress=attack?Math.max(0,(serverTime-attack.at)/(attack.until-attack.at)):0;
    const close=attack?.kind==='melee'||attack?.kind==='hammer';
@@ -800,11 +806,11 @@ export class Scene{
    if(posePath&&!siegePoses.has(posePath))siegePoses.set(posePath,img(posePath.replace(/^\/assets\//,assets)));
    const strike=siegePoses.get(posePath);
    if(directional){
-    const {cell,frames,feet}=maleSiegeArt[p.cls];
+    const {image,cell,frames,feet}=attackSheet;
     const dx=target.x-p.x,dy=(target.y-p.y)*FLAT;
     const row=dx||dy?siegeDirection(dx,dy):prev.dir;
     const frame=Math.min(frames-1,Math.floor(progress*frames));
-    c.drawImage(attackSheet,frame*cell,row*cell,cell,cell,x-size*.5,y-size*feet[row],size,size);
+    c.drawImage(image,frame*cell,row*cell,cell,cell,x-size*.5,y-size*feet[row],size,size);
    }else if(ready(strike)){
     const reach=Math.sin(Math.PI*Math.min(1,progress))*(close?14:5);
     const direction=Math.sign(target.x-x)||1;
