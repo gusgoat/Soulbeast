@@ -4,7 +4,7 @@ import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
 import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=male-siege-v1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
-import {battlePresentation} from './battle-presentation.mjs?v=projectile-2';
+import {battlePresentation} from './battle-presentation.mjs?v=motion-fx-3';
 import {bindWalkJoystick} from './walk-joystick.mjs?v=1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 

@@ -1,4 +1,4 @@
-import {battleEffects} from './battle-effects.generated.mjs?v=projectile-2';
+import {battleEffects} from './battle-effects.generated.mjs?v=motion-fx-3';
 
 const assets = new URL('../../assets/',import.meta.url).pathname;
 // Reuse the sounds and painted projectiles from the game's PvP presentation.
