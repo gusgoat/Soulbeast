@@ -6,6 +6,7 @@ import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
+import maleSiegeArt from './siege-male-catalog.mjs?v=1';
 import pvpCardArt from './pvp-card-art.mjs?v=battle-parity-1';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
 const TILE=CELL*FLAT;
@@ -140,6 +141,16 @@ const baseArt=['ice','fire'].map(theme=>({
 const siegeArt=Object.fromEntries(['archer','magic','gunner','melee','hammer','tower','collapse']
  .map(kind=>[kind,img(`./art/siege-${kind}.webp`)]));
 const siegePoses=new Map();
+const maleSiegeSheets=new Map();
+const siegeDirection=(dx,dy)=>(Math.round(-Math.atan2(dx,dy)/WALK_SECTOR)+8)%8;
+
+function maleSiegeSheet(player){
+ if(sealerGender(player)!=='male'||!Object.hasOwn(maleSiegeArt,player.cls))return null;
+ if(!maleSiegeSheets.has(player.cls)){
+  maleSiegeSheets.set(player.cls,img(new URL(`./art/siege-male-v1/${player.cls}.webp`,import.meta.url).href));
+ }
+ return maleSiegeSheets.get(player.cls);
+}
 const damageSources=[[.46,.29],[.24,.55],[.72,.47],[.38,.68],[.62,.57],[.82,.65]];
 const damageFire=img('./art/siege-fire.webp'),damageSmoke=img('./art/siege-smoke.webp');
 const pavingArt=img('./art/arena-paving-v1.webp');
@@ -780,13 +791,21 @@ export class Scene{
    const entry=atlas?.entry;
    const [ax,ay]=entry?.anchor||[.5,.962],size=145*(entry?.renderScale||1);
    const target=attack&&bases.get(attack.baseId);
-   const action=target&&pvpCardArt[`${p.cls}-${sealerGender(p)}`];
+   const attackSheet=target&&maleSiegeSheet(p);
+   const directional=ready(attackSheet);
+   const action=target&&!directional&&pvpCardArt[`${p.cls}-${sealerGender(p)}`];
    const progress=attack?Math.max(0,(serverTime-attack.at)/(attack.until-attack.at)):0;
    const close=attack?.kind==='melee'||attack?.kind==='hammer';
    const posePath=action&&(progress<.25?action.windup:close?action.melee:action.power);
    if(posePath&&!siegePoses.has(posePath))siegePoses.set(posePath,img(posePath.replace(/^\/assets\//,assets)));
    const strike=siegePoses.get(posePath);
-   if(ready(strike)){
+   if(directional){
+    const {cell,frames,feet}=maleSiegeArt[p.cls];
+    const dx=target.x-p.x,dy=(target.y-p.y)*FLAT;
+    const row=dx||dy?siegeDirection(dx,dy):prev.dir;
+    const frame=Math.min(frames-1,Math.floor(progress*frames));
+    c.drawImage(attackSheet,frame*cell,row*cell,cell,cell,x-size*.5,y-size*feet[row],size,size);
+   }else if(ready(strike)){
     const reach=Math.sin(Math.PI*Math.min(1,progress))*(close?14:5);
     const direction=Math.sign(target.x-x)||1;
     const height=size*.87,width=height*strike.naturalWidth/strike.naturalHeight;
@@ -806,7 +825,7 @@ export class Scene{
      globalThis.sealerSprites.drawColoredFrame(c,sheet,col*width,row*height,width,height,x-size*ax,y-size*ay,size,size);
     }
    }
-   if(!ready(strike)&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
+   if(!directional&&!ready(strike)&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
    const spriteTop=y-(atlas?size*ay:55);
    this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,spriteTop-16,isMe?'#fff2af':color,p.rating??0,now);
   }

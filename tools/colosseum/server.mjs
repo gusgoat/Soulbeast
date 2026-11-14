@@ -8,7 +8,7 @@ import {createAccountLoader} from './account-auth.mjs';
 
 const TYPES={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8',
  '.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg','.mp3':'audio/mpeg'};
-const STATIC=new Set(['index.html','client.mjs','ranking.mjs','matchmaking.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','battle-effects.generated.mjs','pvp-card-art.mjs','walk-joystick.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js','town-walk-demo/sealer-sprites.js']);
+const STATIC=new Set(['index.html','client.mjs','ranking.mjs','matchmaking.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','siege-male-catalog.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','battle-effects.generated.mjs','pvp-card-art.mjs','walk-joystick.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js','town-walk-demo/sealer-sprites.js']);
 const ROOT=new URL('../../',import.meta.url);
 const TICK=50, LOBBY_TTL=30*60_000, LOBBY_RECONNECT_MS=60_000, FINISH_TTL=5*60_000;
 const MAX_ROOMS=32, MAX_CONNECTIONS=160;
@@ -469,7 +469,7 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
   const atlas=/^art\/(?:(swordsman|archer|mage|summoner)-(idle|run)|tall-grass-v1|tall-hedge-v2|maze-wall-v1|stone-base-v1|arena-(crowd|paving|column|ruins)-v1|mode-(team|survival)-v1|(?:ice|fire)-castle-(?:main|small)-v1)\.webp$/.test(path);
   const effectStyles=path==='game-styles.afa6a43765a67ae5.css';
   const siegeArt=/^art\/(?:(?:ice|fire)-castle-(?:small|medium|large)-hp-(?:75|50|25)|siege-(?:archer|magic|gunner|melee|hammer|tower|collapse|fire|smoke))\.webp$/.test(path);
-  if(!contentType||!(STATIC.has(path)||asset||atlas||siegeArt||effectStyles))return new Response('Not found',{status:404});
+  if(!contentType||!(STATIC.has(path)||asset||atlas||siegeArt||/^art\/siege-male-v1\/[a-z]+\.webp$/.test(path)||effectStyles))return new Response('Not found',{status:404});
   const location=asset||effectStyles?new URL(path,ROOT):new URL(path.includes('/')&&STATIC.has(path)?'../'+path:path,import.meta.url);
   try{
    const body=req.method==='HEAD'?null:await Deno.readFile(location);
