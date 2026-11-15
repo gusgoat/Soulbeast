@@ -1,5 +1,5 @@
 import '../../content/beast-names.js';
-import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-auto-1';
+import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-timed-monsters-1';
 import rareArt from './rare-art.mjs';
 import {personalCombatBonus} from './arena.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
@@ -94,6 +94,15 @@ export function syncCombatBonuses(b){
   u.colosseumStatMultiplier=multiplier;
  }
 }
+export function syncMonsterPower(b,elapsed){
+ if(!b.colosseumOwnerSlots||!b.beastId||b.finished)return;
+ const monster=b.enemies[0];
+ const multiplier=1+Math.floor(elapsed/120_000)/10;
+ const previous=monster.timePower??1;
+ if(multiplier===previous)return;
+ for(const stat of BASE_AURA_STATS)monster.st[stat]*=multiplier/previous;
+ monster.timePower=multiplier;
+}
 export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=false){
  const roster=teams.flat();
  const b={id,kind:shadow?'hunt':'pvp',round:0,turns:0,turn:0,cur:null,queue:[],deadline:0,
@@ -119,7 +128,14 @@ export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=fa
    list.push(u);
   }
  }
- if(shadow){const u=shadow.boss?bossUnit(shadow):core.shadow(shadow.sp,shadow.lv,0);u.owner=-1;u.name=shadow.label;b.enemies.push(u);b.boss=!!shadow.boss;}
+ if(shadow){
+  const u=shadow.boss?bossUnit(shadow):core.shadow(shadow.sp,shadow.lv,0);
+  if(teamSiege&&!shadow.boss){
+   for(const stat of ['hp','pdef','mdef'])u.st[stat]=Math.round(u.st[stat]*1.5);
+   u.hp=u.st.hp;
+  }
+  u.owner=-1;u.name=shadow.label;b.enemies.push(u);b.boss=!!shadow.boss;
+ }
  syncCombatBonuses(b);
  for(const p of roster)if(auraOwners.has(p.id))b.log.push(`◆ ${p.name} · ออร่าฐาน โจมตีและป้องกัน +${auraOwners.get(p.id)}%`);
  core.bind(b);next(b,now);return b;

@@ -1,7 +1,7 @@
 import {ASSIST, BASES, BASE_BOLT_MS, TEAM_SPEED, BOSS_INTERVAL, BUSHES, CELL, COLS, WARP_PADS, MATCH_MS, OBSTACLES, RADIUS, bushAt, cellCenter, clearPath, distance, fits, maze, movePlayer, nextCell, personalCombatBonus, siegeProfile, spawns} from './arena.mjs';
 import {SIGHT_RANGE} from './sight.mjs';
 import {Match} from './match.mjs';
-import {advanceCombat, bossUnit, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto} from './combat.mjs';
+import {advanceCombat, bossUnit, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, syncMonsterPower} from './combat.mjs';
 import {serve} from './server.mjs';
 import {startPractice} from './practice.mjs';
 import {siegeAudio} from './siege-audio.mjs';
@@ -83,10 +83,10 @@ Deno.test('each central medium base unlocks after destroying any one of its thre
   };
   stage(medium,3000);eq(medium.hp,80);
   small.hp=1;stage(small,4000);
-  eq([small.side,small.hp],[side,0]);
+  eq([small.side,small.hp,small.flagSide],[side,0,attacker.side]);
   eq([attacker.earned,r.score[attacker.side],r.score[side]],[21,321,259]);
   ok(!r.inBaseFireRange(small));
-  stage(medium,5000);eq(medium.hp,75);
+  stage(medium,5000);eq(medium.hp,attacker.baseCls==='summoner'?77:75);
   medium.hp=1;stage(medium,6000);
   eq([medium.side,medium.hp,attacker.earned,r.score[attacker.side],r.score[side]],[side,0,55,355,195]);
  }
@@ -120,21 +120,21 @@ Deno.test('archer siege hits for two HP every second, awards points, shows the w
  const base=r.bases.find(base=>base.side===b.side&&base.tier==='small');
  base.fireAt=Infinity;
  Object.assign(a,{x:base.x,y:base.y,baseCls:'archer'});
- eq(siegeProfile(a),{range:350,effect:'archer'});
+ eq(siegeProfile(a),{range:375,effect:'archer'});
  r.siegeBases(3000);r.siegeBases(3199);eq(base.hp,60);
  eq(r.snapshot(b,3199).bases.find(x=>x.id===base.id).underAttack,true);
  eq(r.snapshot(a,3199).bases.find(x=>x.id===base.id).underAttack,false);
  r.siegeBases(3999);eq(base.hp,60);eq(r.score,[300,300]);
- r.siegeBases(4000);eq(base.hp,58);eq(r.score,[301,299]);eq([a.x,a.y],[base.x,base.y]);
+ r.siegeBases(4000);eq(base.hp,58);eq(r.score,[300.5,299.5]);eq(a.earned,.5);eq([a.x,a.y],[base.x,base.y]);
  ok(r.baseEffects.some(e=>e.kind==='archer'));
- r.score[b.side]=1;r.siegeBases(4999);eq(r.score,[301,1]);
+ r.score[b.side]=.5;r.siegeBases(4999);eq(r.score,[300.5,.5]);
  r.siegeBases(5000);eq(r.winner,a.side);eq(r.reason,'zero');
 });
-Deno.test('archer hits a base from 350 units while the turret and gunner cannot reach',()=>{
+Deno.test('archer hits a base from 375 units while the turret and gunner cannot reach',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');
  r.bases=[base];
- Object.assign(a,{x:base.x-351,y:base.y,baseCls:'archer'});
+ Object.assign(a,{x:base.x-376,y:base.y,baseCls:'archer'});
  ok(clearPath(a,base));
  r.siegeBases(3000);eq(a.siege,undefined);
  a.x++;
@@ -291,6 +291,7 @@ Deno.test('thieves gain PvP damage only against eligible sealers',()=>{
  const a=r.join({name:'Thief',cls:'thief',lv:25,botCareer:true});
  const gunner=r.join({name:'Gunner',cls:'gunner',lv:25,botCareer:true});
  const gladiator=r.join({name:'Gladiator',cls:'gladiator',lv:25,botCareer:true});
+ const druid=r.join({name:'Druid',cls:'druid',lv:25,botCareer:true});
  const core=globalThis.SoulbeastColosseumEngine(),random=Math.random;
  const damage=(opponent,teamSiege,pet=false)=>{
   const b=makeCombat('career',[[a],[opponent]],null,3000,new Map(),teamSiege);
@@ -306,6 +307,7 @@ Deno.test('thieves gain PvP damage only against eligible sealers',()=>{
  };
  try{
   Math.random=()=>.5;
+  eq(damage(druid,true),damage(druid,false));
   const normal=damage(gunner,false);
   const boosted=damage(gunner,true);
   ok(Math.abs(boosted-normal*1.15)<=1,`expected 15% more than ${normal}, got ${boosted}; thief line ${a.baseCls}`);
@@ -341,7 +343,7 @@ Deno.test('shadows spawn outside turret range and creatures cannot cross through
  r.moveBeast(beast,target,.1,200);
  ok(!r.inBaseFireRange(beast));
 });
-Deno.test('merchant stays put and earns one personal point per five seconds of active repair within 70 units',()=>{
+Deno.test('merchant stays put and earns one personal point per 2.5 seconds of active repair within 70 units',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
  const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');
  base.hp=55;Object.assign(a,{x:base.x,y:base.y});
@@ -355,14 +357,14 @@ Deno.test('merchant stays put and earns one personal point per five seconds of a
  r.command(a,{type:'repairBase',id:base.id},3000);
  r.command(a,{type:'move',seq:2,x:1,y:0},3300);
  r.tick(5499,.05);eq(base.hp,55);eq(a.x,base.x+70);
- r.tick(5500,.05);eq(base.hp,56);eq(a.earned,0);
- r.tick(7999,0);eq(base.hp,56);eq(a.earned,0);
- r.tick(8000,0);eq(base.hp,57);eq(a.earned,1);
+ r.tick(5500,.05);eq(base.hp,56);eq(a.earned,1);
+ r.tick(7999,0);eq(base.hp,56);eq(a.earned,1);
+ r.tick(8000,0);eq(base.hp,57);eq(a.earned,2);
  r.command(a,{type:'stopRepair'},8500);
  r.tick(9000,0);eq(base.hp,57);
  r.command(a,{type:'repairBase',id:base.id},10000);
  r.tick(17499,0);eq(base.hp,59);
- r.tick(17500,0);eq(base.hp,60);eq(a.repair,undefined);eq(a.earned,2);eq(r.score,[300,300]);
+ r.tick(17500,0);eq(base.hp,60);eq(a.repair,undefined);eq(a.earned,5);eq(r.score,[300,300]);
 });
 Deno.test('every friendly base restores walking sealers and revives their pets at its tier rate',()=>{
  for(const [tier,ratio] of [['small',.03],['medium',.06],['large',.09]]){
@@ -375,6 +377,8 @@ Deno.test('every friendly base restores walking sealers and revives their pets a
   ok(Math.abs(a.hp-a.maxHp*(.5+ratio))<.001);
   eq([a.mp,pet.hp,pet.mp],[a.maxMp*ratio,pet.maxHp*ratio,pet.maxMp*ratio]);
   eq(a.ailments,{poison:2});
+  eq(r.snapshot(a,4000).players.find(p=>p.id===a.id).healUntil,4850);
+  eq(r.snapshot(a,4850).players.find(p=>p.id===a.id).healUntil,undefined);
  }
 });
 Deno.test('a raider bot holds its attack position and damages a base through the same siege ticks',()=>{
@@ -407,7 +411,7 @@ Deno.test('a repairing defender in battle cannot block another player from hitti
  b.phase='battle';
  Object.assign(a,{x:base.x,y:base.y});
  r.siegeBases(3000);r.siegeBases(4000);
- eq(base.hp,base.maxHp-6);eq(r.score,[301,299]);
+ eq(base.hp,base.maxHp-4);eq(r.score,[301,299]);
 });
 Deno.test('team movement runs at 200 and thief at 240 with half speed in bushes',()=>{
  const bush=BUSHES[0];
@@ -470,7 +474,7 @@ Deno.test('friendly main base aura covers PvE and summoned golems while shadow a
  const at=a.spawn;Object.assign(a,at);
  const shadow=r.shadows[0];Object.assign(shadow,at);
  r.encounter(a,shadow,3000,true);
- const fight=r.battles.get(a.battle), reference=makeCombat('no-aura',[[a],[]],shadow,3000);
+ const fight=r.battles.get(a.battle), reference=makeCombat('no-aura',[[a],[]],shadow,3000,new Map(),true);
  const summon=battle=>{
   battle.cur=battle.allies[0].id;
   ok(combatAction(battle,a.id,{turn:battle.turn,skill:'summon_golem',target:battle.enemies[0].id},battle.openAt));
@@ -482,7 +486,9 @@ Deno.test('friendly main base aura covers PvE and summoned golems while shadow a
  r.encounter(a,boss,BOSS_INTERVAL,true);
  const bossFight=r.battles.get(a.battle);
  bossFight.allies.forEach((unit,i)=>checkAura(unit,demoProfile(a,0)[i],30));
- checkAura(bossFight.enemies[0],bossUnit(boss),0);
+ const referenceBoss=makeCombat('boss-reference',[[a],[]],boss,BOSS_INTERVAL,new Map(),true);
+ syncMonsterPower(referenceBoss,BOSS_INTERVAL);
+ checkAura(bossFight.enemies[0],referenceBoss.enemies[0],0);
 });
 Deno.test('team and survival enforce a 300-unit sight boundary without changing chest totals or the team minimap',()=>{
  for(const mode of ['team','survival']){
@@ -566,13 +572,13 @@ Deno.test('team warp pads lock movement for five seconds and reject or cancel de
  ok(denied(small[1],9500));
  r.tick(13300,0);eq([a.x,a.y],[pad.x,pad.y]);
 });
-Deno.test('mage, summoner, and druid siege damage is five HP per second',()=>{
+Deno.test('mage deals five HP per second while summoner and druid deal three',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');
  for(const cls of ['mage','summoner','druid']){
   delete a.siege;a.baseCls=cls;base.hp=60;
   r.damageBase(base,a,3000);r.damageBase(base,a,4000);
-  eq(base.hp,55);
+  eq(base.hp,cls==='mage'?55:57);
  }
 });
 Deno.test('team streak callouts include both triple and its milestone and reset on falling',()=>{
@@ -746,6 +752,7 @@ Deno.test('ten distinct random chest sites; only first opener earns 5–20 point
 });
 Deno.test('rare boss spawns every two minutes at the rounded average level and scores once',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
+ a.baseCls='mage';
  r.tick(BOSS_INTERVAL-1,0);eq(r.bosses.length,0);
  r.tick(BOSS_INTERVAL,0);eq(r.bosses.length,1);eq(r.nextBossAt,BOSS_INTERVAL*2);
  const beast=r.bosses[0];ok(rareSpecies.includes(beast.sp)&&rareSpecies.length>10);
@@ -753,14 +760,16 @@ Deno.test('rare boss spawns every two minutes at the rounded average level and s
  const at={x:beast.x,y:beast.y};
  Object.assign(a,at);r.tick(BOSS_INTERVAL+1,0);
  const battle=r.battles.get(a.battle);
- ok(battle?.boss);eq(battle.enemies.length,1);eq(battle.enemies[0].st,bossUnit(beast).st);
+ ok(battle?.boss);eq(battle.enemies.length,1);eq(battle.enemies[0].hp,bossUnit(beast).hp);
+ ok(Math.abs(battle.enemies[0].st.patk-bossUnit(beast).st.patk*1.1)<.001);
  battle.enemies[0].hp=0;r.recordFalls(battle,BOSS_INTERVAL+2);r.recordFalls(battle,BOSS_INTERVAL+3);
  eq(r.score,[360,240]);ok(r.events.at(-1).text.includes('นาทีที่ 4'));eq(beast.phase,'defeated');
  r.tick(BOSS_INTERVAL*2,0);eq(r.bosses.length,1);ok(r.bosses[0].sp!==beast.sp);
 });
-Deno.test('swordsman line earns 8 for a shadow and 70 for a boss',()=>{
+Deno.test('swordsman and summoner earn 8 for a shadow and 75 for a boss',()=>{
+ for(const career of ['swordsman','summoner']){
  const {r,p:[a,b]}=match();start(r,[a,b]);
- a.baseCls='swordsman';
+ a.baseCls=career;
  r.encounter(a,r.shadows[0],3000,true);
  const hunt=r.battles.get(a.battle);
  hunt.enemies[0].hp=0;r.recordFalls(hunt,3100);r.recordFalls(hunt,3200);
@@ -769,7 +778,49 @@ Deno.test('swordsman line earns 8 for a shadow and 70 for a boss',()=>{
  r.encounter(a,r.bosses[0],BOSS_INTERVAL,true);
  const boss=r.battles.get(a.battle);
  boss.enemies[0].hp=0;r.recordFalls(boss,BOSS_INTERVAL+1);r.recordFalls(boss,BOSS_INTERVAL+2);
- eq(a.earned,78);eq([a.beastKills,a.bossKills],[1,1]);eq(r.score,[378,240]);
+ eq(a.earned,83);eq([a.beastKills,a.bossKills],[1,1]);eq(r.score,[383,240]);
+ }
+});
+Deno.test('team monsters grow every two minutes and shadow aura only applies in team mode',()=>{
+ const {r,p:[a,b]}=match();start(r,[a,b]);
+ const shadow=r.shadows[0],normal=makeCombat('normal',[[a],[]],shadow,0).enemies[0];
+ r.encounter(a,shadow,3000,true);
+ const battle=r.battles.get(a.battle),beast=battle.enemies[0];
+ eq(beast.hp,Math.round(normal.hp*1.5));eq(beast.st.pdef,Math.round(normal.st.pdef*1.5));
+ syncMonsterPower(battle,BOSS_INTERVAL-1);eq(beast.st.patk,normal.st.patk);
+ syncMonsterPower(battle,BOSS_INTERVAL*2);
+ ok(Math.abs(beast.st.patk-normal.st.patk*1.2)<.001);
+ ok(Math.abs(beast.st.pdef-Math.round(normal.st.pdef*1.5)*1.2)<.001);
+ const scaled=beast.st.pdef;
+ syncMonsterPower(battle,BOSS_INTERVAL*2);eq(beast.st.pdef,scaled);
+});
+Deno.test('five new team chests spawn per wave and thieves and merchants earn 1.5 times the chest score',()=>{
+ for(const career of ['merchant','thief']){
+  const {r,p:[a,b]}=match();start(r,[a,b]);
+  r.rotateBosses(BOSS_INTERVAL-1);eq(r.chests.length,10);
+  r.rotateBosses(BOSS_INTERVAL);eq(r.chests.length,15);
+  r.rotateBosses(BOSS_INTERVAL);eq(r.chests.length,15);
+  r.rotateBosses(BOSS_INTERVAL*2);eq(r.chests.length,20);
+  eq(new Set(r.chests.map(c=>c.id)).size,20);
+  eq(new Set(r.chests.map(c=>[c.x,c.y].join('/'))).size,20);
+  const chest=r.chests[19];Object.assign(a,{x:chest.x,y:chest.y,baseCls:career});
+  r.command(a,{type:'chest',id:chest.id},BOSS_INTERVAL*2);
+  eq(a.earned,chest.points*1.5);eq(r.score[0],300+a.earned);
+ }
+});
+Deno.test('captured flags enable allied warp and arrival cues only near the destination',()=>{
+ const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
+ const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');base.hp=1;
+ r.damageBase(base,a,3000);r.damageBase(base,a,4000);
+ eq(base.flagSide,a.side);eq(base.hp,0);
+ Object.assign(a,WARP_PADS[a.side]);Object.assign(b,{x:base.x,y:base.y});
+ r.command(a,{type:'warpSmallBase',id:base.id},4100);
+ eq(r.snapshot(a,4100).warpArrivals,[]);
+ eq(r.snapshot(b,4100).warpArrivals,[{x:base.x,y:base.y,recallEndsAt:9100}]);
+ r.command(a,{type:'cancelRecall'},4200);eq(r.snapshot(b,4200).warpArrivals,[]);
+ r.command(a,{type:'warpSmallBase',id:base.id},4300);
+ Object.assign(b,b.spawn);
+ r.tick(9300,0);eq([a.x,a.y],[base.x,base.y]);
 });
 Deno.test('an undefeated boss is replaced at the deadline, even if a battle is active',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.tick(BOSS_INTERVAL,0);
@@ -860,6 +911,7 @@ Deno.test('rare creature kill scores once and island traps are randomized ten pe
  r.updateTraps(5000,2);
  ok(a.hp<a.maxHp);
  const creature=r.shadows[0];
+ a.baseCls='mage';
  r.encounter(a,creature,5200,true);
  const battle=r.battles.get(a.battle);
  eq(battle.allies[0].hp,a.maxHp-Math.round(a.maxHp*.1));

@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, RAID_TARGET, WARP_PADS, baseDamageStage, distance} from './arena.mjs?v=archer-siege-1';
+import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, RAID_TARGET, WARP_PADS, baseDamageStage, distance} from './arena.mjs?v=team-objectives-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -139,6 +139,8 @@ const baseArt=['ice','fire'].map(theme=>({
  damaged:Object.fromEntries(['small','medium','large'].map(tier=>[tier,
   [75,50,25].map(hp=>img(`./art/${theme}-castle-${tier}-hp-${hp}.webp`))])),
 }));
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+const flagArt=['sapphire','ruby'].map(team=>img(`./art/capture-flag-${team}-v1.webp`));
 const warpPadArt=['sapphire','ruby'].map(team=>img(`./art/warp-pad-${team}-v1.webp`));
 const siegeArt=Object.fromEntries(['archer','magic','gunner','melee','hammer','tower','collapse']
  .map(kind=>[kind,img(`./art/siege-${kind}.webp`)]));
@@ -365,6 +367,13 @@ export function drawMap(canvas,state,players,me,zoom=1){
   if(zone.remaining){m.strokeStyle='#b4f081';m.lineWidth=zoom;m.strokeRect(mapX(zone.min),mapY(zone.min),mapX(zone.max-zone.min),mapY(zone.max-zone.min));}
  }
  const bases=(state.bases??BASES).filter(b=>b.hp!==0);
+ for(const flag of state.bases??[]){
+  if(flag.flagSide==null)continue;
+  m.save();m.translate(mapX(flag.x),mapY(flag.y));
+  m.strokeStyle='#fff0bd';m.fillStyle=COLORS[flag.flagSide];m.lineWidth=zoom;
+  m.beginPath();m.moveTo(-3*zoom,4*zoom);m.lineTo(-3*zoom,-4*zoom);
+  m.lineTo(5*zoom,-3*zoom);m.lineTo(-3*zoom,zoom);m.fill();m.stroke();m.restore();
+ }
  const side=state.players.find(p=>p.id===state.me)?.side;
  for(const base of bases)for(const id of base.links||[]){
   const target=bases.find(b=>b.id===id);
@@ -400,7 +409,7 @@ export function drawMap(canvas,state,players,me,zoom=1){
 }
 export class Scene{
  constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.camera=null;this.anim=new Map();this.siegeOrigins=new Map();this.traps=createArenaTraps();this.arena=TEAM_ARENA;}
- render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null,pan=null,baseEffects=[]){
+ render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null,pan=null,baseEffects=[],warpArrivals=[]){
   const canvas=this.canvas,c=this.c,w=canvas.clientWidth,h=canvas.clientHeight;
   if(!w||!h||!me)return;
   const dpr=Math.min(2,devicePixelRatio||1), zoom=Math.min(1.3,Math.max(.84,w/590))*1.08;
@@ -426,6 +435,7 @@ export class Scene{
     c.drawImage(art,pad.x-width/2,pad.y*FLAT-height*.62,width,height);
    }
   }
+  const flags=bases.filter(b=>b.flagSide!=null&&inSight(me,b));
   const repairs=new Set();
   for(const b of castles){
    if(b.side!==me.side||b.hp>=b.maxHp)continue;
@@ -442,11 +452,12 @@ export class Scene{
   const alive=new Set(seen.map(p=>p.id));
   for(const id of this.anim.keys())if(!alive.has(id))this.anim.delete(id);
   const props=obstacles.filter(p=>inSight(me,p)&&p.x>=left-75&&p.x<=right+75&&p.y*FLAT>=top-80&&p.y*FLAT<=bottom+100);
-  for(const e of [...walls,...castles,...seen,...props].sort((a,b)=>a.y-b.y)){
+  for(const e of [...walls,...castles,...flags,...seen,...props].sort((a,b)=>a.y-b.y)){
    if(e.wall){
     this.wall(e.col,e.row,e.wall);
     continue;
    }
+   if(e.flagSide!=null){this.captureFlag(e,now);continue;}
    if(e.main!==undefined){
     this.base(e,now);
     if(repairs.has(e.id))this.repairSparks(e,now);
@@ -457,12 +468,29 @@ export class Scene{
    else{
     if(e.recallEndsAt)this.recallCircle(e,serverTime);
     this.actor(e,now,e.id===me.id,attacks.get(e.id),baseById,serverTime);
+    if(e.healUntil>serverTime)this.healSparks(e,serverTime);
    }
   }
   this.drawBaseEffects(baseEffects,bases,seen,serverTime);
   for(const base of castles)this.drawBaseStatus(base);
+  for(const arrival of warpArrivals)if(arrival.recallEndsAt>serverTime)this.recallCircle(arrival,serverTime,true);
   this.sightMask(me,left,top,right,bottom);
   if(zone?.step)this.fog(zone,left,top,right,bottom,now);
+ }
+ captureFlag(base,now){
+  const image=flagArt[base.flagSide];
+  if(!ready(image))return;
+  const c=this.c,width=82,height=width*image.naturalHeight/image.naturalWidth;
+  const [anchorX,anchorY]=base.flagSide===0?[.316,.95]:[.285,.88];
+  const x=base.x-width*anchorX,y=base.y*FLAT-height*anchorY;
+  if(reducedMotion.matches){c.drawImage(image,x,y,width,height);return;}
+  // The pole is stationary. Only the cloth to its right moves.
+  const strips=24,step=image.naturalWidth/strips,drawStep=width/strips;
+  for(let i=0;i<strips;i++){
+   const loose=Math.max(0,(i/strips-.40)/.60);
+   const offset=Math.sin(now/145-i*.65+base.x*.01)*loose*3.5;
+   c.drawImage(image,i*step,0,step,image.naturalHeight,x+i*drawStep,y+offset,drawStep+.16,height);
+  }
  }
  drawTerrain(left,top,right,bottom){
   const c=this.c,{cols,rows,width,height}=this.arena;
@@ -644,7 +672,19 @@ export class Scene{
   c.fillStyle='#ffb756';c.beginPath();c.ellipse(x,y-4,5,r,0,0,Math.PI*2);c.fill();
   c.fillStyle='#ffe7a9';c.beginPath();c.ellipse(x,y,2.5,6,0,0,Math.PI*2);c.fill();
  }
- recallCircle(player,now){
+ healSparks(player,now){
+  const c=this.c,progress=Math.max(0,1-(player.healUntil-now)/850);
+  c.save();
+  c.strokeStyle='#a8ffc5';c.shadowColor='#69eea7';c.shadowBlur=8;c.lineWidth=2;
+  for(let i=0;i<5;i++){
+   const x=player.x+Math.sin(i*2.4)*27,y=player.y*FLAT-18-progress*49+Math.cos(i*2.4)*18;
+   const size=4+(i%2)*2;
+   c.globalAlpha=Math.sin(progress*Math.PI);
+   c.beginPath();c.moveTo(x-size,y);c.lineTo(x+size,y);c.moveTo(x,y-size);c.lineTo(x,y+size);c.stroke();
+  }
+  c.restore();
+ }
+ recallCircle(player,now,arrival=false){
   const c=this.c;
   const progress=Math.max(0,Math.min(1,1-(player.recallEndsAt-now)/BASE_RECALL_MS));
   const turn=progress*Math.PI*2;
@@ -654,8 +694,8 @@ export class Scene{
   c.shadowBlur=12;
   c.shadowColor='#77dfff';
   c.lineWidth=2;
-  c.strokeStyle='#87e6ff';
-  c.fillStyle='#4baee942';
+  c.strokeStyle=arrival?'#fff1bd':'#87e6ff';
+  c.fillStyle=arrival?'#f9c56559':'#4baee942';
   c.beginPath();c.arc(0,0,37,0,2*Math.PI);c.fill();c.stroke();
   c.rotate(turn);
   for(let i=0;i<2;i++){
@@ -671,6 +711,7 @@ export class Scene{
   c.strokeStyle='#fff1bd';c.lineWidth=4;
   c.beginPath();c.arc(0,0,42,-Math.PI/2,turn-Math.PI/2);c.stroke();
   c.restore();
+  if(arrival)this.label('กำลังวาร์ปลง',player.x,player.y*FLAT-32,'#fff1bd');
  }
  repairRing(b,active){
   const c=this.c,x=b.x,y=b.y*FLAT;
@@ -846,6 +887,16 @@ export class Scene{
   c.strokeStyle=color;c.fillStyle=p.boss?'#5d2150ad':'#100c1877';c.lineWidth=p.boss?3:isMe?3:1.5;
   c.beginPath();c.ellipse(x,y,p.boss?55:25,p.boss?25:12,0,0,2*Math.PI);c.fill();c.stroke();
   if(p.sp){
+   if(this.arena===TEAM_ARENA&&p.rare&&!p.boss){
+    c.save();
+    c.translate(x,y-6);c.scale(1,.57);
+    const aura=c.createRadialGradient(0,0,12,0,0,42);
+    const pulse=reducedMotion.matches?1:.90+.10*Math.sin(now/240);
+    aura.addColorStop(0,'#2a155e00');
+    aura.addColorStop(.76,`rgba(139,89,233,${.5*pulse})`);
+    aura.addColorStop(1,'#7242d500');
+    c.fillStyle=aura;c.fillRect(-42,-42,84,84);c.restore();
+   }
    const spec=rareArt[p.sp];
    if(spec){
     if(!rareAtlases.has(p.sp))rareAtlases.set(p.sp,img(assets+'rare-beast-walk-20261103/'+p.sp+'-walk-v1.webp'));

@@ -84,6 +84,7 @@ dialog canvas{display:block;width:min(68vw,48dvh,400px);height:auto;margin:auto}
 #full-map-wrap{position:relative;width:fit-content;margin:auto;clear:both}
 #warp-map-targets{position:absolute;inset:0;pointer-events:none}
 #warp-map-targets button{position:absolute;translate:-50% -50%;pointer-events:auto;width:32px;min-height:32px;padding:0;border-radius:50%;border:2px solid #ffe5a7;background:#153550;color:#fff;font-weight:800;box-shadow:0 0 10px #96d9fc}
+#warp-map-targets button[data-flag]{border-style:dashed}
 #warp-map-targets[data-side="1"] button{background:#6a2627;box-shadow:0 0 10px #ff8875}
 #large-map:has(#warp-map-targets:not([hidden])) canvas{width:min(77vw,60dvh,430px)}
 #kill-announcement{margin:0;padding:3px 9px;border:1px solid #dbc079;border-radius:7px;background:#1c1529ee;color:#ffe19b;font-size:.78rem;font-weight:750;text-align:center}

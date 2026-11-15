@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=archer-siege-1';
+import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=team-objectives-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=archer-siege-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=team-objectives-1';
 import {teamResults} from './ranking.mjs?v=team-balance-2';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
@@ -69,7 +69,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=tower-warning-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=team-objectives-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -347,7 +347,7 @@ function applyState(next){
   const err=distance(local,expected);
   if(me.recallEndsAt||err>145||!scene.arena.fits(local.x,local.y)){local.x=expected.x;local.y=expected.y;correction=null;}
   else correction=err>7?{x:expected.x-local.x,y:expected.y-local.y}:null;
-  for(const k of ['phase','connected','safeUntil','repairingBase','recallEndsAt','rating','points','streakTitle'])local[k]=me[k];
+  for(const k of ['phase','connected','safeUntil','repairingBase','recallEndsAt','rating','points','streakTitle','healUntil'])local[k]=me[k];
  }
  const visible=[...next.players.filter(p=>p.id!==me.id&&Number.isFinite(p.x)&&p.connected&&p.phase!=='dead'),...next.shadows,...next.bosses];
  const ids=new Set(visible.map(p=>p.id));
@@ -356,7 +356,7 @@ function applyState(next){
   const q=actors.get(p.id);
   if(!q||q.warp!==p.warp||distance(q.samples.at(-1),p)>160)actors.set(p.id,{...p,samples:[{x:p.x,y:p.y,at:next.now}]});
   else{
-   const {x,y}=q;Object.assign(q,p,{x,y});
+   const {x,y}=q;Object.assign(q,p,{x,y,healUntil:p.healUntil});
    if(next.now>q.samples.at(-1).at)q.samples.push({x:p.x,y:p.y,at:next.now});
    if(q.samples.length>6)q.samples.shift();
   }
@@ -868,18 +868,19 @@ $('copy').onclick=async()=>{
 function renderWarpTargets(){
  if(!me||me.phase!=='walk'||me.recallEndsAt||!WARP_ACCESS(me,state.bases)){mapDialog.close();return;}
  const ownSmall=state.bases.filter(b=>b.side===me.side&&b.tier==='small');
- const available=ownSmall.filter(b=>WARP_TARGET(me,b));
+ const available=state.bases.filter(b=>WARP_TARGET(me,b));
  const key=available.map(b=>b.id).join('/');
- $('warp-map-help').textContent=available.length?'แตะหมายเลขป้อมเล็กเพื่อเริ่มวาร์ป 5 วินาที':'ฐานเล็กฝั่งคุณถูกทำลายหมดแล้ว';
+ $('warp-map-help').textContent=available.length?'แตะป้อมเล็กหรือธงของทีมเพื่อเริ่มวาร์ป 5 วินาที':'ยังไม่มีจุดวาร์ปที่ใช้ได้';
  if(key===warpMapKey)return;
  warpMapKey=key;
  const markers=$('warp-map-targets');
  markers.dataset.side=me.side;
  markers.replaceChildren(...available.map(base=>{
   const number=ownSmall.indexOf(base)+1;
-  const button=node('button',String(number),'secondary');
+  const button=node('button',base.flagSide!=null?'⚑':String(number),'secondary');
+  if(base.flagSide!=null)button.dataset.flag='';
   button.type='button';
-  button.title=`วาร์ปไป${base.label}`;
+  button.title=base.flagSide!=null?`วาร์ปไปธงที่${base.label}เดิมของฝ่ายตรงข้าม`:`วาร์ปไป${base.label}`;
   button.setAttribute('aria-label',button.title);
   button.style.left=`${base.x/WIDTH*100}%`;
   button.style.top=`${base.y/HEIGHT*100}%`;
@@ -891,7 +892,7 @@ function openArenaMap(selectWarp=false){
  release();
  warpMap=selectWarp;
  warpMapKey=null;
- $('map-title').textContent=warpMap?'เลือกฐานเล็กที่จะวาร์ปไป':'แผนที่สนาม';
+ $('map-title').textContent=warpMap?'เลือกป้อมเล็กหรือธงที่จะวาร์ปไป':'แผนที่สนาม';
  for(const id of ['warp-map-targets','warp-map-help'])$(id).hidden=!warpMap;
  for(const id of ['map-legend','map-chests'])$(id).hidden=warpMap;
  mapDialog.showModal();
@@ -918,7 +919,7 @@ function objective(){
  if(state.baseRepair)return {type:'stopRepair',label:'หยุดซ่อมฐาน'};
  if(state.mode!=='survival'&&WARP_ACCESS(me,state.bases)){
   const enabled=state.bases.some(b=>WARP_TARGET(me,b));
-  return {type:'selectWarp',disabled:!enabled,label:enabled?'วาร์ปไปฐานเล็ก':'ฐานเล็กถูกทำลายหมดแล้ว'};
+  return {type:'selectWarp',disabled:!enabled,label:enabled?'เลือกจุดวาร์ป':'ยังไม่มีจุดวาร์ปที่ใช้ได้'};
  }
  const repair=state.bases.find(b=>REPAIR_TARGET(me,b));
  if(repair)return {type:'repairBase',id:repair.id,label:`ซ่อม${repair.label}`};
@@ -1045,7 +1046,7 @@ function frame(t){
   }
   const all=[...actors.values(),...(local.phase==='dead'||!solo&&local.phase==='battle'?[]:[local])];
   const watch=watchedPlayer(),focus=watch?(actors.get(watch.id)||watch):local;
-  scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null,state.baseEffects);
+  scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null,state.baseEffects,state.warpArrivals);
   $('blue').textContent=solo?state.survivors:state.score[0];
   $('red').textContent=solo?`${Math.round(zone.remaining*100)}%`:state.score[1];
   $('clock').textContent=solo?(zone.nextAt?clock(zone.nextAt-(state.finishedAt??now)):'☠'):clock(state.ends-(state.finishedAt??now));

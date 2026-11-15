@@ -8,7 +8,7 @@ export const TEAM_START_SCORE=300;
 export const BASE_CONTROL_MS=30_000;
 export const BASE_AURA_RANGE=300;
 export const BASE_RECALL_MS=5000, WARP_PAD_RANGE=70;
-export const BASE_HEAL_RANGE=150, BASE_REPAIR_RANGE=70, BASE_REPAIR_MS=2500, BASE_REPAIR_SCORE_MS=5000, BASE_ATTACK_SCORE_MS=1000;
+export const BASE_HEAL_RANGE=150, BASE_REPAIR_RANGE=70, BASE_REPAIR_MS=2500, BASE_ATTACK_SCORE_MS=1000;
 export const personalCombatBonus=points=>Math.min(60,Math.floor(Math.max(0,points??0)/5));
 export const MATCH_MS=15*60_000;
 export const BOSS_INTERVAL=2*60_000, BOSS_POINTS=60, CHEST_COUNT=10;
@@ -74,7 +74,7 @@ export const canRaidBase=(side,base,bases)=>base.side!==side&&base.hp>0&&
  (!base.links?.length||base.links.some(id=>bases.some(link=>link.id===id&&link.hp===0)));
 export const mainBase=side=>BASES.find(b=>b.main&&b.side===side);
 export const WARP_PADS=TEAMS.map((_,side)=>({side,...cellCenter(side?COLS-2:1,21)}));
-export const WARP_TARGET=(p,b)=>b.side===p.side&&b.tier==='small'&&b.hp>0;
+export const WARP_TARGET=(p,b)=>b.tier==='small'&&(b.hp>0?b.side===p.side:b.flagSide===p.side);
 export const WARP_ACCESS=(p,bases)=>bases.some(b=>b.side===p.side&&b.main&&b.hp>0)&&distance(p,WARP_PADS[p.side])<=WARP_PAD_RANGE;
 export const spawns=side=>[[-48,-52],[-48,52],[0,0],[48,-52],[48,52]].map(([dx,dy])=>({x:mainBase(side).x+(side?-dx:dx),y:mainBase(side).y+dy}));
 const propSites=maze.flatMap((row,y)=>row.slice(2,14).flatMap((open,i)=>{
@@ -153,7 +153,7 @@ export const TEAM_ARENA=createArena(maze,BUSHES,OBSTACLES);
 export const {bushAt,canSeeOpponent,passable,fits,clearPath,move,movePlayer,nextCell}=TEAM_ARENA;
 export function siegeProfile(p){
  const cls=p.baseCls||p.cls;
- if(cls==='archer')return {range:350,effect:'archer'};
+ if(cls==='archer')return {range:375,effect:'archer'};
  if(cls==='gunner')return {range:300,effect:'gunner'};
  if(cls==='mage'||cls==='summoner'||cls==='druid')return {range:150,effect:'magic'};
  return {range:75,effect:cls==='merchant'?'hammer':'melee'};
