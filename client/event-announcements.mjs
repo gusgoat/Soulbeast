@@ -119,6 +119,17 @@ export function mountAnnouncements() {
   get('.shade').hidden = !expanded;
   if (show && content !== JSON.stringify(pending)) {
    content = JSON.stringify(pending);
+   if(pending.status==='active'){
+    const id=pending.id,voiceKey='soulbeast-kingdom-awakened:'+id;
+    void import('./game-system-voices.mjs?v=1').then(({systemVoice})=>{
+     if(document.hidden||pending?.id!==id||pending.status!=='active')return;
+     try{
+      if(sessionStorage.getItem(voiceKey))return;
+      sessionStorage.setItem(voiceKey,'1');
+     }catch{}
+     systemVoice('kingdom-awakened',()=>pending?.id===id&&pending.status==='active');
+    }).catch(()=>{});
+   }
    renderPortrait(pending);
    const title = pending.status === 'active' ? 'บอสอาณาจักรปรากฏตัว!' : pending.status === 'defeated' ? 'บอสอาณาจักรถูกปราบแล้ว' : 'กิจกรรมบอสอาณาจักรสิ้นสุดแล้ว';
    get('#eventTitle').textContent = title;

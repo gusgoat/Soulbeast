@@ -6,6 +6,7 @@ import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatVie
 import rareArt from './rare-art.mjs';
 import {resetBotRoute, stepBot} from './practice.mjs?v=base-recall-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
+import {matchAnnouncer} from './match-announcer.mjs?v=1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
@@ -33,6 +34,7 @@ export class Match {
   this.code=code;this.id=crypto.randomUUID();this.created=now;this.players=[];this.score=[TEAM_START_SCORE,TEAM_START_SCORE];this.phase='lobby';this.events=[];
   this.battles=new Map();this.shadows=[];this.chests=[];this.bosses=[];this.battleSerial=0;this.eventSerial=0;this.botSerial=0;this.random=random;
   this.baseBolts=[];this.baseEffects=[];this.baseEffectSerial=0;
+  this.announcer=matchAnnouncer();
   this.solo=mode==='survival';
   this.arena=this.solo?SURVIVAL_ARENA:TEAM_ARENA;
   this.sites=this.solo?SURVIVAL_SITES:OBJECT_SITES;
@@ -92,6 +94,7 @@ export class Match {
  }
  start(now){
   this.phase='match';this.started=now;
+  this.announcer.start(this.players.length);
   if(this.solo){
    this.zone=fogZone(now,now);
    this.nextEliminationAt=now+SURVIVAL_CUT_INTERVAL;
@@ -184,6 +187,7 @@ export class Match {
   const boss={...home,home,id:`boss-${this.nextBossAt}`,boss:true,sp,label:rareArt[sp].name,lv:this.averageLevel,phase:'walk'};
   const u=bossUnit(boss);Object.assign(boss,{hp:u.hp,maxHp:u.st.hp,mp:u.mp});
   this.bosses=[boss];
+  this.announcer.add('boss-appeared',now);
   this.note(old&&!old.claimed?'บอสตัวเดิมหายไปแล้ว · บอสตัวใหม่ปรากฏในสนาม':'บอสโคลอสเซียมปรากฏตัวแล้ว · ออกค้นหาในสนาม',now,'boss');
  }
  rotateBosses(now){
@@ -329,6 +333,10 @@ export class Match {
   if(b.boss)battle.bossSide=a.side;
   if(neutral)battle.huntSide=a.side;
   this.battles.set(id,battle);
+  if(this.solo&&!neutral&&!this.finalDuelAnnounced&&this.players.filter(p=>p.phase!=='dead').length===2){
+   this.finalDuelAnnounced=true;
+   this.announcer.add('final-duel',now);
+  }
   for(const p of [...teams.flat(),...(neutral?[b]:[])]){
    p.phase='battle';p.battle=id;p.dx=p.dy=0;
    delete p.siege;delete p.recallEndsAt;
@@ -348,6 +356,7 @@ export class Match {
   return this.players.find(p=>p.id===battle.roster[owner])??null;
  }
  fall(p,now,cause='',killer=null){
+  if(p.phase!=='dead')this.announcer.fall(p,killer,now,this.solo);
   p.phase='dead';
   delete p.repair;delete p.recallEndsAt;
   if(this.solo){p.eliminationCause=cause;p.eliminatedAt=now;this.note(`${p.name} ตกรอบ${cause?' · '+cause:''}`,now);return;}
@@ -387,6 +396,7 @@ export class Match {
     const survivor=winner&&this.players.find(p=>p.id===winner.sealer&&p.phase==='battle'&&p.battle===b.id);
     if(survivor){
      this.addSurvivalPoints(survivor,SURVIVAL_POINTS.beast,now);
+     if(this.announcer.beast(survivor,now))this.note(`${survivor.name} ล่าอสูรครบ 5 ตัวในชีวิตเดียว`,now);
      this.recover(survivor,winner,.2,now,`ชนะอสูร · +${SURVIVAL_POINTS.beast} คะแนน`,false,b);
      this.note(`${survivor.name} ชนะ${beast.name} · +${SURVIVAL_POINTS.beast} คะแนน`,now);
     }
@@ -399,6 +409,7 @@ export class Match {
    const credit=this.combatCredit(b,b.enemies[0])??this.players.find(p=>p.id===b.teams[0][0]);
    const points=credit.baseCls==='swordsman'?8:BEAST_POINTS;
    this.earn(credit,points);
+   if(this.announcer.beast(credit,now))this.note(`${credit.name} ล่าอสูรครบ 5 ตัวในชีวิตเดียว`,now);
    this.note(`${TEAMS[b.huntSide]} ล่า${b.enemies[0].name}สำเร็จ · +${points}`,now);
   }
   if(b.boss){
@@ -407,6 +418,7 @@ export class Match {
     beast.hp=unit.hp;beast.mp=unit.mp;
     if(unit.hp<=0&&!beast.claimed){
      beast.claimed=true;beast.phase='defeated';const side=b.bossSide;
+     this.announcer.add('boss-defeated',now);
      const credit=this.combatCredit(b,unit)??this.players.find(p=>p.id===b.teams[0][0]);
      const points=BOSS_POINTS+(credit.baseCls==='swordsman'?10:0);
      this.earn(credit,points);this.score[1-side]=Math.max(0,this.score[1-side]-BOSS_POINTS);
@@ -679,9 +691,12 @@ export class Match {
     continue;
    }
    siege.nextHitAt+=BASE_ATTACK_MS;
+   if(base.main&&now-(base.lastAnnouncedHit??-Infinity)>2500)this.announcer.add('base-under-attack',now,{side:base.side});
+   base.lastAnnouncedHit=now;
    base.hp=Math.max(0,base.hp-hitDamage);
    this.baseEffect(effect,base,p,now,BASE_ATTACK_MS);
    if(base.hp===0){
+    this.announcer.capture(base,p,now);
     this.baseEffect('collapse',base,{x:base.x,y:base.y},now,1050);
     const defender=base.side,loss=BASE_CAPTURE_LOSS[base.tier],bonus=loss/2;
     this.score[defender]=Math.max(0,this.score[defender]-loss);
@@ -838,7 +853,8 @@ export class Match {
    ...(this.solo?{mode:'survival',zone:this.zone,survivors:this.players.filter(player=>player.phase!=='dead').length,
     nextEliminationAt:this.phase==='match'?this.nextEliminationAt:null,placement:p.placement,eliminationCause:p.eliminationCause,spectating:spectating?.id,
     winnerName:this.players.find(player=>player.id===this.winner)?.name}:{}),
-   bases:this.bases.map(({fireAt,underAttack,...base})=>({...base,underAttack:base.side===p.side&&Boolean(underAttack)})),
+   bases:this.bases.map(({fireAt,underAttack,lastAnnouncedHit,...base})=>({...base,underAttack:base.side===p.side&&Boolean(underAttack)})),
+   announcements:this.announcer.forPlayer(p,now),
    baseEffects:this.baseEffects.filter(e=>e.until>now&&inSight(viewer,e)),
 
    traps:this.traps.controller.list.flatMap(({id,x,y,type})=>{

@@ -1,4 +1,7 @@
 (function(g){'use strict';
+const voiceSource=g.document?.currentScript&&new URL('../../client/game-system-voices.mjs?v=1',g.document.currentScript.src);
+if(voiceSource)void import(voiceSource.href).catch(()=>{});
+function questVoice(clip){g.SoulbeastGameVoice?.play('game-voice/'+clip);}
 function state(p){
  const s=p.worldQuests||(p.worldQuests={version:1});
  s.accepted||={};s.completed||={};if(!Array.isArray(s.events))s.events=[];
@@ -16,7 +19,7 @@ function accept(p,q,choice){
  if(!available(p,q))return false;const c=q.choices?.find(c=>c.id===choice);
  if(q.choices&&!c)return false;const cost=c?.cost||0;
  if(!Number.isFinite(cost)||cost<0||(p.gold||0)<cost)return false;
- p.gold=(p.gold||0)-cost;state(p).accepted[q.id]={step:0,count:0,choice:c?.id};return true;
+ p.gold=(p.gold||0)-cost;state(p).accepted[q.id]={step:0,count:0,choice:c?.id};questVoice('quest-accepted');return true;
 }
 function isTracking(p,q){
  const s=state(p);
@@ -86,7 +89,7 @@ function claim(p,q,place,npc){
  if(!a||!validRoute(p,q)||!prerequisites(p,q)||!Number.isInteger(a.step)||a.step!==route.length||q.place!==place||!correctNpc||s.completed[q.id]||!validRewards(q)||!Number.isFinite(gold)||gold<0)return false;
  s.outcomes||={};s.outcomes[q.id]={choice:a.choice,ending:choice?.ending||q.ending,gold,rewards:rewardList(q)};
  if(s.tracked===q.id)delete s.tracked;
- grant(p,q);s.completed[q.id]=Date.now();delete s.accepted[q.id];p.gold=(p.gold||0)+gold;return true;
+ grant(p,q);s.completed[q.id]=Date.now();delete s.accepted[q.id];p.gold=(p.gold||0)+gold;questVoice('quest-completed');return true;
 }
 const api={state,available,blockedReason,steps,accept,emit,claim,isTarget,isTracking,toggleTracking,rewardList,rewardText,countryOf,objectiveCountry,searchObjectives,trackedDestination,trackedBorder,needsTownExit};g.WalkQuestEngine=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

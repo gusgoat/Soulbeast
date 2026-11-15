@@ -4,8 +4,9 @@ import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
 import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-damage-stage-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
-import {battlePresentation} from './battle-presentation.mjs?v=signature-motion-10';
+import {battlePresentation} from './battle-presentation.mjs?v=announcer-1';
 import {siegeAudio} from './siege-audio.mjs?v=2';
+import {clientAnnouncer} from './client-announcer.mjs?v=1';
 import {bindWalkJoystick} from './walk-joystick.mjs?v=1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
@@ -17,6 +18,8 @@ const node=(tag,content,className)=>{
 const scene=new Scene($('world')), actors=new Map(), keys=new Set();
 const presentation=battlePresentation($('battle-vfx'));
 const siegeSounds=siegeAudio(presentation.playSiege);
+const announcerVoice=window.SoulbeastVoicePlayer({enabled:()=>presentation.enabled,volume:()=>.72,duck:presentation.duckMusic});
+const announcer=clientAnnouncer(announcerVoice);
 const mapDialog=$('large-map'), channel='soulbeast-colosseum-session';
 let ws,state,battle,me,local,lastInput='',seq=0,offset=0,retry,packet;
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
@@ -62,7 +65,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=combat-auto-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=announcer-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -158,7 +161,7 @@ async function connect(payload){
     setTimeout(()=>{if(ws?.readyState===WebSocket.OPEN)$('signal').hidden=true;},1800);
    }else $('notice').textContent=m.message;
   }else if(m.type==='state')applyState(m);
-  else if(m.type==='battle')receiveBattle(m.battle);
+  else if(m.type==='battle'){announcer.battle(m.battle);receiveBattle(m.battle);}
  };
  socket.onclose=event=>{
   if(ws!==socket)return;
@@ -216,6 +219,7 @@ function reset(message='',clearInvite=false){
  presentation.setMusicScene('lobby');
  presentation.setSiegeAudio(false,false);
  siegeSounds.reset();
+ announcer.reset();
  hideBattle();
  opening=queued=leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;
  if(clearInvite){
@@ -304,6 +308,7 @@ function applyState(next){
  const repairing=fieldAudio&&state.phase==='match'&&state.players.some(p=>p.repairingBase&&p.phase==='walk');
  presentation.setSiegeAudio(fieldAudio,repairing);
  siegeSounds.sync(state,fieldAudio?player:null);
+ announcer.sync(state);
  if(entering)updateEntryControls();
  $('lobby').hidden=state.phase!=='lobby';$('arena').hidden=state.phase==='lobby';
  $('entry').hidden=true;$('room').hidden=false;
@@ -655,6 +660,7 @@ function renderBattle(){
  soundButton.setAttribute('aria-pressed',String(presentation.enabled));
  soundButton.onclick=()=>{
   presentation.toggle();
+  if(!presentation.enabled)announcerVoice.clear();
   syncWalkSound();
   soundButton.textContent=presentation.enabled?'ปิดเสียง':'เปิดเสียง';
   soundButton.setAttribute('aria-pressed',String(presentation.enabled));
@@ -1056,7 +1062,7 @@ function syncWalkSound(){
  button.setAttribute('aria-pressed',String(presentation.enabled));
  button.title=presentation.enabled?'ปิดเสียงโคลอสเซียม':'เปิดเสียงโคลอสเซียม';
 }
-$('walk-sound').onclick=()=>{presentation.toggle();syncWalkSound();};
+$('walk-sound').onclick=()=>{presentation.toggle();if(!presentation.enabled)announcerVoice.clear();syncWalkSound();};
 syncWalkSound();
 if(onlineEnabled&&saved())connect(saved());
 requestAnimationFrame(frame);

@@ -29,7 +29,7 @@ const prefsKey='soulbeast-colosseum-battle-sound';
 
 export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=='off'}={}){
  let active=false, playing=false, walking=false, surface=null;
- let fieldAudio=false, repairing=false;
+ let fieldAudio=false, repairing=false, voicePlaying=false;
  let enabled=sound, context, gain;
  const clips=new Map(), timers=new Set(), loops=new Map();
  const poses=new Map(), preloaded=new Set(), flights=new Set(), heldHp=new Map();
@@ -87,6 +87,7 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
  function syncMusic(){
   const audible=enabled&&!document.hidden&&context?.state==='running';
   if(music){
+   music.volume=voicePlaying?.065:.16;
    if(audible&&music.paused)music.play().catch(()=>{});
    else if(!audible)music.pause();
   }
@@ -96,6 +97,7 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
   loop('leaves',explore&&surface==='leaves',.78);
   loop('repair',audible&&fieldAudio&&repairing,.48);
  }
+ function duckMusic(playing){voicePlaying=playing;if(music)music.volume=playing?.065:.16;}
  function setSiegeAudio(audible,repair){
   if(fieldAudio===audible&&repairing===repair)return;
   fieldAudio=audible;repairing=repair;syncMusic();
@@ -323,6 +325,6 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
  addEventListener('pointerdown',unlock,{passive:true});
  addEventListener('keydown',unlock);
  document.addEventListener('visibilitychange',syncMusic);
- return {action,setActive,setMusicScene,setSiegeAudio,playSiege:key=>play(key,true),syncPoses,toggle,walk,holdHp,hp:unit=>heldHp.get(unit.id)?.value??unit.hp,
+ return {action,setActive,setMusicScene,setSiegeAudio,duckMusic,playSiege:key=>play(key,true),syncPoses,toggle,walk,holdHp,hp:unit=>heldHp.get(unit.id)?.value??unit.hp,
   get busy(){return playing;},get enabled(){return enabled;}};
 }
