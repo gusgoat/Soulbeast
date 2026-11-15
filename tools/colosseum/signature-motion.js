@@ -295,7 +295,7 @@
   return 'assets/vfx/'+folder+'/'+key+(expanded?'.png':'.webp');
  }
  function bannerDuration(){
-  return globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches?550:1000;
+  return globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches?550:2000;
  }
  function portraitUrl(actor, localUrl){
   const path=portraitPath(actor);
@@ -370,7 +370,7 @@
     transform:expanded?'translateY(-8%) scale(1.18, '+(id==='solar_raijaku_s6'?'1.33':'1.30')+')':
      'translateY(-6%) scale(1.04)'});
    portraitLayer.append(face);
-   if(duration===1000){
+   if(!reducedMotion){
     const animation=face.animate([{backgroundPosition:'0% 50%'},{backgroundPosition:'133.333333% 50%'}],
      {duration,easing:'steps(4,end)',fill:'none'});
     animation.playbackRate=rate;
