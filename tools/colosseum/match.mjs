@@ -1,16 +1,17 @@
 import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile, WARP_ACCESS, WARP_TARGET,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=archer-movement-1';
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=team-time-win-1';
 import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses, syncMonsterPower} from './combat.mjs?v=archer-movement-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses, syncMonsterPower} from './combat.mjs?v=team-time-win-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=archer-movement-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=team-time-win-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const PLAYER_DEATH_POINTS=30;
+const BOSS_SCORE_LOSS=60;
 const hunterBonus=player=>['swordsman','summoner'].includes(player.baseCls);
 function cancelRecall(p){delete p.recallEndsAt;delete p.recallBaseId;}
 const BASE_CAPTURE_LOSS={small:40,medium:60,large:100};
@@ -170,7 +171,6 @@ export class Match {
     this.note(`${player.name} โดนกับดัก${label}${damage?` · −${damage} HP`:''}`,now);
     if(player.hp<=0)this.fall(player,now);
    }
-   if(!this.solo){this.checkScore(now);if(this.phase!=='match')return;}
   }
   if(this.solo)this.checkScore(now);
  }
@@ -230,14 +230,11 @@ export class Match {
   this.battles.clear();
  }
  checkScore(now){
-  if(this.solo){
-   const living=this.players.filter(p=>p.phase!=='dead');
-   const rank=Math.max(2,living.length+1);
-   for(const player of this.players)if(player.eliminatedAt===now)player.placement=rank;
-   if(living.length<=1)this.finish(living[0]?.id??-1,'survival',now);
-   return;
-  }
-  if(this.score.includes(0))this.finish(this.score[0]===this.score[1]?-1:this.score[0]>this.score[1]?0:1,'zero',now);
+  if(!this.solo)return;
+  const living=this.players.filter(p=>p.phase!=='dead');
+  const rank=Math.max(2,living.length+1);
+  for(const player of this.players)if(player.eliminatedAt===now)player.placement=rank;
+  if(living.length<=1)this.finish(living[0]?.id??-1,'survival',now);
  }
  command(p,m,now){
   if(this.phase==='lobby'){
@@ -290,7 +287,7 @@ export class Match {
     p.dx=Math.max(-1,Math.min(1,m.x));p.dy=Math.max(-1,Math.min(1,m.y));p.inputAt=now;
    }
   }else if(m.type==='recallBase'){
-   const base=this.bases.find(base=>base.main&&base.side===p.side&&base.hp>0);
+   const base=this.bases.find(base=>base.main&&base.side===p.side);
    assert(!this.solo&&p.connected&&p.phase==='walk'&&base,'วาร์ปกลับฐานใหญ่ได้เฉพาะขณะเดินในโหมดทีม');
    p.recallEndsAt??=now+BASE_RECALL_MS;
    p.dx=p.dy=0;
@@ -466,18 +463,16 @@ export class Match {
      beast.claimed=true;beast.phase='defeated';const side=b.bossSide;
      this.announcer.add('boss-defeated',now);
      const credit=this.combatCredit(b,unit)??this.players.find(p=>p.id===b.teams[0][0]);
-     const points=hunterBonus(credit)?75:BOSS_POINTS;
+     const points=hunterBonus(credit)?60:BOSS_POINTS;
      credit.bossKills++;
-     this.earn(credit,points);this.score[1-side]=Math.max(0,this.score[1-side]-BOSS_POINTS);
+     this.earn(credit,points);this.score[1-side]=Math.max(0,this.score[1-side]-BOSS_SCORE_LOSS);
      const minutes=Math.round((this.nextBossAt-(this.ends-MATCH_MS))/60_000);
      const next=this.nextBossAt<this.ends?`เกิดอีกครั้งเมื่อนาทีที่ ${minutes}`:'ไม่มีบอสเกิดเพิ่มในรอบนี้';
-     this.note(`${TEAMS[side]} สังหาร${beast.label} · ${TEAMS[side]} +${points} / ${TEAMS[1-side]} −${BOSS_POINTS} · คะแนน ${this.score[0]} : ${this.score[1]} · ${next}`,now,'boss');
-     changed=true;
+     this.note(`${TEAMS[side]} สังหาร${beast.label} · ${TEAMS[side]} +${points} / ${TEAMS[1-side]} −${BOSS_SCORE_LOSS} · คะแนน ${this.score[0]} : ${this.score[1]} · ${next}`,now,'boss');
     }
    }
   }
   syncCombatBonuses(b);
-  if(changed)this.checkScore(now);
  }
  addSurvivalPoints(p,points,now){
   p.points+=points;
@@ -652,7 +647,6 @@ export class Match {
    if(!target.hp){
     this.baseEffect('tower-fall',base,target,now,750);
     this.fall(target,now);
-    this.checkScore(now);
    }
    if(this.phase!=='match')return;
   }
@@ -735,14 +729,9 @@ export class Match {
   const siege=p.siege;
   while(Math.min(siege.nextScoreAt,siege.nextHitAt)<=now){
    if(siege.nextScoreAt<=siege.nextHitAt){
-    const endsWithCapture=base.hp<=hitDamage&&siege.nextScoreAt===siege.nextHitAt;
     this.earn(p,1);
     this.score[base.side]=Math.max(0,this.score[base.side]-1);
     siege.nextScoreAt+=BASE_ATTACK_SCORE_MS;
-    if(!endsWithCapture){
-     this.checkScore(now);
-     if(this.phase!=='match')return;
-    }
     continue;
    }
    siege.nextHitAt+=BASE_ATTACK_MS;
@@ -769,12 +758,8 @@ export class Match {
     for(const player of this.players)if(player.recallBaseId===base.id)cancelRecall(player);
     const personalNotice=teamPersonal?` · ทุกคนในทีม +${teamPersonal} แต้มส่วนตัว`:'';
     this.note(`${p.name} ทำ${base.label}แตก · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}${personalNotice}`,now);
-    if(base.main)this.finish(p.side,'base-captured',now);
-    else this.checkScore(now);
     return;
    }
-   this.checkScore(now);
-   if(this.phase!=='match')return;
   }
  }
  awardBaseControl(now){
@@ -791,7 +776,6 @@ export class Match {
    this.score=[Math.max(0,this.score[0]+net),Math.max(0,this.score[1]-net)];
    const winner=net>0?0:1,points=Math.abs(net);
    this.note(`คะแนนครองป้อม · ${TEAMS[winner]} +${points} / ${TEAMS[1-winner]} −${points}`,at);
-   this.checkScore(at);
   }
  }
  tick(now,dt){
@@ -875,7 +859,7 @@ export class Match {
     if(p.phase!=='walk'||!p.recallEndsAt||now<p.recallEndsAt)continue;
     const destination=p.recallBaseId;
     cancelRecall(p);
-    const base=this.bases.find(b=>destination?b.id===destination&&WARP_TARGET(p,b):b.main&&b.side===p.side&&b.hp>0);
+    const base=this.bases.find(b=>destination?b.id===destination&&WARP_TARGET(p,b):b.main&&b.side===p.side);
     if(!base)continue;
     Object.assign(p,{x:base.x,y:base.y,warp:(p.warp||0)+1,dx:0,dy:0});
     delete p.baseRecovery;
@@ -922,7 +906,7 @@ export class Match {
    warpArrivals:this.phase==='match'&&!this.solo?this.bases.flatMap(base=>{
     if(!inSight(viewer,base))return [];
     const endsAt=Math.min(...this.players.filter(q=>q.connected&&q.phase==='walk'&&q.recallEndsAt>now&&
-     (q.recallBaseId?q.recallBaseId===base.id&&WARP_TARGET(q,base):base.main&&base.hp>0&&base.side===q.side)).map(q=>q.recallEndsAt));
+     (q.recallBaseId?q.recallBaseId===base.id&&WARP_TARGET(q,base):base.main&&base.side===q.side)).map(q=>q.recallEndsAt));
     return Number.isFinite(endsAt)?[{x:base.x,y:base.y,recallEndsAt:endsAt}]:[];
    }):[],
    baseEffects:this.baseEffects.filter(e=>e.until>now&&inSight(viewer,e)),

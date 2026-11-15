@@ -128,7 +128,9 @@ Deno.test('archer siege hits for three HP every second, awards points, shows the
  r.siegeBases(4000);eq(base.hp,57);eq(r.score,[301,299]);eq(a.earned,1);eq([a.x,a.y],[base.x,base.y]);
  ok(r.baseEffects.some(e=>e.kind==='archer'));
  r.score[b.side]=1;r.siegeBases(4999);eq(r.score,[301,1]);
- r.siegeBases(5000);eq(r.winner,a.side);eq(r.reason,'zero');
+ r.siegeBases(5000);eq(r.score,[302,0]);eq(r.phase,'match');
+ r.tick(MATCH_MS-1,0);eq(r.phase,'match');
+ r.tick(MATCH_MS,0);eq(r.winner,a.side);eq(r.reason,'time');
 });
 Deno.test('archer and gunner share the turret boundary at 300 units',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
@@ -774,10 +776,10 @@ Deno.test('rare boss spawns every two minutes at the rounded average level and s
  ok(battle?.boss);eq(battle.enemies.length,1);eq(battle.enemies[0].hp,bossUnit(beast).hp);
  ok(Math.abs(battle.enemies[0].st.patk-bossUnit(beast).st.patk*1.1)<.001);
  battle.enemies[0].hp=0;r.recordFalls(battle,BOSS_INTERVAL+2);r.recordFalls(battle,BOSS_INTERVAL+3);
- eq(r.score,[360,240]);ok(r.events.at(-1).text.includes('นาทีที่ 4'));eq(beast.phase,'defeated');
+ eq(r.score,[350,240]);ok(r.events.at(-1).text.includes('นาทีที่ 4'));eq(beast.phase,'defeated');
  r.tick(BOSS_INTERVAL*2,0);eq(r.bosses.length,1);ok(r.bosses[0].sp!==beast.sp);
 });
-Deno.test('swordsman and summoner earn 8 for a shadow and 75 for a boss',()=>{
+Deno.test('swordsman and summoner earn 8 for a shadow and 60 for a boss',()=>{
  for(const career of ['swordsman','summoner']){
  const {r,p:[a,b]}=match();start(r,[a,b]);
  a.baseCls=career;
@@ -789,7 +791,7 @@ Deno.test('swordsman and summoner earn 8 for a shadow and 75 for a boss',()=>{
  r.encounter(a,r.bosses[0],BOSS_INTERVAL,true);
  const boss=r.battles.get(a.battle);
  boss.enemies[0].hp=0;r.recordFalls(boss,BOSS_INTERVAL+1);r.recordFalls(boss,BOSS_INTERVAL+2);
- eq(a.earned,83);eq([a.beastKills,a.bossKills],[1,1]);eq(r.score,[383,240]);
+ eq(a.earned,68);eq([a.beastKills,a.bossKills],[1,1]);eq(r.score,[368,240]);
  }
 });
 Deno.test('team monsters grow every two minutes and shadow aura only applies in team mode',()=>{
@@ -867,16 +869,20 @@ Deno.test('a creature breaks pursuit on entry into grass and returns to its star
  for(let time=3100;beast.returning&&time<=4000;time+=50)r.tick(time,.05);
  eq(beast.returning,false);ok(distance(beast,beast.home)<=10);
 });
-Deno.test('destroying a large base removes it permanently and immediately wins above zero points',()=>{
+Deno.test('destroying a large base keeps the match running and the home warp available',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const capital=r.bases.find(x=>x.side===b.side&&x.main);
  r.bases.find(x=>x.id===capital.links[0]).hp=0;
  capital.hp=1;
  Object.assign(a,{x:capital.x,y:capital.y});
  r.siegeBases(3000);r.siegeBases(4000);
- eq([capital.side,capital.hp,r.winner,r.reason],[b.side,0,a.side,'base-captured']);
+ eq([capital.side,capital.hp,r.phase],[b.side,0,'match']);
  ok(r.baseEffects.some(e=>e.baseId===capital.id&&e.kind==='collapse'));
  eq(r.score,[351,199]);eq(a.earned,51);
+ Object.assign(b,WARP_PADS[b.side]);
+ const small=r.bases.find(x=>x.side===b.side&&x.tier==='small');
+ r.command(b,{type:'warpSmallBase',id:small.id},4100);
+ eq(b.recallBaseId,small.id);
 });
 Deno.test('a shadow acquires at 1000, runs at 200 units per second and returns after five seconds or beyond 2000',()=>{
  for(const reason of ['time','distance']){
@@ -948,7 +954,7 @@ Deno.test('solo practice starts with nine bots and runs normal objectives to a r
    });
   }
  }
- eq(r.phase,'finished');ok(['zero','time','base-captured'].includes(r.reason));
+ eq(r.phase,'finished');eq(r.reason,'time');
  ok(hasBotSiege,'bots never besieged a base');
  ok(r.chests.some(c=>c.opened));ok(hasBotAttack);
  eq({x:human.x,y:human.y},human.spawn);
