@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, RAID_TARGET, WARP_PADS, baseDamageStage, distance} from './arena.mjs?v=team-objectives-1';
+import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, baseDamageStage, distance} from './arena.mjs?v=archer-movement-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -426,7 +426,7 @@ export class Scene{
   c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#241f26';c.fillRect(0,0,w,h);
   c.setTransform(dpr*zoom,0,0,dpr*zoom,-left*dpr*zoom,-top*dpr*zoom);
   const walls=this.drawTerrain(left,top,right,bottom);
-  const castles=bases.filter(b=>b.hp!==0&&(inSight(me,b)||this.arena===TEAM_ARENA&&RAID_TARGET(me,b))&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
+  const castles=bases.filter(b=>b.hp!==0&&inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
   for(const pad of WARP_PADS){
    if(!bases.some(b=>b.main&&b.side===pad.side&&b.hp>0)||!inSight(me,pad))continue;
    const art=warpPadArt[pad.side];

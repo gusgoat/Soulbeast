@@ -153,8 +153,7 @@ export const TEAM_ARENA=createArena(maze,BUSHES,OBSTACLES);
 export const {bushAt,canSeeOpponent,passable,fits,clearPath,move,movePlayer,nextCell}=TEAM_ARENA;
 export function siegeProfile(p){
  const cls=p.baseCls||p.cls;
- if(cls==='archer')return {range:375,effect:'archer'};
- if(cls==='gunner')return {range:300,effect:'gunner'};
+ if(cls==='gunner'||cls==='archer')return {range:300,effect:cls};
  if(cls==='mage'||cls==='summoner'||cls==='druid')return {range:150,effect:'magic'};
  return {range:75,effect:cls==='merchant'?'hammer':'melee'};
 }
@@ -167,7 +166,8 @@ export function baseDamageStage(base){
  return ratio<=.25?2:ratio<=.5?1:ratio<=.75?0:-1;
 }
 export function walkSpeed(arena,p){
- const speed=arena.maze===maze?TEAM_SPEED*((p.baseCls||p.cls)==='thief'?1.2:1):SPEED;
+ const fast=['thief','archer'].includes(p.baseCls||p.cls);
+ const speed=arena.maze===maze?TEAM_SPEED*(fast?1.2:1):SPEED;
  return arena.bushAt(p)===null?speed:speed/2;
 }
 export const CHEST_TARGET=TEAM_ARENA.chestInReach;

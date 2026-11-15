@@ -1,10 +1,10 @@
 import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile, WARP_ACCESS, WARP_TARGET,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=team-objectives-1';
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=archer-movement-1';
 import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses, syncMonsterPower} from './combat.mjs?v=team-objectives-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses, syncMonsterPower} from './combat.mjs?v=archer-movement-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=team-objectives-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=archer-movement-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
@@ -729,15 +729,14 @@ export class Match {
  damageBase(base,p,now){
   const {effect}=siegeProfile(p);
   const career=p.baseCls||p.cls;
-  const hitDamage=['druid','summoner'].includes(career)?3:effect==='magic'?5:effect==='archer'||career==='gladiator'||career==='thief'?BASE_ATTACK_HP/2:BASE_ATTACK_HP;
+  const hitDamage=['archer','druid','summoner'].includes(career)?3:effect==='magic'?5:career==='gladiator'||career==='thief'?BASE_ATTACK_HP/2:BASE_ATTACK_HP;
   if(p.siege?.id!==base.id)p.siege={id:base.id,nextHitAt:now+BASE_ATTACK_MS,nextScoreAt:now+BASE_ATTACK_SCORE_MS};
   const siege=p.siege;
   while(Math.min(siege.nextScoreAt,siege.nextHitAt)<=now){
    if(siege.nextScoreAt<=siege.nextHitAt){
     const endsWithCapture=base.hp<=hitDamage&&siege.nextScoreAt===siege.nextHitAt;
-    const points=base.points*(career==='archer'?.5:1);
-    this.earn(p,points);
-    this.score[base.side]=Math.max(0,this.score[base.side]-points);
+    this.earn(p,base.points);
+    this.score[base.side]=Math.max(0,this.score[base.side]-base.points);
     siege.nextScoreAt+=BASE_ATTACK_SCORE_MS;
     if(!endsWithCapture){
      this.checkScore(now);

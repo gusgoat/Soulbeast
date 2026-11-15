@@ -115,33 +115,32 @@ Deno.test('standing small and medium bases transfer net ownership points every t
  r.tick(90_000,0);eq(r.score,[350,250]);
  eq([a.earned,b.earned],[0,0]);
 });
-Deno.test('archer siege hits for two HP every second, awards points, shows the warning, and never teleports',()=>{
+Deno.test('archer siege hits for three HP every second, awards points, shows the warning, and never teleports',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(base=>base.side===b.side&&base.tier==='small');
  base.fireAt=Infinity;
  Object.assign(a,{x:base.x,y:base.y,baseCls:'archer'});
- eq(siegeProfile(a),{range:375,effect:'archer'});
+ eq(siegeProfile(a),{range:300,effect:'archer'});
  r.siegeBases(3000);r.siegeBases(3199);eq(base.hp,60);
  eq(r.snapshot(b,3199).bases.find(x=>x.id===base.id).underAttack,true);
  eq(r.snapshot(a,3199).bases.find(x=>x.id===base.id).underAttack,false);
  r.siegeBases(3999);eq(base.hp,60);eq(r.score,[300,300]);
- r.siegeBases(4000);eq(base.hp,58);eq(r.score,[300.5,299.5]);eq(a.earned,.5);eq([a.x,a.y],[base.x,base.y]);
+ r.siegeBases(4000);eq(base.hp,57);eq(r.score,[301,299]);eq(a.earned,1);eq([a.x,a.y],[base.x,base.y]);
  ok(r.baseEffects.some(e=>e.kind==='archer'));
- r.score[b.side]=.5;r.siegeBases(4999);eq(r.score,[300.5,.5]);
+ r.score[b.side]=1;r.siegeBases(4999);eq(r.score,[301,1]);
  r.siegeBases(5000);eq(r.winner,a.side);eq(r.reason,'zero');
 });
-Deno.test('archer hits a base from 375 units while the turret and gunner cannot reach',()=>{
+Deno.test('archer and gunner share the turret boundary at 300 units',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');
  r.bases=[base];
- Object.assign(a,{x:base.x-376,y:base.y,baseCls:'archer'});
+ Object.assign(a,{x:base.x-301,y:base.y,baseCls:'archer'});
  ok(clearPath(a,base));
  r.siegeBases(3000);eq(a.siege,undefined);
  a.x++;
  r.siegeBases(3100);r.siegeBases(4100);
- eq(base.hp,58);eq(r.baseBolts.length,0);eq(a.hp,a.maxHp);
- a.baseCls='gunner';
- r.siegeBases(5100);eq(a.siege,undefined);eq(base.hp,58);
+ eq(base.hp,57);ok(a.hp<a.maxHp);
+ eq(siegeProfile({baseCls:'gunner'}).range,siegeProfile(a).range);
 });
 Deno.test('friendly small and medium tower alerts are distinct from main base alerts and do not repeat during continuous damage',()=>{
  for(const tier of ['small','medium','large']){
@@ -413,9 +412,9 @@ Deno.test('a repairing defender in battle cannot block another player from hitti
  r.siegeBases(3000);r.siegeBases(4000);
  eq(base.hp,base.maxHp-4);eq(r.score,[301,299]);
 });
-Deno.test('team movement runs at 200 and thief at 240 with half speed in bushes',()=>{
+Deno.test('team movement runs at 200 and archer and thief at 240 with half speed in bushes',()=>{
  const bush=BUSHES[0];
- for(const [cls,speed] of [['mage',200],['thief',240]]){
+ for(const [cls,speed] of [['mage',200],['thief',240],['archer',240]]){
   const open={...cellCenter(5,21),baseCls:cls};
   const inside={...cellCenter(bush.x,bush.y),baseCls:cls};
   for(const [p,expected] of [[open,speed],[inside,speed/2]]){
