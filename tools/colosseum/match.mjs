@@ -14,6 +14,7 @@ const PLAYER_DEATH_POINTS=30;
 const hunterBonus=player=>['swordsman','summoner'].includes(player.baseCls);
 function cancelRecall(p){delete p.recallEndsAt;delete p.recallBaseId;}
 const BASE_CAPTURE_LOSS={small:40,medium:60,large:100};
+const BASE_CAPTURE_TEAM_PERSONAL={small:10,medium:20,large:0};
 const nearest=(p,list)=>list.slice().sort((a,b)=>distance(a,p)-distance(b,p)||(a.id??'').localeCompare(b.id??''))[0];
 const partyPets=(battle,p)=>[...battle.allies,...battle.enemies,...(battle.retiredUnits||[])].filter(u=>u.kind==='pet'&&u.sealer===p.id&&p.petVitals?.has(u.uid));
 const SHADOW_AGGRO=1000, SHADOW_LEASH=2000, SHADOW_CHASE_MS=5000;
@@ -758,11 +759,16 @@ export class Match {
     const defender=base.side,loss=BASE_CAPTURE_LOSS[base.tier],bonus=loss/2;
     this.score[defender]=Math.max(0,this.score[defender]-loss);
     this.earn(p,bonus);
+    const teamPersonal=BASE_CAPTURE_TEAM_PERSONAL[base.tier];
+    if(teamPersonal)for(const teammate of this.players){
+     if(teammate.side===p.side&&!teammate.retired)teammate.earned+=teamPersonal;
+    }
     base.underAttack=false;
     delete p.siege;
     this.clearBaseRepairs(base.id);
     for(const player of this.players)if(player.recallBaseId===base.id)cancelRecall(player);
-    this.note(`${p.name} ทำ${base.label}แตก · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}`,now);
+    const personalNotice=teamPersonal?` · ทุกคนในทีม +${teamPersonal} แต้มส่วนตัว`:'';
+    this.note(`${p.name} ทำ${base.label}แตก · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}${personalNotice}`,now);
     if(base.main)this.finish(p.side,'base-captured',now);
     else this.checkScore(now);
     return;

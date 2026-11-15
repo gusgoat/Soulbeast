@@ -84,11 +84,11 @@ Deno.test('each central medium base unlocks after destroying any one of its thre
   stage(medium,3000);eq(medium.hp,80);
   small.hp=1;stage(small,4000);
   eq([small.side,small.hp,small.flagSide],[side,0,attacker.side]);
-  eq([attacker.earned,r.score[attacker.side],r.score[side]],[21,321,259]);
+  eq([attacker.earned,r.score[attacker.side],r.score[side]],[31,321,259]);
   ok(!r.inBaseFireRange(small));
   stage(medium,5000);eq(medium.hp,attacker.baseCls==='summoner'?77:75);
   medium.hp=1;stage(medium,6000);
-  eq([medium.side,medium.hp,attacker.earned,r.score[attacker.side],r.score[side]],[side,0,53,353,197]);
+  eq([medium.side,medium.hp,attacker.earned,r.score[attacker.side],r.score[side]],[side,0,83,353,197]);
  }
 });
 Deno.test('balanced rooms start at 1v1 and 5v5; 15 minutes, draw on tie',()=>{
@@ -168,6 +168,18 @@ Deno.test('each extra attacker independently deals four HP and earns points ever
   for(let time=3000;time<=6000;time+=25)r.siegeBases(time);
   eq(base.hp,60-damage);eq(r.score,[300+3*count,300-3*count]);
   eq(attackers.map(u=>u.earned),Array(count).fill(3));
+ }
+});
+Deno.test('small and medium base destruction gives every teammate a separate personal bonus',()=>{
+ for(const [tier,personal,finisher,loss] of [['small',10,20,40],['medium',20,30,60],['large',0,50,100]]){
+  const {r,p:[attacker,enemy,teammate,enemyAlly]}=match(4);start(r,r.players);
+  const base=r.bases.find(b=>b.side===enemy.side&&b.tier===tier);
+  base.hp=1;
+  r.damageBase(base,attacker,3000);
+  r.damageBase(base,attacker,4000);
+  r.damageBase(base,attacker,5000);
+  eq([attacker.earned,teammate.earned,enemy.earned,enemyAlly.earned],[1+finisher+personal,personal,0,0]);
+  eq(r.score,[301+finisher,299-loss]);
  }
 });
 Deno.test('siege transfers one point per second for every base tier',()=>{
