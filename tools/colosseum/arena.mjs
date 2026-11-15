@@ -156,6 +156,10 @@ export function siegeProfile(p){
 export const RAID_TARGET=(p,b)=>p.side!==b.side&&distance(p,b)<=siegeProfile(p).range&&clearPath(p,b);
 export const HEAL_TARGET=(p,b)=>p.side===b.side&&b.hp>0&&distance(p,b)<=BASE_REPAIR_RANGE;
 export const REPAIR_TARGET=(p,b)=>(p.baseCls||p.cls)==='merchant'&&HEAL_TARGET(p,b)&&b.hp<b.maxHp;
+export function baseDamageStage(base){
+ const ratio=(base.hp??base.maxHp)/base.maxHp;
+ return ratio<=.25?2:ratio<=.5?1:ratio<=.75?0:-1;
+}
 export function walkSpeed(arena,p){
  const speed=arena.maze===maze?TEAM_SPEED*((p.baseCls||p.cls)==='thief'?1.2:1):SPEED;
  return arena.bushAt(p)===null?speed:speed/2;

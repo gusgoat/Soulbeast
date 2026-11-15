@@ -3,7 +3,7 @@ import {battleEffects} from './battle-effects.generated.mjs?v=signature-motion-9
 const assets = new URL('../../assets/',import.meta.url).pathname;
 // Reuse the sounds and painted projectiles from the game's PvP presentation.
 const audioFiles={
- music:'ae90e5697f1bc67924075c93', charge:'8656c08c0c6d000fa76ebf35',
+ charge:'8656c08c0c6d000fa76ebf35',
  melee:'3641c4e4dd26d6c72a93b678', bow:'6e5c59331550998865640e60', spell:'81dbfea983f07ed9d78a7cbb',
  heal:'ba0966b26d7a39b612d426f1', buff:'ef008aa2274f6ef5eea8a19d',
  fire:'2987725a76ac26d72cae8fe1', water:'1ddb745bb9bcf745daade49d', ice:'9eda521ae5a1036adfa74c99',
@@ -13,16 +13,38 @@ const walkingFiles={
  walk:'audio/20261020/0ec63238028507b2de14e0af.mp3',
  stone:'audio/forest-journey/stone.mp3',leaves:'audio/forest-journey/leaves.mp3',
 };
-const audioUrl=key=>assets+(walkingFiles[key]||'media/'+audioFiles[key]+'.mp3');
+const siegeClips={
+ 'ranged-impact':{duration:.56,level:.75},
+ 'dagger-impact':{duration:.72,level:.7},
+ 'heavy-melee-impact':{duration:.85,level:.7},
+ 'magic-impact':{duration:.95,level:.7},
+ 'collapse':{offset:.34,level:.85},
+ 'damage-start':{duration:2.3,level:.42},
+ 'repair':{},
+ 'tower':{file:'media/'+audioFiles.electric+'.mp3',duration:.8,level:.65},
+};
+const audioUrl=key=>assets+(walkingFiles[key]||(siegeClips[key]?
+ siegeClips[key].file||'audio/colosseum-siege/'+key+'.mp3':'media/'+audioFiles[key]+'.mp3'));
 const prefsKey='soulbeast-colosseum-battle-sound';
 
 export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=='off'}={}){
  let active=false, playing=false, walking=false, surface=null;
+ let fieldAudio=false, repairing=false;
  let enabled=sound, context, gain;
  const clips=new Map(), timers=new Set(), loops=new Map();
  const poses=new Map(), preloaded=new Set(), flights=new Set(), heldHp=new Map();
- const music=new Audio(audioUrl('music'));
- music.loop=true;music.volume=.16;music.preload='none';
+ const musicFiles={
+  lobby:'competitive/activity-menu.mp3',
+  arena:'competitive/colosseum-arena.mp3',
+  results:'menu-and-results.mp3',
+ };
+ const musicTracks=Object.fromEntries(Object.entries(musicFiles).map(([scene,file])=>{
+  const audio=new Audio(assets+'audio/'+file);
+  audio.loop=true;audio.volume=.16;audio.preload='none';
+  window.SoulbeastMusicChannel?.register(audio,document);
+  return [scene,audio];
+ }));
+ let music=musicTracks.lobby;
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const effectsHost=document.createElement('div');
  effectsHost.style.cssText='position:absolute;inset:0;pointer-events:none';
@@ -64,12 +86,26 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
  }
  function syncMusic(){
   const audible=enabled&&!document.hidden&&context?.state==='running';
-  if(active&&audible)music.play().catch(()=>{});
-  else music.pause();
+  if(music){
+   if(audible&&music.paused)music.play().catch(()=>{});
+   else if(!audible)music.pause();
+  }
   const explore=audible&&walking&&!active;
   loop('walk',explore,.62);
   loop('stone',explore&&surface==='stone',.78);
   loop('leaves',explore&&surface==='leaves',.78);
+  loop('repair',audible&&fieldAudio&&repairing,.48);
+ }
+ function setSiegeAudio(audible,repair){
+  if(fieldAudio===audible&&repairing===repair)return;
+  fieldAudio=audible;repairing=repair;syncMusic();
+ }
+ function setMusicScene(scene){
+  const next=musicTracks[scene];
+  if(next===music)return;
+  if(music){music.pause();music.currentTime=0;}
+  music=next;
+  syncMusic();
  }
  function walk(value,steps=null){
   if(walking===value&&surface===steps)return;
@@ -83,17 +119,25 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
    context=new Context();
    gain=context.createGain();gain.gain.value=.38;gain.connect(context.destination);
    for(const key of ['melee','bow','spell','heal','buff','charge','walk','stone','leaves'])void clip(key);
+   for(const key of Object.keys(siegeClips))void clip(key);
   }
   if(context.state==='running')syncMusic();
   else context.resume().then(syncMusic).catch(()=>{});
  }
- function play(key){
-  if(!active||!enabled||document.hidden||context?.state!=='running')return;
+ function play(key,field=false){
+  const audible=()=>enabled&&!document.hidden&&(field?fieldAudio:active)&&context?.state==='running';
+  if(!audible())return;
   const requestedAt=context.currentTime;
   void clip(key).then(buffer=>{
-   if(!buffer||!active||!enabled||document.hidden||context.currentTime-requestedAt>.45)return;
+   if(!buffer||!audible()||context.currentTime-requestedAt>.45)return;
    const source=context.createBufferSource();source.buffer=buffer;
-   source.connect(gain);source.start();
+   if(!field){source.connect(gain);source.start();return;}
+   const {offset=0,duration,level}=siegeClips[key];
+   const volume=context.createGain();volume.gain.value=level;
+   source.connect(volume);volume.connect(gain);
+   source.onended=()=>{source.disconnect();volume.disconnect();};
+   if(duration)source.start(0,offset,duration);
+   else source.start(0,offset);
   });
  }
  function after(callback,delay){
@@ -107,7 +151,6 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
    playing=false;timers.forEach(clearTimeout);timers.clear();poses.clear();flights.clear();heldHp.clear();effects.clear();
    for(const node of [...layer.children])if(node!==effectsHost)node.remove();
    syncPoses();
-   music.currentTime=0;
   }
   syncMusic();
  }
@@ -280,6 +323,6 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
  addEventListener('pointerdown',unlock,{passive:true});
  addEventListener('keydown',unlock);
  document.addEventListener('visibilitychange',syncMusic);
- return {action,setActive,syncPoses,toggle,walk,holdHp,hp:unit=>heldHp.get(unit.id)?.value??unit.hp,
+ return {action,setActive,setMusicScene,setSiegeAudio,playSiege:key=>play(key,true),syncPoses,toggle,walk,holdHp,hp:unit=>heldHp.get(unit.id)?.value??unit.hp,
   get busy(){return playing;},get enabled(){return enabled;}};
 }

@@ -2676,6 +2676,8 @@ const uploadedCryPrevious=ExtraAudio.cry;
 ExtraAudio.cry=function(sp,death){if(!death&&sp==='demonlord')return UploadedAudio.effect('boss');if(!death&&sp==='demon_knight')return UploadedAudio.effect('demonLaughFx');if(!death&&sp==='legend2_abyssarch')return UploadedAudio.effect('voice_demon');const q=SP[sp];if(!death&&!SPECIES_VOICE[sp]&&q&&(q.legendary||q.rare&&q.t.some(t=>['ghost','psychic','fairy','dragon'].includes(t))))return UploadedAudio.effect('mysteryCryFx');return uploadedCryPrevious.call(this,sp,death);};
 const uploadedFxPrevious=Sound.fx;
 Sound.fx=function(kind,...args){if(kind==='revive')return UploadedAudio.effect('reviveFx');if(kind==='chest')return UploadedAudio.effect('specialRewardFx');if(kind==='charge'&&UploadedAudio.action?.u?.cls&&clsWeapon(UploadedAudio.action.u.cls)==='gun')return UploadedAudio.effect('reloadFx');return uploadedFxPrevious.call(this,kind,...args);};
+MUSIC_ASSETS.gachaShrine='assets/audio/gacha-shrine.mp3';
+ExtraAudio.groups.bgSacredMusic=['gachaShrine'];
 function uploadedMusicScene(){
  const q=S.ui.cinema||(!S.P&&!S.ui.introSeen?{chapter:0,index:S.ui.introFrame||0}:null);
  if(q){const f=storyFrames(q.chapter,q.after)[q.index||0],key=f?.music||'intro',group=({intro:'bgIntroMusic',sadMusic:'bgSadMusic',hauntMusic:'bgHorrorMusic',battleMusic:'bgDramaMusic',pianoMusic:'bgInspireMusic',peaceMusic:'bgInspireMusic'})[key]||key;const themed=/ต้นไม้โลก|รากโลก/.test(f?.text||f?.t||'')?'bgWorldTreeMusic':/ปราสาทจอมมาร/.test(f?.text||f?.t||'')?'bgDemonCastleMusic':group;return {group:themed,stamp:'cinema:'+q.chapter+':'+!!q.after+':'+group};}
@@ -2686,6 +2688,8 @@ function uploadedMusicScene(){
  if(active&&b.enemies?.some(u=>u.sp==='demonlord'))return {group:'bgDemonBossRoomMusic',stamp:'demonlord-combat'};
  if(active&&b.kind==='boss')return {group:({2:'bgMistBossRoomMusic',6:'bgDemonBossRoomMusic'})[S.zone?.id]||'bgBossRoomMusic',stamp:'boss-combat:'+S.zone?.id};
  if(active)return {group:'bgBattleMusic',stamp:'combat:'+S.screen+':'+(b.kind||'')+':'+(S.zone?.id||0)};
+ if(S.screen==='gacha')return {group:'bgSacredMusic',stamp:'gacha'};
+ if(S.screen==='zone'&&['shrine','revival'].includes(S.zone?.ev?.type)&&!isBossDoorScene())return {group:'bgSacredMusic',stamp:'sacred-forest:'+S.zone.id};
  if(S.zone){const type=S.zone.ev?.type||'fork';if(isBossDoorScene())return {group:({2:'bgMistBossRoomMusic',3:'bgDesertBossDoorMusic',4:'bgDragonBossDoorMusic',6:'bgDemonBossRoomMusic'})[S.zone.id]||'bgBossRoomMusic',stamp:'boss-door:'+S.zone.id};if(['spring','revival','cleanse'].includes(type))return {group:'bgWavesMusic',stamp:'forest-water:'+S.zone.id};if(type==='village'||type==='hospital')return {group:'peaceMusic',stamp:'forest-rest:'+type+':'+S.zone.id};if(type==='chest'&&!S.zone.ev.opened)return {group:'bgPuzzleMusic',stamp:'forest-puzzle:'+S.zone.id};if(type==='mist'&&S.zone.id===6)return {group:'bgGhostAmbientMusic',stamp:'ghost-mist'};if(type==='stranger')return {group:'bgAnxietyMusic',stamp:'forest-stranger:'+S.zone.id};if(type==='ruins'&&S.zone.id===5)return {group:'bgWorldTreeMusic',stamp:'world-tree-ruins'};if(['mist','ruins'].includes(type))return {group:'bgPressureMusic',stamp:'forest-mystery:'+type+':'+S.zone.id};return {group:({1:'bgMysticForestMusic',2:'bgMistValleyMusic',3:'bgDesertMusic',4:'bgDragonPeakMusic',5:'bgHeavenAmbientMusic',6:'bgDemonCastleMusic'})[S.zone.id]||'bgAdventureMusic',stamp:'forest:'+S.zone.id};}
  if(S.screen==='guild')return {group:'bgGuildMusic',stamp:'guild'};
  if(S.screen==='hospital')return {group:'peaceMusic',stamp:'hospital'};

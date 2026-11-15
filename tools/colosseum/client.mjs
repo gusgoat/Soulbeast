@@ -1,10 +1,11 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance, siegeProfile} from './arena.mjs?v=balance-summons-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=siege-roster-v1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-damage-stage-1';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
-import {battlePresentation} from './battle-presentation.mjs?v=signature-motion-9';
+import {battlePresentation} from './battle-presentation.mjs?v=siege-audio-1';
+import {siegeAudio} from './siege-audio.mjs?v=2';
 import {bindWalkJoystick} from './walk-joystick.mjs?v=1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
@@ -15,6 +16,7 @@ const node=(tag,content,className)=>{
 };
 const scene=new Scene($('world')), actors=new Map(), keys=new Set();
 const presentation=battlePresentation($('battle-vfx'));
+const siegeSounds=siegeAudio(presentation.playSiege);
 const mapDialog=$('large-map'), channel='soulbeast-colosseum-session';
 let ws,state,battle,me,local,lastInput='',seq=0,offset=0,retry,packet;
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
@@ -211,6 +213,9 @@ function reset(message='',clearInvite=false){
  spectatorPan.x=spectatorPan.y=0;spectatorDrag=null;
  presentation.walk(false);
  presentation.setActive(false);
+ presentation.setMusicScene('lobby');
+ presentation.setSiegeAudio(false,false);
+ siegeSounds.reset();
  hideBattle();
  opening=queued=leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;
  if(clearInvite){
@@ -292,6 +297,13 @@ function applyState(next){
   }
  }
  opening=false;state=next;offset=next.now+oneWay-arrival;
+ presentation.setMusicScene(state.phase==='match'?'arena':state.phase==='finished'?'results':'lobby');
+ const player=own();
+ const fieldAudio=state.mode!=='survival'&&(state.phase==='match'&&player?.phase==='walk'||
+  state.phase==='finished'&&state.reason==='base-captured'&&player?.phase!=='battle');
+ const repairing=fieldAudio&&state.phase==='match'&&state.players.some(p=>p.repairingBase&&p.phase==='walk');
+ presentation.setSiegeAudio(fieldAudio,repairing);
+ siegeSounds.sync(state,fieldAudio?player:null);
  if(entering)updateEntryControls();
  $('lobby').hidden=state.phase!=='lobby';$('arena').hidden=state.phase==='lobby';
  $('entry').hidden=true;$('room').hidden=false;

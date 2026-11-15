@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, distance} from './arena.mjs?v=base-recall-1';
+import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, baseDamageStage, distance} from './arena.mjs?v=base-damage-stage-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -711,8 +711,7 @@ export class Scene{
  }
  baseAppearance(b){
   const art=baseArt[b.side];
-  const ratio=(b.hp??b.maxHp)/b.maxHp;
-  const damage=ratio<=.25?2:ratio<=.5?1:ratio<=.75?0:-1;
+  const damage=baseDamageStage(b);
   const worn=art.damaged[b.tier]?.[damage];
   const castle=ready(worn)?worn:art[b.main?'main':'small'];
   return {castle,damage};

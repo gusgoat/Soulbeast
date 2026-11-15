@@ -5,6 +5,7 @@ window.walkAudioCatalog={
     "countryBlue": "/Soulbeast/assets/audio/20261020/8c35f0ad34b7ec2f4b180d7e.mp3",
     "countryGreen": "/Soulbeast/assets/audio/20261020/575f7581ee845faaa338fc07.mp3",
     "countryRed": "/Soulbeast/assets/audio/20261020/b6de92cbbf3d7e274a7df2c1.mp3",
+    "countryRedOverworld": "/Soulbeast/assets/audio/menu-and-results.mp3",
     "mine": "/Soulbeast/assets/audio/20261020/76e4f429449a697ad4f62e22.mp3",
     "deepMine": "/Soulbeast/assets/audio/20261020/41ac1161c8b26f5ceabbed1e.mp3",
     "desert": "/Soulbeast/assets/audio/20261020/b6de92cbbf3d7e274a7df2c1.mp3",
