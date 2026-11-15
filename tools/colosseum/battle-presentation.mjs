@@ -1,4 +1,4 @@
-import {battleEffects} from './battle-effects.generated.mjs?v=motion-fx-3';
+import {battleEffects} from './battle-effects.generated.mjs?v=signature-motion-9';
 
 const assets = new URL('../../assets/',import.meta.url).pathname;
 // Reuse the sounds and painted projectiles from the game's PvP presentation.
@@ -16,9 +16,9 @@ const walkingFiles={
 const audioUrl=key=>assets+(walkingFiles[key]||'media/'+audioFiles[key]+'.mp3');
 const prefsKey='soulbeast-colosseum-battle-sound';
 
-export function battlePresentation(layer){
+export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=='off'}={}){
  let active=false, playing=false, walking=false, surface=null;
- let enabled=localStorage.getItem(prefsKey)!=='off', context, gain;
+ let enabled=sound, context, gain;
  const clips=new Map(), timers=new Set(), loops=new Map();
  const poses=new Map(), preloaded=new Set(), flights=new Set(), heldHp=new Map();
  const music=new Audio(audioUrl('music'));
@@ -221,6 +221,12 @@ export function battlePresentation(layer){
    events.find(e=>e.skill)?.skill||effects.skillByName(last.skill);
   const profile=effects.profile(skillId,actor);
   effects.prepareProjectile(profile);
+  const begin=()=>playAction(last,actor,events,damage,finished,repaint,finish,origin,profile,skillId);
+  const lead=effects.showSignatureBanner(profile,origin,actor);
+  if(lead)after(begin,lead);
+  else begin();
+ }
+ function playAction(last,actor,events,damage,finished,repaint,finish,origin,profile,skillId){
   const motion=effects.motion(skillId,profile);
   if(events.some(event=>event.k==='charge')){
    showPose(last.actor,'windup',550);play('charge');

@@ -10,6 +10,7 @@ const TYPES={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset
  '.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg','.mp3':'audio/mpeg'};
 const STATIC=new Set(['index.html','client.mjs','ranking.mjs','matchmaking.mjs','arena.mjs','survival-arena.mjs','arena-traps.mjs','scene.mjs','siege-male-catalog.mjs','siege-female-catalog.mjs','sight.mjs','style.css','rare-art.mjs','battle-presentation.mjs','battle-effects.generated.mjs','battle-motion-fx.js','pvp-card-art.mjs','walk-joystick.mjs','labyrinth-demo/traps.js','town-walk-demo/sealer-sprite-catalog.js','town-walk-demo/sealer-sprites.js']);
 const ROOT=new URL('../../',import.meta.url);
+STATIC.add('signature-motion.js');
 const TICK=50, LOBBY_TTL=30*60_000, LOBBY_RECONNECT_MS=60_000, FINISH_TTL=5*60_000;
 const MAX_ROOMS=32, MAX_CONNECTIONS=160;
 

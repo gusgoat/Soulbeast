@@ -3879,8 +3879,27 @@ handlers.accountCharacters=()=>{save();location.assign('./accounts-staging.html'
  later(fn,ms,epoch=this.epoch){const id=setTimeout(()=>{this.timers.delete(id);if(epoch===this.epoch)fn();},BattleSpeed.ms(ms));this.timers.add(id);return id;},
  clear(){this.epoch++;for(const t of this.timers)clearTimeout(t);this.timers.clear();for(const f of [...this.live])f();this.live.clear();document.getElementById('vfx')?.querySelectorAll('.battle-fx-owned').forEach(n=>n.remove());},
  watch(){if(this.observer||typeof MutationObserver==='undefined')return;this.observer=new MutationObserver(()=>{if(this.screen!==S.screen){this.clear();return;}for(const f of [...this.live])if(f.stale?.())f();});this.observer.observe(document.getElementById('app'),{childList:true,subtree:true});},
+ showSignatureBanner(L,at,p,actor){
+  if(!at)return 0;
+  const duration=globalThis.SoulbeastSignatureMotion?.bannerDuration()||0;
+  const motion=globalThis.SoulbeastSignatureMotion;
+  const portrait=motion?.portraitUrl(actor,path=>this.projectileUrl(path));
+  const banner=motion?.reveal(L,at,p.id,SK[p.id]?.n,this.animationRate(),duration,portrait);
+  if(!banner)return 0;
+  const cleanup=()=>{banner.remove();this.live.delete(cleanup);};
+  this.live.add(cleanup);this.later(cleanup,duration);
+  return duration;
+ },
+ signatureMotion(L,at,p,phase){
+  if(!at)return;
+  const effect=globalThis.SoulbeastSignatureMotion?.play(L,at,p.id,this.animationRate(),phase);
+  if(!effect)return;
+  const cleanup=()=>{effect.remove();this.live.delete(cleanup);};
+  this.live.add(cleanup);this.later(cleanup,1180);
+ },
  castVisual(L,at,profile){
   if(!at||profile.id==='attack'||!SK[profile.id])return;
+  this.signatureMotion(L,at,profile,'cast');
   if(profile.effect){this.eclipseCast(L,at,profile);return;}
   spellBurst(L,{k:'cast',skill:profile.id},at.x,at.y);
   this.spawn(L,'seal',at.x,at.y,profile,{'--size':'62px'});
@@ -3948,6 +3967,7 @@ handlers.accountCharacters=()=>{save();location.assign('./accounts-staging.html'
   anim=n.animate?.([{transform:pose+' scale(.45)',opacity:0},{transform:pose+' scale(1)',opacity:1,offset:.25},{transform:pose+' scale(1.25)',opacity:0}],{duration:650,easing:'ease-out',fill:'both'});if(anim)anim.onfinish=cleanup;this.later(cleanup,700);
  },
  impact(L,e,to,p){
+  if(e.k!=='hit'||CharacterMotion.landed(e))this.signatureMotion(L,to,p,'impact');
   this.paintedImpact(L,e,to,p);
   if(p.effect){this.eclipseImpact(L,e,to,p);return;}
   if(e.k==='heal')p={...p,color:'#a8f4bc',accent:'#fff5c7'};
@@ -3967,9 +3987,16 @@ handlers.accountCharacters=()=>{save();location.assign('./accounts-staging.html'
   const seen=new Map(),moved=new Set();let time=0,lastGroup=-1;
   for(const e of events){
    if(e.group!==lastGroup){if(lastGroup>=0)time+=740;lastGroup=e.group;}
+   if(e.k==='cast'||e.k==='charge'){
+    const lead=globalThis.SoulbeastSignatureMotion?.recipes.has(e.skill)?globalThis.SoulbeastSignatureMotion.bannerDuration():0;
+    if(lead){
+     this.later(()=>this.showSignatureBanner(L,this.anchor(e.source||e.id),{id:e.skill},this.actor(e.source||e.id)),time,epoch);
+     time+=lead;
+    }
+   }
    const at=time;this.later(()=>{
     if(S.screen!==screen)return;const to=this.anchor(e.id),from=this.anchor(e.source),p=this.profile(e.skill||'attack',this.actor(e.source||e.id));if(!to)return;
-    if(e.k==='cast'||e.k==='charge'){if(p.effect){vSpawn(L,'vx-cast',null,p.color,e.n||SK[e.skill]?.n);this.eclipseCast(L,to,p);return;}vSpawn(L,'vx-cast',null,p.color,e.n||SK[e.skill]?.n);spellBurst(L,{...e,k:'cast'},to.x,to.y);this.spawn(L,'seal',to.x,to.y,p,{'--size':'62px'});if(['support','field'].includes(p.mode))this.impact(L,e,to,p);return;}
+    if(e.k==='cast'||e.k==='charge'){L.querySelector('[data-signature-banner]')?.remove();this.signatureMotion(L,to,p,'cast');if(p.effect){vSpawn(L,'vx-cast',null,p.color,e.n||SK[e.skill]?.n);this.eclipseCast(L,to,p);return;}vSpawn(L,'vx-cast',null,p.color,e.n||SK[e.skill]?.n);spellBurst(L,{...e,k:'cast'},to.x,to.y);this.spawn(L,'seal',to.x,to.y,p,{'--size':'62px'});if(['support','field'].includes(p.mode))this.impact(L,e,to,p);return;}
     if(!['hit','miss','heal','buff','debuff'].includes(e.k))return;
     const key=e.group+':'+e.source+':'+e.id+':'+e.skill,index=seen.get(key)||0,repeat=index>0;seen.set(key,index+1);
     this.currentSource=e.source;this.currentTarget=e.id;let arrival=0;
@@ -4322,8 +4349,11 @@ const MotionTimeline={
    const windup=charging?(a?.windupDuration||1)*1000:a?(mode==='blade'?300:mode==='ranged'?(a.windupDuration||1)*1000:mode==='support'?(a.assets.threat?1800:(a.windupDuration||1)*1000):0):0;
    // Reserve through projectile arrival, all multi-hit impacts and the target's recovery pose.
    const span=charging?windup+150:mode==='melee'?2400:windup+2600+targets.length*65;
+   const lead=cast&&globalThis.SoulbeastSignatureMotion?.recipes.has(skill)?globalThis.SoulbeastSignatureMotion.bannerDuration():0;
+   if(lead)CharacterMotion.schedule(()=>BattleEffects.showSignatureBanner(L,BattleEffects.anchor(source),profile,actor),offset);
    CharacterMotion.schedule(()=>{
     if(cast){
+     if(lead)L.querySelector('[data-signature-banner]')?.remove();
      vSpawn(L,'vx-cast',null,cast.c||'#d9b35b',cast.n||SK[skill]?.n);
      BattleEffects.castVisual(L,BattleEffects.anchor(source),profile);
     }
@@ -4343,8 +4373,8 @@ const MotionTimeline={
      // MP cost and self buffs appear at release, not during windup.
      if(!targets.some(e=>e.id===source))this.arrive(source);
     },windup);
-   },offset);
-   offset+=span;
+   },offset+lead);
+   offset+=lead+span;
   }
   this.until=Date.now()+BattleSpeed.ms(offset);
   CharacterMotion.schedule(()=>{if(Date.now()+20<this.until)return;this.until=0;this.revealRemaining();},offset);

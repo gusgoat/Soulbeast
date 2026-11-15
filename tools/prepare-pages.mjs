@@ -27,6 +27,12 @@ const sourceArt=new Set([
 ]);
 // The game streams these MP4s from Supabase Storage. Keep the WebP posters on Pages.
 const streamedVideos=new Set(['assets/video/soulbeast-intro-v2.mp4']);
+const signatureManifest='assets/vfx/signature-portraits-v9/available.js';
+const signaturePng=/^assets\/vfx\/signature-portraits-(?:v9\/[a-z0-9_-]+|v7\/[a-z0-9_-]+-expanded)\.png$/;
+const publishedSignatureManifest=files.has(signatureManifest)
+ ?readFileSync(resolve(root,signatureManifest),'utf8')+
+  'globalThis.SoulbeastSignaturePortraitRoot='+JSON.stringify('https://raw.githubusercontent.com/gusgoat/Soulbeast/'+revision+'/')+';\n'
+ :null;
 for(let zone=1;zone<=8;zone++){
  for(const phase of ['before','after'])streamedVideos.add('assets/video/forest-story/zone-'+zone+'-'+phase+'.mp4');
 }
@@ -41,25 +47,27 @@ const publishedCatalog=readFileSync(resolve(root,catalog),'utf8').replace(
  },
 );
 
-let bytes=0, count=0, omittedBytes=0, streamedBytes=0;
+let bytes=0, count=0, omittedBytes=0, streamedBytes=0, signatureBytes=0;
 const staged=[];
 for(const file of files){
  if(file.startsWith('.github/')||file==='tools/prepare-pages.mjs')continue;
  const source=resolve(root,file);
  const size=statSync(source).size;
  if(streamedVideos.has(file)){streamedBytes+=size;continue;}
+ if(publishedSignatureManifest&&signaturePng.test(file)){signatureBytes+=size;continue;}
  if(sourceArt.has(file)||originals.has(file)){omittedBytes+=size;continue;}
- bytes+=file===catalog?Buffer.byteLength(publishedCatalog):size;
- staged.push({file,source});
+ const rewritten=file===catalog?publishedCatalog:file===signatureManifest?publishedSignatureManifest:null;
+ bytes+=rewritten===null?size:Buffer.byteLength(rewritten);
+ staged.push({file,source,rewritten});
  count++;
 }
 if(bytes>=1_000_000_000)throw new Error(`Pages would publish ${bytes} bytes. The site must be smaller than 1 GB.`);
 
 mkdirSync(output);
-for(const {file,source} of staged){
+for(const {file,source,rewritten} of staged){
  const target=resolve(output,file);
  mkdirSync(dirname(target),{recursive:true});
- if(file===catalog)writeFileSync(target,publishedCatalog);
+ if(rewritten!==null)writeFileSync(target,rewritten);
  else copyFileSync(source,target);
 }
-console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video.`);
+console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video. ${signatureBytes} bytes of portrait PNGs are served from the release commit.`);
