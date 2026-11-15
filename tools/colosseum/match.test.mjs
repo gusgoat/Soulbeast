@@ -88,7 +88,7 @@ Deno.test('each central medium base unlocks after destroying any one of its thre
   ok(!r.inBaseFireRange(small));
   stage(medium,5000);eq(medium.hp,attacker.baseCls==='summoner'?77:75);
   medium.hp=1;stage(medium,6000);
-  eq([medium.side,medium.hp,attacker.earned,r.score[attacker.side],r.score[side]],[side,0,55,355,195]);
+  eq([medium.side,medium.hp,attacker.earned,r.score[attacker.side],r.score[side]],[side,0,53,353,197]);
  }
 });
 Deno.test('balanced rooms start at 1v1 and 5v5; 15 minutes, draw on tie',()=>{
@@ -170,8 +170,8 @@ Deno.test('each extra attacker independently deals four HP and earns points ever
   eq(attackers.map(u=>u.earned),Array(count).fill(3));
  }
 });
-Deno.test('one second of siege transfers the rate of the base tier',()=>{
- for(const [tier,points] of [['small',1],['medium',2],['large',3]]){
+Deno.test('siege transfers one point per second for every base tier',()=>{
+ for(const tier of ['small','medium','large']){
   const {r,p:[a,b]}=match();start(r,[a,b]);
   const base=r.bases.find(q=>q.side===b.side&&q.tier===tier);
   base.links=[];base.fireAt=Infinity;r.bases=[base];
@@ -179,7 +179,7 @@ Deno.test('one second of siege transfers the rate of the base tier',()=>{
   r.siegeBases(3000);r.siegeBases(3999);
   eq(base.hp,base.maxHp);eq(a.earned,0);
   r.siegeBases(4000);
-  eq(a.earned,points);eq(r.score,[300+points,300-points]);
+  eq(a.earned,1);eq(r.score,[301,299]);
  }
 });
 Deno.test('gladiator and thief hit bases for half damage every second without reducing score',()=>{
@@ -864,7 +864,7 @@ Deno.test('destroying a large base removes it permanently and immediately wins a
  r.siegeBases(3000);r.siegeBases(4000);
  eq([capital.side,capital.hp,r.winner,r.reason],[b.side,0,a.side,'base-captured']);
  ok(r.baseEffects.some(e=>e.baseId===capital.id&&e.kind==='collapse'));
- eq(r.score,[353,197]);eq(a.earned,53);
+ eq(r.score,[351,199]);eq(a.earned,51);
 });
 Deno.test('a shadow acquires at 1000, runs at 200 units per second and returns after five seconds or beyond 2000',()=>{
  for(const reason of ['time','distance']){

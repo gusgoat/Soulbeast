@@ -735,8 +735,8 @@ export class Match {
   while(Math.min(siege.nextScoreAt,siege.nextHitAt)<=now){
    if(siege.nextScoreAt<=siege.nextHitAt){
     const endsWithCapture=base.hp<=hitDamage&&siege.nextScoreAt===siege.nextHitAt;
-    this.earn(p,base.points);
-    this.score[base.side]=Math.max(0,this.score[base.side]-base.points);
+    this.earn(p,1);
+    this.score[base.side]=Math.max(0,this.score[base.side]-1);
     siege.nextScoreAt+=BASE_ATTACK_SCORE_MS;
     if(!endsWithCapture){
      this.checkScore(now);
