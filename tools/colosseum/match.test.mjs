@@ -143,6 +143,22 @@ Deno.test('archer hits a base from 350 units while the turret and gunner cannot 
  a.baseCls='gunner';
  r.siegeBases(5100);eq(a.siege,undefined);eq(base.hp,58);
 });
+Deno.test('friendly small and medium tower alerts are distinct from main base alerts and do not repeat during continuous damage',()=>{
+ for(const tier of ['small','medium','large']){
+  const {r,p:[attacker,defender]}=match();start(r,r.players);
+  const base=r.bases.find(b=>b.side===defender.side&&b.tier===tier);
+  const clip=tier==='large'?'base-under-attack':'tower-under-attack';
+  r.damageBase(base,attacker,3000);
+  r.damageBase(base,attacker,4000);
+  r.damageBase(base,attacker,5000);
+  eq(r.announcer.forPlayer(defender,5000).map(e=>e.clip),[clip]);
+  eq(r.announcer.forPlayer(attacker,5000),[]);
+  delete attacker.siege;
+  r.damageBase(base,attacker,7000);
+  r.damageBase(base,attacker,8000);
+  eq(r.announcer.forPlayer(defender,8000).map(e=>e.clip),[clip,clip]);
+ }
+});
 Deno.test('each extra attacker independently deals four HP and earns points every second',()=>{
  for(const [count,damage] of [[1,12],[2,24],[3,36]]){
   const {r,p}=match(6);start(r,p);

@@ -1,4 +1,4 @@
-import {Match} from './match.mjs?v=archer-siege-1';
+import {Match} from './match.mjs?v=tower-warning-1';
 import {startPractice} from './practice.mjs?v=archer-siege-1';
 
 let room,player,timer,last,frame=0,battleKey;

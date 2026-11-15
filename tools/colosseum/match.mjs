@@ -740,7 +740,9 @@ export class Match {
     continue;
    }
    siege.nextHitAt+=BASE_ATTACK_MS;
-   if(base.main&&now-(base.lastAnnouncedHit??-Infinity)>2500)this.announcer.add('base-under-attack',now,{side:base.side});
+   if(now-(base.lastAnnouncedHit??-Infinity)>2500){
+    this.announcer.add(base.main?'base-under-attack':'tower-under-attack',now,{side:base.side});
+   }
    base.lastAnnouncedHit=now;
    base.hp=Math.max(0,base.hp-hitDamage);
    this.baseEffect(effect,base,p,now,BASE_ATTACK_MS);
