@@ -21,7 +21,12 @@ const siegeClips={
  'collapse':{offset:.34,level:.85},
  'damage-start':{duration:2.3,level:.42},
  'repair':{},
+ 'warp-charge':{},
+ 'respawn':{file:'media/af5fc3353af9928b07db46cf.mp3',level:.85},
  'tower':{file:'media/'+audioFiles.electric+'.mp3',duration:.8,level:.65},
+ ...Object.fromEntries(['male','female'].flatMap(gender=>[1,2,3,4].map(take=>[
+  `fall-${gender}-${take}`,{file:`audio/humanoid-death/${gender}-${take}.mp3`,level:.9,afterFall:true},
+ ]))),
 };
 const audioUrl=key=>assets+(walkingFiles[key]||(siegeClips[key]?
  siegeClips[key].file||'audio/colosseum-siege/'+key+'.mp3':'media/'+audioFiles[key]+'.mp3'));
@@ -30,6 +35,7 @@ const prefsKey='soulbeast-colosseum-battle-sound';
 export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=='off'}={}){
  let active=false, playing=false, walking=false, surface=null;
  let fieldAudio=false, repairing=false, voicePlaying=false;
+ let warpAt=null, warpDeadline=null;
  let enabled=sound, context, gain;
  const clips=new Map(), timers=new Set(), loops=new Map();
  const poses=new Map(), preloaded=new Set(), flights=new Set(), heldHp=new Map();
@@ -68,7 +74,7 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
   }
   return clips.get(key);
  }
- function loop(key,shouldPlay,level){
+ function loop(key,shouldPlay,level,endsAt=null){
   const prior=loops.get(key);
   if(!shouldPlay){loops.delete(key);prior?.source?.stop();return;}
   if(prior)return;
@@ -77,11 +83,13 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
   void clip(key).then(buffer=>{
    if(loops.get(key)!==track)return;
    if(!buffer){loops.delete(key);return;}
+   const remaining=endsAt===null?buffer.duration:(endsAt-performance.now())/1000;
+   if(remaining<=0)return;
    const source=context.createBufferSource(),volume=context.createGain();
-   volume.gain.value=level;source.buffer=buffer;source.loop=true;
+   volume.gain.value=level;source.buffer=buffer;source.loop=endsAt===null;
    source.connect(volume);volume.connect(gain);
    source.onended=()=>{source.disconnect();volume.disconnect();};
-   track.source=source;source.start();
+   track.source=source;source.start(0,Math.max(0,buffer.duration-remaining));
   });
  }
  function syncMusic(){
@@ -96,10 +104,16 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
   loop('stone',explore&&surface==='stone',.78);
   loop('leaves',explore&&surface==='leaves',.78);
   loop('repair',audible&&fieldAudio&&repairing,.48);
+  loop('warp-charge',audible&&fieldAudio&&warpDeadline!==null,.75,warpDeadline);
  }
  function duckMusic(playing){voicePlaying=playing;if(music)music.volume=playing?.065:.16;}
- function setSiegeAudio(audible,repair){
-  if(fieldAudio===audible&&repairing===repair)return;
+ function setSiegeAudio(audible,repair,recallEndsAt=null,serverNow=0){
+  if(fieldAudio===audible&&repairing===repair&&warpAt===recallEndsAt)return;
+  if(warpAt!==recallEndsAt){
+   loop('warp-charge',false);
+   warpAt=recallEndsAt;
+   warpDeadline=warpAt===null?null:performance.now()+warpAt-serverNow;
+  }
   fieldAudio=audible;repairing=repair;syncMusic();
  }
  function setMusicScene(scene){
@@ -127,14 +141,15 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
   else context.resume().then(syncMusic).catch(()=>{});
  }
  function play(key,field=false){
-  const audible=()=>enabled&&!document.hidden&&(field?fieldAudio:active)&&context?.state==='running';
+  const fieldClip=field?siegeClips[key]:null;
+  const audible=()=>enabled&&!document.hidden&&(field?fieldAudio||fieldClip.afterFall:active)&&context?.state==='running';
   if(!audible())return;
   const requestedAt=context.currentTime;
   void clip(key).then(buffer=>{
    if(!buffer||!audible()||context.currentTime-requestedAt>.45)return;
    const source=context.createBufferSource();source.buffer=buffer;
    if(!field){source.connect(gain);source.start();return;}
-   const {offset=0,duration,level}=siegeClips[key];
+   const {offset=0,duration,level}=fieldClip;
    const volume=context.createGain();volume.gain.value=level;
    source.connect(volume);volume.connect(gain);
    source.onended=()=>{source.disconnect();volume.disconnect();};

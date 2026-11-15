@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, baseDamageStage, distance} from './arena.mjs?v=base-damage-stage-1';
+import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, RAID_TARGET, WARP_PADS, baseDamageStage, distance} from './arena.mjs?v=archer-siege-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -139,6 +139,7 @@ const baseArt=['ice','fire'].map(theme=>({
  damaged:Object.fromEntries(['small','medium','large'].map(tier=>[tier,
   [75,50,25].map(hp=>img(`./art/${theme}-castle-${tier}-hp-${hp}.webp`))])),
 }));
+const warpPadArt=['sapphire','ruby'].map(team=>img(`./art/warp-pad-${team}-v1.webp`));
 const siegeArt=Object.fromEntries(['archer','magic','gunner','melee','hammer','tower','collapse']
  .map(kind=>[kind,img(`./art/siege-${kind}.webp`)]));
 const siegePoses=new Map();
@@ -156,6 +157,61 @@ function siegeSheet(player){
   siegeSheets.set(key,{image,...catalog[player.cls]});
  }
  return siegeSheets.get(key);
+}
+// Weapon positions in the release pose, clockwise from facing down.
+const weaponTips={
+ archer:{
+  female:[[.67,.37],[.25,.32],[.36,.29],[.29,.29],[.39,.27],[.82,.37],[.80,.38],[.76,.39]],
+  male:[[.65,.40],[.24,.30],[.35,.31],[.34,.30],[.36,.31],[.80,.34],[.78,.39],[.73,.39]],
+ },
+ gunner:{
+  female:[[.53,.18],[.24,.23],[.23,.20],[.28,.17],[.57,.16],[.74,.19],[.76,.23],[.67,.25]],
+  male:[[.38,.25],[.21,.19],[.29,.14],[.45,.12],[.76,.14],[.81,.17],[.70,.23],[.59,.20]],
+ },
+ magic:{
+  female:[[.29,.21],[.33,.18],[.41,.18],[.56,.15],[.70,.17],[.70,.19],[.59,.20],[.41,.17]],
+  male:[[.28,.22],[.28,.17],[.44,.19],[.56,.16],[.71,.18],[.74,.19],[.59,.20],[.44,.19]],
+ },
+ melee:[[.38,.54],[.18,.62],[.05,.55],[.18,.43],[.56,.47],[.85,.47],[.95,.55],[.84,.60]],
+ hammer:[[.39,.44],[.24,.53],[.24,.50],[.43,.40],[.61,.44],[.77,.49],[.76,.52],[.62,.46]],
+};
+const lashTips=[[.69,.54],[.25,.63],[.27,.63],[.27,.49],[.31,.49],[.77,.65],[.80,.66],[.76,.53]];
+function tipOnSprite(sheet,row,frame,tip){
+ if(!ready(sheet?.image))return tip;
+ sheet.tips??=new Map();
+ const key=[row,...tip].join('/');
+ if(sheet.tips.has(key))return sheet.tips.get(key);
+ const {cell,image}=sheet;
+ const canvas=document.createElement('canvas');
+ canvas.width=canvas.height=cell;
+ const ctx=canvas.getContext('2d',{willReadFrequently:true});
+ ctx.drawImage(image,frame*cell,row*cell,cell,cell,0,0,cell,cell);
+ const {data}=ctx.getImageData(0,0,cell,cell);
+ const tx=Math.round(tip[0]*cell),ty=Math.round(tip[1]*cell);
+ const radius=Math.ceil(cell*.12);
+ let closest=radius*radius,point=tip;
+ for(let y=Math.max(0,ty-radius);y<Math.min(cell,ty+radius+1);y++){
+  for(let x=Math.max(0,tx-radius);x<Math.min(cell,tx+radius+1);x++){
+   const distance=(x-tx)**2+(y-ty)**2;
+   if(distance<closest&&data[(y*cell+x)*4+3]>96){
+    closest=distance;point=[x/cell,y/cell];
+   }
+  }
+ }
+ sheet.tips.set(key,point);
+ return point;
+}
+function siegeRelease(player,kind,base){
+ const gender=sealerGender(player);
+ const sheet=siegeSheet(player);
+ const row=siegeDirection(base.x-player.x,(base.y-player.y)*FLAT);
+ const size=145*(getAtlas(player)?.entry.renderScale||1);
+ const tips=kind==='magic'&&player.cls==='summoner'&&gender==='female'?lashTips:
+  (weaponTips[kind]?.[gender]??weaponTips[kind]??weaponTips.melee);
+ const frames=sheet?.frames??4;
+ const frame=Math.floor(frames/2);
+ const [x,y]=tipOnSprite(sheet,row,frame,tips[row]);
+ return {x:player.x+(x-.5)*size,y:player.y*FLAT+(y-(sheet?.feet[row]??.9))*size,at:frame/frames};
 }
 const damageSources=[[.46,.29],[.24,.55],[.72,.47],[.38,.68],[.62,.57],[.82,.65]];
 const damageFire=img('./art/siege-fire.webp'),damageSmoke=img('./art/siege-smoke.webp');
@@ -308,7 +364,7 @@ export function drawMap(canvas,state,players,me,zoom=1){
   m.fill('evenodd');
   if(zone.remaining){m.strokeStyle='#b4f081';m.lineWidth=zoom;m.strokeRect(mapX(zone.min),mapY(zone.min),mapX(zone.max-zone.min),mapY(zone.max-zone.min));}
  }
- const bases=state.bases??BASES;
+ const bases=(state.bases??BASES).filter(b=>b.hp!==0);
  const side=state.players.find(p=>p.id===state.me)?.side;
  for(const base of bases)for(const id of base.links||[]){
   const target=bases.find(b=>b.id===id);
@@ -343,7 +399,7 @@ export function drawMap(canvas,state,players,me,zoom=1){
  }
 }
 export class Scene{
- constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.camera=null;this.anim=new Map();this.traps=createArenaTraps();this.arena=TEAM_ARENA;}
+ constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.camera=null;this.anim=new Map();this.siegeOrigins=new Map();this.traps=createArenaTraps();this.arena=TEAM_ARENA;}
  render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null,pan=null,baseEffects=[]){
   const canvas=this.canvas,c=this.c,w=canvas.clientWidth,h=canvas.clientHeight;
   if(!w||!h||!me)return;
@@ -361,7 +417,15 @@ export class Scene{
   c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#241f26';c.fillRect(0,0,w,h);
   c.setTransform(dpr*zoom,0,0,dpr*zoom,-left*dpr*zoom,-top*dpr*zoom);
   const walls=this.drawTerrain(left,top,right,bottom);
-  const castles=bases.filter(b=>inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
+  const castles=bases.filter(b=>b.hp!==0&&(inSight(me,b)||this.arena===TEAM_ARENA&&RAID_TARGET(me,b))&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
+  for(const pad of WARP_PADS){
+   if(!bases.some(b=>b.main&&b.side===pad.side&&b.hp>0)||!inSight(me,pad))continue;
+   const art=warpPadArt[pad.side];
+   if(ready(art)){
+    const width=104,height=width*art.naturalHeight/art.naturalWidth;
+    c.drawImage(art,pad.x-width/2,pad.y*FLAT-height*.62,width,height);
+   }
+  }
   const repairs=new Set();
   for(const b of castles){
    if(b.side!==me.side||b.hp>=b.maxHp)continue;
@@ -372,7 +436,7 @@ export class Scene{
   for(const box of chests)if(inSight(me,box)&&box.x>left-55&&box.x<right+55&&box.y*FLAT>top-55&&box.y*FLAT<bottom+55)this.chest(box,now);
   drawArenaTraps(this.traps,c,traps.filter(trap=>inSight(me,trap)),serverTime,FLAT);
   const seen=entities.filter(p=>p.id===me.id||inSight(me,p));
-  const attacks=new Map(baseEffects.filter(e=>e.kind!=='tower'&&e.kind!=='collapse'&&e.until>serverTime)
+  const attacks=new Map(baseEffects.filter(e=>weaponTips[e.kind]&&e.until>serverTime)
    .map(e=>[e.playerId,e]));
   const baseById=new Map(bases.map(b=>[b.id,b]));
   const alive=new Set(seen.map(p=>p.id));
@@ -656,12 +720,14 @@ export class Scene{
  }
  drawBaseEffects(effects,bases,entities,now){
   const c=this.c;
+  for(const [id,origin] of this.siegeOrigins)if(now>=origin.until)this.siegeOrigins.delete(id);
   const colors={archer:'#ff963d',gunner:'#ffcb72',magic:'#aa90ff',melee:'#ffe1a3'};
   for(const e of effects){
+   if(e.kind==='tower-fall'||e.kind==='respawn')continue;
    const base=bases.find(b=>b.id===e.baseId);
    const player=entities.find(p=>p.id===e.playerId);
    if(!base||now>=e.until)continue;
-   const t=Math.max(0,(now-e.at)/(e.until-e.at));
+   let t=Math.max(0,(now-e.at)/(e.until-e.at));
    const art=siegeArt[e.kind];
    if(e.kind==='collapse'){
     const size=(base.main?268:194)*(.55+t*.65);
@@ -679,15 +745,23 @@ export class Scene{
    }
    if(!player)continue;
    const tower=e.kind==='tower',bx=base.x,by=base.y*FLAT-34;
-   const px=tower?player.x:e.x,py=(tower?player.y:e.y)*FLAT-40;
+   const release=tower?null:this.siegeOrigins.get(e.id)??siegeRelease(player,e.kind,base);
+   if(release){
+    if(t<release.at)continue;
+    release.until=e.until;
+    this.siegeOrigins.set(e.id,release);
+    t=(t-release.at)/(1-release.at);
+   }
+   const px=tower?player.x:release.x,py=tower?player.y*FLAT-40:release.y;
    const x=tower?bx:px,y=tower?by:py,tx=tower?px:bx,ty=tower?py:by;
    const dx=tx-x,dy=ty-y,angle=Math.atan2(dy,dx);
+   const melee=e.kind==='melee'||e.kind==='hammer';
+   const travel=melee?t*Math.min(1,24/Math.max(1,Math.hypot(dx,dy))):t;
    c.save();
-   c.translate(x+dx*t,y+dy*t);c.rotate(angle);
+   c.translate(x+dx*travel,y+dy*travel);c.rotate(angle);
    c.strokeStyle=colors[e.kind]??COLORS[e.side];c.fillStyle=c.strokeStyle;
    c.shadowColor=c.strokeStyle;c.shadowBlur=11;c.lineWidth=tower?5:3;c.lineCap='round';
    if(ready(art)){
-    const melee=e.kind==='melee'||e.kind==='hammer';
     const width=melee?108:tower?122:e.kind==='gunner'?78:91;
     const height=width*art.naturalHeight/art.naturalWidth;
     if(melee)c.globalAlpha=1-t*.82;
@@ -809,13 +883,13 @@ export class Scene{
     const dx=target.x-p.x,dy=(target.y-p.y)*FLAT;
     const row=dx||dy?siegeDirection(dx,dy):prev.dir;
     const frame=Math.min(frames-1,Math.floor(progress*frames));
-    c.drawImage(image,frame*cell,row*cell,cell,cell,x-size*.5,y-size*feet[row],size,size);
+    globalThis.sealerSprites.drawColoredFrame(c,image,frame*cell,row*cell,cell,cell,x-size*.5,y-size*feet[row],size,size);
    }else if(ready(strike)){
     const reach=Math.sin(Math.PI*Math.min(1,progress))*(close?14:5);
     const direction=Math.sign(target.x-x)||1;
     const height=size*.87,width=height*strike.naturalWidth/strike.naturalHeight;
     c.save();c.translate(x+direction*reach,y);c.scale(direction,1);
-    c.drawImage(strike,-width/2,-height,width,height);
+    globalThis.sealerSprites.drawColoredFrame(c,strike,0,0,strike.naturalWidth,strike.naturalHeight,-width/2,-height,width,height);
     c.restore();
    }else if(atlas){
     const sheet=atlas[pose]??=img(siteAsset(moving?(entry.run||entry.walk):entry.idle));
@@ -833,6 +907,7 @@ export class Scene{
    if(!directional&&!ready(strike)&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
    const spriteTop=y-(atlas?size*ay:55);
    this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,spriteTop-16,isMe?'#fff2af':color,p.rating??0,now);
+   if(this.arena!==SURVIVAL_ARENA&&Number.isFinite(p.points))this.label([p.streakTitle,p.points].filter(value=>value!=null).join(' · '),x,spriteTop-39,'#ffe19a');
   }
   c.restore();
  }

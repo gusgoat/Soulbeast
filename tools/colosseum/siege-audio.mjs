@@ -4,7 +4,7 @@ const impactClips={
 };
 const maxEffectAge=280;
 
-export function siegeAudio(play){
+export function siegeAudio(play,sealerGender){
  const seen=new Map(),baseStages=new Map();
  function reset(){seen.clear();baseStages.clear();}
  function sync(state,viewer){
@@ -17,8 +17,15 @@ export function siegeAudio(play){
   for(const effect of state.baseEffects??[]){
    if(seen.has(effect.id))continue;
    seen.set(effect.id,effect.until);
+   if(effect.kind==='tower-fall'){
+    if(state.now-effect.at>600||(!viewer&&effect.playerId!==state.me))continue;
+    const victim=state.players.find(player=>player.id===effect.playerId);
+    if(victim)play(`fall-${sealerGender(victim)}-${1+Math.floor(Math.random()*4)}`);
+    continue;
+   }
    const impact=impactClips[effect.kind];
    if(!viewer||state.now-effect.at>maxEffectAge)continue;
+   if(effect.kind==='respawn'){play('respawn');continue;}
    if(effect.kind==='tower'){play('tower');continue;}
    if(effect.kind==='collapse'){play('collapse');continue;}
    if(!impact)continue;

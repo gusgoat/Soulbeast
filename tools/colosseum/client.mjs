@@ -1,12 +1,14 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, canRaidBase, distance, siegeProfile} from './arena.mjs?v=balance-summons-1';
+import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=archer-siege-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=base-damage-stage-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=archer-siege-1';
+import {teamResults} from './ranking.mjs?v=team-balance-2';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
-import {battlePresentation} from './battle-presentation.mjs?v=announcer-1';
-import {siegeAudio} from './siege-audio.mjs?v=2';
-import {clientAnnouncer} from './client-announcer.mjs?v=1';
+import {battlePresentation} from './battle-presentation.mjs?v=respawn-sound-1';
+import {siegeAudio} from './siege-audio.mjs?v=respawn-sound-1';
+import {clientAnnouncer} from './client-announcer.mjs?v=team-warp-1';
+import {killCallouts} from './match-announcer.mjs?v=team-warp-1';
 import {bindWalkJoystick} from './walk-joystick.mjs?v=1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
@@ -17,14 +19,16 @@ const node=(tag,content,className)=>{
 };
 const scene=new Scene($('world')), actors=new Map(), keys=new Set();
 const presentation=battlePresentation($('battle-vfx'));
-const siegeSounds=siegeAudio(presentation.playSiege);
+const siegeSounds=siegeAudio(presentation.playSiege,sealerGender);
 const announcerVoice=window.SoulbeastVoicePlayer({enabled:()=>presentation.enabled,volume:()=>.72,duck:presentation.duckMusic});
 const announcer=clientAnnouncer(announcerVoice);
 const mapDialog=$('large-map'), channel='soulbeast-colosseum-session';
+let warpMap=false,warpMapKey='';
 let ws,state,battle,me,local,lastInput='',seq=0,offset=0,retry,packet;
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
 let showBattleLog=false;
-let resultKey='';
+let resultKey='',liveScoreKey='';
+const teamScoresDialog=$('live-team-scores');
 const battleUpdates=[];
 const spectatorPan={x:0,y:0};
 let spectatorDrag=null;
@@ -65,7 +69,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=announcer-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=archer-siege-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -165,6 +169,7 @@ async function connect(payload){
  };
  socket.onclose=event=>{
   if(ws!==socket)return;
+  presentation.setSiegeAudio(false,false);
   release();lastInput='';
   if(event.code===4001){reset('เปิดห้องเดิมในอีกแท็บแล้ว');return;}
   if(event.code===1000&&event.reason==='left'){reset('',true);return;}
@@ -229,7 +234,7 @@ function reset(message='',clearInvite=false){
  }
  store(null);packet=null;clearTimeout(retry);const current=ws;ws=null;current?.close();
  release();
- state=me=local=battle=null;actors.clear();scene.camera=null;lobbyKey='';battleKey='';teamHpKey='';survivalRankKey='';lastInput='';
+ state=me=local=battle=null;actors.clear();scene.siegeOrigins.clear();scene.camera=null;lobbyKey='';battleKey='';teamHpKey='';survivalRankKey='';lastInput='';
  pendingMoves=[];pendingChest=null;correction=null;
  resultKey='';
  $('match-results').hidden=true;
@@ -237,6 +242,7 @@ function reset(message='',clearInvite=false){
  $('arena').hidden=$('room').hidden=$('rank-queue').hidden=true;$('lobby').hidden=$('entry').hidden=false;$('notice').textContent=message;
  updateEntryControls();
  if(mapDialog.open)mapDialog.close();
+ if(teamScoresDialog.open)teamScoresDialog.close();
 }
 function showRankQueue(message){
  const first=!queued;
@@ -306,12 +312,16 @@ function applyState(next){
  const fieldAudio=state.mode!=='survival'&&(state.phase==='match'&&player?.phase==='walk'||
   state.phase==='finished'&&state.reason==='base-captured'&&player?.phase!=='battle');
  const repairing=fieldAudio&&state.phase==='match'&&state.players.some(p=>p.repairingBase&&p.phase==='walk');
- presentation.setSiegeAudio(fieldAudio,repairing);
+ presentation.setSiegeAudio(fieldAudio,repairing,fieldAudio?player?.recallEndsAt:null,state.now);
  siegeSounds.sync(state,fieldAudio?player:null);
  announcer.sync(state);
  if(entering)updateEntryControls();
  $('lobby').hidden=state.phase!=='lobby';$('arena').hidden=state.phase==='lobby';
  $('entry').hidden=true;$('room').hidden=false;
+ const liveTeam=state.phase==='match'&&state.mode!=='survival';
+ $('open-team-scores').hidden=!liveTeam;
+ if(!liveTeam&&teamScoresDialog.open)teamScoresDialog.close();
+ if(teamScoresDialog.open)renderLiveScores();
  if(state.phase==='lobby'){renderLobby();return;}
  me=own();
  if(me?.recallEndsAt&&!local?.recallEndsAt){release();pendingMoves=[];}
@@ -337,7 +347,7 @@ function applyState(next){
   const err=distance(local,expected);
   if(me.recallEndsAt||err>145||!scene.arena.fits(local.x,local.y)){local.x=expected.x;local.y=expected.y;correction=null;}
   else correction=err>7?{x:expected.x-local.x,y:expected.y-local.y}:null;
-  for(const k of ['phase','connected','safeUntil','repairingBase','recallEndsAt','rating'])local[k]=me[k];
+  for(const k of ['phase','connected','safeUntil','repairingBase','recallEndsAt','rating','points','streakTitle'])local[k]=me[k];
  }
  const visible=[...next.players.filter(p=>p.id!==me.id&&Number.isFinite(p.x)&&p.connected&&p.phase!=='dead'),...next.shadows,...next.bosses];
  const ids=new Set(visible.map(p=>p.id));
@@ -352,6 +362,7 @@ function applyState(next){
   }
  }
  if((state.phase!=='match'||me.phase!=='walk'&&!state.spectating)&&mapDialog.open)mapDialog.close();
+ if(mapDialog.open&&warpMap)renderWarpTargets();
  if(!viewingBattle())hideBattle();
 }
 function shieldIcon(score){
@@ -365,13 +376,13 @@ function shieldIcon(score){
  icon.height=24;
  return icon;
 }
-function scoreTable(label,side,team,players){
+function scoreTable(label,side,team,players,final){
  const card=node('div',null,'result-team');
  card.dataset.side=side;
  const table=node('table',null,'rank-table');
  table.append(node('caption',label));
  const header=node('tr');
- for(const heading of ['ผู้เล่น','คะแนน','สังหาร']){
+ for(const heading of ['ผู้เล่น','คะแนน','สังหาร','อสูร','บอส','ตาย']){
   const cell=node('th',heading);
   cell.scope='col';
   header.append(cell);
@@ -382,18 +393,18 @@ function scoreTable(label,side,team,players){
  for(const result of team){
   const profile=players.get(result.id);
   const tr=node('tr');
-  tr.classList.toggle('result-mvp',result.mvp);
+  tr.classList.toggle('result-mvp',final&&result.mvp);
   const player=node('th',null,'result-player');
   player.scope='row';
   const identity=node('div',null,'rank-name result-name');
   const name=node('span',result.name,'result-player-name');
   name.setAttribute('data-user-content','');
-  const badge=shieldIcon(profile?.rating??result.rating);
+  const badge=shieldIcon(profile?.rating??result.rating??0);
   if(badge)identity.append(badge);
   identity.append(name);
   const details=node('div',null,'result-identity');
   details.append(identity);
-  if(result.mvp)details.append(node('small','MVP','mvp-label'));
+  if(final&&result.mvp)details.append(node('small','MVP','mvp-label'));
   if(profile){
    const career=profile.className||CLASSES[profile.baseCls]||CLASSES[profile.cls];
    const detail=[career,Number.isFinite(profile.lv)?'Lv '+profile.lv:''].filter(Boolean).join(' · ');
@@ -409,12 +420,30 @@ function scoreTable(label,side,team,players){
   }
   figure.append(details);
   player.append(figure);
-  tr.append(player,node('td',String(result.points),'result-points'),node('td',String(result.kills)));
+  tr.append(player,node('td',String(result.points),'result-points'),...['kills','beastKills','bossKills','deaths'].map(field=>node('td',String(result[field]??0))));
   tbody.append(tr);
  }
  table.append(thead,tbody);
  card.append(table);
  return card;
+}
+function scoreSections(teams,roster,final){
+ const players=new Map(roster.map(profile=>[profile.id,profile]));
+ return teams.map((team,i)=>scoreTable(TEAMS[i],i,team,players,final));
+}
+function renderLiveScores(){
+ const teams=teamResults(state.players.map(p=>({...p,earned:p.points??0})));
+ const key=JSON.stringify(teams);
+ if(key===liveScoreKey)return;
+ liveScoreKey=key;
+ $('live-score-results').replaceChildren(...scoreSections(teams,state.players,false));
+}
+function openTeamScores(){
+ if(state?.phase!=='match'||state.mode==='survival'||teamScoresDialog.open)return;
+ release();
+ liveScoreKey='';
+ renderLiveScores();
+ teamScoresDialog.showModal();
 }
 function renderMatchResults(){
  const panel=$('match-results');
@@ -424,8 +453,7 @@ function renderMatchResults(){
  const key=JSON.stringify([state.finishedAt,state.results,roster,state.rankDelta,state.rankSaved,state.rankingAvailable,state.rankPending,state.placement,me?.rating]);
  if(key===resultKey)return;
  resultKey=key;
- const players=new Map(roster.map(profile=>[profile.id,profile]));
- const sections=(state.results||[]).map((team,i)=>scoreTable(TEAMS[i],i,team,players));
+ const sections=scoreSections(state.results||[],roster,true);
  if(state.rankDelta!=null){
   const delta=state.rankDelta>0?'+'+state.rankDelta:String(state.rankDelta);
   const message=state.rankSaved?'แต้มสะสม '+delta+' · รวม '+me.rating
@@ -555,6 +583,7 @@ function unitCard(unit,current,selectable,choose){
   }
  };
  face.append(art);
+ if(Number.isFinite(unit.personalPoints))face.append(node('span',String(unit.personalPoints),'battle-personal-score'));
  const name=node('b',unit.name);
  const badge=unit.kind==='player'&&shieldIcon(state.players.find(p=>p.id===battle?.roster[unit.owner])?.rating);
  if(badge)name.prepend(badge);
@@ -674,6 +703,12 @@ function renderBattle(){
   actions.append(autoButton);
  }
  actions.append(logButton,soundButton);
+ if(!solo){
+  const scores=node('button','ตารางคะแนน','secondary');
+  scores.setAttribute('aria-haspopup','dialog');
+  scores.onclick=openTeamScores;
+  actions.append(scores);
+ }
  controls.append(heading,actions);
  footer.append(controls);
  if(solo&&state.nextEliminationAt){
@@ -830,7 +865,40 @@ $('copy').onclick=async()=>{
  try{await navigator.clipboard.writeText(link.href);$('notice').textContent='คัดลอกลิงก์ห้องแล้ว';}
  catch{$('notice').textContent=link.href;}
 };
-$('map').onclick=()=>{release();mapDialog.showModal();};
+function renderWarpTargets(){
+ if(!me||me.phase!=='walk'||me.recallEndsAt||!WARP_ACCESS(me,state.bases)){mapDialog.close();return;}
+ const ownSmall=state.bases.filter(b=>b.side===me.side&&b.tier==='small');
+ const available=ownSmall.filter(b=>WARP_TARGET(me,b));
+ const key=available.map(b=>b.id).join('/');
+ $('warp-map-help').textContent=available.length?'แตะหมายเลขป้อมเล็กเพื่อเริ่มวาร์ป 5 วินาที':'ฐานเล็กฝั่งคุณถูกทำลายหมดแล้ว';
+ if(key===warpMapKey)return;
+ warpMapKey=key;
+ const markers=$('warp-map-targets');
+ markers.dataset.side=me.side;
+ markers.replaceChildren(...available.map(base=>{
+  const number=ownSmall.indexOf(base)+1;
+  const button=node('button',String(number),'secondary');
+  button.type='button';
+  button.title=`วาร์ปไป${base.label}`;
+  button.setAttribute('aria-label',button.title);
+  button.style.left=`${base.x/WIDTH*100}%`;
+  button.style.top=`${base.y/HEIGHT*100}%`;
+  button.onclick=()=>{if(send({type:'warpSmallBase',id:base.id}))mapDialog.close();};
+  return button;
+ }));
+}
+function openArenaMap(selectWarp=false){
+ release();
+ warpMap=selectWarp;
+ warpMapKey=null;
+ $('map-title').textContent=warpMap?'เลือกฐานเล็กที่จะวาร์ปไป':'แผนที่สนาม';
+ for(const id of ['warp-map-targets','warp-map-help'])$(id).hidden=!warpMap;
+ for(const id of ['map-legend','map-chests'])$(id).hidden=warpMap;
+ mapDialog.showModal();
+ if(warpMap)renderWarpTargets();
+}
+$('map').onclick=()=>openArenaMap();
+$('open-team-scores').onclick=$('dead-team-scores').onclick=openTeamScores;
 const objectivesPanel=$('objectives-panel'),objectivesToggle=$('objectives-toggle');
 function updateObjectivesToggle(){
  const expanded=!objectivesPanel.hidden,language=window.SoulbeastLocale?.get();
@@ -848,6 +916,10 @@ updateObjectivesToggle();
 function objective(){
  if(!me||state.phase!=='match'||me.phase!=='walk')return null;
  if(state.baseRepair)return {type:'stopRepair',label:'หยุดซ่อมฐาน'};
+ if(state.mode!=='survival'&&WARP_ACCESS(me,state.bases)){
+  const enabled=state.bases.some(b=>WARP_TARGET(me,b));
+  return {type:'selectWarp',disabled:!enabled,label:enabled?'วาร์ปไปฐานเล็ก':'ฐานเล็กถูกทำลายหมดแล้ว'};
+ }
  const repair=state.bases.find(b=>REPAIR_TARGET(me,b));
  if(repair)return {type:'repairBase',id:repair.id,label:`ซ่อม${repair.label}`};
  if(now>=me.safeUntil){
@@ -862,7 +934,7 @@ function objective(){
  if(base){
   let label;
   if(attacking)label=`กำลังโจมตี${base.label} · ${base.hp}/${base.maxHp} HP`;
-  else if(!canRaidBase(me.side,base,state.bases))label=base.main?'ยึดฐานกลางที่เชื่อมอยู่ก่อน':'ยึดฐานเล็กที่เชื่อมอยู่ก่อน';
+  else if(!canRaidBase(me.side,base,state.bases))label=base.main?'ทำลายฐานกลางที่เชื่อมอยู่ก่อน':'ทำลายฐานเล็กที่เชื่อมอยู่ก่อน';
   else if(!RAID_TARGET(me,base))label='มีสิ่งกีดขวาง · ขยับให้เห็นป้อม';
   else if(now<me.safeUntil)label='รอหมดเวลาคุ้มกันก่อนตีป้อม';
   else label=`เตรียมโจมตี${base.label}`;
@@ -874,6 +946,7 @@ function objective(){
 
 $('raid').onclick=()=>{
  const target=objective();
+ if(target?.type==='selectWarp'&&!target.disabled){openArenaMap(true);return;}
  if(target&&!target.disabled&&send({type:target.type,id:target.id})&&target.type==='chest')pendingChest=target.id;
 };
 function renderTeamHp(){
@@ -910,7 +983,7 @@ function renderSurvivalRank(solo){
 const keyboard=['arrowleft','arrowright','arrowup','arrowdown','w','a','s','d'];
 addEventListener('keydown',e=>{
  const k=e.key.toLowerCase();
- if(me?.phase==='walk'&&!mapDialog.open&&keyboard.includes(k)){if(!keys.has(k)){keys.add(k);sendMove(...direction());}e.preventDefault();}
+ if(me?.phase==='walk'&&!mapDialog.open&&!teamScoresDialog.open&&keyboard.includes(k)){if(!keys.has(k)){keys.add(k);sendMove(...direction());}e.preventDefault();}
 });
 addEventListener('keyup',e=>{if(keys.delete(e.key.toLowerCase())&&me?.phase==='walk')sendMove(...direction());});
 addEventListener('blur',release);
@@ -926,11 +999,11 @@ $('base-recall-button').onclick=()=>{
  send({type:me.recallEndsAt?'cancelRecall':'recallBase'});
 };
 const stick=bindWalkJoystick($('stick'),$('thumb'),{
- canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!me.recallEndsAt&&!state.baseRepair&&!mapDialog.open,
+ canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!me.recallEndsAt&&!state.baseRepair&&!mapDialog.open&&!teamScoresDialog.open,
  onStart:sendDirection,onStop:sendDirection
 });
 function direction(){
- if(!me||me.phase!=='walk'||state?.phase!=='match'||me.recallEndsAt||state.baseRepair||mapDialog.open||ws?.readyState!==WebSocket.OPEN)return [0,0];
+ if(!me||me.phase!=='walk'||state?.phase!=='match'||me.recallEndsAt||state.baseRepair||mapDialog.open||teamScoresDialog.open||ws?.readyState!==WebSocket.OPEN)return [0,0];
  const k=(...names)=>Number(names.some(name=>keys.has(name)));
  return [stick.x+k('d','arrowright')-k('a','arrowleft'),stick.y+k('s','arrowdown')-k('w','arrowup')].map(x=>Math.max(-1,Math.min(1,x)));
 }
@@ -979,6 +1052,10 @@ function frame(t){
   let activity;
   for(let i=state.events.length-1;i>=0;i--)if(state.events[i].type!=='boss'){activity=state.events[i];break;}
   const event=activity&&now-activity.at<4800?activity:null;
+  const callouts=(state.announcements??[]).filter(e=>e.name&&killCallouts[e.clip]&&now-e.at<3800);
+  const callout=callouts.at(-1);
+  const calloutText=callout?`${callout.name} · ${callouts.filter(e=>e.name===callout.name&&e.at===callout.at).map(e=>killCallouts[e.clip]).join(' · ')}`:'';
+  if($('kill-announcement').textContent!==calloutText)$('kill-announcement').textContent=calloutText;
   const bossEvent=state.bossEvent;$('boss-announcement').textContent=bossEvent&&now-bossEvent.at<8500?bossEvent.text:'';
   const heal=state.baseHeal;
   const healing=heal&&now-heal.at<3300&&(!event||heal.at>=event.at);
@@ -1029,6 +1106,7 @@ function frame(t){
    lastMap=t;
   }
   const ended=state.phase==='finished',dead=me.phase==='dead';
+  $('dead-team-scores').hidden=ended||solo||!dead;
   const showingCollapse=ended&&state.reason==='base-captured'&&state.baseEffects?.some(
    effect=>effect.kind==='collapse'&&effect.until>now);
   $('rank-leave-respawn').hidden=ended||solo||!dead||!state.ranked;
@@ -1041,7 +1119,7 @@ function frame(t){
     $('overlay-text').textContent=[state.placement?'อันดับ '+state.placement:'',state.eliminationCause,result,Number.isFinite(me.points)?`คะแนนคุณ ${me.points}`:''].filter(Boolean).join(' · ');
    }else{
     $('overlay-title').textContent=ended?(state.winner===-1?'เสมอ':state.winner===me.side?'ทีมคุณชนะ!':'ทีมคุณแพ้'):'ผู้ผนึกล้มลง';
-    $('overlay-text').textContent=ended?`${state.reason==='base-captured'?`${TEAMS[state.winner]} ยึดฐานใหญ่ · `:state.reason==='error'?'สนามยุติการเล่น · ':''}${TEAMS[0]} ${state.score[0]} : ${state.score[1]} ${TEAMS[1]}`:`เกิดใหม่ที่ฐานใหญ่ใน ${clock(state.respawnAt-now)}`;
+    $('overlay-text').textContent=ended?`${state.reason==='base-captured'?`${TEAMS[state.winner]} ทำลายฐานใหญ่ · `:state.reason==='error'?'สนามยุติการเล่น · ':''}${TEAMS[0]} ${state.score[0]} : ${state.score[1]} ${TEAMS[1]}`:`เกิดใหม่ที่ฐานใหญ่ใน ${clock(state.respawnAt-now)}`;
    }
   }
   if(walking&&scene.arena.bushAt(local)!==null&&!event&&!healing)$('event').textContent='อยู่ในพุ่มไม้ · ความเร็วครึ่งหนึ่ง';

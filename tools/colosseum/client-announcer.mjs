@@ -1,4 +1,4 @@
-import {matchAnnouncer} from './match-announcer.mjs?v=1';
+import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 
 const teamTimers=[[120_000,'two-minutes'],[60_000,'one-minute'],[30_000,'thirty-seconds'],[10_000,'running-out']];
 const maxDelay=6500;

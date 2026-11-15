@@ -6,10 +6,11 @@ export const TEAM_SPEED=200, BASE_FIRE_RANGE=300, BASE_FIRE_MS=2000, BASE_BOLT_M
 export const BASE_ATTACK_MS=1000, BASE_ATTACK_HP=4;
 export const TEAM_START_SCORE=300;
 export const BASE_CONTROL_MS=30_000;
-export const BASE_AURA_RANGE=600;
-export const BASE_RECALL_MS=5000;
-export const BASE_REPAIR_RANGE=150, BASE_REPAIR_MS=500, BASE_REPAIR_SCORE_MS=2000, BASE_ATTACK_SCORE_MS=1000;
-export const MATCH_MS=12*60_000, RESPAWN_MS=30_000;
+export const BASE_AURA_RANGE=300;
+export const BASE_RECALL_MS=5000, WARP_PAD_RANGE=70;
+export const BASE_HEAL_RANGE=150, BASE_REPAIR_RANGE=70, BASE_REPAIR_MS=2500, BASE_REPAIR_SCORE_MS=5000, BASE_ATTACK_SCORE_MS=1000;
+export const personalCombatBonus=points=>Math.min(60,Math.floor(Math.max(0,points??0)/5));
+export const MATCH_MS=15*60_000;
 export const BOSS_INTERVAL=2*60_000, BOSS_POINTS=60, CHEST_COUNT=10;
 export const BEAST_POINTS=5;
 export const TEAMS=['ไพลิน','ทับทิม'], COLORS=['#6ac9ff','#ff827a'];
@@ -59,10 +60,10 @@ function findBush(p,bushes){
  return bushes.find(b=>y===b.y&&x>=b.x&&x<b.x+b.w)?.id??null;
 }
 const baseSites=[
- [2,21,'large',180,30,[1,2]], [5,13,'medium',120,20,[3,4]], [6,29,'medium',120,20,[5,6]],
+ [2,21,'large',100,30,[1,2]], [5,13,'medium',80,20,[3,4]], [6,29,'medium',80,20,[5,6]],
  [6,5,'small',60,10,[]], [10,13,'small',60,10,[]], [10,29,'small',60,10,[]], [6,37,'small',60,10,[]],
  [10,21,'small',60,10,[],'ฐานเล็กแนวกลาง'],
- [5,21,'medium',120,20,[4,5,7],'ฐานกลางแนวกลาง'],
+ [5,21,'medium',80,20,[4,5,7],'ฐานกลางแนวกลาง'],
 ];
 export const BASES=TEAMS.flatMap((team,side)=>baseSites.map(([x,y,tier,maxHp,aura,children,label],i)=>({
  id:`${side}-${i}`,side,tier,maxHp,aura,main:tier==='large',points:tier==='large'?3:tier==='medium'?2:1,
@@ -70,8 +71,11 @@ export const BASES=TEAMS.flatMap((team,side)=>baseSites.map(([x,y,tier,maxHp,aur
  links:children.map(child=>`${side}-${child}`),...cellCenter(side?COLS-1-x:x,y)
 })));
 export const canRaidBase=(side,base,bases)=>base.side!==side&&base.hp>0&&
- (!base.links?.length||base.links.some(id=>bases.some(link=>link.id===id&&link.side===side&&link.hp>0)));
+ (!base.links?.length||base.links.some(id=>bases.some(link=>link.id===id&&link.hp===0)));
 export const mainBase=side=>BASES.find(b=>b.main&&b.side===side);
+export const WARP_PADS=TEAMS.map((_,side)=>({side,...cellCenter(side?COLS-2:1,21)}));
+export const WARP_TARGET=(p,b)=>b.side===p.side&&b.tier==='small'&&b.hp>0;
+export const WARP_ACCESS=(p,bases)=>bases.some(b=>b.side===p.side&&b.main&&b.hp>0)&&distance(p,WARP_PADS[p.side])<=WARP_PAD_RANGE;
 export const spawns=side=>[[-48,-52],[-48,52],[0,0],[48,-52],[48,52]].map(([dx,dy])=>({x:mainBase(side).x+(side?-dx:dx),y:mainBase(side).y+dy}));
 const propSites=maze.flatMap((row,y)=>row.slice(2,14).flatMap((open,i)=>{
  const x=i+2;
@@ -149,13 +153,15 @@ export const TEAM_ARENA=createArena(maze,BUSHES,OBSTACLES);
 export const {bushAt,canSeeOpponent,passable,fits,clearPath,move,movePlayer,nextCell}=TEAM_ARENA;
 export function siegeProfile(p){
  const cls=p.baseCls||p.cls;
- if(cls==='gunner'||cls==='archer')return {range:300,effect:cls};
+ if(cls==='archer')return {range:350,effect:'archer'};
+ if(cls==='gunner')return {range:300,effect:'gunner'};
  if(cls==='mage'||cls==='summoner'||cls==='druid')return {range:150,effect:'magic'};
  return {range:75,effect:cls==='merchant'?'hammer':'melee'};
 }
 export const RAID_TARGET=(p,b)=>p.side!==b.side&&distance(p,b)<=siegeProfile(p).range&&clearPath(p,b);
-export const HEAL_TARGET=(p,b)=>p.side===b.side&&b.hp>0&&distance(p,b)<=BASE_REPAIR_RANGE;
-export const REPAIR_TARGET=(p,b)=>(p.baseCls||p.cls)==='merchant'&&HEAL_TARGET(p,b)&&b.hp<b.maxHp;
+export const HEAL_TARGET=(p,b)=>p.side===b.side&&b.hp>0&&distance(p,b)<=BASE_HEAL_RANGE;
+export const REPAIR_TARGET=(p,b)=>(p.baseCls||p.cls)==='merchant'&&p.side===b.side&&b.hp>0&&
+ b.hp<b.maxHp&&distance(p,b)<=BASE_REPAIR_RANGE;
 export function baseDamageStage(base){
  const ratio=(base.hp??base.maxHp)/base.maxHp;
  return ratio<=.25?2:ratio<=.5?1:ratio<=.75?0:-1;

@@ -1,6 +1,7 @@
 import '../../content/beast-names.js';
 import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-auto-1';
 import rareArt from './rare-art.mjs';
+import {personalCombatBonus} from './arena.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
 const ACT_MS=12_000, SHOW_MS=850;
 const BOT_ACT_MS=500;
@@ -77,14 +78,20 @@ export function demoProfile(p,seat){
  const sp=careerInfo(p.cls)?.base==='summoner'?['kappa','griffin']:['kappa'];
  return core.profile({name:p.name,lv:p.lv,cls:p.cls,eq:core.gear(p.cls,p.lv),pts:{},pets:sp.map((s,i)=>({uid:i+1,sp:s,lv:p.lv,pts:{}})),party:sp.map((_,i)=>i+1)},seat).team;
 }
-function syncBaseAura(b){
- if(!b.baseAuraOwners.size)return;
+export function syncCombatBonuses(b){
  for(const u of units(b)){
-  const active=b.baseAuraOwners.get(b.roster[u.owner])||0,previous=u.baseAura||0;
-  if(active===previous)continue;
-  const factor=(100+active)/(100+previous);
+  const id=b.roster[u.owner];
+  const aura=b.baseAuraOwners.get(id)||0;
+  const owner=b.scoreOwners.get(id);
+  const personal=u.kind==='player'?personalCombatBonus(owner?.earned):0;
+  u.baseAura=aura||undefined;
+  u.personalPoints=u.kind==='player'?owner?.earned:undefined;
+  const multiplier=(1+aura/100)*(1+personal/100);
+  const previous=u.colosseumStatMultiplier??1;
+  if(multiplier===previous)continue;
+  const factor=multiplier/previous;
   for(const stat of BASE_AURA_STATS)u.st[stat]*=factor;
-  u.baseAura=active;
+  u.colosseumStatMultiplier=multiplier;
  }
 }
 export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=false){
@@ -93,6 +100,7 @@ export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=fa
   teams:teams.map(t=>t.map(p=>p.id)),roster:roster.map(p=>p.id),botOwners:roster.map(p=>Boolean(p.bot)),beastId:shadow?.id,
   allies:[],enemies:[],log:[],fx:[],effects:[],fallen:[],finished:false,releasedAt:0,autoOwners:new Set(),autoVersion:0,
   colosseumOwnerSlots:teamSiege,baseAuraOwners:auraOwners,colosseumFalls:new Map(),
+  scoreOwners:new Map(teamSiege?roster.map(p=>[p.id,p]):[]),
   colosseumHuntBonus:new Set(teamSiege&&shadow?roster.flatMap((p,index)=>p.baseCls==='swordsman'?[index]:[]):[]),
   colosseumPvpCareers:teamSiege&&!shadow?roster.map(p=>p.baseCls):null};
  for(const [side,team] of teams.entries()) for(const p of team){
@@ -112,7 +120,7 @@ export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=fa
   }
  }
  if(shadow){const u=shadow.boss?bossUnit(shadow):core.shadow(shadow.sp,shadow.lv,0);u.owner=-1;u.name=shadow.label;b.enemies.push(u);b.boss=!!shadow.boss;}
- syncBaseAura(b);
+ syncCombatBonuses(b);
  for(const p of roster)if(auraOwners.has(p.id))b.log.push(`◆ ${p.name} · ออร่าฐาน โจมตีและป้องกัน +${auraOwners.get(p.id)}%`);
  core.bind(b);next(b,now);return b;
 }
@@ -188,7 +196,7 @@ function perform(b,u,id,target,now,active=false){
   if(target.side!==u.side)return target.hp<previous.hp||Object.keys(target.status).length>previous.statuses;
   return target.owner!==u.owner&&(target.hp>previous.hp||target.buffs.length>previous.buffs);
  }))b.onContribution(b.roster[u.owner]);
- syncBaseAura(b);
+ syncCombatBonuses(b);
  b.last={actor:u.id,target:aim?.id,skill:sk.n,skillId:id,...actionVisual(u,id,sk),element:sk.el,n:(b.last?.n||0)+1};
  if(!core.takeFreeForm(u)){b.turns++;next(b,now);}
  else if(!checkEnd(b,now))openTurn(b,u,now);
@@ -219,7 +227,7 @@ export function combatView(b,player){
    targets:(sk.tg==='self'?[cur]:support?allies(b,cur):enemies(b,cur)).map(u=>u.id)};
  }):[];
  const show=u=>({id:u.id,owner:u.owner,name:u.name,kind:u.kind,cls:u.cls,baseCls:careerInfo(u.cls)?.base,sp:u.sp,lv:u.lv,hp:u.hp,mp:u.mp,maxHp:u.st.hp,maxMp:u.st.mp,
-  gender:u.gender,evo:u.evo,types:u.types,statuses:Object.keys(u.status||{}),baseAura:u.baseAura});
+  gender:u.gender,evo:u.evo,types:u.types,statuses:Object.keys(u.status||{}),baseAura:u.baseAura,personalPoints:u.personalPoints});
  return {id:b.id,teams:b.teams,roster:b.roster,allies:b.allies.map(show),enemies:b.enemies.map(show),commands,boss:b.boss,
   round:b.round,turn:b.turn,cur:b.cur,deadline:actionDeadline(b,cur),openAt:b.openAt,finished:b.finished,last:b.last,auto,
   fx:b.fx,effects:b.effects,log:b.log.slice(-5)};

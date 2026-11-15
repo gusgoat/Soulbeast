@@ -18,11 +18,14 @@ export function shieldUrl(shield){
  return new URL('../../assets/ui/colosseum-shields/'+shield.id+'.webp?v=2',import.meta.url).href;
 }
 
+export const teamStats=({earned=0,kills=0,beastKills=0,bossKills=0,deaths=0})=>({points:earned,kills,beastKills,bossKills,deaths});
+
 export function teamResults(players){
  return [0,1].map(side=>players.filter(p=>p.side===side)
   .sort((a,b)=>b.earned-a.earned||b.kills-a.kills)
-  .map(({id,name,earned,kills,bot,rating,retired},index,team)=>({
-   id,name,points:earned,kills,bot:Boolean(bot),rating,mvp:!retired&&index===team.findIndex(p=>!p.retired),
+  .map((player,index,team)=>({
+   id:player.id,name:player.name,...teamStats(player),bot:Boolean(player.bot),rating:player.rating,
+   mvp:!player.retired&&index===team.findIndex(p=>!p.retired),
   })));
 }
 

@@ -1,16 +1,17 @@
-import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_SCORE_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, RESPAWN_MS, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=balance-summons-1';
-import {teamResults} from './ranking.mjs';
+import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_SCORE_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile, WARP_ACCESS, WARP_TARGET,
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=archer-siege-1';
+import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat} from './combat.mjs?v=combat-auto-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=team-balance-2';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=base-recall-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=archer-siege-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
-import {matchAnnouncer} from './match-announcer.mjs?v=1';
+import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const PLAYER_DEATH_POINTS=30;
+function cancelRecall(p){delete p.recallEndsAt;delete p.recallBaseId;}
 const BASE_CAPTURE_LOSS={small:40,medium:60,large:100};
 const nearest=(p,list)=>list.slice().sort((a,b)=>distance(a,p)-distance(b,p)||(a.id??'').localeCompare(b.id??''))[0];
 const partyPets=(battle,p)=>[...battle.allies,...battle.enemies,...(battle.retiredUnits||[])].filter(u=>u.kind==='pet'&&u.sealer===p.id&&p.petVitals?.has(u.uid));
@@ -29,6 +30,7 @@ const OBJECT_SITES=maze.flatMap((row,y)=>row.flatMap((walk,x)=>{
  const p=cellCenter(x,y);
  return walk&&bushAt(p)===null&&BASES.every(b=>distance(p,b)>470)?[p]:[];
 }));
+const BOSS_SITES=OBJECT_SITES.filter(p=>Math.floor(p.x/CELL)===Math.floor(COLS/2));
 export class Match {
  constructor(code,now,random=Math.random,mode='team'){
   this.code=code;this.id=crypto.randomUUID();this.created=now;this.players=[];this.score=[TEAM_START_SCORE,TEAM_START_SCORE];this.phase='lobby';this.events=[];
@@ -119,7 +121,7 @@ export class Match {
      [spawn]=edgeSpawns.splice(index,1);assigned.push(spawn);
      Object.assign(p,{points:0,scoreAt:now});
     }
-    Object.assign(p,{earned:0,kills:0,spawn,maxHp:hero.st.hp,maxMp:hero.st.mp});
+    Object.assign(p,{earned:0,kills:0,beastKills:0,bossKills:0,deaths:0,spawn,maxHp:hero.st.hp,maxMp:hero.st.mp});
     this.respawn(p,now);
    });
    SHADOW_SPAWNS.forEach(([x,y,sp],i)=>{
@@ -158,7 +160,7 @@ export class Match {
    for(const id of event.hit){
     const player=this.players.find(p=>p.id===id);
     const damage=applyTrap(event.trap.type,player,player.maxHp);
-    if(damage)delete player.recallEndsAt;
+    if(damage)cancelRecall(player);
     const label=trapTypes[event.trap.type].name;
     this.note(`${player.name} โดนกับดัก${label}${damage?` · −${damage} HP`:''}`,now);
     if(player.hp<=0)this.fall(player,now);
@@ -167,9 +169,10 @@ export class Match {
   }
   if(this.solo)this.checkScore(now);
  }
- site(existing,minimum){
-  const spaced=this.sites.filter(p=>existing.every(q=>distance(p,q)>=minimum));
-  const choices=spaced.length?spaced:this.sites.filter(p=>existing.every(q=>distance(p,q)>0));
+ site(existing,minimum,sites=this.sites){
+  const spaced=sites.filter(p=>existing.every(q=>distance(p,q)>=minimum));
+  const clear=spaced.length?spaced:sites.filter(p=>existing.every(q=>distance(p,q)>0));
+  const choices=clear.length?clear:sites;
   return choices[Math.floor(this.random()*choices.length)];
  }
  spawnBoss(now){
@@ -183,7 +186,7 @@ export class Match {
     battle.log.push('บอสตัวเดิมหายไปเมื่อครบเวลา');
    }
   }
-  const home=this.site([...this.chests,...this.shadows,...this.bosses,...this.players.filter(p=>p.phase==='walk')],270);
+  const home=this.site([...this.chests,...this.shadows,...this.bosses,...this.players.filter(p=>p.phase==='walk')],270,BOSS_SITES);
   const boss={...home,home,id:`boss-${this.nextBossAt}`,boss:true,sp,label:rareArt[sp].name,lv:this.averageLevel,phase:'walk'};
   const u=bossUnit(boss);Object.assign(boss,{hp:u.hp,maxHp:u.st.hp,mp:u.mp});
   this.bosses=[boss];
@@ -197,12 +200,18 @@ export class Match {
  }
  teleport(p,now){
   Object.assign(p,p.spawn,{phase:'walk',safeUntil:now+2500,dx:0,dy:0,warp:(p.warp||0)+1});
-  delete p.battle;delete p.respawnAt;delete p.repair;delete p.siege;delete p.baseRecovery;delete p.recallEndsAt;
+  delete p.battle;delete p.respawnAt;delete p.repair;delete p.siege;delete p.baseRecovery;cancelRecall(p);
   resetBotRoute(p);
  }
  respawn(p,now){
+  const returning=p.phase==='dead';
   Object.assign(p,{hp:p.maxHp,mp:p.maxMp,ailments:{}});
   this.teleport(p,now);
+  if(returning){
+   for(const pet of p.petVitals.values())pet.hp=pet.maxHp;
+   const base=this.bases.find(b=>b.main&&b.side===p.side);
+   if(base)this.baseEffect('respawn',base,p,now,750);
+  }
  }
  finish(winner,reason,now){
   if(this.phase==='finished')return;
@@ -281,12 +290,20 @@ export class Match {
    p.recallEndsAt??=now+BASE_RECALL_MS;
    p.dx=p.dy=0;
    delete p.repair;delete p.siege;
+  }else if(m.type==='warpSmallBase'){
+   const base=this.bases.find(b=>b.id===m.id&&WARP_TARGET(p,b));
+   assert(!this.solo&&p.connected&&p.phase==='walk'&&!p.recallEndsAt&&base&&WARP_ACCESS(p,this.bases),
+    'ต้องอยู่ที่แท่นวาร์ปและเลือกฐานเล็กฝ่ายตัวเองที่ยังอยู่');
+   p.recallBaseId=base.id;
+   p.recallEndsAt=now+BASE_RECALL_MS;
+   p.dx=p.dy=0;
+   delete p.repair;delete p.siege;
   }else if(m.type==='cancelRecall'){
-   delete p.recallEndsAt;
+   cancelRecall(p);
   }else if(m.type==='repairBase'){
    const base=this.bases.find(b=>b.id===m.id);
    assert(p.connected&&p.phase==='walk'&&!p.recallEndsAt&&base&&REPAIR_TARGET(p,base),'สายพ่อค้าต้องอยู่ใกล้ฐานฝ่ายตัวเองที่ HP ยังไม่เต็ม');
-   if(p.repair?.baseId!==base.id)p.repair={baseId:base.id,nextAt:now+BASE_REPAIR_MS,scoreTime:0};
+   if(p.repair?.baseId!==base.id)p.repair={baseId:base.id,nextAt:now+BASE_REPAIR_MS,nextScoreAt:now+BASE_REPAIR_SCORE_MS};
    p.dx=p.dy=0;
   }else if(m.type==='stopRepair'){
    delete p.repair;
@@ -339,8 +356,8 @@ export class Match {
   }
   for(const p of [...teams.flat(),...(neutral?[b]:[])]){
    p.phase='battle';p.battle=id;p.dx=p.dy=0;
-   delete p.siege;delete p.recallEndsAt;
-   if(p.repair)p.repair.nextAt=null;
+   delete p.siege;cancelRecall(p);
+   if(p.repair)p.repair.pausedAt=now;
   }
   this.baseBolts=this.baseBolts.filter(bolt=>bolt.target.phase!=='battle');
   this.baseEffects=this.baseEffects.filter(effect=>effect.kind==='collapse'||
@@ -355,31 +372,42 @@ export class Match {
   const owner=battle.colosseumFalls?.get(unit.id);
   return this.players.find(p=>p.id===battle.roster[owner])??null;
  }
- fall(p,now,cause='',killer=null){
-  if(p.phase!=='dead')this.announcer.fall(p,killer,now,this.solo);
+ fall(p,now,cause='',killer=null,bonuses=this.announcer.bonuses(p,killer,this.solo)){
+  if(p.phase==='dead')return;
+  const {shutdown,revenge}=bonuses;
+  this.announcer.fall(p,killer,now,this.solo,bonuses);
   p.phase='dead';
-  delete p.repair;delete p.recallEndsAt;
+  delete p.repair;cancelRecall(p);
   if(this.solo){p.eliminationCause=cause;p.eliminatedAt=now;this.note(`${p.name} ตกรอบ${cause?' · '+cause:''}`,now);return;}
-  p.respawnAt=now+RESPAWN_MS;
+  const elapsedMinutes=Math.floor((now-this.started)/60_000);
+  p.respawnAt=now+10_000+elapsedMinutes*5_000;
+  p.deaths++;
+  const loss=20+shutdown+(revenge?5:0);
+  p.earned=Math.floor(p.earned*(100-loss)/100);
   const points=killer?.baseCls==='thief'?30:20;
-  if(killer)this.earn(killer,points);
   this.score[p.side]=Math.max(0,this.score[p.side]-PLAYER_DEATH_POINTS);
   const award=killer?`${killer.name} สังหาร ${p.name} · ${TEAMS[killer.side]} +${points}`:`${p.name} ล้มลง`;
   this.note(`${award} · ${TEAMS[p.side]} −${PLAYER_DEATH_POINTS}`,now);
  }
  recordFalls(b,now){
   let changed=false;
-  for(const id of b.fallen){
+  const rewards=[];
+  const knockouts=b.fallen.flatMap(id=>{
    const p=this.players.find(x=>x.id===id);
-   if(!p||p.battle!==b.id||p.phase==='dead')continue;
-   this.savePetVitals(p,b);
+   if(!p||p.battle!==b.id||p.phase==='dead')return [];
    const hero=[...b.allies,...b.enemies].find(u=>u.kind==='player'&&u.sealer===id);
    const credit=this.combatCredit(b,hero);
    const killer=!b.beastId&&credit&&credit!==p&&(this.solo||credit.side!==p.side)?credit:null;
-   if(killer)killer.kills++;
-   this.fall(p,now,'',killer);changed=true;
+   return [{p,killer,bonuses:this.announcer.bonuses(p,killer,this.solo)}];
+  });
+  for(const {p,killer,bonuses} of knockouts){
+   this.savePetVitals(p,b);
+   const victimPoints=p.earned;
+   this.fall(p,now,'',killer,bonuses);
+   if(killer)rewards.push({killer,victimPoints,revenge:bonuses.revenge});
+   changed=true;
    if(this.solo&&!b.beastId){
-    const winner=[...b.allies,...b.enemies].find(u=>u.kind==='player'&&u.sealer!==id&&u.hp>0);
+    const winner=[...b.allies,...b.enemies].find(u=>u.kind==='player'&&u.sealer!==p.id&&u.hp>0);
     const survivor=winner&&this.players.find(player=>player.id===winner.sealer);
     if(survivor){
      this.addSurvivalPoints(survivor,SURVIVAL_POINTS.player,now);
@@ -387,6 +415,15 @@ export class Match {
      this.note(`${survivor.name} ชนะ ${p.name} · +${SURVIVAL_POINTS.player} คะแนน`,now);
     }
    }
+  }
+  if(knockouts.length>1)for(const {p} of knockouts)this.announcer.resetStreak(p);
+  for(const {killer,victimPoints,revenge} of rewards){
+   killer.kills++;
+   if(this.solo)continue;
+   const thief=killer.baseCls==='thief',minimum=thief?30:20;
+   const award=Math.max(minimum,Math.floor(victimPoints*(thief?25:20)/100));
+   killer.earned+=revenge?award+Math.floor(award*5/100):award;
+   this.score[killer.side]+=minimum;
   }
   if(this.solo){
    const beast=b.beastId&&b.enemies[0];
@@ -408,6 +445,7 @@ export class Match {
    b.beastScored=true;
    const credit=this.combatCredit(b,b.enemies[0])??this.players.find(p=>p.id===b.teams[0][0]);
    const points=credit.baseCls==='swordsman'?8:BEAST_POINTS;
+   credit.beastKills++;
    this.earn(credit,points);
    if(this.announcer.beast(credit,now))this.note(`${credit.name} ล่าอสูรครบ 5 ตัวในชีวิตเดียว`,now);
    this.note(`${TEAMS[b.huntSide]} ล่า${b.enemies[0].name}สำเร็จ · +${points}`,now);
@@ -421,6 +459,7 @@ export class Match {
      this.announcer.add('boss-defeated',now);
      const credit=this.combatCredit(b,unit)??this.players.find(p=>p.id===b.teams[0][0]);
      const points=BOSS_POINTS+(credit.baseCls==='swordsman'?10:0);
+     credit.bossKills++;
      this.earn(credit,points);this.score[1-side]=Math.max(0,this.score[1-side]-BOSS_POINTS);
      const minutes=Math.round((this.nextBossAt-(this.ends-MATCH_MS))/60_000);
      const next=this.nextBossAt<this.ends?`เกิดอีกครั้งเมื่อนาทีที่ ${minutes}`:'ไม่มีบอสเกิดเพิ่มในรอบนี้';
@@ -429,6 +468,7 @@ export class Match {
     }
    }
   }
+  syncCombatBonuses(b);
   if(changed)this.checkScore(now);
  }
  addSurvivalPoints(p,points,now){
@@ -598,10 +638,14 @@ export class Match {
   for(const bolt of this.baseBolts){
    if(bolt.at>now){pending.push(bolt);continue;}
    const {base,side,target,warp,damage}=bolt;
-   if(base.side!==side||!target.connected||target.phase!=='walk'||target.warp!==warp)continue;
+   if(base.hp<=0||base.side!==side||!target.connected||target.phase!=='walk'||target.warp!==warp)continue;
    target.hp=Math.max(0,target.hp-damage);
-   delete target.recallEndsAt;
-   if(!target.hp){this.fall(target,now);this.checkScore(now);}
+   cancelRecall(target);
+   if(!target.hp){
+    this.baseEffect('tower-fall',base,target,now,750);
+    this.fall(target,now);
+    this.checkScore(now);
+   }
    if(this.phase!=='match')return;
   }
   this.baseBolts=pending;
@@ -613,16 +657,21 @@ export class Match {
     const base=this.bases.find(b=>b.id===p.repair.baseId);
     if(!base||!p.connected||!REPAIR_TARGET(p,base))delete p.repair;
     else if(walking){
-     p.repair.nextAt??=now+BASE_REPAIR_MS;
-     while(p.repair&&now>=p.repair.nextAt){
-      base.hp++;
-      p.repair.scoreTime+=BASE_REPAIR_MS;
-      if(p.repair.scoreTime>=BASE_REPAIR_SCORE_MS){
+     const repair=p.repair;
+     if(repair.pausedAt!=null){
+      const paused=now-repair.pausedAt;
+      repair.nextAt+=paused;repair.nextScoreAt+=paused;
+      delete repair.pausedAt;
+     }
+     while(p.repair&&now>=Math.min(repair.nextAt,repair.nextScoreAt)){
+      if(repair.nextScoreAt<=repair.nextAt){
        p.earned++;
-       p.repair.scoreTime-=BASE_REPAIR_SCORE_MS;
+       repair.nextScoreAt+=BASE_REPAIR_SCORE_MS;
+      }else{
+       base.hp++;
+       repair.nextAt+=BASE_REPAIR_MS;
+       if(base.hp===base.maxHp)this.clearBaseRepairs(base.id);
       }
-      p.repair.nextAt+=BASE_REPAIR_MS;
-      if(base.hp===base.maxHp)this.clearBaseRepairs(base.id);
      }
     }
    }
@@ -663,7 +712,7 @@ export class Match {
    }
   }
   for(const base of this.bases){
-   if(now<(base.fireAt??0))continue;
+   if(base.hp<=0||now<(base.fireAt??0))continue;
    const target=nearest(base,this.players.filter(p=>p.side!==base.side&&fresh(p,now)&&distance(base,p)<=BASE_FIRE_RANGE));
    if(!target)continue;
    base.fireAt=now+BASE_FIRE_MS;
@@ -675,7 +724,7 @@ export class Match {
  damageBase(base,p,now){
   const {effect}=siegeProfile(p);
   const career=p.baseCls||p.cls;
-  const hitDamage=career==='gladiator'||career==='thief'?BASE_ATTACK_HP/2:BASE_ATTACK_HP;
+  const hitDamage=effect==='magic'?5:effect==='archer'||career==='gladiator'||career==='thief'?BASE_ATTACK_HP/2:BASE_ATTACK_HP;
   if(p.siege?.id!==base.id)p.siege={id:base.id,nextHitAt:now+BASE_ATTACK_MS,nextScoreAt:now+BASE_ATTACK_SCORE_MS};
   const siege=p.siege;
   while(Math.min(siege.nextScoreAt,siege.nextHitAt)<=now){
@@ -701,13 +750,11 @@ export class Match {
     const defender=base.side,loss=BASE_CAPTURE_LOSS[base.tier],bonus=loss/2;
     this.score[defender]=Math.max(0,this.score[defender]-loss);
     this.earn(p,bonus);
-    base.side=p.side;
-    base.hp=base.maxHp/4;
-    base.fireAt=now+BASE_FIRE_MS;
     base.underAttack=false;
     delete p.siege;
     this.clearBaseRepairs(base.id);
-    this.note(`${p.name} ยึด${base.label} · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}`,now);
+    for(const player of this.players)if(player.recallBaseId===base.id)cancelRecall(player);
+    this.note(`${p.name} ทำ${base.label}แตก · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}`,now);
     if(base.main)this.finish(p.side,'base-captured',now);
     else this.checkScore(now);
     return;
@@ -765,7 +812,7 @@ export class Match {
   }
   for(const p of this.players){
    if(!this.solo&&!p.retired&&p.phase==='dead'&&now>=p.respawnAt)this.respawn(p,now);
-   if(!p.connected)delete p.recallEndsAt;
+   if(!p.connected)cancelRecall(p);
    if(p.phase!=='walk'||!p.connected)continue;
    if(p.recallEndsAt){p.appliedSeq=p.seq;continue;}
    if(p.bot)stepBot(this,p,now,dt);
@@ -811,8 +858,9 @@ export class Match {
    if(this.phase!=='match')return;
    for(const p of this.players){
     if(p.phase!=='walk'||!p.recallEndsAt||now<p.recallEndsAt)continue;
-    delete p.recallEndsAt;
-    const base=this.bases.find(base=>base.main&&base.side===p.side&&base.hp>0);
+    const destination=p.recallBaseId;
+    cancelRecall(p);
+    const base=this.bases.find(b=>destination?b.id===destination&&WARP_TARGET(p,b):b.main&&b.side===p.side&&b.hp>0);
     if(!base)continue;
     Object.assign(p,{x:base.x,y:base.y,warp:(p.warp||0)+1,dx:0,dy:0});
     delete p.baseRecovery;
@@ -832,15 +880,15 @@ export class Match {
  snapshot(p,now){
   const {bushAt,canSeeOpponent}=this.arena,hero=this.battleHero(p);
   const spectating=this.spectatorTarget(p),viewer=spectating||p;
-  const repairing=q=>this.phase==='match'&&q.phase==='walk'&&q.connected&&q.repair?.nextAt!=null&&
-   this.bases.some(b=>b.id===q.repair.baseId&&b.side===q.side&&b.hp<b.maxHp);
+  const repairing=q=>this.phase==='match'&&q.phase==='walk'&&q.connected&&q.repair&&q.repair.pausedAt==null&&
+   this.bases.some(b=>b.id===q.repair.baseId&&REPAIR_TARGET(q,b));
   const players=this.players.map(q=>{
    const {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,x,y,warp,safeUntil}=q;
    const ally=this.solo?q===p:side===p.side;
    const visible=q===p||q===spectating||((this.solo||phase==='walk')&&inSight(viewer,q)&&(ally||canSeeOpponent(viewer,q)));
    const teamHp=ally?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
    return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),rating:q.rating,...teamHp,
-    ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
+    ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{...teamStats(q),streakTitle:this.announcer.title(q)}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
     ...(!this.solo&&ally&&visible?{repairingBase:repairing(q)?q.repair.baseId:null}:{}),
     ...(visible?{recallEndsAt:this.phase==='match'&&phase==='walk'&&connected?q.recallEndsAt??null:null}:{}),
     ...(!this.solo&&ally&&!visible&&phase==='walk'&&Number.isFinite(x)&&Number.isFinite(y)?{mapX:x,mapY:y}:{})};
