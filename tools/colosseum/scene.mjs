@@ -950,7 +950,7 @@ export class Scene{
    }
   }else{
    const atlas=getAtlas(p);
-   const pose=moving?'run':'idle';
+   const pose=moving?(p.walkRunning===false?'walk':'run'):'idle';
    const entry=atlas?.entry;
    const [ax,ay]=entry?.anchor||[.5,.962],size=145*(entry?.renderScale||1);
    const target=attack&&bases.get(attack.baseId);
@@ -976,12 +976,13 @@ export class Scene{
     globalThis.sealerSprites.drawColoredFrame(c,strike,0,0,strike.naturalWidth,strike.naturalHeight,-width/2,-height,width,height);
     c.restore();
    }else if(atlas){
-    const sheet=atlas[pose]??=img(siteAsset(moving?(entry.run||entry.walk):entry.idle));
+    const sheet=atlas[pose]??=img(siteAsset(entry[pose]||(pose==='run'?entry.walk:entry.idle)));
     if(ready(sheet)){
-     const layout=moving?(entry.runLayout||entry.walkLayout):entry.idleLayout;
-     const cols=layout?.columns??(moving?(entry.runFrames||entry.walkFrames||8):4);
+     const running=pose==='run'&&!!entry.run;
+     const layout=moving?(running?(entry.runLayout||entry.walkLayout):entry.walkLayout):entry.idleLayout;
+     const cols=layout?.columns??(moving?((running?entry.runFrames:entry.walkFrames)||entry.walkFrames||8):4);
      const rows=layout?.rows??(moving?8:2);
-     const rate=entry.runPhaseScale??entry.phaseScale??1;
+     const rate=(running?entry.runPhaseScale:entry.phaseScale)??entry.phaseScale??1;
      const col=moving?Math.floor(prev.phase*rate*cols/8)%cols:prev.dir%cols;
      const row=moving?prev.dir:Math.floor(prev.dir/cols);
      const width=sheet.naturalWidth/cols, height=sheet.naturalHeight/rows;
