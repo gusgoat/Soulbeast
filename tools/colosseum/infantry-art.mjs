@@ -1,4 +1,4 @@
-import {FLAT} from './arena.mjs?v=infantry-siege-1';
+import {FLAT} from './arena.mjs?v=team-bot-tactics-1';
 
 const sheets=new Map();
 const teams=['sapphire','ruby'];

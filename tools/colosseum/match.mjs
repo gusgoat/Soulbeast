@@ -1,22 +1,21 @@
-import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_SCORE_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile, WARP_ACCESS, WARP_TARGET,
- TEAM_ARENA, bushAt, capitalSpawn, cellCenter, distance, maze, spawns, warpArrival} from './arena.mjs?v=infantry-siege-1';
+import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_SCORE_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, INFANTRY_HEAL_RANGE, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, hasInfantrySupport, siegeProfile, WARP_ACCESS, WARP_TARGET, WOUNDED_INFANTRY,
+ TEAM_ARENA, bushAt, capitalSpawn, cellCenter, distance, maze, spawns, warpArrival} from './arena.mjs?v=team-bot-tactics-1';
 import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=team-minimap-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=infantry-siege-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=team-bot-tactics-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {INFANTRY_WAVE_MS, spawnInfantry, stepInfantry} from './infantry.mjs?v=infantry-siege-1';
+import {INFANTRY_WAVE_MS, spawnInfantry, stepInfantry} from './infantry.mjs?v=team-bot-tactics-1';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const PLAYER_DEATH_POINTS=30;
 const INFANTRY_HIT_SCORE_INTERVAL=4000, INFANTRY_KILL_POINTS=5;
 const INFANTRY_DAMAGE={archer:4,swordsman:5,thief:5,mage:3,gunner:3,druid:3,summoner:2,merchant:4,gladiator:4};
-const INFANTRY_HEAL_RANGE=180, INFANTRY_HEAL_HP=2, INFANTRY_HEAL_MS=1000;
+const INFANTRY_HEAL_HP=2, INFANTRY_HEAL_MS=1000;
 const siegeScoreBonus=p=>Math.floor(p.earned/75);
-const BASE_INFANTRY_SUPPORT_RANGE=300;
 const BOSS_SCORE_LOSS=60;
 const hunterBonus=player=>['swordsman','summoner'].includes(player.baseCls);
 function cancelRecall(p){delete p.recallEndsAt;delete p.recallBaseId;}
@@ -715,10 +714,11 @@ export class Match {
     }
    }
    const canAttack=p.hp>0&&!p.repair&&!p.recallEndsAt&&fresh(p,now);
-   const base=canAttack&&nearest(p,this.bases.filter(b=>RAID_TARGET(p,b)&&canRaidBase(p.side,b,this.bases)));
+   const soldier=canAttack&&nearest(p,this.infantry.filter(unit=>unit.hp>0&&RAID_TARGET(p,unit)&&this.arena.canSeeOpponent(p,unit)));
+   const base=canAttack&&!(p.bot&&soldier)&&nearest(p,this.bases.filter(b=>RAID_TARGET(p,b)&&canRaidBase(p.side,b,this.bases)&&
+    (!p.bot||hasInfantrySupport(b,p.side,this.infantry,BASE_FIRE_RANGE))));
    if(!base){
     delete p.siege;
-    const soldier=canAttack&&nearest(p,this.infantry.filter(unit=>unit.hp>0&&RAID_TARGET(p,unit)&&this.arena.canSeeOpponent(p,unit)));
     if(soldier){
      delete p.nextInfantryHealAt;
      this.attackInfantry(p,soldier,now);
@@ -764,7 +764,7 @@ export class Match {
  }
  healInfantry(player,now,canAct){
   const soldier=canAct&&(player.baseCls||player.cls)==='summoner'&&this.infantry.filter(unit=>
-   unit.side===player.side&&unit.hp>0&&unit.hp<unit.maxHp&&distance(player,unit)<=INFANTRY_HEAL_RANGE)
+   WOUNDED_INFANTRY(player,unit)&&distance(player,unit)<=INFANTRY_HEAL_RANGE)
    .sort((a,b)=>a.hp-b.hp||distance(player,a)-distance(player,b))[0];
   if(!soldier){delete player.nextInfantryHealAt;return;}
   player.nextInfantryHealAt??=now+INFANTRY_HEAL_MS;
@@ -809,8 +809,7 @@ export class Match {
   }
  }
  hitBase(base,p,damage,now){
-  if(!p.infantry&&!this.infantry.some(unit=>unit.side===p.side&&unit.hp>0&&
-   distance(unit,base)<=BASE_INFANTRY_SUPPORT_RANGE))damage/=2;
+  if(!p.infantry&&!hasInfantrySupport(base,p.side,this.infantry))damage/=2;
   base.underAttack=true;
   if(now-(base.lastAnnouncedHit??-Infinity)>2500){
    this.announcer.add(base.main?'base-under-attack':'tower-under-attack',now,{side:base.side});

@@ -1,4 +1,4 @@
-import {BASES, FLAT, RADIUS, TEAM_ARENA, TEAM_SPEED, cellCenter, distance, walkSpeed, canRaidBase} from './arena.mjs?v=infantry-siege-1';
+import {BASES, FLAT, RADIUS, TEAM_ARENA, TEAM_SPEED, cellCenter, distance, walkSpeed, canRaidBase} from './arena.mjs?v=team-bot-tactics-1';
 
 export const INFANTRY_WAVE_MS=30_000;
 const AGGRO=300, LEASH=600, STRIKE_RANGE=75, STRIKE_MS=1000;
@@ -55,7 +55,7 @@ export function spawnInfantry(room,wave){
    const offset=[-48,-24,0,36,62][lane]/FLAT;
    const spawn={x:base.x,y:base.y+offset};
    const join=offset?[{x:base.x,y:base.y},...path]:path;
-   room.infantry.push({id:`infantry-${wave}-${side}-${lane}`,infantry:true,side,...spawn,
+   room.infantry.push({id:`infantry-${wave}-${side}-${lane}`,infantry:true,side,lane,...spawn,
     hp:maxHp,maxHp,path:join,waypoint:0,dir:side?2:6,pose:'walk',frame:0,stride:0});
   });
  }

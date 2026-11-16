@@ -185,6 +185,10 @@ export function siegeProfile(p){
  return {range:75,effect:cls==='merchant'?'hammer':'melee'};
 }
 export const RAID_TARGET=(p,b)=>p.side!==b.side&&distance(p,b)<=siegeProfile(p).range&&clearPath(p,b);
+export const BASE_INFANTRY_SUPPORT_RANGE=300, INFANTRY_HEAL_RANGE=180;
+export const hasInfantrySupport=(base,side,infantry,range=BASE_INFANTRY_SUPPORT_RANGE)=>infantry.some(unit=>
+ unit.side===side&&unit.hp>0&&distance(unit,base)<=range);
+export const WOUNDED_INFANTRY=(p,unit)=>unit.side===p.side&&unit.hp>0&&unit.hp<unit.maxHp;
 export const HEAL_TARGET=(p,b)=>p.side===b.side&&b.hp>0&&distance(p,b)<=BASE_HEAL_RANGE;
 export const REPAIR_TARGET=(p,b)=>(p.baseCls||p.cls)==='merchant'&&p.side===b.side&&b.hp>0&&
  b.hp<b.maxHp&&distance(p,b)<=BASE_REPAIR_RANGE;

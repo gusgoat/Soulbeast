@@ -1,4 +1,4 @@
-import {CHEST_TARGET, COLS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, canRaidBase, canSeeOpponent, cellCenter, distance, indexAt, nextCell, walkSpeed} from './arena.mjs?v=infantry-siege-1';
+import {BASE_FIRE_RANGE, BASE_INFANTRY_SUPPORT_RANGE, CHEST_TARGET, COLS, FLAT, HEAL_TARGET, INFANTRY_HEAL_RANGE, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, WOUNDED_INFANTRY, canRaidBase, canSeeOpponent, cellCenter, distance, hasInfantrySupport, indexAt, nextCell, walkSpeed} from './arena.mjs?v=team-bot-tactics-1';
 import {inSight} from './sight.mjs';
 import {fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -26,43 +26,93 @@ function patrolPoint(bot){
  return points[(brain.routeSeed+brain.patrol*19)%points.length];
 }
 
+const WAVE_FOLLOW_RANGE=105;
+const activeInfantry=(bot,match)=>match.infantry.filter(unit=>unit.side===bot.side&&unit.hp>0);
+const canSee=(observer,target)=>inSight(observer,target)&&canSeeOpponent(observer,target);
+
+function threatenedBase(match,bot,bases,opponents){
+ const {role}=bot.bot;
+ const threats=bases.flatMap(base=>{
+  if(!base.main&&role!=='guard'&&distance(bot,base)>650)return [];
+  const soldiers=match.infantry.filter(unit=>unit.side!==bot.side&&unit.hp>0&&
+   (unit.target===base||distance(base,unit)<=BASE_FIRE_RANGE&&canSee(base,unit)&&match.arena.clearPath(base,unit)));
+  const players=opponents.filter(p=>p.siege?.id===base.id||
+   distance(base,p)<=BASE_FIRE_RANGE&&(canSee(bot,p)||canSee(base,p))&&match.arena.clearPath(base,p));
+  const soldier=nearestTo(bot,soldiers),enemy=nearestTo(bot,players);
+  return soldier||enemy?[{base,type:soldier?'fightInfantry':'intercept',point:soldier||enemy}]:[];
+ });
+ return threats.sort((a,b)=>Number(b.base.main)-Number(a.base.main)||
+  distance(bot,a.point)-distance(bot,b.point))[0];
+}
+
+function pushWithInfantry(match,bot,allies,pick){
+ if(!allies.length)return null;
+ const raidBases=match.bases.filter(base=>canRaidBase(bot.side,base,match.bases));
+ const supported=pick(raidBases.filter(base=>hasInfantrySupport(base,bot.side,allies,BASE_FIRE_RANGE)));
+ const raidIds=new Set(raidBases.map(base=>base.id));
+ const frontByLane=new Map();
+ for(const unit of allies){
+  const advancing=unit.path.some((point,i)=>i>=unit.waypoint&&raidIds.has(point.baseId));
+  if(supported?distance(unit,supported)>BASE_FIRE_RANGE:!advancing)continue;
+  const front=frontByLane.get(unit.lane);
+  if(!front||unit.waypoint>front.waypoint)frontByLane.set(unit.lane,unit);
+ }
+ const wave=pick([...frontByLane.values()]);
+ if(!wave)return null;
+ const enemy=pick(match.infantry.filter(unit=>unit.side!==bot.side&&unit.hp>0&&canSee(wave,unit)&&
+  (distance(wave,unit)<=BASE_INFANTRY_SUPPORT_RANGE||unit.target===wave)));
+ if(enemy)return {type:'fightInfantry',point:enemy};
+ if(supported)return {type:'raid',point:supported};
+ return {type:'followInfantry',point:wave};
+}
+
 function chooseObjective(match,bot,now){
- const {role,lane,patrol,skipPoint}=bot.bot;
+ const {role,skipPoint}=bot.bot;
  const pick=points=>nearestTo(bot,points.filter(p=>p!==skipPoint||now>=bot.bot.skipUntil));
  const healingBases=match.bases.filter(base=>base.side===bot.side&&base.hp>0);
  const lowVitals=u=>u.hp<u.maxHp*.58||u.mp<u.maxMp*.34;
  const low=lowVitals(bot)||[...bot.petVitals.values()].some(lowVitals);
  const heal=low&&pick(healingBases);
  if(heal)return {type:'recover',point:heal};
- const repair=bot.baseCls==='merchant'&&pick(healingBases.filter(b=>b.hp<b.maxHp&&
+ const career=bot.baseCls||bot.cls;
+ const enemies=match.players.filter(p=>p.side!==bot.side&&p.connected&&p.phase==='walk'&&now>=p.safeUntil);
+ const defense=threatenedBase(match,bot,healingBases,enemies);
+ if(defense)return defense;
+ const repair=career==='merchant'&&pick(healingBases.filter(b=>b.hp<b.maxHp&&
   !match.players.some(p=>p!==bot&&p.repair?.baseId===b.id)));
  if(repair)return {type:'repairBase',point:repair};
 
- const visible=p=>inSight(bot,p)&&canSeeOpponent(bot,p);
- const opponents=match.players.filter(p=>p.side!==bot.side&&p.connected&&p.phase==='walk'&&now>=p.safeUntil&&visible(p));
+ const visible=p=>canSee(bot,p);
+ const opponents=enemies.filter(visible);
  const allies=match.players.filter(p=>p!==bot&&p.side===bot.side&&p.connected&&p.phase==='walk');
- const opponent=pick(opponents);
- if(opponent&&(role==='guard'||role==='escort'||role==='hunter'&&bot.hp>bot.maxHp*.78))
-  return {type:'intercept',point:opponent};
-
+ const thief=career==='druid'&&pick(opponents.filter(p=>p.baseCls==='thief'));
+ const opponent=thief||pick(opponents);
+ const infantry=activeInfantry(bot,match);
  const active=p=>p.phase==='walk'&&!p.claimed&&now>=(p.safeUntil||0)&&visible(p);
- const boss=role==='hunter'&&pick(match.bosses.filter(active));
+ const beastHunter=role==='hunter'||career==='swordsman'||career==='summoner';
+ const boss=beastHunter&&pick(match.bosses.filter(active));
  if(boss)return {type:'hunt',point:boss};
  const chest=pick(match.chests.filter(p=>!p.opened&&visible(p)&&(role!=='guard'||distance(bot,p)<160)));
+ if(chest&&['thief','merchant'].includes(career))return {type:'chest',point:chest};
+
+ const push=pushWithInfantry(match,bot,infantry,pick);
+ if((push?.type==='fightInfantry'||push?.type==='raid')&&(role!=='guard'||distance(bot,push.point)<=360))return push;
+ if(career==='summoner'){
+  const wounded=infantry.filter(unit=>WOUNDED_INFANTRY(bot,unit)&&distance(bot,unit)<=360)
+   .sort((a,b)=>a.hp-b.hp||distance(bot,a)-distance(bot,b))[0];
+  if(wounded)return {type:'healInfantry',point:wounded};
+ }
+ if(push&&(role==='raider'||role==='escort'))return push;
+ if(opponent&&(thief||role==='guard'||role==='escort'||(role==='hunter'||career==='thief')&&bot.hp>bot.maxHp*.78))
+  return {type:'intercept',point:opponent};
  if(chest)return {type:'chest',point:chest};
- const shadow=role==='hunter'&&pick(match.shadows.filter(active));
+ const shadow=beastHunter&&pick(match.shadows.filter(active));
  if(shadow)return {type:'hunt',point:shadow};
+ if(push&&role!=='guard')return push;
 
  if(role==='escort'){
   const partner=pick(allies.filter(p=>!p.bot&&distance(bot,p)>180&&distance(bot,p)<720));
   if(partner)return {type:'escort',point:partner};
- }
- if(role==='raider'||role==='scout'&&patrol%4===3){
-  const targets=match.bases.filter(base=>canRaidBase(bot.side,base,match.bases));
-  const middle=match.bases.find(base=>base.id===`${1-bot.side}-${lane+1}`);
-  const raid=pick(targets.filter(base=>base.main))||pick(targets.filter(base=>base===middle))||
-   pick(targets.filter(base=>base.tier==='medium'))||pick(targets.filter(base=>middle?.links.includes(base.id)))||pick(targets);
-  if(raid)return {type:'raid',point:raid};
  }
  return {type:'patrol',point:patrolPoint(bot)};
 }
@@ -71,7 +121,9 @@ function currentObjective(match, bot, now) {
  const brain = bot.bot;
  const goal = brain.goal;
  const expired = goal?.type === 'chest' && goal.point.opened ||
-  goal?.type==='raid'&&!canRaidBase(bot.side,goal.point,match.bases) ||
+  goal?.type==='raid'&&(!canRaidBase(bot.side,goal.point,match.bases)||!hasInfantrySupport(goal.point,bot.side,match.infantry,BASE_FIRE_RANGE)) ||
+  (goal?.type==='fightInfantry'||goal?.type==='followInfantry')&&goal.point.hp<=0 ||
+  goal?.type==='healInfantry'&&!WOUNDED_INFANTRY(bot,goal.point) ||
   (goal?.type==='recover'||goal?.type==='repairBase')&&(goal.point.side!==bot.side||goal.point.hp<=0||goal.type==='repairBase'&&goal.point.hp>=goal.point.maxHp) ||
   goal?.type === 'hunt' && (goal.point.claimed || goal.point.phase !== 'walk') ||
   goal?.type === 'intercept' && (goal.point.phase !== 'walk' || !canSeeOpponent(bot, goal.point)) ||
@@ -199,7 +251,10 @@ export function stepBot(match, bot, now, dt) {
   if(type==='repairBase'&&bot.repair.baseId===point.id)return;
   match.command(bot,{type:'stopRepair'},now);
  }
- if((type==='raid'&&RAID_TARGET(bot,point))||(type==='recover'&&HEAL_TARGET(bot,point)))return;
+ if(((type==='raid'||type==='fightInfantry')&&RAID_TARGET(bot,point)&&
+  (type==='raid'||canSeeOpponent(bot,point)))||(type==='recover'&&HEAL_TARGET(bot,point))||
+  (type==='followInfantry'&&distance(bot,point)<=WAVE_FOLLOW_RANGE&&match.arena.clearPath(bot,point))||
+  (type==='healInfantry'&&distance(bot,point)<=INFANTRY_HEAL_RANGE))return;
  if((type==='repairBase'&&REPAIR_TARGET(bot,point))||(type==='chest'&&CHEST_TARGET(bot,point))){
   match.command(bot,{type,id:point.id},now);
   brain.goal=null;

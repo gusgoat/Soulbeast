@@ -4,6 +4,7 @@ import {Match} from './match.mjs';
 import {advanceCombat, bossUnit, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto} from './combat.mjs';
 import {serve} from './server.mjs';
 import {startPractice} from './practice.mjs';
+import {spawnInfantry} from './infantry.mjs';
 import {siegeAudio} from './siege-audio.mjs';
 
 const ok=(test,message='assertion failed')=>{if(!test)throw Error(message);};
@@ -411,6 +412,10 @@ Deno.test('a raider bot holds its attack position and damages a base through the
  const {r,p:[human]}=match(1),bot=r.addBot(1,10);
  start(r,r.players);r.shadows=[];
  const base=r.bases.find(b=>b.side===human.side&&b.tier==='small');
+ spawnInfantry(r,1);
+ const support=r.infantry.find(unit=>unit.side===bot.side);
+ Object.assign(support,{x:base.x,y:base.y});
+ r.infantry=[support];
  Object.assign(bot,{x:base.x,y:base.y});
  Object.assign(bot.bot,{goal:{type:'raid',point:base},planAt:9000});
  r.tick(3000,0);r.tick(4000,0);
@@ -420,6 +425,10 @@ Deno.test('a merchant guarding a damaged base draws the bot into PvP before any 
  const {r,p:[human]}=match(1),bot=r.addBot(1,10);
  start(r,r.players);r.shadows=[];
  const base=r.bases.find(b=>b.side===human.side&&b.tier==='small');
+ spawnInfantry(r,1);
+ const support=r.infantry.find(unit=>unit.side===bot.side);
+ Object.assign(support,{x:base.x,y:base.y});
+ r.infantry=[support];
  base.hp=40;
  Object.assign(human,{x:base.x-34,y:base.y,baseCls:'merchant'});
  Object.assign(bot,{x:base.x+34,y:base.y});
@@ -428,6 +437,73 @@ Deno.test('a merchant guarding a damaged base draws the bot into PvP before any 
  r.tick(3050,0);eq(bot.battle,human.battle);ok(bot.battle);
  eq(base.hp,40);eq(r.score,[300,300]);eq(human.repair.pausedAt,3050);
 });
+Deno.test('a raider clears enemy infantry first and waits for its wave to enter tower range',()=>{
+ const {r,p:[human]}=match(1),bot=r.addBot(1,10);
+ start(r,r.players);
+ r.shadows=[];r.chests=[];
+ human.phase='battle';
+ const base=r.bases.find(b=>b.id==='0-7');
+ for(const fort of r.bases)fort.fireAt=Infinity;
+ spawnInfantry(r,1);
+ const wave=r.infantry.find(unit=>unit.side===bot.side&&unit.lane===4);
+ const enemy=r.infantry.find(unit=>unit.side===human.side);
+ r.infantry=[wave,enemy];
+ bot.bot.role='raider';
+ Object.assign(bot,{baseCls:'archer',x:base.x+120,y:base.y});
+ Object.assign(enemy,{x:base.x+55,y:base.y,hp:4});
+ Object.assign(wave,{x:base.x+275,y:base.y});
+ r.tick(3000,0);r.tick(4000,0);
+ eq(enemy.hp,0);eq(base.hp,base.maxHp);
+ r.tick(5000,0);r.siegeBases(6000);
+ eq(bot.bot.goal.type,'followInfantry');eq(base.hp,base.maxHp);
+ wave.x=base.x+100;
+ r.tick(7000,0);r.tick(8000,0);
+ eq(bot.bot.goal.type,'raid');eq(base.hp,base.maxHp-3);
+ wave.hp=0;
+ r.tick(9000,0);r.tick(10_000,0);
+ eq(base.hp,base.maxHp-3);
+});
+
+Deno.test('a merchant bot defends a threatened fort and repairs once the infantry is gone',()=>{
+ const {r,p:[human]}=match(1),bot=r.addBot(1,10);
+ start(r,r.players);
+ r.shadows=[];r.chests=[];
+ human.phase='battle';
+ const base=r.bases.find(b=>b.id==='1-7');
+ for(const fort of r.bases)fort.fireAt=Infinity;
+ spawnInfantry(r,1);
+ const enemy=r.infantry.find(unit=>unit.side===human.side);
+ r.infantry=[enemy];
+ Object.assign(bot,{baseCls:'merchant',x:base.x,y:base.y});
+ Object.assign(enemy,{x:base.x-50,y:base.y,hp:4});
+ base.hp-=5;
+ r.tick(3000,0);
+ eq(bot.bot.goal.type,'fightInfantry');
+ eq(bot.repair,undefined);
+ r.tick(4000,0);eq(enemy.hp,0);
+ r.tick(5000,0);eq(bot.repair?.baseId,base.id);
+ r.tick(7500,0);eq(base.hp,base.maxHp-4);
+});
+
+Deno.test('a summoner bot moves into heal range and supports a wounded allied soldier',()=>{
+ const {r,p:[human]}=match(1),bot=r.addBot(1,10);
+ start(r,r.players);
+ r.shadows=[];r.chests=[];
+ human.phase='battle';
+ const base=r.bases.find(b=>b.id==='1-7');
+ spawnInfantry(r,1);
+ const ally=r.infantry.find(unit=>unit.side===bot.side&&unit.lane===4);
+ r.infantry=[ally];
+ Object.assign(bot,{baseCls:'summoner',x:base.x-190,y:base.y});
+ Object.assign(ally,{x:base.x,y:base.y,hp:30,waypoint:ally.path.length});
+ r.tick(3000,0);
+ eq(bot.bot.goal.type,'healInfantry');eq(bot.bot.goal.point,ally);
+ eq(ally.hp,30);
+ bot.x=base.x-175;
+ r.tick(4000,0);r.tick(5000,0);
+ eq(ally.hp,32);
+});
+
 Deno.test('a repairing defender in battle cannot block another player from hitting the base',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');
@@ -1054,7 +1130,7 @@ Deno.test('solo practice starts with nine bots and runs normal objectives to a r
  let hasBotAttack=false,hasBotSiege=false;
  for(let time=50;r.phase==='match'&&time<=MATCH_MS;time+=50){
   r.tick(time,.05);
-  hasBotSiege||=r.baseEffects.some(effect=>effect.kind!=='tower'&&bots.some(bot=>bot.id===effect.playerId));
+  hasBotSiege||=r.baseEffects.some(effect=>!effect.targetInfantry&&['melee','hammer','archer','gunner','magic'].includes(effect.kind)&&bots.some(bot=>bot.id===effect.playerId));
   if(!hasBotAttack){
    hasBotAttack=[...r.battles.values()].some(b=>{
     const actor=[...b.allies,...b.enemies].find(u=>u.id===b.last?.actor);
