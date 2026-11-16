@@ -1,0 +1,238 @@
+:root {
+ --game-menu-journal: url('../assets/ui/menu-theme/panel-journal.webp');
+ --game-menu-party: url('../assets/ui/menu-theme/panel-retinue.webp');
+ --game-menu-loadout: url('../assets/ui/menu-theme/panel-equipment.webp');
+ --game-menu-market: url('../assets/ui/menu-theme/panel-market.webp');
+ --game-menu-settings: url('../assets/ui/menu-theme/panel-settings.webp');
+ --game-menu-button: url('../assets/ui/dialogue-20261103/dialog-button.png.webp');
+ --game-menu-frame: url('../assets/ui/menu-theme/frame-panel.png.webp');
+ --game-menu-inner: #081a24;
+ --game-menu-gold: #ffe5ad;
+}
+
+@media (orientation: portrait) {
+ :root {
+  --game-menu-journal: url('../assets/ui/menu-portrait/panel-journal.webp');
+  --game-menu-party: url('../assets/ui/menu-portrait/panel-retinue.webp');
+  --game-menu-loadout: url('../assets/ui/menu-portrait/panel-equipment.webp');
+  --game-menu-market: url('../assets/ui/menu-portrait/panel-market.webp');
+  --game-menu-settings: url('../assets/ui/menu-portrait/panel-settings.webp');
+ }
+}
+
+/* These surfaces opt in by their menu containers, outside the combat HUD. */
+:is(#lobby > .panel, #rules, #large-map, #live-team-scores, #walk-character, #stick-settings,
+ .dungeon-party-menu #joinPanel > section, .dungeon-party-menu #roomPanel,
+ .dungeon-party-menu .feedback:has(#status:not(:empty)),
+ .dialogue-lobby #roster .card, .dialogue-lobby #simulatedRoster .card,
+ #fusionDialog, #walkPeerDialog, #townDialog.places-list,
+ .quest-event-dialog, .walk-lesson, .joystick-edit-panel, .coupon-page .invite-dialog) {
+ box-sizing: border-box;
+ border: 9px solid transparent;
+ border-image: var(--game-menu-frame) 225 330 / 18px 22px stretch;
+ border-radius: 0;
+ color: #f5e8cf;
+ background: linear-gradient(135deg,#061722ab,#06172255), var(--game-menu-art,var(--game-menu-journal))
+  right bottom / cover no-repeat, var(--game-menu-inner);
+ box-shadow: 0 12px 32px #020a12a3;
+}
+
+:is(#lobby > #room, #lobby > #rank-queue, .dungeon-party-menu #joinPanel, .dungeon-party-menu #roomPanel,
+ .dialogue-lobby #roster, .dialogue-lobby #simulatedRoster, #walkPeerDialog) {
+ --game-menu-art: var(--game-menu-party);
+}
+:is(#fusionDialog, #walk-character) { --game-menu-art: var(--game-menu-loadout); }
+:is(#stick-settings, .joystick-edit-panel) { --game-menu-art: var(--game-menu-settings); }
+.coupon-page .invite-dialog { --game-menu-art: var(--game-menu-market); }
+
+/* Painted button face. Existing layout, hit targets, and states stay native. */
+:is(#lobby, #rules, #large-map, #live-team-scores, #walk-character, #stick-settings,
+ .dungeon-party-menu main, .dialogue-lobby main, #fusionDialog, #walkPeerDialog,
+ #worldAtlas .atlas-controls, #townDialog.places-list, .quest-event-dialog, .walk-lesson,
+ .joystick-edit-panel, .coupon-page .invite-dialog) button,
+.dialogue-lobby main > footer > a {
+ background: var(--game-menu-button) center / 100% 162% no-repeat;
+ border-color: transparent;
+ color: var(--game-menu-gold);
+ text-shadow: 0 1px 3px #020d14;
+}
+:is(#lobby,#rules,#large-map,#live-team-scores,#walk-character,#stick-settings,
+ .dungeon-party-menu main,#fusionDialog,#walkPeerDialog,#worldAtlas,.quest-event-dialog,
+ .walk-lesson,.joystick-edit-panel,.invite-dialog) button:enabled:hover { filter: brightness(1.15); }
+:is(#lobby,#rules,#large-map,#live-team-scores,#walk-character,#stick-settings,
+ .dungeon-party-menu main,#fusionDialog,#walkPeerDialog,#worldAtlas,.quest-event-dialog,
+ .walk-lesson,.joystick-edit-panel,.invite-dialog) :is(button,a,input,select):focus-visible {
+ outline: 2px solid #ffdf94;
+ outline-offset: 2px;
+}
+
+/* Colosseum lobby, match queue, map, and score summaries. */
+body:has(#lobby:not([hidden])) {
+ background: linear-gradient(#061620a6,#071420da), var(--game-menu-journal) right bottom / cover fixed, #071420;
+}
+#lobby { max-width: 780px; }
+#lobby > .panel { padding: clamp(14px,4vw,24px); }
+#lobby :is(#rank-entry,#public-rooms,.rank-ladder,.roster) {
+ background-color: #061622ba;
+ border-color: #bc995e7d;
+}
+#lobby .rank-ladder { padding: 12px; border: 1px solid #bc995e7d; border-radius: 8px; }
+#lobby .roster { border-top-color: var(--team); }
+#lobby .mode-option :checked + .mode-card { box-shadow: 0 0 0 1px #ffe39a, 0 0 12px #c698504d; }
+#lobby .mode-card { background-color: #071e28; }
+:is(#lobby #ranked-solo, #lobby #room #ready, .dungeon-party-menu .primary,
+ .dungeon-party-menu #start):enabled { filter: brightness(1.17); }
+:is(#rules,#large-map,#live-team-scores,#walk-character) { padding: 10px; }
+#rules { background-image: linear-gradient(#0617228f,#061722ab), var(--game-menu-journal); }
+#walk-character .character-dialog-header { background: #071d29da; }
+#arena #overlay:has(.result-team) {
+ background: linear-gradient(135deg,#0617228c,#0617225c), var(--game-menu-journal) right bottom / cover no-repeat, #081820;
+}
+#arena #overlay > button {
+ background: var(--game-menu-button) center / 100% 162% no-repeat;
+ border-color: transparent;
+ color: var(--game-menu-gold);
+}
+@media (min-width: 700px) {
+ .dungeon-party-menu main { max-width: 740px; }
+ .dungeon-party-menu #joinPanel { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+ .dungeon-party-menu #joinPanel > section { margin: 0; }
+ .dungeon-party-menu #joinPanel > section:first-child { grid-column: 1/-1; }
+}
+@media (orientation: landscape) and (max-height: 480px) {
+ .dungeon-party-menu .intro {
+  display: grid;
+  grid-template-columns: minmax(105px,145px) minmax(0,1fr);
+  align-items: center;
+  column-gap: 16px;
+  margin-block: 2px 12px;
+  text-align: start;
+ }
+ .dungeon-party-menu .intro img { grid-row: span 2; width: 100%; }
+ .dungeon-party-menu .intro h1 { font-size: 24px; margin: 0; }
+ .dungeon-party-menu .intro p { margin: 0; }
+}
+
+/* Dungeon, quest, fusion, and map overlays keep their existing illustrations. */
+.dungeon-party-menu {
+ background: linear-gradient(#061b2666,#061b26a8), var(--game-menu-party) right bottom / cover fixed, #071821;
+ min-height: 100dvh;
+}
+.dungeon-party-menu #joinPanel > section,
+.dungeon-party-menu #roomPanel { padding: 16px; }
+.dungeon-party-menu .feedback:has(#status:not(:empty)) { padding: 6px 10px; }
+.dungeon-party-menu .feedback #status { margin: 0; }
+.dungeon-party-menu #members li { background: linear-gradient(90deg,#092733df,#061622aa); }
+.dialogue-lobby :is(#roster,#simulatedRoster) .card { padding: 9px; }
+.dialogue-lobby :is(#roster,#simulatedRoster) .card.selected { outline: 2px solid #72dbc3; outline-offset: -2px; }
+#worldAtlas { background: linear-gradient(#0616228f,#06162262), var(--game-menu-journal) right bottom / cover; }
+#worldAtlas .atlas-header { background: #071e2bce; }
+#worldAtlas :is(#atlasInfo,#atlasObjectives) { background-color: #061622d9; }
+.quest-event-dialog > header { background-color: #081c28ed; }
+#fusionDialog .fusion-card { background-color: #071c28dc; }
+.walk-lesson .walk-lesson-controls .walk-lesson-confirm {
+ background: var(--game-menu-button) center / 100% 162% no-repeat;
+ border-color: transparent;
+ color: var(--game-menu-gold);
+}
+.coupon-page .invite-dialog .invite-copy-row input { min-width: 0; background-color: #061820; }
+
+/* These newer town screens already use the game menu frame and button assets. */
+#app:is([data-screen="mail"],[data-screen="guide"]) main { --menu-panel-art: var(--game-menu-journal); }
+#app[data-screen="leader"] main { --menu-panel-art: var(--game-menu-journal); }
+#app[data-screen="leader"] .lbrow {
+ border: 6px solid transparent;
+ border-image: var(--game-menu-frame) 225 330 / 10px 14px stretch;
+ background: linear-gradient(90deg,#071923da,#071923a6), var(--menu-panel-art) right bottom / cover;
+}
+#app:is([data-screen="friends"],[data-screen="guild"],[data-screen="guildwar"],[data-screen="camp"]) main {
+ --menu-panel-art: var(--game-menu-party);
+}
+#app:is([data-screen="pvp"],[data-screen="world"],[data-screen="countrywar"]) main:not(:has(.online-arena,.cw-battle)) {
+ --menu-panel-art: var(--game-menu-loadout);
+}
+/* Social pages, rankings, and mail use the same layout details as chat. */
+#app:is([data-screen="friends"],[data-screen="guild"],[data-screen="leader"],[data-screen="mail"]) > main {
+ background: linear-gradient(#061722a6,#06172280), var(--menu-panel-art) right bottom / cover no-repeat, var(--game-menu-inner);
+}
+#app:is([data-screen="friends"],[data-screen="guild"],[data-screen="leader"],[data-screen="mail"]) > main > .stack {
+ gap: 12px;
+}
+#app:is([data-screen="friends"],[data-screen="guild"],[data-screen="mail"]) > main > .stack > .row:first-child,
+#app[data-screen="leader"] > main > .stack > h2:first-child {
+ flex-wrap: wrap;
+ gap: 8px;
+ margin: 0;
+ padding: 9px 12px;
+ background: linear-gradient(90deg,#0b2a39e8,#071b28b5);
+ border: 7px solid transparent;
+ border-image: var(--game-menu-frame) 225 330 / 16px 20px stretch;
+ color: var(--game-menu-gold);
+}
+#app:is([data-screen="friends"],[data-screen="guild"],[data-screen="leader"],[data-screen="mail"]) main
+ :is(button.btn:not(.unit-frame),.tabs > button) {
+ min-height: 42px;
+ background: var(--game-menu-button) center / 100% 162% no-repeat;
+ border-color: transparent;
+ color: var(--game-menu-gold);
+}
+#app:is([data-screen="friends"],[data-screen="guild"],[data-screen="leader"],[data-screen="mail"]) main
+ :is(button.btn:not(.unit-frame),.tabs > button)::before { content: none; }
+#app:is([data-screen="friends"],[data-screen="guild"],[data-screen="leader"],[data-screen="mail"]) main
+ :is(button.btn.danger,.tabs > button.on) { box-shadow: inset 0 -2px #d1a05c; }
+#app:is([data-screen="friends"],[data-screen="guild"],[data-screen="leader"],[data-screen="mail"]) main
+ :is(button.btn,.tabs > button):focus-visible { outline: 2px solid #ffdf94; outline-offset: 2px; }
+#app[data-screen="friends"] .friend-card {
+ display: grid;
+ grid-template-columns: auto minmax(0,1fr) auto;
+ align-items: center;
+ column-gap: 10px;
+ padding: 12px;
+}
+#app[data-screen="friends"] .friend-card .grow { min-width: 0; overflow-wrap: anywhere; }
+#app[data-screen="friends"] .friend-actions:empty { display: none; }
+#app[data-screen="friends"] main .friend-request-list {
+ gap: 7px;
+ padding: 10px 12px;
+ border: 1px solid #b48d535e;
+ background-color: #081923ad;
+}
+#app[data-screen="friends"] .friend-request-list > :is(h3,p) { margin: 0; }
+#app[data-screen="guild"] main details.card > summary {
+ padding-block: 7px;
+ color: var(--game-menu-gold);
+ cursor: pointer;
+}
+#app[data-screen="guild"] main .card .card.row:has([data-a="guildTransfer"]) { flex-wrap: wrap; }
+#app[data-screen="guild"] #guildSearch {
+ margin-top: 5px;
+ background: #071d29;
+ border-color: #a48653;
+}
+#app[data-screen="mail"] main .cw-mail-row {
+ display: grid;
+ justify-content: stretch;
+ justify-items: start;
+ gap: 3px;
+ min-height: 60px;
+ padding: 12px 18px;
+ text-align: start;
+ white-space: normal;
+ overflow-wrap: anywhere;
+}
+#app[data-screen="mail"] .cw-mail-row small { color: #c9d9d9; }
+.coupon-page .invite-dialog .invite-copy-row {
+ min-width: 0;
+ padding: 9px 11px;
+ background-color: #071d29c9;
+ border: 1px solid #b894586a;
+ border-radius: 8px;
+}
+.coupon-page .invite-dialog .invite-copy-row span { color: var(--game-menu-gold); }
+@media (max-width: 480px) {
+ #app[data-screen="friends"] .friend-card { grid-template-columns: auto minmax(0,1fr); }
+ #app[data-screen="friends"] .friend-actions { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px; }
+ #app:is([data-screen="friends"],[data-screen="guild"],[data-screen="leader"],[data-screen="mail"]) > main > .stack {
+  padding-inline: 2px;
+ }
+}
