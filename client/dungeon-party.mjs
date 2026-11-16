@@ -43,7 +43,7 @@ export async function partyMotion(connection,room,receive,receiveState=()=>{}) {
  const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.76.1');
  const api=createClient(connection.config.url,connection.config.key,{accessToken:connection.token});
  await api.realtime.setAuth();
- const channels=[],sequence=new Map();let publisher,ready=false,seq=0,last=0,lastState='',closed=false;
+ const channels=[],sequence=new Map();let publisher,ready=false,seq=0,nextSend=0,lastGait=null,closed=false;
  const state=api.channel(`sb-party-state:${connection.environment}:${room.id}:${connection.code}`,{config:{private:true}})
   .on('broadcast',{event:'state'},({payload})=>{
    if(!closed&&payload?.id===room.id&&Number.isSafeInteger(payload.revision))receiveState(payload);
@@ -53,7 +53,7 @@ export async function partyMotion(connection,room,receive,receiveState=()=>{}) {
   const channel=api.channel(`sb-party:${connection.environment}:${room.id}:${member.code}`,{config:{private:true,broadcast:{self:false}}});
   channels.push(channel);
   if(member.code===connection.code) {
-   publisher=channel;channel.subscribe(status=>{ready=status==='SUBSCRIBED';if(ready)lastState='';});
+   publisher=channel;channel.subscribe(status=>{ready=status==='SUBSCRIBED';if(ready)lastGait=null;});
   }else channel.on('broadcast',{event:'motion'},({payload:p})=>{
    if(closed||!p||p.floor!==room.floor||!Number.isSafeInteger(p.seq)||p.seq<0||
     !Number.isFinite(p.x)||!Number.isFinite(p.y)||p.x<0||p.y<0||p.x>20000||p.y>20000||
@@ -68,11 +68,19 @@ export async function partyMotion(connection,room,receive,receiveState=()=>{}) {
  return {
   send(position,moving,running) {
    if(!ready||closed)return;
-   const time=performance.now(),state=JSON.stringify([!!moving,!!running,position.dir]);
-   if(state===lastState&&time-last<(moving?100:1500))return;
-   last=time;lastState=state;
+   const time=performance.now(),gait=moving?(running?'run':'walk'):'idle';
+   const interval=moving?100:1500;
+   if(gait!==lastGait){
+    lastGait=gait;
+    nextSend=time+interval;
+   }else{
+    if(time<nextSend)return;
+    // Preserve the cadence through small delays. Skip a slot if it would cause a burst.
+    nextSend+=interval;
+    if(nextSend-time<interval*.75)nextSend=time+interval;
+   }
    void publisher.send({type:'broadcast',event:'motion',payload:{session,seq:++seq,floor:room.floor,
-    x:Math.round(position.x),y:Math.round(position.y),dir:position.dir||0,moving:!!moving,running:!!running}}).catch(()=>{});
+    x:position.x,y:position.y,sentAt:time,dir:position.dir||0,spriteDir:position.spriteDir,moving:!!moving,running:!!running}}).catch(()=>{});
   },
   async close(){closed=true;ready=false;clearInterval(refresh);await Promise.all(channels.map(c=>api.removeChannel(c)));}
  };

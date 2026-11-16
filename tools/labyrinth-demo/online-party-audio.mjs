@@ -16,14 +16,14 @@ export function partyAudio(create=options=>window.WalkAudio.create(options)){
   options.music=config.floor===6?'deepMine':config.theme;
   options.surface=config.theme==='castle'?'hall':config.theme==='jungle'?'leaves':['snow','desert'].includes(config.theme)?'forest':'stone';
  }
- function tick(dt,{position,moving,blocked,ready,world,nav}){
+ function tick(dt,{position,moving,running,blocked,ready,world,nav}){
   if(!floor||!map||!position)return;
   if(previousDoor===false&&world.doorOpen)mixer.boss('door',floor.bossModel);
   previousDoor=!!world.doorOpen;
   const chasing=!!(ready&&!blocked&&world.doorOpen&&world.boss==='guarding'&&nav&&nav.distance(position,map.boss)<850);
   if(chasing&&!wasChasing)mixer.boss('chase',floor.bossModel);
   wasChasing=chasing;
-  mixer.tick(dt,{position,moving:!!moving,running:false,blocked:!ready||!!blocked,chasing});
+  mixer.tick(dt,{position,moving:!!moving,running:!!running,blocked:!ready||!!blocked,chasing});
  }
  return {setFloor,tick,dispose:()=>mixer.dispose()};
 }

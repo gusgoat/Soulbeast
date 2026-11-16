@@ -94,7 +94,7 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
   void a.sync(player).catch(()=>{});
   draws.push({y:p.y,run:()=>{
    const q=screen(p),size=145*s;
-   a.draw(ctx,q.x,q.y,size,p.dir||0,p.phase||0,!!p.moving);
+   a.draw(ctx,q.x,q.y,size,Math.round(p.spriteDir??p.dir??0)%8,p.phase||0,!!p.moving,!!p.running);
    const {cls,gender}=sealerSprites.identity(player);
    const entry=a.current??sealerSpriteCatalog[cls]?.[gender];
    // Idle breathing can stretch the rendered sprite by up to 0.9%.

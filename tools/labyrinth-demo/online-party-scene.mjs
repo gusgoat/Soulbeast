@@ -1,10 +1,10 @@
 import {partyBattleTransition} from './online-party-battle-transition.mjs';
-import {remotePartyMotion} from './online-party-view.mjs?v=smooth-peers-1';
+import {remotePartyMotion} from './online-party-view.mjs?v=adaptive-buffer-1';
 
 // Renderer bridge: authoritative snapshots control gameplay; WebSocket motion
 // updates only animate the visual positions of members still in this room.
 export function partyScene({code,roomId,view,clock=()=>performance.now()}){
- const motion=remotePartyMotion(),battle=partyBattleTransition({code,
+ const motion=remotePartyMotion({delay:150,maxDelay:220}),battle=partyBattleTransition({code,
   stopSolo:options=>view.stopSolo(options),enterBoss:options=>view.enterBoss(options)});
  const trapDeadlines=new Map();
  let revision=-1,snapshot=null,departed=false,closed=false,roster=new Set(),queue=Promise.resolve();

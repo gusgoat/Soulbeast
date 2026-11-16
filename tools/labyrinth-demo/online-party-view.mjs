@@ -1,4 +1,4 @@
-export {remoteWalkMotion as remotePartyMotion} from '../../client/remote-walk-motion.mjs?v=1';
+export {remoteWalkMotion as remotePartyMotion} from '../../client/remote-walk-motion.mjs?v=adaptive-buffer-1';
 
 export function mountPartyVitals(parent=document.body) {
  const box=document.createElement('section');box.className='online-party-vitals';box.setAttribute('aria-label','HP และ MP ของสมาชิกปาร์ตี้');

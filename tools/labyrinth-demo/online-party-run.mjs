@@ -1,15 +1,15 @@
-import {partyAudio} from './online-party-audio.mjs?v=party-audio-1';
+import {partyAudio} from './online-party-audio.mjs?v=party-gait-1';
 import {partyMenu} from './online-party-menu.mjs?v=quest-editorial-2';
-import {partyArt} from './online-party-art.mjs?v=player-nameplates-1';
-import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=walk-shields-1';
-import {partyScene} from './online-party-scene.mjs?v=party-victory-traps-1';
+import {partyArt} from './online-party-art.mjs?v=adaptive-buffer-1';
+import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=motion-cadence-1';
+import {partyScene} from './online-party-scene.mjs?v=adaptive-buffer-1';
 import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
 import {partyRunController} from './online-party-controller.mjs?v=party-save-latency-2';
 import {bindWalkJoystick} from '../colosseum/walk-joystick.mjs?v=1';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
-const visuals=partyArt();let selfDir=0,selfPhase=0,selfMoving=false;
+const visuals=partyArt();let selfDir=0,selfSpriteDir=0,selfPhase=0,selfMoving=false,selfRunning=false;
 const localWorld=localPartyWorld();let trapPlacements=[];
 const sceneAudio=partyAudio();
 let camera=null;
@@ -233,14 +233,22 @@ try{
   }
  },100);
  function frame(now){
-  const dt=Math.min(.05,(now-last)/1000);last=now;selfMoving=false;
+  const dt=Math.min(.05,(now-last)/1000);last=now;selfMoving=selfRunning=false;
   if(!WalkTutorial.active()&&!DungeonFeedback.isOpen&&$('battle').hidden&&!menus.open&&$('mapPanel').hidden&&!window.WalkControls?.editing&&ready&&position&&nav&&controller.state?.battle?.status!=='active'&&(contactPending||!showShadowLesson())){
    const dx=joystick.x+Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
    const dy=joystick.y+Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
-   const length=Math.hypot(dx,dy),moving=length>0&&!contactPending;selfMoving=moving;if(moving){selfDir=(Math.round(-Math.atan2(dx,dy)/(Math.PI/4))+8)%8;selfPhase+=dt*8;}
-   if(moving){const speed=180,point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
-    if(nav.clear(position,point)&&controller.move(point,position))position=point;}
-   controller.broadcast({...position,dir:selfDir},moving,false);
+   const length=Math.hypot(dx,dy),tilt=Math.hypot(joystick.x,joystick.y);
+   selfMoving=length>0&&!contactPending;
+   selfRunning=selfMoving&&(tilt>0?tilt>.72:keys.has('Shift'));
+   if(selfMoving){
+    selfSpriteDir=(-Math.atan2(dx,dy)/(Math.PI/4)+8)%8;
+    selfDir=Math.round(selfSpriteDir)%8;
+    selfPhase+=dt*(selfRunning?12:8);
+    const speed=tilt>0?145*Math.min(1,tilt/.72)+35*Math.max(0,(tilt-.72)/.28):selfRunning?180:145;
+    const point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
+    if(nav.clear(position,point)&&controller.move(point,position))position=point;
+   }
+   controller.broadcast({...position,dir:selfDir,spriteDir:selfSpriteDir},selfMoving,selfRunning);
    localWorld.update(dt,position,nav,world,maze.boss,now);
    localWorld.trigger(trapPlacements,position,nav,now);
    traps=[...localWorld.effects.values()];
@@ -266,12 +274,14 @@ try{
    camera.x+=(position.x-camera.x)*follow;
    camera.y+=(position.y-camera.y)*follow;
   }
-  scene.frame();sceneAudio.tick(dt,{position,moving:selfMoving,ready,world,nav,blocked:menus.open||!$('mapPanel').hidden||!$('battle').hidden||!!window.WalkControls?.editing});render();renderMinimap();frameId=requestAnimationFrame(frame);
+  scene.frame();sceneAudio.tick(dt,{position,moving:selfMoving,running:selfRunning,ready,world,nav,blocked:menus.open||!$('mapPanel').hidden||!$('battle').hidden||!!window.WalkControls?.editing});render();renderMinimap();frameId=requestAnimationFrame(frame);
  }
  frameId=requestAnimationFrame(frame);
 }catch(error){failure(error);}
-const moveKeys=new Set(['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight']);
-addEventListener('keydown',e=>{if(!menus.open&&moveKeys.has(e.key)){e.preventDefault();keys.add(e.key);}});addEventListener('keyup',e=>keys.delete(e.key));
+const moveKeys=new Set(['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Shift']);
+const moveKey=key=>key.length===1?key.toLowerCase():key;
+addEventListener('keydown',e=>{const key=moveKey(e.key);if(!menus.open&&moveKeys.has(key)){e.preventDefault();keys.add(key);}});
+addEventListener('keyup',e=>keys.delete(moveKey(e.key)));
 addEventListener('blur',clearMovement);document.addEventListener('visibilitychange',()=>{if(document.hidden)freeze();else void controller?.refresh();});
 addEventListener('pagehide',()=>{freeze();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();sceneAudio.dispose();void controller?.close();});
 const daylight=CountryDaylight.create('dungeon');
@@ -288,7 +298,7 @@ function render(){
   }).catch(()=>{}).finally(()=>{partyRankPending=false;});
   else partyRankPending=false;
  }
- visuals.draw(ctx,w,h,focus,{...position,dir:selfDir,phase:selfPhase,moving:selfMoving},me,peers,world,localWorld,controller?.state?.chestClaims,traps,performance.now()/1000,partyRanks);
+ visuals.draw(ctx,w,h,focus,{...position,dir:selfDir,spriteDir:selfSpriteDir,phase:selfPhase,moving:selfMoving,running:selfRunning},me,peers,world,localWorld,controller?.state?.chestClaims,traps,performance.now()/1000,partyRanks);
  daylight.draw(ctx,w,h,CountryDaylight.at(Date.now()));
 }
 
