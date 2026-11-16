@@ -38,3 +38,13 @@ html[data-dungeon-mode="party"] #joystick,html[data-dungeon-mode="party"] #joyst
  html[data-dungeon-mode="party"] .online-party-member meter{height:4px;margin:1px 0}
  html[data-dungeon-mode="party"] .walk-audio-toggle{bottom:calc(var(--walk-bottom) + 14px)!important}
 }
+
+#partyEncounter{position:fixed;inset:0;z-index:22;display:grid;place-items:center;padding:20px;
+ background:linear-gradient(180deg,#091725aa,#08141e),var(--party-encounter-art,none) center/cover;
+ color:#fff0c8}
+.party-encounter-card{width:min(100%,360px);padding:clamp(18px,4vw,30px);text-align:center;
+ border:1px solid #ad9156;border-radius:14px;background:#0c2030ed;box-shadow:0 18px 50px #0007}
+.party-encounter-card h2{margin:0 0 10px;font-size:clamp(22px,4vw,32px)}
+.party-encounter-card p{margin:0 0 20px;color:#e9ddc1}
+#partyOpeningAttack{min-height:44px;padding:7px 16px;border:1px solid #d4bd83;border-radius:9px;background:#132e3d;color:#fff0cb}
+#partyOpeningAttack[aria-pressed="true"]{background:#245146;border-color:#a3d0a1}

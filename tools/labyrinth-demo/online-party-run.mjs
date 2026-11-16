@@ -5,7 +5,7 @@ import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=
 import {partyScene} from './online-party-scene.mjs?v=adaptive-buffer-1';
 import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
-import {partyRunController} from './online-party-controller.mjs?v=party-save-latency-2';
+import {partyRunController} from './online-party-controller.mjs?v=contact-response-1';
 import {bindWalkJoystick} from '../colosseum/walk-joystick.mjs?v=1';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
@@ -42,7 +42,7 @@ for(const type of ['selectstart','contextmenu'])document.addEventListener(type,e
  if(stick.classList.contains('active')||stick.contains(event.target))event.preventDefault();
 },true);
 const joystick=bindWalkJoystick(stick,knob,{
- canStart:()=>ready&&!DungeonFeedback.isOpen&&!menus.open&&$('battle').hidden&&$('mapPanel').hidden&&!window.WalkControls?.editing
+ canStart:()=>ready&&!contactPending&&!DungeonFeedback.isOpen&&!menus.open&&$('battle').hidden&&$('mapPanel').hidden&&!window.WalkControls?.editing
 });
 function clearMovement(){keys.clear();joystick.reset();}
 const showShadowLesson=WalkTutorial.watchShadowSight({
@@ -71,9 +71,60 @@ function offerReturn(city,automatic=false){
  };
  if(automatic)void button.onclick();
 }
-const menus=partyMenu({canOpen:()=>ready&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{clearMovement();selfMoving=false;}});
+const menus=partyMenu({canOpen:()=>ready&&!contactPending&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{clearMovement();selfMoving=false;}});
 let clockOffset=0, shownBattle=null, battleFrameReady=false, visibleBattleId=null, victory=null, queuedBattle=null;
-const battleFrame=$('partyBattleFrame');let warmFloor;
+const battleFrame=$('partyBattleFrame'),encounterPanel=$('partyEncounter'),openingAttack=$('partyOpeningAttack');
+ let warmFloor,encounter=null;
+ openingAttack.onclick=()=>{
+  if(!encounter)return;
+  encounter.attack=!encounter.attack;
+  openingAttack.textContent=encounter.attack?'เลือกโจมตีแล้ว · ยกเลิก':'โจมตีเมื่อถึงเทิร์นแรก';
+  openingAttack.setAttribute('aria-pressed',String(encounter.attack));
+ };
+ function clearEncounter(){
+  encounterPanel.hidden=true;
+  encounter=null;
+ }
+ function tryOpeningAttack(){
+  const run=shownBattle;
+  if(!encounter||run?.id!==visibleBattleId)return;
+  encounterPanel.hidden=true;
+  if(!encounter.battle)return;
+  if(!encounter.attack||encounter.battle!==run.id||run.status!=='active'){clearEncounter();return;}
+  if(run.loading||run.presentation)return;
+  const local=run.localCombatVersion===1;
+  const state=local?localCombat?.current():run;
+  const turn=state?.waiting;
+  if(turn?.ownerCode!==connection.code)return;
+  const target=turn.choices?.find(choice=>choice.id==='attack')?.targets?.[0];
+  clearEncounter();
+  if(!target)return;
+  const command={battle:run.id,actor:turn.actor,turn:turn.turn,presentationVersion:2,skill:'attack',target};
+  if(local){
+   void localCombat.command(run.id,command);
+  }else void controller.command('battleCommand',command);
+ }
+ function openEncounter(action,details){
+  const pending={action,attack:false,battle:null};
+  encounter=pending;contactPending=true;clearMovement();
+  openingAttack.textContent='โจมตีเมื่อถึงเทิร์นแรก';
+  openingAttack.setAttribute('aria-pressed','false');
+  $('partyEncounterTitle').textContent=action==='bossContact'?'เผชิญบอส':'เผชิญอสูร';
+  encounterPanel.hidden=false;
+  let rejection;
+  void controller.command(action,details,error=>{rejection=error.message;}).then(ok=>{
+   contactPending=false;
+   if(encounter!==pending||(pending.battle&&(ok||shownBattle?.id===pending.battle)))return;
+   clearEncounter();
+   if(shownBattle?.status==='active')return;
+   if(rejection==='enemy_unavailable'){
+    localWorld.enemies.delete(details.enemy);
+    notice('เพื่อนร่วมทีมเริ่มสู้กับอสูรตัวนี้แล้ว');
+   }
+   else if(rejection)notice('อสูรพ้นระยะต่อสู้แล้ว');
+   else notice('ยังเริ่มต่อสู้ไม่ได้ · ลองเดินเข้าใกล้อีกครั้ง');
+  });
+ }
 function warmBattleFrame(){
  const floor=config?.id||'mine-floor-1';
  if(warmFloor===floor)return;
@@ -81,6 +132,7 @@ function warmBattleFrame(){
  battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=quest-editorial-2&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
  const backdrop=new Image();
  backdrop.src=asset(config?.battleArt||'assets/ui/battle-scenes/training-v2.webp');
+ encounterPanel.style.setProperty('--party-encounter-art',`url("${backdrop.src}")`);
  void backdrop.decode?.().catch(()=>{});
 }
 function sendBattle(){
@@ -95,7 +147,7 @@ addEventListener('message',event=>{
  if(!shownBattle||$('battle').hidden||message?.battle!==shownBattle.id)return;
  if(message.type==='party-battle-visible'){visibleBattleId=shownBattle.id;
   if(shownBattle.localCombatVersion)localCombat?.visible(shownBattle.id);
-  else if(nextPulse!==Infinity)nextPulse=performance.now();return;}
+  else if(nextPulse!==Infinity)nextPulse=performance.now();tryOpeningAttack();return;}
  if(message.type==='party-battle-done'&&shownBattle.status!=='active'&&!shownBattle.presentation){
   const next=queuedBattle;queuedBattle=null;victory=null;
   seenBattle=shownBattle.id;clearMovement();drawBattle(next);if(!next)window.focus();return;
@@ -116,6 +168,7 @@ addEventListener('message',event=>{
    if(shownBattle?.id===battleId)battleFrame.contentWindow.postMessage({type:'party-battle-command-result',battle:battleId,request:message.request,ok},location.origin);
   };
   if(turn?.ownerCode!==connection.code||message.turn!==turn.turn||message.actor!==turn.actor){reply(false);return;}
+  if(encounter?.battle===battleId)clearEncounter();
   const command={battle:battleId,actor:turn.actor,turn:turn.turn,presentationVersion:2,skill:message.skill,item:message.item,seal:message.seal,escape:message.escape,swap:message.swap,target:message.target,friend:message.friend};
   const local=shownBattle.localCombatVersion===1;
   const choice=local?localCombat?.command(battleId,command):controller.command('battleCommand',command);
@@ -130,6 +183,7 @@ function drawBattle(run,local=false){
  if(!local&&run?.localCombatVersion&&run.status==='active'&&localCombat?.active(run.id))return;
  if(!local&&run?.status==='finished'&&localCombat?.active(run.id))localCombat.stop(null);
  if(!run||(run.status!=='active'&&seenBattle===run.id)){
+  if(encounter?.battle&&shownBattle?.id===encounter.battle)clearEncounter();
   shownBattle=null;$('battle').hidden=true;$('battleError').hidden=true;
   if(run)clearMovement();
   return;
@@ -139,7 +193,7 @@ function drawBattle(run,local=false){
   clearMovement();visibleBattleId=null;warmBattleFrame();
  }
  if(run.status==='finished'&&run.result==='win'&&!run.presentation)victory=run;
- shownBattle=run;$('battle').hidden=false;sendBattle();
+ shownBattle=run;$('battle').hidden=false;sendBattle();tryOpeningAttack();
 
 }
 const view={
@@ -153,11 +207,11 @@ const view={
   $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · กับดักเหลือ ${trapPlacements.length-(world.traps||[]).filter(t=>t.state==='spent').length} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
  stopSolo(){localCombat?.stop(null);clearMovement();if(!victory)$('battle').hidden=true;},enterBoss(){clearMovement();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
- respawn(destination,reason){victory=null;queuedBattle=null;drawBattle(null);freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
+ respawn(destination,reason){clearEncounter();victory=null;queuedBattle=null;drawBattle(null);freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
   // Navigation is restricted to our own town page; never use a server-supplied URL.
   const city=typeof destination==='string'?destination:destination?.city;
   offerReturn(reason==='left'?null:city,true);},
- complete(){freeze();$('battle').hidden=true;notice('พิชิตดันเจี้ยนสำเร็จแล้ว');
+ complete(){clearEncounter();freeze();$('battle').hidden=true;notice('พิชิตดันเจี้ยนสำเร็จแล้ว');
   offerReturn();
  }
 };
@@ -182,7 +236,9 @@ try{
  connection=connectDungeonParty();const roomId=new URL(location.href).searchParams.get('room');
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
  const scene=partyScene({code:connection.code,roomId,view});
- controller=partyRunController({onResult:async(action,result)=>{if(action==='chest'){clearMovement();await DungeonFeedback.reward(result)}if(action==='trapResolve'&&result?.hit){clearMovement();await DungeonFeedback.trap(result.type,result.damage?'เสีย '+result.damage+' HP':'')}},canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
+ controller=partyRunController({onResult:async(action,result)=>{
+  if(encounter?.action===action&&result.battle){encounter.battle=result.battle;tryOpeningAttack();}
+  if(action==='chest'){clearMovement();await DungeonFeedback.reward(result)}if(action==='trapResolve'&&result?.hit){clearMovement();await DungeonFeedback.trap(result.type,result.damage?'เสีย '+result.damage+' HP':'')}},canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
   clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
@@ -258,13 +314,14 @@ try{
    }
    const confirmed=position,bossPosition=localWorld.boss?.position||world.bossPosition||maze.boss;
    if(!trapRequest&&!contactPending&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
-    if(target&&!controller.state.savePending){
-     contactPending=true;nextContact=now+500;
-     void controller.command('claim',{floor:controller.state.floor,enemy:target[0],enemyPosition:{...target[1].position},...(localCombat?{localCombatVersion:1}:{})})
-      .finally(()=>{contactPending=false;});
+    if(target){
+     nextContact=now+500;
+     openEncounter('claim',{floor:controller.state.floor,enemy:target[0],enemyPosition:{...target[1].position},
+      ...(localCombat?{localCombatVersion:1}:{})});
     }
-    else if(!controller.busy&&world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,bossPosition)<65&&nav.clear(confirmed,bossPosition)){
-     nextContact=now+500;void controller.command('bossContact',{enemyPosition:{...bossPosition}});
+    else if(world.doorOpen&&world.boss==='guarding'&&nav.distance(confirmed,bossPosition)<65&&nav.clear(confirmed,bossPosition)){
+     nextContact=now+500;
+     openEncounter('bossContact',{enemyPosition:{...bossPosition}});
     }}
   }
   if($('battle').hidden) pulseIfDue();

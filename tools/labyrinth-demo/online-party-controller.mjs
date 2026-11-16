@@ -104,7 +104,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    }
    await refresh(next);
   }),
-  command:(action,data={})=>new Promise(resolve=>{
+  command:(action,data={},onRejected)=>new Promise(resolve=>{
    const work=async()=>{
    // Interactions use confirmed positions. Keep pending walking in the pulse
    // queue, including when a target moves away before the action arrives.
@@ -116,7 +116,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    }
    catch(error){
     if(['trap_unavailable','trap_out_of_reach','enemy_out_of_reach','boss_out_of_reach','enemy_unavailable','door_out_of_reach','stairs_out_of_reach','chest_out_of_reach','spring_out_of_reach'].includes(error.message)){
-     await refresh();return;
+     onRejected?.(error);await refresh();return;
     }
     if(action==='soloFinish'&&['battle_not_member','party_not_member'].includes(error.message)){await refresh();return;}
     throw error;
