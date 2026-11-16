@@ -2,11 +2,21 @@ const impactClips={
  archer:'ranged-impact',gunner:'ranged-impact',magic:'magic-impact',
  hammer:'heavy-melee-impact',melee:'heavy-melee-impact',
 };
+const cannonClasses=new Set(['artillery','cannoneer','demolisher']);
+function infantryWeapon(effect,attacker){
+ if(effect.kind==='infantry-slash')return 'melee';
+ if(effect.kind==='gunner')return cannonClasses.has(attacker?.cls)?'cannon':'gun';
+ if(effect.kind==='archer')return 'bow';
+ if(effect.kind==='hammer')return 'mace';
+ const career=attacker?.baseCls||attacker?.cls;
+ if(effect.kind==='magic')return career==='summoner'?'whip':'spell';
+ return career==='gladiator'?'axe':career==='thief'?'dagger':'melee';
+}
 const maxEffectAge=280;
 
 export function siegeAudio(play,sealerGender){
- const seen=new Map(),baseStages=new Map();
- function reset(){seen.clear();baseStages.clear();}
+ const seen=new Map(),baseStages=new Map(),lastWeaponAt=new Map();
+ function reset(){seen.clear();baseStages.clear();lastWeaponAt.clear();}
  function sync(state,viewer){
   for(const [id,until] of seen)if(until<=state.now)seen.delete(id);
   for(const base of state.bases??[]){
@@ -28,8 +38,15 @@ export function siegeAudio(play,sealerGender){
    if(effect.kind==='respawn'){play('respawn');continue;}
    if(effect.kind==='tower'){play('tower');continue;}
    if(effect.kind==='collapse'){play('collapse');continue;}
-   if(!impact)continue;
    const attacker=state.players.find(player=>player.id===effect.playerId);
+   if(effect.targetInfantry&&(impact||effect.kind==='infantry-slash')){
+    const key='weapon-'+infantryWeapon(effect,attacker);
+    if(state.now-(lastWeaponAt.get(key)??-Infinity)>=140){
+     lastWeaponAt.set(key,state.now);play(key);
+    }
+    continue;
+   }
+   if(!impact)continue;
    const dagger=effect.kind==='melee'&&(attacker?.baseCls||attacker?.cls)==='thief';
    play(dagger?'dagger-impact':impact);
   }

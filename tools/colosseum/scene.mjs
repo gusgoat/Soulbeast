@@ -796,7 +796,7 @@ export class Scene{
   for(const [id,origin] of this.siegeOrigins)if(now>=origin.until)this.siegeOrigins.delete(id);
   const colors={archer:'#ff963d',gunner:'#ffcb72',magic:'#aa90ff',melee:'#ffe1a3'};
   for(const e of effects){
-   if(e.kind==='tower-fall'||e.kind==='respawn')continue;
+   if(e.kind==='tower-fall'||e.kind==='respawn'||e.kind==='infantry-slash')continue;
    const base=bases.find(b=>b.id===e.baseId)||
     (e.targetInfantry&&(entities.find(unit=>unit.id===e.baseId)||e.targetInfantry));
    const player=entities.find(p=>p.id===e.playerId);

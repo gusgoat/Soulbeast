@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {Match} from './match.mjs';
 import {BASE_FIRE_RANGE, BASE_BOLT_MS, COLS, cellCenter, distance, FLAT} from './arena.mjs';
 import {spawnInfantry, stepInfantry} from './infantry.mjs';
+import {siegeAudio} from './siege-audio.mjs';
 
 function match(){
  const room=new Match('INFANTRY',0);
@@ -134,6 +135,7 @@ Deno.test('soldier priorities, automatic sealer hits and damage rates use the ov
  assert.equal(a.target,b);
  stepInfantry(room,5000,0);
  assert.equal(b.hp,39);
+ assert.ok(room.baseEffects.some(event=>event.kind==='infantry-slash'&&event.baseId===b.id&&event.targetInfantry));
  b.hp=0;
  stepInfantry(room,5100,0);
  assert.equal(a.target,base);
@@ -148,6 +150,35 @@ Deno.test('soldier priorities, automatic sealer hits and damage rates use the ov
  room.attackInfantry(blue,b,8300);
  assert.equal(b.hp,96);
  assert.equal(room.battles.size,0);
+});
+
+Deno.test('infantry hits use battle weapon clips, and corresponding tower hits use siege clips',()=>{
+ const player={id:'player'};
+ const cases=[
+  ['melee','swordsman','swordsman','melee','heavy-melee-impact'],
+  ['melee','gladiator','paladin','axe','heavy-melee-impact'],
+  ['melee','thief','ninja','dagger','dagger-impact'],
+  ['hammer','merchant','blacksmith','mace','heavy-melee-impact'],
+  ['archer','archer','ranger','bow','ranged-impact'],
+  ['gunner','gunner','gunner','gun','ranged-impact'],
+  ['gunner','gunner','cannoneer','cannon','ranged-impact'],
+  ['magic','mage','mage','spell','magic-impact'],
+  ['magic','summoner','summoner','whip','magic-impact'],
+ ];
+ for(const [kind,baseCls,cls,weapon,impact] of cases){
+  const played=[],audio=siegeAudio(key=>played.push(key));
+  const state={now:3000,players:[{...player,baseCls,cls}],baseEffects:[
+   {id:1,kind,playerId:player.id,at:3000,until:4000,targetInfantry:{x:1,y:1}},
+   {id:2,kind,playerId:player.id,at:3000,until:4000},
+  ]};
+  audio.sync(state,player);
+  audio.sync(state,player);
+  assert.deepEqual(played,['weapon-'+weapon,impact]);
+ }
+ const played=[],audio=siegeAudio(key=>played.push(key));
+ const melee={id:1,kind:'infantry-slash',playerId:'soldier',targetInfantry:{x:1,y:1},at:3000,until:3300};
+ audio.sync({now:3000,players:[],baseEffects:[melee,{...melee,id:2}]},player);
+ assert.deepEqual(played,['weapon-melee']);
 });
 
 Deno.test('soldiers abandon a moving target beyond 600 units and return to their route',()=>{

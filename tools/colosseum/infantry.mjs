@@ -182,7 +182,10 @@ export function stepInfantry(room,now,dt){
   if(target.hp<=0)continue;
   if(target.tier){
    if(canRaidBase(unit.side,target,room.bases))room.hitBase(target,unit,1,now);
-  }else if(target.infantry)target.hp=Math.max(0,target.hp-1);
+  }else if(target.infantry){
+   target.hp=Math.max(0,target.hp-1);
+   room.baseEffect('infantry-slash',target,unit,now,300);
+  }
   else if(active(target,now))room.hitWalker(target,1,now);
  }
 }

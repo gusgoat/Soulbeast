@@ -8,6 +8,8 @@ const audioFiles={
  heal:'ba0966b26d7a39b612d426f1', buff:'ef008aa2274f6ef5eea8a19d',
  fire:'2987725a76ac26d72cae8fe1', water:'1ddb745bb9bcf745daade49d', ice:'9eda521ae5a1036adfa74c99',
  electric:'ced8f5121a6dcfb9cda8797d', dark:'fc94ebb80b513a5d4f19b661', rock:'adcd8ecf4c7736c73fe79ddb',
+ axe:'b1a2d65ae18f4f175bbd6382', dagger:'1bddb36b636100967d45be05', mace:'eaaf5984b3e185bd02dfdce0',
+ whip:'4a3ac3cc1f9466cb97ba070d', gun:'b179f13bde5dcd5699dc8bf5', cannon:'95377ca2860aae0fecbf9d4b',
 };
 const walkingFiles={
  walk:'audio/20261020/0ec63238028507b2de14e0af.mp3',
@@ -24,6 +26,9 @@ const siegeClips={
  'warp-charge':{},
  'respawn':{file:'media/af5fc3353af9928b07db46cf.mp3',level:.85},
  'tower':{file:'media/'+audioFiles.electric+'.mp3',duration:.8,level:.65},
+ ...Object.fromEntries(['melee','axe','dagger','mace','bow','gun','cannon','whip','spell'].map(key=>[
+  'weapon-'+key,{file:'media/'+audioFiles[key]+'.mp3',duration:.85,level:.58},
+ ])),
  ...Object.fromEntries(['male','female'].flatMap(gender=>[1,2,3,4].map(take=>[
   `fall-${gender}-${take}`,{file:`audio/humanoid-death/${gender}-${take}.mp3`,level:.9,afterFall:true},
  ]))),

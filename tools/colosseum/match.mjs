@@ -8,7 +8,7 @@ import {resetBotRoute, stepBot} from './practice.mjs?v=team-minimap-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {INFANTRY_WAVE_MS, spawnInfantry, stepInfantry} from './infantry.mjs?v=team-minimap-1';
+import {INFANTRY_WAVE_MS, spawnInfantry, stepInfantry} from './infantry.mjs?v=infantry-audio-1';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const PLAYER_DEATH_POINTS=30;
