@@ -2,7 +2,7 @@ import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATT
  TEAM_ARENA, bushAt, capitalSpawn, cellCenter, distance, maze, spawns, warpArrival} from './arena.mjs?v=team-bot-tactics-1';
 import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=team-minimap-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=colosseum-mercenary-hud-1';
 import rareArt from './rare-art.mjs';
 import {dispatchTeamDefense, resetBotRoute, stepBot} from './practice.mjs?v=team-bot-defense-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
@@ -987,8 +987,8 @@ export class Match {
    const {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,x,y,warp,safeUntil}=q;
    const ally=this.solo?q===p:side===p.side;
    const visible=q===p||q===spectating||((this.solo||phase==='walk')&&inSight(viewer,q)&&(ally||canSeeOpponent(viewer,q)));
-   const teamHp=ally?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
-   return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),rating:q.rating,...teamHp,
+   const vitals=ally||visible&&phase==='walk'?{hp:phase==='dead'?0:(q===p?hero:this.battleHero(q))?.hp??q.hp,maxHp:q.maxHp}:{};
+   return {id,side,cls,baseCls,className,gender,name,lv,phase,ready,connected,bot:Boolean(q.bot),rating:q.rating,...vitals,
     ...(this.solo?{points:q.points,scoreAt:q.scoreAt}:{...teamStats(q),streakTitle:this.announcer.title(q)}),...(visible?{x,y,warp,safeUntil,inBush:bushAt(q)!==null}:{}),
     ...(!this.solo&&ally&&visible?{repairingBase:repairing(q)?q.repair.baseId:null}:{}),
     ...(visible&&phase==='walk'&&q.healUntil>now?{healUntil:q.healUntil}:{}),

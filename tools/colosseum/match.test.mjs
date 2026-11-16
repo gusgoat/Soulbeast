@@ -906,6 +906,36 @@ Deno.test('a team battle bot can summon a golem when its own group still has a s
  eq([golem.sp,golem.owner],['bastion_golem',hero.owner]);
  ok(b.queue.includes(golem.id)||b.cur===golem.id);
 });
+Deno.test('team Colosseum merchants hire without affecting character gold, manually and as bots',()=>{
+ for(const automated of [false,true]){
+  const merchant={id:'merchant',name:'Merchant',cls:'merchant',lv:20,gold:4321,...(automated?{bot:{}}:{})};
+  const rival={id:'foe',name:'Opponent',cls:'mage',lv:20};
+  const b=makeCombat('hire',[[merchant],[rival]],null,0,new Map(),true);
+  const human=b.allies[0];
+  b.cur=human.id;b.openAt=0;b.deadline=500;
+  const order={turn:b.turn,skill:'hire_merc',target:b.enemies[0].id};
+  if(automated)advanceCombat(b,500);
+  else ok(combatAction(b,merchant.id,order,100));
+  eq(b.last.skillId,'hire_merc');
+  const hired=b.allies.find(u=>u.kind==='summon');
+  eq([hired.name,hired.lv,hired.owner],['ทหารรับจ้าง',17,human.owner]);
+  eq(merchant.gold,4321);
+  const solo=makeCombat('hire-solo',[[merchant],[rival]],null,0);
+  solo.cur=solo.allies[0].id;solo.openAt=0;solo.deadline=500;
+  eq(combatAction(solo,merchant.id,{...order,turn:solo.turn,target:solo.enemies[0].id},100),false);
+ }
+});
+Deno.test('walking HP is visible for nearby opponents and hidden for distant opponents',()=>{
+ const {r,p:[a,b]}=match();
+ start(r,[a,b]);
+ Object.assign(a,cellCenter(15,21));
+ Object.assign(b,{x:a.x+90,y:a.y,hp:12});
+ const near=r.snapshot(a,3000).players.find(p=>p.id===b.id);
+ eq([near.hp,near.maxHp],[12,b.maxHp]);
+ b.x=a.x+1200;
+ const far=r.snapshot(a,3000).players.find(p=>p.id===b.id);
+ eq([far.hp,far.maxHp,far.x],[undefined,undefined,undefined]);
+});
 function autoDecisionBattle(cls,bot){
  const players=[[{id:'test-a',name:'A',cls,lv:45,...(bot?{bot:{}}:{})}],
   [{id:'test-b',name:'B',cls:'swordsman',lv:45}]];

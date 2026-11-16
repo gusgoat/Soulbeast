@@ -1,5 +1,5 @@
 import '../../content/beast-names.js';
-import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-timed-monsters-1';
+import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-mercenary-hud-1';
 import rareArt from './rare-art.mjs';
 import {personalCombatBonus} from './arena.mjs';
 const core=globalThis.SoulbeastColosseumEngine();

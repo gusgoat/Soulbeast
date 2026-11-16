@@ -130,7 +130,7 @@ dialog p{margin-top:10px;font-size:.82em}
 .card::after{content:'';position:absolute;inset:0;background:var(--card-frame) center/100% 100% no-repeat;pointer-events:none}
 .battle-slot-empty{align-self:stretch;border:1px dashed #bba57155;border-radius:4px;background:#08142150}
 .battle-face{position:relative;display:grid;place-items:center;min-width:0;height:100%;overflow:hidden}
-.battle-personal-score{position:absolute;top:2px;left:50%;translate:-50%;padding:1px 5px;border:1px solid #bd975a;border-radius:5px;background:#101420ed;color:#ffe09b;font-size:.7rem;font-weight:750;font-variant-numeric:tabular-nums}
+.battle-personal-score{align-self:flex-start;padding:0 4px;border:1px solid #bd975a;border-radius:4px;background:#101420ed;color:#ffe09b;font-size:.8em;line-height:1.1;font-weight:750;font-variant-numeric:tabular-nums}
 .battle-face :is(img,.atlas-portrait){width:100%;height:100%;min-height:0;object-fit:contain;object-position:top;display:block}
 .battle-face img[data-pvp-idle]{object-position:center;transform-origin:50% 82%}
 .battle-face [data-pvp-idle=breathe][data-pose=idle]{animation:pvp-breathe 3.8s ease-in-out infinite}

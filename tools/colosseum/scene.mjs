@@ -991,6 +991,13 @@ export class Scene{
    if(!directional&&!ready(strike)&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
    const spriteTop=y-(atlas?size*ay:55);
    this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,spriteTop-16,isMe?'#fff2af':color,p.rating??0,now);
+   if(p.phase==='walk'&&Number.isFinite(p.hp)&&p.maxHp>0){
+    const width=64,height=7,barY=spriteTop-9;
+    const ratio=Math.max(0,Math.min(1,p.hp/p.maxHp));
+    c.fillStyle='#17121e';c.fillRect(x-width/2,barY,width,height);
+    c.fillStyle=ratio<=.25?'#ff7474':ratio<=.5?'#ffc55e':'#75e3a2';
+    c.fillRect(x-width/2+1,barY+1,(width-2)*ratio,height-2);
+   }
    if(this.arena!==SURVIVAL_ARENA&&Number.isFinite(p.points))this.label([p.streakTitle,p.points].filter(value=>value!=null).join(' · '),x,spriteTop-39,'#ffe19a');
   }
   c.restore();

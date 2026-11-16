@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=team-bot-tactics-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=team-bot-tactics-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=colosseum-mercenary-hud-1';
 import {teamResults} from './ranking.mjs?v=team-balance-2';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
@@ -71,7 +71,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=team-bot-defense-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=colosseum-mercenary-hud-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -540,7 +540,7 @@ function frameArt(unit){
 }
 function combatPose(unit){
  if(unit.form&&pvpCardArt['form:'+unit.form])return pvpCardArt['form:'+unit.form];
- if(unit.kind==='player'){
+ if(unit.kind==='player'||(unit.kind==='summon'&&unit.cls&&!unit.sp)){
   return pvpCardArt[`${unit.cls}-${sealerGender(unit)}`];
  }
  const form=unit.evo||0,pose=pvpCardArt[`${unit.sp}:${form}`];
@@ -585,7 +585,6 @@ function unitCard(unit,current,selectable,choose){
   }
  };
  face.append(art);
- if(Number.isFinite(unit.personalPoints))face.append(node('span',String(unit.personalPoints),'battle-personal-score'));
  const name=node('b',unit.name);
  const badge=unit.kind==='player'&&shieldIcon(state.players.find(p=>p.id===battle?.roster[unit.owner])?.rating);
  if(badge)name.prepend(badge);
@@ -596,6 +595,11 @@ function unitCard(unit,current,selectable,choose){
   return meter;
  });
  const stats=node('div',null,'battle-meter');
+ if(Number.isFinite(unit.personalPoints)){
+  const score=node('span',String(unit.personalPoints),'battle-personal-score');
+  score.title='คะแนนส่วนตัว';
+  stats.append(score);
+ }
  const level=node('small',`Lv ${unit.lv}`,'battle-level');
  if(aura){
   const badge=node('span','◆','battle-base-aura');
