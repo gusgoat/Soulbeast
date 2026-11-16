@@ -83,9 +83,10 @@ export function syncCombatBonuses(b){
   const id=b.roster[u.owner];
   const aura=b.baseAuraOwners.get(id)||0;
   const owner=b.scoreOwners.get(id);
-  const personal=u.kind==='player'?personalCombatBonus(owner?.earned):0;
+  const points=b.colosseumOwnerSlots?owner?.earned:owner?.points;
+  const personal=u.kind==='player'?personalCombatBonus(points):0;
   u.baseAura=aura||undefined;
-  u.personalPoints=u.kind==='player'?owner?.earned:undefined;
+  u.personalPoints=u.kind==='player'?points:undefined;
   const multiplier=(1+aura/100)*(1+personal/100);
   const previous=u.colosseumStatMultiplier??1;
   if(multiplier===previous)continue;
@@ -109,7 +110,7 @@ export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=fa
   teams:teams.map(t=>t.map(p=>p.id)),roster:roster.map(p=>p.id),botOwners:roster.map(p=>Boolean(p.bot)),beastId:shadow?.id,
   allies:[],enemies:[],log:[],fx:[],effects:[],fallen:[],finished:false,releasedAt:0,autoOwners:new Set(),autoVersion:0,
   colosseumOwnerSlots:teamSiege,baseAuraOwners:auraOwners,colosseumFalls:new Map(),
-  scoreOwners:new Map(teamSiege?roster.map(p=>[p.id,p]):[]),
+  scoreOwners:new Map(roster.map(p=>[p.id,p])),
   colosseumHuntBonus:new Set(teamSiege&&shadow?roster.flatMap((p,index)=>p.baseCls==='swordsman'?[index]:[]):[]),
   colosseumPvpCareers:teamSiege&&!shadow?roster.map(p=>p.baseCls):null};
  for(const [side,team] of teams.entries()) for(const p of team){

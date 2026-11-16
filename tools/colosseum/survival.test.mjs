@@ -1,5 +1,6 @@
 import {CELL, RADIUS, cellCenter, distance} from './arena.mjs';
 import {Match} from './match.mjs';
+import {demoProfile} from './combat.mjs';
 import {startPractice} from './practice.mjs';
 import {FOG_INTERVAL, SURVIVAL_ARENA as arena, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -13,6 +14,23 @@ function setup(count,random=Math.random){
  return {room,players};
 }
 
+Deno.test('survival personal score raises only sealer attack and defense up to sixty percent',()=>{
+ const {room,players:[a,b]}=setup(2);
+ a.points=27;b.points=320;
+ room.encounter(a,b,3000);
+ const battle=room.battles.get(a.battle);
+ const check=(units,player,factor)=>{
+  for(const unit of units){
+   const baseline=demoProfile(player,0).find(u=>u.kind===unit.kind&&u.uid===unit.uid);
+   for(const stat of ['patk','matk','pdef','mdef']){
+    ok(Math.abs(unit.st[stat]-baseline.st[stat]*(unit.kind==='player'?factor:1))<.001);
+   }
+  }
+ };
+ check(battle.allies,a,1.05);check(battle.enemies,b,1.60);
+ room.addSurvivalPoints(a,3,3001);room.recordFalls(battle,3001);
+ check(battle.allies,a,1.06);
+});
 Deno.test('survival adds five distinct safe chests per two-minute cut',()=>{
  const {room,players}=setup(5,()=>.5);
  const safe=fogZone(0,240_000),spots=[];

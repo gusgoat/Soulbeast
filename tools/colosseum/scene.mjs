@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, baseDamageStage, distance} from './arena.mjs?v=team-time-win-1';
+import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, baseDamageStage, distance} from './arena.mjs?v=duel-layout-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';

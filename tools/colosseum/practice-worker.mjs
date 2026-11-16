@@ -1,5 +1,5 @@
-import {Match} from './match.mjs?v=team-time-win-1';
-import {startPractice} from './practice.mjs?v=team-time-win-1';
+import {Match} from './match.mjs?v=duel-layout-1';
+import {startPractice} from './practice.mjs?v=duel-layout-1';
 
 let room,player,timer,last,frame=0,battleKey;
 const send=message=>postMessage(message);

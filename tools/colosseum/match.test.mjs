@@ -356,7 +356,7 @@ Deno.test('shadows spawn outside turret range and creatures cannot cross through
  r.moveBeast(beast,target,.1,200);
  ok(!r.inBaseFireRange(beast));
 });
-Deno.test('merchant stays put and earns one personal point per 2.5 seconds of active repair within 70 units',()=>{
+Deno.test('merchant stays put and earns one personal point per four seconds of active repair within 70 units',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
  const base=r.bases.find(x=>x.side===a.side&&x.tier==='small');
  base.hp=55;Object.assign(a,{x:base.x,y:base.y});
@@ -370,14 +370,16 @@ Deno.test('merchant stays put and earns one personal point per 2.5 seconds of ac
  r.command(a,{type:'repairBase',id:base.id},3000);
  r.command(a,{type:'move',seq:2,x:1,y:0},3300);
  r.tick(5499,.05);eq(base.hp,55);eq(a.x,base.x+70);
- r.tick(5500,.05);eq(base.hp,56);eq(a.earned,1);
+ r.tick(5500,.05);eq(base.hp,56);eq(a.earned,0);
+ r.tick(6999,0);eq(a.earned,0);
+ r.tick(7000,0);eq(a.earned,1);
  r.tick(7999,0);eq(base.hp,56);eq(a.earned,1);
- r.tick(8000,0);eq(base.hp,57);eq(a.earned,2);
+ r.tick(8000,0);eq(base.hp,57);eq(a.earned,1);
  r.command(a,{type:'stopRepair'},8500);
  r.tick(9000,0);eq(base.hp,57);
  r.command(a,{type:'repairBase',id:base.id},10000);
  r.tick(17499,0);eq(base.hp,59);
- r.tick(17500,0);eq(base.hp,60);eq(a.repair,undefined);eq(a.earned,5);eq(r.score,[300,300]);
+ r.tick(17500,0);eq(base.hp,60);eq(a.repair,undefined);eq(a.earned,2);eq(r.score,[300,300]);
 });
 Deno.test('every friendly base restores walking sealers and revives their pets at its tier rate',()=>{
  for(const [tier,ratio] of [['small',.03],['medium',.06],['large',.09]]){
@@ -869,20 +871,16 @@ Deno.test('a creature breaks pursuit on entry into grass and returns to its star
  for(let time=3100;beast.returning&&time<=4000;time+=50)r.tick(time,.05);
  eq(beast.returning,false);ok(distance(beast,beast.home)<=10);
 });
-Deno.test('destroying a large base keeps the match running and the home warp available',()=>{
+Deno.test('destroying a large base wins immediately even when trailing on score',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const capital=r.bases.find(x=>x.side===b.side&&x.main);
  r.bases.find(x=>x.id===capital.links[0]).hp=0;
- capital.hp=1;
+ capital.hp=1;r.score=[100,300];
  Object.assign(a,{x:capital.x,y:capital.y});
  r.siegeBases(3000);r.siegeBases(4000);
- eq([capital.side,capital.hp,r.phase],[b.side,0,'match']);
+ eq([capital.side,capital.hp,r.phase,r.winner,r.reason],[b.side,0,'finished',a.side,'base-captured']);
  ok(r.baseEffects.some(e=>e.baseId===capital.id&&e.kind==='collapse'));
- eq(r.score,[351,199]);eq(a.earned,51);
- Object.assign(b,WARP_PADS[b.side]);
- const small=r.bases.find(x=>x.side===b.side&&x.tier==='small');
- r.command(b,{type:'warpSmallBase',id:small.id},4100);
- eq(b.recallBaseId,small.id);
+ eq(r.score,[151,199]);eq(a.earned,51);
 });
 Deno.test('a shadow acquires at 1000, runs at 200 units per second and returns after five seconds or beyond 2000',()=>{
  for(const reason of ['time','distance']){
@@ -954,7 +952,7 @@ Deno.test('solo practice starts with nine bots and runs normal objectives to a r
    });
   }
  }
- eq(r.phase,'finished');eq(r.reason,'time');
+ eq(r.phase,'finished');ok(['time','base-captured'].includes(r.reason));
  ok(hasBotSiege,'bots never besieged a base');
  ok(r.chests.some(c=>c.opened));ok(hasBotAttack);
  eq({x:human.x,y:human.y},human.spawn);

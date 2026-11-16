@@ -1,10 +1,10 @@
-import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile, WARP_ACCESS, WARP_TARGET,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=team-time-win-1';
+import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_SCORE_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile, WARP_ACCESS, WARP_TARGET,
+ TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=duel-layout-1';
 import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses, syncMonsterPower} from './combat.mjs?v=team-time-win-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses, syncMonsterPower} from './combat.mjs?v=duel-layout-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=team-time-win-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=duel-layout-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
@@ -305,7 +305,7 @@ export class Match {
   }else if(m.type==='repairBase'){
    const base=this.bases.find(b=>b.id===m.id);
    assert(p.connected&&p.phase==='walk'&&!p.recallEndsAt&&base&&REPAIR_TARGET(p,base),'สายพ่อค้าต้องอยู่ใกล้ฐานฝ่ายตัวเองที่ HP ยังไม่เต็ม');
-   if(p.repair?.baseId!==base.id)p.repair={baseId:base.id,nextAt:now+BASE_REPAIR_MS};
+   if(p.repair?.baseId!==base.id)p.repair={baseId:base.id,nextAt:now+BASE_REPAIR_MS,nextScoreAt:now+BASE_REPAIR_SCORE_MS};
    p.dx=p.dy=0;
   }else if(m.type==='stopRepair'){
    delete p.repair;
@@ -443,6 +443,7 @@ export class Match {
      this.note(`${survivor.name} ชนะ${beast.name} · +${SURVIVAL_POINTS.beast} คะแนน`,now);
     }
    }
+   syncCombatBonuses(b);
    if(changed)this.checkScore(now);
    return;
   }
@@ -662,14 +663,18 @@ export class Match {
      const repair=p.repair;
      if(repair.pausedAt!=null){
       const paused=now-repair.pausedAt;
-      repair.nextAt+=paused;
+      repair.nextAt+=paused;repair.nextScoreAt+=paused;
       delete repair.pausedAt;
      }
-     while(p.repair&&now>=repair.nextAt){
-      base.hp++;
-      p.earned++;
-      repair.nextAt+=BASE_REPAIR_MS;
-      if(base.hp===base.maxHp)this.clearBaseRepairs(base.id);
+     while(p.repair&&now>=Math.min(repair.nextAt,repair.nextScoreAt)){
+      if(repair.nextScoreAt<=repair.nextAt){
+       p.earned++;
+       repair.nextScoreAt+=BASE_REPAIR_SCORE_MS;
+      }else{
+       base.hp++;
+       repair.nextAt+=BASE_REPAIR_MS;
+       if(base.hp===base.maxHp)this.clearBaseRepairs(base.id);
+      }
      }
     }
    }
@@ -758,6 +763,7 @@ export class Match {
     for(const player of this.players)if(player.recallBaseId===base.id)cancelRecall(player);
     const personalNotice=teamPersonal?` · ทุกคนในทีม +${teamPersonal} แต้มส่วนตัว`:'';
     this.note(`${p.name} ทำ${base.label}แตก · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}${personalNotice}`,now);
+    if(base.main)this.finish(p.side,'base-captured',now);
     return;
    }
   }

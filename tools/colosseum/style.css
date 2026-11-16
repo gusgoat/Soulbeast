@@ -140,6 +140,12 @@ dialog p{margin-top:10px;font-size:.82em}
 @keyframes pvp-sway{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg) scaleY(1.02)}}
 .battle-face .atlas-portrait{width:min(100%,70px);height:auto;aspect-ratio:1}
 .solo .card{max-height:110px;font-size:clamp(10px,3vw,15px)}
+.battle-duel .battle-side.solo .battle-row{
+ width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+}
+.battle-duel .battle-side.solo .battle-row:has(.card:only-child){grid-template-columns:minmax(0,1fr)}
+.battle-duel .battle-row .card{width:100%;max-height:none;align-self:start;container-type:inline-size}
+.battle-duel .card .battle-meter{font-size:clamp(8px,5.4cqw,22px)}
 .battle-meter{display:flex;flex-direction:column;min-width:0;gap:2px;text-shadow:0 1px 3px #000}
 .battle-level{font-size:.83em;color:#dec9a1}
 .battle-base-aura{color:#ffe291;text-shadow:0 0 5px #dfa640}
@@ -316,6 +322,11 @@ dialog p{margin-top:10px;font-size:.82em}
  }
  #battle .battle-row{width:100%;grid-template-columns:repeat(min(var(--cols),2),minmax(0,1fr));grid-auto-rows:minmax(44px,auto)}
  #battle .battle-side.solo .battle-row:has(.card:only-child){width:100%;max-width:210px;margin-inline:0}
+ #battle .battle-duel{grid-template-columns:minmax(0,1.65fr) minmax(185px,1fr)}
+ #battle .battle-duel .battle-side.solo .battle-row{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,106px),1fr));grid-auto-rows:auto;gap:4px;
+ }
+ #battle .battle-duel .battle-side.solo .battle-row:has(.card:only-child){max-width:none}
  #battle .battle-footer{display:flex;flex-direction:column;min-height:0;overflow:auto;overscroll-behavior:contain}
  #battle .battle-footer>*{flex:none}
  #battle .commands{max-height:none;overflow:visible}
