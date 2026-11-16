@@ -9,7 +9,7 @@
  <script src="../town-walk-demo/music-channel.js?v=ios-audio-2-20261107"></script>
  <script src="../../client/voice-player.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=duel-layout-1">
+ <link rel="stylesheet" href="./style.css?v=team-minimap-1">
 <link rel="stylesheet" href="../../client/game-menu-art.css?v=5"></head>
 <body>
  <main id="lobby">
@@ -180,14 +180,15 @@
   <button id="raid" hidden>ซ่อมฐาน</button>
   <section id="battle" hidden aria-label="ฉากต่อสู้"></section>
   <div id="battle-vfx" aria-hidden="true"></div>
-  <div id="spectator" hidden aria-label="ชมผู้รอดชีวิต">
+  <div id="spectator" hidden aria-label="ชมผู้เล่น">
    <button id="spectator-prev" class="secondary" aria-label="ชมคนก่อนหน้า">‹</button>
    <span id="spectator-name" aria-live="polite"></span>
+   <span id="spectator-respawn" hidden></span>
    <button id="spectator-next" class="secondary" aria-label="ชมคนถัดไป">›</button>
    <button id="spectator-leave" class="secondary">กลับห้อง</button>
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" class="team-score-results" hidden></div><button id="dead-team-scores" class="secondary" type="button" aria-haspopup="dialog" hidden>ตารางคะแนน</button><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=upper-lane-1"></script>
+ <script type="module" src="./client.mjs?v=infantry-support-1"></script>
 </body>
 </html>

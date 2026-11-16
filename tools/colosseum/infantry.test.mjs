@@ -11,16 +11,18 @@ function match(){
  return {room,blue,red};
 }
 
-Deno.test('team waves spawn five 100 HP soldiers on each capital every 30 seconds',()=>{
+Deno.test('team waves spawn five soldiers per capital and new waves gain 5 HP every 2 minutes',()=>{
  const {room,blue}=match();
  room.tick(29_999,0);
  assert.equal(room.infantry.length,0);
  room.tick(30_000,0);
  assert.deepEqual([0,1].map(side=>room.infantry.filter(unit=>unit.side===side).length),[5,5]);
  assert.equal(room.snapshot(blue,30_000).infantry.length,5);
- for(const unit of room.infantry)assert.equal(unit.hp,100);
+ for(const unit of room.infantry)assert.equal(unit.hp,40);
  const assigned=room.infantry.filter(unit=>unit.side===0).map(unit=>unit.path.find(point=>point.baseId)?.baseId);
  assert.deepEqual(assigned,['1-3','1-4','1-5','1-6','1-7']);
+ const routeCells=new Set(room.infantry.flatMap(unit=>unit.path.map(room.arena.indexAt)));
+ assert.ok(room.shadows.every(beast=>!routeCells.has(room.arena.indexAt(beast.home))));
  for(let i=0;i<5;i++){
   const left=room.infantry[i],right=room.infantry[i+5];
   assert.deepEqual(left.path.map(p=>[room.arena.width-p.x,p.y]),right.path.map(p=>[p.x,p.y]));
@@ -29,6 +31,14 @@ Deno.test('team waves spawn five 100 HP soldiers on each capital every 30 second
  assert.equal(room.infantry.length,10);
  room.tick(60_000,0);
  assert.equal(room.infantry.length,20);
+ const veteran=room.infantry[0];
+ veteran.hp=11;
+ room.tick(120_000,0);
+ assert.equal(veteran.hp,11);
+ assert.equal(veteran.maxHp,40);
+ assert.equal(room.infantry.find(unit=>unit.id==='infantry-4-0-0').hp,45);
+ room.tick(240_000,0);
+ assert.equal(room.infantry.find(unit=>unit.id==='infantry-8-0-0').maxHp,50);
 });
 
 Deno.test('in an uncontested lane, infantry passes linked allied forts and the mirrored enemy forts',()=>{
@@ -69,8 +79,44 @@ Deno.test('a fort targets soldiers before even a nearer sealer and uses percent 
  room.siegeBases(4000);
  assert.equal(room.baseBolts.find(bolt=>bolt.base===fort).target,soldier);
  room.siegeBases(4000+BASE_BOLT_MS);
- assert.equal(soldier.hp,84);
+ assert.equal(soldier.hp,33.6);
  assert.equal(red.hp,hp);
+});
+
+Deno.test('only living allied infantry within 300 units of the attacked fort restore full damage',()=>{
+ const {room,blue,red}=match();
+ const fort=room.bases.find(base=>base.id==='1-7');
+ const support={side:blue.side,hp:40,x:fort.x+301,y:fort.y};
+ const enemy={...support,side:red.side,x:fort.x};
+ room.infantry=[support,enemy];
+ blue.baseCls='archer';
+ room.damageBase(fort,blue,3000);
+ room.damageBase(fort,blue,4000);
+ assert.equal(fort.hp,58.5);
+ support.x--;
+ room.damageBase(fort,blue,5000);
+ assert.equal(fort.hp,55.5);
+ support.hp=0;
+ room.damageBase(fort,blue,6000);
+ assert.equal(fort.hp,54);
+ assert.equal(blue.earned,3);
+ assert.deepEqual(room.score,[303,297]);
+});
+
+Deno.test('repair fills a fort with fractional damage without exceeding its maximum HP',()=>{
+ const {room,blue,red}=match();
+ const fort=room.bases.find(base=>base.id==='0-7');
+ Object.assign(blue,{baseCls:'merchant',x:fort.x,y:fort.y});
+ red.baseCls='archer';
+ room.damageBase(fort,red,3000);
+ room.damageBase(fort,red,4000);
+ assert.equal(fort.hp,58.5);
+ room.command(blue,{type:'repairBase',id:fort.id},4001);
+ room.siegeBases(6501);
+ assert.equal(fort.hp,59.5);
+ room.siegeBases(9001);
+ assert.equal(fort.hp,60);
+ assert.equal(blue.repair,undefined);
 });
 
 Deno.test('soldier priorities, automatic sealer hits and damage rates use the overworld',()=>{
@@ -87,7 +133,7 @@ Deno.test('soldier priorities, automatic sealer hits and damage rates use the ov
  stepInfantry(room,4000,0);
  assert.equal(a.target,b);
  stepInfantry(room,5000,0);
- assert.equal(b.hp,99);
+ assert.equal(b.hp,39);
  b.hp=0;
  stepInfantry(room,5100,0);
  assert.equal(a.target,base);
@@ -120,6 +166,30 @@ Deno.test('soldiers abandon a moving target beyond 600 units and return to their
  assert.equal(unit.target,undefined);
  assert.ok(distance(unit,home)<.001);
  assert.ok(distance(unit,red)>600);
+});
+
+Deno.test('soldier hits earn whole personal points across targets and the last hit earns five once',()=>{
+ const {room,blue,red}=match();
+ spawnInfantry(room,1);
+ const [first,second]=room.infantry.filter(unit=>unit.side===red.side);
+ const scores=[...room.score];
+ room.attackInfantry(blue,first,3000);
+ room.attackInfantry(blue,first,3999);
+ assert.equal(blue.earned,0);
+ for(const now of [4000,5000,6000])room.attackInfantry(blue,first,now);
+ assert.equal(blue.earned,0);
+ delete blue.infantryStrike;
+ room.attackInfantry(blue,second,12_000);
+ assert.equal(blue.earned,0);
+ second.hp=1;
+ room.attackInfantry(blue,second,13_000);
+ assert.equal(blue.earned,6);
+ room.attackInfantry(blue,second,14_000);
+ assert.equal(blue.earned,6);
+ assert.equal(second.hp,0);
+ assert.deepEqual(room.score,scores);
+ assert.equal(blue.kills,0);
+ assert.equal(room.snapshot(blue,14_000).players.find(p=>p.id===blue.id).points,6);
 });
 
 Deno.test('the first soldier exits the allied upper medium fort north without retracing its approach',()=>{

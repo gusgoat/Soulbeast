@@ -107,6 +107,7 @@ dialog p{margin-top:10px;font-size:.82em}
 #spectator[hidden]{display:none}
 #spectator button{min-height:38px;padding:.25rem .5rem}
 #spectator-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#spectator-respawn{white-space:nowrap}
 #arena[data-spectating] #battle{bottom:58px}
 #arena[data-spectating] #world{cursor:grab}
 #battle{inset:max(66px,calc(env(safe-area-inset-top) + 58px)) 0 0;overflow:hidden;padding:6px clamp(6px,3vw,16px) max(6px,env(safe-area-inset-bottom));background:#0a1018}

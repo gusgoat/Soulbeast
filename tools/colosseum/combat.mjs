@@ -95,15 +95,6 @@ export function syncCombatBonuses(b){
   u.colosseumStatMultiplier=multiplier;
  }
 }
-export function syncMonsterPower(b,elapsed){
- if(!b.colosseumOwnerSlots||!b.beastId||b.finished)return;
- const monster=b.enemies[0];
- const multiplier=1+Math.floor(elapsed/120_000)/10;
- const previous=monster.timePower??1;
- if(multiplier===previous)return;
- for(const stat of BASE_AURA_STATS)monster.st[stat]*=multiplier/previous;
- monster.timePower=multiplier;
-}
 export function makeCombat(id,teams,shadow,now,auraOwners=new Map(),teamSiege=false){
  const roster=teams.flat();
  const b={id,kind:shadow?'hunt':'pvp',round:0,turns:0,turn:0,cur:null,queue:[],deadline:0,

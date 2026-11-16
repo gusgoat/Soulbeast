@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=clear-hedges-1';
+import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=team-minimap-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=upper-lane-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=team-minimap-1';
 import {teamResults} from './ranking.mjs?v=team-balance-2';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
@@ -33,6 +33,8 @@ const battleUpdates=[];
 const spectatorPan={x:0,y:0};
 let spectatorDrag=null;
 const watchedPlayer=()=>state?.spectating&&state.players.find(p=>p.id===state.spectating);
+const spectatablePlayers=()=>state?.players.filter(p=>p.connected&&['walk','battle'].includes(p.phase)&&
+ (state.mode==='survival'||p.side===me?.side))??[];
 const viewingBattle=()=>state?.phase==='match'&&(me?.phase==='battle'||watchedPlayer()?.phase==='battle');
 let pendingChest=null, pendingMoves=[], correction=null, oneWay=0, bestRtt=Infinity;
 function acceptPong(message){
@@ -69,7 +71,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=upper-lane-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=infantry-support-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -336,7 +338,7 @@ function applyState(next){
  $('blue-label').textContent=solo?'เหลือผู้รอด':'ไพลิน';
  $('red-label').textContent=solo?'พื้นที่ปลอดภัย':'ทับทิม';
  $('vitals-label').textContent=solo?'พลังของคุณ':'HP ทีมเรา';
- $('map-legend').textContent=solo?'กรอบเขียว พื้นที่ปลอดภัย · ◎ ตำแหน่งมุมมอง':'◆ ฐานใหญ่ · ▣ ฐานกลาง · □ ฐานเล็ก · ! ฐานถูกโจมตี';
+ $('map-legend').textContent=solo?'กรอบเขียว พื้นที่ปลอดภัย · ◎ ตำแหน่งมุมมอง':'● ผู้ผนึก · ▲ พลทหาร · ✦ บอส · ○ อสูรเงา · ◆ ฐานใหญ่ · ▣ ฐานกลาง · □ ฐานเล็ก · ! ฐานถูกโจมตี';
  renderTeamHp();
  renderSurvivalRank(solo);
  pendingMoves=pendingMoves.filter(move=>move.seq>next.ack);
@@ -839,7 +841,7 @@ function leavePractice(){
 $('back').onclick=()=>state?.practice?leavePractice():reset();
 $('spectator-leave').onclick=$('back').onclick;
 function cycleSpectator(step){
- const survivors=state?.players.filter(p=>p.connected&&p.phase!=='dead')||[];
+ const survivors=spectatablePlayers();
  if(survivors.length<2)return;
  const current=survivors.findIndex(p=>p.id===state.spectating);
  send({type:'spectate',target:survivors[(current+step+survivors.length)%survivors.length].id});
@@ -1075,10 +1077,15 @@ function frame(t){
   if(recall)$('base-recall-progress').value=Math.max(0,Math.min(1,1-(recall-now)/BASE_RECALL_MS));
   $('arena').toggleAttribute('data-spectating',Boolean(watch));
   $('spectator').hidden=!watch;
+  $('spectator-leave').hidden=!solo;
   if(watch){
    const label=`${state.placement?'อันดับ '+state.placement+' · ':''}ชม ${watch.name}`;
    if($('spectator-name').textContent!==label)$('spectator-name').textContent=label;
-   const canSwitch=state.players.filter(p=>p.connected&&p.phase!=='dead').length>1;
+   const timer=$('spectator-respawn');
+   timer.hidden=solo;
+   const timeLabel=solo?'':`เกิดใหม่ใน ${clock(state.respawnAt-now)}`;
+   if(timer.textContent!==timeLabel)timer.textContent=timeLabel;
+   const canSwitch=spectatablePlayers().length>1;
    $('spectator-prev').disabled=$('spectator-next').disabled=!canSwitch;
   }
   $('walk-sound').hidden=!walking;

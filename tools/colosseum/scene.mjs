@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=clear-hedges-1';
+import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=team-minimap-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -10,7 +10,7 @@ import maleSiegeArt from './siege-male-catalog.mjs?v=1';
 import femaleSiegeArt from './siege-female-catalog.mjs?v=1';
 import pvpCardArt from './pvp-card-art.mjs?v=battle-parity-1';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
-import {drawInfantry} from './infantry-art.mjs?v=clear-hedges-1';
+import {drawInfantry} from './infantry-art.mjs?v=team-minimap-1';
 const TILE=CELL*FLAT;
 const WALL_HEIGHT=54;
 const WALK_SECTOR=Math.PI/4;
@@ -396,14 +396,35 @@ export function drawMap(canvas,state,players,me,zoom=1){
  }
  const rendered=new Map(players.map(p=>[p.id,p]));
  const focus=state.spectating||state.me;
- for(const p of state.players)if((solo?p.id===focus:p.side===side)&&p.connected&&p.phase!=='dead'){
+ if(state.mapUnits)for(const unit of state.mapUnits){
+  const pos=unit.id===focus?me:unit;
+  const r=(unit.kind==='boss'?5:unit.kind==='infantry'?3:3.5)*zoom;
+  m.save();
+  m.translate(mapX(pos.x),mapY(pos.y));
+  m.lineWidth=1.4*zoom;
+  m.strokeStyle='#10151d';
+  m.fillStyle=unit.id===focus?'#fff2a4':unit.kind==='boss'?'#ffda72':
+   unit.kind==='shadow'?'#d6a6ff':COLORS[unit.side];
+  m.beginPath();
+  if(unit.kind==='infantry'){
+   m.moveTo(0,-r);m.lineTo(r,r);m.lineTo(-r,r);m.closePath();
+  }else if(unit.kind==='boss'){
+   m.moveTo(0,-r);m.lineTo(r*.28,-r*.28);m.lineTo(r,0);m.lineTo(r*.28,r*.28);
+   m.lineTo(0,r);m.lineTo(-r*.28,r*.28);m.lineTo(-r,0);m.lineTo(-r*.28,-r*.28);m.closePath();
+  }else m.arc(0,0,r,0,2*Math.PI);
+  if(unit.kind==='shadow'){
+   m.stroke();m.strokeStyle=m.fillStyle;m.lineWidth=zoom;m.stroke();
+  }else {m.stroke();m.fill();}
+  m.restore();
+ }
+ if(!state.mapUnits)for(const p of state.players)if((solo?p.id===focus:p.side===side)&&p.connected&&p.phase!=='dead'){
   const pos=p.id===focus?me:(rendered.get(p.id)??{x:p.mapX??p.x,y:p.mapY??p.y});
   if(!Number.isFinite(pos?.x)||!Number.isFinite(pos?.y))continue;
   m.fillStyle=p.id===focus?'#fff2a4':'#d5f5ff';
   m.strokeStyle='#10151d';m.lineWidth=1.6*zoom;
   m.beginPath();m.arc(mapX(pos.x),mapY(pos.y),(p.id===state.me?3.9:3.0)*zoom,0,2*Math.PI);m.stroke();m.fill();
  }
- if(!solo&&me?.phase==='dead'){
+ if(!solo&&!state.spectating&&me?.phase==='dead'){
   const p=BASES.find(b=>b.side===side&&b.main);
   m.strokeStyle='#fff2a4';m.lineWidth=1.5*zoom;m.beginPath();m.arc(mapX(p.x),mapY(p.y),7*zoom,0,Math.PI*2);m.stroke();
  }

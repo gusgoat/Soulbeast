@@ -1,7 +1,8 @@
-import {BASES, FLAT, RADIUS, TEAM_ARENA, TEAM_SPEED, cellCenter, distance, walkSpeed, canRaidBase} from './arena.mjs?v=clear-hedges-1';
+import {BASES, FLAT, RADIUS, TEAM_ARENA, TEAM_SPEED, cellCenter, distance, walkSpeed, canRaidBase} from './arena.mjs?v=team-minimap-1';
 
 export const INFANTRY_WAVE_MS=30_000;
-const AGGRO=300, LEASH=600, STRIKE_RANGE=75, STRIKE_MS=1000, MAX_HP=100;
+const AGGRO=300, LEASH=600, STRIKE_RANGE=75, STRIKE_MS=1000;
+const START_HP=40, HP_STEP=5, HP_INTERVAL_MS=120_000;
 const LANES=[[1,3],[1,4],[2,5],[2,6],[8,7]];
 const teams=[0,1];
 const neighbors=[[-1,0],[1,0],[0,-1],[0,1]];
@@ -45,6 +46,7 @@ const routes=[sapphireRoutes,sapphireRoutes.map(path=>path.map(({x,y,baseId})=>(
 })))];
 
 export function spawnInfantry(room,wave){
+ const maxHp=START_HP+Math.floor(wave*INFANTRY_WAVE_MS/HP_INTERVAL_MS)*HP_STEP;
  for(const side of teams){
   const base=room.bases.find(b=>b.main&&b.side===side);
   if(base.hp<=0)continue;
@@ -53,7 +55,7 @@ export function spawnInfantry(room,wave){
    const spawn={x:base.x,y:base.y+offset};
    const join=offset?[{x:base.x,y:base.y},...path]:path;
    room.infantry.push({id:`infantry-${wave}-${side}-${lane}`,infantry:true,side,...spawn,
-    hp:MAX_HP,maxHp:MAX_HP,path:join,waypoint:0,dir:side?2:6,pose:'walk',frame:0,stride:0});
+    hp:maxHp,maxHp,path:join,waypoint:0,dir:side?2:6,pose:'walk',frame:0,stride:0});
   });
  }
 }

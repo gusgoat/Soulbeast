@@ -2,7 +2,7 @@ export const COLS=31, ROWS=43, CELL=180, FLAT=.64;
 export const WIDTH=COLS*CELL, HEIGHT=ROWS*CELL;
 export const SPEED=246, RADIUS=21, CONTACT=50, ASSIST=400, RAID_RANGE=122;
 export const BEAST_SPEED_SCALE=.8;
-export const TEAM_SPEED=200, BASE_FIRE_RANGE=300, BASE_FIRE_MS=2000, BASE_BOLT_MS=280;
+export const TEAM_SPEED=200, BASE_FIRE_RANGE=250, BASE_FIRE_MS=2000, BASE_BOLT_MS=280;
 export const BASE_ATTACK_MS=1000, BASE_ATTACK_HP=4;
 export const TEAM_START_SCORE=300;
 export const BASE_CONTROL_MS=30_000;
@@ -180,7 +180,7 @@ export const TEAM_ARENA=createArena(maze,BUSHES,OBSTACLES);
 export const {bushAt,canSeeOpponent,passable,fits,clearPath,move,movePlayer,nextCell}=TEAM_ARENA;
 export function siegeProfile(p){
  const cls=p.baseCls||p.cls;
- if(cls==='gunner'||cls==='archer')return {range:300,effect:cls};
+ if(cls==='gunner'||cls==='archer')return {range:BASE_FIRE_RANGE,effect:cls};
  if(cls==='mage'||cls==='summoner'||cls==='druid')return {range:150,effect:'magic'};
  return {range:75,effect:cls==='merchant'?'hammer':'melee'};
 }

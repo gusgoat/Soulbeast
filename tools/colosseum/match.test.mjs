@@ -1,7 +1,7 @@
 import {ASSIST, BASES, BASE_BOLT_MS, BASE_RECALL_MS, TEAM_SPEED, BOSS_INTERVAL, BUSHES, CELL, COLS, FLAT, WARP_ACCESS, WARP_PADS, WARP_PAD_RANGE, MATCH_MS, OBSTACLES, RADIUS, bushAt, cellCenter, clearPath, distance, fits, maze, movePlayer, nextCell, personalCombatBonus, siegeProfile, spawns, warpArrival} from './arena.mjs';
 import {SIGHT_RANGE} from './sight.mjs';
 import {Match} from './match.mjs';
-import {advanceCombat, bossUnit, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, syncMonsterPower} from './combat.mjs';
+import {advanceCombat, bossUnit, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto} from './combat.mjs';
 import {serve} from './server.mjs';
 import {startPractice} from './practice.mjs';
 import {siegeAudio} from './siege-audio.mjs';
@@ -90,7 +90,7 @@ Deno.test('each central medium base unlocks after destroying any one of its thre
   eq([small.side,small.hp,small.flagSide],[side,0,attacker.side]);
   eq([attacker.earned,r.score[attacker.side],r.score[side]],[31,321,259]);
   ok(!r.inBaseFireRange(small));
-  stage(medium,5000);eq(medium.hp,attacker.baseCls==='summoner'?77:75);
+  stage(medium,5000);eq(medium.hp,attacker.baseCls==='summoner'?78.5:77.5);
   medium.hp=1;stage(medium,6000);
   eq([medium.side,medium.hp,attacker.earned,r.score[attacker.side],r.score[side]],[side,0,83,353,197]);
  }
@@ -124,28 +124,28 @@ Deno.test('archer siege hits for three HP every second, awards points, shows the
  const base=r.bases.find(base=>base.side===b.side&&base.tier==='small');
  base.fireAt=Infinity;
  Object.assign(a,{x:base.x,y:base.y,baseCls:'archer'});
- eq(siegeProfile(a),{range:300,effect:'archer'});
+ eq(siegeProfile(a),{range:250,effect:'archer'});
  r.siegeBases(3000);r.siegeBases(3199);eq(base.hp,60);
  eq(r.snapshot(b,3199).bases.find(x=>x.id===base.id).underAttack,true);
  eq(r.snapshot(a,3199).bases.find(x=>x.id===base.id).underAttack,false);
  r.siegeBases(3999);eq(base.hp,60);eq(r.score,[300,300]);
- r.siegeBases(4000);eq(base.hp,57);eq(r.score,[301,299]);eq(a.earned,1);eq([a.x,a.y],[base.x,base.y]);
+ r.siegeBases(4000);eq(base.hp,58.5);eq(r.score,[301,299]);eq(a.earned,1);eq([a.x,a.y],[base.x,base.y]);
  ok(r.baseEffects.some(e=>e.kind==='archer'));
  r.score[b.side]=1;r.siegeBases(4999);eq(r.score,[301,1]);
  r.siegeBases(5000);eq(r.score,[302,0]);eq(r.phase,'match');
  r.tick(MATCH_MS-1,0);eq(r.phase,'match');
  r.tick(MATCH_MS,0);eq(r.winner,a.side);eq(r.reason,'time');
 });
-Deno.test('archer and gunner share the turret boundary at 300 units',()=>{
+Deno.test('archer and gunner share the turret boundary at 250 units',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');
  r.bases=[base];
- Object.assign(a,{x:base.x-301,y:base.y,baseCls:'archer'});
+ Object.assign(a,{x:base.x-251,y:base.y,baseCls:'archer'});
  ok(clearPath(a,base));
  r.siegeBases(3000);eq(a.siege,undefined);
  a.x++;
  r.siegeBases(3100);r.siegeBases(4100);
- eq(base.hp,57);ok(a.hp<a.maxHp);
+ eq(base.hp,58.5);ok(a.hp<a.maxHp);
  eq(siegeProfile({baseCls:'gunner'}).range,siegeProfile(a).range);
 });
 Deno.test('friendly small and medium tower alerts are distinct from main base alerts and do not repeat during continuous damage',()=>{
@@ -164,8 +164,8 @@ Deno.test('friendly small and medium tower alerts are distinct from main base al
   eq(r.announcer.forPlayer(defender,8000).map(e=>e.clip),[clip,clip]);
  }
 });
-Deno.test('each extra attacker independently deals four HP and earns points every second',()=>{
- for(const [count,damage] of [[1,12],[2,24],[3,36]]){
+Deno.test('each extra attacker independently deals two HP without infantry and earns points every second',()=>{
+ for(const [count,damage] of [[1,6],[2,12],[3,18]]){
   const {r,p}=match(6);start(r,p);
   const base=r.bases.find(b=>b.side===1&&b.tier==='small');
   r.bases=[base];base.fireAt=Infinity;
@@ -200,13 +200,13 @@ Deno.test('siege transfers one point per second for every base tier',()=>{
   eq(a.earned,1);eq(r.score,[301,299]);
  }
 });
-Deno.test('gladiator and thief hit bases for half damage every second without reducing score',()=>{
+Deno.test('gladiator and thief stack both tower damage penalties without reducing score',()=>{
  for(const career of ['gladiator','thief']){
   const {r,p:[a,b]}=match();start(r,[a,b]);
   const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');
-  base.hp=3;base.fireAt=Infinity;r.bases=[base];
+  base.hp=2;base.fireAt=Infinity;r.bases=[base];
   Object.assign(a,{x:base.x,y:base.y,baseCls:career});
-  r.siegeBases(3000);r.siegeBases(3999);eq(base.hp,3);
+  r.siegeBases(3000);r.siegeBases(3999);eq(base.hp,2);
   r.siegeBases(4000);eq(base.hp,1);eq(r.score,[301,299]);
   r.siegeBases(5000);eq([base.side,base.hp],[b.side,0]);eq(r.score,[322,258]);
  }
@@ -293,7 +293,7 @@ Deno.test('manual cancellation and encounters with players, shadows or bosses pr
   const at=cellCenter(15,21);Object.assign(a,at);
   const shadow=r.shadows[0];
   r.shadows=reason==='shadow'?[shadow]:[];
-  if(reason==='shadow')Object.assign(shadow,at);
+  if(reason==='shadow')Object.assign(shadow,at,{home:at});
   if(reason==='boss'){r.rotateBosses(BOSS_INTERVAL);Object.assign(r.bosses[0],at);}
   if(reason==='player')Object.assign(b,at);
   r.command(a,{type:'recallBase'},3000);
@@ -348,15 +348,22 @@ Deno.test('entering combat cancels the turret projectile and hides the sealer un
  Object.assign(battle,{finished:true,releasedAt:4000});
  r.tick(4000,0);eq(a.phase,'walk');eq([a.x,a.y],[base.x,base.y]);
 });
-Deno.test('shadows spawn outside turret range and creatures cannot cross through a 300-unit turret zone',()=>{
+Deno.test('shadows spawn outside turret range and creatures cannot cross through a 250-unit turret zone',()=>{
  const {r,p}=match();start(r,p);
  ok(r.shadows.every(beast=>!r.inBaseFireRange(beast)));
+ const marked=[[7,7],[5,17],[11,27],[5,39],[9,1]];
+ for(const [side,mirror] of [false,true].entries())for(const [i,[x,y]] of marked.entries()){
+  const beast=r.shadows.find(shadow=>shadow.id===`s${side}${i}`);
+  eq([Math.floor(beast.x/CELL),Math.floor(beast.y/CELL)],[mirror?COLS-1-x:x,y]);
+  ok(fits(beast.x,beast.y));
+ }
  const base=r.bases[0];
  r.bases=[base];
- const beast={x:base.x+301,y:base.y};
+ const beast={x:base.x+251,y:base.y};
+ beast.home={...beast};
  const target={x:base.x,y:base.y};
  ok(!r.beastPathAllowed(beast,target));
- ok(!r.beastPathAllowed({x:base.x-301,y:base.y},beast));
+ ok(!r.beastPathAllowed({x:base.x-251,y:base.y},beast));
  r.moveBeast(beast,target,.1,200);
  ok(!r.inBaseFireRange(beast));
 });
@@ -430,7 +437,7 @@ Deno.test('a repairing defender in battle cannot block another player from hitti
  b.phase='battle';
  Object.assign(a,{x:base.x,y:base.y});
  r.siegeBases(3000);r.siegeBases(4000);
- eq(base.hp,base.maxHp-4);eq(r.score,[301,299]);
+ eq(base.hp,base.maxHp-2.5);eq(r.score,[301,299]);
 });
 Deno.test('team movement runs at 200 and archer and thief at 240 with half speed in bushes',()=>{
  const bush=BUSHES[0];
@@ -506,7 +513,6 @@ Deno.test('friendly main base aura covers PvE and summoned golems while shadow a
  const bossFight=r.battles.get(a.battle);
  bossFight.allies.forEach((unit,i)=>checkAura(unit,demoProfile(a,0)[i],30));
  const referenceBoss=makeCombat('boss-reference',[[a],[]],boss,BOSS_INTERVAL,new Map(),true);
- syncMonsterPower(referenceBoss,BOSS_INTERVAL);
  checkAura(bossFight.enemies[0],referenceBoss.enemies[0],0);
 });
 Deno.test('team and survival enforce a 300-unit sight boundary without changing chest totals or the team minimap',()=>{
@@ -528,6 +534,46 @@ Deno.test('team and survival enforce a 300-unit sight boundary without changing 
   Object.assign(b,{x:200,y:670});
   eq(r.snapshot(a,0).players.find(p=>p.id===b.id).x,undefined);
  }
+});
+Deno.test('team minimap shares sight from active allies, infantry and living forts without sharing scene coordinates',()=>{
+ const {r,p:[a,b,ally]}=match(4);start(r,r.players);
+ Object.assign(a,{x:0,y:0});
+ Object.assign(ally,{x:2000,y:0});
+ Object.assign(b,{x:2300,y:0});
+ const friend={id:'our-soldier',side:a.side,x:5000,y:0,hp:40};
+ const enemy={id:'enemy-soldier',side:b.side,x:5300,y:0,hp:40};
+ r.infantry=[friend,enemy];
+ const fort={...r.bases[0],side:a.side,x:7000,y:0};
+ r.bases=[fort];
+ r.shadows=[{id:'shadow',x:7300,y:0,phase:'walk'},{id:'out-of-range',x:7301,y:0,phase:'walk'}];
+ r.bosses=[{id:'boss',x:7275,y:0,phase:'walk'}];
+ const get=()=>r.snapshot(a,3000);
+ const markers=()=>new Map(get().mapUnits.map(unit=>[unit.id,unit.kind]));
+ const visible=markers();
+ eq(visible.get(b.id),'sealer');
+ eq(visible.get(friend.id),'infantry');eq(visible.get(enemy.id),'infantry');
+ eq(visible.get('shadow'),'shadow');eq(visible.get('boss'),'boss');
+ ok(!visible.has('out-of-range'));
+ const view=get();
+ eq(view.players.find(p=>p.id===b.id).x,undefined);
+ eq(view.infantry,[]);eq(view.shadows,[]);eq(view.bosses,[]);
+ ally.phase='battle';friend.hp=0;fort.hp=0;
+ for(const id of [b.id,friend.id,enemy.id,'shadow','boss'])ok(!markers().has(id));
+});
+Deno.test('waiting to respawn can spectate living allies and returns to the player on respawn',()=>{
+ const {r,p:[a,b,ally,enemy,other]}=match(6);start(r,r.players);
+ r.fall(a,3000);
+ eq(r.snapshot(a,3000).spectating,ally.id);
+ r.command(a,{type:'spectate',target:b.id},3001);
+ eq(r.snapshot(a,3001).spectating,ally.id);
+ r.command(a,{type:'spectate',target:other.id},3002);
+ eq(r.snapshot(a,3002).spectating,other.id);
+ r.encounter(other,enemy,3010);
+ ok(r.viewedBattle(a));
+ eq(r.battleSnapshot(a).commands,[]);
+ r.respawn(a,a.respawnAt);
+ eq(r.snapshot(a,13_000).spectating,undefined);
+ eq(r.viewedBattle(a),null);
 });
 Deno.test('nearest ally within 400 units; allies alone never fight; far enemy coordinates are omitted',()=>{
  const {r,p}=match(6);start(r,p);
@@ -637,13 +683,13 @@ Deno.test('five players spawn in front of each capital and warp together from bo
  for(const player of p){player.phase='dead';r.respawn(player,15000);}
  eq(points(p),starts);
 });
-Deno.test('mage deals five HP per second while summoner and druid deal three',()=>{
+Deno.test('mage deals 2.5 HP per second while summoner and druid deal 1.5 without infantry',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');
  for(const cls of ['mage','summoner','druid']){
   delete a.siege;a.baseCls=cls;base.hp=60;
   r.damageBase(base,a,3000);r.damageBase(base,a,4000);
-  eq(base.hp,cls==='mage'?55:57);
+  eq(base.hp,cls==='mage'?57.5:58.5);
  }
 });
 Deno.test('team streak callouts include both triple and its milestone and reset on falling',()=>{
@@ -826,7 +872,7 @@ Deno.test('rare boss spawns every two minutes at the rounded average level and s
  Object.assign(a,at);r.tick(BOSS_INTERVAL+1,0);
  const battle=r.battles.get(a.battle);
  ok(battle?.boss);eq(battle.enemies.length,1);eq(battle.enemies[0].hp,bossUnit(beast).hp);
- ok(Math.abs(battle.enemies[0].st.patk-bossUnit(beast).st.patk*1.1)<.001);
+ eq(battle.enemies[0].st.patk,bossUnit(beast).st.patk);
  battle.enemies[0].hp=0;r.recordFalls(battle,BOSS_INTERVAL+2);r.recordFalls(battle,BOSS_INTERVAL+3);
  eq(r.score,[350,240]);ok(r.events.at(-1).text.includes('นาทีที่ 4'));eq(beast.phase,'defeated');
  r.tick(BOSS_INTERVAL*2,0);eq(r.bosses.length,1);ok(r.bosses[0].sp!==beast.sp);
@@ -846,18 +892,18 @@ Deno.test('swordsman and summoner earn 8 for a shadow and 60 for a boss',()=>{
  eq(a.earned,68);eq([a.beastKills,a.bossKills],[1,1]);eq(r.score,[368,240]);
  }
 });
-Deno.test('team monsters grow every two minutes and shadow aura only applies in team mode',()=>{
+Deno.test('team shadows and bosses retain their base aura late in the match without time scaling',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const shadow=r.shadows[0],normal=makeCombat('normal',[[a],[]],shadow,0).enemies[0];
- r.encounter(a,shadow,3000,true);
+ r.encounter(a,shadow,BOSS_INTERVAL*3,true);
  const battle=r.battles.get(a.battle),beast=battle.enemies[0];
  eq(beast.hp,Math.round(normal.hp*1.5));eq(beast.st.pdef,Math.round(normal.st.pdef*1.5));
- syncMonsterPower(battle,BOSS_INTERVAL-1);eq(beast.st.patk,normal.st.patk);
- syncMonsterPower(battle,BOSS_INTERVAL*2);
- ok(Math.abs(beast.st.patk-normal.st.patk*1.2)<.001);
- ok(Math.abs(beast.st.pdef-Math.round(normal.st.pdef*1.5)*1.2)<.001);
- const scaled=beast.st.pdef;
- syncMonsterPower(battle,BOSS_INTERVAL*2);eq(beast.st.pdef,scaled);
+ eq(beast.st.patk,normal.st.patk);
+ r.spawnBoss(BOSS_INTERVAL*3);
+ const boss=r.bosses[0],reference=bossUnit(boss);
+ r.encounter(a,boss,BOSS_INTERVAL*3,true);
+ const bossFight=r.battles.get(a.battle).enemies[0];
+ for(const stat of ['hp','mp','patk','matk','pdef','mdef','spd'])eq(bossFight.st[stat],reference.st[stat]);
 });
 Deno.test('five new team chests spawn per wave and thieves and merchants earn 1.5 times the chest score',()=>{
  for(const career of ['merchant','thief']){
@@ -934,20 +980,32 @@ Deno.test('destroying a large base wins immediately even when trailing on score'
  ok(r.baseEffects.some(e=>e.baseId===capital.id&&e.kind==='collapse'));
  eq(r.score,[151,199]);eq(a.earned,51);
 });
-Deno.test('a shadow acquires at 1000, runs at 200 units per second and returns after five seconds or beyond 2000',()=>{
- for(const reason of ['time','distance']){
-  const {r,p:[a,b]}=match();start(r,[a,b]);
-  const beast=r.shadows[0];
-  beast.home=cellCenter(3,21);Object.assign(beast,beast.home);
-  r.shadows=[beast];r.bases=[];b.connected=false;
-  Object.assign(a,{x:beast.x+1001,y:beast.y});
-  r.tick(3000,0);eq(beast.pursuedId,undefined);
-  a.x=beast.x+1000;r.tick(3100,0);eq(beast.pursuedId,a.id);
-  a.x=beast.x+2000;r.tick(3200,.05);eq(beast.pursuedId,a.id);
-  ok(Math.abs(distance(beast,beast.home)-TEAM_SPEED*.05)<.001);
-  if(reason==='distance')a.x=beast.x+2001;
-  r.tick(reason==='time'?8100:3300,0);eq(beast.pursuedId,undefined);
-  r.tick(reason==='time'?8150:3350,.05);eq(distance(beast,beast.home),0);
+Deno.test('a team shadow waits at its post, detects under 300 units and abandons targets beyond its home range',()=>{
+ const {r,p:[a,b]}=match();start(r,[a,b]);
+ const beast=r.shadows[0],home=cellCenter(8,13);
+ Object.assign(beast,home,{home});
+ r.shadows=[beast];r.bases=[];b.connected=false;
+ Object.assign(a,{x:home.x+300,y:home.y});
+ for(let time=3000;time<=4000;time+=50)r.tick(time,.05);
+ eq(beast.pursuedId,undefined);eq(distance(beast,home),0);
+ a.x=home.x+299;r.tick(4050,.05);eq(beast.pursuedId,a.id);
+ ok(Math.abs(distance(beast,home)-TEAM_SPEED*.05)<.001);
+ r.tick(4100,.05);
+ r.tick(9100,0);eq(beast.pursuedId,a.id);
+ a.x=home.x+301;
+ ok(distance(beast,a)<300);
+ r.tick(9150,0);eq(beast.pursuedId,undefined);ok(beast.returning);
+ for(let time=9200;time<=10_000;time+=50)r.tick(time,.05);
+ eq(beast.returning,false);eq(distance(beast,home),0);
+});
+Deno.test('movement cannot take a team shadow more than 300 units from home',()=>{
+ const {r,p}=match();start(r,p);r.bases=[];
+ const beast=r.shadows[0],home=cellCenter(8,13);
+ Object.assign(beast,home,{home});
+ const outside={x:home.x+360,y:home.y};
+ for(let i=0;i<100;i++){
+  r.moveBeast(beast,outside,.05,TEAM_SPEED);
+  ok(distance(beast,home)<=300);
  }
 });
 Deno.test('boss runs at 200 units per second, switches to the nearest visible sealer and patrols without a target',()=>{
