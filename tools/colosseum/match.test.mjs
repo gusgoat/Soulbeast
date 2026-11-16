@@ -472,17 +472,53 @@ Deno.test('a merchant bot defends a threatened fort and repairs once the infantr
  const base=r.bases.find(b=>b.id==='1-7');
  for(const fort of r.bases)fort.fireAt=Infinity;
  spawnInfantry(r,1);
- const enemy=r.infantry.find(unit=>unit.side===human.side);
+ const enemy=r.infantry.find(unit=>unit.side===human.side&&unit.lane===4);
  r.infantry=[enemy];
  Object.assign(bot,{baseCls:'merchant',x:base.x,y:base.y});
- Object.assign(enemy,{x:base.x-50,y:base.y,hp:4});
+ Object.assign(enemy,{x:base.x-50,y:base.y,hp:4,waypoint:enemy.path.findIndex(point=>point.baseId===base.id)});
  base.hp-=5;
  r.tick(3000,0);
- eq(bot.bot.goal.type,'fightInfantry');
+ eq(bot.bot.defense?.type,'fightInfantry');
  eq(bot.repair,undefined);
  r.tick(4000,0);eq(enemy.hp,0);
  r.tick(5000,0);eq(bot.repair?.baseId,base.id);
  r.tick(7500,0);eq(base.hp,base.maxHp-4);
+});
+
+Deno.test('team defense sends the first bot able to reach the approaching wave',()=>{
+ const {r}=match(1), nearby=r.addBot(1,10), ranged=r.addBot(1,10);
+ r.join({name:'Ally',cls:'mage',lv:10},null,0);
+ start(r,r.players);
+ const fort=r.bases.find(b=>b.id==='1-7');
+ spawnInfantry(r,1);
+ const soldier=r.infantry.find(unit=>unit.side===0&&unit.lane===4);
+ r.infantry=[soldier];r.shadows=[];r.chests=[];
+ for(const b of r.bases)b.fireAt=Infinity;
+ Object.assign(soldier,{x:fort.x-265,y:fort.y,waypoint:soldier.path.findIndex(p=>p.baseId===fort.id)});
+ Object.assign(nearby,{baseCls:'swordsman',x:fort.x-150,y:fort.y});
+ Object.assign(ranged,{baseCls:'archer',x:fort.x-45,y:fort.y});
+ r.tick(3000,0);
+ eq(nearby.bot.defense,undefined);
+ eq(ranged.bot.defense?.point,soldier);
+ eq(ranged.bot.defense?.fort,fort);
+ eq(fort.hp,fort.maxHp);
+ r.tick(4000,0);
+ eq(soldier.hp,36);
+});
+
+Deno.test('merchant takes a safe chest along the repair route, then resumes repairs',()=>{
+ const {r}=match(1),bot=r.addBot(1,10);
+ start(r,r.players);
+ const fort=r.bases.find(b=>b.id==='1-7');
+ const chest={id:'detour',x:fort.x-140,y:fort.y,points:10,opened:false};
+ r.chests=[chest];r.shadows=[];
+ Object.assign(bot,{baseCls:'merchant',x:fort.x-145,y:fort.y});
+ fort.hp=fort.maxHp-10;
+ r.tick(3000,0);
+ ok(chest.opened);eq(bot.earned,15);
+ bot.x=fort.x-40;
+ r.tick(3250,0);
+ eq(bot.repair?.baseId,fort.id);
 });
 
 Deno.test('a summoner bot moves into heal range and supports a wounded allied soldier',()=>{

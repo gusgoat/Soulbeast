@@ -4,7 +4,7 @@ import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=team-minimap-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=team-bot-tactics-1';
+import {dispatchTeamDefense, resetBotRoute, stepBot} from './practice.mjs?v=team-bot-defense-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
@@ -885,6 +885,7 @@ export class Match {
     this.battles.delete(b.id);
    }
   }
+  if(!this.solo&&this.players.some(p=>p.bot))dispatchTeamDefense(this,now);
   for(const p of this.players){
    if(!this.solo&&!p.retired&&p.phase==='dead'&&now>=p.respawnAt)this.respawn(p,now);
    if(!p.connected)cancelRecall(p);

@@ -1,4 +1,4 @@
-import {BASE_FIRE_RANGE, BASE_INFANTRY_SUPPORT_RANGE, CHEST_TARGET, COLS, FLAT, HEAL_TARGET, INFANTRY_HEAL_RANGE, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, WOUNDED_INFANTRY, canRaidBase, canSeeOpponent, cellCenter, distance, hasInfantrySupport, indexAt, nextCell, walkSpeed} from './arena.mjs?v=team-bot-tactics-1';
+import {BASE_FIRE_RANGE, BASE_INFANTRY_SUPPORT_RANGE, CHEST_TARGET, COLS, FLAT, HEAL_TARGET, INFANTRY_HEAL_RANGE, RADIUS, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, WOUNDED_INFANTRY, canRaidBase, canSeeOpponent, cellCenter, distance, hasInfantrySupport, indexAt, nextCell, walkSpeed} from './arena.mjs?v=team-bot-tactics-1';
 import {inSight} from './sight.mjs';
 import {fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 
@@ -30,19 +30,99 @@ const WAVE_FOLLOW_RANGE=105;
 const activeInfantry=(bot,match)=>match.infantry.filter(unit=>unit.side===bot.side&&unit.hp>0);
 const canSee=(observer,target)=>inSight(observer,target)&&canSeeOpponent(observer,target);
 
-function threatenedBase(match,bot,bases,opponents){
- const {role}=bot.bot;
+const routeCells=new Map(patrolTiles.map(point=>[indexAt(point),point]));
+const routeEdges=new Map([...routeCells].map(([key,p])=>[key,
+ [[-1,0],[1,0],[0,-1],[0,1]].map(([dx,dy])=>routeCells.get((p.row+dy)*COLS+p.col+dx))
+  .filter(q=>q&&Math.abs(q.col-p.col)+Math.abs(q.row-p.row)===1&&TEAM_ARENA.clearPath(p,q,RADIUS))
+  .map(q=>[indexAt(q),distance(p,q)*(1+(Number(TEAM_ARENA.bushAt(p)!==null)+Number(TEAM_ARENA.bushAt(q)!==null))/2)])]));
+const routesToCell=new Map();
+
+function routesTo(target){
+ const dest=indexAt(target);
+ if(routesToCell.has(dest))return routesToCell.get(dest);
+ const cost=new Map([[dest,0]]),next=new Map(),queue=[dest],queued=new Set(queue);
+ for(let i=0;i<queue.length;i++){
+  const cell=queue[i];
+  queued.delete(cell);
+  for(const [neighbor,length] of routeEdges.get(cell)??[]){
+   const candidate=cost.get(cell)+length;
+   if(candidate+0.001>=(cost.get(neighbor)??Infinity))continue;
+   cost.set(neighbor,candidate);next.set(neighbor,cell);
+   if(!queued.has(neighbor)){queued.add(neighbor);queue.push(neighbor);}
+  }
+ }
+ const route={cost,next};
+ routesToCell.set(dest,route);
+ return route;
+}
+
+function routeDistance(from,to){
+ const start=indexAt(from),dest=indexAt(to);
+ if(start===dest||TEAM_ARENA.clearPath(from,to,RADIUS))return distance(from,to);
+ const route=routesTo(to);
+ if(!route.cost.has(start))return Infinity;
+ return distance(from,routeCells.get(start))+route.cost.get(start)+distance(routeCells.get(dest),to);
+}
+
+function defenseTime(bot,unit){
+ if(RAID_TARGET(bot,unit)&&canSeeOpponent(bot,unit))return 0;
+ // Route costs include bushes. Use each career's speed on open ground.
+ const speed=walkSpeed(TEAM_ARENA,bot)*(TEAM_ARENA.bushAt(bot)===null?1:2);
+ return routeDistance(bot,unit)/speed;
+}
+
+export function dispatchTeamDefense(match,now){
+ if(match.nextDefensePlanAt>now)return;
+ match.nextDefensePlanAt=now+250;
+ const bots=match.players.filter(p=>p.bot);
+ for(const p of bots)delete p.bot.defense;
+ match.threatenedForts=new Set();
+ const forts=new Map(match.bases.filter(b=>b.hp>0).map(b=>[b.id,b]));
+ const infantry=match.infantry.filter(u=>u.hp>0);
+ const walkers=match.players.filter(p=>p.connected&&p.phase==='walk'&&p.hp>0&&now>=p.safeUntil);
+ const threats=new Map(),scouts=[...walkers,...infantry,...forts.values()];
+ for(const unit of infantry){
+  const goal=unit.path.find((point,i)=>i>=unit.waypoint&&forts.has(point.baseId));
+  const fort=unit.target?.tier&&unit.target.hp>0?unit.target:forts.get(goal?.baseId);
+  if(!fort||fort.side===unit.side||distance(fort,unit)>600)continue;
+  const seen=scouts.some(q=>q.side===fort.side&&canSee(q,unit));
+  if(!seen)continue;
+  const front=threats.get(fort);
+  if(!front||distance(fort,unit)<distance(fort,front))threats.set(fort,unit);
+ }
+ const available=new Set(walkers.filter(p=>p.bot&&!p.recallEndsAt));
+ const ordered=[...threats].sort(([a,u],[b,v])=>Number(b.main)-Number(a.main)||
+  distance(a,u)-distance(b,v)||a.hp/a.maxHp-b.hp/b.maxHp);
+ for(const [fort,unit] of ordered){
+  match.threatenedForts.add(fort.id);
+  let defender,time=Infinity;
+  for(const bot of available)if(bot.side===fort.side){
+   const eta=defenseTime(bot,unit);
+   if(eta<time){defender=bot;time=eta;}
+  }
+  if(!defender)continue;
+  available.delete(defender);
+  defender.bot.defense={type:'fightInfantry',point:unit,fort};
+ }
+}
+
+function threatenedPlayer(match,bot,bases,opponents){
  const threats=bases.flatMap(base=>{
-  if(!base.main&&role!=='guard'&&distance(bot,base)>650)return [];
-  const soldiers=match.infantry.filter(unit=>unit.side!==bot.side&&unit.hp>0&&
-   (unit.target===base||distance(base,unit)<=BASE_FIRE_RANGE&&canSee(base,unit)&&match.arena.clearPath(base,unit)));
-  const players=opponents.filter(p=>p.siege?.id===base.id||
-   distance(base,p)<=BASE_FIRE_RANGE&&(canSee(bot,p)||canSee(base,p))&&match.arena.clearPath(base,p));
-  const soldier=nearestTo(bot,soldiers),enemy=nearestTo(bot,players);
-  return soldier||enemy?[{base,type:soldier?'fightInfantry':'intercept',point:soldier||enemy}]:[];
+  if(!base.main&&bot.bot.role!=='guard'&&distance(bot,base)>650)return [];
+  const point=nearestTo(bot,opponents.filter(p=>p.siege?.id===base.id||
+   distance(base,p)<=BASE_FIRE_RANGE&&(canSee(bot,p)||canSee(base,p))&&match.arena.clearPath(base,p)));
+  return point?[{base,type:'intercept',point}]:[];
  });
  return threats.sort((a,b)=>Number(b.base.main)-Number(a.base.main)||
   distance(bot,a.point)-distance(bot,b.point))[0];
+}
+
+function merchantDetour(match,bot,fort,enemies,pick){
+ if(bot.repair||fort.hp<fort.maxHp*.6||match.threatenedForts?.has(fort.id)||
+  enemies.some(p=>distance(p,fort)<=320&&canSee(fort,p)))return null;
+ const direct=routeDistance(bot,fort);
+ return pick(match.chests.filter(chest=>!chest.opened&&canSee(bot,chest)&&
+  distance(bot,chest)<=220&&routeDistance(bot,chest)+routeDistance(chest,fort)<=direct+240));
 }
 
 function pushWithInfantry(match,bot,allies,pick){
@@ -76,11 +156,15 @@ function chooseObjective(match,bot,now){
  if(heal)return {type:'recover',point:heal};
  const career=bot.baseCls||bot.cls;
  const enemies=match.players.filter(p=>p.side!==bot.side&&p.connected&&p.phase==='walk'&&now>=p.safeUntil);
- const defense=threatenedBase(match,bot,healingBases,enemies);
+ const defense=threatenedPlayer(match,bot,healingBases,enemies);
  if(defense)return defense;
  const repair=career==='merchant'&&pick(healingBases.filter(b=>b.hp<b.maxHp&&
   !match.players.some(p=>p!==bot&&p.repair?.baseId===b.id)));
- if(repair)return {type:'repairBase',point:repair};
+ if(repair){
+  const chest=merchantDetour(match,bot,repair,enemies,pick);
+  if(chest)return {type:'chest',point:chest};
+  if(!match.threatenedForts?.has(repair.id))return {type:'repairBase',point:repair};
+ }
 
  const visible=p=>canSee(bot,p);
  const opponents=enemies.filter(visible);
@@ -92,6 +176,11 @@ function chooseObjective(match,bot,now){
  const beastHunter=role==='hunter'||career==='swordsman'||career==='summoner';
  const boss=beastHunter&&pick(match.bosses.filter(active));
  if(boss)return {type:'hunt',point:boss};
+ if(career==='swordsman'&&bot.hp>=bot.maxHp*.72){
+  const shadow=pick(match.shadows.filter(p=>p.phase==='walk'&&now>=(p.safeUntil||0)&&
+   distance(bot,p)<=570&&routeDistance(bot,p)<=760));
+  if(shadow)return {type:'hunt',point:shadow};
+ }
  const chest=pick(match.chests.filter(p=>!p.opened&&visible(p)&&(role!=='guard'||distance(bot,p)<160)));
  if(chest&&['thief','merchant'].includes(career))return {type:'chest',point:chest};
 
@@ -124,6 +213,7 @@ function currentObjective(match, bot, now) {
   goal?.type==='raid'&&(!canRaidBase(bot.side,goal.point,match.bases)||!hasInfantrySupport(goal.point,bot.side,match.infantry,BASE_FIRE_RANGE)) ||
   (goal?.type==='fightInfantry'||goal?.type==='followInfantry')&&goal.point.hp<=0 ||
   goal?.type==='healInfantry'&&!WOUNDED_INFANTRY(bot,goal.point) ||
+  goal?.type==='repairBase'&&match.threatenedForts?.has(goal.point.id) ||
   (goal?.type==='recover'||goal?.type==='repairBase')&&(goal.point.side!==bot.side||goal.point.hp<=0||goal.type==='repairBase'&&goal.point.hp>=goal.point.maxHp) ||
   goal?.type === 'hunt' && (goal.point.claimed || goal.point.phase !== 'walk') ||
   goal?.type === 'intercept' && (goal.point.phase !== 'walk' || !canSeeOpponent(bot, goal.point)) ||
@@ -136,8 +226,9 @@ function currentObjective(match, bot, now) {
  return brain.goal;
 }
 
-function walkToward(bot, point, dt) {
+function walkToward(bot, point, dt, defense=false) {
  const brain = bot.bot;
+ if(defense&&TEAM_ARENA.clearPath(bot,point,RADIUS))return walkStep(bot,point,dt,TEAM_ARENA);
  const destination = indexAt(point);
  // Finish a step to the center of a tile before turning into the next
  // corridor. Steering diagonally from an edge can wedge a bot at a corner.
@@ -147,7 +238,7 @@ function walkToward(bot, point, dt) {
   if (here === destination) brain.waypoint = {x: point.x, y: point.y};
   else if (distance(bot, center) > 2) brain.waypoint = center;
   else {
-   const next = nextCell(here, destination);
+   const next = defense?routesTo(point).next.get(here)??here:nextCell(here,destination);
    brain.waypoint = cellCenter(next % COLS, Math.floor(next / COLS));
   }
  }
@@ -246,7 +337,13 @@ export function stepBot(match, bot, now, dt) {
  if (now < bot.safeUntil) return;
  if (match.solo) return stepSurvivalBot(match,bot,now,dt);
  const brain = bot.bot;
- const {type, point} = currentObjective(match, bot, now);
+ const defense=brain.defense?.point.hp>0?brain.defense:null;
+ if(brain.defending!==defense?.point){
+  brain.defending=defense?.point;
+  brain.waypoint=null;
+  brain.blockedAt=null;
+ }
+ const {type, point}=defense||currentObjective(match,bot,now);
  if(bot.repair){
   if(type==='repairBase'&&bot.repair.baseId===point.id)return;
   match.command(bot,{type:'stopRepair'},now);
@@ -266,7 +363,7 @@ export function stepBot(match, bot, now, dt) {
   return;
  }
  const x=bot.x,y=bot.y;
- walkToward(bot, point, dt);
+ walkToward(bot,point,dt,Boolean(defense));
  if(Math.hypot(bot.x-x,bot.y-y)>.02)brain.blockedAt=null;
  else if(now-(brain.blockedAt??=now)>700){
   brain.skipPoint=point;brain.skipUntil=now+3500;
