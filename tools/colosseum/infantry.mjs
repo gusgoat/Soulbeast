@@ -1,8 +1,9 @@
-import {BASES, FLAT, RADIUS, TEAM_ARENA, TEAM_SPEED, cellCenter, distance, walkSpeed, canRaidBase} from './arena.mjs?v=team-minimap-1';
+import {BASES, FLAT, RADIUS, TEAM_ARENA, TEAM_SPEED, cellCenter, distance, walkSpeed, canRaidBase} from './arena.mjs?v=infantry-siege-1';
 
 export const INFANTRY_WAVE_MS=30_000;
 const AGGRO=300, LEASH=600, STRIKE_RANGE=75, STRIKE_MS=1000;
 const START_HP=40, HP_STEP=5, HP_INTERVAL_MS=120_000;
+const DAMAGE_INTERVAL_MS=240_000;
 const LANES=[[1,3],[1,4],[2,5],[2,6],[8,7]];
 const teams=[0,1];
 const neighbors=[[-1,0],[1,0],[0,-1],[0,1]];
@@ -177,15 +178,16 @@ export function stepInfantry(room,now,dt){
    strikes.push({unit,target});
   }
  }
+ const damage=1+Math.floor(Math.max(0,now-room.started)/DAMAGE_INTERVAL_MS);
  for(const {unit,target} of strikes){
   if(room.phase!=='match')break;
   if(target.hp<=0)continue;
   if(target.tier){
-   if(canRaidBase(unit.side,target,room.bases))room.hitBase(target,unit,1,now);
+   if(canRaidBase(unit.side,target,room.bases))room.hitBase(target,unit,damage,now);
   }else if(target.infantry){
-   target.hp=Math.max(0,target.hp-1);
+   target.hp=Math.max(0,target.hp-damage);
    room.baseEffect('infantry-slash',target,unit,now,300);
   }
-  else if(active(target,now))room.hitWalker(target,1,now);
+  else if(active(target,now))room.hitWalker(target,damage,now);
  }
 }

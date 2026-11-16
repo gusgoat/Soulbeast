@@ -1,18 +1,21 @@
 import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_SCORE_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile, WARP_ACCESS, WARP_TARGET,
- TEAM_ARENA, bushAt, capitalSpawn, cellCenter, distance, maze, spawns, warpArrival} from './arena.mjs?v=team-minimap-1';
+ TEAM_ARENA, bushAt, capitalSpawn, cellCenter, distance, maze, spawns, warpArrival} from './arena.mjs?v=infantry-siege-1';
 import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=team-minimap-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=team-minimap-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=infantry-siege-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {INFANTRY_WAVE_MS, spawnInfantry, stepInfantry} from './infantry.mjs?v=infantry-audio-1';
+import {INFANTRY_WAVE_MS, spawnInfantry, stepInfantry} from './infantry.mjs?v=infantry-siege-1';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const PLAYER_DEATH_POINTS=30;
 const INFANTRY_HIT_SCORE_INTERVAL=4000, INFANTRY_KILL_POINTS=5;
+const INFANTRY_DAMAGE={archer:4,swordsman:5,thief:5,mage:3,gunner:3,druid:3,summoner:2,merchant:4,gladiator:4};
+const INFANTRY_HEAL_RANGE=180, INFANTRY_HEAL_HP=2, INFANTRY_HEAL_MS=1000;
+const siegeScoreBonus=p=>Math.floor(p.earned/75);
 const BASE_INFANTRY_SUPPORT_RANGE=300;
 const BOSS_SCORE_LOSS=60;
 const hunterBonus=player=>['swordsman','summoner'].includes(player.baseCls);
@@ -695,7 +698,7 @@ export class Match {
      }
     }
    }
-   if(!walking){delete p.siege;delete p.infantryStrike;delete p.baseRecovery;continue;}
+   if(!walking){delete p.siege;delete p.infantryStrike;delete p.nextInfantryHealAt;delete p.baseRecovery;continue;}
    const home=this.bases.filter(b=>HEAL_TARGET(p,b)).sort((a,b)=>b.points-a.points||distance(p,a)-distance(p,b))[0];
    if(!home)delete p.baseRecovery;
    else{
@@ -711,16 +714,22 @@ export class Match {
      if(p.hp>hp||p.mp>mp||petsRecovered)p.healUntil=now+850;
     }
    }
-   const canAttack=!p.repair&&!p.recallEndsAt&&fresh(p,now);
-   const soldier=canAttack&&nearest(p,this.infantry.filter(unit=>unit.hp>0&&RAID_TARGET(p,unit)&&this.arena.canSeeOpponent(p,unit)));
-   if(soldier){
+   const canAttack=p.hp>0&&!p.repair&&!p.recallEndsAt&&fresh(p,now);
+   const base=canAttack&&nearest(p,this.bases.filter(b=>RAID_TARGET(p,b)&&canRaidBase(p.side,b,this.bases)));
+   if(!base){
     delete p.siege;
-    this.attackInfantry(p,soldier,now);
+    const soldier=canAttack&&nearest(p,this.infantry.filter(unit=>unit.hp>0&&RAID_TARGET(p,unit)&&this.arena.canSeeOpponent(p,unit)));
+    if(soldier){
+     delete p.nextInfantryHealAt;
+     this.attackInfantry(p,soldier,now);
+    }else{
+     delete p.infantryStrike;
+     this.healInfantry(p,now,canAttack);
+    }
     continue;
    }
    delete p.infantryStrike;
-   const base=canAttack&&nearest(p,this.bases.filter(b=>RAID_TARGET(p,b)&&canRaidBase(p.side,b,this.bases)));
-   if(!base){delete p.siege;continue;}
+   delete p.nextInfantryHealAt;
    const defender=nearest(p,this.players.filter(q=>fresh(q,now)&&q.repair?.baseId===base.id&&
     REPAIR_TARGET(q,base)&&this.arena.canSeeOpponent(p,q)&&this.arena.canSeeOpponent(q,p)&&this.arena.clearPath(p,q)));
    if(defender){
@@ -753,6 +762,17 @@ export class Match {
    this.baseEffect('tower',base,target,now,BASE_BOLT_MS);
   }
  }
+ healInfantry(player,now,canAct){
+  const soldier=canAct&&(player.baseCls||player.cls)==='summoner'&&this.infantry.filter(unit=>
+   unit.side===player.side&&unit.hp>0&&unit.hp<unit.maxHp&&distance(player,unit)<=INFANTRY_HEAL_RANGE)
+   .sort((a,b)=>a.hp-b.hp||distance(player,a)-distance(player,b))[0];
+  if(!soldier){delete player.nextInfantryHealAt;return;}
+  player.nextInfantryHealAt??=now+INFANTRY_HEAL_MS;
+  if(now<player.nextInfantryHealAt)return;
+  player.nextInfantryHealAt=now+INFANTRY_HEAL_MS;
+  soldier.hp=Math.min(soldier.maxHp,soldier.hp+INFANTRY_HEAL_HP);
+  soldier.healUntil=now+850;
+ }
  attackInfantry(player,soldier,now){
   if(soldier.hp<=0)return;
   if(player.infantryStrike?.id!==soldier.id)player.infantryStrike={id:soldier.id,nextAt:now+BASE_ATTACK_MS};
@@ -760,7 +780,8 @@ export class Match {
   if(strike.nextAt>now)return;
   strike.nextAt+=BASE_ATTACK_MS;
   const {effect}=siegeProfile(player);
-  soldier.hp=Math.max(0,soldier.hp-(['archer','gunner'].includes(effect)?6:4));
+  const damage=(INFANTRY_DAMAGE[player.baseCls||player.cls]??4)+siegeScoreBonus(player);
+  soldier.hp=Math.max(0,soldier.hp-damage);
   player.infantryAttackTime=(player.infantryAttackTime??0)+BASE_ATTACK_MS;
   if(player.infantryAttackTime>=INFANTRY_HIT_SCORE_INTERVAL){
    player.infantryAttackTime-=INFANTRY_HIT_SCORE_INTERVAL;
@@ -784,7 +805,7 @@ export class Match {
    }
    siege.nextHitAt+=BASE_ATTACK_MS;
    this.baseEffect(effect,base,p,now,BASE_ATTACK_MS);
-   if(this.hitBase(base,p,hitDamage,now))return;
+   if(this.hitBase(base,p,hitDamage+siegeScoreBonus(p),now))return;
   }
  }
  hitBase(base,p,damage,now){
@@ -1006,8 +1027,8 @@ export class Match {
    respawnAt:p.respawnAt,finishedAt:this.finishedAt,ack:p.appliedSeq??-1,input:[p.dx,p.dy],battleId:p.phase==='battle'?p.battle:null,
    shadows:this.shadows.filter(b=>b.phase==='walk'&&inSight(viewer,b)).map(({id,x,y,sp,rare,lv,label})=>({id,x,y,sp,rare,lv,label})),
    infantry:this.infantry.filter(unit=>unit.hp>0&&inSight(viewer,unit)&&
-    (unit.side===p.side||canSeeOpponent(viewer,unit))).map(({id,x,y,side,hp,maxHp,dir,pose,frame})=>
-    ({id,x,y,side,hp,maxHp,dir,pose,frame,infantry:true})),
+    (unit.side===p.side||canSeeOpponent(viewer,unit))).map(({id,x,y,side,hp,maxHp,dir,pose,frame,healUntil})=>
+    ({id,x,y,side,hp,maxHp,dir,pose,frame,infantry:true,...(healUntil>now?{healUntil}:{})})),
    bosses:this.bosses.filter(b=>!b.claimed&&inSight(viewer,b)).map(({id,x,y,sp,boss,lv,label,hp,maxHp,phase})=>({id,x,y,sp,boss,lv,label,hp,maxHp,phase})),
    chests:this.chests.filter(c=>!c.opened&&inSight(viewer,c)).map(({id,x,y})=>({id,x,y})),
    chestsLeft:this.chests.filter(c=>!c.opened).length,chestsTotal:this.chests.length,

@@ -181,7 +181,7 @@ export const {bushAt,canSeeOpponent,passable,fits,clearPath,move,movePlayer,next
 export function siegeProfile(p){
  const cls=p.baseCls||p.cls;
  if(cls==='gunner'||cls==='archer')return {range:BASE_FIRE_RANGE,effect:cls};
- if(cls==='mage'||cls==='summoner'||cls==='druid')return {range:150,effect:'magic'};
+ if(cls==='mage'||cls==='summoner'||cls==='druid')return {range:180,effect:'magic'};
  return {range:75,effect:cls==='merchant'?'hammer':'melee'};
 }
 export const RAID_TARGET=(p,b)=>p.side!==b.side&&distance(p,b)<=siegeProfile(p).range&&clearPath(p,b);

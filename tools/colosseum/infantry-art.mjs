@@ -1,4 +1,4 @@
-import {FLAT} from './arena.mjs?v=team-minimap-1';
+import {FLAT} from './arena.mjs?v=infantry-siege-1';
 
 const sheets=new Map();
 const teams=['sapphire','ruby'];

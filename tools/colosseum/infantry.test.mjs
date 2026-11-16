@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {Match} from './match.mjs';
-import {BASE_FIRE_RANGE, BASE_BOLT_MS, COLS, cellCenter, distance, FLAT} from './arena.mjs';
+import {BASE_FIRE_RANGE, BASE_BOLT_MS, COLS, cellCenter, distance, FLAT, RAID_TARGET, siegeProfile} from './arena.mjs';
 import {spawnInfantry, stepInfantry} from './infantry.mjs';
 import {siegeAudio} from './siege-audio.mjs';
 
@@ -144,12 +144,155 @@ Deno.test('soldier priorities, automatic sealer hits and damage rates use the ov
  room.attackInfantry(red,a,6200);
  const before=a.hp;
  room.attackInfantry(red,a,7200);
- assert.equal(a.hp,before-6);
+ assert.equal(a.hp,before-4);
  b.hp=100;
  room.attackInfantry(blue,b,7300);
  room.attackInfantry(blue,b,8300);
- assert.equal(b.hp,96);
+ assert.equal(b.hp,97);
  assert.equal(room.battles.size,0);
+});
+
+Deno.test('sealers attack an eligible fort before a nearer enemy soldier',()=>{
+ const {room,blue,red}=match();
+ spawnInfantry(room,1);
+ const base=room.bases.find(b=>b.id==='1-7');
+ const enemy=room.infantry.find(unit=>unit.side===red.side);
+ room.infantry=[enemy];
+ for(const fort of room.bases)fort.fireAt=Infinity;
+ Object.assign(blue,{x:base.x-160,y:base.y,safeUntil:0});
+ Object.assign(enemy,{x:base.x-120,y:base.y});
+ red.phase='battle';
+ assert.ok(RAID_TARGET(blue,base));
+ room.siegeBases(3000);
+ room.siegeBases(4000);
+ assert.equal(blue.siege?.id,base.id);
+ assert.equal(base.hp,base.maxHp-2.5);
+ assert.equal(enemy.hp,40);
+ base.hp=0;
+ room.siegeBases(5000);
+ room.siegeBases(6000);
+ assert.equal(blue.siege,undefined);
+ assert.equal(enemy.hp,37);
+});
+
+Deno.test('magic careers can attack from 180 units, including promoted careers',()=>{
+ const {room}=match();
+ const base=room.bases.find(b=>b.id==='1-7');
+ for(const [baseCls,cls] of [['mage','archmage'],['druid','druid'],['summoner','summoner']]){
+  const player={baseCls,cls,side:0,x:base.x-180,y:base.y};
+  assert.deepEqual(siegeProfile(player),{range:180,effect:'magic'});
+  assert.ok(RAID_TARGET(player,base));
+  player.x--;
+  assert.ok(!RAID_TARGET(player,base));
+ }
+});
+
+Deno.test('infantry damage gains one HP per second every four minutes against all target types',()=>{
+ const {room,red,blue}=match();
+ spawnInfantry(room,1);
+ const base=room.bases.find(b=>b.id==='1-7');
+ const soldier=room.infantry.find(unit=>unit.id==='infantry-1-0-4');
+ const enemy=room.infantry.find(unit=>unit.side===red.side);
+ Object.assign(soldier,{x:base.x-60,y:base.y});
+ Object.assign(enemy,{x:base.x-100,y:base.y});
+ Object.assign(red,{x:base.x-35,y:base.y,safeUntil:0});
+ room.infantry=[soldier];
+ blue.phase='battle';
+ for(const [before,after,damage] of [[239_999,240_000,2],[479_999,480_000,3],[719_999,720_000,4]]){
+  for(const [target,at] of [[enemy,before-2000],[base,after],[red,after+2000]]){
+   room.infantry=target===enemy?[soldier,enemy]:[soldier];
+   soldier.waypoint=target===base?soldier.path.findIndex(point=>point.baseId===base.id):soldier.path.length;
+   delete soldier.nextHitAt;
+   stepInfantry(room,at-1000,0);
+   const hp=target.hp;
+   stepInfantry(room,at,0);
+   assert.equal(target.hp,hp-(target===enemy?damage-1:damage),target.id);
+  }
+ }
+});
+
+Deno.test('sealer infantry damage follows career and uses current personal score thresholds',()=>{
+ const {room,blue,red}=match();
+ spawnInfantry(room,1);
+ const enemy=room.infantry.find(unit=>unit.side===red.side);
+ const careers={archer:4,swordsman:5,thief:5,mage:3,gunner:3,druid:3,summoner:2,merchant:4,gladiator:4};
+ for(const [baseCls,damage] of Object.entries(careers)){
+  for(const [earned,bonus] of [[74,0],[75,1],[149,1],[150,2]]){
+   Object.assign(blue,{baseCls,cls:'promoted',earned,infantryAttackTime:0});
+   enemy.hp=enemy.maxHp;
+   delete blue.infantryStrike;
+   room.attackInfantry(blue,enemy,3000);
+   assert.equal(enemy.hp,enemy.maxHp);
+   room.attackInfantry(blue,enemy,4000);
+   assert.equal(enemy.hp,enemy.maxHp-damage-bonus,baseCls+' at '+earned);
+  }
+ }
+});
+
+Deno.test('personal score boosts fort damage and unsupported attacks still deal half',()=>{
+ const {room,blue}=match();
+ spawnInfantry(room,1);
+ const base=room.bases.find(b=>b.id==='1-7');
+ const support=room.infantry.find(unit=>unit.side===blue.side);
+ Object.assign(support,{x:base.x,y:base.y});
+ blue.earned=150;
+ room.damageBase(base,blue,3000);
+ room.damageBase(base,blue,4000);
+ assert.equal(base.hp,base.maxHp-7);
+ support.hp=0;
+ blue.earned=0;
+ room.damageBase(base,blue,5000);
+ assert.equal(base.hp,base.maxHp-7-2.5);
+ blue.earned=150;
+ room.damageBase(base,blue,6000);
+ assert.equal(base.hp,base.maxHp-7-2.5-3.5);
+});
+
+Deno.test('summoner attacks a fort, then an enemy, then heals the lowest living ally in range',()=>{
+ const {room,blue,red}=match();
+ spawnInfantry(room,1);
+ const base=room.bases.find(b=>b.id==='1-7');
+ const [low,near,out,fallen]=room.infantry.filter(unit=>unit.side===blue.side);
+ const enemy=room.infantry.find(unit=>unit.side===red.side);
+ room.infantry=[low,near,out,fallen,enemy];
+ for(const fort of room.bases)fort.fireAt=Infinity;
+ Object.assign(blue,{baseCls:'summoner',x:base.x-160,y:base.y,safeUntil:0});
+ red.phase='battle';
+ Object.assign(low,{x:blue.x-180,y:blue.y,hp:22,maxHp:25});
+ Object.assign(near,{x:blue.x,y:blue.y,hp:23,maxHp:25});
+ Object.assign(out,{x:blue.x-181,y:blue.y,hp:1});
+ Object.assign(fallen,{x:blue.x,y:blue.y,hp:0});
+ Object.assign(enemy,{x:blue.x+40,y:blue.y});
+ room.siegeBases(3000);
+ room.siegeBases(4000);
+ assert.equal(base.hp,base.maxHp-3);
+ assert.equal(enemy.hp,40);
+ assert.equal(low.hp,22);
+ base.hp=0;
+ room.siegeBases(5000);
+ room.siegeBases(6000);
+ assert.equal(enemy.hp,38);
+ assert.equal(low.hp,22);
+ enemy.hp=0;
+ room.siegeBases(7000);
+ room.siegeBases(7999);
+ assert.equal(low.hp,22);
+ room.siegeBases(8000);
+ assert.equal(low.hp,24);
+ assert.ok(room.snapshot(blue,8000).infantry.find(unit=>unit.id===low.id).healUntil>8000);
+ room.siegeBases(9000);
+ assert.equal(near.hp,25);
+ room.siegeBases(10_000);
+ assert.equal(low.hp,25);
+ room.siegeBases(11_000);
+ assert.equal(blue.nextInfantryHealAt,undefined);
+ assert.equal(out.hp,1);
+ assert.equal(fallen.hp,0);
+ blue.baseCls='druid';
+ near.hp=20;
+ room.siegeBases(12_000);
+ room.siegeBases(13_000);
+ assert.equal(near.hp,20);
 });
 
 Deno.test('infantry hits use battle weapon clips, and corresponding tower hits use siege clips',()=>{
