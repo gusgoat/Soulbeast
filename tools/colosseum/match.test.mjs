@@ -1,4 +1,4 @@
-import {ASSIST, BASES, BASE_BOLT_MS, TEAM_SPEED, BOSS_INTERVAL, BUSHES, CELL, COLS, WARP_PADS, MATCH_MS, OBSTACLES, RADIUS, bushAt, cellCenter, clearPath, distance, fits, maze, movePlayer, nextCell, personalCombatBonus, siegeProfile, spawns} from './arena.mjs';
+import {ASSIST, BASES, BASE_BOLT_MS, BASE_RECALL_MS, TEAM_SPEED, BOSS_INTERVAL, BUSHES, CELL, COLS, FLAT, WARP_ACCESS, WARP_PADS, WARP_PAD_RANGE, MATCH_MS, OBSTACLES, RADIUS, bushAt, cellCenter, clearPath, distance, fits, maze, movePlayer, nextCell, personalCombatBonus, siegeProfile, spawns, warpArrival} from './arena.mjs';
 import {SIGHT_RANGE} from './sight.mjs';
 import {Match} from './match.mjs';
 import {advanceCombat, bossUnit, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, syncMonsterPower} from './combat.mjs';
@@ -63,7 +63,11 @@ Deno.test('mirror, connected arena, all spawn and base cells accessible',()=>{
  }
  for(const p of [...BASES,...spawns(0),...spawns(1)])ok(fits(p.x,p.y));
  eq(maze.filter(row=>row[Math.floor(COLS/2)]).length,7);
- eq(BUSHES.length,40);eq(CELL,180);
+ eq(BUSHES.length,34);eq(CELL,180);
+ for(const [x,y] of [[6,13],[6,21],[4,29]])for(const col of [x,x+1,COLS-2-x,COLS-1-x]){
+  ok(maze[y][col]);
+  eq(bushAt(cellCenter(col,y)),null);
+ }
  eq(BASES.map(base=>base.maxHp),[100,80,80,60,60,60,60,60,80,100,80,80,60,60,60,60,60,80]);
  ok(OBSTACLES.every(prop=>!fits(prop.x,prop.y)));
  for(const b of BUSHES)for(let i=0;i<b.w;i++)ok(maze[b.y][b.x+i]);
@@ -271,7 +275,7 @@ Deno.test('turrets shoot every two seconds and deal constant damage to repeat ta
 });
 Deno.test('base recall locks movement for five seconds and warps to the main base without restoring vitals',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);r.shadows=[];
- const at=cellCenter(15,21),base=r.bases.find(q=>q.side===a.side&&q.main);
+ const at=cellCenter(15,21);
  Object.assign(a,at,{hp:a.maxHp-20,mp:2});
  const hp=a.hp,warp=a.warp;
  r.command(a,{type:'recallBase'},3000);
@@ -281,7 +285,7 @@ Deno.test('base recall locks movement for five seconds and warps to the main bas
  eq([a.x,a.y,a.recallEndsAt],[at.x,at.y,8000]);
  eq(r.snapshot(a,7999).players.find(p=>p.id===a.id).recallEndsAt,8000);
  r.tick(8000,.05);
- eq([a.x,a.y,a.hp,a.mp,a.warp,a.recallEndsAt],[base.x,base.y,hp,2,warp+1,undefined]);
+ eq([a.x,a.y,a.hp,a.mp,a.warp,a.recallEndsAt],[a.spawn.x,a.spawn.y,hp,2,warp+1,undefined]);
 });
 Deno.test('manual cancellation and encounters with players, shadows or bosses prevent an active recall',()=>{
  for(const reason of ['manual','player','shadow','boss']){
@@ -587,6 +591,52 @@ Deno.test('team warp pads lock movement for five seconds and reject or cancel de
  ok(denied(small[1],9500));
  r.tick(13300,0);eq([a.x,a.y],[pad.x,pad.y]);
 });
+Deno.test('five players spawn in front of each capital and warp together from both pads without stacking',()=>{
+ const {r,p}=match(10);start(r,p);
+ const points=players=>players.map(({x,y})=>({x,y}));
+ function checkSpacing(positions,gap){
+  for(const [i,point] of positions.entries()){
+   ok(fits(point.x,point.y));
+   for(const other of positions.slice(i+1))ok(distance(point,other)>=gap);
+  }
+ }
+ const starts=points(p);
+ for(const side of [0,1]){
+  const team=p.filter(player=>player.side===side);
+  const capital=r.bases.find(base=>base.main&&base.side===side);
+  const pad=WARP_PADS[side],mirror=side?-1:1;
+  eq(team.length,5);
+  eq(new Set(team.map(player=>player.y)).size,3);
+  ok(Math.abs(pad.x-capital.x)-WARP_PAD_RANGE-225/2>=40);
+  for(const player of team){
+   ok((player.y-capital.y)*FLAT>=150);
+   ok(Math.abs(player.x-pad.x)-WARP_PAD_RANGE>=90);
+   ok(!WARP_ACCESS(player,r.bases));
+  }
+  checkSpacing(points(team),85);
+  const destinations=r.bases.filter(base=>base.tier==='small');
+  for(const base of destinations)checkSpacing(team.map(player=>warpArrival(player,base)),2*RADIUS);
+  const landing=destinations.find(base=>base.side===side);
+  const positions=[[-100,0],[-50,-42],[0,42],[50,-42],[100,0]].map(([dx,dy])=>({x:pad.x+mirror*dx,y:pad.y+dy/FLAT}));
+  checkSpacing(positions,65);
+  for(const [i,player] of team.entries()){
+   Object.assign(player,positions[i]);
+   ok(WARP_ACCESS(player,r.bases));
+   r.command(player,{type:'warpSmallBase',id:landing.id},3000);
+   eq(player.recallEndsAt,3000+BASE_RECALL_MS);
+  }
+ }
+ r.tick(3000+BASE_RECALL_MS,0);
+ for(const side of [0,1]){
+  const team=p.filter(player=>player.side===side);
+  checkSpacing(points(team),2*RADIUS);
+  for(const player of team)r.command(player,{type:'recallBase'},9000);
+ }
+ r.tick(9000+BASE_RECALL_MS,0);
+ eq(points(p),starts);
+ for(const player of p){player.phase='dead';r.respawn(player,15000);}
+ eq(points(p),starts);
+});
 Deno.test('mage deals five HP per second while summoner and druid deal three',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const base=r.bases.find(q=>q.side===b.side&&q.tier==='small');
@@ -861,7 +911,9 @@ Deno.test('opponents cannot see through bush borders; walking in foliage is half
 Deno.test('a creature breaks pursuit on entry into grass and returns to its starting point',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const beast=r.shadows[0];
- const edge=8*CELL;
+ const home=cellCenter(13,5);
+ Object.assign(beast,home,{home});
+ const edge=13*CELL;
  Object.assign(a,{x:edge+6,y:beast.home.y});
  r.tick(2950,.05);r.tick(3000,.05);
  eq(beast.pursuedId,a.id);ok(beast.x<beast.home.x);

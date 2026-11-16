@@ -7,7 +7,7 @@ export const BASE_ATTACK_MS=1000, BASE_ATTACK_HP=4;
 export const TEAM_START_SCORE=300;
 export const BASE_CONTROL_MS=30_000;
 export const BASE_AURA_RANGE=300;
-export const BASE_RECALL_MS=5000, WARP_PAD_RANGE=70;
+export const BASE_RECALL_MS=5000, WARP_PAD_RANGE=124, WARP_PAD_DEPTH=72;
 export const BASE_HEAL_RANGE=150, BASE_REPAIR_RANGE=70, BASE_REPAIR_MS=2500, BASE_REPAIR_SCORE_MS=4000, BASE_ATTACK_SCORE_MS=1000;
 export const personalCombatBonus=points=>Math.min(60,Math.floor(Math.max(0,points??0)/5));
 export const MATCH_MS=15*60_000;
@@ -35,6 +35,8 @@ export function buildMaze(){
  for(const y of [5,13,21,29,37]) for(let x=1;x<=13;x++)grid[y][x]=true;
  for(const x of [3,9,13])for(let y=3;y<=39;y++)grid[y][x]=true;
  for(const y of [21,9,33]) for(let j=y-1;j<=y+1;j++)for(let x=1;x<=3;x++)grid[j][x]=true;
+ for(let y=20;y<=22;y++)grid[y][4]=true;
+ for(let y=23;y<=24;y++)for(let x=1;x<=3;x++)grid[y][x]=true;
  for(let y=0;y<ROWS;y++)for(let x=0;x<15;x++)grid[y][COLS-1-x]=grid[y][x];
  for(const y of [5,9,15,21,27,33,37]){
   grid[y][14]=grid[y][16]=true;
@@ -48,19 +50,21 @@ export function buildMaze(){
  return grid;
 }
 export const maze=buildMaze();
+// A fourth value of true marks a cleared hedge footprint.
 const hedgeSites=[
- [6,13,2],[11,5,2],[8,29,2],[4,37,2],[8,5,2],[3,5,2],[3,13,2],[6,21,2],[4,29,2],[9,37,2],
+ [6,13,2,true],[11,5,2],[8,29,2],[4,37,2],[8,5,2],[3,5,2],[3,13,2],[6,21,2,true],[4,29,2,true],[9,37,2],
  [3,3,1],[9,8,1],[13,11,1],[3,16,1],[9,18,1],[13,24,1],[9,26,1],[3,31,1],[13,34,1],[3,39,1],
 ];
-export const BUSHES=[0,1].flatMap(side=>hedgeSites.map(([x,y,w],i)=>({
- id:`${side}-${i}`,x:side?COLS-w-x:x,y,w
+const hedgeFootprints=[0,1].flatMap(side=>hedgeSites.map(([x,y,w,cleared=false],i)=>({
+ id:`${side}-${i}`,x:side?COLS-w-x:x,y,w,cleared
 })));
+export const BUSHES=hedgeFootprints.filter(site=>!site.cleared);
 function findBush(p,bushes){
  const x=Math.floor(p.x/CELL),y=Math.floor(p.y/CELL);
  return bushes.find(b=>y===b.y&&x>=b.x&&x<b.x+b.w)?.id??null;
 }
 const baseSites=[
- [2,21,'large',100,30,[1,2]], [5,13,'medium',80,20,[3,4]], [6,29,'medium',80,20,[5,6]],
+ [2,21,'large',100,30,[1,2]], [5,13,'medium',80,20,[3,4]], [3,29,'medium',80,20,[5,6]],
  [6,5,'small',60,10,[]], [10,13,'small',60,10,[]], [10,29,'small',60,10,[]], [6,37,'small',60,10,[]],
  [10,21,'small',60,10,[],'ฐานเล็กแนวกลาง'],
  [5,21,'medium',80,20,[4,5,7],'ฐานกลางแนวกลาง'],
@@ -73,14 +77,37 @@ export const BASES=TEAMS.flatMap((team,side)=>baseSites.map(([x,y,tier,maxHp,aur
 export const canRaidBase=(side,base,bases)=>base.side!==side&&base.hp>0&&
  (!base.links?.length||base.links.some(id=>bases.some(link=>link.id===id&&link.hp===0)));
 export const mainBase=side=>BASES.find(b=>b.main&&b.side===side);
-export const WARP_PADS=TEAMS.map((_,side)=>({side,...cellCenter(side?COLS-2:1,21)}));
+export const WARP_PADS=TEAMS.map((_,side)=>{
+ const {x,y}=mainBase(side);
+ return {side,x:x+(side?-288:288),y:y-18};
+});
 export const WARP_TARGET=(p,b)=>b.tier==='small'&&(b.hp>0?b.side===p.side:b.flagSide===p.side);
-export const WARP_ACCESS=(p,bases)=>bases.some(b=>b.side===p.side&&b.main)&&distance(p,WARP_PADS[p.side])<=WARP_PAD_RANGE;
-export const spawns=side=>[[-48,-52],[-48,52],[0,0],[48,-52],[48,52]].map(([dx,dy])=>({x:mainBase(side).x+(side?-dx:dx),y:mainBase(side).y+dy}));
+export function WARP_ACCESS(p,bases){
+ const pad=WARP_PADS[p.side];
+ return !!pad&&bases.some(b=>b.side===p.side&&b.main&&b.hp!==0)&&
+  Math.hypot((p.x-pad.x)/WARP_PAD_RANGE,(p.y-pad.y)*FLAT/WARP_PAD_DEPTH)<=1;
+}
+export const capitalSpawn=side=>{
+ const {x,y}=mainBase(side);
+ return {x,y:y+330};
+};
+export const spawns=side=>{
+ const {x,y}=capitalSpawn(side);
+ return [[0,0],[-72,-85],[72,-85],[-72,85],[72,85]]
+  .map(([dx,dy])=>({x:x+(side?-dx:dx),y:y+dy}));
+};
+const smallBaseOffsets=[[0,0],[-55,-54],[55,-54],[-55,54],[55,54]];
+export function warpArrival(p,base){
+ if(base.main)return p.spawn;
+ const [dx,dy]=smallBaseOffsets[p.spawnSlot];
+ return {x:base.x+(p.side?-dx:dx),y:base.y+dy};
+}
 const propSites=maze.flatMap((row,y)=>row.slice(2,14).flatMap((open,i)=>{
  const x=i+2;
  const center=cellCenter(x,y);
- if(!open||(x<4&&Math.abs(y-21)<3)||findBush(center,BUSHES)!==null||BASES.some(base=>distance(center,base)<120))return [];
+ const courtyard=x<=4&&Math.abs(y-21)<3||x<=3&&y>=23&&y<=24;
+ // Keep cleared stretches of road open and preserve the deterministic prop layout.
+ if(!open||courtyard||findBush(center,hedgeFootprints)!==null||BASES.some(base=>distance(center,base)<120))return [];
  return [{x,y,original:(x*11+y*7)%4===0,order:Math.imul(cellKey(x,y),0x9e3779b1)>>>0}];
 }));
 const originalPropCount=propSites.filter(p=>p.original).length;

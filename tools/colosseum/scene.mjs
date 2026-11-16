@@ -2,7 +2,7 @@ import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
 import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, baseDamageStage, distance} from './arena.mjs?v=duel-layout-1';
+import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=clear-hedges-1';
 import {inSight,SIGHT_RANGE} from './sight.mjs?v=colosseum-ranges';
 import {SURVIVAL_ARENA} from './survival-arena.mjs';
 import rareArt from './rare-art.mjs';
@@ -10,6 +10,7 @@ import maleSiegeArt from './siege-male-catalog.mjs?v=1';
 import femaleSiegeArt from './siege-female-catalog.mjs?v=1';
 import pvpCardArt from './pvp-card-art.mjs?v=battle-parity-1';
 import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
+import {drawInfantry} from './infantry-art.mjs?v=clear-hedges-1';
 const TILE=CELL*FLAT;
 const WALL_HEIGHT=54;
 const WALK_SECTOR=Math.PI/4;
@@ -412,27 +413,36 @@ export class Scene{
  render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null,pan=null,baseEffects=[],warpArrivals=[]){
   const canvas=this.canvas,c=this.c,w=canvas.clientWidth,h=canvas.clientHeight;
   if(!w||!h||!me)return;
-  const dpr=Math.min(2,devicePixelRatio||1), zoom=Math.min(1.3,Math.max(.84,w/590))*1.08;
+  const dpr=Math.min(2,devicePixelRatio||1), normalZoom=Math.min(1.3,Math.max(.84,w/590))*1.08;
   if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){
    canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
   }
   const {width,obstacles}=this.arena;
   const edgeLook=Math.min(74,Math.max(0,(w-285)*.42))*Math.max(0,1-Math.max(0,Math.min(me.x,width-me.x)-430)/390);
-  const lookX=me.x+(me.x<width/2?-edgeLook:edgeLook)+(pan?.x||0),lookY=me.y*FLAT+(pan?.y||0);
-  if(!this.camera||this.camera.warp!==me.warp)this.camera={x:lookX,y:lookY,warp:me.warp};
+  const home=this.arena===TEAM_ARENA&&(me.side===0||me.side===1)?capitalSpawn(me.side):null;
+  const framing=home?Math.max(0,Math.min(1,(300-distance(me,home))/110)):0;
+  const fieldX=me.x+(me.x<width/2?-edgeLook:edgeLook);
+  const courtyardX=home?home.x+(me.side?-102:102):fieldX;
+  const lookX=fieldX+(courtyardX-fieldX)*framing+(pan?.x||0);
+  const lookY=(me.y+(home?home.y-me.y:0)*framing)*FLAT-146*framing+(pan?.y||0);
+  const homeZoom=Math.min(normalZoom,.94,w/610,h/555);
+  const targetZoom=normalZoom+(homeZoom-normalZoom)*framing;
+  if(!this.camera||this.camera.warp!==me.warp)this.camera={x:lookX,y:lookY,zoom:targetZoom,warp:me.warp};
   const cam=this.camera;
   cam.x+=(lookX-cam.x)*.18;cam.y+=(lookY-cam.y)*.18;
+  cam.zoom+=(targetZoom-cam.zoom)*.18;
+  const zoom=cam.zoom;
   const left=cam.x-w/2/zoom, top=cam.y-h/2/zoom, right=left+w/zoom, bottom=top+h/zoom;
   c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#241f26';c.fillRect(0,0,w,h);
   c.setTransform(dpr*zoom,0,0,dpr*zoom,-left*dpr*zoom,-top*dpr*zoom);
   const walls=this.drawTerrain(left,top,right,bottom);
   const castles=bases.filter(b=>b.hp!==0&&inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
   for(const pad of WARP_PADS){
-   if(!bases.some(b=>b.main&&b.side===pad.side)||!inSight(me,pad))continue;
+   if(!bases.some(b=>b.main&&b.side===pad.side&&b.hp!==0)||pad.side!==me.side&&!inSight(me,pad))continue;
    const art=warpPadArt[pad.side];
    if(ready(art)){
-    const width=104,height=width*art.naturalHeight/art.naturalWidth;
-    c.drawImage(art,pad.x-width/2,pad.y*FLAT-height*.62,width,height);
+    const width=2*WARP_PAD_RANGE,height=width*art.naturalHeight/art.naturalWidth;
+    c.drawImage(art,pad.x-width/2,pad.y*FLAT-height*.45,width,height);
    }
   }
   const flags=bases.filter(b=>b.flagSide!=null&&inSight(me,b));
@@ -448,7 +458,7 @@ export class Scene{
   const seen=entities.filter(p=>p.id===me.id||inSight(me,p));
   const attacks=new Map(baseEffects.filter(e=>weaponTips[e.kind]&&e.until>serverTime)
    .map(e=>[e.playerId,e]));
-  const baseById=new Map(bases.map(b=>[b.id,b]));
+  const baseById=new Map([...bases,...seen.filter(e=>e.infantry)].map(target=>[target.id,target]));
   const alive=new Set(seen.map(p=>p.id));
   for(const id of this.anim.keys())if(!alive.has(id))this.anim.delete(id);
   const props=obstacles.filter(p=>inSight(me,p)&&p.x>=left-75&&p.x<=right+75&&p.y*FLAT>=top-80&&p.y*FLAT<=bottom+100);
@@ -464,7 +474,8 @@ export class Scene{
     continue;
    }
    if(e.x<left-160||e.x>right+160||e.y*FLAT<top-180||e.y*FLAT>bottom+100)continue;
-   if(e.radius)this.drawProp(e);
+   if(e.infantry)drawInfantry(c,e,COLORS[e.side]);
+   else if(e.radius)this.drawProp(e);
    else{
     if(e.recallEndsAt)this.recallCircle(e,serverTime);
     this.actor(e,now,e.id===me.id,attacks.get(e.id),baseById,serverTime);
@@ -765,7 +776,8 @@ export class Scene{
   const colors={archer:'#ff963d',gunner:'#ffcb72',magic:'#aa90ff',melee:'#ffe1a3'};
   for(const e of effects){
    if(e.kind==='tower-fall'||e.kind==='respawn')continue;
-   const base=bases.find(b=>b.id===e.baseId);
+   const base=bases.find(b=>b.id===e.baseId)||
+    (e.targetInfantry&&(entities.find(unit=>unit.id===e.baseId)||e.targetInfantry));
    const player=entities.find(p=>p.id===e.playerId);
    if(!base||now>=e.until)continue;
    let t=Math.max(0,(now-e.at)/(e.until-e.at));

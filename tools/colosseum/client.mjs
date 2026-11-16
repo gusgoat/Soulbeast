@@ -1,7 +1,7 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=duel-layout-1';
+import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=clear-hedges-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=duel-layout-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=upper-lane-1';
 import {teamResults} from './ranking.mjs?v=team-balance-2';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
@@ -69,7 +69,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=duel-layout-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=upper-lane-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -349,7 +349,7 @@ function applyState(next){
   else correction=err>7?{x:expected.x-local.x,y:expected.y-local.y}:null;
   for(const k of ['phase','connected','safeUntil','repairingBase','recallEndsAt','rating','points','streakTitle','healUntil'])local[k]=me[k];
  }
- const visible=[...next.players.filter(p=>p.id!==me.id&&Number.isFinite(p.x)&&p.connected&&p.phase!=='dead'),...next.shadows,...next.bosses];
+ const visible=[...next.players.filter(p=>p.id!==me.id&&Number.isFinite(p.x)&&p.connected&&p.phase!=='dead'),...next.shadows,...next.bosses,...(next.infantry??[])];
  const ids=new Set(visible.map(p=>p.id));
  for(const id of actors.keys())if(!ids.has(id))actors.delete(id);
  for(const p of visible){

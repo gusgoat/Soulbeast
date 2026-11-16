@@ -1,13 +1,14 @@
 import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATTACK_SCORE_MS, BASE_BOLT_MS, BASE_FIRE_MS, BASE_FIRE_RANGE, BASE_AURA_RANGE, BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_SCORE_MS, BASE_REPAIR_RANGE, BEAST_POINTS, BEAST_SPEED_SCALE, BOSS_INTERVAL, BOSS_POINTS, CELL, CHEST_COUNT, CLASSES, COLS, CONTACT, FLAT, HEAL_TARGET, MATCH_MS, RADIUS, RAID_TARGET, SPEED, TEAM_SPEED, TEAM_START_SCORE, TEAMS, REPAIR_TARGET, canRaidBase, siegeProfile, WARP_ACCESS, WARP_TARGET,
- TEAM_ARENA, bushAt, cellCenter, distance, maze, spawns} from './arena.mjs?v=duel-layout-1';
+ TEAM_ARENA, bushAt, capitalSpawn, cellCenter, distance, maze, spawns, warpArrival} from './arena.mjs?v=clear-hedges-1';
 import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses, syncMonsterPower} from './combat.mjs?v=duel-layout-1';
 import rareArt from './rare-art.mjs';
-import {resetBotRoute, stepBot} from './practice.mjs?v=duel-layout-1';
+import {resetBotRoute, stepBot} from './practice.mjs?v=clear-hedges-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
+import {INFANTRY_WAVE_MS, spawnInfantry, stepInfantry} from './infantry.mjs?v=upper-lane-1';
 
 const fresh=(p,now)=>p.connected&&p.phase==='walk'&&now>=p.safeUntil;
 const PLAYER_DEATH_POINTS=30;
@@ -39,6 +40,7 @@ export class Match {
   this.code=code;this.id=crypto.randomUUID();this.created=now;this.players=[];this.score=[TEAM_START_SCORE,TEAM_START_SCORE];this.phase='lobby';this.events=[];
   this.battles=new Map();this.shadows=[];this.chests=[];this.bosses=[];this.battleSerial=0;this.eventSerial=0;this.botSerial=0;this.random=random;
   this.baseBolts=[];this.baseEffects=[];this.baseEffectSerial=0;
+  this.infantry=[];
   this.announcer=matchAnnouncer();
   this.solo=mode==='survival';
   this.arena=this.solo?SURVIVAL_ARENA:TEAM_ARENA;
@@ -108,6 +110,7 @@ export class Match {
    this.ends=now+MATCH_MS;
    this.nextBossAt=now+BOSS_INTERVAL;
    this.nextBaseControlAt=now+BASE_CONTROL_MS;
+   this.nextInfantryAt=now+INFANTRY_WAVE_MS;
   }
   const lv=this.averageLevel=Math.round(this.players.reduce((sum,p)=>sum+p.lv,0)/this.players.length);
   const edgeSpawns=SURVIVAL_SPAWNS.slice(), assigned=[];
@@ -124,7 +127,7 @@ export class Match {
      [spawn]=edgeSpawns.splice(index,1);assigned.push(spawn);
      Object.assign(p,{points:0,scoreAt:now});
     }
-    Object.assign(p,{earned:0,kills:0,beastKills:0,bossKills:0,deaths:0,spawn,maxHp:hero.st.hp,maxMp:hero.st.mp});
+    Object.assign(p,{earned:0,kills:0,beastKills:0,bossKills:0,deaths:0,spawn,spawnSlot:i,maxHp:hero.st.hp,maxMp:hero.st.mp});
     this.respawn(p,now);
    });
    SHADOW_SPAWNS.forEach(([x,y,sp],i)=>{
@@ -633,8 +636,17 @@ export class Match {
  }
  baseEffect(kind,base,p,now,duration){
   const effect={id:++this.baseEffectSerial,kind,side:base.side,baseId:base.id,playerId:p.id,
-   x:p.x,y:p.y,at:now,until:now+duration};
+   x:p.x,y:p.y,at:now,until:now+duration,
+   ...(base.infantry?{targetInfantry:{x:base.x,y:base.y}}:{})};
   this.baseEffects.push(effect);
+ }
+ hitWalker(target,damage,now,onFall=null){
+  target.hp=Math.max(0,target.hp-damage);
+  cancelRecall(target);
+  if(!target.hp){
+   onFall?.();
+   this.fall(target,now);
+  }
  }
  siegeBases(now){
   this.baseEffects=this.baseEffects.filter(e=>e.until>now);
@@ -642,12 +654,10 @@ export class Match {
   for(const bolt of this.baseBolts){
    if(bolt.at>now){pending.push(bolt);continue;}
    const {base,side,target,warp,damage}=bolt;
-   if(base.hp<=0||base.side!==side||!target.connected||target.phase!=='walk'||target.warp!==warp)continue;
-   target.hp=Math.max(0,target.hp-damage);
-   cancelRecall(target);
-   if(!target.hp){
-    this.baseEffect('tower-fall',base,target,now,750);
-    this.fall(target,now);
+   if(base.hp<=0||base.side!==side||target.hp<=0)continue;
+   if(target.infantry)target.hp=Math.max(0,target.hp-damage);
+   else if(target.connected&&target.phase==='walk'&&target.warp===warp){
+    this.hitWalker(target,damage,now,()=>this.baseEffect('tower-fall',base,target,now,750));
    }
    if(this.phase!=='match')return;
   }
@@ -678,7 +688,7 @@ export class Match {
      }
     }
    }
-   if(!walking){delete p.siege;delete p.baseRecovery;continue;}
+   if(!walking){delete p.siege;delete p.infantryStrike;delete p.baseRecovery;continue;}
    const home=this.bases.filter(b=>HEAL_TARGET(p,b)).sort((a,b)=>b.points-a.points||distance(p,a)-distance(p,b))[0];
    if(!home)delete p.baseRecovery;
    else{
@@ -694,7 +704,15 @@ export class Match {
      if(p.hp>hp||p.mp>mp||petsRecovered)p.healUntil=now+850;
     }
    }
-   const base=!p.repair&&!p.recallEndsAt&&fresh(p,now)&&nearest(p,this.bases.filter(b=>RAID_TARGET(p,b)&&canRaidBase(p.side,b,this.bases)));
+   const canAttack=!p.repair&&!p.recallEndsAt&&fresh(p,now);
+   const soldier=canAttack&&nearest(p,this.infantry.filter(unit=>unit.hp>0&&RAID_TARGET(p,unit)&&this.arena.canSeeOpponent(p,unit)));
+   if(soldier){
+    delete p.siege;
+    this.attackInfantry(p,soldier,now);
+    continue;
+   }
+   delete p.infantryStrike;
+   const base=canAttack&&nearest(p,this.bases.filter(b=>RAID_TARGET(p,b)&&canRaidBase(p.side,b,this.bases)));
    if(!base){delete p.siege;continue;}
    const defender=nearest(p,this.players.filter(q=>fresh(q,now)&&q.repair?.baseId===base.id&&
     REPAIR_TARGET(q,base)&&this.arena.canSeeOpponent(p,q)&&this.arena.canSeeOpponent(q,p)&&this.arena.clearPath(p,q)));
@@ -718,13 +736,24 @@ export class Match {
   }
   for(const base of this.bases){
    if(base.hp<=0||now<(base.fireAt??0))continue;
-   const target=nearest(base,this.players.filter(p=>p.side!==base.side&&fresh(p,now)&&distance(base,p)<=BASE_FIRE_RANGE));
+   const inRange=p=>p.side!==base.side&&distance(base,p)<=BASE_FIRE_RANGE;
+   const target=nearest(base,this.infantry.filter(unit=>unit.hp>0&&inRange(unit)))||
+    nearest(base,this.players.filter(p=>fresh(p,now)&&inRange(p)));
    if(!target)continue;
    base.fireAt=now+BASE_FIRE_MS;
    const fraction=(base.points+1)*.04*(target.baseCls==='gladiator'?.5:1);
    this.baseBolts.push({base,side:base.side,target,warp:target.warp,damage:target.maxHp*fraction,at:now+BASE_BOLT_MS});
    this.baseEffect('tower',base,target,now,BASE_BOLT_MS);
   }
+ }
+ attackInfantry(player,soldier,now){
+  if(player.infantryStrike?.id!==soldier.id)player.infantryStrike={id:soldier.id,nextAt:now+BASE_ATTACK_MS};
+  const strike=player.infantryStrike;
+  if(strike.nextAt>now)return;
+  strike.nextAt+=BASE_ATTACK_MS;
+  const {effect}=siegeProfile(player);
+  soldier.hp=Math.max(0,soldier.hp-(['archer','gunner'].includes(effect)?6:4));
+  this.baseEffect(effect,soldier,player,now,BASE_ATTACK_MS);
  }
  damageBase(base,p,now){
   const {effect}=siegeProfile(p);
@@ -740,19 +769,25 @@ export class Match {
     continue;
    }
    siege.nextHitAt+=BASE_ATTACK_MS;
-   if(now-(base.lastAnnouncedHit??-Infinity)>2500){
-    this.announcer.add(base.main?'base-under-attack':'tower-under-attack',now,{side:base.side});
-   }
-   base.lastAnnouncedHit=now;
-   base.hp=Math.max(0,base.hp-hitDamage);
    this.baseEffect(effect,base,p,now,BASE_ATTACK_MS);
-   if(base.hp===0){
+   if(this.hitBase(base,p,hitDamage,now))return;
+  }
+ }
+ hitBase(base,p,damage,now){
+  base.underAttack=true;
+  if(now-(base.lastAnnouncedHit??-Infinity)>2500){
+   this.announcer.add(base.main?'base-under-attack':'tower-under-attack',now,{side:base.side});
+  }
+  base.lastAnnouncedHit=now;
+  base.hp=Math.max(0,base.hp-damage);
+  if(base.hp===0){
     if(base.tier==='small')base.flagSide=p.side;
     this.announcer.capture(base,p,now);
     this.baseEffect('collapse',base,{x:base.x,y:base.y},now,1050);
     const defender=base.side,loss=BASE_CAPTURE_LOSS[base.tier],bonus=loss/2;
     this.score[defender]=Math.max(0,this.score[defender]-loss);
-    this.earn(p,bonus);
+    if(p.infantry)this.score[p.side]+=bonus;
+    else this.earn(p,bonus);
     const teamPersonal=BASE_CAPTURE_TEAM_PERSONAL[base.tier];
     if(teamPersonal)for(const teammate of this.players){
      if(teammate.side===p.side&&!teammate.retired)teammate.earned+=teamPersonal;
@@ -762,11 +797,11 @@ export class Match {
     this.clearBaseRepairs(base.id);
     for(const player of this.players)if(player.recallBaseId===base.id)cancelRecall(player);
     const personalNotice=teamPersonal?` · ทุกคนในทีม +${teamPersonal} แต้มส่วนตัว`:'';
-    this.note(`${p.name} ทำ${base.label}แตก · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}${personalNotice}`,now);
+    this.note(`${p.infantry?'พลทหาร'+TEAMS[p.side]:p.name} ทำ${base.label}แตก · ${TEAMS[p.side]} +${bonus} / ${TEAMS[defender]} −${loss}${personalNotice}`,now);
     if(base.main)this.finish(p.side,'base-captured',now);
-    return;
-   }
+    return true;
   }
+  return false;
  }
  awardBaseControl(now){
   while(this.phase==='match'&&this.nextBaseControlAt<=Math.min(now,this.ends)){
@@ -859,15 +894,22 @@ export class Match {
    }
   }
   if(!this.solo){
+   while(now>=this.nextInfantryAt){
+    spawnInfantry(this,(this.nextInfantryAt-this.started)/INFANTRY_WAVE_MS);
+    this.nextInfantryAt+=INFANTRY_WAVE_MS;
+   }
    this.siegeBases(now);
    if(this.phase!=='match')return;
+   stepInfantry(this,now,dt);
+   if(this.phase!=='match')return;
+   this.infantry=this.infantry.filter(unit=>unit.hp>0);
    for(const p of this.players){
     if(p.phase!=='walk'||!p.recallEndsAt||now<p.recallEndsAt)continue;
     const destination=p.recallBaseId;
     cancelRecall(p);
     const base=this.bases.find(b=>destination?b.id===destination&&WARP_TARGET(p,b):b.main&&b.side===p.side);
     if(!base)continue;
-    Object.assign(p,{x:base.x,y:base.y,warp:(p.warp||0)+1,dx:0,dy:0});
+    Object.assign(p,warpArrival(p,base),{warp:(p.warp||0)+1,dx:0,dy:0});
     delete p.baseRecovery;
     resetBotRoute(p);
    }
@@ -910,10 +952,11 @@ export class Match {
    bases:this.bases.map(({fireAt,underAttack,lastAnnouncedHit,...base})=>({...base,underAttack:base.side===p.side&&Boolean(underAttack)})),
    announcements:this.announcer.forPlayer(p,now),
    warpArrivals:this.phase==='match'&&!this.solo?this.bases.flatMap(base=>{
-    if(!inSight(viewer,base))return [];
+    const location=base.main?capitalSpawn(base.side):{x:base.x,y:base.y};
+    if(!inSight(viewer,location))return [];
     const endsAt=Math.min(...this.players.filter(q=>q.connected&&q.phase==='walk'&&q.recallEndsAt>now&&
      (q.recallBaseId?q.recallBaseId===base.id&&WARP_TARGET(q,base):base.main&&base.side===q.side)).map(q=>q.recallEndsAt));
-    return Number.isFinite(endsAt)?[{x:base.x,y:base.y,recallEndsAt:endsAt}]:[];
+    return Number.isFinite(endsAt)?[{...location,recallEndsAt:endsAt}]:[];
    }):[],
    baseEffects:this.baseEffects.filter(e=>e.until>now&&inSight(viewer,e)),
 
@@ -927,6 +970,9 @@ export class Match {
    siegeBaseId:p.phase==='walk'?p.siege?.id:null,
    respawnAt:p.respawnAt,finishedAt:this.finishedAt,ack:p.appliedSeq??-1,input:[p.dx,p.dy],battleId:p.phase==='battle'?p.battle:null,
    shadows:this.shadows.filter(b=>b.phase==='walk'&&inSight(viewer,b)).map(({id,x,y,sp,rare,lv,label})=>({id,x,y,sp,rare,lv,label})),
+   infantry:this.infantry.filter(unit=>unit.hp>0&&inSight(viewer,unit)&&
+    (unit.side===p.side||canSeeOpponent(viewer,unit))).map(({id,x,y,side,hp,maxHp,dir,pose,frame})=>
+    ({id,x,y,side,hp,maxHp,dir,pose,frame,infantry:true})),
    bosses:this.bosses.filter(b=>!b.claimed&&inSight(viewer,b)).map(({id,x,y,sp,boss,lv,label,hp,maxHp,phase})=>({id,x,y,sp,boss,lv,label,hp,maxHp,phase})),
    chests:this.chests.filter(c=>!c.opened&&inSight(viewer,c)).map(({id,x,y})=>({id,x,y})),
    chestsLeft:this.chests.filter(c=>!c.opened).length,chestsTotal:this.chests.length,
