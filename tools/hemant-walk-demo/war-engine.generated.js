@@ -1158,7 +1158,7 @@ function actBase(u,id,tgt,atgt,free){const sk=pvpSkill(id),b=B(),cost=costOf(u,s
  if(sk.t==='heal'||sk.t==='buff'){
   let list=sk.tg==='team'?mates.filter(x=>x.hp>0||((sk.revAll)&&x.kind!=='player')):sk.tg==='self'?[u]:[atgt&&(atgt.hp>0||sk.rev)&&mates.includes(atgt)?atgt:u];
   const hm=(hasPas(u,'healer')?1.3:1)*((['pet','npcpet','summon'].includes(u.kind)||u.kind==='beast'&&u.side==='ally') ? .7 : ['player','human'].includes(u.kind)&&u.cls&&['druid','summoner'].includes(baseOf(u.cls))&&!(['pvp','raid','camp','guildwar','tower','world'].includes(B()?.kind)||B()?.towerRun) ? .7 : 1);
-  list.forEach(x=>{if(sk.t==='heal'){if(x.hp<=0){if(sk.rev||sk.revAll){x.hp=Math.round(x.st.hp*sk.pw/100);x.status={};blog(`${x.name} ฟื้นคืนชีพ!`);fxAdd(x,'คืนชีพ','good')}return}
+  list.forEach(x=>{if(sk.t==='heal'){if(x.hp<=0){if((sk.rev||sk.revAll)&&(!b.colosseumFalls||colosseumReviveTarget(x))){x.hp=Math.round(x.st.hp*sk.pw/100);x.status={};blog(`${x.name} ฟื้นคืนชีพ!`);fxAdd(x,'คืนชีพ','good');if(b.colosseumFalls)vfx('heal',x.id)}return}
    heal(x,(x.st.hp*sk.pw/100+eff(u,'matk')*.5)*hm);if(sk.cure)x.status={};vfx('heal',x.id)}
    if(sk.t==='buff')vfx('buff',x.id,{c:sk.charge?'#6f9cf0':'#d9b35b'});
    addBuffs(x,sk);if(sk.charge){x.charge=sk.charge;fxAdd(x,'×'+sk.charge,'mp')}});
@@ -3958,10 +3958,30 @@ function colosseumTeamBuff(u,foes){
  }
  return null;
 }
+function colosseumReviveTarget(target){
+ return target?.kind==='pet'&&target.hp<=0&&sideOf(target).some(u=>u.kind==='player'&&u.owner===target.owner&&u.hp>0);
+}
+const colosseumDefendSkill={n:'ตั้งรับ',t:'buff',tg:'self'};
+function colosseumAct(u,id,target,friend,free){
+ if(id!=='defend')return act(u,id,target,friend,free);
+ u.buffs.push({st:'pdef',amt:.5,tn:1},{st:'mdef',amt:.5,tn:1});
+ blog(u.name+' ตั้งรับ เพิ่มป้องกัน 50% จนถึงเทิร์นถัดไป');
+ vfx('buff',u.id,{c:'#d9b35b'});
+ endUnitTurn(u);
+ return true;
+}
 function colosseumAuto(u){
  const move=pvpAutoChoice_(u);
  const sk=pvpSkill(move.id);
- if(u.owner<0||sk?.t==='heal'||sk?.t==='rest')return move;
+ if(u.owner<0||sk?.t==='rest'||(sk?.t==='heal'&&move.friend?.hp<=move.friend?.st.hp*.25&&!sk.rev))return move;
+ const fallen=sideOf(u).filter(colosseumReviveTarget);
+ if(fallen.length){
+  const available=u.skills.map(pvpSkillId=>({id:pvpSkillId,skill:pvpSkill(pvpSkillId)})).filter(({id,skill})=>
+   (skill?.rev||skill?.revAll)&&!skill.gc&&!cooldownOf(u,id)&&costOf(u,skill)<=u.mp);
+  const choice=(fallen.length>1?available.find(({skill})=>skill.revAll):available.find(({skill})=>skill.rev))||available[0];
+  if(choice)return {id:choice.id,friend:fallen[0]};
+ }
+ if(sk?.t==='heal')return move;
  const foes=foesOf(u).filter(target=>target.hp>0);
  const finisher=colosseumFinisher(u,foes);
  if(finisher)return finisher;
@@ -3971,7 +3991,9 @@ function colosseumAuto(u){
 }
 return {colosseum:()=>({profile:pvpTeam_,gear:npcEq,botEquipment:colosseumBotEquipment,
  baseCareers:()=>Object.keys(CLS).filter(cls=>baseOf(cls)===cls),petLimit:cls=>Math.min(3,clsSum(cls)),
- botBeasts:()=>{const {beast,rare}=gachaPools();return [...beast,...rare];},shadow:wildUnit,rareBeasts:()=>gachaPools().rare,skill:pvpSkill,act,turnStart,takeFreeForm,auto:colosseumAuto,
+ botBeasts:()=>{const {beast,rare}=gachaPools();return [...beast,...rare];},shadow:wildUnit,rareBeasts:()=>gachaPools().rare,
+ skill:id=>id==='defend'?colosseumDefendSkill:pvpSkill(id),act:colosseumAct,turnStart,takeFreeForm,auto:colosseumAuto,
+ openingOrder:class10OpeningOrder,canRevive:colosseumReviveTarget,passiveName:id=>PAS[id]?.n,formName:id=>FORMS[id]?.n,elementName:id=>EL[id]?.n,
  career:cls=>pvpOwn_(CLS,cls)?{base:baseOf(cls),name:CLS[cls].n}:null,childrenOf,
  bind(battle){S={P:{gold:0},battle};},speed:u=>eff(u,'spd'),cost:costOf,cooldown:cooldownOf}),dispatch(packet){if(packet?.action==='country_job_tick'&&packet._internalCountryJob===true){cwTick();return {ok:true};}if(/^(country_|mail_)/.test(packet?.action||''))return cwDispatch(packet);if(packet?.action==='account_retire_check'){try{const auth=pvpSaveAuth_(packet);if(pvpFindActive_(auth.code)||wbExisting_(auth.code))return {ok:false,error:'finish other battle'};return {ok:true};}catch(e){return {ok:false,error:e.message||String(e)};}}return JSON.parse((packet===null?doGet():doPost({postData:{contents:JSON.stringify(packet)}})).getContent());}};
 }

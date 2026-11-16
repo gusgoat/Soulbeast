@@ -1,3 +1,4 @@
+import pvpCardArt from './pvp-card-art.mjs';
 import {ASSIST, BASES, BASE_BOLT_MS, BASE_RECALL_MS, TEAM_SPEED, BOSS_INTERVAL, BUSHES, CELL, COLS, FLAT, WARP_ACCESS, WARP_PADS, WARP_PAD_RANGE, MATCH_MS, OBSTACLES, RADIUS, bushAt, cellCenter, clearPath, distance, fits, maze, movePlayer, nextCell, personalCombatBonus, siegeProfile, spawns, warpArrival} from './arena.mjs';
 import {SIGHT_RANGE} from './sight.mjs';
 import {Match} from './match.mjs';
@@ -22,6 +23,32 @@ function checkAura(unit,reference,active){
  }
 }
 
+Deno.test('walking character vitals contain only the viewer’s actual companions in both modes',()=>{
+ for(const mode of ['team','survival']){
+  const room=new Match('PROFILE',0,Math.random,mode);
+  const sealer=room.join({name:'Sealer',cls:'summoner',lv:20});
+  const opponent=room.join({name:'Opponent',cls:'swordsman',lv:20});
+  start(room,[sealer,opponent]);
+  const pets=[...sealer.petVitals.values()];
+  eq(pets.length,2);
+  Object.assign(pets[0],{hp:0,mp:3});
+  Object.assign(sealer,{hp:14,mp:7,points:31,earned:32,ailments:{burn:2}});
+  const view=room.snapshot(sealer,0);
+  const personal=view.players.find(p=>p.id===sealer.id);
+  eq([personal.hp,personal.points,view.vitals.mp,view.vitals.ailments],
+   [14,mode==='survival'?31:32,7,['burn']]);
+  const shown=view.vitals.companions;
+  eq(shown,pets);
+  ok(shown.every(pet=>pet.name&&pet.sp&&pet.lv===20&&pet.maxHp>0&&pet.maxMp>=0));
+  const otherView=room.snapshot(opponent,0);
+  eq(otherView.vitals.companions.length,1);
+  ok(!Object.hasOwn(otherView.players.find(p=>p.id===sealer.id),'companions'));
+  room.recoverPets(sealer,.09,true);
+  ok(room.snapshot(sealer,0).vitals.companions[0].hp>0);
+  eq(shown[0].hp,0);
+  sealer.phase='dead';eq(room.snapshot(sealer,0).vitals.companions,undefined);
+ }
+});
 Deno.test('the host fills team and survival vacancies with ready bots without replacing human seats',()=>{
  const {r,p}=match();
  const [host,guest]=p;
@@ -947,6 +974,113 @@ function autoDecisionBattle(cls,bot){
  if(!bot)setCombatAuto(battle,'test-a',true);
  return {battle,hero};
 }
+Deno.test('gunners take opening priority, with speed deciding between them in either mode',()=>{
+ for(const teamSiege of [true,false]){
+  const players=[[{id:'a',name:'A',cls:'druid',lv:45}],[{id:'b',name:'B',cls:'gunner',lv:45}]];
+  const make=()=>makeCombat('gunner-opening',players,null,0,new Map(),teamSiege);
+  const slow=make();
+  eq(slow.cur,slow.enemies[0].id);
+  const nextRound=make();
+  players[0][0]={...players[0][0],cls:'gunner',lv:60};
+  const faster=make();
+  eq(faster.cur,faster.allies[0].id);
+  // The opening passive applies only in round one.
+  const gunner=nextRound.enemies[0],fasterPet=nextRound.allies[1];
+  gunner.st.spd=1;fasterPet.st.spd=10000;nextRound.queue=[];
+  ok(combatAction(nextRound,'b',{turn:nextRound.turn,skill:'defend'},nextRound.openAt));
+  eq([nextRound.round,nextRound.cur],[2,fasterPet.id]);
+ }
+});
+Deno.test('manual and automatic rest, defend, and pet revival work in both modes',()=>{
+ for(const teamSiege of [true,false])for(const control of ['manual','auto','bot']){
+  function prepare(cls){
+   const {battle,hero}=autoDecisionBattle(cls,control==='bot',teamSiege);
+   if(control==='manual')setCombatAuto(battle,'test-a',false);
+   return {battle,hero};
+  }
+  const act=(battle,id,target)=>{
+   if(control==='manual'){
+    const command=combatView(battle,'test-a').commands.find(skill=>skill.id===id);
+    eq(command.targets,[target.id]);
+    ok(combatAction(battle,'test-a',{turn:battle.turn,skill:id,target:target.id},0));
+   }else advanceCombat(battle,500);
+   eq(battle.last?.skillId,id);
+  };
+  const rest=prepare('mage');
+  rest.hero.mp=0;
+  act(rest.battle,'rest',rest.hero);
+  eq(rest.hero.mp,Math.round(rest.hero.st.mp*.3));
+
+  const defending=prepare('swordsman');
+  // No effective attack gives the shared AI a reason to choose defend.
+  defending.hero.skills=['rest'];
+  act(defending.battle,'defend',defending.hero);
+  eq(defending.hero.buffs.map(({st,amt,tn})=>[st,amt,tn]),[['pdef',.5,1],['mdef',.5,1]]);
+  eq(combatView(defending.battle,'test-b').allies[0].badges.map(badge=>badge.icon),['⬟↑','◇↑']);
+
+  const revival=prepare('summoner'),pet=revival.battle.allies[1];
+  pet.hp=0;pet.status={burn:2};
+  if(control==='manual'){
+   const illegal={turn:revival.battle.turn,skill:'su_revive',target:revival.battle.enemies[0].id};
+   eq(combatAction(revival.battle,'test-a',illegal,0),false);
+  }
+  act(revival.battle,'su_revive',pet);
+  eq(pet.hp,Math.round(pet.st.hp*.4));eq(pet.status,{});
+  ok(revival.battle.effects.some(effect=>effect.k==='heal'&&effect.id===pet.id));
+ }
+});
+Deno.test('team revival restores companions of active sealers only',()=>{
+ const player=(id,cls)=>({id,name:id,cls,lv:45});
+ for(const auto of [false,true]){
+  const battle=makeCombat('revive-party',[[player('a','soulsage'),player('b','mage')],[player('c','swordsman')]],null,0,new Map(),true);
+  const [hero,...allies]=battle.allies;
+  const pets=allies.filter(unit=>unit.kind==='pet'&&unit.owner===hero.owner);
+  ok(hero.skills.includes('ss_rebirth'));
+  for(const unit of allies)unit.hp=0;
+  battle.cur=hero.id;battle.openAt=0;battle.deadline=12000;
+  if(auto){setCombatAuto(battle,'a',true);advanceCombat(battle,500);}
+  else{
+   const skill=combatView(battle,'a').commands.find(skill=>skill.id==='ss_rebirth');
+   eq(skill.targets,[hero.id]);
+   ok(combatAction(battle,'a',{turn:battle.turn,skill:skill.id,target:hero.id},0));
+  }
+  ok(globalThis.SoulbeastColosseumEngine().skill(battle.last?.skillId)?.revAll);
+  ok(pets.every(unit=>unit.hp>0));
+  ok(allies.filter(unit=>unit.owner!==hero.owner).every(unit=>unit.hp===0));
+ }
+});
+Deno.test('battle snapshots expose live status icons for both sides',()=>{
+ for(const teamSiege of [true,false]){
+  const battle=makeCombat('badges',[[{id:'a',name:'A',cls:'mage',lv:45}],[{id:'b',name:'B',cls:'archer',lv:45}]],null,0,new Map(),teamSiege);
+  const [mage,summon]=battle.allies,[archer]=battle.enemies;
+  Object.assign(mage,{taunt:2,charging:{id:'sw_charge'},charge:2,immune:'m',enchant:'fire',status:{burn:2},
+   buffs:[{pas:'class10_parry',tn:2},{st:'spd',amt:-.3,tn:1}],dots:[{n:'พายุไฟ',turns:2}]});
+  summon.summonLife=2;
+  for(const viewer of ['a','b']){
+   const snapshot=JSON.parse(JSON.stringify(combatView(battle,viewer)));
+   eq(snapshot.allies[0].statuses,['burn']);
+   eq(snapshot.allies[0].badges.map(badge=>badge.icon),[0,1,2,4,5,3,6,22,'➟↓']);
+   eq(snapshot.allies[1].badges.map(badge=>badge.icon),[23]);
+   eq(snapshot.enemies[0].badges.map(badge=>badge.icon),[14]);
+  }
+  archer.archerVeil=0;mage.buffs=[];mage.class10Barrier=0;
+  eq(combatView(battle,'b').enemies[0].badges,[]);
+  ok(!combatView(battle,'b').allies[0].badges.some(badge=>[3,22].includes(badge.icon)));
+ }
+});
+Deno.test('druid bots and autoplay transform and expose the form portrait in the combat snapshot',()=>{
+ for(const cls of ['druid','wildgod','archdruid'])for(const bot of [true,false]){
+  const {battle,hero}=autoDecisionBattle(cls,bot);
+  advanceCombat(battle,500);
+  eq(globalThis.SoulbeastColosseumEngine().skill(battle.last.skillId).t,'form');
+  ok(hero.form);
+  for(const viewer of ['test-a','test-b']){
+   const shown=combatView(battle,viewer).allies.find(u=>u.id===hero.id);
+   eq(shown.form,hero.form);
+   ok(pvpCardArt['form:'+shown.form]?.idle);
+  }
+ }
+});
 Deno.test('bot and player auto recover MP when the shared decision chooses rest',()=>{
  for(const bot of [true,false]){
   const {battle,hero}=autoDecisionBattle('mage',bot);

@@ -1,5 +1,5 @@
 import '../../content/beast-names.js';
-import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-mercenary-hud-1';
+import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-walk-tools-1';
 import rareArt from './rare-art.mjs';
 import {personalCombatBonus} from './arena.mjs';
 const core=globalThis.SoulbeastColosseumEngine();
@@ -10,10 +10,56 @@ const units=b=>[...b.allies,...b.enemies];
 const find=(b,id)=>units(b).find(u=>u.id===id);
 const enemies=(b,u)=>units(b).filter(t=>t.side!==u.side&&t.hp>0);
 const allies=(b,u)=>units(b).filter(t=>t.side===u.side&&t.hp>0);
-const activeSkill=(u,id)=>{
+const activeSkill=(b,u,id)=>{
  const sk=core.skill(id);
- return !!sk&&u.skills.includes(id)&&!sk.gc&&!sk.rev&&!sk.revAll&&!core.cooldown(u,id)&&core.cost(u,sk)<=u.mp;
+ return !!sk&&(u.skills.includes(id)||id==='rest'||id==='defend')&&!sk.gc&&!core.cooldown(u,id)&&core.cost(u,sk)<=u.mp&&
+  (!sk.rev||sideOf(b,u).some(core.canRevive));
 };
+const sideOf=(b,u)=>u.side==='ally'?b.allies:b.enemies;
+const isSupport=sk=>sk.t==='heal'||sk.t==='buff';
+function skillTargets(b,u,sk){
+ if(sk.tg==='self'||sk.tg==='team'||sk.t==='rest')return [u];
+ if(sk.rev)return sideOf(b,u).filter(core.canRevive);
+ return isSupport(sk)?allies(b,u):enemies(b,u);
+}
+const statIcons={
+ patk:['⚔','พลังโจมตีกายภาพ'],matk:['⚚','พลังโจมตีเวท'],pdef:['⬟','ป้องกันกายภาพ'],mdef:['◇','ป้องกันเวท'],
+ acc:['⊕','แม่นยำ'],crit:['✦','คริติคอล'],eva:['➶','หลบหลีก'],spd:['➟','ความเร็ว'],
+};
+const passiveIcons={thorns2:9,reflect50:9,counter50:9,omni:10,poisonTouch2:11,mpsave:12,regen:13,guardian:14,class10_parry:22};
+const formIcons={wolf:15,bear:16,hawk:17,treant:18,saber:19,gdragon:20,moon:21};
+const dotIcons={'พายุไฟ':6,'วังน้ำวน':7,'บีบรัด':8};
+function battleBadges(u){
+ const badges=[];
+ const add=(icon,label)=>badges.push({icon,label});
+ if(u.taunt>0)add(0,`ยั่วยุ · เหลือ ${u.taunt} เทิร์น`);
+ if(u.charging){
+  const name=core.skill(u.charging.id)?.n;
+  add(1,name?'กำลังชาร์จ · '+name:'กำลังชาร์จ');
+ }
+ if(u.charge>1)add(2,'พลังโจมตีครั้งถัดไป ×'+u.charge);
+ if(u.immune==='p')add(3,'ป้องกันกายภาพ 100%');
+ if(u.immune==='m')add(4,'ป้องกันเวท 100%');
+ if(u.enchant)add(5,'ประทับธาตุอาวุธ · '+(core.elementName(u.enchant)||u.enchant));
+ if(u.class10Barrier>0)add(3,'บาเรียเวท · ป้องกันได้ 1 ท่า');
+ if(u.archerVeil>0)add(14,'ล่องหน · ลดดาเมจท่าเดี่ยวแรก 50%');
+ if(u.form&&Object.hasOwn(formIcons,u.form))add(formIcons[u.form],core.formName(u.form));
+ if(u.summonLife>0)add(23,`อสูรอัญเชิญชั่วคราว · เหลือ ${u.summonLife} เทิร์น`);
+ for(const dot of u.dots||[])if(dot.turns>0)add(dotIcons[dot.n]??'☄',`${dot.n} · เหลือ ${dot.turns} เทิร์น`);
+ const stats=new Map(),passives=new Map();
+ for(const buff of u.buffs||[]){
+  if(buff.tn<=0)continue;
+  if(buff.pas)passives.set(buff.pas,Math.max(passives.get(buff.pas)||0,buff.tn));
+  if(Object.hasOwn(statIcons,buff.st))stats.set(buff.st,(stats.get(buff.st)||0)+buff.amt);
+ }
+ for(const [id,turns] of passives)add(passiveIcons[id]??'✦',`${core.passiveName(id)||id} · เหลือ ${turns} เทิร์น`);
+ for(const [id,amount] of stats){
+  if(!amount)continue;
+  const [icon,label]=statIcons[id],up=amount>0;
+  badges.push({icon:icon+(up?'↑':'↓'),label:label+(up?'เพิ่มขึ้น':'ลดลง'),down:!up});
+ }
+ return badges;
+}
 const bladeWaves=new Set(['gl_quake','ms_gladiator20','wl_split','ms_swordsman60','ms_swordsman30','ke_thousand','ms_merchant30','ws_mace3','bs_hammer','ms_godhammer','te_judge','sb_thunder','ws_axe3','s_cyclops','ground_m2','fairy_m2','sw_charge','ws_sword5','pa_hammer']);
 function actionVisual(u,id,skill){
  if(['heal','buff'].includes(skill.t))return {kind:skill.t};
@@ -161,7 +207,7 @@ function next(b,now){
   if(checkEnd(b,now))return;
   if(!b.queue.length){
    b.round++;
-   b.queue=units(b).filter(u=>u.hp>0).sort((a,c)=>core.speed(c)-core.speed(a)||a.id.localeCompare(c.id)).map(u=>u.id);
+   b.queue=units(b).filter(u=>u.hp>0).sort((a,c)=>core.openingOrder(a,c,b)||core.speed(c)-core.speed(a)||a.id.localeCompare(c.id)).map(u=>u.id);
   }
   const u=find(b,b.queue.shift());if(!u||u.hp<=0)continue;
   if(core.turnStart(u)){b.turns++;continue;}
@@ -183,18 +229,19 @@ export function combatAction(b,player,command,now){
  if(b.finished||b.autoOwners.has(player)||command.turn!==b.turn||now<b.openAt||now>=b.deadline)return false;
  core.bind(b);
  const u=find(b,b.cur), target=find(b,command.target);
- if(!u||b.roster[u.owner]!==player||!activeSkill(u,command.skill)||(command.target!=null&&!target))return false;
+ if(!u||b.roster[u.owner]!==player||u.charging||!activeSkill(b,u,command.skill)||(command.target!=null&&!target))return false;
  return perform(b,u,command.skill,target,now,true);
 }
 function perform(b,u,id,target,now,active=false){
  const charged=u.charging;
  if(charged){id=charged.id;target=find(b,charged.tid);u.charging=null;u.pendingStealthChargeCrit=!!charged.stealthCrit;}
  const sk=core.skill(id);if(!sk)return false;
- const support=['heal','buff'].includes(sk.t);
- const list=support?allies(b,u):enemies(b,u);
+ const support=isSupport(sk);
+ const list=skillTargets(b,u,sk);
  if(target&&!list.includes(target)&&!charged)return false;
  const aim=list.includes(target)?target:list[0];
- const friend=sk.tg==='self'?u:support?aim:u;
+ if(sk.rev&&!aim)return false;
+ const friend=support?aim:u;
  const before=b.onContribution&&active?new Map(units(b).map(target=>[target.id,{hp:target.hp,buffs:target.buffs.length,statuses:Object.keys(target.status).length}])):null;
  b.effects=[];b.fx=[];
  if(!core.act(u,id,support?enemies(b,u)[0]:aim,friend,!!charged))return false;
@@ -218,24 +265,24 @@ export function advanceCombat(b,now){
  if(!u.charging&&now<actionDeadline(b,u))return;
  const move=core.auto(u);
  const sk=core.skill(move.id);
- const target=['heal','buff'].includes(sk?.t)?move.friend:move.target;
+ const target=sk&&(sk.tg==='self'||sk.tg==='team'||sk.t==='rest')?u:sk&&isSupport(sk)?move.friend:move.target;
  const active=b.autoOwners.has(b.roster[u.owner]);
  if(u.charging&&perform(b,u,u.charging.id,undefined,now,active))return;
- if((u.owner>=0&&move.id==='rest'||activeSkill(u,move.id))&&perform(b,u,move.id,target,now,active))return;
- if(perform(b,u,'attack',enemies(b,u)[0],now,active))return;
+ if((u.owner>=0||move.id!=='rest')&&activeSkill(b,u,move.id)&&perform(b,u,move.id,target,now,active))return;
+ if(perform(b,u,'defend',u,now,active))return;
  b.turns++;next(b,now);
 }
 export function combatView(b,player){
  core.bind(b);
  const cur=find(b,b.cur);
  const auto=b.autoOwners.has(player);
- const commands=!auto&&cur&&b.roster[cur.owner]===player&&!cur.charging?[...new Set(cur.skills)].filter(id=>activeSkill(cur,id)).map(id=>{
-  const sk=core.skill(id), support=['heal','buff'].includes(sk.t);
+ const commands=!b.finished&&!auto&&cur&&b.roster[cur.owner]===player&&!cur.charging?[...new Set([...cur.skills,'rest','defend'])].filter(id=>activeSkill(b,cur,id)).map(id=>{
+  const sk=core.skill(id);
   return {id,name:sk.n,mp:core.cost(cur,sk),
-   targets:(sk.tg==='self'?[cur]:support?allies(b,cur):enemies(b,cur)).map(u=>u.id)};
+   targets:skillTargets(b,cur,sk).map(u=>u.id)};
  }):[];
  const show=u=>({id:u.id,owner:u.owner,name:u.name,kind:u.kind,cls:u.cls,baseCls:careerInfo(u.cls)?.base,sp:u.sp,lv:u.lv,hp:u.hp,mp:u.mp,maxHp:u.st.hp,maxMp:u.st.mp,
-  gender:u.gender,evo:u.evo,types:u.types,statuses:Object.keys(u.status||{}),baseAura:u.baseAura,personalPoints:u.personalPoints});
+  gender:u.gender,evo:u.evo,form:u.form,types:u.types,statuses:Object.keys(u.status||{}),badges:battleBadges(u),baseAura:u.baseAura,personalPoints:u.personalPoints});
  return {id:b.id,teams:b.teams,roster:b.roster,allies:b.allies.map(show),enemies:b.enemies.map(show),commands,boss:b.boss,
   round:b.round,turn:b.turn,cur:b.cur,deadline:actionDeadline(b,cur),openAt:b.openAt,finished:b.finished,last:b.last,auto,
   fx:b.fx,effects:b.effects,log:b.log.slice(-5)};

@@ -9,7 +9,7 @@
  <script src="../town-walk-demo/music-channel.js?v=ios-audio-2-20261107"></script>
  <script src="../../client/voice-player.js?v=1"></script>
  <title>โคลอสเซียม · SoulBeast</title>
- <link rel="stylesheet" href="./style.css?v=colosseum-mercenary-hud-1">
+ <link rel="stylesheet" href="./style.css?v=colosseum-walk-tools-1">
 <link rel="stylesheet" href="../../client/game-menu-art.css?v=5"></head>
 <body>
  <main id="lobby">
@@ -174,8 +174,35 @@
    <p id="boss-announcement" role="status"></p>
    <p id="event" role="status"></p>
   </div>
-  <div id="stick" aria-label="จอยเดิน"><div id="thumb"></div></div>
-  <button id="walk-sound" class="secondary" type="button" aria-label="เสียงโคลอสเซียม" hidden></button>
+  <dialog id="walk-character" aria-labelledby="walk-character-title">
+   <header class="character-dialog-header">
+    <h2 id="walk-character-title">ตัวละคร</h2>
+    <form method="dialog"><button class="secondary" autofocus>ปิด</button></form>
+   </header>
+   <div id="walk-character-profile"></div>
+  </dialog>
+  <div id="arena-notices">
+   <p id="kill-announcement" role="status"></p>
+   <p id="boss-announcement" role="status"></p>
+   <p id="event" role="status"></p>
+  </div>
+  <div id="stick-area"><div id="stick" aria-label="จอยเดิน"><div id="thumb"></div></div></div>
+  <button id="stick-settings-button" class="secondary" type="button" aria-label="ตั้งค่าตำแหน่งจอย" title="ตั้งค่าตำแหน่งจอย" aria-controls="stick-settings" aria-expanded="false" hidden>⚙︎</button>
+  <section id="stick-settings" aria-labelledby="stick-settings-title" hidden>
+   <strong id="stick-settings-title">ตำแหน่งจอย</strong>
+   <p>ลากจอยไปยังตำแหน่งที่ถนัด แล้วกดบันทึก</p>
+   <div>
+    <button id="stick-save" type="button">บันทึก</button>
+    <button id="stick-default" class="secondary" type="button">คืนค่าเริ่มต้น</button>
+    <button id="stick-cancel" class="secondary" type="button">ยกเลิก</button>
+   </div>
+  </section>
+  <div id="walk-tools" hidden>
+   <button id="open-walk-character" class="secondary" type="button" aria-label="ตัวละคร" title="ตัวละคร" aria-haspopup="dialog" aria-controls="walk-character">
+    <img id="walk-character-icon" alt="" hidden><span id="walk-character-label" aria-hidden="true">ตัวละคร</span>
+   </button>
+   <button id="walk-sound" class="secondary" type="button" aria-label="เสียงโคลอสเซียม"></button>
+  </div>
   <div id="base-recall" hidden>
    <progress id="base-recall-progress" max="1" value="0" aria-label="ความคืบหน้าการวาร์ป" hidden></progress>
    <button id="base-recall-button" class="secondary" type="button">วาร์ปกลับฐานใหญ่</button>
@@ -192,6 +219,6 @@
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" class="team-score-results" hidden></div><button id="dead-team-scores" class="secondary" type="button" aria-haspopup="dialog" hidden>ตารางคะแนน</button><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=colosseum-mercenary-hud-1"></script>
+ <script type="module" src="./client.mjs?v=colosseum-walk-tools-1"></script>
 </body>
 </html>

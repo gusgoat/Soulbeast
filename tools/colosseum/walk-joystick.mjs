@@ -41,3 +41,82 @@ export function bindWalkJoystick(base,knob,{canStart=()=>true,onStart=()=>{},onS
  document.addEventListener('visibilitychange',()=>{if(document.hidden)reset();});
  return direction;
 }
+
+export function bindJoystickPosition(base,{button,panel,save,reset,cancel,canEdit,onEdit}){
+ const area=base.parentElement,landscape=matchMedia('(orientation:landscape)');
+ const storageKey='soulbeast-colosseum-stick-position';
+ const defaultPosition={x:0,y:1};
+ const clamp=value=>Math.max(0,Math.min(1,value));
+ let positions={},draft=null,drag=null;
+ try{positions=JSON.parse(localStorage.getItem(storageKey))||{};}catch{}
+ const orientation=()=>landscape.matches?'landscape':'portrait';
+ function stored(){
+  const point=positions[orientation()];
+  return Number.isFinite(point?.x)&&Number.isFinite(point.y)?{x:clamp(point.x),y:clamp(point.y)}:defaultPosition;
+ }
+ function apply(){
+  const {x,y}=draft||stored();
+  area.style.setProperty('--stick-x',x);
+  area.style.setProperty('--stick-y',y);
+  area.toggleAttribute('data-stick-on-right',x>.55&&y>.5);
+ }
+ function close(commit=false,focus=false){
+  if(!draft)return;
+  if(commit){
+   positions={...positions,[orientation()]:draft};
+   try{localStorage.setItem(storageKey,JSON.stringify(positions));}catch{}
+  }
+  if(drag&&base.hasPointerCapture(drag.id))base.releasePointerCapture(drag.id);
+  draft=drag=null;
+  panel.hidden=true;area.removeAttribute('data-editing');base.removeAttribute('tabindex');
+  button.setAttribute('aria-expanded','false');
+  onEdit(false);
+  apply();
+  if(focus)button.focus();
+ }
+ button.onclick=()=>{
+  if(draft){close(false,true);return;}
+  if(!canEdit())return;
+  draft={...stored()};
+  onEdit(true);
+  panel.hidden=false;area.setAttribute('data-editing','');base.tabIndex=0;
+  button.setAttribute('aria-expanded','true');
+  base.focus();
+ };
+ save.onclick=()=>close(true,true);
+ cancel.onclick=()=>close(false,true);
+ reset.onclick=()=>{if(draft){draft={...defaultPosition};apply();}};
+ landscape.addEventListener('change',()=>{close();apply();});
+ base.addEventListener('pointerdown',event=>{
+  if(!draft||drag||event.button!==0)return;
+  event.preventDefault();
+  const rect=base.getBoundingClientRect();
+  drag={id:event.pointerId,x:event.clientX-rect.left,y:event.clientY-rect.top};
+  base.setPointerCapture(drag.id);
+ });
+ base.addEventListener('pointermove',event=>{
+  if(drag?.id!==event.pointerId)return;
+  const rect=area.getBoundingClientRect();
+  draft={
+   x:clamp((event.clientX-rect.left-drag.x)/Math.max(1,rect.width-base.offsetWidth)),
+   y:clamp((event.clientY-rect.top-drag.y)/Math.max(1,rect.height-base.offsetHeight))
+  };
+  apply();
+ });
+ for(const type of ['pointerup','pointercancel','lostpointercapture'])base.addEventListener(type,event=>{
+  if(drag?.id===event.pointerId)drag=null;
+ });
+ const arrows={ArrowLeft:[-.03,0],ArrowRight:[.03,0],ArrowUp:[0,-.03],ArrowDown:[0,.03]};
+ base.addEventListener('keydown',event=>{
+  const step=arrows[event.key];
+  if(!draft||!step)return;
+  event.preventDefault();
+  draft={x:clamp(draft.x+step[0]),y:clamp(draft.y+step[1])};
+  apply();
+ });
+ window.addEventListener('keydown',event=>{
+  if(draft&&event.key==='Escape'){event.preventDefault();close(false,true);}
+ });
+ apply();
+ return {get active(){return draft!==null;},close};
+}

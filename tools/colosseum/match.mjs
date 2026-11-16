@@ -2,7 +2,7 @@ import {ASSIST, BASES, BASE_CONTROL_MS, BASE_ATTACK_HP, BASE_ATTACK_MS, BASE_ATT
  TEAM_ARENA, bushAt, capitalSpawn, cellCenter, distance, maze, spawns, warpArrival} from './arena.mjs?v=team-bot-tactics-1';
 import {teamResults, teamStats} from './ranking.mjs';
 import {inSight} from './sight.mjs?v=colosseum-ranges';
-import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=colosseum-mercenary-hud-1';
+import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=colosseum-walk-tools-1';
 import rareArt from './rare-art.mjs';
 import {dispatchTeamDefense, resetBotRoute, stepBot} from './practice.mjs?v=team-bot-defense-1';
 import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
@@ -124,7 +124,8 @@ export class Match {
    this.players.filter(p=>p.side===side).forEach((p,i)=>{
     const party=demoProfile(p,0);
     const hero=party.find(u=>u.kind==='player');
-    p.petVitals=new Map(party.filter(u=>u.kind==='pet').map(u=>[u.uid,{hp:u.hp,mp:u.mp,maxHp:u.st.hp,maxMp:u.st.mp}]));
+    p.petVitals=new Map(party.filter(u=>u.kind==='pet').map(({uid,name,sp,evo,lv,hp,mp,st})=>
+     [uid,{name,sp,evo,lv,hp,mp,maxHp:st.hp,maxMp:st.mp}]));
     let spawn=spawns(side)[i];
     if(this.solo){
      const separation=point=>Math.min(...assigned.map(other=>distance(point,other)));
@@ -1021,7 +1022,8 @@ export class Match {
     if(!state||(state.done&&!state.burst)||!inSight(viewer,{x,y}))return [];
     return [{id,x,y,type,endsAt:now+state.remaining*1000,burstUntil:state.done?now+state.burst*1000:0}];
    }),
-   players,vitals:{mp:hero?.mp??p.mp,maxMp:p.maxMp,ailments:Object.keys(hero?.status??p.ailments??{})},baseHeal:p.baseHeal,
+   players,vitals:{mp:hero?.mp??p.mp,maxMp:p.maxMp,ailments:Object.keys(hero?.status??p.ailments??{}),
+    ...(this.phase==='match'&&p.phase==='walk'?{companions:Array.from(p.petVitals?.values()??[],pet=>({...pet}))}:{})},baseHeal:p.baseHeal,
    ...(repairing(p)?{baseRepair:{id:p.repair.baseId,nextAt:p.repair.nextAt}}:{}),
    siegeBaseId:p.phase==='walk'?p.siege?.id:null,
    respawnAt:p.respawnAt,finishedAt:this.finishedAt,ack:p.appliedSeq??-1,input:[p.dx,p.dy],battleId:p.phase==='battle'?p.battle:null,

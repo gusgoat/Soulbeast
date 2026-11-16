@@ -1,5 +1,5 @@
 const assets = new URL('../../assets/',import.meta.url).pathname;
-import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, siegeProfile} from './arena.mjs?v=team-bot-tactics-1';
+import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, personalCombatBonus, siegeProfile} from './arena.mjs?v=team-bot-tactics-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
 import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=colosseum-mercenary-hud-1';
 import {teamResults} from './ranking.mjs?v=team-balance-2';
@@ -9,7 +9,7 @@ import {battlePresentation} from './battle-presentation.mjs?v=infantry-audio-1';
 import {siegeAudio} from './siege-audio.mjs?v=infantry-audio-1';
 import {clientAnnouncer} from './client-announcer.mjs?v=team-warp-1';
 import {killCallouts} from './match-announcer.mjs?v=team-warp-1';
-import {bindWalkJoystick} from './walk-joystick.mjs?v=1';
+import {bindJoystickPosition,bindWalkJoystick} from './walk-joystick.mjs?v=colosseum-walk-tools-1';
 import pvpCardArt,{beastPortraits} from './pvp-card-art.mjs?v=battle-parity-1';
 
 const battleAsset=path=>path?.replace(/^\/assets\//,assets);
@@ -27,7 +27,17 @@ let warpMap=false,warpMapKey='';
 let ws,state,battle,me,local,lastInput='',seq=0,offset=0,retry,packet;
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
 let showBattleLog=false;
+let characterKey="";
 let resultKey='',liveScoreKey='';
+const characterDialog=$('walk-character');
+const characterIcon=$('walk-character-icon'),characterLabel=$('walk-character-label');
+function showCharacterIcon(loaded){
+ characterIcon.hidden=!loaded;
+ characterLabel.hidden=loaded;
+}
+characterIcon.onload=()=>showCharacterIcon(true);
+characterIcon.onerror=()=>showCharacterIcon(false);
+const walkModalOpen=()=>mapDialog.open||teamScoresDialog.open||characterDialog.open||stickEditor.active;
 const teamScoresDialog=$('live-team-scores');
 const battleUpdates=[];
 const spectatorPan={x:0,y:0};
@@ -71,7 +81,7 @@ try{
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
- const worker=new Worker(new URL('./practice-worker.mjs?v=colosseum-mercenary-hud-1',import.meta.url),{type:'module'});
+ const worker=new Worker(new URL('./practice-worker.mjs?v=colosseum-walk-tools-1',import.meta.url),{type:'module'});
  const socket={readyState:WebSocket.OPEN,local:true,send:data=>worker.postMessage(JSON.parse(data)),close:()=>worker.terminate()};
  worker.onmessage=({data})=>socket.onmessage?.({data:JSON.stringify(data)});
  worker.onerror=()=>socket.onmessage?.({data:JSON.stringify({type:'error',message:'เปิดสนามทดลองไม่ได้'})});
@@ -244,6 +254,8 @@ function reset(message='',clearInvite=false){
  $('arena').hidden=$('room').hidden=$('rank-queue').hidden=true;$('lobby').hidden=$('entry').hidden=false;$('notice').textContent=message;
  updateEntryControls();
  if(mapDialog.open)mapDialog.close();
+ if(characterDialog.open)characterDialog.close();
+ stickEditor.close();
  if(teamScoresDialog.open)teamScoresDialog.close();
 }
 function showRankQueue(message){
@@ -331,8 +343,19 @@ function applyState(next){
   selectedRating=me.rating;
   renderRankProfile();
  }
+ if(characterDialog.open){
+  if(state.phase==='match'&&me?.phase==='walk')renderWalkCharacter(me);
+  else characterDialog.close();
+ }
+ if(state.phase!=='match'||me?.phase!=='walk'||me.recallEndsAt)stickEditor.close();
  renderMatchResults();
  if(!me||!Number.isFinite(me.x))return;
+ const characterArt=portrait(me);
+ if(characterArt!==(characterIcon.getAttribute('src')||undefined)){
+  showCharacterIcon(false);
+  if(characterArt)characterIcon.src=characterArt;
+  else characterIcon.removeAttribute('src');
+ }
  const solo=state.mode==='survival';
  scene.arena=solo?SURVIVAL_ARENA:TEAM_ARENA;
  $('blue-label').textContent=solo?'เหลือผู้รอด':'ไพลิน';
@@ -349,7 +372,7 @@ function applyState(next){
   const err=distance(local,expected);
   if(me.recallEndsAt||err>145||!scene.arena.fits(local.x,local.y)){local.x=expected.x;local.y=expected.y;correction=null;}
   else correction=err>7?{x:expected.x-local.x,y:expected.y-local.y}:null;
-  for(const k of ['phase','connected','safeUntil','repairingBase','recallEndsAt','rating','points','streakTitle','healUntil'])local[k]=me[k];
+  for(const k of ['phase','connected','safeUntil','repairingBase','recallEndsAt','rating','points','streakTitle','healUntil','hp','maxHp'])local[k]=me[k];
  }
  const visible=[...next.players.filter(p=>p.id!==me.id&&Number.isFinite(p.x)&&p.connected&&p.phase!=='dead'),...next.shadows,...next.bosses,...(next.infantry??[])];
  const ids=new Set(visible.map(p=>p.id));
@@ -534,6 +557,12 @@ function addBotButton(side,full,label=side===null?'เพิ่มบอท':`�
 const classEmblems={swordsman:'sword',archer:'bow',mage:'arcane',summoner:'summon'};
 const statusLabels={burn:'ไฟไหม้',poison:'พิษ',para:'อัมพาต',sleep:'หลับ',freeze:'แช่แข็ง',
  confuse:'สับสน',charm:'หลงเสน่ห์',chill:'หนาวเย็น',static:'ไฟฟ้าสถิต',love:'หลงรัก'};
+function ailmentIcon(status){
+ const icon=node('img');
+ icon.src=assets+'ui/status/'+status+'.webp';
+ icon.alt=icon.title=statusLabels[status];
+ return icon;
+}
 function frameArt(unit){
  if(unit.kind==='player')return assets+'ui/element-card-scenes/class-'+(classEmblems[unit.baseCls||unit.cls]||'sword')+'.webp';
  return assets+'ui/element-card-scenes/element-'+(unit.types?.[0]||'normal')+'.webp';
@@ -608,11 +637,16 @@ function unitCard(unit,current,selectable,choose){
  }
  stats.append(name,level,...meters);
  const statuses=(unit.statuses||[]).filter(status=>Object.hasOwn(statusLabels,status));
- if(statuses.length){
+ const badges=unit.badges||[];
+ if(statuses.length||badges.length){
   const strip=node('span',null,'battle-statuses');
-  for(const status of statuses){
-   const icon=node('img');icon.src=assets+'ui/status/'+status+'.webp';
-   icon.alt=statusLabels[status];icon.title=statusLabels[status];strip.append(icon);
+  strip.append(...statuses.map(ailmentIcon));
+  for(const {icon,label,down} of badges){
+   const painted=Number.isInteger(icon);
+   const badge=node('span',painted?null:icon,painted?'battle-badge painted':down?'battle-badge down':'battle-badge');
+   badge.setAttribute('role','img');badge.setAttribute('aria-label',label);badge.title=label;
+   if(painted)badge.style.backgroundPosition=`${icon%6*20}% ${Math.floor(icon/6)*100/3}%`;
+   strip.append(badge);
   }
   stats.append(strip);
  }
@@ -623,11 +657,11 @@ function skillButton(skill,enabled,onClick){
  const button=node('button',null,'battle-skill');
  button.disabled=!enabled;button.onclick=onClick;
  const icon=node('img');
- icon.src=assets+'skills/painted-v2/'+skill.id+'.webp';icon.alt='';
+ icon.src=assets+(skill.id==='defend'?'ui/unit-frames/shield.svg':'skills/painted-v2/'+skill.id+'.webp');icon.alt='';
  icon.onerror=()=>{icon.onerror=null;icon.src=assets+'ui/unit-frames/sword.svg';};
  const caption=node('span',skill.name);
- const mp=node('small',skill.mp?`${skill.mp} MP`:'ไม่ใช้ MP');
- button.append(icon,caption,mp);
+ const detail=skill.id==='rest'?'ฟื้น MP 30%':skill.id==='defend'?'ป้องกัน +50%':skill.mp?`${skill.mp} MP`:'ไม่ใช้ MP';
+ button.append(icon,caption,node('small',detail));
  return button;
 }
 function renderBattle(){
@@ -971,6 +1005,62 @@ function renderTeamHp(){
  }));
  $('own-mp').textContent=Number.isFinite(maxMp)?`MP คุณ ${Math.ceil(mp)}/${maxMp}`:'';
 }
+function characterVitals(unit,subtitle){
+ const card=node('article',null,'character-vitals');
+ const art=node('img',null,'character-portrait');
+ const source=unit.sp?battleAsset(beastPortraits[unit.sp]?.[unit.evo||0]):null;
+ const fallback=portrait(unit);
+ art.alt='';
+ if(source||fallback)art.src=source||fallback;
+ art.onerror=()=>{
+  art.onerror=()=>art.removeAttribute('src');
+  if(source&&fallback&&source!==fallback)art.src=fallback;
+  else art.removeAttribute('src');
+ };
+ const info=node('div',null,'character-vitals-info');
+ const heading=node('div',null,'character-unit-heading');
+ const name=node('h3',unit.name);name.title=unit.name;
+ heading.append(name,node('small',subtitle));
+ if(unit.sp&&unit.hp===0)heading.append(node('small','หมดสติ','character-ailment'));
+ info.append(heading);
+ for(const [label,value,max] of [['HP',unit.hp,unit.maxHp],['MP',unit.mp,unit.maxMp]]){
+  const line=node('div',null,'character-vital '+label.toLowerCase());
+  const range=node('meter');
+  range.max=Math.max(1,max);range.value=value;range.setAttribute('aria-label',label+' '+unit.name);
+  line.append(node('span',label),node('span',`${value}/${max}`),range);
+  info.append(line);
+ }
+ card.append(art,info);
+ return card;
+}
+function renderWalkCharacter(player){
+ const {mp,maxMp,ailments=[],companions=[]}=state.vitals??{};
+ const roundVitals=unit=>({...unit,hp:Math.ceil(unit.hp??0),mp:Math.ceil(unit.mp??0)});
+ const hero=roundVitals({name:player.name,cls:player.cls,gender:player.gender,hp:player.hp,maxHp:player.maxHp,mp,maxMp});
+ const pets=companions.map(roundVitals);
+ const key=JSON.stringify([hero,player.lv,player.className,player.points,ailments,pets]);
+ if(characterKey===key)return;
+ characterKey=key;
+ const profile=characterVitals(hero,`Lv ${player.lv} · ${player.className}`);
+ const status=node('div',null,'character-conditions');
+ const score=node('div',null,'character-score');
+ score.append(node('b',`คะแนนส่วนตัว ${player.points??0}`),
+  node('span',`โจมตีและป้องกัน +${personalCombatBonus(player.points)}%`,'character-score-bonus'));
+ status.append(score,node('strong','สถานะผิดปกติ'));
+ const active=node('div',null,'character-ailments');
+ active.append(...ailments.filter(ailment=>Object.hasOwn(statusLabels,ailment)).map(ailmentIcon));
+ if(!active.childElementCount){
+  const empty=node('span','—');
+  empty.setAttribute('role','img');
+  empty.setAttribute('aria-label','ไม่มีสถานะผิดปกติ');
+  active.append(empty);
+ }
+ status.append(active);
+ const roster=node('div',null,'character-companions');
+ roster.append(...pets.map(pet=>characterVitals(pet,`Lv ${pet.lv}`)));
+ if(!pets.length)roster.append(node('p','ไม่มีอสูรคู่หูในทีม'));
+ $('walk-character-profile').replaceChildren(profile,status,node('h3','อสูรคู่หู'),roster);
+}
 function renderSurvivalRank(solo){
  const enabled=solo&&Number.isFinite(me.points);
  $('survival-standings').hidden=!enabled;
@@ -988,10 +1078,16 @@ function renderSurvivalRank(solo){
   item.append(name,node('b',p.points));return item;
  }));
 }
+$('open-walk-character').onclick=()=>{
+ if(state?.phase!=='match'||me?.phase!=='walk'||walkModalOpen())return;
+ release();
+ renderWalkCharacter(me);
+ characterDialog.showModal();
+};
 const keyboard=['arrowleft','arrowright','arrowup','arrowdown','w','a','s','d'];
 addEventListener('keydown',e=>{
  const k=e.key.toLowerCase();
- if(me?.phase==='walk'&&!mapDialog.open&&!teamScoresDialog.open&&keyboard.includes(k)){if(!keys.has(k)){keys.add(k);sendMove(...direction());}e.preventDefault();}
+ if(me?.phase==='walk'&&!walkModalOpen()&&keyboard.includes(k)){if(!keys.has(k)){keys.add(k);sendMove(...direction());}e.preventDefault();}
 });
 addEventListener('keyup',e=>{if(keys.delete(e.key.toLowerCase())&&me?.phase==='walk')sendMove(...direction());});
 addEventListener('blur',release);
@@ -1007,11 +1103,20 @@ $('base-recall-button').onclick=()=>{
  send({type:me.recallEndsAt?'cancelRecall':'recallBase'});
 };
 const stick=bindWalkJoystick($('stick'),$('thumb'),{
- canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!me.recallEndsAt&&!state.baseRepair&&!mapDialog.open&&!teamScoresDialog.open,
+ canStart:()=>me?.phase==='walk'&&state?.phase==='match'&&!me.recallEndsAt&&!state.baseRepair&&!walkModalOpen(),
  onStart:sendDirection,onStop:sendDirection
 });
+const stickEditor=bindJoystickPosition($('stick'),{
+ button:$('stick-settings-button'),panel:$('stick-settings'),
+ save:$('stick-save'),reset:$('stick-default'),cancel:$('stick-cancel'),
+ canEdit:()=>state?.phase==='match'&&me?.phase==='walk'&&!me.recallEndsAt&&!walkModalOpen(),
+ onEdit:editing=>{
+  if(editing)release();
+  for(const id of ['scoreboard','objectives','map','walk-tools','base-recall','raid'])$(id).inert=editing;
+ }
+});
 function direction(){
- if(!me||me.phase!=='walk'||state?.phase!=='match'||me.recallEndsAt||state.baseRepair||mapDialog.open||teamScoresDialog.open||ws?.readyState!==WebSocket.OPEN)return [0,0];
+ if(!me||me.phase!=='walk'||state?.phase!=='match'||me.recallEndsAt||state.baseRepair||walkModalOpen()||ws?.readyState!==WebSocket.OPEN)return [0,0];
  const k=(...names)=>Number(names.some(name=>keys.has(name)));
  return [stick.x+k('d','arrowright')-k('a','arrowleft'),stick.y+k('s','arrowdown')-k('w','arrowup')].map(x=>Math.max(-1,Math.min(1,x)));
 }
@@ -1092,7 +1197,8 @@ function frame(t){
    const canSwitch=spectatablePlayers().length>1;
    $('spectator-prev').disabled=$('spectator-next').disabled=!canSwitch;
   }
-  $('walk-sound').hidden=!walking;
+  $('walk-tools').hidden=!walking;
+  $('stick-settings-button').hidden=!walking||Boolean(recall);
   presentation.walk(walking,stepped?(scene.arena.bushAt(local)!==null?'leaves':'stone'):null);
   $('objectives').hidden=!walking;
   const repair=walking&&state.baseRepair;
