@@ -92,6 +92,20 @@ function drawMovement(c,x,y,size,dir,frame,cols,sheet,anchor,scale,between,extra
  c.drawImage(turnCanvas,0,0,sw,sh,x+left,y+top,width,height);
 }
 
+const movementStorage='https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/';
+const intercardinalPath=/\/assets\/player-walk\/([a-z0-9_-]+)\/((?:walk|run)-intercardinal-v1\.webp)$/;
+function movementUrl(file){
+ const asset=intercardinalPath.exec(file);
+ return asset?movementStorage+asset[1]+'--'+asset[2]:file;
+}
+function movementImage(file){
+ const src=movementUrl(file);
+ const image=new Image();
+ if(src.startsWith(movementStorage))image.crossOrigin='anonymous';
+ image.src=src;
+ return image;
+}
+
 function create({preloadDirections=false}={}){
  let current=null,requested='',version=0,pending=null,idleStartedAt=null;
  function close(sprite){
@@ -100,6 +114,7 @@ function create({preloadDirections=false}={}){
  function read(src,cols,rows,cell){
   return new Promise((resolve,reject)=>{
    const image=new Image();
+   if(src.startsWith(movementStorage))image.crossOrigin='anonymous';
    image.onload=async()=>{
     try{resolve(scope.CountryRenderBudget?await scope.CountryRenderBudget.atlas(image,cols,rows,cell):image)}
     catch(error){reject(error)}
@@ -112,7 +127,7 @@ function create({preloadDirections=false}={}){
   const file=sprite.intercardinal?.[motion],key=motion+'Between';
   if(!file||sprite[key]!==undefined)return;
   sprite[key]=null; // A missing optional atlas keeps the nearest original direction.
-  read(file,sprite[motion+'Frames'],8,preloadDirections?256:192).then(image=>{
+  read(movementUrl(file),sprite[motion+'Frames'],8,preloadDirections?256:192).then(image=>{
    if(ticket===version&&current===sprite)sprite[key]=image;
    else image.close?.();
   }).catch(()=>{});
@@ -182,5 +197,5 @@ function create({preloadDirections=false}={}){
  function release(){version++;close(current);current=null;requested='';pending=null;idleStartedAt=null}
  return {sync,draw,release,get current(){return current}};
 }
-scope.sealerSprites={create,identity,drawColoredFrame,heading,nearestDirection,drawMovement};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
+scope.sealerSprites={create,identity,drawColoredFrame,heading,nearestDirection,drawMovement,movementImage};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
 })(typeof window==='undefined'?globalThis:window);

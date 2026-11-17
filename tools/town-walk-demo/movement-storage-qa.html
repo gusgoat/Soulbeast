@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Soulbeast · ทดสอบภาพเดินและวิ่ง</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui,sans-serif;background:#0e1720;color:#f3e6c8}
+body{max-width:680px;margin:auto;padding:16px}h1{font-size:1.25rem;margin:0 0 8px}
+p{margin:8px 0}main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+figure{margin:0;text-align:center;border:1px solid #826b42;border-radius:8px;background:#1a2633;padding:6px}
+canvas{display:block;width:min(100%,27vh);height:auto;margin:0 auto}a{color:#ffe1a2;display:inline-block;padding:8px 0}
+</style>
+<script src="sealer-sprite-catalog.js?v=world-walk16-20261117"></script>
+<script src="sealer-sprites.js?v=storage-walk16-20261117"></script>
+</head>
+<body>
+<h1>ทดสอบภาพเดินและวิ่งจาก Supabase</h1>
+<p id="result" role="status">กำลังโหลดภาพเดินและวิ่ง…</p>
+<main>
+<figure><canvas id="walk" width="160" height="160"></canvas><figcaption>เดิน</figcaption></figure>
+<figure><canvas id="run" width="160" height="160"></canvas><figcaption>วิ่ง</figcaption></figure>
+</main>
+<a href="../../accounts.html">เข้าเกม Soulbeast เพื่อทดสอบฉากเดิน</a>
+<script>
+(async()=>{
+ const player=sealerSprites.create({preloadDirections:true});
+ const result=document.querySelector('#result');
+ const panels=['walk','run'].map(motion=>[motion,document.querySelector('#'+motion).getContext('2d')]);
+ const render=(time,dir)=>{
+  for(const [motion,ctx] of panels){
+   ctx.clearRect(0,0,160,160);
+   player.draw(ctx,80,146,135,dir,time,true,motion==='run');
+  }
+ };
+ try{
+  await player.sync({cls:'archdruid',gender:'female'});
+  const deadline=performance.now()+20000;
+  while(!player.current?.walkBetween||!player.current?.runBetween){
+   if(performance.now()>deadline)throw new Error('รอภาพจาก Supabase เกินเวลา');
+   await new Promise(resolve=>setTimeout(resolve,80));
+  }
+  for(let dir=.5;dir<8;dir++){
+   render(0,dir);
+   for(const [motion,ctx] of panels){
+    const pixels=ctx.getImageData(0,0,160,160).data;
+    if(!pixels.some((value,index)=>index%4===3&&value))throw new Error('ภาพ '+motion+' ว่างที่ทิศ '+dir);
+   }
+  }
+  result.textContent='ผ่าน · ภาพเดินและวิ่งจาก Supabase โหลดและวาดได้ครบทั้ง 8 ทิศระหว่างทิศหลัก';
+  const start=performance.now();
+  requestAnimationFrame(function animate(now){
+   const seconds=(now-start)/1000;
+   render(seconds*7,(Math.floor(seconds/1.5)%8)+.5);
+   requestAnimationFrame(animate);
+  });
+ }catch(error){result.textContent='ทดสอบไม่ผ่าน · '+error.message}
+})();
+</script>
+</body>
+</html>
+
