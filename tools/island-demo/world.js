@@ -26,12 +26,13 @@ if(!online&&IslandPreviewProfile.upgrade(player,WalkVitals.maximum)){
  const raw=JSON.stringify(player);sessionStorage.setItem(I.key,raw);
  localStorage.setItem('soulbeast-walk-save:'+player.walkId,raw);
 }
-const data=I.map(country),F=I.F,canvas=$('world'),ctx=canvas.getContext('2d');
+const data=I.map(country),F=I.F,canvas=$('world'),surface=canvas.getContext('2d');
+let ctx=surface;
 const patrols=IslandPatrols.create({
  ...data,actors:[...data.actors,{...data.boss,id:'boss',kind:'boss',lv:60}],
 },cfg.seed);
 const boss=patrols.actors.find(a=>a.kind==='boss');
-const mini=$('mini').getContext('2d'),avatar=sealerSprites.create(),keys=new Set(),joy={x:0,y:0,id:null};
+const mini=$('mini').getContext('2d'),avatar=sealerSprites.create({preloadDirections:true}),keys=new Set(),joy={x:0,y:0,id:null};
 const visit=()=>I.state(player,country).visit;
 const saved=visit().position;
 const p={...(saved&&data.walkable(saved.x,saved.y)?saved:data.spawn),dir:saved?.dir||0};
@@ -40,13 +41,12 @@ const nav={walkable:data.walkable,distance:I.distance};
 const trapState=visit().traps;
 const traps=DungeonTraps.create(data,nav,trapState,{seed:cfg.seed,count:I.trapCount,spacing:370});
 const colors={
- blue:{sea:'#12415d',deep:'#071d35',ground:'#a5bcc4',edge:'#cfdddb',road:'#e0dccc',tree:'assets/hemant-walk-preview/pine-v2.png.webp',floor:'assets/hemant-walk-preview/snow-v1.png.webp'},
- green:{sea:'#12616c',deep:'#082e43',ground:'#4c7440',edge:'#ccb98a',road:'#bba878',tree:'assets/country-walk/green/tree.png.webp',floor:'assets/town-walk-preview/grass-v1.png.webp'},
- red:{sea:'#224758',deep:'#091f32',ground:'#714831',edge:'#ac805c',road:'#bc8b56',tree:'assets/country-walk/red/tree.png.webp',floor:'assets/country-walk/red/ground.png.webp'},
+ blue:{sea:'#12415d',deep:'#071d35',ground:'#a5bcc4',floor:'assets/hemant-walk-preview/snow-v1.png.webp'},
+ green:{sea:'#12616c',deep:'#082e43',ground:'#4c7440',floor:'assets/town-walk-preview/grass-v1.png.webp'},
+ red:{sea:'#224758',deep:'#091f32',ground:'#714831',floor:'assets/country-walk/red/ground.png.webp'},
 }[country];
 const asset=Object.fromEntries(Object.entries({
- tree:colors.tree,rock:'assets/island-props/'+country+'-rock.webp',
- floor:colors.floor,ruin:'assets/island-props/'+country+'-ruin.webp',
+ floor:colors.floor,
  wreck:'assets/island-props/'+country+'-wreck.webp',
  chest:'assets/hemant-walk-preview/bandit-treasure-v1.png.webp',
  bandit:'assets/hemant-walk-preview/forest-bandit-walk-v2.png.webp',
@@ -58,12 +58,9 @@ const asset=Object.fromEntries(Object.entries({
 const atlas={},loadImage=url=>new Promise((resolve,reject)=>{
  const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('Cannot load '+url));img.src=url;
 });
-fetch('island-props.json?v=1').then(res=>res.json()).then(async catalog=>{
- await Promise.all(Object.entries(catalog).map(async([group,frames])=>{
-  const image=await loadImage(root+'assets/island-props/'+group+'-atlas.webp');
-  for(const [id,bounds] of Object.entries(frames))atlas[id]={image,bounds};
- }));
- canvas.dataset.scenery='ready';
+const atlasReady=fetch('island-props.json?v=1').then(res=>res.json()).then(async ({beach})=>{
+ const image=await loadImage(root+'assets/island-props/beach-atlas.webp');
+ for(const [id,bounds] of Object.entries(beach))atlas[id]={image,bounds};
 }).catch(console.error);
 const shore=Array.from({length:81},(_,i)=>data.coast(i*Math.PI/40));
 const music=WalkAudio.create({kind:'country',music:{blue:'countryBlue',green:'countryGreen',red:'countryRed'}[country],surface:'leaves',waterSources:[{points:shore,width:85}]});
@@ -85,36 +82,39 @@ async function loadBossSprite(){
 let bossSprite=null;
 void loadBossSprite().catch(console.error);
 void avatar.sync(player).catch(console.error);
-const random=I.seeded(cfg.seed+91),props=[];
-for(let i=0;i<600&&props.length<135;i++){
- const x=random()*data.width,y=random()*data.height;
- if(data.isLand(x,y)&&!data.walkable(x,y)&&!data.nodes.some(n=>I.distance(n,{x,y})<230)){
-  const n=props.length;
-  props.push({x,y,art:n%3===0?'bush':n%7===0?'rock':'tree',variant:n%5+1,size:n%3===0?45+random()*75:80+random()*115});
- }
-}
+const random=I.seeded(cfg.seed+91);
 const coastProps=[];
 for(const [index,angle] of [.42,.91,1.42,1.85,2.29,2.85,3.4,3.87,4.38,4.88,5.47].entries()){
- const bearing=angle+cfg.angle,point=data.coast(bearing,index%4===1?1.008:.985);
+ if(index%4!==1)continue;
+ const bearing=angle+cfg.angle,point=data.coast(bearing,1.008);
  if(I.distance(point,data.spawn)<420)continue;
- coastProps.push({...point,art:index%4===1?'wreck':'shore-rock',variant:index%5+1,size:index%4===1?230:95+random()*95});
+ coastProps.push({...point,art:'wreck',size:230});
 }
 for(let i=0;i<12;i++){
  const bearing=cfg.angle-.25+i*.074;
  const foot=data.coast(bearing,.973-(i%3)*.006);
  coastProps.push({...foot,art:i%4===0?'star':'shell',variant:i%4===0?i/4+1:i%5+1,size:21+random()*20});
- if(i%2===0){
-  const palm=data.coast(bearing+.034,.928);
-  if(!data.walkable(palm.x,palm.y))coastProps.push({...palm,art:'palm',size:94+random()*40});
- }
 }
 const landmark=data.coast(cfg.angle+.30,.982);
-coastProps.push({...landmark,art:'statue',size:112});
+if(!data.walkable(landmark.x,landmark.y))coastProps.push({...data.coast(cfg.angle+.30,.956),art:'statue',size:112});
 const fishSchools=[-.15,.36,1.45,2.35,3.5,4.42,5.65].map((angle,index)=>({angle:angle+cfg.angle,offset:index*.9}));
 const portArt={...data.coast(cfg.angle,.988),depthY:data.spawn.y-16,art:'port',size:240,name:cfg.port};
+const beach=IslandBeach.create(data,country,F,I.seeded(cfg.seed+174),I.distance,coastProps,portArt,data.sites);
+const {artFiles,layout,props,lamps,lava}=IslandLandscape.create(data,country,F,random,I.distance,[...coastProps,...beach.palms],portArt,beach.width);
+const staticScenery=CountryRenderBudget.index([...props,...beach.palms,...coastProps,portArt,
+ ...data.sites.map(o=>({...o,art:'ruin',size:190}))
+],o=>({left:o.x-o.size,right:o.x+o.size,top:o.y*F-o.size*2,bottom:o.y*F+o.size*.2}));
+const visibleScenery=[];
+const landscapeArt=Object.fromEntries(Object.entries(artFiles).map(([key,src])=>{
+ const im=new Image();
+ im.src=src;
+ return [key,im];
+}));
+const shadowLayer=WalkGroundShadows.create();
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let width=0,height=0,dpr=1,last=performance.now(),clock=0,phase=0,writeAt=0,miniAt=0;
 let moving=false,running=false,near=null,frame=null,kind='',noticeTimer=null,portalOpen=false;
+let grassDisplacement=null;
 const coupon=()=>online?openFrame(null,'coupon'):show('คูปองเกาะ','คูปองในเซฟเกาะ '+I.state(player).coupons+' ใบ',[['กลับ',close]]);
 const fusion=BeastFusion.create({
  canOpen:()=>!frame&&!saveContinuation&&!$('townDialog').open&&!DungeonFeedback.isOpen&&!window.WalkControls?.editing,
@@ -125,7 +125,7 @@ peers.className='peer-list-button';peers.setAttribute('aria-label','ผู้เ
 peers.onclick=()=>{reset();show('ผู้เล่นในพื้นที่เดียวกัน','โหมดทดสอบเกาะเล่นคนเดียว',[['กลับไปเดินต่อ',close]]);};
 document.querySelector('.tools').append(peers);
 const cooldown=new Map(),ground=document.createElement('canvas'),gc=ground.getContext('2d');
-const groundScale=.23,zoom=.82;
+const groundScale=matchMedia('(pointer: coarse)').matches?.31:.38,zoom=.82;
 ground.width=Math.ceil(data.width*groundScale);ground.height=Math.ceil(data.height*F*groundScale);
 function renderGround(){
  gc.setTransform(groundScale,0,0,groundScale,0,0);
@@ -133,58 +133,63 @@ function renderGround(){
  const sea=gc.createRadialGradient(data.center.x,data.center.y*F,data.rx*.45,data.center.x,data.center.y*F,data.rx*1.4);
  sea.addColorStop(0,colors.sea);sea.addColorStop(1,colors.deep);
  gc.fillStyle=sea;gc.fillRect(0,0,data.width,data.height*F);
- function shore(radius){
-  gc.beginPath();
-  for(let i=0;i<160;i++){
-   const p=data.coast(i*Math.PI/80,radius);
-   if(i)gc.lineTo(p.x,p.y*F);else gc.moveTo(p.x,p.y*F);
-  }
-  gc.closePath();
- }
- for(const radius of [1.07,1.035,1]){
-  shore(radius);
-  gc.strokeStyle='#a2e7df58';gc.lineWidth=radius===1?15:5;gc.stroke();
- }
- gc.save();gc.clip();
+ beach.paintWater(gc);
+ gc.save();gc.clip(beach.waterline);
  gc.fillStyle=colors.ground;gc.fillRect(0,0,data.width,data.height*F);
  if(asset.floor.naturalWidth){
   const texture=gc.createPattern(asset.floor,'repeat');
-  texture.setTransform(new DOMMatrix().scale(.56));
-  gc.globalAlpha=.65;gc.fillStyle=texture;gc.fillRect(0,0,data.width,data.height*F);gc.globalAlpha=1;
+  texture.setTransform(new DOMMatrix().scale(.45));
+  gc.fillStyle=texture;gc.fillRect(0,0,data.width,data.height*F);
  }
- shore(.992);gc.lineWidth=60;gc.strokeStyle=colors.edge+'a8';gc.stroke();
- gc.beginPath();
- data.nodes.forEach((n,i)=>i?gc.lineTo(n.x,n.y*F):gc.moveTo(n.x,n.y*F));
- gc.lineCap='round';gc.lineJoin='round';gc.lineWidth=data.lane*2+22;gc.strokeStyle=colors.edge;gc.stroke();
- gc.lineWidth=data.lane*2;gc.strokeStyle=colors.road;gc.stroke();
- gc.beginPath();gc.arc(data.center.x,data.center.y*F,215,0,2*Math.PI);gc.fillStyle=colors.road;gc.fill();
- const harbor=gc.createRadialGradient(data.spawn.x,data.spawn.y*F,data.safeRadius*.28,
-  data.spawn.x,data.spawn.y*F,data.safeRadius);
- harbor.addColorStop(0,colors.road);harbor.addColorStop(.72,colors.road+'c8');harbor.addColorStop(1,colors.road+'00');
- gc.fillStyle=harbor;gc.fillRect(data.spawn.x-data.safeRadius,data.spawn.y*F-data.safeRadius,data.safeRadius*2,data.safeRadius*2);
+ lava.drawGround(gc,landscapeArt);
+ CountryPathArt.paintSettlement(gc,layout,F,landscapeArt,country);
+ beach.paintSand(gc);
  gc.restore();
 }
-asset.floor.addEventListener('load',renderGround);renderGround();
+renderGround();
+const waitForImage=im=>new Promise(resolve=>{
+ if(im.complete)resolve();
+ else {im.onload=resolve;im.onerror=resolve;}
+});
+Promise.all([atlasReady,...[asset.floor,...Object.values(landscapeArt)].map(waitForImage),
+ LivingEnvironment.ready(Array.from({length:5},(_,i)=>'country-tree:'+country+'-tree-'+(i+1)))
+]).then(()=>{
+ renderGround();
+ canvas.dataset.scenery='ready';
+});
 function resize(){
  dpr=Math.min(2,devicePixelRatio||1);width=innerWidth;height=innerHeight;
  canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
+ shadowLayer.resize(canvas.width,canvas.height,width,height);
 }
 addEventListener('resize',resize);resize();
 const sx=x=>width/2+(x-cam.x)*zoom,sy=y=>height*.54+(y-cam.y)*F*zoom;
-function stamp(img,x,y,size){
- if(!img.naturalWidth)return false;
+function stamp(img,x,y,size,anchor=1){
+ if(!img?.naturalWidth)return false;
  const h=size*img.naturalHeight/img.naturalWidth;
- ctx.drawImage(img,x-size/2,y-h,size,h);
+ shadowLayer.sprite(ctx,x,y).drawImage(img,x-size/2,y-h*anchor,size,h);
  return true;
 }
 function stampProp(o,x,y){
  const variant=o.variant||1;
- const frame=o.art==='tree'?country+'-tree-'+variant:o.art==='rock'?'inland-rock-'+variant:
-  ['bush','shell','star','shore-rock'].includes(o.art)?o.art+'-'+variant:o.art;
- const sprite=atlas[frame],size=o.size*zoom;
+ const size=o.size*zoom;
+ if(o.art==='tree')return stamp(LivingEnvironment.load('country-tree:'+country+'-tree-'+variant),x,y,size,.89);
+ if(o.art==='rock')return stamp(landscapeArt['edgeRock'+variant],x,y,size,.5);
+ if(o.art==='shrub')return stamp(landscapeArt['shrub'+variant],x,y,size,.84);
+ if(o.key)return stamp(landscapeArt[o.key],x,y,size,o.art==='wildflower'?.78:.91);
+ const mainland=landscapeArt[o.art];
+ if(mainland)return stamp(mainland,x,y,size,.94);
+ const frame=['shell','star'].includes(o.art)?o.art+'-'+variant:o.art;
+ const sprite=atlas[frame];
  if(sprite){
   const [left,top,w,h]=sprite.bounds,drawHeight=size*h/w;
-  ctx.drawImage(sprite.image,left,top,w,h,x-size/2,y-drawHeight,size,drawHeight);
+  const palm=o.art==='palm';
+  ctx.save();
+  ctx.translate(x,y);
+  if(o.flip)ctx.scale(-1,1);
+  shadowLayer.sprite(ctx,x,y).drawImage(sprite.image,left,top,w,h,-size*(palm?.12:.5),
+   -drawHeight*(palm?.975:1),size,drawHeight);
+  ctx.restore();
  }else if(asset[o.art])stamp(asset[o.art],x,y,size);
 }
 function label(text,x,y){
@@ -213,47 +218,41 @@ function drawFish(){
   }
  }
 }
-function drawWaves(){
- ctx.save();
- ctx.lineCap='round';
- for(let row=0;row<3;row++){
-  const phase=(row/3+(reduceMotion.matches?0:clock*.17))%1;
-  const swell=1+.055*(1-phase),alpha=.06+.31*Math.sin(Math.PI*phase);
-  ctx.strokeStyle='rgba(192,245,242,'+alpha+')';
-  ctx.lineWidth=1.2+phase*2;
-  for(let i=0;i<22;i++){
-   const start=i*Math.PI*2/22+.017*Math.sin(i*3+row);
-   const points=Array.from({length:6},(_,j)=>data.coast(start+j*.032,swell+.0016*Math.sin(i+j+(reduceMotion.matches?0:clock))));
-   if(!points.some(o=>sx(o.x)>-35&&sx(o.x)<width+35&&sy(o.y)>-35&&sy(o.y)<height+35))continue;
-   ctx.beginPath();
-   points.forEach((o,j)=>j?ctx.lineTo(sx(o.x),sy(o.y)):ctx.moveTo(sx(o.x),sy(o.y)));
-   ctx.stroke();
-  }
- }
- ctx.restore();
-}
 const daylight=CountryDaylight.create(country);
 function draw(){
+ const light=CountryDaylight.at(Date.now()),lit=light.night>.005;
  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=colors.deep;ctx.fillRect(0,0,width,height);
  ctx.drawImage(ground,sx(0),sy(0),data.width*zoom,data.height*F*zoom);
  drawFish();
- drawWaves();
+ beach.waves(ctx,sx,sy,zoom,width,height,clock,reduceMotion.matches);
+ lava.drawGroundHeat(ctx,sx,sy,zoom,clock,reduceMotion.matches,width,height,landscapeArt);
+ const visibleLamps=lamps.poles.filter(o=>sx(o.x)>-210&&sx(o.x)<width+210&&sy(o.y)>-100&&sy(o.y)<height+195);
+ if(lit)for(const o of visibleLamps)lamps.drawGround(ctx,o,sx,sy,zoom,clock,1,light.night);
+ staticScenery.query({left:cam.x-width/(2*zoom),right:cam.x+width/(2*zoom),
+  top:cam.y*F-height*.54/zoom,bottom:cam.y*F+height*.46/zoom},visibleScenery);
  const objects=[
-  ...props,
-  ...data.barriers.map((o,i)=>({...o,variant:i%5+1})),
-  ...coastProps,
-  portArt,
-  ...data.sites.map(o=>({...o,art:'ruin',size:190})),
+  ...visibleScenery,
+  ...visibleLamps.map(o=>({...o,art:'lamp'})),
   ...(!visit().cleared.chest?[{...data.chest,art:'chest',size:75}]:[]),
   ...patrols.actors.filter(a=>!visit().cleared[a.id]).map(a=>({...a,art:a.kind})),
   ...(companion.key&&companion.body?[{...companion.body,art:'companion'}]:[]),
   {...p,art:'player'},
  ].sort((a,b)=>(a.depthY??a.y)-(b.depthY??b.y));
+ ctx=shadowLayer.begin(F,light.night,visibleLamps,sx,sy,zoom);
  for(const o of objects){
   const x=sx(o.x),y=sy(o.y);
   if(x<-200||x>width+200||y<-25||y>height+250)continue;
-  if(o.art==='companion'){companion.draw(ctx,sx,sy,zoom);continue;}
-  if(o.art==='player'){if(!fusion.draw(ctx,x,y,1,p.dir,clock,moving))avatar.draw(ctx,x,y,134,p.dir,phase,moving,running);continue;}
+  if(o.art==='lamp'){lamps.draw(ctx,o,x,y,zoom,clock,lit?1:0,light.night,shadowLayer);continue;}
+  if(o.art==='grass'){
+   CountryGrassClumps.draw(ctx,landscapeArt[o.key],o,x,y,zoom,p,grassDisplacement,clock,F,shadowLayer,width,height);
+   continue;
+  }
+  if(o.art==='companion'){companion.draw(ctx,sx,sy,zoom,shadowLayer);continue;}
+  if(o.art==='player'){
+   const sprite=shadowLayer.sprite(ctx,x,y);
+   if(!fusion.draw(sprite,x,y,1,p.dir,clock,moving))avatar.draw(sprite,x,y,134,p.spriteDir??p.dir,phase,moving,running);
+   continue;
+  }
   if(o.art==='boss'){
    const size=country==='red'?242:216;
    const drawn=bossSprite?.draw(ctx,x,y,size,o.dir,clock,o.moving)||stamp(asset.boss,x,y,164);
@@ -274,8 +273,23 @@ function draw(){
    if(o.name&&I.distance(p,o)<350)label(o.name,x,y+18);
   }
  }
+ ctx=surface;
+ shadowLayer.finish(ctx);
  traps.draw(ctx,o=>({x:sx(o.x),y:sy(o.y)}),F);
- daylight.draw(ctx,width,height,CountryDaylight.at(Date.now()));
+ daylight.draw(ctx,width,height,light,lit?veil=>{
+  for(const o of visibleLamps)lamps.openLight(veil,o,sx,sy,zoom,clock);
+  for(const {x,y,rx,ry,power} of lava.nightLights([],sx,sy,zoom,width,height,landscapeArt,1)){
+   veil.save();
+   veil.translate(x,y);
+   veil.scale(rx,ry);
+   const glow=veil.createRadialGradient(0,0,0,0,0,1);
+   glow.addColorStop(0,'rgba(255,255,255,'+power+')');
+   glow.addColorStop(1,'rgba(255,255,255,0)');
+   veil.fillStyle=glow;
+   veil.fillRect(-1,-1,2,2);
+   veil.restore();
+  }
+ }:undefined);
 }
 function drawMap(c){
  const w=c.canvas.width,h=c.canvas.height,ratio=Math.min(w/data.width,h/(data.height*F));
@@ -462,7 +476,7 @@ function update(dt){
  const magnitude=Math.hypot(x,y);
  moving=magnitude>.12;running=moving&&(keys.has('shift')||joy.id!=null&&magnitude>.74);
  if(moving){
-  p.dir=(Math.round(-Math.atan2(x,y)/(Math.PI/4))+8)%8;
+  p.spriteDir=sealerSprites.heading(x,y);p.dir=(Math.round(-Math.atan2(x,y)/(Math.PI/4))+8)%8;
   const effort=Math.min(1,magnitude);
   const step=fusion.speed((running?246:151)*effort,effort)*dt;
   const nx=p.x+x/magnitude*step,ny=p.y+y/magnitude*step/F;
@@ -498,7 +512,10 @@ function update(dt){
 function tick(now){
  const dt=Math.min(.05,(now-last)/1000);last=now;clock+=dt;
  if(visit()){
+  const x=p.x,y=p.y;
   update(dt);
+  const dx=p.x-x,dy=(p.y-y)*F,length=Math.hypot(dx,dy);
+  grassDisplacement=length>.02?{x:dx/length,y:dy/length}:null;
   if(visit()){
    companion.sync(CompanionFollowers.first(player));companion.update(dt,p);
    if(companion.key)canvas.dataset.companion=companion.key;else delete canvas.dataset.companion;
@@ -551,6 +568,7 @@ for(const type of ['pointerup','pointercancel','lostpointercapture'])stick.addEv
 addEventListener('pagehide',event=>{
  if(!frame&&!saveContinuation){syncPlayer();if(visit())persist();}
  if(!event.persisted)companion.release();
+ if(!event.persisted)shadowLayer.release();
 });
 $('title').textContent=cfg.name;document.title='Soulbeast · '+cfg.name;
 canvas.dataset.island=country;canvas.dataset.shadows=I.shadowCount;canvas.dataset.bandits=I.banditCount;

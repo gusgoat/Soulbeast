@@ -8,7 +8,7 @@ function create(country){
   image.src='/Soulbeast/assets/country-walk/bridge-rails-v1/'+country+'-'+dir+'.webp';
   return [dir,image];
  }));
- function draw(c,o,sx,sy,z){
+ function draw(c,o,sx,sy,z,shadows){
   let x=sx(o.a.x),y=sy(o.a.y),X=sx(o.b.x),Y=sy(o.b.y);
   if(x>X){[x,X]=[X,x];[y,Y]=[Y,y];}
   const slope=Math.abs(Y-y)/Math.max(1,X-x);
@@ -21,7 +21,9 @@ function create(country){
   const [ax,ay,bx,by,post]=base,width=(flip?-1:1)*Math.max(Math.abs(dx),dir==='steep'?22*z:1);
   // Map both feet to the bridge edge and keep the posts vertical in screen space.
   const vertical=40*z/post,horizontal=width/(bx-ax),shear=(dy-vertical*(by-ay))/(bx-ax);
-  c.save();c.transform(horizontal,shear,0,vertical,x-(width-dx)/2-horizontal*ax,y-shear*ax-vertical*ay);
+  const left=x-(width-dx)/2;
+  c.save();c.transform(horizontal,shear,0,vertical,left-horizontal*ax,y-shear*ax-vertical*ay);
+  shadows?.cast(c,left,y,dy/width,art,0,0);
   c.drawImage(art,0,0);c.restore();return true;
  }
  return {draw};

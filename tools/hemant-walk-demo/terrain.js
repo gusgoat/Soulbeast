@@ -18,12 +18,49 @@ function create(data,nav){
  const rocks=mountains.map(o=>{const h=o.w*881/1500;return {kind:'mountain',points:outline.map(([x,y])=>({x:o.x+(x-.5)*o.w,y:o.y*F+(y-.94)*h}))}});
  let seed=205;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
  const trees=[];for(let i=0;i<Math.round(850*data.width*data.height/(6200*6900));i++){const o={x:180+rand()*(data.width-360),y:200+rand()*(data.height-400),w:110+rand()*65};if(data.countryId==='red'&&o.x/data.width>.28&&o.y/data.height<.7&&Math.sin(o.x*.001)+Math.cos(o.y*.0013)<.35)continue;if(!insideEnclosure(o.x,o.y)||water.raw(o.x,o.y,55)||water.bridges.some(b=>nav.distance(o,b.a)+nav.distance(o,b.b)<b.length+200)||nav.nearest(o).distance<165||nav.places.some(s=>nav.distance(o,s)<360)||rocks.some(r=>inside(o.x,o.y*F,r.points)))continue;trees.push(o)}
+ const shrubInterval={green:4,blue:5,red:5}[data.countryId];
+ if(shrubInterval)for(const tree of trees){
+  const signature=(Math.imul(Math.round(tree.x),73)^Math.imul(Math.round(tree.y),193))>>>0;
+  if(signature%shrubInterval!==0)continue;
+  tree.shrub=1+(signature>>>6)%4;
+  tree.w*=.73;
+ }
  const trunks=trees.map(o=>({kind:'tree',x:o.x,y:o.y*F,rx:o.w*.12+PLAYER_RADIUS,ry:o.w*.07+PLAYER_RADIUS}));
  const buckets=new Map(),CELL=256;
  for(const o of [...rocks,...trunks]){const box=o.points?{left:Math.min(...o.points.map(p=>p.x))-PLAYER_RADIUS,right:Math.max(...o.points.map(p=>p.x))+PLAYER_RADIUS,top:Math.min(...o.points.map(p=>p.y))-PLAYER_RADIUS,bottom:Math.max(...o.points.map(p=>p.y))+PLAYER_RADIUS}:{left:o.x-o.rx,right:o.x+o.rx,top:o.y-o.ry,bottom:o.y+o.ry};for(let x=Math.floor(box.left/CELL);x<=Math.floor(box.right/CELL);x++)for(let y=Math.floor(box.top/CELL);y<=Math.floor(box.bottom/CELL);y++){const key=x+','+y;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o)}}
  function hit(x,y){if(!insideEnclosure(x,y))return 'mountain';if(water.hit(x,y))return 'water';const py=y*F,list=buckets.get(Math.floor(x/CELL)+','+Math.floor(py/CELL))||[];for(const o of list){if(o.kind==='tree'||o.kind==='scenery'){if(((x-o.x)/o.rx)**2+((py-o.y)/o.ry)**2<1)return o.kind}else if(inside(x,py,o.points)||o.points.some((a,i)=>segmentDistance(x,py,a,o.points[(i+1)%o.points.length])<PLAYER_RADIUS))return o.kind}return null}
- function addScenery(props){for(const p of props){const o={kind:'scenery',x:p.x,y:p.y*F,rx:Math.min(26,p.w*.18)+PLAYER_RADIUS,ry:Math.min(18,p.w*.1)+PLAYER_RADIUS};for(let x=Math.floor((o.x-o.rx)/CELL);x<=Math.floor((o.x+o.rx)/CELL);x++)for(let y=Math.floor((o.y-o.ry)/CELL);y<=Math.floor((o.y+o.ry)/CELL);y++){const key=x+','+y;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o)}}}
- return {addScenery,trees,mountains,rocks,trunks,border,water,insideEnclosure,hit,blocked:(x,y)=>!!hit(x,y)};
+ function removeCollision(entries){
+  if(!entries.size)return;
+  for(const [key,items] of buckets){
+   if(!items.some(item=>entries.has(item)))continue;
+   const remaining=items.filter(item=>!entries.has(item));
+   if(remaining.length)buckets.set(key,remaining);
+   else buckets.delete(key);
+  }
+ }
+ function removeTrees(exclude){
+  const removed=new Set();
+  for(let i=trees.length-1;i>=0;i--){
+   if(!exclude(trees[i]))continue;
+   trees.splice(i,1);
+   removed.add(trunks.splice(i,1)[0]);
+  }
+  removeCollision(removed);
+ }
+ function addScenery(props){
+  const entries=new Set();
+  for(const p of props){
+   const o={kind:'scenery',x:p.x,y:p.y*F,rx:Math.min(26,p.w*.18)+PLAYER_RADIUS,ry:Math.min(18,p.w*.1)+PLAYER_RADIUS};
+   entries.add(o);
+   for(let x=Math.floor((o.x-o.rx)/CELL);x<=Math.floor((o.x+o.rx)/CELL);x++)for(let y=Math.floor((o.y-o.ry)/CELL);y<=Math.floor((o.y+o.ry)/CELL);y++){
+    const key=x+','+y;
+    if(!buckets.has(key))buckets.set(key,[]);
+    buckets.get(key).push(o);
+   }
+  }
+  return ()=>removeCollision(entries);
+ }
+ return {addScenery,removeTrees,trees,mountains,rocks,trunks,border,water,insideEnclosure,hit,blocked:(x,y)=>!!hit(x,y)};
 }
 const api={create,inside,PLAYER_RADIUS};scope.hemantTerrain=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

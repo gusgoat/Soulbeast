@@ -74,7 +74,7 @@
     body.direction=xWeight>yWeight?(dx<0?2:3):(dy<0?1:0);
    }
   }
-  function draw(ctx,sx,sy,scale){
+  function draw(ctx,sx,sy,scale,shadows){
    if(!key||!body)return;
    const x=sx(body.x),y=sy(body.y),size=128*scale;
    const canvasWidth=ctx.canvas.clientWidth||ctx.canvas.width,canvasHeight=ctx.canvas.clientHeight||ctx.canvas.height;
@@ -84,8 +84,9 @@
    if(!asset.ready)return;
    const image=asset.image,col=body.direction%2,row=Math.floor(body.direction/2);
    const bob=Math.sin(clock*3.5)*4*scale;
-   ctx.save();ctx.fillStyle='#173a4c30';ctx.beginPath();ctx.ellipse(x,y,15*scale,5*scale,0,0,Math.PI*2);ctx.fill();
-   ctx.drawImage(image,col*image.naturalWidth/2,row*image.naturalHeight/2,image.naturalWidth/2,image.naturalHeight/2,x-size/2,y-size-13*scale+bob,size,size);ctx.restore();
+   ctx.save();
+   if(!shadows){ctx.fillStyle='#173a4c30';ctx.beginPath();ctx.ellipse(x,y,15*scale,5*scale,0,0,Math.PI*2);ctx.fill();}
+   (shadows?.sprite(ctx,x,y)??ctx).drawImage(image,col*image.naturalWidth/2,row*image.naturalHeight/2,image.naturalWidth/2,image.naturalHeight/2,x-size/2,y-size-13*scale+bob,size,size);ctx.restore();
   }
   return {sync,update,draw,reset,release(){drop(key,asset);asset=null;key=null;body=null;trail=[];},get body(){return body;},get key(){return key;}};
  }

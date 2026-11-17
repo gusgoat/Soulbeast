@@ -1,4 +1,4 @@
-import {remoteWalkMotion} from './remote-walk-motion.mjs?v=1';
+import {remoteWalkMotion} from './remote-walk-motion.mjs?v=smooth-turn-2';
 
 export async function connectWalkRealtime({url, key, token, identity, companion=()=>null, environment='test'}) {
  const {createClient} = await import('https://esm.sh/@supabase/supabase-js@2.76.1');
@@ -47,7 +47,7 @@ export async function connectWalkRealtime({url, key, token, identity, companion=
   // Send only once the private channel is subscribed, so send stays on WebSocket.
   lastSent=now;lastMotion=motion;
   void publisher.channel.send({type:'broadcast',event:'position',payload:{
-   x:Math.round(position.x),y:Math.round(position.y),dir:position.dir||0,
+   x:Math.round(position.x),y:Math.round(position.y),dir:position.dir||0,spriteDir:position.spriteDir,
    moving:!!moving,running:!!running,seq:++sequence,companion:pet
   }}).catch(()=>{});
  }

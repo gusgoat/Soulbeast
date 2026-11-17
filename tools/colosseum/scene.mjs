@@ -1,5 +1,5 @@
-import '../town-walk-demo/sealer-sprite-catalog.js?v=walking-approved-20261111';
-import '../town-walk-demo/sealer-sprites.js?v=sealer-color-1';
+import '../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117';
+import '../town-walk-demo/sealer-sprites.js?v=world-walk16-20261117';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=team-bot-tactics-1';
@@ -32,6 +32,7 @@ export function updateWalkPose(pose,p,now){
   const difference=heading-pose.dir*WALK_SECTOR;
   const turn=Math.abs(Math.atan2(Math.sin(difference),Math.cos(difference)));
   if(turn>WALK_SECTOR*.64)pose.dir=(Math.round(heading/WALK_SECTOR)+8)%8;
+  pose.spriteDir=globalThis.sealerSprites.heading(pose.vx,pose.vy);
   pose.phase+=distance/15;
   pose.movingUntil=now+105;
  }else if(!samePositionStream||!walking){
@@ -984,9 +985,17 @@ export class Scene{
      const rows=layout?.rows??(moving?8:2);
      const rate=(running?entry.runPhaseScale:entry.phaseScale)??entry.phaseScale??1;
      const col=moving?Math.floor(prev.phase*rate*cols/8)%cols:prev.dir%cols;
-     const row=moving?prev.dir:Math.floor(prev.dir/cols);
-     const width=sheet.naturalWidth/cols, height=sheet.naturalHeight/rows;
-     globalThis.sealerSprites.drawColoredFrame(c,sheet,col*width,row*height,width,height,x-size*ax,y-size*ay,size,size);
+     if(moving){
+      const dir=prev.spriteDir??prev.dir,extra=entry.intercardinal;
+      const alternate=running?'run':'walk',atlasKey=alternate+'Between';
+      const between=extra?.[alternate]&&!Number.isInteger(dir)&&(atlas[atlasKey]??=img(siteAsset(extra[alternate])));
+      globalThis.sealerSprites.drawMovement(c,x,y,145,dir,col,cols,sheet,[ax,ay],entry.renderScale||1,
+       ready(between)?between:null,extra);
+     }else{
+      const width=sheet.naturalWidth/cols,height=sheet.naturalHeight/rows;
+      globalThis.sealerSprites.drawColoredFrame(c,sheet,col*width,Math.floor(prev.dir/cols)*height,
+       width,height,x-size*ax,y-size*ay,size,size);
+     }
     }
    }
    if(!directional&&!ready(strike)&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}

@@ -22,12 +22,59 @@ function create(data,nav){
  function hit(x,y){return raw(x,y,14)&&!onBridge(x,y)}
  function path(ctx,points,close=false){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y*F):ctx.moveTo(p.x,p.y*F));if(close)ctx.closePath()}
  function lakeFill(g,l){const xs=l.points.map(p=>p.x),ys=l.points.map(p=>p.y*F),fill=g.createLinearGradient(Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys));fill.addColorStop(0,'#6bb8ca');fill.addColorStop(.35,'#377e9b');fill.addColorStop(.65,'#255b78');fill.addColorStop(1,'#71bfd1');return fill}
- function drawGround(g,texture){g.save();g.lineJoin=g.lineCap='round';const winter=!data.countryId||data.countryId==='blue';let pattern;if(texture){pattern=g.createPattern(texture,'repeat');pattern.setTransform(new DOMMatrix().scale(.38))}for(const l of lakes){path(g,l.points,true);g.strokeStyle=winter?'#bbd7e6':data.countryId==='red'?'#9c7154':'#527f58';g.lineWidth=45;g.stroke();g.strokeStyle=winter?'#eefaff':'#c2b18a';g.lineWidth=24;g.stroke();g.fillStyle=pattern||lakeFill(g,l);g.fill();path(g,l.points,true);g.strokeStyle='#83c8db88';g.lineWidth=9;g.stroke()}for(const r of rivers){for(const [extra,color]of [[43,winter?'#bed7e5':data.countryId==='red'?'#a77251':'#507d54'],[25,winter?'#f2fbff':'#c2b18a'],[8,'#73bfd3'],[0,pattern||'#347b9e']]){path(g,r.points);g.strokeStyle=color;g.lineWidth=r.width+extra;g.stroke()}}g.restore()}
- function drawDeck(g,images={}){g.save();for(const [i,b] of bridges.entries()){const angle=Math.atan2((b.b.y-b.a.y)*F,b.b.x-b.a.x);g.save();g.translate(b.a.x,b.a.y*F);g.rotate(angle);g.fillStyle='#263c4b55';g.fillRect(-9,-b.width/2+10,b.length+18,b.width);const art=images['bridge'+i]?.naturalWidth?images['bridge'+i]:images['bridge'+i%3];if(art?.naturalWidth){if(Math.cos(angle)<0){g.translate(b.length,0);g.rotate(Math.PI);}g.drawImage(art,-12,-b.width/2,b.length+24,b.width);g.restore();continue;}g.fillStyle='#706557';g.fillRect(-12,-b.width/2,b.length+24,b.width);g.fillStyle='#a9916c';g.fillRect(0,-b.width/2+8,b.length,b.width-16);for(let x=0;x<b.length;x+=19){g.fillStyle=(Math.floor(x/19)%2)?'#bca582':'#aa9271';g.fillRect(x,-b.width/2+10,17,b.width-20);g.fillStyle=data.countryId&&data.countryId!=='blue'?'#c1a176':'#e8f3f5';g.fillRect(x,-b.width/2+9,17,7)}g.fillStyle=data.countryId&&data.countryId!=='blue'?'#bca27b':'#ecf8ff';g.fillRect(-13,-b.width/2,22,b.width);g.fillRect(b.length-9,-b.width/2,22,b.width);g.restore()}g.restore()}
+ function drawLayeredBanks(g,pattern){
+  // Translucent banks leave the underlying terrain and paving visible.
+  const bankColors={
+   blue:['#a7c5d510','#a7c5d523','#abc8d73b','#d7ebf260','#e5f3f58c'],
+   green:['#51483012','#64563a24','#63543738','#534a3450','#3f4f4380'],
+   red:['#392a2716','#4930292a','#56382f45','#70463a62','#82584984']
+  };
+  const shallowColors={
+   blue:['#9bbdce44','#c5e5ef56','#9ed2e344'],
+   green:['#52564155','#60644856','#536b5444'],
+   red:['#5c403960','#82594563','#61604748']
+  };
+  const colors=bankColors[data.countryId]||bankColors.blue;
+  const shallows=shallowColors[data.countryId]||shallowColors.blue;
+  for(const [index,width] of [70,55,41,28,16].entries()){
+   const color=colors[index];
+   g.strokeStyle=color;
+   for(const lake of lakes){path(g,lake.points,true);g.lineWidth=width;g.stroke();}
+   for(const river of rivers){path(g,river.points);g.lineWidth=river.width+width;g.stroke();}
+  }
+  for(const lake of lakes){
+   path(g,lake.points,true);
+   g.fillStyle=pattern||lakeFill(g,lake);
+   g.fill();
+   for(const [index,width] of [17,10,5].entries()){
+    g.strokeStyle=shallows[index];g.lineWidth=width;g.stroke();
+   }
+  }
+  for(const river of rivers){
+   path(g,river.points);
+   g.fillStyle=g.strokeStyle=pattern||'#347b9e';
+   for(const [trim,alpha] of [[-7,.23],[0,.5],[7,.72],[14,1]]){
+    g.globalAlpha=alpha;g.lineWidth=Math.max(1,river.width-trim);g.stroke();
+   }
+  }
+  g.globalAlpha=1;
+ }
+ function drawGround(g,texture){
+  g.save();
+  g.lineJoin=g.lineCap='round';
+  let pattern;
+  if(texture){
+   pattern=g.createPattern(texture,'repeat');
+   pattern.setTransform(new DOMMatrix().scale(.38));
+  }
+  drawLayeredBanks(g,pattern);
+  g.restore();
+ }
+ function drawDeck(g,images={},hasModel=()=>false){g.save();for(const [i,b] of bridges.entries()){if(hasModel(b))continue;const angle=Math.atan2((b.b.y-b.a.y)*F,b.b.x-b.a.x);g.save();g.translate(b.a.x,b.a.y*F);g.rotate(angle);g.fillStyle='#263c4b55';g.fillRect(-9,-b.width/2+10,b.length+18,b.width);const art=images['bridge'+i]?.naturalWidth?images['bridge'+i]:images['bridge'+i%3];if(art?.naturalWidth){if(Math.cos(angle)<0){g.translate(b.length,0);g.rotate(Math.PI);}g.drawImage(art,-12,-b.width/2,b.length+24,b.width);g.restore();continue;}g.fillStyle='#706557';g.fillRect(-12,-b.width/2,b.length+24,b.width);g.fillStyle='#a9916c';g.fillRect(0,-b.width/2+8,b.length,b.width-16);for(let x=0;x<b.length;x+=19){g.fillStyle=(Math.floor(x/19)%2)?'#bca582':'#aa9271';g.fillRect(x,-b.width/2+10,17,b.width-20);g.fillStyle=data.countryId&&data.countryId!=='blue'?'#c1a176':'#e8f3f5';g.fillRect(x,-b.width/2+9,17,7)}g.fillStyle=data.countryId&&data.countryId!=='blue'?'#bca27b':'#ecf8ff';g.fillRect(-13,-b.width/2,22,b.width);g.fillRect(b.length-9,-b.width/2,22,b.width);g.restore()}g.restore()}
  // Cache current distances and shoreline polygons, rather than rebuilding world geometry per frame.
  const currents=rivers.map(r=>{let length=0;const segments=r.points.slice(1).map((b,i)=>{const a=r.points[i],len=dist(a,b),start=length;length+=len;return {a,b,len,start}});const banks=[-1,1].map(side=>r.points.map((p,i)=>{const a=r.points[Math.max(0,i-1)],b=r.points[Math.min(r.points.length-1,i+1)],len=dist(a,b);return {x:p.x-(b.y-a.y)*F/len*(r.width/2-5)*side,y:p.y+(b.x-a.x)/len*(r.width/2-5)*side/F}}));return {...r,segments,length,outline:[...banks[0],...banks[1].reverse()]}});
  let flowPattern=null,flowTexture=null;
- function drawFlow(c,sx,sy,z,time,texture,viewport,compact=false){
+ function drawFlow(c,sx,sy,z,time,texture,viewport,compact=false,hasModel=()=>false){
   // The overview uses the cached terrain; detail animation is only needed close up.
   if(z<.15)return;
     const pixelRatio=c.getTransform?.()?.a||1,vw=viewport?.width||c.canvas.width/pixelRatio,vh=viewport?.height||c.canvas.height/pixelRatio;
@@ -44,7 +91,7 @@ function create(data,nav){
   c.clip(outline);
   // Leave bridge decks completely untouched, including their rails and snowy ends.
   const openings=new Path2D();openings.rect(0,0,c.canvas.width,c.canvas.height);
-  for(const b of bridges){const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,w=b.width/2+10;
+  for(const b of bridges){if(hasModel(b))continue;const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,w=b.width/2+10;
    const points=[[-20,-w],[b.length+20,-w],[b.length+20,w],[-20,w]].map(([u,v])=>({x:b.a.x+dx*u-dy*v,y:b.a.y+(dy*u+dx*v)/F}));
    points.forEach((p,i)=>i?openings.lineTo(sx(p.x),sy(p.y)):openings.moveTo(sx(p.x),sy(p.y)));openings.closePath();
   }c.clip(openings,'evenodd');
@@ -74,7 +121,7 @@ function create(data,nav){
    for(let i=0;i<rings;i++){const phase=(time*.15+i/rings)%1,x=center.x+Math.sin(i*7.4)*160,y=center.y+Math.cos(i*5.9)*150;c.beginPath();c.ellipse(sx(x),sy(y),(12+phase*38)*z,(4+phase*13)*z,.15,0,Math.PI*2);c.strokeStyle=`rgba(194,230,235,${Math.sin(phase*Math.PI)*.14})`;c.lineWidth=z;c.stroke()}
   }c.restore();
  }
- const rails=[];for(const b of bridges){const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,nx=-dy*b.width/2,ny=dx*b.width/2,count=Math.ceil(b.length/80);for(const side of [-1,1])for(let i=0;i<count;i++){const a={x:b.a.x+(b.b.x-b.a.x)*i/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*i/count+ny*side/F},end={x:b.a.x+(b.b.x-b.a.x)*(i+1)/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*(i+1)/count+ny*side/F};rails.push({kind:'bridgeRail',x:(a.x+end.x)/2,y:(a.y+end.y)/2,a,b:end})}}
+ const rails=[];for(const b of bridges){const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,nx=-dy*b.width/2,ny=dx*b.width/2,count=Math.ceil(b.length/80);for(const side of [-1,1])for(let i=0;i<count;i++){const a={x:b.a.x+(b.b.x-b.a.x)*i/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*i/count+ny*side/F},end={x:b.a.x+(b.b.x-b.a.x)*(i+1)/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*(i+1)/count+ny*side/F};rails.push({kind:'bridgeRail',crossing:b,x:(a.x+end.x)/2,y:(a.y+end.y)/2,a,b:end})}}
  function drawRail(c,o,sx,sy,z){const x=sx(o.a.x),y=sy(o.a.y),X=sx(o.b.x),Y=sy(o.b.y);c.save();c.lineCap='round';c.strokeStyle=data.countryId==='red'?'#522b24':data.countryId==='green'?'#53412e':'#647d92';c.lineWidth=5*z;c.beginPath();c.moveTo(x,y-22*z);c.lineTo(X,Y-22*z);c.stroke();c.strokeStyle=data.countryId==='red'?'#b47142':data.countryId==='green'?'#ae9366':'#f1fbff';c.lineWidth=3*z;c.beginPath();c.moveTo(x,y-25*z);c.lineTo(X,Y-25*z);c.stroke();for(const [a,b]of [[x,y],[X,Y]]){c.fillStyle='#635e56';c.fillRect(a-3*z,b-34*z,6*z,36*z);c.fillStyle=data.countryId==='red'?'#ce9453':data.countryId==='green'?'#b19a66':'#f0faff';c.fillRect(a-5*z,b-37*z,10*z,5*z)}c.restore()}
  return {source:settings,rivers,lakes,bridges,rails,raw,onBridge,hit,drawGround,drawDeck,drawFlow,drawRail};
 }

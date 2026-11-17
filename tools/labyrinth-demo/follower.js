@@ -7,7 +7,7 @@ function create(nav,leader){
   if(routeClock<=0||!path.length){path=nav.pathBetween(actor,target);routeClock=.3}
   while(path.length&&nav.distance(actor,path[0])<5)path.shift();if(!path.length)return;
   const point=path[0],dx=point.x-actor.x,dy=point.y-actor.y,d=nav.distance(actor,point);actor.running=leaderRunning||gap>210;const speed=(actor.running?360:220)*.68425*(gap>180?1.12:1),travel=Math.min(d,speed*dt),ratio=travel/(d||1),nx=actor.x+dx*ratio,ny=actor.y+dy*ratio;
-  if(nav.walkable(nx,ny)&&nav.clear(actor,{x:nx,y:ny})){actor.x=nx;actor.y=ny;actor.moving=travel>.01;actor.dir=(Math.round(-Math.atan2(dx,dy*flatten)/(Math.PI/4))+8)%8;if(actor.moving)actor.phase+=dt*(actor.running?15:9)}else{path=[];routeClock=0;actor.running=false}
+  if(nav.walkable(nx,ny)&&nav.clear(actor,{x:nx,y:ny})){actor.x=nx;actor.y=ny;actor.moving=travel>.01;actor.spriteDir=(-Math.atan2(dx,dy*flatten)/(Math.PI/4)+8)%8;actor.dir=Math.round(actor.spriteDir)%8;if(actor.moving)actor.phase+=dt*(actor.running?15:9)}else{path=[];routeClock=0;actor.running=false}
  }
  return {actor,update};
 }

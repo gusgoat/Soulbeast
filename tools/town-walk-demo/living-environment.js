@@ -4,12 +4,26 @@ const groundTextures={'ground-blue':'/Soulbeast/assets/dungeon-later-v1/snow-flo
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
 function rng(seed){let n=seed>>>0;return ()=>((n=(Math.imul(n,1664525)+1013904223)>>>0)/4294967296)}
 const dist=(a,b)=>Math.hypot(a.x-b.x,(a.y-b.y)*F);
-function load(key){if(images.has(key))return images.get(key);const im=new Image();im.src=groundTextures[key]||ROOT+key+'.png.webp';images.set(key,im);return im}
+function load(key){
+ if(images.has(key))return images.get(key);
+ const im=new Image();
+ const tree=typeof key==='string'&&key.startsWith('country-tree:');
+ const variant=tree?key.slice('country-tree:'.length):'';
+ const treeVersion=variant.startsWith('blue-')?'?v=snowpack-1':variant.startsWith('red-')?'?v=desert-1':'';
+ im.src=tree?'/Soulbeast/assets/country-walk/trees-blender-v1/'+variant+'.webp'+treeVersion:
+  groundTextures[key]||ROOT+key+'.png.webp';
+ images.set(key,im);
+ return im;
+}
 function ready(keys){return Promise.all([...new Set(keys)].map(key=>new Promise(resolve=>{const im=load(key);if(im.complete&&im.naturalWidth)return resolve();im.addEventListener('load',resolve,{once:true});im.addEventListener('error',()=>{console.warn('Environment art unavailable:',key);resolve()},{once:true})}))) }
 function viewport(c,w,h){viewports.set(c,{w,h})}
 function visible(c,x,y,w,h){const v=viewports.get(c);return x+w>0&&x-w<(v?.w||c.canvas.width)&&y+30>0&&y-h<(v?.h||c.canvas.height)}
-function draw(c,o,x,y,z,time=0,viewer){const im=load(o.key);if(!im.naturalWidth)return false;const w=o.w*z,h=w*im.naturalHeight/im.naturalWidth;if(!visible(c,x,y,w,h))return true;let alpha=o.alpha??1;if(viewer&&o.w>120&&Math.abs(viewer.x-o.x)<o.w*.38&&viewer.y<o.y&&o.y-viewer.y<h/z/F)alpha*=.45;const phase=(o.phase||0)+time,near=viewer?dist(o,viewer):Infinity;
- c.save();c.globalAlpha=alpha;c.translate(x,y);if(o.flip)c.scale(-1,1);const left=-w/2,top=-h*.94;
+function draw(c,o,x,y,z,time=0,viewer,shadows){const im=load(o.key);if(!im.naturalWidth)return false;const w=o.w*z,h=w*im.naturalHeight/im.naturalWidth;if(!visible(c,x,y,w,h))return true;let alpha=o.alpha??1;if(viewer&&o.w>120&&Math.abs(viewer.x-o.x)<o.w*.38&&viewer.y<o.y&&o.y-viewer.y<h/z/F)alpha*=.45;const phase=(o.phase||0)+time,near=viewer?dist(o,viewer):Infinity;
+ c.save();c.globalAlpha=alpha;c.translate(x,y);if(o.flip)c.scale(-1,1);const left=-w/2,top=-h*(o.anchor??.94);
+ if(shadows){
+  const height=o.floorSplit??1;
+  shadows.cast(c,x,y,0,im,0,0,im.naturalWidth,im.naturalHeight*height,left,top,w,h*height);
+ }
  // Only the cloth/cat fragment moves; the stand, masonry and basket remain rigid.
  const moving=o.fx==='cloth'?[.26,.25,.48,.45]:o.fx==='breath'?[.23,.26,.30,.25]:null;
  if(moving){const [a,b,d,e]=moving,rx=left+w*a,ry=top+h*b,rw=w*d,rh=h*e;c.save();c.beginPath();c.rect(left-2,top-2,w+4,h+4);c.rect(rx,ry,rw,rh);c.clip('evenodd');c.drawImage(im,left,top,w,h);c.restore();c.save();c.beginPath();c.rect(rx,ry,rw,rh);c.clip();c.translate(0,Math.sin(phase*(o.fx==='cloth'?1.3:1.6))*z*(o.fx==='cloth'?1.8:.45));c.drawImage(im,left,top,w,h);c.restore()}

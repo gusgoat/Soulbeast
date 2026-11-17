@@ -59,6 +59,15 @@ function create(data,nav,terrain){
   }
  }
 
+ function crowdsPool(prop,back=prop.w*(prop.shrub?.84:1.06)){
+  // Leave room for the visible crown or roof as well as the base.
+  return pools.some(pool=>{
+   const dx=Math.max(0,Math.abs(prop.x-pool.x)-prop.w*.5);
+   const dy=(prop.y-pool.y)*flatten;
+   const gapY=Math.max(0,dy-back,-dy-prop.w*.18);
+   return Math.hypot(dx,gapY)<pool.radius*1.075+60;
+  });
+ }
  const poolImage=(pool,images)=>images['lavaPool'+(pool.variant+1)];
  function drawDecal(ctx,point,image,width){
   if(!image?.naturalWidth)return;
@@ -168,7 +177,7 @@ function create(data,nav,terrain){
   }
   return lights;
  }
- return {pools,cracks,drawGround,drawGroundHeat,drawVolcanoHeat,nightLights};
+ return {pools,cracks,crowdsPool,drawGround,drawGroundHeat,drawVolcanoHeat,nightLights};
 }
 const api={art,create};g.CountryLava=api;
 if(typeof module!=='undefined')module.exports=api;

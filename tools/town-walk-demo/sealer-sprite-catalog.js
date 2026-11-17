@@ -36,6 +36,15 @@
       "runLayout": {
         "columns": 12,
         "rows": 8
+      },
+      "intercardinal": {
+        "renderScale": 1.421875,
+        "anchor": [
+          0.4999997615814209,
+          0.803275540471077
+        ],
+        "walk": "/Soulbeast/assets/player-walk/valkyrie/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/valkyrie/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -72,6 +81,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "Meshy Azure Starblade Knight 20261031 male; preserved PBR textures with a detailed 450k triangle animation mesh",
         "animation": "Accepted half-width male gait preserved. Corrected upper-arm, forearm and hand ownership; complete blade and guard rigidly follow hand.R. 12 frames per direction."
+      },
+      "intercardinal": {
+        "renderScale": 1.421875,
+        "anchor": [
+          0.4999997615814209,
+          0.803275540471077
+        ],
+        "walk": "/Soulbeast/assets/player-walk/starblade-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/starblade-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -112,6 +130,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-ronin-empress FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.4999997913837433,
+          0.7653660923242569
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-samurai-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-samurai-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -148,6 +175,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-ronin-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-samurai-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-samurai-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -188,6 +224,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-blade-empress-alt FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-kensei-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-kensei-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -224,6 +269,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-blade-warlord FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-kensei-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-kensei-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -264,6 +318,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-lotus-samurai FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-shogun-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-shogun-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -300,6 +363,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-warlord-character-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-shogun-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-shogun-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -340,6 +412,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-imperial-blade FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-spellblade-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-spellblade-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -376,6 +457,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "gilded-bladesworn-noble FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-spellblade-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-spellblade-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -416,6 +506,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "scarlet-blade-empress FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sbsummon-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sbsummon-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -452,6 +551,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-blade-sovereign-1 FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sbsummon-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sbsummon-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -492,6 +600,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-valkyrie FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sbwar-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sbwar-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -528,6 +645,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-warlord-character-sheet-1 FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sbwar-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sbwar-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -568,6 +694,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "User Meshy Lionheart Valkyrie FBX, 450k detailed surface with original PBR textures",
         "animation": "Idle, 8-direction 12-frame Walk and Run. Rigid axe and lion shield follow the correct hands. Male knee and heel widths match; female gait is narrower. Run uses 0.56m stride range, 0.17m recovery lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/lionheart-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/lionheart-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -604,6 +739,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "User Meshy Lionheart Sentinel FBX, 450k detailed surface with original PBR textures",
         "animation": "Idle, 8-direction 12-frame Walk and Run. Rigid axe and lion shield follow the correct hands. Male knee and heel widths match; female gait is narrower. Run uses 0.56m stride range, 0.17m recovery lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/lionheart-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/lionheart-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -644,6 +788,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "azure-sun-paladin FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-paladin-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-paladin-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -680,6 +833,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "golden-paladin-character-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-paladin-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-paladin-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -720,6 +882,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "radiant-valkyrie-concept-art FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-templar-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-templar-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -756,6 +927,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-solaris-paladin FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-templar-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-templar-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -796,6 +976,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "azure-lion-paladin FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-eternal-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-eternal-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -832,6 +1021,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-golden-aegis-champion FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-eternal-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-eternal-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -872,6 +1070,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-reaver FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-berserker-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-berserker-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -908,6 +1115,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "bloodaxe-warlord FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-berserker-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-berserker-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -948,6 +1164,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-warlord-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-warlord-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-warlord-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -984,6 +1209,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-warlord-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-warlord-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-warlord-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1024,6 +1258,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-warlord-concept-art FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-bloodwar-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-bloodwar-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1060,6 +1303,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-warlord-of-the-abyss FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-bloodwar-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-bloodwar-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1100,6 +1352,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "verdant-elven-archer-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-archer-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-archer-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1136,6 +1397,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "verdant-elven-archer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-archer-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-archer-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1176,6 +1446,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "verdant-huntress-character-turnaround FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-ranger-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-ranger-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1212,6 +1491,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "forest-ranger-character-turnaround FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-ranger-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-ranger-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1252,6 +1540,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-archer-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sniper-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sniper-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1288,6 +1585,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-hawk-archer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sniper-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sniper-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1328,6 +1634,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "feathered-huntress-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-wildlord-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-wildlord-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1364,6 +1679,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-feathered-bow-warrior FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-wildlord-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-wildlord-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1404,6 +1728,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "celestial-archer-goddess FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-bard-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-bard-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1440,6 +1773,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "celestial-archer-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-bard-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-bard-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1480,6 +1822,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "celestial-archer-empress FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-maestro-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-maestro-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1516,6 +1867,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-moonlit-celestial-archer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-maestro-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-maestro-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1556,6 +1916,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-arcana-huntress FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-dirge-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-dirge-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1592,6 +1961,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-moon-archer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-dirge-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-dirge-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1632,6 +2010,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "celestial-starweaver FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-mage-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-mage-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1668,6 +2055,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "celestial-archmage-character-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-mage-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-mage-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1708,6 +2104,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "celestial-oracle-priestess FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sage-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sage-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1744,6 +2149,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "celestial-sovereign-priest FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sage-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sage-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1784,6 +2198,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "arcane-empress-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-archmage-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-archmage-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1820,6 +2243,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-arcane-sovereign-priest FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-archmage-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-archmage-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1860,6 +2292,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-oracle-character-design FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-elementalist-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-elementalist-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1896,6 +2337,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-flame-sovereign-archmage FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-elementalist-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-elementalist-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -1936,6 +2386,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-arcane-empress FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-warlock-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-warlock-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -1972,6 +2431,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-arcane-sovereign FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-warlock-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-warlock-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2012,6 +2480,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "violet-oracle-of-the-bone-scepter FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-necro-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-necro-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2048,6 +2525,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-obsidian-reliquary-mage FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-necro-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-necro-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2088,6 +2574,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "amethyst-sovereign-costume-design FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-enchanter-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-enchanter-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2124,6 +2619,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-violet-archmage-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-enchanter-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-enchanter-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2164,6 +2668,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "clockwork-trailblazer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-merchant-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-merchant-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2200,6 +2713,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "feathered-wayfarer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-merchant-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-merchant-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2240,6 +2762,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-warhammer-sentinel FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-blacksmith-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-blacksmith-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2276,6 +2807,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-hammer-warrior FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-blacksmith-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-blacksmith-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2316,6 +2856,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-hammer-valkyrie FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-mastersmith-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-mastersmith-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2352,6 +2901,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-molten-warlord-character-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-mastersmith-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-mastersmith-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2392,6 +2950,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-gearmaiden FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-mechanic-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-mechanic-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2428,6 +2995,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-clockwork-crimson-vanguard FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-mechanic-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-mechanic-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2468,6 +3044,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "Crimson Imperial Warmaiden FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-alchemist-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-alchemist-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2504,6 +3089,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-dragon-oracle FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-alchemist-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-alchemist-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2544,6 +3138,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "emerald-oracle-priestess FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-biochem-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-biochem-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2580,6 +3183,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-emerald-celestial-warden FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-biochem-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-biochem-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2620,6 +3232,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "golden-empress-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-goldalch-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-goldalch-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2656,6 +3277,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-celestial-dragon-regent FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-goldalch-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-goldalch-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2696,6 +3326,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-gunslinger FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-gunner-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-gunner-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2732,6 +3371,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "gilded-gunslinger-character-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-gunner-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-gunner-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2772,6 +3420,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-jade-gunslinger FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-marksman-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-marksman-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2808,6 +3465,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "emerald-rifleman-character-study FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-marksman-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-marksman-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2848,6 +3514,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-imperial-gunner FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-gunsaint-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-gunsaint-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2884,6 +3559,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-reliquary-gunslinger FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-gunsaint-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-gunsaint-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -2924,6 +3608,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-wanderer-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-bounty-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-bounty-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -2960,6 +3653,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-ronin-character-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-bounty-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-bounty-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3000,6 +3702,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-artillerist FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-artillery-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-artillery-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3036,6 +3747,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-cannon-corsair FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-artillery-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-artillery-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3076,6 +3796,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-cannon-valkyrie FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-cannoneer-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-cannoneer-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3112,6 +3841,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-cannon-ronin FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-cannoneer-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-cannoneer-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3152,6 +3890,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-cannon-sentinel FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-demolisher-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-demolisher-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3188,6 +3935,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-cannon-warlord FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-demolisher-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-demolisher-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3228,6 +3984,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "verdant-elven-oracle FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-druid-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-druid-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3264,6 +4029,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "emerald-grove-archmage FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-druid-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-druid-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3304,6 +4078,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-tiger-shaman FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-feral-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-feral-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3340,6 +4123,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "tiger-warlord-character-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-feral-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-feral-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3380,6 +4172,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "verdant-oracle FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-wildgod-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-wildgod-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3416,6 +4217,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-verdant-staffbearer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-wildgod-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-wildgod-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3456,6 +4266,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-halberd-empress FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-packlord-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-packlord-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3492,6 +4311,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-dynasty-warlord-1 FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-packlord-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-packlord-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3532,6 +4360,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "verdant-oracle-of-the-glade FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-grove-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-grove-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3568,6 +4405,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "verdant-archdruid FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-grove-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-grove-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3608,6 +4454,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "moonlit-oracle-priestess FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-archdruid-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-archdruid-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3644,6 +4499,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-celestial-moonweaver FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-archdruid-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-archdruid-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3684,6 +4548,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "azure-oracle-of-the-golden-staff FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-stormcaller-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-stormcaller-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3720,6 +4593,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-azure-celestial-archmage FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-stormcaller-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-stormcaller-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3760,6 +4642,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "shadowblade-sentinel FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-thief-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-thief-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3796,6 +4687,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "gilded-shadowblade FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-thief-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-thief-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3836,6 +4736,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-blade-dancer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-rogue-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-rogue-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3872,6 +4781,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-blade-nomad FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-rogue-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-rogue-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3912,6 +4830,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-blade-warrior FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-masterthief-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-masterthief-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -3948,6 +4875,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-nomad-warrior FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-masterthief-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-masterthief-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -3988,6 +4924,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-blade-empress FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-trickster-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-trickster-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4024,6 +4969,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-blade-sovereign FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-trickster-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-trickster-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4064,6 +5018,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-blade-dancer-alt FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-assassin-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-assassin-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4100,6 +5063,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-blade-warlord FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-assassin-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-assassin-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4140,6 +5112,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-blade-dancer FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-ninja-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-ninja-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4176,6 +5157,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-shadowblade FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-ninja-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-ninja-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4216,6 +5206,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-ronin-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-ronin-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-ronin-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4252,6 +5251,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-straw-ronin FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-ronin-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-ronin-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4292,6 +5300,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "jade-seraphina FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-summoner-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-summoner-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4328,6 +5345,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "azure-oracle-of-tides FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-summoner-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-summoner-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4368,6 +5394,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-empress-character-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-tamer-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-tamer-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4404,6 +5439,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-imperial-warlord FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-tamer-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-tamer-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4444,6 +5488,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-valkyrie-costume-design FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-beastking-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-beastking-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4480,6 +5533,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-warlord-character-sheet-2 FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-beastking-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-beastking-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4520,6 +5582,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-empress-costume-design FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sealmaster-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sealmaster-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4556,6 +5627,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-crimson-dynasty-warlord FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-sealmaster-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-sealmaster-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4596,6 +5676,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-dragon-empress FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-soullink-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-soullink-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4632,6 +5721,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "crimson-warlord-costume-concept FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-soullink-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-soullink-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4672,6 +5770,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "violet-empress-concept-sheet FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.625,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-soulsage-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-soulsage-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4708,6 +5815,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-regal-violet-warlock FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-soulsage-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-soulsage-male/run-intercardinal-v1.webp"
       }
     }
   },
@@ -4748,6 +5864,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "celestial-empress-costume-design FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-spiritlord-female/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-spiritlord-female/run-intercardinal-v1.webp"
       }
     },
     "male": {
@@ -4784,6 +5909,15 @@
         "tool": "Blender 5.2 EEVEE",
         "source": "male-celestial-warden FBX supplied by user; detailed surface with original packed PBR textures",
         "animation": "Idle plus 12-frame, eight-direction walk/run. Equipment follows the fitted hands/body. Male knee and heel track widths match; female gait is narrower. Running uses longer strides, increased leg lift and forward torso/head lean."
+      },
+      "intercardinal": {
+        "renderScale": 1.6250000000000002,
+        "anchor": [
+          0.5,
+          0.7653658986091614
+        ],
+        "walk": "/Soulbeast/assets/player-walk/meshy-spiritlord-male/walk-intercardinal-v1.webp",
+        "run": "/Soulbeast/assets/player-walk/meshy-spiritlord-male/run-intercardinal-v1.webp"
       }
     }
   }

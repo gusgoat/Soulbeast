@@ -44,24 +44,143 @@ function drawColoredFrame(c,sheet,sx,sy,sw,sh,x,y,width,height){
  c.drawImage(frame,x,y,width,height);
 }
 
-function create(){let current=null,requested='',version=0,pending=null,idleStartedAt=null;
- async function sync(player){const explicit=!!player;if(!player){try{player=JSON.parse(sessionStorage.getItem(KEY)||'null')}catch{}}const preview=!explicit&&!player&&previewAvatar(),id=preview?identity(PREVIEW_AVATARS[preview]):identity(player),entry=scope.sealerSpriteCatalog[id.cls][id.gender],requestKey=id.key+'|'+entry.walk+'|'+entry.idle+'|'+(entry.run||'');if(requested===requestKey)return pending||current;requested=requestKey;const ticket=++version,read=(src,cols,rows)=>new Promise((resolve,reject)=>{const im=new Image();im.onload=async()=>{try{resolve(scope.CountryRenderBudget?await scope.CountryRenderBudget.atlas(im,cols,rows):im)}catch(error){reject(error)}};im.onerror=()=>reject(Error('Cannot load '+src));im.src=src});
-  if(!entry.ready){requested='';throw Error('Missing animated sealer '+id.key)}
-  pending=Promise.all([read(entry.walk,entry.walkFrames||8,8),read(entry.idle,4,2),entry.run?read(entry.run,entry.runFrames||entry.walkFrames||8,8):null]).then(([walk,idle,run])=>{if(ticket===version){for(const im of [current?.walk,current?.idle,current?.run])im?.close?.();idleStartedAt=null;current={...id,walk,idle,run,walkFrames:entry.walkFrames||8,runFrames:entry.runFrames||entry.walkFrames||8,phaseScale:entry.phaseScale||1,runPhaseScale:entry.runPhaseScale||entry.phaseScale||1,anchor:entry.anchor||[.5,.962],renderScale:entry.renderScale||1,name:scope.sealerSpriteCatalog[id.cls].name};pending=null}else for(const im of [walk,idle,run])im?.close?.();return current}).catch(e=>{if(ticket===version){requested='';pending=null}throw e});return pending;
+// Continuous headings use the same units as the original eight direction rows.
+function heading(dx,dy){return (-Math.atan2(dx,dy)/(Math.PI/4)+8)%8;}
+function nearestDirection(dir){return Math.round(dir)%8;}
+
+let turnCanvas,turnContext;
+function drawMovement(c,x,y,size,dir,frame,cols,sheet,anchor,scale,between,extra,mask=false){
+ const position=between?dir*2:nearestDirection(dir)*2;
+ const lower=Math.floor(position),mix=position-lower;
+ const drawFrame=mask?(ctx,...args)=>ctx.drawImage(...args):drawColoredFrame;
+ function pose(step){
+  step%=16;
+  const alternate=step%2===1;
+  const image=alternate?between:sheet;
+  const feet=alternate?extra.anchor:anchor;
+  const width=size*(alternate?extra.renderScale:scale);
+  return {image,row:Math.floor(step/2),left:-width*feet[0],top:-width*feet[1],width};
  }
- function draw(c,x,y,size,dir,phase,moving,running=false,idleTime,mask=false){if(!current)return;size*=current.renderScale;const sprint=moving&&running&&current.run,im=moving?(sprint?current.run:current.walk):current.idle,cols=moving?(sprint?current.runFrames:current.walkFrames):4,rate=sprint?current.runPhaseScale:current.phaseScale,rows=moving?8:2,frame=moving?Math.floor(phase*rate*cols/8)%cols:dir%4,row=moving?dir:Math.floor(dir/4);// A gentle 3.6-second breath starts at rest when the stick is released.
- // One affine draw keeps the whole weapon straight and the feet on their anchor.
- // Use elapsed wall time: the movement phase stops advancing while idle.
- let inhale=0;
- if(moving)idleStartedAt=null;
- else{const now=idleTime??scope.performance?.now?.()??Date.now();if(idleStartedAt===null)idleStartedAt=now;const elapsed=Math.max(0,now-idleStartedAt);inhale=(1-Math.cos(elapsed*Math.PI*2/3600))*.5}
- const width=size*(1+.0025*inhale),height=size*(1+.009*inhale);
- const source=[im,frame*im.width/cols,row*im.height/rows,im.width/cols,im.height/rows];
- const destination=[x-width*current.anchor[0],y-height*current.anchor[1],width,height];
- if(mask)c.drawImage(...source,...destination);
- else drawColoredFrame(c,...source,...destination)}
- function release(){version++;for(const im of [current?.walk,current?.idle,current?.run])im?.close?.();current=null;requested='';pending=null;idleStartedAt=null}
+ function drawPose(ctx,p,left,top,width){
+  const sw=p.image.width/cols,sh=p.image.height/8;
+  drawFrame(ctx,p.image,frame*sw,p.row*sh,sw,sh,left,top,width,width);
+ }
+ if(mix<.001||mix>.999||!scope.document){
+  const p=pose(Math.round(position));
+  drawPose(c,p,x+p.left,y+p.top,p.width);
+  return;
+ }
+ const a=pose(lower),b=pose(lower+1);
+ const left=Math.min(a.left,b.left),top=Math.min(a.top,b.top);
+ const width=Math.max(a.left+a.width,b.left+b.width)-left;
+ const height=Math.max(a.top+a.width,b.top+b.width)-top;
+ if(!turnCanvas){
+  turnCanvas=scope.document.createElement('canvas');
+  turnCanvas.width=turnCanvas.height=256;
+  turnContext=turnCanvas.getContext('2d');
+ }
+ const rasterScale=256/Math.max(width,height);
+ const sw=width*rasterScale,sh=height*rasterScale;
+ turnContext.clearRect(0,0,256,256);
+ // Add premultiplied colors so a pixel covered by both poses keeps its opacity.
+ turnContext.globalCompositeOperation='lighter';
+ turnContext.globalAlpha=1-mix;
+ drawPose(turnContext,a,(a.left-left)*rasterScale,(a.top-top)*rasterScale,a.width*rasterScale);
+ turnContext.globalAlpha=mix;
+ drawPose(turnContext,b,(b.left-left)*rasterScale,(b.top-top)*rasterScale,b.width*rasterScale);
+ // Project a single blended silhouette, including when the caller draws a shadow.
+ c.drawImage(turnCanvas,0,0,sw,sh,x+left,y+top,width,height);
+}
+
+function create({preloadDirections=false}={}){
+ let current=null,requested='',version=0,pending=null,idleStartedAt=null;
+ function close(sprite){
+  for(const key of ['walk','idle','run','walkBetween','runBetween'])sprite?.[key]?.close?.();
+ }
+ function read(src,cols,rows,cell){
+  return new Promise((resolve,reject)=>{
+   const image=new Image();
+   image.onload=async()=>{
+    try{resolve(scope.CountryRenderBudget?await scope.CountryRenderBudget.atlas(image,cols,rows,cell):image)}
+    catch(error){reject(error)}
+   };
+   image.onerror=()=>reject(Error('Cannot load '+src));
+   image.src=src;
+  });
+ }
+ function loadBetween(sprite,motion,ticket){
+  const file=sprite.intercardinal?.[motion],key=motion+'Between';
+  if(!file||sprite[key]!==undefined)return;
+  sprite[key]=null; // A missing optional atlas keeps the nearest original direction.
+  read(file,sprite[motion+'Frames'],8,preloadDirections?256:192).then(image=>{
+   if(ticket===version&&current===sprite)sprite[key]=image;
+   else image.close?.();
+  }).catch(()=>{});
+ }
+ async function sync(player){
+  const explicit=!!player;
+  if(!player){try{player=JSON.parse(sessionStorage.getItem(KEY)||'null')}catch{}}
+  const preview=!explicit&&!player&&previewAvatar();
+  const id=identity(preview?PREVIEW_AVATARS[preview]:player);
+  const entry=scope.sealerSpriteCatalog[id.cls][id.gender];
+  const requestKey=id.key+'|'+entry.walk+'|'+entry.idle+'|'+(entry.run||'');
+  if(requested===requestKey)return pending||current;
+  if(!entry.ready)throw Error('Missing animated sealer '+id.key);
+  requested=requestKey;
+  const ticket=++version,walkFrames=entry.walkFrames||8,runFrames=entry.runFrames||walkFrames;
+  pending=Promise.allSettled([
+   read(entry.walk,walkFrames,8),read(entry.idle,4,2),entry.run?read(entry.run,runFrames,8):null
+  ]).then(results=>{
+   const [walk,idle,run]=results.map(result=>result.value);
+   const failure=results.find(result=>result.status==='rejected');
+   if(failure||ticket!==version){
+    close({walk,idle,run});
+    if(failure)throw failure.reason;
+    return current;
+   }
+   close(current);
+   idleStartedAt=null;
+   current={...id,walk,idle,run,walkFrames,runFrames,intercardinal:entry.intercardinal,
+    phaseScale:entry.phaseScale||1,runPhaseScale:entry.runPhaseScale||entry.phaseScale||1,
+    anchor:entry.anchor||[.5,.962],renderScale:entry.renderScale||1,name:scope.sealerSpriteCatalog[id.cls].name};
+   pending=null;
+   if(preloadDirections){
+    loadBetween(current,'walk',ticket);
+    loadBetween(current,'run',ticket);
+   }
+   return current;
+  }).catch(error=>{
+   if(ticket===version){requested='';pending=null}
+   throw error;
+  });
+  return pending;
+ }
+ function draw(c,x,y,size,dir,phase,moving,running=false,idleTime,mask=false){
+  if(!current||!(size>0))return;
+  if(moving){
+   idleStartedAt=null;
+   const sprint=running&&current.run,motion=sprint?'run':'walk',cols=current[motion+'Frames'];
+   const rate=sprint?current.runPhaseScale:current.phaseScale;
+   const frame=Math.floor(phase*rate*cols/8)%cols;
+   if(!Number.isInteger(dir))loadBetween(current,motion,version);
+   drawMovement(c,x,y,size,dir,frame,cols,current[motion],current.anchor,current.renderScale,
+    current[motion+'Between'],current.intercardinal,mask);
+   return;
+  }
+  // Use elapsed wall time because the movement phase stops advancing at rest.
+  const now=idleTime??scope.performance?.now?.()??Date.now();
+  if(idleStartedAt===null)idleStartedAt=now;
+  const inhale=(1-Math.cos(Math.max(0,now-idleStartedAt)*Math.PI*2/3600))*.5;
+  dir=nearestDirection(dir);
+  size*=current.renderScale;
+  const width=size*(1+.0025*inhale),height=size*(1+.009*inhale);
+  const im=current.idle,sw=im.width/4,sh=im.height/2;
+  const args=[im,(dir%4)*sw,Math.floor(dir/4)*sh,sw,sh,x-width*current.anchor[0],y-height*current.anchor[1],width,height];
+  if(mask)c.drawImage(...args);
+  else drawColoredFrame(c,...args);
+ }
+ function release(){version++;close(current);current=null;requested='';pending=null;idleStartedAt=null}
  return {sync,draw,release,get current(){return current}};
 }
-scope.sealerSprites={create,identity,drawColoredFrame};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
+scope.sealerSprites={create,identity,drawColoredFrame,heading,nearestDirection,drawMovement};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
 })(typeof window==='undefined'?globalThis:window);

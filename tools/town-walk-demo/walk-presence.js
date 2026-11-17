@@ -1,7 +1,7 @@
 /* Local-machine preview transport. BroadcastChannel is intentionally not an online server. */
 (()=>{'use strict';const key='soulbeast-walk-preview-player-v1',peers=new Map(),channel=new BroadcastChannel('soulbeast-walk-presence-v1'),session=crypto.randomUUID();let locationId='',lastSend=0,lastState=null;function raster(im,w,h){const tile=document.createElement('canvas');tile.width=w;tile.height=h;tile.getContext('2d').drawImage(im,0,0,w,h);im.raster=tile}
 let online=null;const onlineMode=!!sessionStorage.getItem('soulbeast-online-walk-v1');
-if(onlineMode)import('../../client/online-walk.mjs?v=all-walk-shields-1').then(m=>{online=m.connectOnlineWalk();if(online){m.mountSaveNotice(online);addEventListener('message',e=>{const frame=document.querySelector('#townMenu,#regionMenu,#menuFrame');if(e.origin===location.origin&&e.source===frame?.contentWindow&&e.data?.type==='walk-player-saved')void online.flush();});setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
+if(onlineMode)import('../../client/online-walk.mjs?v=smooth-turn-2').then(m=>{online=m.connectOnlineWalk();if(online){m.mountSaveNotice(online);addEventListener('message',e=>{const frame=document.querySelector('#townMenu,#regionMenu,#menuFrame');if(e.origin===location.origin&&e.source===frame?.contentWindow&&e.data?.type==='walk-player-saved')void online.flush();});setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
 const flags={};for(const id of ['blue','green','red']){const im=new Image();im.onload=()=>raster(im,64,42);im.src=new URL('../../assets/ui/country-war/flag-'+id+'-v1.webp',document.currentScript.src).href;flags[id]=im}
 let playerRaw,playerCache;function player(){try{const raw=sessionStorage.getItem(key);if(raw!==playerRaw){playerRaw=raw;playerCache=JSON.parse(raw||'null')}return playerCache}catch{return null}}
 const frames={};
@@ -25,7 +25,7 @@ function refreshWalkRanks(scene,rows,now){
 }
 
 function label(c,x,y,p,rank=ownRank){if(!p)return;const name=String(p.name||p.n||'ผู้ผนึก').slice(0,30),cls=window.sealerSpriteCatalog?.[p.cls]?.name||p.cls||'ผู้ผนึก',premium=window.WalkNameplates?.owned(p),src=window.WalkNameplates?.asset(p);if(src&&!frames[src]){frames[src]=new Image();const skin=frames[src];skin.onload=()=>raster(skin,660,152);skin.src=src}const im=frames[src];c.save();c.font='12px Tahoma';c.textAlign='center';const text=name,sub=cls+' · Lv '+p.lv,w=Math.max(220,Math.min(330,Math.max(c.measureText(text).width,c.measureText(sub).width)+100)),h=premium?76:64;c.fillStyle='#091b2ce8';if(im?.naturalWidth)c.drawImage(im.raster||im,x-w/2,y-h+12,w,h);else{c.fillRect(x-w/2+20,y-40,w-40,40);c.strokeStyle='#d5c18a';c.strokeRect(x-w/2+20,y-40,w-40,40)}const flag=flags[p.country];if(flag?.naturalWidth)c.drawImage(flag.raster||flag,x-10,y-49,20,13);c.fillStyle='#fff0c0';c.shadowColor='#000';c.shadowBlur=3;c.fillText(text,x,y-27,w-100);c.font='11px Tahoma';c.fillText(sub,x,y-13,w-100);c.shadowBlur=0;drawWalkRank?.(c,x,y,rank);c.restore();return w}
-channel.onmessage=({data:d})=>{if(onlineMode||!d||d.session===session)return;if(d.type==='leave'){if(peers.has(d.session))releasePeer(peers.get(d.session));peers.delete(d.session);return}if(d.type==='hello'){if(lastState)channel.postMessage(lastState);return}if(d.type!=='position'||typeof d.place!=='string'||!Number.isFinite(d.x)||!Number.isFinite(d.y)||!window.sealerSpriteCatalog?.[d.player?.cls])return;if(d.player?.socialId&&d.player.socialId===window.walkSocial?.publicId)return;if(d.place!==locationId){if(peers.has(d.session))releasePeer(peers.get(d.session));peers.delete(d.session);return}let p=peers.get(d.session);if(!p){p={sprite:window.RemoteWalkSprite.create(),x:d.x,y:d.y};peers.set(d.session,p)}Object.assign(p,{targetX:d.x,targetY:d.y,dir:d.dir,moving:!!d.moving,running:!!d.running,player:d.player,seen:performance.now()});p.sprite.sync(d.player).catch(()=>{})};
+channel.onmessage=({data:d})=>{if(onlineMode||!d||d.session===session)return;if(d.type==='leave'){if(peers.has(d.session))releasePeer(peers.get(d.session));peers.delete(d.session);return}if(d.type==='hello'){if(lastState)channel.postMessage(lastState);return}if(d.type!=='position'||typeof d.place!=='string'||!Number.isFinite(d.x)||!Number.isFinite(d.y)||!window.sealerSpriteCatalog?.[d.player?.cls])return;if(d.player?.socialId&&d.player.socialId===window.walkSocial?.publicId)return;if(d.place!==locationId){if(peers.has(d.session))releasePeer(peers.get(d.session));peers.delete(d.session);return}let p=peers.get(d.session);if(!p){p={sprite:window.RemoteWalkSprite.create(),x:d.x,y:d.y};peers.set(d.session,p)}Object.assign(p,{targetX:d.x,targetY:d.y,dir:d.dir,spriteDir:Number.isFinite(d.spriteDir)&&d.spriteDir>=0&&d.spriteDir<8?d.spriteDir:undefined,moving:!!d.moving,running:!!d.running,player:d.player,seen:performance.now()});p.sprite.sync(d.player).catch(()=>{})};
 let nextHeartbeat=0,heartbeatPending=false,lastDraw=0,lastCompanionTick=0,companionScene='';
 const localCompanion=window.CompanionFollowers?.create();
 function releasePeer(peer){peer.sprite.release();peer.companion?.release();}
@@ -35,9 +35,11 @@ function samplePeer(peer,row,seen){
  const dx=row.x-(peer.targetX??row.x),dy=row.y-(peer.targetY??row.y);
  if(!row.moving||!sameDirection||elapsed>1500||Math.hypot(dx,dy)>400){
   peer.vx=peer.vy=0;
+  if(row.dir!==peer.dir)peer.directionSample=null;
  }else if(elapsed>=100&&(dx||dy)){
   peer.vx=dx/elapsed;
   peer.vy=dy/elapsed;
+  peer.directionSample={dx,dy};
  }
  if(!row.moving||dx||dy||!sameDirection||peer.sampleAt==null)peer.sampleAt=seen;
 }
@@ -84,7 +86,7 @@ function syncPeers(place,p,moving,running){const now=performance.now();if(!onlin
   }
  }
  for(const [id,peer] of peers)if(!ids.has(id)){releasePeer(peer);peers.delete(id);realtime?.motion.remove(id);}const seen=performance.now();for(const row of rows){if(!window.sealerSpriteCatalog?.[row.cls])continue;let peer=peers.get(row.id);if(!peer){peer={sprite:window.RemoteWalkSprite.create(),x:row.x,y:row.y};peers.set(row.id,peer);}if(seen-(peer.realtimeAt??-Infinity)<750){Object.assign(peer,{player:row,seen});peer.sprite.sync(row).catch(()=>{});continue;}samplePeer(peer,row,seen);Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,player:row,seen});peer.sprite.sync(row).catch(()=>{});}}).catch(()=>{nextHeartbeat=performance.now()+3000;}).finally(()=>{heartbeatPending=false;});}
-function tick(place,p,moving,running){if(onlineMode&&!place.includes(':'))place='town:'+place;window.walkSocial?.tick();window.DungeonPartyPresence?.publish();if(locationId!==place&&realtime){realtime.reset();lastRealtimePeerAt=-Infinity;}locationId=place;const now=performance.now();if(onlineMode&&!/^(country:|dungeon:|town:(blue|green|red)-)/.test(place))refreshWalkRanks(null,[],now);if(localCompanion){const elapsed=lastCompanionTick?Math.min((now-lastCompanionTick)/1000,.05):0;lastCompanionTick=now;if(companionScene!==place){localCompanion.reset(p);companionScene=place;}localCompanion.sync(window.CompanionFollowers.first(player()));localCompanion.update(elapsed,p);}for(const [id,v]of peers)if(now-v.seen>5000){releasePeer(v);peers.delete(id);realtime?.motion.remove(id)}if(onlineMode){showRealtimeStatus(now);realtime?.send(place,p,moving,running);syncPeers(place,p,moving,running);return;}if(now-lastSend<150)return;lastSend=now;const me=player();if(!me)return;lastState={type:'position',session,place,x:p.x,y:p.y,dir:p.dir,moving,running,player:{name:me.name||me.n,cls:me.cls,gender:me.gender,lv:me.lv,country:me.country,walkFusion:me.walkFusion||null,walkCompanion:window.CompanionFollowers?.first(me)||null,entitlements:{premiumNameplates:window.WalkNameplates?.owned(me)||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}
+function tick(place,p,moving,running){if(onlineMode&&!place.includes(':'))place='town:'+place;window.walkSocial?.tick();window.DungeonPartyPresence?.publish();if(locationId!==place&&realtime){realtime.reset();lastRealtimePeerAt=-Infinity;}locationId=place;const now=performance.now();if(onlineMode&&!/^(country:|dungeon:|town:(blue|green|red)-)/.test(place))refreshWalkRanks(null,[],now);if(localCompanion){const elapsed=lastCompanionTick?Math.min((now-lastCompanionTick)/1000,.05):0;lastCompanionTick=now;if(companionScene!==place){localCompanion.reset(p);companionScene=place;}localCompanion.sync(window.CompanionFollowers.first(player()));localCompanion.update(elapsed,p);}for(const [id,v]of peers)if(now-v.seen>5000){releasePeer(v);peers.delete(id);realtime?.motion.remove(id)}if(onlineMode){showRealtimeStatus(now);realtime?.send(place,p,moving,running);syncPeers(place,p,moving,running);return;}if(now-lastSend<150)return;lastSend=now;const me=player();if(!me)return;lastState={type:'position',session,place,x:p.x,y:p.y,dir:p.dir,spriteDir:p.spriteDir,moving,running,player:{name:me.name||me.n,cls:me.cls,gender:me.gender,lv:me.lv,country:me.country,walkFusion:me.walkFusion||null,walkCompanion:window.CompanionFollowers?.first(me)||null,entitlements:{premiumNameplates:window.WalkNameplates?.owned(me)||false},socialId:window.walkSocial?.publicId||'',busy:window.walkSocial?.busy||false}};channel.postMessage(lastState)}
 // Return actors to the scene's ground-depth sort; labels are a separate final pass.
 function objects(){
  const now=performance.now(),dt=lastDraw?Math.min(now-lastDraw,100):16;lastDraw=now;
@@ -108,15 +110,30 @@ function objects(){
  }
  return items;
 }
-function drawObject(c,item,sx,sy,scale){
- if(item.kind==='presenceCompanion'){item.companion.draw(c,sx,sy,scale);return;}
+function drawObject(c,item,sx,sy,scale,shadows){
+ if(item.kind==='presenceCompanion'){item.companion.draw(c,sx,sy,scale,shadows);return;}
  const p=item.peer;p.hitbox={x:sx(p.x),y:sy(p.y),scale};
  const gait=p.visual||p;
- p.sprite.draw(c,sx(p.x),sy(p.y),156*scale,gait.dir,p.walkPhase,gait.moving,gait.running);
+ const x=sx(p.x),y=sy(p.y);
+ let dir=gait.spriteDir??p.spriteDir??gait.dir;
+ if(gait.spriteDir===undefined&&gait.moving&&p.directionSample){
+  const {dx,dy}=p.directionSample;
+  const angle=window.sealerSprites.heading(sx(p.x+dx)-x,sy(p.y+dy,p.x+dx)-y);
+  if(Math.abs((angle-gait.dir+12)%8-4)<=.5)dir=angle;
+ }
+ const now=performance.now();
+ if(gait.moving&&p.drawDir!==undefined&&(!p.visual||gait.spriteDir===undefined)){
+  const turn=(dir-p.drawDir+12)%8-4;
+  dir=(p.drawDir+turn*(1-Math.exp(-Math.min(now-p.drawDirAt,100)/48))+8)%8;
+ }
+ p.drawDirAt=now;
+ p.drawDir=dir;
+ p.sprite.draw(shadows?.sprite(c,x,y)??c,x,y,156*scale,dir,p.walkPhase,gait.moving,gait.running);
 }
 function drawLabels(c,sx,sy,scale){for(const p of peers.values()){
- p.hitbox={x:sx(p.x),y:sy(p.y),scale};
- p.hitbox.labelWidth=label(c,sx(p.x),sy(p.y)-154*scale,p.player,peerRanks.get(p.player?.id)??0);
+ const x=sx(p.x),y=sy(p.y,p.x);
+ p.hitbox={x,y,scale};
+ p.hitbox.labelWidth=label(c,x,y-154*scale,p.player,peerRanks.get(p.player?.id)??0);
 }}
 // Compatibility for scenes that do not yet supply their own actor depth sort.
 function draw(c,sx,sy,scale,phase){for(const item of objects().sort((a,b)=>a.y-b.y))drawObject(c,item,sx,sy,scale);drawLabels(c,sx,sy,scale);}

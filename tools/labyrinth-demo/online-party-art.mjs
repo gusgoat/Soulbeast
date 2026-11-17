@@ -90,7 +90,7 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
   if(m?.exploring===false||!visible(p))return;
   const key=m?.code||'self',player=m||{cls:'swordsman',gender:'male'};
   let a=avatars.get(key);
-  if(!a){a=sealerSprites.create();avatars.set(key,a);}
+  if(!a){a=sealerSprites.create({preloadDirections:p===position});avatars.set(key,a);}
   void a.sync(player).catch(()=>{});
   draws.push({y:p.y,run:()=>{
    const q=screen(p),size=145*s;
