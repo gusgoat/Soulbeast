@@ -1,5 +1,10 @@
 /* Local-machine preview transport. BroadcastChannel is intentionally not an online server. */
-(()=>{'use strict';const key='soulbeast-walk-preview-player-v1',peers=new Map(),channel=new BroadcastChannel('soulbeast-walk-presence-v1'),session=crypto.randomUUID();let locationId='',lastSend=0,lastState=null;function raster(im,w,h){const tile=document.createElement('canvas');tile.width=w;tile.height=h;tile.getContext('2d').drawImage(im,0,0,w,h);im.raster=tile}
+(()=>{'use strict';
+if(window.SoulbeastPacklordPreview){
+ window.walkPresence={peers:new Map(),objects:()=>[],player:()=>null,localCompanion:()=>null,
+  tick(){},draw(){},drawObject(){},drawLabels(){},label(){}};
+ return;
+}const key='soulbeast-walk-preview-player-v1',peers=new Map(),channel=new BroadcastChannel('soulbeast-walk-presence-v1'),session=crypto.randomUUID();let locationId='',lastSend=0,lastState=null;function raster(im,w,h){const tile=document.createElement('canvas');tile.width=w;tile.height=h;tile.getContext('2d').drawImage(im,0,0,w,h);im.raster=tile}
 let online=null;const onlineMode=!!sessionStorage.getItem('soulbeast-online-walk-v1');
 if(onlineMode)import('../../client/online-walk.mjs?v=smooth-turn-2').then(m=>{online=m.connectOnlineWalk();if(online){m.mountSaveNotice(online);addEventListener('message',e=>{const frame=document.querySelector('#townMenu,#regionMenu,#menuFrame');if(e.origin===location.origin&&e.source===frame?.contentWindow&&e.data?.type==='walk-player-saved')void online.flush();});setInterval(()=>online.flush(),2500);addEventListener('walk-player-saved',()=>online.flush());}}).catch(console.error);
 const flags={};for(const id of ['blue','green','red']){const im=new Image();im.onload=()=>raster(im,64,42);im.src=new URL('../../assets/ui/country-war/flag-'+id+'-v1.webp',document.currentScript.src).href;flags[id]=im}

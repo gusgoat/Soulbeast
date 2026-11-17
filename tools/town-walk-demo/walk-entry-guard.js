@@ -1,5 +1,6 @@
 (() => {
  const {hostname, pathname} = location;
+ if (pathname === '/Soulbeast/tools/hemant-walk-demo/index.html' && window.SoulbeastPacklordPreview) return;
  if (hostname !== 'gusgoat.github.io' || !pathname.startsWith('/Soulbeast/')) return;
 
  function checkSelectedCharacter() {

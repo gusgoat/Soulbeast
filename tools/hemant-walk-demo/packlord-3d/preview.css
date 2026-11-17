@@ -1,0 +1,14 @@
+html[data-packlord-preview] :is(.walk-hud,.tools,.actions,#nearby,#walkHudToggle,.walk-world-chat,.legacy-walk-header,.country-quick-items,footer) { display:none!important }
+html[data-packlord-preview] .joystick-wrap { z-index:8 }
+.packlord-preview-panel {
+ position:fixed;z-index:9;right:max(12px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));
+ display:grid;grid-template-columns:auto auto;gap:4px 8px;align-items:center;max-width:min(49vw,260px);
+ background:#102534ef;color:#f4e5bd;border:1px solid #b69b61;border-radius:12px;
+ padding:8px 10px;box-shadow:0 4px 16px #0006;font:14px system-ui;
+}
+.packlord-preview-panel strong,.packlord-preview-panel small { grid-column:1/-1 }
+.packlord-preview-panel span { font-size:12px }
+.packlord-preview-panel button { font:inherit;padding:6px;color:#f4e5bd;background:#294252;border:1px solid #8d754b;border-radius:8px;cursor:pointer }
+
+html[data-packlord-preview] #minimap { pointer-events:none }
+html[data-packlord-preview] .joystick-on-right .packlord-preview-panel { left:max(12px,env(safe-area-inset-left));right:auto }
