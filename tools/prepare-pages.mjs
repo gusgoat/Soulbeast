@@ -27,9 +27,10 @@ const sourceArt=new Set([
 ]);
 // The game streams these MP4s from Supabase Storage. Keep the WebP posters on Pages.
 const streamedVideos=new Set(['assets/video/soulbeast-intro-v2.mp4']);
-// The extra directions stream from Supabase. The eight original directions stay on Pages.
-const streamedMovement=/^assets\/player-walk\/[^/]+\/(?:walk|run)-intercardinal-v1\.webp$/;
-const streamedRuns=/^assets\/player-walk\/[^/]+\/run-v\d+(?:-[a-z0-9-]+)?\.webp$/;
+// Rigged 3D actors load from Storage; these atlas files are editing and rollback inputs.
+const retiredSealerAtlas=/^assets\/player-walk\/[^/]+\/(?:idle|walk|run)-[a-z0-9-]+\.webp$/;
+const retiredBeastAtlas=/^outputs\/(?:beast-walk-batch-20261102|dungeon-boss-walk-20261102|tricephalos-mount-rig-20261101)\/.+\/(?:idle|walk|run)-atlas\.webp$/;
+const retiredRareAtlas=/^assets\/rare-beast-walk-20261103\/(?:qilin|baihu|frost_lich|vampire_queen)-walk-v1\.(?:webp|png)$/;
 const streamedMusic=new Set([
  'assets/audio/20261020/0e86c1cf8adcec8f15b9849e.mp3',
  'assets/audio/20261020/394f1ddfb2570de3ddd2287b.mp3',
@@ -106,7 +107,7 @@ for(const file of files){
  const source=resolve(root,file);
  const size=statSync(source).size;
  if(streamedVideos.has(file)){streamedBytes+=size;continue;}
- if(streamedMovement.test(file)||streamedRuns.test(file)){movementBytes+=size;continue;}
+ if(retiredSealerAtlas.test(file)||retiredBeastAtlas.test(file)||retiredRareAtlas.test(file)){movementBytes+=size;continue;}
  if(streamedMusic.has(file)){musicBytes+=size;continue;}
  if(publishedSignatureManifest&&signaturePng.test(file)){signatureBytes+=size;continue;}
  if(sourceArt.has(file)||originals.has(file)){omittedBytes+=size;continue;}
@@ -124,4 +125,4 @@ for(const {file,source,rewritten} of staged){
  if(rewritten!==null)writeFileSync(target,rewritten);
  else copyFileSync(source,target);
 }
-console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video and ${movementBytes} bytes of streamed movement sprites and ${musicBytes} bytes of streamed music. ${signatureBytes} bytes of portrait PNGs are served from the release commit.`);
+console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video and ${movementBytes} bytes of retired movement sprites and ${musicBytes} bytes of streamed music. ${signatureBytes} bytes of portrait PNGs are served from the release commit.`);

@@ -48,186 +48,61 @@ function drawColoredFrame(c,sheet,sx,sy,sw,sh,x,y,width,height){
 function heading(dx,dy){return (-Math.atan2(dx,dy)/(Math.PI/4)+8)%8;}
 function nearestDirection(dir){return Math.round(dir)%8;}
 
-let turnCanvas,turnContext;
-function drawMovement(c,x,y,size,dir,frame,cols,sheet,anchor,scale,between,extra,mask=false){
- const position=between?dir*2:nearestDirection(dir)*2;
- const lower=Math.floor(position),mix=position-lower;
- const drawFrame=mask?(ctx,...args)=>ctx.drawImage(...args):drawColoredFrame;
- function pose(step){
-  step%=16;
-  const alternate=step%2===1;
-  const image=alternate?between:sheet;
-  const feet=alternate?extra.anchor:anchor;
-  const width=size*(alternate?extra.renderScale:scale);
-  return {image,row:Math.floor(step/2),left:-width*feet[0],top:-width*feet[1],width};
- }
- function drawPose(ctx,p,left,top,width){
-  const sw=p.image.width/cols,sh=p.image.height/8;
-  drawFrame(ctx,p.image,frame*sw,p.row*sh,sw,sh,left,top,width,width);
- }
- if(mix<.001||mix>.999||!scope.document){
-  const p=pose(Math.round(position));
-  drawPose(c,p,x+p.left,y+p.top,p.width);
-  return;
- }
- const a=pose(lower),b=pose(lower+1);
- const left=Math.min(a.left,b.left),top=Math.min(a.top,b.top);
- const width=Math.max(a.left+a.width,b.left+b.width)-left;
- const height=Math.max(a.top+a.width,b.top+b.width)-top;
- if(!turnCanvas){
-  turnCanvas=scope.document.createElement('canvas');
-  turnCanvas.width=turnCanvas.height=256;
-  turnContext=turnCanvas.getContext('2d');
- }
- const rasterScale=256/Math.max(width,height);
- const sw=width*rasterScale,sh=height*rasterScale;
- turnContext.clearRect(0,0,256,256);
- // Add premultiplied colors so a pixel covered by both poses keeps its opacity.
- turnContext.globalCompositeOperation='lighter';
- turnContext.globalAlpha=1-mix;
- drawPose(turnContext,a,(a.left-left)*rasterScale,(a.top-top)*rasterScale,a.width*rasterScale);
- turnContext.globalAlpha=mix;
- drawPose(turnContext,b,(b.left-left)*rasterScale,(b.top-top)*rasterScale,b.width*rasterScale);
- // Project a single blended silhouette, including when the caller draws a shadow.
- c.drawImage(turnCanvas,0,0,sw,sh,x+left,y+top,width,height);
-}
-
-const movementStorage='https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/';
-const streamedMovementPath=/\/assets\/player-walk\/([a-z0-9_-]+)\/((?:walk-intercardinal-v1|run-[a-z0-9-]+)\.webp)$/;
-function movementUrl(file){
- const asset=streamedMovementPath.exec(file?.split(/[?#]/,1)[0]);
- return asset?movementStorage+asset[1]+'--'+asset[2]:file;
-}
-function movementImage(file){
- const src=movementUrl(file);
- const image=new Image();
- if(src.startsWith(movementStorage))image.crossOrigin='anonymous';
- image.src=src;
- return image;
-}
-
-function enabled3d(){
- try{
-  const value=new URLSearchParams(scope.location?.search).get('world3d');
-  if(value==='1'||value==='0')sessionStorage.setItem('soulbeast-walk-renderer-3d',value);
-  return value?value==='1':sessionStorage.getItem('soulbeast-walk-renderer-3d')==='1';
- }catch{return false;}
-}
-const use3d=enabled3d();
 function createModel({beast=false,primary=false}={}){
- let current=null,next='',pending=null,ticket=0;
- function release(){ticket++;next='';pending=null;current?.dispose();current=null;}
+ let current=null,next='',pending=null,ticket=0,supported=null;
+ function release(){ticket++;next='';pending=null;current?.dispose();current=null;supported=null;}
  function sync(key){
-  if(!use3d||!key)return;
+  if(!key)return Promise.resolve(false);
   if(key===next)return pending;
   release();
   next=key;
   const revision=ticket;
-  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=1')
-   .then(catalog=>catalog.loadActor(key,{beast,primary}))
-   .then(actor=>{
-    if(revision!==ticket){actor.dispose();return;}
-    current=actor;
+  supported=beast?null:true;
+  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=world-3d-1')
+   .then(catalog=>{
+    if(revision!==ticket)return null;
+    supported=catalog.hasActor(key,{beast});
+    return supported?catalog.loadActor(key,{beast,primary}):null;
    })
-   .catch(()=>{});
+   .then(actor=>{
+    if(revision!==ticket){actor?.dispose();return false;}
+    current=actor;
+    return !!actor;
+   })
+   .catch(()=>false);
   return pending;
  }
- return {sync,release,get ready(){return !!current;},draw(...args){return current?.draw(...args)||false}};
+ return {sync,release,get ready(){return !!current;},get supported(){return supported;},draw(...args){return current?.draw(...args)||false}};
 }
-function create({preloadDirections=false}={}){
+function create({preloadDirections=false,allow3d=true}={}){
  const model=createModel({primary:preloadDirections});
- let current=null,requested='',version=0,pending=null,idleStartedAt=null;
- function close(sprite){
-  for(const key of ['walk','idle','run','walkBetween','runBetween'])sprite?.[key]?.close?.();
- }
- function read(src,cols,rows,cell){
-  return new Promise((resolve,reject)=>{
-   const image=new Image();
-   if(src.startsWith(movementStorage))image.crossOrigin='anonymous';
-   image.onload=async()=>{
-    try{resolve(scope.CountryRenderBudget?await scope.CountryRenderBudget.atlas(image,cols,rows,cell):image)}
-    catch(error){reject(error)}
-   };
-   image.onerror=()=>reject(Error('Cannot load '+src));
-   image.src=src;
-  });
- }
- function loadBetween(sprite,motion,ticket){
-  const file=sprite.intercardinal?.[motion],key=motion+'Between';
-  if(!file||sprite[key]!==undefined)return;
-  sprite[key]=null; // A missing optional atlas keeps the nearest original direction.
-  read(movementUrl(file),sprite[motion+'Frames'],8,preloadDirections?256:192).then(image=>{
-   if(ticket===version&&current===sprite)sprite[key]=image;
-   else image.close?.();
-  }).catch(()=>{});
- }
- async function sync(player){
+ let current=null;
+ function sync(player){
   const explicit=!!player;
   if(!player){try{player=JSON.parse(sessionStorage.getItem(KEY)||'null')}catch{}}
   const preview=!explicit&&!player&&previewAvatar();
   const id=identity(preview?PREVIEW_AVATARS[preview]:player);
-  const entry=scope.sealerSpriteCatalog[id.cls][id.gender];
-  model.sync(id.key);
-  const requestKey=id.key+'|'+entry.walk+'|'+entry.idle+'|'+(entry.run||'');
-  if(requested===requestKey)return pending||current;
-  if(!entry.ready)throw Error('Missing animated sealer '+id.key);
-  requested=requestKey;
-  const ticket=++version,walkFrames=entry.walkFrames||8,runFrames=entry.runFrames||walkFrames;
-  pending=Promise.allSettled([
-   read(entry.walk,walkFrames,8),read(entry.idle,4,2),entry.run?read(movementUrl(entry.run),runFrames,8).catch(()=>null):null
-  ]).then(results=>{
-   const [walk,idle,run]=results.map(result=>result.value);
-   const failure=results.find(result=>result.status==='rejected');
-   if(failure||ticket!==version){
-    close({walk,idle,run});
-    if(failure)throw failure.reason;
-    return current;
-   }
-   close(current);
-   idleStartedAt=null;
-   current={...id,walk,idle,run,walkFrames,runFrames,intercardinal:entry.intercardinal,
-    phaseScale:entry.phaseScale||1,runPhaseScale:entry.runPhaseScale||entry.phaseScale||1,
-    anchor:entry.anchor||[.5,.962],renderScale:entry.renderScale||1,name:scope.sealerSpriteCatalog[id.cls].name};
-   pending=null;
-   if(preloadDirections){
-    loadBetween(current,'walk',ticket);
-    loadBetween(current,'run',ticket);
-   }
-   return current;
-  }).catch(error=>{
-   if(ticket===version){requested='';pending=null}
-   throw error;
-  });
-  return pending;
- }
- function draw(c,x,y,size,dir,phase,moving,running=false,idleTime,mask=false){
-  if(!(size>0))return;
-  if(model.draw(c,x,y,size,dir,moving,running))return;
-  if(!current)return;
-  if(moving){
-   idleStartedAt=null;
-   const sprint=running&&current.run,motion=sprint?'run':'walk',cols=current[motion+'Frames'];
-   const rate=sprint?current.runPhaseScale:current.phaseScale;
-   const frame=Math.floor(phase*rate*cols/8)%cols;
-   if(!Number.isInteger(dir))loadBetween(current,motion,version);
-   drawMovement(c,x,y,size,dir,frame,cols,current[motion],current.anchor,current.renderScale,
-    current[motion+'Between'],current.intercardinal,mask);
-   return;
+  if(current?.key!==id.key){
+   const cls=scope.sealerSpriteCatalog[id.cls],entry=cls[id.gender];
+   const portrait=new Image();
+   if(entry.portrait)portrait.src=entry.portrait;
+   current={...id,name:cls.name,portrait};
+   if(allow3d)model.sync(id.key);
   }
-  // Use elapsed wall time because the movement phase stops advancing at rest.
-  const now=idleTime??scope.performance?.now?.()??Date.now();
-  if(idleStartedAt===null)idleStartedAt=now;
-  const inhale=(1-Math.cos(Math.max(0,now-idleStartedAt)*Math.PI*2/3600))*.5;
-  dir=nearestDirection(dir);
-  size*=current.renderScale;
-  const width=size*(1+.0025*inhale),height=size*(1+.009*inhale);
-  const im=current.idle,sw=im.width/4,sh=im.height/2;
-  const args=[im,(dir%4)*sw,Math.floor(dir/4)*sh,sw,sh,x-width*current.anchor[0],y-height*current.anchor[1],width,height];
-  if(mask)c.drawImage(...args);
-  else drawColoredFrame(c,...args);
+  return Promise.resolve(current);
  }
- function release(){model.release();version++;close(current);current=null;requested='';pending=null;idleStartedAt=null}
- return {sync,draw,release,get current(){return current},get renderer(){return model.ready?'3d':'sprite'}};
+ function draw(c,x,y,size,dir,phase,moving,running=false){
+  if(!current||!(size>0))return;
+  if(model.draw(c,x,y,size,dir,moving,running))return;
+  const portrait=current.portrait,width=size*.54;
+  if(portrait.complete&&portrait.naturalWidth)c.drawImage(portrait,x-width*.5,y-width,width,width);
+  else{
+   c.save();c.fillStyle='#d9bd79';
+   c.beginPath();c.ellipse(x,y-20,size*.082,size*.12,0,0,Math.PI*2);c.fill();c.restore();
+  }
+ }
+ function release(){model.release();current=null;}
+ return {sync,draw,release,get current(){return current},get renderer(){return model.ready?'3d':'portrait'}};
 }
-scope.sealerSprites={create,createModel,use3d,identity,drawColoredFrame,heading,nearestDirection,drawMovement,movementImage};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
+scope.sealerSprites={create,createModel,use3d:true,identity,drawColoredFrame,heading,nearestDirection};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
 })(typeof window==='undefined'?globalThis:window);

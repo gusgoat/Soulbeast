@@ -20,7 +20,7 @@ for(const kind of ['ruin','statue'])files['prop-'+kind]='/Soulbeast/assets/ui/wo
 for(const [id,file]of Object.entries(files)){const im=new Image();im.src=file.startsWith('/')?file:'/Soulbeast/assets/hemant-walk-preview/'+file;images[id]=im}
 let c=surface;
 const groundShadows=WalkGroundShadows.create(),spriteContext=(x,y)=>overview?c:groundShadows.sprite(c,x,y);
-const avatar=window.sealerSprites.create({preloadDirections:true});const syncAvatar=()=>avatar.sync(packlordPreview?.avatar).catch(e=>console.error('Player animation:',e));
+const avatar=window.sealerSprites.create({preloadDirections:true,allow3d:!packlordPreview});const syncAvatar=()=>avatar.sync(packlordPreview?.avatar).catch(e=>console.error('Player animation:',e));
 if(packlordPreview)addEventListener('walk-preview-avatar',syncAvatar);
 const touchDisplay=matchMedia('(pointer: coarse)').matches;
 let lastPaint=-Infinity,graphics,paintInterval,grassDisplacement=null;

@@ -250,7 +250,7 @@ function draw(){
   if(o.art==='companion'){companion.draw(ctx,sx,sy,zoom,shadowLayer);continue;}
   if(o.art==='player'){
    const sprite=shadowLayer.sprite(ctx,x,y);
-   if(!fusion.draw(sprite,x,y,1,p.dir,clock,moving))avatar.draw(sprite,x,y,134,p.spriteDir??p.dir,phase,moving,running);
+   if(!fusion.draw(sprite,x,y,1,p.dir,clock,moving,p.spriteDir??p.dir))avatar.draw(sprite,x,y,134,p.spriteDir??p.dir,phase,moving,running);
    continue;
   }
   if(o.art==='boss'){

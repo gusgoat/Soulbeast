@@ -1,5 +1,5 @@
 import '../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117';
-import '../town-walk-demo/sealer-sprites.js?v=world-3d-qa-1';
+import '../town-walk-demo/sealer-sprites.js?v=world-3d-live-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=team-bot-tactics-1';
@@ -938,7 +938,7 @@ export class Scene{
    }
    const spec=rareArt[p.sp];
    const rendered=prev.model?.draw(c,x,y,p.boss?142:89,heading,moving,false);
-   if(!rendered&&spec){
+   if(!rendered&&spec&&prev.model?.supported===false){
     if(!rareAtlases.has(p.sp))rareAtlases.set(p.sp,img(assets+'rare-beast-walk-20261103/'+p.sp+'-walk-v1.webp'));
     const a=rareAtlases.get(p.sp),size=p.boss?142:89;
     const col=moving?Math.floor(now/1000/spec.cycle*spec.frames)%spec.frames:0;
@@ -959,7 +959,7 @@ export class Scene{
    const atlas=getAtlas(p);
    const pose=moving?(p.walkRunning===false?'walk':'run'):'idle';
    const entry=atlas?.entry;
-   const [ax,ay]=entry?.anchor||[.5,.962],size=145*(entry?.renderScale||1);
+   const [,ay]=entry?.anchor||[.5,.962],size=145*(entry?.renderScale||1);
    const target=attack&&bases.get(attack.baseId);
    const attackSheet=target&&siegeSheet(p);
    const directional=ready(attackSheet?.image);
@@ -982,31 +982,13 @@ export class Scene{
     c.save();c.translate(x+direction*reach,y);c.scale(direction,1);
     globalThis.sealerSprites.drawColoredFrame(c,strike,0,0,strike.naturalWidth,strike.naturalHeight,-width/2,-height,width,height);
     c.restore();
-   }else if(atlas&&!prev.model?.draw(c,x,y,145,heading,moving,pose==='run')){
-    const run=pose==='run'&&entry.run;
-    const runSheet=run?(atlas.run??=globalThis.sealerSprites.movementImage(siteAsset(run))):null;
-    const running=ready(runSheet);
-    const sheet=running?runSheet:pose==='idle'?(atlas.idle??=img(siteAsset(entry.idle))):(atlas.walk??=img(siteAsset(entry.walk)));
-    if(ready(sheet)){
-     const layout=moving?(running?(entry.runLayout||entry.walkLayout):entry.walkLayout):entry.idleLayout;
-     const cols=layout?.columns??(moving?((running?entry.runFrames:entry.walkFrames)||entry.walkFrames||8):4);
-     const rows=layout?.rows??(moving?8:2);
-     const rate=(running?entry.runPhaseScale:entry.phaseScale)??entry.phaseScale??1;
-     const col=moving?Math.floor(prev.phase*rate*cols/8)%cols:prev.dir%cols;
-     if(moving){
-      const dir=prev.spriteDir??prev.dir,extra=entry.intercardinal;
-      const alternate=running?'run':'walk',atlasKey=alternate+'Between';
-      const between=extra?.[alternate]&&!Number.isInteger(dir)&&(atlas[atlasKey]??=globalThis.sealerSprites.movementImage(siteAsset(extra[alternate])));
-      globalThis.sealerSprites.drawMovement(c,x,y,145,dir,col,cols,sheet,[ax,ay],entry.renderScale||1,
-       ready(between)?between:null,extra);
-     }else{
-      const width=sheet.naturalWidth/cols,height=sheet.naturalHeight/rows;
-      globalThis.sealerSprites.drawColoredFrame(c,sheet,col*width,Math.floor(prev.dir/cols)*height,
-       width,height,x-size*ax,y-size*ay,size,size);
-     }
-    }
+   }else if(!prev.model?.draw(c,x,y,145,heading,moving,pose==='run')){
+    const face=portrait(p);
+    if(face&&!beastArt.has(face))beastArt.set(face,img(face));
+    const image=beastArt.get(face),width=size*.55;
+    if(ready(image))c.drawImage(image,x-width/2,y-width,width,width);
+    else{c.fillStyle=color;c.fillRect(x-12,y-48,24,44);}
    }
-   if(!directional&&!ready(strike)&&!prev.model?.ready&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
    const spriteTop=y-(atlas?size*ay:55);
    this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,spriteTop-16,isMe?'#fff2af':color,p.rating??0,now);
    if(p.phase==='walk'&&Number.isFinite(p.hp)&&p.maxHp>0){

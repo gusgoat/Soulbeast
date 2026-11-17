@@ -28,6 +28,10 @@ export function roster(catalog){
  ];
 }
 
+export function hasActor(key,{beast=false}={}){
+ return /^[a-z0-9_-]+$/.test(key)&&(!beast||Object.hasOwn(beasts,aliases[key]||key));
+}
+
 export function loadActor(key,{beast=false,primary=false}={}){
  if(beast)key=aliases[key]||key;
  if(!/^[a-z0-9_-]+$/.test(key)||beast&&!Object.hasOwn(beasts,key))throw new Error('Unknown 3D actor '+key);
