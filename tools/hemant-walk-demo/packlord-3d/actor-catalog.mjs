@@ -1,4 +1,4 @@
-import {createActor} from './world-actors.mjs?v=1';
+import {createActor} from './world-actors.mjs?v=bitmap-capture-1';
 
 const publishedRoot='https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/';
 const local=/^(?:localhost|127\.0\.0\.1)$/.test(location.hostname);

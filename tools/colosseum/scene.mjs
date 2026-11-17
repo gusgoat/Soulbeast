@@ -1,5 +1,5 @@
 import '../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117';
-import '../town-walk-demo/sealer-sprites.js?v=world-3d-live-1';
+import '../town-walk-demo/sealer-sprites.js?v=bitmap-capture-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=team-bot-tactics-1';

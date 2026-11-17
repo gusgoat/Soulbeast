@@ -4,5 +4,17 @@ function index(objects,bounds,cell=512){const bins=new Map(),seen=new Set();for(
 function cadence(period){let next=-Infinity;return now=>{if(now<next)return false;next=now+period;return true}}
 function groundTiles(source,makeCanvas,size=512,factor=2){const tiles=new Map(),width=source.width,height=source.height;for(let y=0;y<height;y+=size)for(let x=0;x<width;x+=size){const tile=makeCanvas();tile.width=Math.min(size,width-x);tile.height=Math.min(size,height-y);tile.getContext('2d').drawImage(source,x,y,tile.width,tile.height,0,0,tile.width,tile.height);tiles.set(x/size+','+y/size,{image:tile,x,y})}return {draw(ctx,rect,sx,sy,z,flatten){for(let x=Math.max(0,Math.floor(rect.left/factor/size));x<=Math.min(Math.ceil(width/size)-1,Math.floor(rect.right/factor/size));x++)for(let y=Math.max(0,Math.floor(rect.top/factor/size));y<=Math.min(Math.ceil(height/size)-1,Math.floor(rect.bottom/factor/size));y++){const tile=tiles.get(x+','+y);if(tile)ctx.drawImage(tile.image,sx(tile.x*factor),sy(tile.y*factor/flatten),tile.image.width*factor*z,tile.image.height*factor*z)}},release(){for(const t of tiles.values())t.image.width=t.image.height=1;tiles.clear()},count:tiles.size}}
 async function atlas(image,cols,rows,cell=256){const w=cols*cell,h=rows*cell;if(image.width<=w&&image.height<=h)return image;if(typeof g.createImageBitmap==='function'){try{const bitmap=await g.createImageBitmap(image,{resizeWidth:w,resizeHeight:h,resizeQuality:'high'});if(bitmap.width===w&&bitmap.height===h)return bitmap;bitmap.close?.()}catch{}}if(!g.document)return image;const tile=g.document.createElement('canvas');tile.width=w;tile.height=h;tile.getContext('2d').drawImage(image,0,0,w,h);return tile}
-const api={index,cadence,groundTiles,atlas};g.CountryRenderBudget=api;if(typeof module!=='undefined')module.exports=api;
+// Keep the display cadence when RAF varies slightly or a frame is late.
+function paintCadence(interval){
+ if(!(interval>0))return ()=>true;
+ let next=null;
+ return now=>{
+  if(next===null){next=now+interval;return true;}
+  const elapsed=now-next+.9;
+  if(elapsed<0)return false;
+  next+=(1+Math.floor(elapsed/interval))*interval;
+  return true;
+ };
+}
+const api={index,cadence,paintCadence,groundTiles,atlas};g.CountryRenderBudget=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

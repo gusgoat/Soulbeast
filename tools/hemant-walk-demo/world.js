@@ -23,7 +23,7 @@ const groundShadows=WalkGroundShadows.create(),spriteContext=(x,y)=>overview?c:g
 const avatar=window.sealerSprites.create({preloadDirections:true,allow3d:!packlordPreview});const syncAvatar=()=>avatar.sync(packlordPreview?.avatar).catch(e=>console.error('Player animation:',e));
 if(packlordPreview)addEventListener('walk-preview-avatar',syncAvatar);
 const touchDisplay=matchMedia('(pointer: coarse)').matches;
-let lastPaint=-Infinity,graphics,paintInterval,grassDisplacement=null;
+let graphics,shouldPaint,grassDisplacement=null;
 function resize(){
  W=innerWidth;H=innerHeight;
  const pixelLimit=touchDisplay?Math.max(1,Math.sqrt(graphics.pixels/Math.max(1,W*H))):2;
@@ -35,7 +35,8 @@ function resize(){
 function applyGraphics(){
  const level=WalkGraphics.read();
  graphics=WalkGraphics.levels[level-1];
- paintInterval=touchDisplay||graphics.frameMs===32?graphics.frameMs:0;
+ const fps=graphics.frameMs===32?30:touchDisplay?60:0;
+ shouldPaint=CountryRenderBudget.paintCadence(fps?1000/fps:0);
  canvas.dataset.graphicsLevel=String(level);
  resize();
 }
@@ -262,7 +263,7 @@ function showVisibleBanditLesson(){
 function update(dt){if(WalkTutorial.active()||document.documentElement.hasAttribute('data-event-announcement-open'))return;if(window.WalkControls?.editing||menu||overview||$('townDialog').open||fusion.isOpen||window.walkSocial.isOpen||window.walkAtlas.isOpen())return;if(!packlordPreview){const crossing=borderGates.find(g=>nav.distance(p,g)<55);if(crossing){crossBorder(crossing);return}if(showVisibleBanditLesson()||showShadowLesson())return;const contact=threats.update(dt,p,{repellent:window.walkRepellentActive?.()});if(contact){openEncounter(contact);return}roamers.update(dt,p);bandits.update(dt,p);}let x=joy.x,y=joy.y;if(keys.has('w')||keys.has('arrowup'))y--;if(keys.has('s')||keys.has('arrowdown'))y++;if(keys.has('a')||keys.has('arrowleft'))x--;if(keys.has('d')||keys.has('arrowright'))x++;const manual=Math.hypot(x,y)>.12;if(manual&&travel)stopTravel();let auto=false;
  if(travel){while(travel.path.length&&nav.distance(p,travel.path[0])<7)travel.path.shift();if(!travel.path.length){stopTravel()}else{const goal=travel.path[0];x=goal.x-p.x;y=(goal.y-p.y)*F;auto=true}}
  const len=Math.hypot(x,y),tilt=Math.min(1,Math.hypot(joy.x,joy.y)),keyboard=['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].some(k=>keys.has(k));moving=len>.12;running=moving&&(auto||keys.has('shift')||tilt>(running ? .62 : .72));if(moving){p.spriteDir=sealerSprites.heading(x,y);p.dir=(Math.round(-Math.atan2(x,y)/(Math.PI/4))+8)%8;let speed=.68425*(auto?360:keyboard?(running?360:220):220*Math.min(1,tilt/.72)+140*Math.max(0,(tilt-.72)/.28)),step=Math.min((packlordPreview?speed:fusion.speed(speed,auto||keyboard?1:tilt/.72))*dt,auto?len:Infinity),nx=p.x+x/len*step,ny=p.y+y/len*step/F;if(nav.walkable(nx,p.y))p.x=nx;if(nav.walkable(p.x,ny))p.y=ny;phase+=dt*(speed/220)*13}
- cam.x+=(p.x-cam.x)*Math.min(1,dt*7);cam.y+=(p.y-cam.y)*Math.min(1,dt*7);const previousNear=near;near=questNpcs.find(n=>nav.distance(p,n)<125)||treasures.chests.find(s=>nav.distance(p,s)<125)||nav.places.filter(s=>nav.distance(p,s)<190).sort((a,b)=>nav.distance(p,a)-nav.distance(p,b))[0];if(near?.type==='questNpc'&&near!==previousNear)WalkIdleArt.greetNpc(near,t);$('interact').textContent=near?.type==='questNpc'?'◇ สนทนาและรับเควส':near?.kind==='chest'?'◇ เปิดหีบสมบัติ':near?.type==='border'?'◇ ข้ามประเทศ':near?.type==='islandPort'?'⚓ ท่าเรือ':'◇ สำรวจทางเข้า';$('nearby').hidden=!near;$('nearbyName').textContent=near?.name||'';$('interact').disabled=!near;$('area').textContent=near?.name||(data.countryId==='blue'?'ถนนหิมะ':data.countryId==='green'?'เส้นทางพงไพร':'เส้นทางดินแดง')+' · '+data.country;
+ const cameraBlend=1-Math.exp(-dt*7);cam.x+=(p.x-cam.x)*cameraBlend;cam.y+=(p.y-cam.y)*cameraBlend;const previousNear=near;near=questNpcs.find(n=>nav.distance(p,n)<125)||treasures.chests.find(s=>nav.distance(p,s)<125)||nav.places.filter(s=>nav.distance(p,s)<190).sort((a,b)=>nav.distance(p,a)-nav.distance(p,b))[0];if(near?.type==='questNpc'&&near!==previousNear)WalkIdleArt.greetNpc(near,t);$('interact').textContent=near?.type==='questNpc'?'◇ สนทนาและรับเควส':near?.kind==='chest'?'◇ เปิดหีบสมบัติ':near?.type==='border'?'◇ ข้ามประเทศ':near?.type==='islandPort'?'⚓ ท่าเรือ':'◇ สำรวจทางเข้า';$('nearby').hidden=!near;$('nearbyName').textContent=near?.name||'';$('interact').disabled=!near;$('area').textContent=near?.name||(data.countryId==='blue'?'ถนนหิมะ':data.countryId==='green'?'เส้นทางพงไพร':'เส้นทางดินแดง')+' · '+data.country;
 }
 function button(text,action){const b=document.createElement('button');b.textContent=text;b.onclick=action;$('dialogChoices').append(b);return b}
 function dialog(title,text){$('islandFerryPreview')?.remove();window.NpcDialogue.clear($('townDialog'));$('townDialog').classList.remove('places-list');reset();$('dialogTitle').textContent=title;$('dialogText').textContent=text;$('dialogChoices').replaceChildren();$('forestEntranceArt')?.remove();if(!$('townDialog').open)$('townDialog').showModal()}
@@ -390,7 +391,7 @@ addEventListener('pagehide',e=>{if(!e.persisted){groundTiles?.release();groundSh
 function frame(now){const dt=Math.min((now-last)/1000||0,.04);last=now;t+=dt;const previousX=p.x,previousY=p.y;update(dt);
  const stepX=p.x-previousX,stepY=(p.y-previousY)*F,stepLength=Math.hypot(stepX,stepY);
  grassDisplacement=stepLength>.02?{x:stepX/stepLength,y:stepY/stepLength}:null;
- window.walkKingdomBoss?.tick(p,running);window.walkPresence.tick('country:'+data.countryId,p,moving,running);sceneAudio.tick(dt,{position:p,moving,running,blocked:menu,waterPreview:ForestEntrance.waterAudible($('townDialog')),surface:terrain.water.onBridge(p.x,p.y)?'hall':canvas.dataset.surface==='road'?'stone':data.countryId==='green'?'leaves':'forest'});if(now-lastPaint<paintInterval){requestAnimationFrame(frame);return;}lastPaint=now;const light=CountryDaylight.at(Date.now());trackedGate=WalkQuestEngine.trackedBorder(window.townQuests.destination(),data.countryId,borderGates,p,nav.distance);canvas.dataset.questBorder=trackedGate?.id||'';draw(light);
+ window.walkKingdomBoss?.tick(p,running);window.walkPresence.tick('country:'+data.countryId,p,moving,running);sceneAudio.tick(dt,{position:p,moving,running,blocked:menu,waterPreview:ForestEntrance.waterAudible($('townDialog')),surface:terrain.water.onBridge(p.x,p.y)?'hall':canvas.dataset.surface==='road'?'stone':data.countryId==='green'?'leaves':'forest'});if(!shouldPaint(now)){requestAnimationFrame(frame);return;}const light=CountryDaylight.at(Date.now());trackedGate=WalkQuestEngine.trackedBorder(window.townQuests.destination(),data.countryId,borderGates,p,nav.distance);canvas.dataset.questBorder=trackedGate?.id||'';draw(light);
  if(!overview){
   const q=zoom(),effects=graphics.effects;
   const showNight=effects>0&&light.night>.005;

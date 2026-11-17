@@ -50,7 +50,15 @@ function release(url,entry){
 }
 function renderer(){
  if(shared)return shared;
- const webgl=new WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});
+ const attributes={alpha:true,antialias:true,powerPreference:'low-power'};
+ let offscreen,context;
+ if(typeof OffscreenCanvas==='function'){
+  try{
+   offscreen=new OffscreenCanvas(SIDE,SIDE);
+   if(typeof offscreen.transferToImageBitmap==='function')context=offscreen.getContext('webgl2',attributes);
+  }catch{}
+ }
+ const webgl=new WebGLRenderer(context?{...attributes,canvas:offscreen,context}:attributes);
  webgl.setSize(SIDE,SIDE,false);
  webgl.setClearColor(0,0);
  const scene=new Scene();
@@ -59,7 +67,7 @@ function renderer(){
  const fill=new DirectionalLight(0xd7e7ff,.85);
  fill.position.set(3,3,-4);
  scene.add(key,fill,new AmbientLight(0xffffff,1.65));
- shared={webgl,scene,lost:false,generation:0};
+ shared={webgl,scene,offscreen:context?offscreen:null,lost:false,generation:0};
  webgl.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();shared.lost=true;});
  webgl.domElement.addEventListener('webglcontextrestored',()=>{shared.lost=false;shared.generation++;});
  return shared;
@@ -83,9 +91,25 @@ export async function createActor(url,{beast=false,primary=false}={}){
   camera.lookAt(0,size.y*.51,0);
   camera.updateMatrixWorld();
   const anchor=(1-new Vector3().project(camera).y)/2;
-  const cached=document.createElement('canvas');
-  cached.width=cached.height=SIDE;
-  const pixels=cached.getContext('2d');
+  let bitmap=null,cached=null,pixels=null;
+  function capture(){
+   if(raster.offscreen){
+    try{
+     const next=raster.offscreen.transferToImageBitmap();
+     bitmap?.close();
+     bitmap=next;
+     return;
+    }catch{raster.offscreen=null;}
+   }
+   if(!cached){
+    cached=document.createElement('canvas');
+    cached.width=cached.height=SIDE;
+    pixels=cached.getContext('2d');
+   }
+   bitmap?.close();bitmap=null;
+   pixels.clearRect(0,0,SIDE,SIDE);
+   pixels.drawImage(raster.webgl.domElement,0,0);
+  }
   const mixer=new AnimationMixer(asset);
   const actions=Object.fromEntries(model.animations.map(clip=>[clip.name.toLowerCase(),mixer.clipAction(clip)]));
   if(beast){
@@ -115,13 +139,12 @@ export async function createActor(url,{beast=false,primary=false}={}){
      raster.scene.add(pivot);
      try{
       raster.webgl.render(raster.scene,camera);
-      pixels.clearRect(0,0,SIDE,SIDE);
-      pixels.drawImage(raster.webgl.domElement,0,0);
+      capture();
      }finally{raster.scene.remove(pivot);}
      painted=now;
      generation=raster.generation;
     }
-    ctx.drawImage(cached,x-width*.5,y-width*anchor,width,width);
+    ctx.drawImage(bitmap||cached,x-width*.5,y-width*anchor,width,width);
     return true;
    },
    get motion(){return motion;},
@@ -132,7 +155,8 @@ export async function createActor(url,{beast=false,primary=false}={}){
     mixer.stopAllAction();
     mixer.uncacheRoot(asset);
     asset.traverse(node=>{if(node.isSkinnedMesh)node.skeleton.dispose();});
-    cached.width=cached.height=1;
+    bitmap?.close();
+    if(cached)cached.width=cached.height=1;
     release(url,ref);
    },
   };
