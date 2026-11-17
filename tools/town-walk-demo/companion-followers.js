@@ -31,11 +31,14 @@
   if(asset&&--asset.refs===0){assets.delete(key);asset.image.onload=asset.image.onerror=null;asset.image.src='';}
  }
  function create(){
+  const model=window.sealerSprites?.createModel?.({beast:true});
   let key=null,asset=null,body=null,trail=[],clock=0;
   function sync(value){
    const v=normalize(value),next=v?v.sp+':'+v.form:null;
    if(next===key)return;
    drop(key,asset);asset=null;key=next;
+   model?.release();
+   if(v?.form===0)model?.sync(v.sp);
   }
   function reset(leader){
    body={x:leader.x-65,y:leader.y+65,direction:0};
@@ -66,7 +69,9 @@
    const blend=1-Math.exp(-dt*followResponse);
    const dx=(targetX-body.x)*blend,dy=(targetY-body.y)*blend;
    body.x+=dx;body.y+=dy;
-   if(Math.hypot(dx,dy)>dt*12){
+   body.moving=Math.hypot(dx,dy)>dt*12;
+   if(body.moving){
+    body.heading=window.sealerSprites?.heading(dx,dy*.64)??0;
     // Favor the current axis near diagonals so small corrections do not flip the sprite.
     const horizontal=body.direction>=2;
     const xWeight=Math.abs(dx)*(horizontal?1.2:1);
@@ -79,6 +84,7 @@
    const x=sx(body.x),y=sy(body.y),size=128*scale;
    const canvasWidth=ctx.canvas.clientWidth||ctx.canvas.width,canvasHeight=ctx.canvas.clientHeight||ctx.canvas.height;
    if(x+size<0||x-size>canvasWidth||y+size<0||y-size>canvasHeight)return;
+   if(model?.draw(shadows?.sprite(ctx,x,y)??ctx,x,y,size,body.heading??0,body.moving,false))return;
    asset??=acquire(key);
    if(asset.failed&&performance.now()>=asset.retryAt){asset.failed=false;asset.image.src='/Soulbeast/assets/companions/'+catalog[key].file;}
    if(!asset.ready)return;
@@ -88,7 +94,7 @@
    if(!shadows){ctx.fillStyle='#173a4c30';ctx.beginPath();ctx.ellipse(x,y,15*scale,5*scale,0,0,Math.PI*2);ctx.fill();}
    (shadows?.sprite(ctx,x,y)??ctx).drawImage(image,col*image.naturalWidth/2,row*image.naturalHeight/2,image.naturalWidth/2,image.naturalHeight/2,x-size/2,y-size-13*scale+bob,size,size);ctx.restore();
   }
-  return {sync,update,draw,reset,release(){drop(key,asset);asset=null;key=null;body=null;trail=[];},get body(){return body;},get key(){return key;}};
+  return {sync,update,draw,reset,release(){model?.release();drop(key,asset);asset=null;key=null;body=null;trail=[];},get body(){return body;},get key(){return key;}};
  }
  window.CompanionFollowers={normalize,first,create,get loadedAssets(){return assets.size;}};
 })();

@@ -1,5 +1,5 @@
 import '../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117';
-import '../town-walk-demo/sealer-sprites.js?v=storage-run-audio-1';
+import '../town-walk-demo/sealer-sprites.js?v=world-3d-qa-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=team-bot-tactics-1';
@@ -482,7 +482,7 @@ export class Scene{
    .map(e=>[e.playerId,e]));
   const baseById=new Map([...bases,...seen.filter(e=>e.infantry)].map(target=>[target.id,target]));
   const alive=new Set(seen.map(p=>p.id));
-  for(const id of this.anim.keys())if(!alive.has(id))this.anim.delete(id);
+  for(const [id,pose] of this.anim)if(!alive.has(id)){pose.model?.release();this.anim.delete(id);}
   const props=obstacles.filter(p=>inSight(me,p)&&p.x>=left-75&&p.x<=right+75&&p.y*FLAT>=top-80&&p.y*FLAT<=bottom+100);
   for(const e of [...walls,...castles,...flags,...seen,...props].sort((a,b)=>a.y-b.y)){
    if(e.wall){
@@ -916,6 +916,11 @@ export class Scene{
   const prev=this.anim.get(p.id)??{x,y,dir:0,phase:0,movingUntil:0,warp:p.warp,at:now,vx:0,vy:0};
   updateWalkPose(prev,p,now);
   this.anim.set(p.id,prev);
+  if(globalThis.sealerSprites.use3d){
+   prev.model??=globalThis.sealerSprites.createModel({beast:!!p.sp,primary:isMe});
+   prev.model.sync(p.sp||p.cls+'-'+sealerGender(p));
+  }
+  const heading=prev.spriteDir??prev.dir;
   const moving=prev.movingUntil>now;
   c.save();if(!p.sp&&this.arena.bushAt(p)!==null)c.globalAlpha=.5;
   c.strokeStyle=color;c.fillStyle=p.boss?'#5d2150ad':'#100c1877';c.lineWidth=p.boss?3:isMe?3:1.5;
@@ -932,13 +937,14 @@ export class Scene{
     c.fillStyle=aura;c.fillRect(-42,-42,84,84);c.restore();
    }
    const spec=rareArt[p.sp];
-   if(spec){
+   const rendered=prev.model?.draw(c,x,y,p.boss?142:89,heading,moving,false);
+   if(!rendered&&spec){
     if(!rareAtlases.has(p.sp))rareAtlases.set(p.sp,img(assets+'rare-beast-walk-20261103/'+p.sp+'-walk-v1.webp'));
     const a=rareAtlases.get(p.sp),size=p.boss?142:89;
     const col=moving?Math.floor(now/1000/spec.cycle*spec.frames)%spec.frames:0;
     const [ax,ay]=spec.anchors?.[prev.dir]??spec.anchor??[.5,.9];
     if(ready(a))c.drawImage(a,col*spec.cell,prev.dir*spec.cell,spec.cell,spec.cell,x-size*ax,y-size*ay,size,size);
-   }else{
+   }else if(!rendered){
     if(!beastArt.has(p.sp))beastArt.set(p.sp,img(portrait(p)));
     const a=beastArt.get(p.sp),size=61, lift=Math.sin(now/135+prev.phase)*3;
     if(ready(a))c.drawImage(a,x-size/2,y-size+lift,size,size);
@@ -976,7 +982,7 @@ export class Scene{
     c.save();c.translate(x+direction*reach,y);c.scale(direction,1);
     globalThis.sealerSprites.drawColoredFrame(c,strike,0,0,strike.naturalWidth,strike.naturalHeight,-width/2,-height,width,height);
     c.restore();
-   }else if(atlas){
+   }else if(atlas&&!prev.model?.draw(c,x,y,145,heading,moving,pose==='run')){
     const run=pose==='run'&&entry.run;
     const runSheet=run?(atlas.run??=globalThis.sealerSprites.movementImage(siteAsset(run))):null;
     const running=ready(runSheet);
@@ -1000,7 +1006,7 @@ export class Scene{
      }
     }
    }
-   if(!directional&&!ready(strike)&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
+   if(!directional&&!ready(strike)&&!prev.model?.ready&&!ready(atlas?.[pose])){c.fillStyle=color;c.fillRect(x-12,y-55,24,49);}
    const spriteTop=y-(atlas?size*ay:55);
    this.label(`${p.name}${p.phase==='battle'?' ⚔':''}`,x,spriteTop-16,isMe?'#fff2af':color,p.rating??0,now);
    if(p.phase==='walk'&&Number.isFinite(p.hp)&&p.maxHp>0){

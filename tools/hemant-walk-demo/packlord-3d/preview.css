@@ -12,3 +12,4 @@ html[data-packlord-preview] .joystick-wrap { z-index:8 }
 
 html[data-packlord-preview] #minimap { pointer-events:none }
 html[data-packlord-preview] .joystick-on-right .packlord-preview-panel { left:max(12px,env(safe-area-inset-left));right:auto }
+.packlord-preview-panel select{grid-column:1/-1;width:100%;min-width:0;font:inherit;color:inherit;background:#294252;padding:5px;border:1px solid #8d754b;border-radius:6px}

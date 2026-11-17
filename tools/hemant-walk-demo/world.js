@@ -21,6 +21,7 @@ for(const [id,file]of Object.entries(files)){const im=new Image();im.src=file.st
 let c=surface;
 const groundShadows=WalkGroundShadows.create(),spriteContext=(x,y)=>overview?c:groundShadows.sprite(c,x,y);
 const avatar=window.sealerSprites.create({preloadDirections:true});const syncAvatar=()=>avatar.sync(packlordPreview?.avatar).catch(e=>console.error('Player animation:',e));
+if(packlordPreview)addEventListener('walk-preview-avatar',syncAvatar);
 const touchDisplay=matchMedia('(pointer: coarse)').matches;
 let lastPaint=-Infinity,graphics,paintInterval,grassDisplacement=null;
 function resize(){
@@ -114,8 +115,9 @@ function questNpcSprite(n,q){
  WalkIdleArt.drawNpc(spriteContext(x,y),im,null,x-w/2,y-h,w,h,t,n);
 }
 function player(){const x=sx(p.x),y=walkY(p.x,p.y),q=zoom();if(overview){ellipse(c,x,y,5,5,'#edcb69');c.strokeStyle='#173e59';c.lineWidth=2;c.strokeRect(x-6,y-6,12,12)}else {const sprite=spriteContext(x,y);const direction=p.spriteDir??p.dir;const draw3d=packlordPreview?.draw(sprite,x,y,154*q,direction,moving,running,t);
+ if(!packlordPreview&&sealerSprites.use3d)canvas.dataset.avatarRenderer=avatar.renderer;
  if(packlordPreview){canvas.dataset.avatarRenderer=draw3d?'3d':'sprite';canvas.dataset.avatarMotion=draw3d?packlordPreview.motion:'';canvas.dataset.avatarAngle=draw3d?packlordPreview.angle.toFixed(3):'';}
- if(!draw3d&&(packlordPreview||!fusion.draw(sprite,x,y,q,p.dir,t,moving)))avatar.draw(sprite,x,y,154*q,direction,phase,moving,running)}}
+ if(!draw3d&&(packlordPreview||!fusion.draw(sprite,x,y,q,p.dir,t,moving,direction)))avatar.draw(sprite,x,y,154*q,direction,phase,moving,running)}}
 function shadowBeast(a){const x=sx(a.x),y=walkY(a.x,a.y),q=zoom();if(overview){ellipse(c,x,y,2,2,'#32384bd0');return}if(x<-120||x>W+120||y<-30||y>H+160)return;const frame=a.moving?Math.floor(a.phase)%8:0;c.save();c.translate(x,y);c.scale(a.facing,1);spriteContext(x,y).drawImage(images.shadow,(frame%4)*256,Math.floor(frame/4)*256,256,256,-72*q,-133*q,144*q,144*q);c.restore();window.townQuests.drawTarget(c,x,y-150*q,q,window.townQuests.targetStyle({type:'enemy',kind:'shadow',country:data.countryId,place:questNearbyPlace(a)}));if(nav.distance(p,a)<240)label(a.chasing?'! เงาอสูร':'เงาอสูร',x,y-116*q,a.chasing?'#922d34':'#343751')}
 function forestBandit(a){if(overview)return;const x=sx(a.x),y=walkY(a.x,a.y),q=zoom();if(x<-120||x>W+120||y<-30||y>H+180)return;const frame=a.moving?Math.floor(a.phase)%8:0;c.save();c.translate(x,y);c.scale(a.facing,1);spriteContext(x,y).drawImage(images.bandit,(frame%4)*256,Math.floor(frame/4)*256,256,256,-82*q,-151*q,164*q,164*q);c.restore();window.townQuests.drawTarget(c,x,y-174*q,q,window.townQuests.targetStyle({type:'enemy',kind:'bandit',country:data.countryId,place:questNearbyPlace(a)}));if(nav.distance(p,a)<210)label(a.chasing?'! โจรป่า':'โจรป่า',x,y-138*q,a.chasing?'#922d34':'#703f30')}
 function treasureChest(a){const status=treasures.state(a);if(overview){if(status!=='opened')ellipse(c,sx(a.x),sy(a.y),2.5,2.5,'#e4ba4e');return}art(images.chest,sx(a.x),sy(a.y),100,.94,status==='opened'?.45:1);window.townQuests.drawTarget(c,sx(a.x),sy(a.y)-112*zoom(),zoom(),window.townQuests.targetStyle({type:'chest',country:data.countryId,place:questNearbyPlace(a),opened:status==='opened'}));if(nav.distance(p,a)<240)label(status==='opened'?'หีบว่าง':status==='ready'?'◇ เปิดหีบสมบัติ':'หีบสมบัติ · โจรเฝ้าอยู่',sx(a.x),sy(a.y)-85*zoom(),status==='ready'?'#92631f':'#4b4850')}

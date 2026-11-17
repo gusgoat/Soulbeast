@@ -95,7 +95,7 @@ function drawMovement(c,x,y,size,dir,frame,cols,sheet,anchor,scale,between,extra
 const movementStorage='https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/';
 const streamedMovementPath=/\/assets\/player-walk\/([a-z0-9_-]+)\/((?:walk-intercardinal-v1|run-[a-z0-9-]+)\.webp)$/;
 function movementUrl(file){
- const asset=streamedMovementPath.exec(file);
+ const asset=streamedMovementPath.exec(file?.split(/[?#]/,1)[0]);
  return asset?movementStorage+asset[1]+'--'+asset[2]:file;
 }
 function movementImage(file){
@@ -106,7 +106,36 @@ function movementImage(file){
  return image;
 }
 
+function enabled3d(){
+ try{
+  const value=new URLSearchParams(scope.location?.search).get('world3d');
+  if(value==='1'||value==='0')sessionStorage.setItem('soulbeast-walk-renderer-3d',value);
+  return value?value==='1':sessionStorage.getItem('soulbeast-walk-renderer-3d')==='1';
+ }catch{return false;}
+}
+const use3d=enabled3d();
+function createModel({beast=false,primary=false}={}){
+ let current=null,next='',pending=null,ticket=0;
+ function release(){ticket++;next='';pending=null;current?.dispose();current=null;}
+ function sync(key){
+  if(!use3d||!key)return;
+  if(key===next)return pending;
+  release();
+  next=key;
+  const revision=ticket;
+  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=1')
+   .then(catalog=>catalog.loadActor(key,{beast,primary}))
+   .then(actor=>{
+    if(revision!==ticket){actor.dispose();return;}
+    current=actor;
+   })
+   .catch(()=>{});
+  return pending;
+ }
+ return {sync,release,get ready(){return !!current;},draw(...args){return current?.draw(...args)||false}};
+}
 function create({preloadDirections=false}={}){
+ const model=createModel({primary:preloadDirections});
  let current=null,requested='',version=0,pending=null,idleStartedAt=null;
  function close(sprite){
   for(const key of ['walk','idle','run','walkBetween','runBetween'])sprite?.[key]?.close?.();
@@ -138,6 +167,7 @@ function create({preloadDirections=false}={}){
   const preview=!explicit&&!player&&previewAvatar();
   const id=identity(preview?PREVIEW_AVATARS[preview]:player);
   const entry=scope.sealerSpriteCatalog[id.cls][id.gender];
+  model.sync(id.key);
   const requestKey=id.key+'|'+entry.walk+'|'+entry.idle+'|'+(entry.run||'');
   if(requested===requestKey)return pending||current;
   if(!entry.ready)throw Error('Missing animated sealer '+id.key);
@@ -171,7 +201,9 @@ function create({preloadDirections=false}={}){
   return pending;
  }
  function draw(c,x,y,size,dir,phase,moving,running=false,idleTime,mask=false){
-  if(!current||!(size>0))return;
+  if(!(size>0))return;
+  if(model.draw(c,x,y,size,dir,moving,running))return;
+  if(!current)return;
   if(moving){
    idleStartedAt=null;
    const sprint=running&&current.run,motion=sprint?'run':'walk',cols=current[motion+'Frames'];
@@ -194,8 +226,8 @@ function create({preloadDirections=false}={}){
   if(mask)c.drawImage(...args);
   else drawColoredFrame(c,...args);
  }
- function release(){version++;close(current);current=null;requested='';pending=null;idleStartedAt=null}
- return {sync,draw,release,get current(){return current}};
+ function release(){model.release();version++;close(current);current=null;requested='';pending=null;idleStartedAt=null}
+ return {sync,draw,release,get current(){return current},get renderer(){return model.ready?'3d':'sprite'}};
 }
-scope.sealerSprites={create,identity,drawColoredFrame,heading,nearestDirection,drawMovement,movementImage};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
+scope.sealerSprites={create,createModel,use3d,identity,drawColoredFrame,heading,nearestDirection,drawMovement,movementImage};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
 })(typeof window==='undefined'?globalThis:window);
