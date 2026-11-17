@@ -27,6 +27,8 @@ const sourceArt=new Set([
 ]);
 // The game streams these MP4s from Supabase Storage. Keep the WebP posters on Pages.
 const streamedVideos=new Set(['assets/video/soulbeast-intro-v2.mp4']);
+// The extra directions stream from Supabase. The eight original directions stay on Pages.
+const streamedMovement=/^assets\/player-walk\/[^/]+\/(?:walk|run)-intercardinal-v1\.webp$/;
 const signatureManifest='assets/vfx/signature-portraits-v9/available.js';
 const signaturePng=/^assets\/vfx\/signature-portraits-(?:v9\/[a-z0-9_-]+|v7\/[a-z0-9_-]+-expanded)\.png$/;
 const publishedSignatureManifest=files.has(signatureManifest)
@@ -47,13 +49,14 @@ const publishedCatalog=readFileSync(resolve(root,catalog),'utf8').replace(
  },
 );
 
-let bytes=0, count=0, omittedBytes=0, streamedBytes=0, signatureBytes=0;
+let bytes=0, count=0, omittedBytes=0, streamedBytes=0, movementBytes=0, signatureBytes=0;
 const staged=[];
 for(const file of files){
  if(file.startsWith('.github/')||file==='tools/prepare-pages.mjs')continue;
  const source=resolve(root,file);
  const size=statSync(source).size;
  if(streamedVideos.has(file)){streamedBytes+=size;continue;}
+ if(streamedMovement.test(file)){movementBytes+=size;continue;}
  if(publishedSignatureManifest&&signaturePng.test(file)){signatureBytes+=size;continue;}
  if(sourceArt.has(file)||originals.has(file)){omittedBytes+=size;continue;}
  const rewritten=file===catalog?publishedCatalog:file===signatureManifest?publishedSignatureManifest:null;
@@ -70,4 +73,4 @@ for(const {file,source,rewritten} of staged){
  if(rewritten!==null)writeFileSync(target,rewritten);
  else copyFileSync(source,target);
 }
-console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video. ${signatureBytes} bytes of portrait PNGs are served from the release commit.`);
+console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video and ${movementBytes} bytes of streamed movement sprites. ${signatureBytes} bytes of portrait PNGs are served from the release commit.`);

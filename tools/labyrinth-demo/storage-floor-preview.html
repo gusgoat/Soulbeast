@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Soulbeast · ทดลองดันเจี้ยน</title>
+<style>
+:root{color-scheme:dark;background:#0c151d;color:#f3e4c2;font:16px system-ui,sans-serif}
+body{max-width:880px;margin:12px auto;padding:0 12px}
+h1{margin:0 0 4px;font-size:1.35rem}
+p{margin:4px 0 8px}a{color:#ffe1a2}
+canvas{display:block;max-width:100%;max-height:72dvh;width:auto;height:auto;margin:0 auto 8px;border:1px solid #95774c;border-radius:6px;touch-action:manipulation}
+canvas[hidden]{display:none}
+</style>
+<script src="maze.js?v=dungeon-flow-20261106"></script>
+<script src="dungeon-ground.js?v=shared-shell-1"></script>
+<script src="../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117"></script>
+<script src="../town-walk-demo/sealer-sprites.js?v=storage-walk16-20261117"></script>
+<script defer src="storage-floor-preview.js"></script>
+</head>
+<body>
+<h1 id="floorTitle">กำลังโหลดดันเจี้ยนทดลอง…</h1>
+<p id="floorStatus" aria-live="polite"></p>
+<canvas id="floorMap" hidden aria-label="แผนที่ดันเจี้ยน ใช้ปุ่มลูกศรหรือแตะทางเดิน"></canvas>
+<a href="../../accounts.html">กลับ Soulbeast</a>
+</body>
+</html>
