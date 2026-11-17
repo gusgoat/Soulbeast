@@ -93,9 +93,9 @@ function drawMovement(c,x,y,size,dir,frame,cols,sheet,anchor,scale,between,extra
 }
 
 const movementStorage='https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/';
-const intercardinalPath=/\/assets\/player-walk\/([a-z0-9_-]+)\/((?:walk|run)-intercardinal-v1\.webp)$/;
+const streamedMovementPath=/\/assets\/player-walk\/([a-z0-9_-]+)\/((?:walk-intercardinal-v1|run-[a-z0-9-]+)\.webp)$/;
 function movementUrl(file){
- const asset=intercardinalPath.exec(file);
+ const asset=streamedMovementPath.exec(file);
  return asset?movementStorage+asset[1]+'--'+asset[2]:file;
 }
 function movementImage(file){
@@ -144,7 +144,7 @@ function create({preloadDirections=false}={}){
   requested=requestKey;
   const ticket=++version,walkFrames=entry.walkFrames||8,runFrames=entry.runFrames||walkFrames;
   pending=Promise.allSettled([
-   read(entry.walk,walkFrames,8),read(entry.idle,4,2),entry.run?read(entry.run,runFrames,8):null
+   read(entry.walk,walkFrames,8),read(entry.idle,4,2),entry.run?read(movementUrl(entry.run),runFrames,8).catch(()=>null):null
   ]).then(results=>{
    const [walk,idle,run]=results.map(result=>result.value);
    const failure=results.find(result=>result.status==='rejected');

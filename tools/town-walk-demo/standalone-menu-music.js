@@ -1,7 +1,7 @@
 (function () {
  'use strict';
  const prefsKey='sealbeast_audio_v1';
- const audio=new Audio(new URL('../../assets/audio/menu-and-results.mp3',document.currentScript.src));
+ const audio=new Audio(new URL('https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/music--audio--menu-and-results.mp3',document.currentScript.src));
  audio.preload='none';
  audio.loop=true;
  window.SoulbeastMusicChannel?.register(audio,document);

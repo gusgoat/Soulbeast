@@ -45,12 +45,12 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
  const clips=new Map(), timers=new Set(), loops=new Map();
  const poses=new Map(), preloaded=new Set(), flights=new Set(), heldHp=new Map();
  const musicFiles={
-  lobby:'competitive/activity-menu.mp3',
-  arena:'competitive/colosseum-arena.mp3',
-  results:'menu-and-results.mp3',
+  lobby:'https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/music--audio--competitive--activity-menu.mp3',
+  arena:'https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/music--audio--competitive--colosseum-arena.mp3',
+  results:'https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/music--audio--menu-and-results.mp3',
  };
  const musicTracks=Object.fromEntries(Object.entries(musicFiles).map(([scene,file])=>{
-  const audio=new Audio(assets+'audio/'+file);
+  const audio=new Audio(file);
   audio.loop=true;audio.volume=.16;audio.preload='none';
   window.SoulbeastMusicChannel?.register(audio,document);
   return [scene,audio];

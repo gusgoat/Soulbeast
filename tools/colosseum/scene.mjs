@@ -1,5 +1,5 @@
 import '../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117';
-import '../town-walk-demo/sealer-sprites.js?v=storage-walk16-20261117';
+import '../town-walk-demo/sealer-sprites.js?v=storage-run-audio-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=team-bot-tactics-1';
@@ -977,9 +977,11 @@ export class Scene{
     globalThis.sealerSprites.drawColoredFrame(c,strike,0,0,strike.naturalWidth,strike.naturalHeight,-width/2,-height,width,height);
     c.restore();
    }else if(atlas){
-    const sheet=atlas[pose]??=img(siteAsset(entry[pose]||(pose==='run'?entry.walk:entry.idle)));
+    const run=pose==='run'&&entry.run;
+    const runSheet=run?(atlas.run??=globalThis.sealerSprites.movementImage(siteAsset(run))):null;
+    const running=ready(runSheet);
+    const sheet=running?runSheet:pose==='idle'?(atlas.idle??=img(siteAsset(entry.idle))):(atlas.walk??=img(siteAsset(entry.walk)));
     if(ready(sheet)){
-     const running=pose==='run'&&!!entry.run;
      const layout=moving?(running?(entry.runLayout||entry.walkLayout):entry.walkLayout):entry.idleLayout;
      const cols=layout?.columns??(moving?((running?entry.runFrames:entry.walkFrames)||entry.walkFrames||8):4);
      const rows=layout?.rows??(moving?8:2);

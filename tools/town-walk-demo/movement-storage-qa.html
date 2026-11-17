@@ -3,24 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Soulbeast · ทดสอบภาพเดินและวิ่ง</title>
+<title>Soulbeast · ทดสอบภาพวิ่งและเพลง</title>
 <style>
 :root{color-scheme:dark;font:16px system-ui,sans-serif;background:#0e1720;color:#f3e6c8}
 body{max-width:680px;margin:auto;padding:16px}h1{font-size:1.25rem;margin:0 0 8px}
 p{margin:8px 0}main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
 figure{margin:0;text-align:center;border:1px solid #826b42;border-radius:8px;background:#1a2633;padding:6px}
 canvas{display:block;width:min(100%,27vh);height:auto;margin:0 auto}a{color:#ffe1a2;display:inline-block;padding:8px 0}
+button{font:inherit;color:#f3e6c8;background:#253747;padding:8px 12px;border:1px solid #826b42;border-radius:6px}
 </style>
 <script src="sealer-sprite-catalog.js?v=world-walk16-20261117"></script>
-<script src="sealer-sprites.js?v=storage-walk16-20261117"></script>
+<script src="sealer-sprites.js?v=storage-run-audio-1"></script>
+<script src="walk-audio-catalog.js?v=storage-run-audio-1"></script>
 </head>
 <body>
-<h1>ทดสอบภาพเดินและวิ่งจาก Supabase</h1>
+<h1>ทดสอบภาพวิ่ง 8 ทิศหลักและเพลงจาก Supabase</h1>
 <p id="result" role="status">กำลังโหลดภาพเดินและวิ่ง…</p>
 <main>
 <figure><canvas id="walk" width="160" height="160"></canvas><figcaption>เดิน</figcaption></figure>
 <figure><canvas id="run" width="160" height="160"></canvas><figcaption>วิ่ง</figcaption></figure>
 </main>
+<button id="testMusic" type="button">ทดสอบเล่นเพลงแผนที่</button>
+<p id="musicResult" role="status">กดเพื่อทดสอบเสียงเพลง</p>
 <a href="../../accounts.html">เข้าเกม Soulbeast เพื่อทดสอบฉากเดิน</a>
 <script>
 (async()=>{
@@ -34,29 +38,76 @@ canvas{display:block;width:min(100%,27vh);height:auto;margin:0 auto}a{color:#ffe
   }
  };
  try{
+  const entry=sealerSpriteCatalog.archdruid.female;
+  const runUrl=sealerSprites.movementImage(entry.run).src;
+  if(!runUrl.includes(".supabase.co/"))throw new Error("ภาพวิ่งไม่ได้โหลดจาก Supabase");
   await player.sync({cls:'archdruid',gender:'female'});
+  if(!player.current?.run)throw new Error('โหลดภาพวิ่ง 8 ทิศหลักไม่สำเร็จ');
   const deadline=performance.now()+20000;
   while(!player.current?.walkBetween||!player.current?.runBetween){
    if(performance.now()>deadline)throw new Error('รอภาพจาก Supabase เกินเวลา');
    await new Promise(resolve=>setTimeout(resolve,80));
   }
-  for(let dir=.5;dir<8;dir++){
+  for(let dir=0;dir<8;dir+=.5){
    render(0,dir);
    for(const [motion,ctx] of panels){
     const pixels=ctx.getImageData(0,0,160,160).data;
     if(!pixels.some((value,index)=>index%4===3&&value))throw new Error('ภาพ '+motion+' ว่างที่ทิศ '+dir);
    }
   }
-  result.textContent='ผ่าน · ภาพเดินและวิ่งจาก Supabase โหลดและวาดได้ครบทั้ง 8 ทิศระหว่างทิศหลัก';
+  result.textContent='ผ่าน · โหลดภาพวิ่ง 8 ทิศหลักจาก Supabase และวาดภาพได้ครบ 16 ทิศ';
   const start=performance.now();
   requestAnimationFrame(function animate(now){
    const seconds=(now-start)/1000;
-   render(seconds*7,(Math.floor(seconds/1.5)%8)+.5);
+   render(seconds*7,(Math.floor(seconds/1.5)%16)/2);
    requestAnimationFrame(animate);
   });
  }catch(error){result.textContent='ทดสอบไม่ผ่าน · '+error.message}
 })();
+const musicButton=document.querySelector('#testMusic');
+const musicResult=document.querySelector('#musicResult');
+musicButton.onclick=async()=>{
+ musicButton.disabled=true;
+ musicResult.textContent='กำลังทดสอบการเล่นเพลง…';
+ const audio=new Audio();
+ let context;
+ try{
+  const track=walkAudioCatalog.music.countryGreen;
+  if(!track.includes('.supabase.co/'))throw new Error('เพลงไม่ได้โหลดจาก Supabase');
+  audio.crossOrigin='anonymous';
+  audio.src=track;
+  context=new AudioContext();
+  const source=context.createMediaElementSource(audio);
+  const analyser=context.createAnalyser();
+  const gain=context.createGain();
+  gain.gain.value=.25;
+  source.connect(analyser).connect(gain).connect(context.destination);
+  let timeout;
+  try{
+   await Promise.race([
+    Promise.all([context.resume(),audio.play()]),
+    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error('รอเพลงโหลดเกินเวลา')),15000)})
+   ]);
+  }finally{clearTimeout(timeout)}
+  const samples=new Float32Array(analyser.fftSize);
+  const deadline=performance.now()+5500;
+  while(performance.now()<deadline){
+   analyser.getFloatTimeDomainData(samples);
+   if(audio.currentTime>.3&&samples.some(sample=>Math.abs(sample)>.002)){
+    musicResult.textContent='ผ่าน · เพลงจาก Supabase เล่นและส่งเสียงได้';
+    await new Promise(resolve=>setTimeout(resolve,1400));
+    return;
+   }
+   await new Promise(resolve=>setTimeout(resolve,80));
+  }
+  throw new Error('ตรวจไม่พบสัญญาณเสียงเพลง');
+ }catch(error){musicResult.textContent='ทดสอบเพลงไม่ผ่าน · '+error.message}
+ finally{
+  audio.pause();
+  if(context)await context.close().catch(()=>{});
+  musicButton.disabled=false;
+ }
+};
 </script>
 </body>
 </html>
-
