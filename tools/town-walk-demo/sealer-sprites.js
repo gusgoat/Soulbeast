@@ -74,6 +74,17 @@ function createModel({beast=false,primary=false}={}){
  }
  return {sync,release,get ready(){return !!current;},get supported(){return supported;},draw(...args){return current?.draw(...args)||false}};
 }
+let loadingMarker;
+function getLoadingMarker(){
+ if(!loadingMarker){
+  loadingMarker=document.createElement('canvas');
+  loadingMarker.width=loadingMarker.height=48;
+  const c=loadingMarker.getContext('2d');
+  c.fillStyle='#d9bd79';
+  c.beginPath();c.ellipse(24,24,23,23,0,0,Math.PI*2);c.fill();
+ }
+ return loadingMarker;
+}
 function create({preloadDirections=false,allow3d=true}={}){
  const model=createModel({primary:preloadDirections});
  let current=null;
@@ -96,10 +107,7 @@ function create({preloadDirections=false,allow3d=true}={}){
   if(model.draw(c,x,y,size,dir,moving,running))return;
   const portrait=current.portrait,width=size*.54;
   if(portrait.complete&&portrait.naturalWidth)c.drawImage(portrait,x-width*.5,y-width,width,width);
-  else{
-   c.save();c.fillStyle='#d9bd79';
-   c.beginPath();c.ellipse(x,y-20,size*.082,size*.12,0,0,Math.PI*2);c.fill();c.restore();
-  }
+  else c.drawImage(getLoadingMarker(),x-size*.082,y-20-size*.12,size*.164,size*.24);
  }
  function release(){model.release();current=null;}
  return {sync,draw,release,get current(){return current},get renderer(){return model.ready?'3d':'portrait'}};
