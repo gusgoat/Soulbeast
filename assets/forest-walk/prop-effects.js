@@ -4,6 +4,9 @@ const fire=area=>({kind:'fire',area});
 const water=(polygon,flow=[1,.3])=>({kind:'water',polygon,flow});
 export function propEffectSpec(prop){
   const id=prop.effectId||prop.art;
+  if(id==='desert-traps#2')return [fire([.12,.01,.86,.6])];
+  if(/^desert-waterways#[01235]$/.test(id))return [water([[0,0],[1,0],[1,1],[0,1]],[.3,.7])];
+  if(id==='desert-spring#1')return [{...water([[.46,.4],[.57,.4],[.65,1],[.49,1]],[0,1]),foam:true}];
   if(id==='trap-fire'||id==='training-png-trap-fire')return [fire([.16,.42,.32,.72]),fire([.32,.4,.5,.7]),fire([.52,.41,.68,.69]),fire([.68,.42,.85,.65])];
   if(id==='lantern#4'||id==='seedmap#4')return [fire([.38,.58,.68,.91])];
   if(id==='waterways#4')return [{kind:'light',area:[.57,.43,.85,.73],color:'190,228,255'}];
@@ -43,7 +46,8 @@ export function createPropEffects(art,source,specs){
     if(spec.kind!=='light')for(let y=0;y<h;y++)for(let x=0;x<w;x++){
       const i=(y*w+x)*4,r=pixels.data[i],g=pixels.data[i+1],b=pixels.data[i+2],a=pixels.data[i+3],u=x/w,v=y/h;
       const inArea=spec.area&&u>=spec.area[0]&&u<=spec.area[2]&&v>=spec.area[1]&&v<=spec.area[3];
-      const selected=spec.kind==='fire'?inArea&&firePixel(r,g,b,a):inPolygon(u,v,spec.polygon)&&waterPixel(r,g,b,a);
+      const waterColor=spec.foam?a>20&&Math.min(r,g,b)>145&&Math.max(r,g,b)-Math.min(r,g,b)<45:waterPixel(r,g,b,a);
+      const selected=spec.kind==='fire'?inArea&&firePixel(r,g,b,a):inPolygon(u,v,spec.polygon)&&waterColor;
       if(!selected)continue;
       data.data[i]=r;data.data[i+1]=g;data.data[i+2]=b;data.data[i+3]=a;count++;
       if(spec.kind==='fire')basePixels.data[i+3]=Math.round(a*.10);

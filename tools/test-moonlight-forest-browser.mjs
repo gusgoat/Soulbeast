@@ -43,7 +43,7 @@ try{
   socket=new WebSocket(targets.webSocketDebuggerUrl);
   await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});
   socket.addEventListener('message',({data})=>{const m=JSON.parse(data);if(m.id){const p=pending.get(m.id);pending.delete(m.id);if(m.error)p?.reject(Error(JSON.stringify(m.error)));else p?.resolve(m.result);}else if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text);else if(m.method==='Runtime.consoleAPICalled'&&m.params.type==='error')console.log('BROWSER',m.params.args.map(a=>a.value||a.description).join(' ').slice(0,1000));});
-  await send('Page.enable');await send('Runtime.enable');
+  await send('Page.enable');await send('Runtime.enable');if(process.env.SOULBEAST_TEST_ORIGIN?.startsWith('https:')){await send('Network.enable');await send('Network.setBlockedURLs',{urls:['https://*/functions/v1/*']});}
   await send('Emulation.setDeviceMetricsOverride',{width:1280,height:800,deviceScaleFactor:1,mobile:false});
   const target=process.env.SOULBEAST_TEST_ORIGIN||'http://127.0.0.1:8831';
   await send('Page.navigate',{url:target+'/Soulbeast/tools/town-walk-demo/menu.html?screen=wild&zone=1&release=moonlight-20261119'+(process.argv.includes('--storage')?'&storage=1':'')});

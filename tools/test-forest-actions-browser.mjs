@@ -34,12 +34,12 @@ try{
  const targets=await until(async()=>{const r=await fetch('http://127.0.0.1:9341/json/list');return (await r.json()).find(p=>p.type==='page');},'Chrome');
  socket=new WebSocket(targets.webSocketDebuggerUrl);await new Promise(resolve=>socket.addEventListener('open',resolve,{once:true}));
  socket.addEventListener('message',({data})=>{const m=JSON.parse(data);if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p?.reject(Error(JSON.stringify(m.error))):p?.resolve(m.result);}else if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails.text);});
- await send('Page.enable');await send('Runtime.enable');
+ await send('Page.enable');await send('Runtime.enable');if(process.env.SOULBEAST_TEST_ORIGIN?.startsWith('https:')){await send('Network.enable');await send('Network.setBlockedURLs',{urls:['https://*/functions/v1/*']});}
  const origin=process.env.SOULBEAST_TEST_ORIGIN||'http://127.0.0.1:8831';
  await send('Page.navigate',{url:origin+'/Soulbeast/tools/town-walk-demo/menu.html?screen=wild&zone=7&release=forest-actions-2'});
  await until(()=>evaluate(`typeof S!=='undefined'&&!!S.P`),'bootstrap',45000);
  await evaluate(`S.P.tutorial.enabled=false;S.ui={};handlers.dozone(7);ForestWalk.mount(S.zone);S.screen='zone';render();window.baseP=structuredClone(S.P);window.baseZ=structuredClone(S.zone);`);await ready();
- for(const zone of [7,1]){
+ for(const zone of [7,1,3]){
   await evaluate(`S.P=structuredClone(baseP);S.P.tutorial.enabled=false;S.ui={};S.battle=null;S.screen='zone';S.zone=structuredClone(baseZ);S.zone.id=${zone};S.zone.depth=4;S.zone.fork=null;S.zone.ev={type:'chest',chest:'wood',opened:false};S.zone.walk={map:'bush',phase:'cleared',trapIndex:-1,position:[3.75,-15],fork:[{k:'bush',h:false},{k:'spring',h:false}],side:0};render();`);
   await ready();await until(()=>evaluate(`!document.querySelector('.forest-walk-chest').hidden`),'near actual chest');
   for(const [width,height]of [[390,844],[480,800],[320,650],[844,390],[1280,800]]){
@@ -53,6 +53,12 @@ try{
   await evaluate(`document.querySelector('.forest-walk-chest').click()`);assert.equal(await evaluate('S.zone.ev.opened'),true);
   const after=await evaluate('JSON.stringify(S.P)');await evaluate(`document.querySelector('.forest-walk-chest').click()`);assert.equal(await evaluate('JSON.stringify(S.P)'),after,'duplicate chest reward');
   console.log('PASS zone '+zone+': right-hand scene actions above footer, five viewport sizes, real hit targets and native chest reward once');
+  await evaluate(`S.zone.ev=null;S.zone.depth=10;S.zone.boss=structuredClone(ZN[${zone-1}].boss);S.zone.walk={map:'boss',phase:'pending',scene:${zone===7?'TrainingForestScenes':zone===3?'DesertForestScenes':'MoonlightForestScenes'}.describe('boss'),position:[1.05,-22]};render();`);await ready();
+  assert.equal(await evaluate(`document.querySelector('.forest-walk-canvas').dataset.bossStatues`),'2');
+  await key('keyDown');await until(()=>evaluate(`!!document.querySelector('.forest-walk-story:not([hidden]) [data-a="boss"]')`),'original boss contact');await key('keyUp');
+  const boss=await evaluate('S.zone.boss.sp');await evaluate('handlers.boss()');assert.equal(await evaluate('S.battle.kind'),'boss');assert.equal(await evaluate('S.battle.enemies[0].sp'),boss);await evaluate('BattleReady.wait(S.battle).then(()=>true)');
+  console.log('PASS native '+boss+' battle with guardian doorway');
+
  }
  assert.deepEqual(errors,[]);
 }catch(error){console.log('ACTION QA',errors,await evaluate(`({screen:typeof S==='undefined'?null:S.screen,body:document.body.innerText.slice(-1200)})`).catch(()=>null));throw error;}finally{if(socket?.readyState===WebSocket.OPEN){await send('Browser.close').catch(()=>{});socket.close();}chrome.kill();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}

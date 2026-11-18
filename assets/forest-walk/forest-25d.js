@@ -4,6 +4,7 @@ import {layerOpacity} from "./training-layers.js?v=layers-v1";
 import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-room-1';
 import {createPropEffects,propEffectSpec} from './prop-effects.js?v=fire-water-1';
 import {bossRoomScenery} from './boss-rooms.js?v=moonlight-release-1';
+import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-preview-1';
 
 const FLATTEN = .64;
 // Player walking and running are 1.5 times the original forest pace.
@@ -237,7 +238,7 @@ function paintFootprints(ctx, x, y, scale) {
   }
 }
 
-function makeGround(images, props, paths, openAreas, footprints, moonlight = false) {
+function makeGround(images, props, paths, openAreas, footprints, moonlight = false, desert = false) {
   const ground = document.createElement("canvas"), scale = 6;
   ground.width = WIDTH * scale;
   ground.height = Math.ceil(LENGTH * FLATTEN * scale);
@@ -247,9 +248,9 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
   pattern.setTransform(new DOMMatrix().scale(.225));
   ctx.fillStyle = pattern;
   ctx.fillRect(0, 0, ground.width, ground.height);
-  ctx.fillStyle = moonlight ? "#233b6350" : "#29452630";
+  ctx.fillStyle = desert ? "#ca9a4818" : moonlight ? "#233b6350" : "#29452630";
   ctx.fillRect(0, 0, ground.width, ground.height);
-  for (const [thickness, color] of moonlight ? [[15.6,"#99a9b446"],[13.3,"#8b9ca346"],[11.8,"#8c9b9f88"],[TRAIL_FILL_WIDTH,"#859393"]] : [[15.6, "#a4a06a46"], [13.3, "#ad9c6246"], [11.8, "#a5966388"], [TRAIL_FILL_WIDTH, "#9e8e60"]]) {
+  for (const [thickness, color] of desert ? [[15.6,'#dec29230'],[13.3,'#c2a16c30'],[11.8,'#c4a06b55'],[TRAIL_FILL_WIDTH,'#c9a66d70']] : moonlight ? [[15.6,"#99a9b446"],[13.3,"#8b9ca346"],[11.8,"#8c9b9f88"],[TRAIL_FILL_WIDTH,"#859393"]] : [[15.6, "#a4a06a46"], [13.3, "#ad9c6246"], [11.8, "#a5966388"], [TRAIL_FILL_WIDTH, "#9e8e60"]]) {
     ctx.beginPath();
     paths.forEach(path => smoothStroke(ctx, path, x, y));
     ctx.lineCap = ctx.lineJoin = "round";
@@ -281,8 +282,8 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
     const radius = p.kind === "tree" ? p.width * 2.3 : p.width * 1.1;
     const shadow = ctx.createRadialGradient(x(p.x) + shift, y(p.z) + shift * .36, 0,
       x(p.x) + shift, y(p.z) + shift * .36, radius);
-    shadow.addColorStop(0, "#18311e53");
-    shadow.addColorStop(1, "#18311e00");
+    shadow.addColorStop(0, desert ? '#62482a45' : "#18311e53");
+    shadow.addColorStop(1, desert ? '#62482a00' : "#18311e00");
     ctx.fillStyle = shadow;
     ctx.fillRect(x(p.x) + shift - radius, y(p.z) + shift * .36 - radius, radius * 2, radius * 2);
   }
@@ -291,6 +292,7 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
 
 export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, zoneTheme, moonlightScene, placeMap} = {}) {
   const moonlight = zoneTheme === 'moonlight';
+  const desert = zoneTheme === 'desert',layeredBiome=moonlight||desert;
   const bossRoom = placeMap === 'boss';
   const banditCamp = Boolean(onBanditLoot);
   const humanPursuit = banditCamp || Boolean(traveler);
@@ -300,7 +302,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const files = {...filenames};
   if (playerAvatar) for (const pose of ["idle", "walk", "run"]) delete files[pose];
   const feature = LANDMARKS[landmark];
-  if (feature && !trainingScene && !moonlight) files.landmark = feature.file;
+  if (feature && !trainingScene && !layeredBiome) files.landmark = feature.file;
   const showEntranceGate = entrance;
   if (showEntranceGate) files.gate = "gate.webp";
   if (banditCamp) {
@@ -328,25 +330,27 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const paths = onTownExit ? [...tracks, townTrail] : bossRoom ? [tracks[0].filter(p=>p[1]<=GLADE_CENTER[1]+2)] : tracks;
   const openAreas = bossRoom ? [[SPAWN,5],[GLADE_CENTER,11.5]] : [...groundClearings];
   let props = makeScenery(showEntranceGate, paths);
-  const scenery = await trainingScenery(bossRoom?null:trainingScene, trapIndex);
-  if(moonlight){
-    const themed=await moonlightScenery(placeMap,moonlightScene,props);
+  const scenery = await trainingScenery(bossRoom?null:trainingScene, desert?-1:trapIndex);
+  if(layeredBiome){
+    const themed=desert?await desertScenery(placeMap,moonlightScene,props,trapIndex):await moonlightScenery(placeMap,moonlightScene,props);
     props=themed.props;Object.assign(images,themed.tiles);
-    canvas.dataset.forestTheme='moonlight';canvas.dataset.moonlightScenery=moonlightScene?.id||placeMap;
-    canvas.dataset.moonlightKit=themed.kit;canvas.dataset.treeRenderer='blender-png';
+    canvas.dataset.forestTheme=zoneTheme;
+    canvas.dataset[desert?'desertScenery':'moonlightScenery']=moonlightScene?.id||placeMap;
+    canvas.dataset[desert?'desertKit':'moonlightKit']=themed.kit;
+    canvas.dataset.treeRenderer=desert?'sparse-cactus-png':'blender-png';
   }
   if(bossRoom){
-    const room=await bossRoomScenery(moonlight?'moonlight':'training');
+    const room=await bossRoomScenery(desert?'desert':moonlight?'moonlight':'training');
     // Keep foreground canopies out of the door and guardian sightline.
     props=props.filter(p=>!['tree','shrub','thicket'].includes(p.kind)||p.z>GLADE_CENTER[1]+3||p.z<GLADE_CENTER[1]-30||Math.abs(p.x-GLADE_CENTER[0])-p.width/2>14);
     Object.assign(images,room.tiles);props.push(...room.props);
-    canvas.dataset.bossRoom=moonlight?'moonlight':'training';
+    canvas.dataset.bossRoom=desert?'desert':moonlight?'moonlight':'training';
     canvas.dataset.bossDoor='closed';
     canvas.dataset.bossStatues=String(room.props.filter(p=>p.bossStatue).length);
   }
   canvas.dataset.sceneryRenderer = "png";
   canvas.dataset.trainingScenery = bossRoom&&trainingScene?'boss':[...new Set(scenery.props.map(p => p.art.slice("training-png-".length)))].join(",");
-  canvas.dataset.sceneryLayers = String((moonlight||bossRoom?props:scenery.props).filter(p => p.layered).length);
+  canvas.dataset.sceneryLayers = String((layeredBiome||bossRoom?props:scenery.props).filter(p => p.layered).length);
   canvas.dataset.cameraMode = "layered-orthographic";
   Object.assign(images, scenery.tiles);
   props.push(...scenery.props);
@@ -359,14 +363,14 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const thicket = onSearch && !mist && !ruins ? thicketLayout.map(([x, z, width, variant]) => ({
     kind: "thicket", art: "shrub-" + variant, x: x + GLADE_CENTER[0], z: z + GLADE_CENTER[1],
     width, canopy: thicketCanopies[variant - 1], swayX: 0, swayY: 0, revealX: 0
-  })).map(p=>moonlight?moonlightThicket(p):p) : [];
+  })).map(p=>desert?desertThicket(p):moonlight?moonlightThicket(p):p) : [];
   props.push(...thicket);
-  if (feature && !trainingScene && !moonlight) {
+  if (feature && !trainingScene && !layeredBiome) {
     const [x, z] = GLADE_CENTER;
     props.push({kind: "landmark", art: "landmark", x, z, width: feature.width});
   }
-  if (banditCamp && !moonlight) props.push(BANDIT_CAMP);
-  if (ruins && !moonlight) props.push(RUINS);
+  if (banditCamp && !layeredBiome) props.push(BANDIT_CAMP);
+  if (ruins && !layeredBiome) props.push(RUINS);
   let pool, rim, lotus;
   if (well) {
     const [x, z] = GLADE_CENTER;
@@ -388,10 +392,10 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
   if (onPray) {
     const [x, z] = GLADE_CENTER;
-    props.push({kind: "shrine", art: "shrine", x, z, width: 12.3, radius: 3.6, renderHidden:moonlight});
+    props.push({kind: "shrine", art: "shrine", x, z, width: 12.3, radius: 3.6, renderHidden:layeredBiome});
   }
   if (village) {
-    props.push({...VILLAGE,renderHidden:moonlight});
+    props.push({...VILLAGE,renderHidden:layeredBiome});
   }
   if (onTownExit) {
     openAreas.push([TOWN_EXIT, 7]);
@@ -399,10 +403,10 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       || trailDistance(prop.x, prop.z, townTrails) > 12 + prop.width * .25);
     props.push({kind: "direction-sign", art: "direction-sign", x: 8.8, z: -7.3, width: 5.6, radius: .35, label: "กลับเมือง →"});
   }
-  if (onVisitHealer) props.push({...HEALER,renderHidden:moonlight});
+  if (onVisitHealer) props.push({...HEALER,renderHidden:layeredBiome});
   // Moonlight kits append individual parts after the already-sorted woodland.
   // Sort those parts too before interleaving them with waiting/moving actors.
-  if (moonlight || well || onPray || visitService || onTownExit || onSearch || banditCamp || feature || scenery.props.length || onQuest) {
+  if (layeredBiome || well || onPray || visitService || onTownExit || onSearch || banditCamp || feature || scenery.props.length || onQuest) {
     props.sort((a, b) => b.z - a.z);
   }
   const obstacles = props.filter(p => p.radius);
@@ -428,7 +432,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
   const gladeChest = ruins ? RUINS_CHEST : GLADE_CHEST;
   const searchPoint = ruins ? RUINS_ENTRY : GLADE_CENTER;
-  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight), ctx = canvas.getContext("2d", { alpha: false });
+  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert), ctx = canvas.getContext("2d", { alpha: false });
   const mini = minimap, map = mini.getContext("2d");
   const start = resume.retreat ? FORK
     : Array.isArray(resume.position) && resume.position.length === 2 && resume.position.every(Number.isFinite) ? resume.position : SPAWN;
@@ -544,7 +548,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const follow = 1 - Math.exp(-9 * dt);
     // Open the framing gently near a layered place so its raised roof fits above
     // the player. This affects projection only; movement and event ranges stay put.
-    const placeFocus = trainingScene || moonlight ? 1-smoothstep(clamp((distance(player.x,player.z,GLADE_CENTER)-7)/12,0,1)) : 0;
+    const placeFocus = trainingScene || layeredBiome ? 1-smoothstep(clamp((distance(player.x,player.z,GLADE_CENTER)-7)/12,0,1)) : 0;
     zoom += (baseZoom*(1-.06*placeFocus)-zoom)*follow;
     camera.x += (player.x - camera.x) * follow;
     camera.z += (player.z + 3*placeFocus - camera.z) * follow;
@@ -763,9 +767,10 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const density = (.23 + .77 * smoothstep(approach)) * mistStrength;
     const x = screenX(player.x), y = screenY(player.z) - 40;
     const haze = ctx.createRadialGradient(x, y, 12, x, y, 185 - density * 130);
-    haze.addColorStop(0, "rgba(205,222,215,0)");
-    haze.addColorStop(.43, `rgba(205,222,215,${density * .27})`);
-    haze.addColorStop(1, `rgba(198,216,208,${density * .98})`);
+    const dust=desert?'209,177,120':'205,222,215';
+    haze.addColorStop(0, `rgba(${dust},0)`);
+    haze.addColorStop(.43, `rgba(${dust},${density * .27})`);
+    haze.addColorStop(1, `rgba(${desert?'201,169,112':'198,216,208'},${density * .98})`);
     ctx.fillStyle = haze;
     ctx.fillRect(0, 0, width, height);
     ctx.restore();
@@ -776,7 +781,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     centerX = viewCenter(camera.x, -WIDTH / 2, WIDTH / 2, horizontal, horizontal);
     centerZ = viewCenter(camera.z, SOUTH, NORTH, vertical * .44, vertical * .56);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = "#2b5034";
+    ctx.fillStyle = desert ? '#c9a771' : "#2b5034";
     ctx.fillRect(0, 0, width, height);
     ctx.drawImage(ground, screenX(-WIDTH / 2), screenY(NORTH), WIDTH * zoom, LENGTH * FLATTEN * zoom);
     const north = centerZ + (height * .56 + 34) / (zoom * FLATTEN);

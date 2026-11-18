@@ -1,5 +1,7 @@
 # Boss doorway guardian statues
 
+2026-11-19 status: training/moonlight are published; desert uses its sphinx pair in the local walking preview. Other pairs remain prepared doorway designs.
+
 Eight transparent PNG atlases in ignored generated/boss-statues/, each containing two separate cutouts. Existing original boss portraits supplied as imagegen identity references. Seven rooms use a mirrored pair of the same boss; zone 8 uses Ferroth on the left and Mortivar on the right. Sculpted inert stone, not additional battle actors.
 
 Source rectangles are read by tools/inspect-boss-statue-alpha.py without modifying pixels. Geometry in bossRoomParts places each statue outside the central 4.4-unit contact lane, with collision at its pedestal. Only training and moonlight currently mount these in their walking scenes. All eight designs can be inspected in tools/boss-room-preview/. No battle, reward, unlock or encounter rule changes. No upload or live publication.

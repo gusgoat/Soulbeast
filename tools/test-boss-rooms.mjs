@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 import {bossRoomParts,BOSS_ROOM_THEMES} from '../assets/forest-walk/boss-rooms.js';
 import {BOSS_ROOM_FRAMES} from '../assets/forest-walk/boss-room-frames.js';
 import {BOSS_STATUE_FRAMES} from '../assets/forest-walk/boss-statue-frames.js';
-assert.equal(BOSS_ROOM_THEMES.length,8);assert.equal(BOSS_ROOM_THEMES.filter(t=>t.walking).length,2);
+assert.equal(BOSS_ROOM_THEMES.length,8);assert.equal(BOSS_ROOM_THEMES.filter(t=>t.walking).length,3);
 assert.deepEqual(new Set(BOSS_ROOM_THEMES.map(t=>t.zone)),new Set([1,2,3,4,5,6,7,8]));
 // Compare with the native country entrance catalogue, including late-added zones.
 await import('./hemant-walk-demo/forest-catalog.js');
@@ -26,4 +26,4 @@ for(const {theme} of BOSS_ROOM_THEMES){
   assert.equal(statuePNG[25],6);
   for(const [x,y,cw,ch]of BOSS_STATUE_FRAMES[theme])assert(x>=0&&y>=0&&cw>0&&ch>0&&x+cw<=statuePNG.readUInt32BE(16)&&y+ch<=statuePNG.readUInt32BE(20));
 }
-console.log('PASS eight closed boss chambers with separate guardian pairs: native catalogue, RGBA bounds, open central approach and original boss contact; only two walking themes enabled');
+console.log('PASS eight closed boss chambers with separate guardian pairs: native catalogue, RGBA bounds, open central approach and original boss contact; three local walking themes enabled');
