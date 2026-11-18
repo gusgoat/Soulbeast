@@ -13,7 +13,8 @@
 .forest-walk-stick span{position:absolute;left:calc(50% - 28px);top:calc(50% - 28px);width:54px;height:54px;border:0;border-radius:50%;background:transparent url('/Soulbeast/assets/ui/walk-skin-20261103/joystick-knob.png.webp') center/100% 100% no-repeat;filter:drop-shadow(0 3px 4px #0008);will-change:transform;pointer-events:none}
 @media(max-width:365px){.forest-walk-stick{width:136px;height:136px}}
 @media(max-height:530px){.forest-walk-stick{width:120px;height:120px}}
-.forest-walk-chest,.forest-walk-fallback{position:absolute;right:14px;bottom:24px}
+.forest-walk-actions{position:absolute;right:14px;bottom:70px;z-index:4;display:flex;flex-direction:column;gap:8px;max-width:min(46%,230px)}
+.forest-walk-actions > .btn{position:relative;min-height:48px;white-space:normal;line-height:1.4}
 .forest-walk-scene [hidden]{display:none!important}
 .forest-walk-layout{height:100%;min-height:0}
 .forest-walk-layout:has(.forest-walk-story:not([hidden])) > .forest-walk-mount{display:none}

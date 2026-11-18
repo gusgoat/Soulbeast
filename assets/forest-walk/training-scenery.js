@@ -1,5 +1,5 @@
 // Generated PNG scenery only. Event rolls, rewards and contacts stay in the game runtime.
-import {placeLayers} from './training-layers.js?v=layers-v1';
+import {placeLayers} from './training-layers.js?v=fire-water-1';
 const storage = 'https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/';
 const prefix = 'forest-training-png-v2--';
 const localRoot = new URL('./generated/', import.meta.url);
@@ -68,7 +68,7 @@ export async function trainingScenery(scene, trapIndex) {
     const layers = placeLayers(id, key, x, z, spec.width);
     tiles[key] = await load(id, !!layers);
     if (layers) props.push(...layers);
-    else props.push({kind: 'training-prop', art: key, x, z, ...spec});
+    else props.push({kind: 'training-prop', art: key, effectId:id, x, z, ...spec});
   }
   const work = [];
   if (scene) work.push(add(scene.id, 1.05, -11.9));

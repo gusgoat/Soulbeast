@@ -1,6 +1,9 @@
 import {forestAssetURL} from "./storage-assets.js";
-import {trainingScenery} from "./training-scenery.js?v=layers-v1";
+import {trainingScenery} from "./training-scenery.js?v=fire-water-1";
 import {layerOpacity} from "./training-layers.js?v=layers-v1";
+import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-room-1';
+import {createPropEffects,propEffectSpec} from './prop-effects.js?v=fire-water-1';
+import {bossRoomScenery} from './boss-rooms.js?v=moonlight-release-1';
 
 const FLATTEN = .64;
 // Player walking and running are 1.5 times the original forest pace.
@@ -234,7 +237,7 @@ function paintFootprints(ctx, x, y, scale) {
   }
 }
 
-function makeGround(images, props, paths, openAreas, footprints) {
+function makeGround(images, props, paths, openAreas, footprints, moonlight = false) {
   const ground = document.createElement("canvas"), scale = 6;
   ground.width = WIDTH * scale;
   ground.height = Math.ceil(LENGTH * FLATTEN * scale);
@@ -244,9 +247,9 @@ function makeGround(images, props, paths, openAreas, footprints) {
   pattern.setTransform(new DOMMatrix().scale(.225));
   ctx.fillStyle = pattern;
   ctx.fillRect(0, 0, ground.width, ground.height);
-  ctx.fillStyle = "#29452630";
+  ctx.fillStyle = moonlight ? "#233b6350" : "#29452630";
   ctx.fillRect(0, 0, ground.width, ground.height);
-  for (const [thickness, color] of [[15.6, "#a4a06a46"], [13.3, "#ad9c6246"], [11.8, "#a5966388"], [TRAIL_FILL_WIDTH, "#9e8e60"]]) {
+  for (const [thickness, color] of moonlight ? [[15.6,"#99a9b446"],[13.3,"#8b9ca346"],[11.8,"#8c9b9f88"],[TRAIL_FILL_WIDTH,"#859393"]] : [[15.6, "#a4a06a46"], [13.3, "#ad9c6246"], [11.8, "#a5966388"], [TRAIL_FILL_WIDTH, "#9e8e60"]]) {
     ctx.beginPath();
     paths.forEach(path => smoothStroke(ctx, path, x, y));
     ctx.lineCap = ctx.lineJoin = "round";
@@ -286,7 +289,9 @@ function makeGround(images, props, paths, openAreas, footprints) {
   return ground;
 }
 
-export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest} = {}) {
+export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, zoneTheme, moonlightScene, placeMap} = {}) {
+  const moonlight = zoneTheme === 'moonlight';
+  const bossRoom = placeMap === 'boss';
   const banditCamp = Boolean(onBanditLoot);
   const humanPursuit = banditCamp || Boolean(traveler);
   const village = Boolean(onVisitVillage);
@@ -295,7 +300,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const files = {...filenames};
   if (playerAvatar) for (const pose of ["idle", "walk", "run"]) delete files[pose];
   const feature = LANDMARKS[landmark];
-  if (feature && !trainingScene) files.landmark = feature.file;
+  if (feature && !trainingScene && !moonlight) files.landmark = feature.file;
   const showEntranceGate = entrance;
   if (showEntranceGate) files.gate = "gate.webp";
   if (banditCamp) {
@@ -315,17 +320,33 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const images = Object.fromEntries(await Promise.all(Object.entries(files).map(([id, file]) =>
     new Promise((resolve, reject) => {
       const image = new Image();
+      image.crossOrigin = 'anonymous';
       image.onload = () => { progress(++loaded / total); resolve([id, image]); };
       image.onerror = () => reject(new Error("Asset failed to load: " + file));
       image.src = id === "story-actor" ? file : forestAssetURL("art/" + file);
     }))));
-  const paths = onTownExit ? [...tracks, townTrail] : tracks;
-  const openAreas = [...groundClearings];
+  const paths = onTownExit ? [...tracks, townTrail] : bossRoom ? [tracks[0].filter(p=>p[1]<=GLADE_CENTER[1]+2)] : tracks;
+  const openAreas = bossRoom ? [[SPAWN,5],[GLADE_CENTER,11.5]] : [...groundClearings];
   let props = makeScenery(showEntranceGate, paths);
-  const scenery = await trainingScenery(trainingScene, trapIndex);
+  const scenery = await trainingScenery(bossRoom?null:trainingScene, trapIndex);
+  if(moonlight){
+    const themed=await moonlightScenery(placeMap,moonlightScene,props);
+    props=themed.props;Object.assign(images,themed.tiles);
+    canvas.dataset.forestTheme='moonlight';canvas.dataset.moonlightScenery=moonlightScene?.id||placeMap;
+    canvas.dataset.moonlightKit=themed.kit;canvas.dataset.treeRenderer='blender-png';
+  }
+  if(bossRoom){
+    const room=await bossRoomScenery(moonlight?'moonlight':'training');
+    // Keep foreground canopies out of the door and guardian sightline.
+    props=props.filter(p=>!['tree','shrub','thicket'].includes(p.kind)||p.z>GLADE_CENTER[1]+3||p.z<GLADE_CENTER[1]-30||Math.abs(p.x-GLADE_CENTER[0])-p.width/2>14);
+    Object.assign(images,room.tiles);props.push(...room.props);
+    canvas.dataset.bossRoom=moonlight?'moonlight':'training';
+    canvas.dataset.bossDoor='closed';
+    canvas.dataset.bossStatues=String(room.props.filter(p=>p.bossStatue).length);
+  }
   canvas.dataset.sceneryRenderer = "png";
-  canvas.dataset.trainingScenery = [...new Set(scenery.props.map(p => p.art.slice("training-png-".length)))].join(",");
-  canvas.dataset.sceneryLayers = String(scenery.props.filter(p => p.layered).length);
+  canvas.dataset.trainingScenery = bossRoom&&trainingScene?'boss':[...new Set(scenery.props.map(p => p.art.slice("training-png-".length)))].join(",");
+  canvas.dataset.sceneryLayers = String((moonlight||bossRoom?props:scenery.props).filter(p => p.layered).length);
   canvas.dataset.cameraMode = "layered-orthographic";
   Object.assign(images, scenery.tiles);
   props.push(...scenery.props);
@@ -338,14 +359,14 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const thicket = onSearch && !mist && !ruins ? thicketLayout.map(([x, z, width, variant]) => ({
     kind: "thicket", art: "shrub-" + variant, x: x + GLADE_CENTER[0], z: z + GLADE_CENTER[1],
     width, canopy: thicketCanopies[variant - 1], swayX: 0, swayY: 0, revealX: 0
-  })) : [];
+  })).map(p=>moonlight?moonlightThicket(p):p) : [];
   props.push(...thicket);
-  if (feature && !trainingScene) {
+  if (feature && !trainingScene && !moonlight) {
     const [x, z] = GLADE_CENTER;
     props.push({kind: "landmark", art: "landmark", x, z, width: feature.width});
   }
-  if (banditCamp) props.push(BANDIT_CAMP);
-  if (ruins) props.push(RUINS);
+  if (banditCamp && !moonlight) props.push(BANDIT_CAMP);
+  if (ruins && !moonlight) props.push(RUINS);
   let pool, rim, lotus;
   if (well) {
     const [x, z] = GLADE_CENTER;
@@ -367,10 +388,10 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
   if (onPray) {
     const [x, z] = GLADE_CENTER;
-    props.push({kind: "shrine", art: "shrine", x, z, width: 12.3, radius: 3.6});
+    props.push({kind: "shrine", art: "shrine", x, z, width: 12.3, radius: 3.6, renderHidden:moonlight});
   }
   if (village) {
-    props.push(VILLAGE);
+    props.push({...VILLAGE,renderHidden:moonlight});
   }
   if (onTownExit) {
     openAreas.push([TOWN_EXIT, 7]);
@@ -378,11 +399,16 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       || trailDistance(prop.x, prop.z, townTrails) > 12 + prop.width * .25);
     props.push({kind: "direction-sign", art: "direction-sign", x: 8.8, z: -7.3, width: 5.6, radius: .35, label: "กลับเมือง →"});
   }
-  if (onVisitHealer) props.push(HEALER);
-  if (well || onPray || visitService || onTownExit || onSearch || banditCamp || feature || scenery.props.length || onQuest) {
+  if (onVisitHealer) props.push({...HEALER,renderHidden:moonlight});
+  // Moonlight kits append individual parts after the already-sorted woodland.
+  // Sort those parts too before interleaving them with waiting/moving actors.
+  if (moonlight || well || onPray || visitService || onTownExit || onSearch || banditCamp || feature || scenery.props.length || onQuest) {
     props.sort((a, b) => b.z - a.z);
   }
   const obstacles = props.filter(p => p.radius);
+  for(const prop of props)if(!prop.renderHidden)prop.effects=createPropEffects(images[prop.art],prop.source,propEffectSpec(prop));
+  canvas.dataset.animatedFireProps=String(props.filter(p=>p.effects?.kinds.includes('fire')).length);
+  canvas.dataset.animatedWaterProps=String(props.filter(p=>p.effects?.kinds.includes('water')).length);
   const travelerActor = traveler ? {
     x: GLADE_CENTER[0], z: GLADE_CENTER[1], radius: .72, flank: 0, wait: 0, phase: 0, facing: 1
   } : null;
@@ -402,7 +428,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
   const gladeChest = ruins ? RUINS_CHEST : GLADE_CHEST;
   const searchPoint = ruins ? RUINS_ENTRY : GLADE_CENTER;
-  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit)), ctx = canvas.getContext("2d", { alpha: false });
+  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight), ctx = canvas.getContext("2d", { alpha: false });
   const mini = minimap, map = mini.getContext("2d");
   const start = resume.retreat ? FORK
     : Array.isArray(resume.position) && resume.position.length === 2 && resume.position.every(Number.isFinite) ? resume.position : SPAWN;
@@ -518,7 +544,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const follow = 1 - Math.exp(-9 * dt);
     // Open the framing gently near a layered place so its raised roof fits above
     // the player. This affects projection only; movement and event ranges stay put.
-    const placeFocus = trainingScene ? 1-smoothstep(clamp((distance(player.x,player.z,GLADE_CENTER)-7)/12,0,1)) : 0;
+    const placeFocus = trainingScene || moonlight ? 1-smoothstep(clamp((distance(player.x,player.z,GLADE_CENTER)-7)/12,0,1)) : 0;
     zoom += (baseZoom*(1-.06*placeFocus)-zoom)*follow;
     camera.x += (player.x - camera.x) * follow;
     camera.z += (player.z + 3*placeFocus - camera.z) * follow;
@@ -581,6 +607,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const sceneryMotion = reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function paintProp(prop) {
+    if(prop.renderHidden)return;
     const x = screenX(prop.x), y = screenY(prop.z) - (prop.elevation || 0) * zoom;
     const art = images[prop.art], w = prop.width * zoom;
     const {canopy} = prop;
@@ -603,11 +630,14 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       ctx.save();
       ctx.translate(x + (prop.swayX * .12 + prop.revealX * .5) * w, y + prop.swayY * w * .16);
       ctx.rotate(prop.swayX * .32);
-      ctx.drawImage(art, 0, canopy.top, art.width, canopy.bottom - canopy.top, -w / 2, top - y, w, h);
+      const crop=prop.source||[0,canopy.top,art.width,canopy.bottom-canopy.top];
+      ctx.drawImage(art, ...crop, -w / 2, top - y, w, h);
       ctx.restore();
     } else {
-      ctx.drawImage(art, ...source, left, top, w, h);
+      if(prop.effects&&!sceneryMotion.matches)ctx.drawImage(prop.effects.base,left,top,w,h);
+      else ctx.drawImage(art, ...source, left, top, w, h);
     }
+    prop.effects?.paint(ctx,left,top,w,h,prior,sceneryMotion.matches);
     ctx.restore();
     if (prop.label) {
       ctx.save();
@@ -784,7 +814,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     map.fillStyle = "#1530208f";
     map.fillRect(0, 0, w, h);
     map.beginPath();
-    tracks.forEach(path => smoothStroke(map, path, x, y));
+    (bossRoom?paths:tracks).forEach(path => smoothStroke(map, path, x, y));
     map.strokeStyle = "#dac190";
     map.lineWidth = 3.5;
     map.lineJoin = map.lineCap = "round";
@@ -795,7 +825,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       map.strokeStyle = "#ffc773";
       map.stroke();
     }
-    const markers = [
+    const markers = bossRoom ? [] : [
       [WEST, 4, visited & 1 ? "#baf196" : "#dac190"],
       [EAST, 4, visited & 2 ? "#baf196" : "#dac190"]
     ];

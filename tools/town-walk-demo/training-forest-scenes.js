@@ -15,7 +15,7 @@ const TrainingForestScenes = (() => {
     "encounter-7": ["เสียงเรียกจากตะกร้า", "basket", "sign", "#dfbe86"],
     "after-training": ["วันที่ต้องปล่อยมือ", "pact", "shrine", "#c0d9e0"],
     villager: ["ชาวบ้านข้างทาง", "camp", "sign", "#e4c18a"],
-    boss: ["ลานหัวหน้าฝูงแจ็กคาโลป", "arena", "gate", "#eac17e"]
+    boss: ["ห้องบอส · หัวหน้าฝูงแจ็กคาโลป", "arena", "gate", "#eac17e"]
   };
   function describe(id = "villager") {
     if (id.startsWith("after:")) id = "after-training";

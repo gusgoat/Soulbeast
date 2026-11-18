@@ -8,7 +8,7 @@ export function placeLayers(id, art, x, z, width) {
   const props = [];
   function part(cell, dx, dz, w, extra = {}) {
     const source = frames[cell];
-    const p = {kind:'training-prop', art, sceneId:id, source, x:x+dx, z:z+dz,
+    const p = {kind:'training-prop', art, sceneId:id, effectId:id+'#'+cell, source, x:x+dx, z:z+dz,
       width:w, pivot:1, layered:true, ...extra};
     if (p.height) p.width = p.height * source[2] / source[3];
     props.push(p);
