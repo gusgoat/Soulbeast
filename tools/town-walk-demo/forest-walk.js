@@ -7,6 +7,7 @@ const ForestWalk = (() => {
   const searches = ["bush", "mist", "ruins"];
   const services = ["village", "hospital"];
   let modules, current;
+  let trainingFocusInstalled = false;
   const footsteps = new Map();
 
   function initialMap() {
@@ -22,30 +23,171 @@ const ForestWalk = (() => {
     return zone.secretSession || zone.specialSession || zone.warpGate || zone.riddleSession || zone.falseBoss || WorldTales.block();
   }
 
+  function rememberPlace(walk) {
+    if (current?.walk === walk && current.scene) walk.position = current.scene.position();
+    walk.menuOrigin ||= {map: walk.map, scene: walk.scene,
+      position: walk.position?.slice()};
+    if (!walk.showStory && walk.position) walk.menuOrigin.position = walk.position.slice();
+  }
+
+  function returnToPlace(walk) {
+    const origin = walk.menuOrigin;
+    if (origin) {
+      walk.map = origin.map;
+      walk.scene = origin.scene;
+      walk.position = origin.position?.slice() || walk.position;
+      if (current?.walk === walk && current.sceneId === origin.scene?.id) {
+        current.scene?.restorePosition?.(walk.position);
+      }
+    }
+    walk.phase = "cleared";
+    walk.showStory = false;
+    walk.storySession = false;
+    walk.message = "จบเหตุการณ์แล้ว เดินต่อไปยังทางแยก";
+    delete walk.menuOrigin;
+  }
+
   function view(legacy) {
     const zone = S.zone, walk = zone?.walk;
+    if (walk?.storySession && !nativeEvent(zone)) returnToPlace(walk);
+    if (zone?.id === 7 && walk && !walk.showService) {
+      const story = TrainingForestScenes.session(zone);
+      if (story) {
+        rememberPlace(walk);
+        walk.scene = story;
+        walk.storySession = true;
+        walk.map = "training";
+        // Existing session actions retain their tokens, validation and rewards.
+        // The map stays mounted but hidden while the full-page menu is open.
+        return mountHTML(walk.showStory ? storyMarkup(legacy()) : "");
+      }
+      if (walk.map === "boss") return mountHTML(walk.showStory ? storyMarkup(legacy(), true) : "");
+    }
     if (!walk || walk.showService || nativeEvent(zone)) return legacy();
     if (walk.map === "legacy") {
       if (!zone.fork || zone.ev || zone.depth >= ZDEPTH) return legacy();
-      zone.walk = initialMap();
+      if (walk.menuOrigin) returnToPlace(walk);
+      else zone.walk = initialMap();
     }
-    return '<section id="forest-walk-mount" class="forest-walk-mount" aria-label="เดินสำรวจป่า"></section>';
+    return mountHTML();
+  }
+
+  function mountHTML(story = "") {
+    return '<section class="forest-walk-layout"><section id="forest-walk-mount" class="forest-walk-mount" aria-label="เดินสำรวจป่า"></section>'
+      + (story ? '<aside class="forest-walk-story" aria-label="เหตุการณ์ในฉาก">' + story + '</aside>' : '') + '</section>';
+  }
+
+  function storyMarkup(html, boss = false) {
+    const template = document.createElement("template");
+    template.innerHTML = html;
+    const section = boss ? template.content.querySelector('[data-a="boss"]')?.closest(".card")
+      : template.content.querySelector(".secret-location, #forestSpecial, #forestRiddle, #worldTales");
+    for (const button of section?.querySelectorAll(".secret-choice-grid > button") || []) {
+      const art = button.querySelector(":scope > .secret-panel, :scope > .tale-panel");
+      if (!art) continue;
+      const caption = art.querySelector("figcaption");
+      const title = caption?.textContent || art.getAttribute("aria-label") || "";
+      caption?.remove();
+      const frame = document.createElement("span");
+      frame.className = "forest-choice-art";
+      art.replaceWith(frame);
+      frame.append(art);
+      if (!button.querySelector(":scope > strong")) {
+        const label = document.createElement("strong");
+        label.textContent = title;
+        button.append(label);
+      }
+      button.classList.add("forest-event-choice");
+    }
+    return section?.outerHTML || html;
+  }
+
+  function forkSignature(zone, walk) {
+    const {walk: ignoredWalk, fork: ignoredFork, ...context} = zone;
+    const {gsAt: ignoredTimestamp, ...player} = S.P || {};
+    return JSON.stringify({context, phase: walk.phase, player});
+  }
+
+  function nextForkPreview(zone, walk) {
+    if (zone.fork) return {fork: zone.fork, zone};
+    const signature = forkSignature(zone, walk);
+    if (walk.routePreview?.signature === signature) return walk.routePreview;
+    // Run the existing generator on a copy: previews must not consume a step,
+    // clear a service, charge an effect, or write a save before the player exits.
+    const originalState = S, originalSave = save, random = Math.random, rolls = [];
+    let result;
+    try {
+      S = structuredClone(S);
+      delete S.zone.walk.routePreview;
+      save = () => {};
+      Math.random = () => { const value = random(); rolls.push(value); return value; };
+      const preview = S.zone;
+      if (walk.phase === "pending") {
+        preview.depth++;
+        zlog(`ก้าวที่ ${preview.depth}: เดินผ่าน ${(EV[walk.fork[walk.side].k]?.n || "เหตุการณ์ในป่า")}`);
+      }
+      preview.ev = null;
+      newFork();
+      result = {signature, rolls, fork: preview.fork, zone: {
+        id: preview.id, boss: preview.boss, secretRun: preview.secretRun,
+        riddleRun: preview.riddleRun, storyRun: preview.storyRun
+      }};
+    } finally {
+      S = originalState;
+      save = originalSave;
+      Math.random = random;
+    }
+    walk.routePreview = result;
+    return result;
+  }
+
+  function nextDestination(zone, walk, side) {
+    if (walk.map === "boss" || nativeEvent(zone) || walk.phase === "resolving"
+      || walk.phase === "pending" && ["training", "bandit"].includes(walk.map)) return "";
+    const plan = nextForkPreview(zone, walk), door = plan.fork?.[side === "left" ? 0 : 1];
+    if (!door) return "ประตูบอส · " + (zone.boss || ZN[zone.id - 1].boss).n;
+    if (door.h) return "ทางมืด · ยังไม่ทราบสถานที่";
+    if (zone.id === 7 && !maps[door.k]) return TrainingForestScenes.selected(plan.zone, door).title;
+    return EV[door.k]?.n || "เหตุการณ์ในป่า";
+  }
+
+  function generateNextFork(preview) {
+    if (!preview) return newFork();
+    // Replay the already sampled rolls through the real generator at the exit.
+    // Its original state changes and save logic still run exactly here.
+    const random = Math.random;
+    let index = 0;
+    try {
+      Math.random = () => index < preview.rolls.length ? preview.rolls[index++] : random();
+      return newFork();
+    } finally { Math.random = random; }
   }
 
   function next(zone, walk, side) {
-    if (!active(zone, walk) || walk.phase === "resolving" || (walk.phase === "pending" && walk.map === "bandit")) return;
+    if (!active(zone, walk) || nativeEvent(zone) || walk.showStory || walk.phase === "resolving" || (walk.phase === "pending" && ["bandit", "training"].includes(walk.map))) return;
+    const preview = walk.routePreview?.signature === forkSignature(zone, walk) ? walk.routePreview : null;
     if (walk.phase === "pending") {
       zone.depth++;
       zlog(`ก้าวที่ ${zone.depth}: เดินผ่าน ${(EV[walk.fork[walk.side].k]?.n || "เหตุการณ์ในป่า")}`);
     }
     zone.ev = null;
-    if (!zone.fork) newFork();
+    if (!zone.fork) generateNextFork(preview);
     const slot = side === "left" ? 0 : 1;
     const door = zone.fork?.[slot];
     if (!door) {
       zone.walk = {map: "boss", phase: "pending"};
+      if (zone.id === 7) zone.walk.scene = TrainingForestScenes.describe("boss");
     } else {
       const selected = {map: maps[door.k] || "landmark", phase: "pending", fork: zone.fork, side: slot};
+      if (zone.id === 7 && selected.map === "landmark") {
+        selected.map = "training";
+        selected.scene = TrainingForestScenes.selected(zone, door);
+      }
+      // Roll the original 14% trap once, so its scenery can be seen before contact.
+      // Native stories do not use chooseFork's ordinary trap roll.
+      if (zone.id === 7 && maps[door.k] && !SAFE.includes(door.k)) {
+        selected.trapIndex = Math.random() < .14 ? TRAPS.indexOf(pick(TRAPS)) : -1;
+      }
       if (door.k === "stranger") {
         selected.disposition = Math.random();
       }
@@ -73,13 +215,19 @@ const ForestWalk = (() => {
 
   function encounter(zone, walk, groupSize) {
     if (!active(zone, walk)) return;
+    if (current?.walk === walk && current.scene) walk.position = current.scene.position();
+    if (zone.id === 7 && (nativeEvent(zone) || walk.map === "boss")) {
+      rememberPlace(walk);
+      walk.showStory = true;
+      render();
+      return "clear";
+    }
     if (walk.phase === "cleared" && services.includes(walk.map) && zone.ev?.type === walk.map) {
       walk.showService = true;
       render();
       return;
     }
     if (walk.phase !== "pending") return;
-    if (current?.walk === walk && current.scene) walk.position = current.scene.position();
     if (walk.map === "boss") {
       walk.map = "legacy";
       walk.phase = "cleared";
@@ -87,19 +235,33 @@ const ForestWalk = (() => {
       return "clear";
     }
     walk.phase = "resolving";
+    if (walk.map === "training") {
+      rememberPlace(walk);
+      walk.showStory = true;
+    }
     if (groupSize) walk.groupSize = groupSize;
     zone.fork = walk.fork;
     const originalDepth = zone.depth;
     chooseFork(walk.side);
     if (!S.battle && zone.depth === originalDepth && !nativeEvent(zone)) {
       walk.phase = "pending";
+      walk.showStory = false;
+      delete walk.menuOrigin;
       zone.fork = null;
-      return;
+      sync();
+      return false;
     }
     walk.phase = "cleared";
     delete walk.fork;
     delete walk.groupSize;
-    if (walk.map === "landmark" || nativeEvent(zone) || (zone.ev && !["chest", walk.map].includes(zone.ev.type))) {
+    if (zone.id === 7 && nativeEvent(zone)) {
+      rememberPlace(walk);
+      walk.showStory = true;
+      walk.storySession = true;
+      walk.map = "training";
+      walk.scene = TrainingForestScenes.session(zone) || walk.scene;
+    } else if (walk.map === "landmark" || nativeEvent(zone) || (zone.ev && !["chest", walk.map].includes(zone.ev.type))) {
+      rememberPlace(walk);
       walk.map = "legacy";
     } else if (services.includes(walk.map) && zone.ev?.type === walk.map) {
       walk.showService = true;
@@ -190,41 +352,45 @@ const ForestWalk = (() => {
     const node = document.createElement("div");
     node.className = "forest-walk-scene";
     node.innerHTML = '<canvas class="forest-walk-canvas" tabindex="0" aria-label="แผนที่เดินป่า"></canvas>'
-      + '<div class="forest-walk-note"><b></b><p role="status"></p></div>'
+      + '<div class="forest-walk-note"><b></b><p role="status"></p><p class="forest-walk-destination" aria-live="polite" hidden></p></div>'
       + '<canvas class="forest-walk-map" width="160" height="160" aria-label="แผนที่ทางแยกตัว Y"></canvas>'
-      + '<button type="button" class="forest-walk-stick" aria-label="จอยเดิน ลากสุดเพื่อวิ่ง"><span></span></button>'
+      + '<button type="button" class="forest-walk-stick" aria-label="จอยเดินทาง ลากน้อยเดิน ลากไกลวิ่ง ปล่อยหยุด"><span></span></button>'
       + '<button type="button" class="btn forest-walk-chest" hidden>เปิดหีบ</button>'
       + '<button type="button" class="btn forest-walk-fallback" hidden>กลับไปสำรวจแบบเดิม</button>';
     const state = {node, zone, walk, scene: null, water: null};
     const stick = node.querySelector(".forest-walk-stick"), knob = stick.firstElementChild;
     const note = node.querySelector(".forest-walk-note");
     const status = note.querySelector("p");
+    const destination = note.querySelector(".forest-walk-destination");
     const chest = node.querySelector(".forest-walk-chest");
     const route = walk.fork?.[walk.side];
-    note.querySelector("b").textContent = walk.map === "boss" ? "ประตูบอส"
-      : route?.h ? ZN[zone.id - 1].n : EV[route?.k || walk.map]?.n || ZN[zone.id - 1].n;
+    note.querySelector("b").textContent = walk.scene?.title || (walk.map === "boss" ? "ประตูบอส"
+      : route?.h ? ZN[zone.id - 1].n : EV[route?.k || walk.map]?.n || ZN[zone.id - 1].n);
     status.textContent = "กำลังโหลดแผนที่…";
     let pointer = null;
     const move = event => {
       if (pointer !== event.pointerId) return;
-      const rect = stick.getBoundingClientRect(), radius = rect.width * .34;
+      const rect = stick.getBoundingClientRect(), radius = rect.width * .33;
       const dx = (event.clientX - rect.left - rect.width / 2) / radius;
       const dy = (event.clientY - rect.top - rect.height / 2) / radius;
       const length = Math.max(1, Math.hypot(dx, dy));
       knob.style.transform = `translate(${dx / length * radius}px,${dy / length * radius}px)`;
       state.scene?.setStick(dx / length, -dy / length);
+      event.preventDefault();
     };
     state.release = () => {
       const captured = pointer;
       pointer = null;
       if (captured !== null && stick.hasPointerCapture(captured)) stick.releasePointerCapture(captured);
       knob.style.transform = "";
+      stick.classList.remove("active");
       state.scene?.setStick(0, 0);
     };
     stick.addEventListener("pointerdown", event => {
       if (!state.scene || pointer !== null || event.button !== 0) return;
       event.preventDefault();
       pointer = event.pointerId;
+      stick.classList.add("active");
       stick.setPointerCapture(pointer);
       Sound.unlock();
       move(event);
@@ -249,9 +415,16 @@ const ForestWalk = (() => {
       chest.hidden = situation !== "near-chest" || Boolean(zone.ev?.opened);
       const cue = {chase: "ศัตรูกำลังเข้ามา!", loot: "เดินไปที่หีบหน้าค่ายเพื่อรับรางวัล",
         "near-chest": "เปิดหีบสมบัติ", waiting: "เดินเข้าใกล้นักเดินทางเพื่อพูดคุย"}[situation];
-      const instruction = {boss: "เดินไปถึงประตูบอส", landmark: "เดินเข้าใกล้เพื่อสำรวจ"}[walk.map];
+      const instruction = walk.trapIndex >= 0 && walk.phase === "pending" ? "ระวังกับดักบนทางข้างหน้า"
+        : {boss: "เดินเข้าลานไปพบหัวหน้าฝูง", training: "เดินเข้าไปสำรวจสถานที่และพูดคุย", landmark: "เดินเข้าใกล้เพื่อสำรวจ"}[walk.map];
       const message = cue || walk.message || instruction || "ลากจอยเพื่อเดินหรือวิ่ง แล้วเลือกทางแยก";
       if (status.textContent !== message) status.textContent = message;
+      const side = ["Fernstone Trail", "Fernstone Clearing"].includes(area) ? "left"
+        : ["Sunbloom Trail", "Sunbloom Clearing"].includes(area) ? "right" : null;
+      const name = side ? nextDestination(zone, walk, side) : "";
+      const upcoming = name ? `${side === "left" ? "ทางซ้าย" : "ทางขวา"} → ${name}` : "";
+      if (destination.textContent !== upcoming) destination.textContent = upcoming;
+      destination.hidden = !upcoming;
     };
     state.canvas = canvas;
     return state;
@@ -264,14 +437,23 @@ const ForestWalk = (() => {
       state.encounterAvatar = window.sealerSprites?.create();
       state.encounterAvatar?.sync(walk.enemies[0]);
     }
-    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js"].map(file => import(new URL(file + "?v=encounter-identity-1", assets).href)));
+    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js"].map(file => import(new URL(file + "?v=forest-speed-15-1", assets).href)));
     try {
       const [{openForest}, {WELLS}, {createWellEffects, startWellAudio}] = await modules;
       if (current !== state) return;
       const map = walk.map;
       const well = WELLS[map];
-      state.avatar = window.sealerSprites?.create();
+      state.avatar = window.sealerSprites?.create({preloadDirections:true});
       state.avatar?.sync(S.P);
+      if (state.avatar?.whenReady) {
+        node.querySelector("[role=status]").textContent = "กำลังโหลดตัวละคร 3D…";
+        await state.avatar.whenReady();
+        if (current !== state) { state.avatar.release(); return; }
+      }
+      if (state.encounterAvatar?.whenReady) {
+        await state.encounterAvatar.whenReady();
+        if (current !== state) { state.encounterAvatar.release(); return; }
+      }
       if (well) {
         try { state.water = startWellAudio(); state.water.setMuted(!Sound.enabled); } catch {}
       }
@@ -282,9 +464,13 @@ const ForestWalk = (() => {
         playerAvatar: state.avatar,
         encounterAvatar: state.encounterAvatar,
         entrance: map === "entrance" && zone.depth === 0,
-        landmark: map === "boss" ? "gate" : map === "landmark" ? landmarkArt(walk.fork[walk.side]) : null,
-        onLandmark: ["boss", "landmark"].includes(map) ? () => resolve() : null,
-        resume: {position: walk.position, retreat: walk.retreat, completed: walk.phase !== "pending",
+        landmark: walk.scene?.landmark || (map === "boss" ? "gate" : map === "landmark" ? landmarkArt(walk.fork[walk.side]) : null),
+        trainingScene: zone.id === 7 ? walk.scene : null,
+        storyActorURL: zone.id === 7 && map === "boss" ? CharacterMotion.resolve({sp: (zone.boss || ZN[6].boss).sp, evo: (zone.boss || ZN[6].boss).form || 0})?.assets.idle : null,
+        trapIndex: walk.trapIndex,
+        onTrap: walk.trapIndex >= 0 ? resolve : null,
+        onLandmark: ["boss", "landmark", "training"].includes(map) ? () => resolve() : null,
+        resume: {position: walk.position, retreat: walk.retreat, completed: map === "training" && nativeEvent(zone) ? Boolean(walk.showStory) : walk.phase !== "pending",
           chest: zone.ev?.type === "chest" && !zone.ev.opened,
           banditOutcome: walk.reward ? "loot" : walk.outcome === "flee" ? "escaped" : walk.outcome === "win" ? "claimed" : "",
           travelerOutcome: walk.outcome === "flee" ? "escaped" : walk.outcome === "win" ? "clear" : ""},
@@ -302,10 +488,17 @@ const ForestWalk = (() => {
         onVisitHealer: map === "hospital" ? resolve : null,
         onTownExit: map === "exit" ? () => { resolve(); if (active(zone, walk) && zone.ev?.type === "exit") handlers.exitzone(); } : null,
         onExit: map === "boss" ? null : side => next(zone, walk, side),
-        onStep: audioStep
+        onStep: audioStep,
+        onQuest: state.hasSearch ? () => {
+          if (!active(zone, walk) || nativeEvent(zone)) return;
+          walk.position = state.scene.position();
+          walk.showSearch = true;
+          render();
+        } : null
       });
       if (current !== state) { scene.dispose(); return; }
       state.scene = scene;
+      state.report(...scene.position(), 0, "", false, "clear");
       sync();
     } catch (error) {
       modules = null;
@@ -328,21 +521,28 @@ const ForestWalk = (() => {
   function sync() {
     const zone = S.zone, walk = zone?.walk;
     const host = document.getElementById("forest-walk-mount");
-    if (current && (current.zone !== zone || current.walk !== walk || walk.map === "legacy")) clear();
+    const hasSearch = Boolean(zone?.id === 7 && !nativeEvent(zone) && document.getElementById("walkQuestSearch"));
+    if (walk && !hasSearch) walk.showSearch = false;
+    if (current && (current.zone !== zone || current.walk !== walk || walk.map === "legacy" || current.sceneId !== walk.scene?.id || current.hasSearch !== hasSearch)) clear();
     if (!host || !walk) {
       current?.release();
       current?.scene?.setPaused(true);
       return;
     }
+    // Native story focus must scroll its own panel, never move the walking viewport.
+    const main = host.closest("main");
+    if (main) main.scrollTop = 0;
     if (!current) {
       current = createNode(zone, walk);
+      current.sceneId = walk.scene?.id;
+      current.hasSearch = hasSearch;
       loadScene(current);
     }
     if (current.node.parentNode !== host) host.appendChild(current.node);
     current.avatar?.sync(S.P);
     current.water?.setMuted(!Sound.enabled);
     if (!active(zone, walk)) current.release();
-    current.scene?.setPaused(!active(zone, walk));
+    current.scene?.setPaused(!active(zone, walk) || Boolean(walk.showStory || walk.showSearch));
     current.scene?.resize();
   }
 
@@ -353,9 +553,41 @@ const ForestWalk = (() => {
     return "sign";
   }
 
+  function presentSearch(box) {
+    const zone = S.zone, layout = document.querySelector(".forest-walk-layout");
+    if (zone?.id !== 7 || !layout || nativeEvent(zone)) return false;
+    const panel = document.createElement("aside");
+    panel.className = "forest-walk-story forest-walk-search-panel";
+    panel.hidden = !zone.walk.showSearch;
+    panel.setAttribute("aria-label", "สำรวจร่องรอยภารกิจ");
+    const close = document.createElement("button");
+    close.type = "button"; close.className = "btn full";
+    close.textContent = "กลับไปเดินสำรวจ";
+    close.onclick = () => { zone.walk.showSearch = false; render(); };
+    panel.append(box, close);
+    layout.append(panel);
+    return true;
+  }
+
   function mount(zone) {
     if (!zone || ![7, 1].includes(zone.id)) return;
-    zone.walk = initialMap();
+    // Preserve a saved scene/session, including rolled trap identity and position.
+    zone.walk ||= zone.depth >= ZDEPTH ? {map: "boss", phase: "pending"} : initialMap();
+    if (zone.id === 7 && zone.walk.map === "boss") zone.walk.scene = TrainingForestScenes.describe("boss");
+    if (!trainingFocusInstalled) {
+      trainingFocusInstalled = true;
+      for (const owner of [Secret, ForestSpecial, ForestRiddle, WorldTales]) {
+        const previous = owner.focus;
+        owner.focus = function(...args) {
+          const panel = S.zone?.id === 7 && document.querySelector(".forest-walk-story:not([hidden])");
+          if (!panel) return previous?.apply(this, args);
+          panel.scrollTop = 0;
+          const heading = panel.querySelector("h2,h3");
+          heading?.setAttribute("tabindex", "-1");
+          heading?.focus({preventScroll: true});
+        };
+      }
+    }
     const legacyZone = vZone;
     vZone = function() { return view(legacyZone); };
     const legacyRender = render;
@@ -373,5 +605,5 @@ const ForestWalk = (() => {
     };
   }
 
-  return {mount, finishBattle};
+  return {mount, finishBattle, presentSearch};
 })();

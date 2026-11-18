@@ -1,8 +1,9 @@
 import {createActor} from './world-actors.mjs?v=bitmap-capture-1';
 
 const publishedRoot='https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/';
-const local=/^(?:localhost|127\.0\.0\.1)$/.test(location.hostname);
-const modelRoot=local?new URL('./models/',import.meta.url).href:publishedRoot;
+// Published Blender models live in Storage, including when playing a local copy.
+// Local worktrees do not contain the large GLB files.
+const modelRoot=publishedRoot;
 const beasts=Object.freeze({
  cerberus:'เซอร์เบอรัส',crystal_stag:'กวางผลึก',crystalbloom_stag:'กวางผลึกบุปผา',
  frost_lich:'ลิชน้ำแข็ง',golden_kirin:'กิเลนทอง',infernal_hydra:'ไฮดราเพลิง',

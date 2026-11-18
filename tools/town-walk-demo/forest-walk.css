@@ -4,8 +4,28 @@
 .forest-walk-note,.forest-walk-map{position:absolute;top:10px;border:1px solid #cbb57678;border-radius:9px;background:#152319e8;color:#f1e3bc}
 .forest-walk-note{left:10px;max-width:calc(100% - 110px);padding:7px 10px;pointer-events:none}
 .forest-walk-note p{margin:2px 0 0;font-size:13px}
+.forest-walk-note .forest-walk-destination{margin-top:5px;padding-top:4px;border-top:1px solid #cbb57659;color:#ffe2a0;font-weight:700}
+.forest-walk-destination[hidden]{display:none!important}
 .forest-walk-map{right:10px;width:clamp(62px,18%,104px);height:auto}
-.forest-walk-stick{position:absolute;left:14px;bottom:20px;width:88px;height:88px;border:1px solid #e3cca087;border-radius:50%;background:#14241bbd;display:grid;place-items:center;touch-action:none}
-.forest-walk-stick span{width:36px;height:36px;border-radius:50%;background:#dbc492;pointer-events:none}
+.forest-walk-stick{position:absolute;left:14px;bottom:14px;width:150px;height:150px;padding:0;min-height:0;min-width:0;border:0;border-radius:50%;background:transparent;box-shadow:none;isolation:isolate;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.forest-walk-stick::before{content:'';position:absolute;inset:0;background:url('/Soulbeast/assets/ui/walk-skin-20261103/joystick-base.png.webp') center/100% 100% no-repeat;opacity:.78;pointer-events:none;z-index:-1}
+.forest-walk-stick.active::before{opacity:.95}
+.forest-walk-stick span{position:absolute;left:calc(50% - 28px);top:calc(50% - 28px);width:54px;height:54px;border:0;border-radius:50%;background:transparent url('/Soulbeast/assets/ui/walk-skin-20261103/joystick-knob.png.webp') center/100% 100% no-repeat;filter:drop-shadow(0 3px 4px #0008);will-change:transform;pointer-events:none}
+@media(max-width:365px){.forest-walk-stick{width:136px;height:136px}}
+@media(max-height:530px){.forest-walk-stick{width:120px;height:120px}}
 .forest-walk-chest,.forest-walk-fallback{position:absolute;right:14px;bottom:24px}
 .forest-walk-scene [hidden]{display:none!important}
+.forest-walk-layout{height:100%;min-height:0}
+.forest-walk-layout:has(.forest-walk-story:not([hidden])) > .forest-walk-mount{display:none}
+.forest-walk-story{width:100%;height:100%;overflow:auto;overscroll-behavior:contain;padding:16px;background:#17251e;color:#f1e3bc;min-height:0}
+.forest-walk-story[hidden]{display:none!important}
+.forest-walk-story :is(.secret-location,.forest-special,.forest-riddle,#worldTales){max-width:100%;margin:0}
+.forest-walk-story :is(button,a){touch-action:manipulation}
+.forest-walk-story .secret-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:10px}
+.forest-walk-story .forest-event-choice{padding:0!important;min-width:0;overflow:hidden;display:flex!important;flex-direction:column;align-items:stretch!important}
+.forest-choice-art{display:block;position:relative;width:100%;aspect-ratio:3/2;overflow:hidden;background:#102331}
+.forest-choice-art > :is(.secret-panel,.tale-panel){position:absolute;left:0;top:50%;width:100%;height:auto;margin:0;border:0;border-radius:0;aspect-ratio:var(--crop-ratio,3/2);transform:translateY(-50%)}
+.forest-event-choice > strong{display:block;padding:8px;font-size:14px;line-height:1.4;text-align:left;white-space:normal}
+@media(max-width:700px){
+ .forest-walk-story{padding:12px}
+}

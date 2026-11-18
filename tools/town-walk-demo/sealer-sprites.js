@@ -58,7 +58,7 @@ function createModel({beast=false,primary=false}={}){
   next=key;
   const revision=ticket;
   supported=beast?null:true;
-  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=bitmap-capture-1')
+  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=storage-local-1')
    .then(catalog=>{
     if(revision!==ticket)return null;
     supported=catalog.hasActor(key,{beast});
@@ -72,7 +72,7 @@ function createModel({beast=false,primary=false}={}){
    .catch(()=>false);
   return pending;
  }
- return {sync,release,get ready(){return !!current;},get supported(){return supported;},draw(...args){return current?.draw(...args)||false}};
+ return {sync,release,whenReady:()=>pending||Promise.resolve(false),get ready(){return !!current;},get supported(){return supported;},draw(...args){return current?.draw(...args)||false}};
 }
 let loadingMarker;
 function getLoadingMarker(){
@@ -110,7 +110,7 @@ function create({preloadDirections=false,allow3d=true}={}){
   else c.drawImage(getLoadingMarker(),x-size*.082,y-20-size*.12,size*.164,size*.24);
  }
  function release(){model.release();current=null;}
- return {sync,draw,release,get current(){return current},get renderer(){return model.ready?'3d':'portrait'}};
+ return {sync,draw,release,whenReady:()=>model.whenReady(),get current(){return current},get renderer(){return model.ready?'3d':'portrait'}};
 }
 scope.sealerSprites={create,createModel,use3d:true,identity,drawColoredFrame,heading,nearestDirection};if(typeof module!=='undefined')module.exports=scope.sealerSprites;
 })(typeof window==='undefined'?globalThis:window);

@@ -1,11 +1,14 @@
 import {forestAssetURL} from "./storage-assets.js";
+import {trainingScenery} from "./training-scenery.js?v=layers-v1";
+import {layerOpacity} from "./training-layers.js?v=layers-v1";
 
 const FLATTEN = .64;
-const RUN_SPEED = 6.5;
+// Player walking and running are 1.5 times the original forest pace.
+const RUN_SPEED = 6.5 * 1.5;
 const WALK_SPEED = RUN_SPEED * 220 / 360;
 const SHADOW_CHASE_SPEED = 6.8;
-// Country Walk uses a fixed .72 zoom and a Packlord atlas scale of 1.05625.
-const COUNTRY_PLAYER_SIZE = 154 * .72 * 1.05625;
+// Match Country Walk's Blender actor at its fixed .72 zoom.
+const COUNTRY_PLAYER_SIZE = 154 * .72;
 const COUNTRY_SHADOW_SIZE = 144 * .72;
 const COUNTRY_BANDIT_SIZE = 164 * .72;
 const TRAVELER_WALK_FRAMES = [1, 2, 3, 2];
@@ -283,7 +286,7 @@ function makeGround(images, props, paths, openAreas, footprints) {
   return ground;
 }
 
-export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio} = {}) {
+export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest} = {}) {
   const banditCamp = Boolean(onBanditLoot);
   const humanPursuit = banditCamp || Boolean(traveler);
   const village = Boolean(onVisitVillage);
@@ -292,7 +295,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const files = {...filenames};
   if (playerAvatar) for (const pose of ["idle", "walk", "run"]) delete files[pose];
   const feature = LANDMARKS[landmark];
-  if (feature) files.landmark = feature.file;
+  if (feature && !trainingScene) files.landmark = feature.file;
   const showEntranceGate = entrance;
   if (showEntranceGate) files.gate = "gate.webp";
   if (banditCamp) {
@@ -306,6 +309,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   if (onSearch || banditCamp) files["glade-chest"] = "forest-bush-chest.webp";
   if (ruins) files.ruins = "forest-ruins.webp";
   if (onVisitHealer) files.healer = "forest-healer.webp";
+  if (storyActorURL) files["story-actor"] = storyActorURL;
   const total = Object.keys(files).length;
   let loaded = 0;
   const images = Object.fromEntries(await Promise.all(Object.entries(files).map(([id, file]) =>
@@ -313,17 +317,30 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       const image = new Image();
       image.onload = () => { progress(++loaded / total); resolve([id, image]); };
       image.onerror = () => reject(new Error("Asset failed to load: " + file));
-      image.src = forestAssetURL("art/" + file);
+      image.src = id === "story-actor" ? file : forestAssetURL("art/" + file);
     }))));
   const paths = onTownExit ? [...tracks, townTrail] : tracks;
   const openAreas = [...groundClearings];
   let props = makeScenery(showEntranceGate, paths);
+  const scenery = await trainingScenery(trainingScene, trapIndex);
+  canvas.dataset.sceneryRenderer = "png";
+  canvas.dataset.trainingScenery = [...new Set(scenery.props.map(p => p.art.slice("training-png-".length)))].join(",");
+  canvas.dataset.sceneryLayers = String(scenery.props.filter(p => p.layered).length);
+  canvas.dataset.cameraMode = "layered-orthographic";
+  Object.assign(images, scenery.tiles);
+  props.push(...scenery.props);
+  if (trainingScene) openAreas.push([GLADE_CENTER, 16]);
+  if (storyActorURL) props.push({kind: "training-prop", art: "story-actor", x: 0, z: -9.5, width: 7.5});
+  if (onQuest) {
+    props.push({kind: "direction-sign", art: "direction-sign", x: 7, z: -26, width: 5.5, label: "ร่องรอยภารกิจ"});
+    openAreas.push([[7, -26], 6]);
+  }
   const thicket = onSearch && !mist && !ruins ? thicketLayout.map(([x, z, width, variant]) => ({
     kind: "thicket", art: "shrub-" + variant, x: x + GLADE_CENTER[0], z: z + GLADE_CENTER[1],
     width, canopy: thicketCanopies[variant - 1], swayX: 0, swayY: 0, revealX: 0
   })) : [];
   props.push(...thicket);
-  if (feature) {
+  if (feature && !trainingScene) {
     const [x, z] = GLADE_CENTER;
     props.push({kind: "landmark", art: "landmark", x, z, width: feature.width});
   }
@@ -362,7 +379,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     props.push({kind: "direction-sign", art: "direction-sign", x: 8.8, z: -7.3, width: 5.6, radius: .35, label: "กลับเมือง →"});
   }
   if (onVisitHealer) props.push(HEALER);
-  if (well || onPray || visitService || onTownExit || onSearch || banditCamp || feature) {
+  if (well || onPray || visitService || onTownExit || onSearch || banditCamp || feature || scenery.props.length || onQuest) {
     props.sort((a, b) => b.z - a.z);
   }
   const obstacles = props.filter(p => p.radius);
@@ -398,6 +415,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   let battle = false, wellUsed = Boolean(resume.completed), paused = false;
   let searchOutcome = resume.chest ? "chest" : resume.completed ? "clear" : "";
   let landmarkReached = Boolean(resume.completed);
+  let trapReached = Boolean(resume.completed);
+  let questReached = false;
   let banditOutcome = resume.banditOutcome || "";
   let travelerOutcome = travelerActor && !onContact ? (resume.completed ? "met" : "waiting") : resume.travelerOutcome || "";
   let atServiceEntrance = false;
@@ -407,7 +426,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const keys = new Set();
   const input = new AbortController();
   const listenerOptions = {signal: input.signal};
-  let axes = [0, 0], visited = 0, width, height, zoom, dpr, prior = 0, nextUI = 0;
+  let axes = [0, 0], visited = 0, width, height, zoom, baseZoom, dpr, prior = 0, nextUI = 0;
   let animation;
 
   function resize() {
@@ -417,7 +436,9 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     dpr = Math.min(devicePixelRatio || 1, 1.5);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
-    zoom = clamp(width / 29, 10.8, 15.5);
+    baseZoom = zoom = clamp(width / 29, 10.8, 15.5);
+    // Resizing a canvas clears it, even while a native conversation pauses walking.
+    if (paused) { paint(); paintMap(); }
   }
 
   function walkable(x, z) {
@@ -477,7 +498,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     player.running = strength > .12 && (keys.has("shift") ||
       (!keyboard && strength > (player.running ? KEEP_RUNNING_TILT : RUN_TILT)));
     if (strength > .12) {
-      player.direction = (Math.round(-Math.atan2(vx, -vz) / (Math.PI / 4)) + 8) % 8;
+      player.direction = (-Math.atan2(vx, -vz) / (Math.PI / 4) + 8) % 8;
       const length = Math.hypot(vx, vz);
       const landSpeed = keyboard ? (player.running ? RUN_SPEED : WALK_SPEED)
         : WALK_SPEED * Math.min(1, strength / RUN_TILT)
@@ -495,8 +516,12 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     }
     if (thicket.length) bendThicket(dt, player.x - previousX, (previousZ - player.z) * FLATTEN);
     const follow = 1 - Math.exp(-9 * dt);
+    // Open the framing gently near a layered place so its raised roof fits above
+    // the player. This affects projection only; movement and event ranges stay put.
+    const placeFocus = trainingScene ? 1-smoothstep(clamp((distance(player.x,player.z,GLADE_CENTER)-7)/12,0,1)) : 0;
+    zoom += (baseZoom*(1-.06*placeFocus)-zoom)*follow;
     camera.x += (player.x - camera.x) * follow;
-    camera.z += (player.z - camera.z) * follow;
+    camera.z += (player.z + 3*placeFocus - camera.z) * follow;
   }
 
   function bendThicket(dt, dx, dy) {
@@ -553,14 +578,27 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   let centerX, centerZ;
   const screenX = x => width * .5 + (x - centerX) * zoom;
   const screenY = z => height * .56 - (z - centerZ) * zoom * FLATTEN;
+  const sceneryMotion = reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function paintProp(prop) {
-    const x = screenX(prop.x), y = screenY(prop.z), art = images[prop.art], w = prop.width * zoom;
+    const x = screenX(prop.x), y = screenY(prop.z) - (prop.elevation || 0) * zoom;
+    const art = images[prop.art], w = prop.width * zoom;
     const {canopy} = prop;
-    const h = canopy ? COUNTRY_PLAYER_SIZE * canopy.scale : w * art.height / art.width;
-    const pivot = {tree: .89, gate: .93, grass: .79, rock: .79, wildflower: .78, shrub: .84, thicket: .96, "glade-chest": .94, well: WELL_PIVOT, shrine: .96, ruins: .91, village: .77, healer: .98, "bandit-camp": .94, "direction-sign": .91, landmark: .94};
-    const left = x - w / 2, top = y - h * pivot[prop.kind];
+    const source = prop.source || [0, 0, art.width, art.height];
+    const h = canopy ? COUNTRY_PLAYER_SIZE * canopy.scale : w * source[3] / source[2];
+    const pivot = {tree: .89, gate: .93, grass: .79, rock: .79, wildflower: .78, shrub: .84, thicket: .96, "glade-chest": .94, well: WELL_PIVOT, shrine: .96, ruins: .91, village: .77, healer: .98, "bandit-camp": .94, "direction-sign": .91, landmark: .94, "training-prop": .94};
+    const left = x - w / 2, top = y - h * (prop.pivot ?? pivot[prop.kind]);
     if (left + w < 0 || left > width || top + h < 0 || top > height) return;
+    const targetAlpha = layerOpacity(prop, player, {left,top,right:left+w,bottom:top+h}, {
+      left:screenX(player.x)-COUNTRY_PLAYER_SIZE*.23, right:screenX(player.x)+COUNTRY_PLAYER_SIZE*.23,
+      top:screenY(player.z)-COUNTRY_PLAYER_SIZE*.92, bottom:screenY(player.z)-8
+    });
+    const now = performance.now(), elapsed = Math.min(.1,(now-(prop.paintedAt ?? now))/1000);
+    prop.paintedAt = now;
+    prop.opacity = sceneryMotion.matches ? targetAlpha
+      : (prop.opacity ?? targetAlpha) + (targetAlpha-(prop.opacity ?? targetAlpha))*(1-Math.exp(-elapsed*12));
+    ctx.save();
+    ctx.globalAlpha *= prop.opacity;
     if (canopy) {
       ctx.save();
       ctx.translate(x + (prop.swayX * .12 + prop.revealX * .5) * w, y + prop.swayY * w * .16);
@@ -568,8 +606,9 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       ctx.drawImage(art, 0, canopy.top, art.width, canopy.bottom - canopy.top, -w / 2, top - y, w, h);
       ctx.restore();
     } else {
-      ctx.drawImage(art, left, top, w, h);
+      ctx.drawImage(art, ...source, left, top, w, h);
     }
+    ctx.restore();
     if (prop.label) {
       ctx.save();
       ctx.font = "700 13px system-ui";
@@ -614,7 +653,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   function paintPlayer() {
     const lift = rim ? player.rim * rim.height * zoom : 0;
     const x = screenX(player.x), y = screenY(player.z) - lift, cell = 160;
-    const size = onContact || traveler || well || onPray || visitService || onTownExit || onSearch || feature ? COUNTRY_PLAYER_SIZE : zoom * 7.35;
+    const size = COUNTRY_PLAYER_SIZE;
     const {depth} = player;
     if (depth < .14) {
       ctx.fillStyle = `rgba(21,42,28,${.4 * (1 - depth / .14)})`;
@@ -623,6 +662,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       ctx.fill();
     }
     if (playerAvatar) {
+      canvas.dataset.avatarRenderer = playerAvatar.renderer;
+      canvas.dataset.avatarIdentity = playerAvatar.current?.key || "";
       const submerged = depth * size * .36;
       ctx.save();
       if (submerged > 0) {
@@ -636,8 +677,9 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       return;
     }
     const art = images[player.moving ? (player.running && !depth && player.rim < .2 ? "run" : "walk") : "idle"];
-    const column = player.moving ? Math.floor(player.phase) % 12 : player.direction % 4;
-    const row = player.moving ? player.direction : Math.floor(player.direction / 4);
+    const direction = Math.round(player.direction) % 8;
+    const column = player.moving ? Math.floor(player.phase) % 12 : direction % 4;
+    const row = player.moving ? direction : Math.floor(direction / 4);
     const fraction = 1 - .67 * depth;
     const top = y - size * .9083 + size * .5783 * depth;
     ctx.drawImage(art, column * cell, row * cell, cell, cell * fraction, x - size * .5, top, size, size * fraction);
@@ -711,6 +753,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const south = centerZ - (height * .44 + 245) / (zoom * FLATTEN);
     // Draw the player above the well artwork while on the rim or in the water.
     const wellSupportsPlayer = player.depth > 0 || player.rim > 0;
+    // Mud, puddles and pit openings are ground art beneath standing actors.
+    for (const prop of props) if (prop.ground) paintProp(prop);
     const actors = [{z: wellSupportsPlayer ? GLADE_CENTER[1] : player.z, paint: paintPlayer}];
     if (lotus) {
       // Both sprites sit above the basin. Their true ground positions decide who is in front.
@@ -723,11 +767,13 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     actors.sort((a, b) => b.z - a.z);
     let actor = 0;
     for (const prop of props) {
-      if (prop.kind !== "well" && (prop.z > north || prop.z < south)) continue;
+      if (prop.ground) continue;
+      if (!prop.layered && prop.kind !== "well" && (prop.z > north || prop.z < south)) continue;
       while (actor < actors.length && prop.z < actors[actor].z) actors[actor++].paint();
       paintProp(prop);
     }
     while (actor < actors.length) actors[actor++].paint();
+    canvas.dataset.fadedLayers = String(props.filter(p => p.layered && p.opacity < .9).length);
     if (mist) paintMist();
   }
 
@@ -763,6 +809,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     if (onTownExit) markers.push([TOWN_EXIT, 5, "#ffc773"]);
     if (onSearch) markers.push([searchPoint, 5, mist ? "#b7e2de" : ruins ? "#ead3a4" : "#a6d686"]);
     if (feature) markers.push([GLADE_CENTER, 5, "#f2cd85"]);
+    if (trapIndex >= 0) markers.push([[0, -29], 5, "#efaa86"]);
+    if (onQuest) markers.push([[7, -26], 5, "#9fdce2"]);
     markers.push([[player.x, player.z], 5, "#faffd1"]);
     for (const [point, radius, color] of markers) {
       map.beginPath();
@@ -826,6 +874,19 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
         }
       }
     }
+    if (onQuest) {
+      const near = distance(player.x, player.z, [7, -26]) <= 3.5;
+      if (!near) questReached = false;
+      else if (!questReached && player.moving) { questReached = true; onQuest(); return; }
+    }
+    if (onTrap && !trapReached && player.moving && distance(player.x, player.z, [0, -29]) <= 3.2) {
+      trapReached = true;
+      const outcome = onTrap();
+      battle = outcome === "battle";
+      if (onSearch && !battle) searchOutcome = outcome || "clear";
+      // The native trap dialog may open combat. Stop this frame before another contact.
+      return;
+    }
     const wellDistance = well ? distance(player.x, player.z, GLADE_CENTER) : Infinity;
     if (!wellUsed && player.depth >= .08) {
       wellUsed = true;
@@ -864,6 +925,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const label = area();
     if (now >= nextUI) {
       nextUI = now + 100;
+      canvas.dataset.moving = String(player.moving);
+      canvas.dataset.running = String(player.running && player.moving);
       wellAudio?.updateDistance(wellDistance);
       paintMap();
       const searchStatus = searchOutcome === "chest" && distance(player.x, player.z, [gladeChest.x, gladeChest.z]) <= 4.2
@@ -883,6 +946,14 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   animation = requestAnimationFrame(loop);
   return {
     position: () => [player.x, player.z],
+    restorePosition(position) {
+      if (!Array.isArray(position) || position.length !== 2 || !position.every(Number.isFinite)) return;
+      [player.x, player.z] = position;
+      Object.assign(camera, {x: player.x, z: player.z});
+      player.moving = player.running = false;
+      axes = [0, 0];
+      keys.clear();
+    },
     setStick: (x, z) => { if (!battle) axes = [x, z]; },
     setPaused(value) {
       if (paused === value) return;
