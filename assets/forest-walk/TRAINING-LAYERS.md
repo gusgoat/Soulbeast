@@ -4,7 +4,7 @@ Generated with the built-in imagegen tool using original place illustrations as 
 
 training-layer-frames.js selects tight source rectangles without modifying the PNGs. training-layers.js places each part at a world position and elevation. Floors draw before actors; upright cutouts sort by ground depth; obstructing parts fade smoothly. The bell pavilion reuses its post at four support positions. The orthographic camera gently widens and raises its focus near places. No event RNG, rules or rewards change.
 
-Local preview loads these files directly. Remote names: forest-training-layers-v1--<id>.png. Upload is required before publishing; these new atlases have not been uploaded.
+Local preview loads these files directly. Remote names: forest-training-layers-v1--<id>.png. All 14 atlases and six trap PNGs were uploaded to Supabase Storage and their public SHA-256 hashes verified on 2026-11-18. PNG files remain outside Git.
 
 ## Generation prompts
 
