@@ -10,5 +10,5 @@ if(screen==='wild'&&ZN.some(z=>z.id===previewZone)){
  surrenderForest=function(...args){if(!S.zone)return forestSurrender.apply(this,args);const originalRender=render;render=()=>{};try{forestSurrender.apply(this,args)}finally{render=originalRender}save();parent.postMessage({type:'walk-forest-exit',result:'surrender',hospital:true,zone:previewZone},location.origin)};
  const forestDone=handlers.bt;handlers.bt=function(v){const terminal=v==='done'&&walkForestOutcome();const r=forestDone(v);if(terminal)walkLeaveForest(terminal);return r};
  const forestNav=handlers.go;handlers.go=function(v){if(v==='town')return walkLeaveForest();return forestNav(v)};
- handlers.dozone(previewZone);render();
+ handlers.dozone(previewZone);ForestWalk.mount(S.zone);render();
 }

@@ -12,7 +12,7 @@
 <!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
 <script>if(location.hostname==='gusgoat.github.io'&&/^\/Soulbeast\/(?:index\.html)?$/.test(location.pathname))location.replace('./accounts.html'+location.search+location.hash);window.WALK_LEADER_URL="https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api";window.SHEET_URL="";</script>
 <link rel="preload" as="image" href="assets/ui/soulseal-summoning.webp">
-<link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/quest-events.css?v=quest-touch-1"><script src="/Soulbeast/tools/town-walk-demo/walk-tutorial.js?v=30"></script><link rel="stylesheet" href="client/game-menu-art.css?v=5"></head>
+<link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/quest-events.css?v=quest-touch-1"><script src="/Soulbeast/tools/town-walk-demo/walk-tutorial.js?v=30"></script><link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/forest-walk.css?v=1"><script src="/Soulbeast/tools/town-walk-demo/sealer-sprite-catalog.js"></script><script src="/Soulbeast/tools/town-walk-demo/sealer-sprites.js"></script><script src="/Soulbeast/tools/town-walk-demo/forest-walk.js?v=encounter-identity-1"></script><link rel="stylesheet" href="client/game-menu-art.css?v=5"></head>
 <body style="margin:0;height:100%">
 <title>ตำนานผนึกอสูร</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3541,6 +3541,7 @@ function startBattle(enemies,kind,meta,pre){VQ.length=0;enemies=enemies.slice(0,
  enemies.forEach(e=>{if(e.sp)markFormSeen(e.sp,e.evo||0)});
  if(kind!=='npc')enemies.filter(e=>e.sp).slice(0,3).forEach((e,i)=>Sound.cry(e.sp,false,i*.18));
  S.battle={v:4,kind,meta,enemies,allies,round:0,queue:[],cur:null,log:[],target:0,atarget:allies.length>1&&baseOf(P.cls)==='summoner'?1:0,menu:'wait',over:null,used,fx:[]};
+ if(S.zone?.walk?.phase==='resolving'&&S.zone.walk.map!=='landmark')S.battle.forestWalk=true;
  S.screen='battle';if(pre)blog(pre);
  blog(kind==='npc'?`${enemies[0].name} ท้าประลองกับคุณ!`:kind==='traveler'?`นักเดินทางถอดผ้าคลุมออก... ${enemies[0].name} Lv ${enemies[0].lv} พุ่งเข้าโจมตี!`:kind==='bandit'?`${enemies[0].name} ตะโกนว่า "ทิ้งเงินไว้แล้วไปซะ!"`:kind==='boss'?`${enemies[0].name} ปรากฏตัว! บรรยากาศหนักอึ้ง`:enemies[0].rare?`★ ${enemies[0].name} ปรากฏตัวจากหมอก! อสูรหายาก`:enemies.length>1?`ฝูงอสูร ${enemies.length} ตัวพุ่งเข้าใส่!`:`${enemies[0].name} Lv ${enemies[0].lv} โผล่ออกมา!`);
  allU().forEach(u=>{if(hasPas(u,'intimidate')&&u.hp>0){foesOf(u).forEach(f=>f.buffs.push({st:'patk',amt:-.2,tn:4}));blog(`${u.name} ข่มขวัญ! ฝ่ายตรงข้ามโจมตีกายภาพลดลง`)}});
@@ -3810,9 +3811,10 @@ function banditStealablePets(P=S.P,b=B()){
  const carried=new Set(P.carried);
  return P.pets.filter(p=>carried.has(p.uid)&&!protectedIds.has(p.uid));
 }
-function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,lines=[];const earned=[...b.enemies,...(b.retiredUnits||[]).filter(x=>x.side==='enemy')].filter(e=>e.hp<=0&&!e.temporary).reduce((n,e)=>n+scoreValue(e),0);if(earned){P.score=(P.score||0)+earned;lines.push('คะแนนสะสม +'+earned)}
- if(res==='win'){let exp=0,gold=0;
-  [...b.enemies,...(b.retiredUnits||[]).filter(x=>x.side==='enemy')].filter(e=>!e.temporary).forEach(e=>{let x=expFor(e.lv)*(e.boss?3:e.rare?2:1)*(e.kind==='human'?1.5:1);if(e.captured)x*=.5;exp+=x;
+function battleRewardEnemies(b){return [...b.enemies,...(b.retiredUnits||[]).filter(x=>x.side==='enemy')].filter(e=>!e.temporary)}
+function awardBattleScore(enemies,lines){const P=S.P;const earned=enemies.filter(e=>e.hp<=0).reduce((n,e)=>n+scoreValue(e),0);if(earned){P.score=(P.score||0)+earned;lines.push('คะแนนสะสม +'+earned)}}
+function awardVictoryRewards(b,enemies,lines){const P=S.P;let exp=0,gold=0;
+  enemies.forEach(e=>{let x=expFor(e.lv)*(e.boss?3:e.rare?2:1)*(e.kind==='human'?1.5:1);if(e.captured)x*=.5;exp+=x;
    if(e.kind==='human'&&b.kind==='traveler')x*=2;
    if(e.kind==='human'&&b.kind==='bandit'){const g=e.lv*20+R(0,e.lv*10);gold+=g;lines.push(`ยึดถุงเงินโจรได้ ${fmt(g)} เหรียญ`)}
    if(e.kind!=='human'&&!e.captured&&e.sp){gold+=e.lv*4+R(0,e.lv*3);const n=e.boss||e.rare?2:Math.random()<.6?1:0;
@@ -3826,6 +3828,13 @@ function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,line
   const lucky=b.allies[0].pas.filter(k=>k==='lucky').length;if(lucky)gold=Math.round(gold*(1+.25*lucky));
   P.gold+=gold;lines.unshift(`ได้ EXP ${fmt(progressionRewardExp(P,exp))} · ${fmt(gold)} เหรียญ`);
   lines.push(...gainExp(P,progressionRewardExp(P,exp),true));b.used.forEach(uid=>{const p=petBy(uid);if(p)lines.push(...gainExp(p,progressionRewardExp(p,exp),false))});
+}
+function endBattle(res){const b=B();if(b.over)return;syncBack();const P=S.P,lines=[];
+ const enemies=battleRewardEnemies(b),defer=res==='win'&&b.forestWalk&&b.kind==='bandit';
+ if(!defer)awardBattleScore(enemies,lines);
+ if(res==='win'){
+  if(defer)lines.push('เดินไปรับรางวัลที่หีบหน้าค่ายโจรป่า');
+  else awardVictoryRewards(b,enemies,lines);
   Sound.fx('win');b.over={res,title:'ชัยชนะ',lines}}
  else if(res==='lose'){const band=b.kind==='bandit'||b.kind==='traveler';
   const lost=Math.max(0,Math.floor(P.gold*(band?.25:.1)));P.gold-=lost;const xl=loseExp(P,band?.15:.08);
@@ -3846,7 +3855,7 @@ function battleAction(v){const b=B();if(!b)return;const [k,a,c]=v.split(':');
   if(res==='lose'){S.zone=null;S.screen='hospital'}
   else if(kind==='npc')S.screen='arena';
   else if(kind==='boss'&&res==='win'){S.zone=null;S.screen=forestReturnScreen();toast(S.screen==='hospital'?'ชนะบอสแล้ว! HP ต่ำกว่า 80% พามาที่โรงพยาบาลในเมือง':'ชนะบอสแล้ว! กลับสู่นครพันผนึกอย่างผู้ชนะ')}
-  else{S.screen='zone';if(S.zone){if(S.zone.after){S.zone.ev=S.zone.after;S.zone.after=null;S.zone.fork=null}else newFork()}}
+  else{S.screen='zone';if(S.zone){if(S.zone.after){S.zone.ev=S.zone.after;S.zone.after=null;S.zone.fork=null}else if(!b.forestWalk)newFork();if(b.forestWalk)ForestWalk.finishBattle(b,S.zone)}}
   save();render();return}
  if(b.menu==='wait'||b.menu==='end')return;const u=uById(b.cur);if(!u)return;
  if(k==='menu'){BattleSkillTarget.pending=null;b.menu=a;render();return}
@@ -3936,12 +3945,12 @@ function wildGroup(zd,ns){const n=+wsel(ns||{1:45,2:33,3:14,4:8}),hi=zd.lv[1]-(n
 function banditGroup(zd){const lv=R(zd.lv[0]+1,zd.lv[1]),tier=lv>=40?2:lv>=25?1:0,cls=pick(BANDCLS[tier]);
  const es=[humanUnit(pick(BANDITS),cls,lv,0)],np=+wsel(zd.id>=3?{1:40,2:40,3:20}:{1:70,2:30});
  for(let i=0;i<np;i++){const sp=pick(zd.sp),u=wildUnit(sp,Math.max(1,lv-R(0,2)),i+1);u.name=`${u.name}ของโจร`;u.kind='npcpet';es.push(u)}return es}
-function chooseFork(i){const z=S.zone,zd=ZN[z.id-1],P=S.P,door=z.fork[i],type=door.k;z.fork=null;z.depth++;
+function chooseFork(i){const z=S.zone,zd=ZN[z.id-1],P=S.P,door=z.fork[i],type=door.k,walk=z.walk?.phase==='resolving'?z.walk:null;z.fork=null;z.depth++;
  zlog(`ก้าวที่ ${z.depth}: เลือกทาง${i?'ขวา':'ซ้าย'}${door.h?'ซึ่งมืดมิด':''} — ${EV[type].n}`);
  let pre='';if(!SAFE.includes(type)&&Math.random()<.14){pre=trap();zlog(pre)}
  const fight=(es,kind='wild',aft=null)=>{z.ev=null;z.after=aft;startBattle(es,kind,z.id,pre||null);save();render()};
  const show=ev=>{if(pre)ev.msg=`<span style="color:var(--bad)">${pre}</span><br>${ev.msg}`;z.ev=ev};
- if(type==='beast')return fight(wildGroup(zd,zd.train?{1:65,2:30,3:5}:undefined));
+ if(type==='beast')return fight(wildGroup(zd,walk?.groupSize?{[walk.groupSize]:1}:zd.train?{1:65,2:30,3:5}:undefined));
  if(type==='bush'){const r=Math.random();if(r<.5)return fight(wildGroup(zd,{1:60,2:30,3:10}));
   if(r<.88)show(chestEv('bush','ในพุ่มไม้มีหีบซ่อนอยู่'));else{P.items.pot=(P.items.pot||0)+1;show({type,msg:'เจอสมุนไพรป่า ทำเป็นยาฟื้นพลังได้ 1 ขวด'})}}
  if(type==='mist'){const r=Math.random();
@@ -3951,7 +3960,7 @@ function chooseFork(i){const z=S.zone,zd=ZN[z.id-1],P=S.P,door=z.fork[i],type=do
   else show({type,msg:'หลงวนอยู่ในหมอกจนเหนื่อย ไม่เจออะไรเลย'})}
  if(type==='ruins'){if(Math.random()<.35){const e=wildUnit(pick(zd.sp),zd.lv[1]+1,0);e.name='ผู้เฝ้า'+e.name;return fight([e],'wild',chestEv('ruins','ผู้เฝ้าล้มลง เผยให้เห็นหีบที่มันปกป้องไว้'))}
   show(chestEv('ruins','ในห้องลับของวิหารมีหีบสมบัติวางอยู่'))}
- if(type==='bandit')return fight(banditGroup(zd),'bandit');
+ if(type==='bandit')return fight(walk?.enemies?structuredClone(walk.enemies):banditGroup(zd),'bandit');
  if(type==='revival'){const down=carriedPets().filter(p=>p.hp<=0);let healed='';if(!down.length){const candidates=[{o:P,s:pStats(),name:P.name},...carriedPets().map(p=>({o:p,s:calcPet(p),name:petName(p)}))].filter(x=>x.o.hp>0&&x.o.hp<x.s.hp).sort((a,b)=>a.o.hp/a.s.hp-b.o.hp/b.s.hp);const target=candidates[0];if(target){const before=target.o.hp;target.o.hp=Math.min(target.s.hp,target.o.hp+Math.round(target.s.hp*.5));healed=esc(target.name)+' ฟื้น HP '+(target.o.hp-before)+' (สูงสุด 50% ของ HP เต็ม)';}}
   down.forEach(p=>{const s=calcPet(p);p.hp=s.hp;p.mp=Math.round(s.mp*.5)});
   show({type,msg:down.length?`แสงจากบ่อปลุก ${down.map(p=>esc(petName(p))).join(' และ ')} ให้ฟื้นคืนสติ ทุกตัวฟื้น HP เต็มและ MP ครึ่งหนึ่ง`:(healed||'ไม่มีผู้หมดสติ ทุกคน HP เต็มแล้ว')})}
@@ -3963,8 +3972,8 @@ function chooseFork(i){const z=S.zone,zd=ZN[z.id-1],P=S.P,door=z.fork[i],type=do
   else{const s=pStats();P.mp=s.mp;carriedPets().forEach(p=>{if(p.hp>0)p.mp=calcPet(p).mp});show({type,msg:'แสงศักดิ์สิทธิ์โอบล้อม MP ของทุกคนเต็ม'})}}
  if(type==='village')show({type,msg:'ชาวบ้านต้อนรับนักเดินทาง ร้านค้าเปิดให้ซื้อสินค้า ราคาแพงกว่าในเมืองนิดหน่อย'});
  if(type==='hospital')show({type,msg:'หมอยาประจำป่ายินดีรักษาให้ ถ้ามีค่าตอบแทน',healed:false});
- if(type==='stranger'){const r=Math.random();
-  if(r<.6)return fight(travelerUnits(zd),'traveler');
+ if(type==='stranger'){const r=walk?.disposition??Math.random();
+  if(r<.6)return fight(walk?.enemies?structuredClone(walk.enemies):travelerUnits(zd),'traveler');
   if(r<.8)show({type,msg:pick(['ชาวบ้านเก็บสมุนไพรเปิดผ้าคลุมทักทาย แล้วเดินจากไป','นักแสวงบุญขอทางผ่าน แล้วหายไปในหมอก','พ่อค้าเร่ที่หลงทางถามทางไปเมือง คุณชี้ทางให้','นักบวชชราพยักหน้าให้เงียบ ๆ แล้วเดินสวนไป'])});
   else{const out=[];if(Math.random()<.15){const id=legendDrop(zd.id);if(id){P.owned.push(id);out.push('✦ '+EQ[id].n)}}
    if(!out.length){const ks=[SEALS[Math.min(4,ZT(z.id))],['pot','pot2','pot2','pot3','pot3','pot3'][ZT(z.id)],pick(CURES),'eth'];ks.slice(0,R(2,4)).forEach(k=>{P.items[k]=(P.items[k]||0)+1;out.push(CON[k].n)})}
@@ -6730,7 +6739,9 @@ const Tutorial={
    case 'stats':return {selector:S.screen==='town'?'[data-a="autoStatsAll"]':town,title:'เริ่มที่แต้มพลังของทีม',text:'แตะจัดสรรอัตโนมัติได้เลย',note:'ปรับเองได้ที่ ตัวละคร → สถานะ และ อสูร → เลือกตัว',art:'stats'};
    case 'forest':return {selector:'nav [data-a="go"][data-v="wild"]',title:'ออกผจญภัยกัน',text:'แตะเมนูป่าด้านล่าง',art:'forest'};
    case 'training':return {selector:S.ui.confirm?'[data-a="dozone"][data-v="7"]':S.ui.forestChoice===7?'[data-a="zone"][data-v="7"]':'[data-a="forestPick"][data-v="7"]',title:'ป่าฝึกหัด',text:S.ui.forestChoice===7?'แตะเข้าสู่ป่าฝึกหัด':'แตะภาพป่าฝึกหัดเป็นด่านแรก',art:'forest'};
-   case 'fork':return S.screen==='zone'&&S.zone?.fork?{selector:'[data-a="fork"]',title:'คุณเลือกเส้นทางเอง',text:'ซ้ายหรือขวาก็ได้ ลองแตะทางที่อยากไป',art:'fork'}:null;
+   case 'fork':
+    if(S.screen==='zone'&&S.zone?.walk?.map==='entrance')return {selector:'#forest-walk-mount',title:'คุณเลือกเส้นทางเอง',text:'ลากจอยแล้วเดินจนสุดทางแยกซ้ายหรือขวาเพื่อไปต่อ',art:'fork'};
+    return S.screen==='zone'&&S.zone?.fork?{selector:'[data-a="fork"]',title:'คุณเลือกเส้นทางเอง',text:'ซ้ายหรือขวาก็ได้ ลองแตะทางที่อยากไป',art:'fork'}:null;
    case 'battleIntro':return {title:'แตะศัตรู → เลือกท่า',text:'ท่าต่าง ๆ อยู่ในเมนูสกิล ดู MP ก่อนใช้',art:'battle',next:true,modal:true};
    case 'elements':return {title:'ธาตุช่วยพลิกการต่อสู้',text:'ดูธาตุขอบรูปอสูร แล้วเลือกธาตุของท่าให้เหมาะ',art:'elements',next:true,modal:true};
    case 'skills':return this.forestBattle()&&u?.side==='ally'&&b.menu!=='wait'?{selector:u.kind==='player'&&b.menu==='main'?'[data-v="menu:skill"]':'[data-a="bt"][data-v^="sk:"]:not(:disabled)',title:'ลองใช้สกิลหนึ่งท่า',text:u.kind==='player'&&b.menu==='main'?'แตะสกิลเพื่อดูท่าที่ใช้ได้':'แตะท่าที่อยากใช้กับเป้าหมาย',art:'battle'}:null;
@@ -8516,7 +8527,7 @@ if(screen==='wild'&&ZN.some(z=>z.id===previewZone)){
  surrenderForest=function(...args){if(!S.zone)return forestSurrender.apply(this,args);const originalRender=render;render=()=>{};try{forestSurrender.apply(this,args)}finally{render=originalRender}save();parent.postMessage({type:'walk-forest-exit',result:'surrender',hospital:true,zone:previewZone},location.origin)};
  const forestDone=handlers.bt;handlers.bt=function(v){const terminal=v==='done'&&walkForestOutcome();const r=forestDone(v);if(terminal)walkLeaveForest(terminal);return r};
  const forestNav=handlers.go;handlers.go=function(v){if(v==='town')return walkLeaveForest();return forestNav(v)};
- handlers.dozone(previewZone);render();
+ handlers.dozone(previewZone);ForestWalk.mount(S.zone);render();
  if(S.zone?.id===previewZone&&S.screen==='zone'&&!S.battle)window.WalkTutorial.onTrainingForestEnter(S.P,S.zone.id);
 }
 
