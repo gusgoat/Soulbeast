@@ -1,6 +1,6 @@
 import {BOSS_ROOM_FRAMES} from './boss-room-frames.js?v=all-boss-rooms-2';
 import {BOSS_STATUE_FRAMES} from './boss-statue-frames.js?v=boss-statues-1';
-import {forestSceneAssetURL} from './storage-assets.js?v=moonlight-release-1';
+import {forestSceneAssetURL} from './storage-assets.js?v=desert-release-1';
 export const BOSS_ROOM_THEMES=Object.freeze([
   {theme:'training',zone:7,name:'ป่าฝึกหัด',boss:'หัวหน้าฝูงแจ็กคาโลป',level:5,walking:true,color:'#283c27',motif:'ไม้เก่า หิน และตราเขากวาง'},
   {theme:'moonlight',zone:1,name:'ป่าแสงจันทร์',boss:'ราชาทานุกิ',level:9,walking:true,color:'#182d40',motif:'รากไม้ หินเก่า และตราจันทร์'},

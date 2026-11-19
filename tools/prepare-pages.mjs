@@ -117,6 +117,7 @@ for(const file of files){
  count++;
 }
 if(bytes>=1_000_000_000)throw new Error(`Pages would publish ${bytes} bytes. The site must be smaller than 1 GB.`);
+if(process.argv.includes('--measure-only')){console.log(`PASS Pages size: ${bytes} bytes in ${count} files, below 1 GB; no output copy requested.`);process.exit(0);}
 
 mkdirSync(output);
 for(const {file,source,rewritten} of staged){

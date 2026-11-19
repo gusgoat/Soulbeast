@@ -1,4 +1,4 @@
-import {PUBLISHED_FOREST_MEDIA} from './published-scene-assets.js?v=moonlight-release-1';
+import {PUBLISHED_FOREST_MEDIA} from './published-scene-assets.js?v=desert-release-1';
 const root = "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/";
 
 export function forestAssetURL(path) {

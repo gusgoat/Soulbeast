@@ -1,5 +1,5 @@
 import {MOON_FRAMES,MOON_DETAILS} from './moonlight-frames.js';
-import {forestSceneAssetURL} from './storage-assets.js?v=moonlight-release-1';
+import {forestSceneAssetURL} from './storage-assets.js?v=desert-release-1';
 
 const cache=new Map();
 async function image(id){

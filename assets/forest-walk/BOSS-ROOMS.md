@@ -1,6 +1,6 @@
 # Closed boss chambers
 
-2026-11-19 status: training and moonlight are published. Desert now also has a local walking preview (see DESERT-DESIGN.md); its scene is not yet published. The other five door themes remain prepared designs.
+2026-11-19 status: training and moonlight are published; desert publication has also been approved (see DESERT-RELEASE.md). The other five door themes remain prepared designs.
 
 Eight themed door kits are prepared for every native area. Training (zone 7) and moonlight (zone 1) currently use them in walking scenes. Mist (zone 2), desert (zone 3), dragon (zone 4), fallen heaven (zone 5), demon castle (zone 6) and binding forest (zone 8) are design assets for future walking scenes; this does not enable those scenes. Original boss species, levels, menu tokens, combat and rewards remain owned by the native game.
 

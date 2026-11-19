@@ -1,4 +1,4 @@
-import {BOSS_ROOM_THEMES,bossRoomScenery} from '../../assets/forest-walk/boss-rooms.js?v=moonlight-release-1';
+import {BOSS_ROOM_THEMES,bossRoomScenery} from '../../assets/forest-walk/boss-rooms.js?v=desert-release-1';
 const $=id=>document.getElementById(id),stage=$('stage'),pieces=$('pieces');
 const labels=['พื้นและบันได','ผนังหลัง','ผนังซ้าย','ผนังขวา','ซุ้มเหนือประตู','บานประตูปิด','รูปปั้นบอสด้านซ้าย','รูปปั้นบอสด้านขวา'];
 let current,room,request=0,separate=false;
@@ -31,7 +31,7 @@ async function choose(theme){
   const ticket=++request;current=theme;room=null;stage.removeAttribute('data-theme');pieces.replaceChildren();
   $('title').textContent=theme.name;$('boss').textContent=theme.boss+' · Lv. '+theme.level;$('motif').textContent=theme.motif;
   $('availability').textContent=theme.walking?'มีฉากเดินให้ลองแล้ว':'แบบเตรียมไว้สำหรับฉากเดินของพื้นที่นี้';
-  $('play').hidden=!theme.walking;$('play').href=theme.walking?'http://127.0.0.1:'+({training:8832,moonlight:8833,desert:8834}[theme.theme])+'/?v=desert-preview-1&scene=boss':'';
+  $('play').hidden=!theme.walking;$('play').href=theme.walking?'http://127.0.0.1:'+({training:8832,moonlight:8833,desert:8834}[theme.theme])+'/?v=desert-release-1&scene=boss':'';
   for(const b of $('themes').children)b.setAttribute('aria-pressed',String(b.dataset.theme===theme.theme));
   const url=new URL(location.href);url.searchParams.set('theme',theme.theme);history.replaceState(null,'',url);
   $('status').textContent='กำลังโหลดชิ้นส่วนประตู…';

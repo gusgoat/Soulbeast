@@ -1,5 +1,5 @@
-import {DESERT_FRAMES} from './desert-frames.js?v=desert-preview-1';
-import {forestSceneAssetURL} from './storage-assets.js?v=moonlight-release-1';
+import {DESERT_FRAMES} from './desert-frames.js?v=desert-release-1';
+import {forestSceneAssetURL} from './storage-assets.js?v=desert-release-1';
 const cache=new Map();
 async function image(id){
   if(cache.has(id)){const ready=cache.get(id);cache.delete(id);cache.set(id,ready);return ready;}

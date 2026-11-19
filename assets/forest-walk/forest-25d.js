@@ -1,16 +1,16 @@
 import {forestAssetURL} from "./storage-assets.js";
-import {trainingScenery} from "./training-scenery.js?v=fire-water-1";
+import {trainingScenery} from "./training-scenery.js?v=desert-release-1";
 import {layerOpacity} from "./training-layers.js?v=layers-v1";
 import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-room-1';
-import {createPropEffects,propEffectSpec} from './prop-effects.js?v=fire-water-1';
-import {bossRoomScenery} from './boss-rooms.js?v=moonlight-release-1';
-import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-preview-1';
+import {createPropEffects,propEffectSpec} from './prop-effects.js?v=desert-release-1';
+import {bossRoomScenery} from './boss-rooms.js?v=desert-release-1';
+import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
 
 const FLATTEN = .64;
 // Player walking and running are 1.5 times the original forest pace.
 const RUN_SPEED = 6.5 * 1.5;
 const WALK_SPEED = RUN_SPEED * 220 / 360;
-const SHADOW_CHASE_SPEED = 6.8;
+const SHADOW_CHASE_SPEED = 6.8 * 1.7;
 // Match Country Walk's Blender actor at its fixed .72 zoom.
 const COUNTRY_PLAYER_SIZE = 154 * .72;
 const COUNTRY_SHADOW_SIZE = 144 * .72;
@@ -592,7 +592,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       const approachX = dx + pursuer.flank * Math.min(1, gap / 9);
       const length = Math.hypot(approachX, dz);
       if (length === 0) continue;
-      const speed = humanPursuit ? 8.3 : SHADOW_CHASE_SPEED;
+      const speed = humanPursuit ? 8.3 * 1.7 : SHADOW_CHASE_SPEED;
       const stride = speed * dt / length;
       const nextX = pursuer.x + approachX * stride, nextZ = pursuer.z + dz * stride / FLATTEN;
       if (walkable(nextX, pursuer.z)) pursuer.x = nextX;

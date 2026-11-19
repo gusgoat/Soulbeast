@@ -1,6 +1,6 @@
-# Golden Tomb Desert local preview assets
+# Golden Tomb Desert assets
 
-Generated with built-in imagegen. Nineteen PNG files live in ignored generated/desert/: seventeen six-cutout environment/place atlases, one six-hazard atlas and one opaque seamless sand texture. No new images are added to GitHub or uploaded before approval of this desert preview.
+Generated with built-in imagegen. Nineteen PNG files live in ignored generated/desert/: seventeen six-cutout environment/place atlases, one six-hazard atlas and one opaque seamless sand texture. Publication was approved on 2026-11-19. The game streams immutable, SHA-256 verified Supabase objects listed in published-scene-assets.js; the new PNGs stay out of GitHub.
 
 tools/inspect-desert-alpha.py reads source bounds and verifies transparency without changing pixels. Scarab, settlement, spring and waterways received imagegen transparency extraction; settlement's floor and roof were detached. Scales received a divider-removal pass. Original drafts are retained outside the repository in D:/GameDev/soulbeast/tmp/desert-source-drafts/.
 
