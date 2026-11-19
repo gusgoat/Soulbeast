@@ -31,7 +31,7 @@ async function choose(theme){
   const ticket=++request;current=theme;room=null;stage.removeAttribute('data-theme');pieces.replaceChildren();
   $('title').textContent=theme.name;$('boss').textContent=theme.boss+' · Lv. '+theme.level;$('motif').textContent=theme.motif;
   $('availability').textContent=theme.walking?'มีฉากเดินให้ลองแล้ว':'แบบเตรียมไว้สำหรับฉากเดินของพื้นที่นี้';
-  $('play').hidden=!theme.walking;$('play').href=theme.walking?'http://127.0.0.1:'+({training:8832,moonlight:8833,desert:8834,dragon:8835,heaven:8836,demon:8837}[theme.theme])+'/?v=dragon-preview-1&scene=boss':'';
+  $('play').hidden=!theme.walking;$('play').href=theme.walking?'http://127.0.0.1:'+({training:8832,moonlight:8833,desert:8834,dragon:8835,heaven:8836,demon:8837,binding:8838}[theme.theme])+'/?v=dragon-preview-1&scene=boss':'';
   for(const b of $('themes').children)b.setAttribute('aria-pressed',String(b.dataset.theme===theme.theme));
   const url=new URL(location.href);url.searchParams.set('theme',theme.theme);history.replaceState(null,'',url);
   $('status').textContent='กำลังโหลดชิ้นส่วนประตู…';

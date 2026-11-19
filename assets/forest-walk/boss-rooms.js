@@ -9,7 +9,7 @@ export const BOSS_ROOM_THEMES=Object.freeze([
   {theme:'dragon',zone:4,name:'ยอดเขามังกรหลับ',boss:'มังกรเพลิงโบราณ',level:37,walking:true,color:'#302b30',motif:'หินบะซอลต์ โลหะเก่า และเกล็ดมังกร'},
   {theme:'heaven',zone:5,name:'แดนสวรรค์ล่มสลาย',boss:'นีดฮ็อกผู้กัดกินรากโลก',level:50,walking:true,color:'#363243',motif:'หินสีงาช้าง ทองหม่น และรากโลก'},
   {theme:'demon',zone:6,name:'ปราสาทจอมมาร',boss:'จอมมารผู้ครองรัตติกาล',level:60,walking:true,color:'#281f2b',motif:'หินทมิฬ เหล็กแดงดำ และตรามงกุฎปีก'},
-  {theme:'binding',zone:8,name:'ป่าทมิฬพันธนาการ',boss:'เฟอร์รอธ และมอร์ทิวาร์',level:60,walking:false,color:'#24322d',motif:'ป้อมเหล็กดำ รากไม้ตาย โซ่พันธนาการ และตรากุญแจวิญญาณ'}
+  {theme:'binding',zone:8,name:'ป่าทมิฬพันธนาการ',boss:'เฟอร์รอธ และมอร์ทิวาร์',level:60,walking:true,color:'#24322d',motif:'ป้อมเหล็กดำ รากไม้ตาย โซ่พันธนาการ และตรากุญแจวิญญาณ'}
 ]);
 const images=new Map();
 export function bossRoomParts(theme,art){

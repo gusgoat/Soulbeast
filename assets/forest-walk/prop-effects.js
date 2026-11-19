@@ -6,6 +6,12 @@ const water=(polygon,flow=[1,.3])=>({kind:'water',polygon,flow});
 const cascade=(polygon,flow=[-.2,1])=>({...water(polygon,flow),cascade:true});
 export function propEffectSpec(prop){
   const id=prop.effectId||prop.art;
+  if(id==='binding-camp#5')return [fire([.17,0,.84,.58])];
+  if(id==='binding-hounds#2')return [fire([.22,0,.8,.43])];
+  if(id==='binding-forge#1')return [fire([.3,.35,.65,.72])];
+  if(id==='binding-sanctuary#5')return [fire([.2,0,.8,.46])];
+  if(id==='binding-spring#1')return [cascade([[.44,.18],[.6,.18],[.57,.78],[.69,.86],[.65,.97],[.28,.97],[.27,.91],[.44,.8]],[0,1])];
+  if(id==='binding-spring#5')return [water([[.1,.12],[.84,.12],[.9,.27],[.74,.39],[.12,.36]],[.3,.2])];
   if(CASTLE_FIRE_AREAS[id])return CASTLE_FIRE_AREAS[id].map(fire);
   if(id==='castle-laboratory#4')return [water([[0,0],[1,0],[1,1],[0,1]],[.2,.2])];
   if(id==='demon-spring#1')return [cascade([[.55,.41],[.65,.41],[.70,.89],[.82,.97],[.41,.99],[.39,.94],[.57,.87]],[0,1])];

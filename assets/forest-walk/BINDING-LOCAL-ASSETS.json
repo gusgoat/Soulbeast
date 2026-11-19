@@ -1,0 +1,131 @@
+{
+  "status": "local-preview-only",
+  "assets": [
+    {
+      "id": "bells",
+      "file": "assets/forest-walk/generated/binding/bells.png",
+      "bytes": 2084094,
+      "sha256": "6eea0a21253d3af16a4a5be3a84d4a0de5de9d65a249be75d19cf10950438b01",
+      "published": false
+    },
+    {
+      "id": "bridge",
+      "file": "assets/forest-walk/generated/binding/bridge.png",
+      "bytes": 2542789,
+      "sha256": "e6ac8fe2c33944ac05e247615eaf9baaee7b4b9c5a48f791c4abc2f251cac962",
+      "published": false
+    },
+    {
+      "id": "camp",
+      "file": "assets/forest-walk/generated/binding/camp.png",
+      "bytes": 2425219,
+      "sha256": "ac582a6f90b2cecf204d1cc3526ae62d230190054c6d972f680cd4f274752e64",
+      "published": false
+    },
+    {
+      "id": "chains",
+      "file": "assets/forest-walk/generated/binding/chains.png",
+      "bytes": 2375019,
+      "sha256": "10ab58f2b90c433691a6df00798560432c3e784c5cee42620009044d0c7c6c2c",
+      "published": false
+    },
+    {
+      "id": "fog",
+      "file": "assets/forest-walk/generated/binding/fog.png",
+      "bytes": 2774678,
+      "sha256": "66fe0fe1a375c00229a1a3d876daaf5b8170576fa1ce2ddb14a15e65d4d99589",
+      "published": false
+    },
+    {
+      "id": "forge",
+      "file": "assets/forest-walk/generated/binding/forge.png",
+      "bytes": 2554313,
+      "sha256": "cc2a570f0ee8d907756e3ca6f05fd7109207fe1ff4e0ab45bd5c64bd67f7699c",
+      "published": false
+    },
+    {
+      "id": "gate",
+      "file": "assets/forest-walk/generated/binding/gate.png",
+      "bytes": 2137324,
+      "sha256": "1e039b14e3e55e71f600233b592ee66d51d59f16fb522da850840f02bd20b3f7",
+      "published": false
+    },
+    {
+      "id": "ground",
+      "file": "assets/forest-walk/generated/binding/ground.png",
+      "bytes": 3968421,
+      "sha256": "431bb5a4ddabaf6ae9eaa61a0987c1e60488e8301dca785c918e7545f292be91",
+      "published": false
+    },
+    {
+      "id": "hounds",
+      "file": "assets/forest-walk/generated/binding/hounds.png",
+      "bytes": 2490248,
+      "sha256": "a6c05bb38b5063f30da5b92e52e223d14aa9d85405f607d2a251bdfd3579d76d",
+      "published": false
+    },
+    {
+      "id": "medicine",
+      "file": "assets/forest-walk/generated/binding/medicine.png",
+      "bytes": 2416915,
+      "sha256": "f0a82e6ced633492737eaedb252f99487218e6d283f5f770df41dd856b7889ca",
+      "published": false
+    },
+    {
+      "id": "memories",
+      "file": "assets/forest-walk/generated/binding/memories.png",
+      "bytes": 2374711,
+      "sha256": "2ad48a411b91fb67acb21970c1eed8acbe2d61707cf481f9da1bd57c58195c10",
+      "published": false
+    },
+    {
+      "id": "reliquary",
+      "file": "assets/forest-walk/generated/binding/reliquary.png",
+      "bytes": 2438795,
+      "sha256": "b7494e9c3c30714e58d88594fc604627c1b171b7c9c596b9dbc7fc5e6d1dabd6",
+      "published": false
+    },
+    {
+      "id": "roots",
+      "file": "assets/forest-walk/generated/binding/roots.png",
+      "bytes": 2723343,
+      "sha256": "48fb52c89a3493f2dc5ff77ecdef181eb8d6df0e7528b4b0c4a43457a59c243b",
+      "published": false
+    },
+    {
+      "id": "sanctuary",
+      "file": "assets/forest-walk/generated/binding/sanctuary.png",
+      "bytes": 2446842,
+      "sha256": "80e9c779ba14264669320d159a3010adfdbee684c564951bbd94b1c1c4a94d61",
+      "published": false
+    },
+    {
+      "id": "settlement",
+      "file": "assets/forest-walk/generated/binding/settlement.png",
+      "bytes": 2310646,
+      "sha256": "0a39169a87c96f7bf1cf7de92a6d0e6607efec2b7562c0f49f4ce0f985800c27",
+      "published": false
+    },
+    {
+      "id": "spring",
+      "file": "assets/forest-walk/generated/binding/spring.png",
+      "bytes": 2363759,
+      "sha256": "52b6eed50cf5758ab25540b213fdd39110c0b08ee4675e7bba4ba20ef915182b",
+      "published": false
+    },
+    {
+      "id": "wagon",
+      "file": "assets/forest-walk/generated/binding/wagon.png",
+      "bytes": 2389276,
+      "sha256": "55bc40e4d977f41073311b31fa1556eb2864e942bb18a206c98b49637d87f625",
+      "published": false
+    },
+    {
+      "id": "woodland",
+      "file": "assets/forest-walk/generated/binding/woodland.png",
+      "bytes": 2108253,
+      "sha256": "7adf947a78352e31d5ec7f6d1f86a024b1ee02787981755071a1d86953c3303c",
+      "published": false
+    }
+  ]
+}

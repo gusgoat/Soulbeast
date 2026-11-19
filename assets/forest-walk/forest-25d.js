@@ -1,12 +1,13 @@
 import {demonScenery,demonThicket} from './demon-scenery.js?v=demon-castle-release-1';
+import {bindingScenery,bindingThicket} from './binding-scenery.js?v=binding-release-1';
 import {startWaterfallAudio} from './waterfall-audio.js?v=heaven-waterfall-release-1';
 import {forestAssetURL} from "./storage-assets.js";
 import '../../tools/town-walk-demo/ground-shadows.js?v=cast-bridge-1';
 import {trainingScenery} from "./training-scenery.js?v=desert-release-1";
 import {layerOpacity} from "./training-layers.js?v=layers-v1";
 import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-room-1';
-import {createPropEffects,propEffectSpec} from './prop-effects.js?v=demon-castle-release-1';
-import {bossRoomScenery} from './boss-rooms.js?v=demon-castle-release-1';
+import {createPropEffects,propEffectSpec} from './prop-effects.js?v=binding-release-1';
+import {bossRoomScenery} from './boss-rooms.js?v=binding-release-1';
 import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
 import {heavenScenery,heavenThicket} from './heaven-scenery.js?v=heaven-waterfall-release-1';
 import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-city-release-1';
@@ -295,10 +296,10 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
   return ground;
 }
 
-export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, soundMix, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, questSites = [], zoneTheme, moonlightScene, placeMap, castleStep=1,castleRoom} = {}) {
+export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, soundMix, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, questSites = [], zoneTheme, moonlightScene, placeMap, castleStep=1,castleRoom,bindingDepth=0} = {}) {
   const moonlight = zoneTheme === 'moonlight';
-  const heaven = zoneTheme === 'heaven', demon=zoneTheme==='demon';
-  const desert = zoneTheme === 'desert',dragon=zoneTheme==='dragon',layeredBiome=moonlight||desert||dragon||heaven||demon;
+  const heaven = zoneTheme === 'heaven', demon=zoneTheme==='demon',binding=zoneTheme==='binding';
+  const desert = zoneTheme === 'desert',dragon=zoneTheme==='dragon',layeredBiome=moonlight||desert||dragon||heaven||demon||binding;
   const bossRoom = placeMap === 'boss';
   const castleInterior=demon&&(castleStep>=4||bossRoom);
   const centerRoute=demon&&hasCastleCenterRoute(placeMap);
@@ -342,9 +343,9 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const paths = centerRoute ? [...tracks,activeTownTrail] : onTownExit ? [...tracks, townTrail] : bossRoom ? [tracks[0].filter(p=>p[1]<=GLADE_CENTER[1]+2)] : tracks;
   const openAreas = bossRoom ? [[SPAWN,5],[GLADE_CENTER,11.5]] : [...groundClearings];
   let props = makeScenery(showEntranceGate, paths);
-  const scenery = await trainingScenery(bossRoom?null:trainingScene, desert||dragon||heaven||demon?-1:trapIndex);
+  const scenery = await trainingScenery(bossRoom?null:trainingScene, desert||dragon||heaven||demon||binding?-1:trapIndex);
   if(layeredBiome){
-    const themed=demon?await demonScenery(placeMap,moonlightScene,props,trapIndex,{step:castleStep,room:castleRoom}):heaven?await heavenScenery(placeMap,moonlightScene,props,trapIndex):dragon?await dragonScenery(placeMap,moonlightScene,props,trapIndex):desert?await desertScenery(placeMap,moonlightScene,props,trapIndex):await moonlightScenery(placeMap,moonlightScene,props);
+    const themed=binding?await bindingScenery(placeMap,moonlightScene,props,trapIndex,bindingDepth):demon?await demonScenery(placeMap,moonlightScene,props,trapIndex,{step:castleStep,room:castleRoom}):heaven?await heavenScenery(placeMap,moonlightScene,props,trapIndex):dragon?await dragonScenery(placeMap,moonlightScene,props,trapIndex):desert?await desertScenery(placeMap,moonlightScene,props,trapIndex):await moonlightScenery(placeMap,moonlightScene,props);
     props=themed.props;Object.assign(images,themed.tiles);
     canvas.dataset.forestTheme=zoneTheme;
     canvas.dataset[zoneTheme+'Scenery']=moonlightScene?.id||placeMap;
@@ -352,17 +353,17 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     canvas.dataset.castleInterior=String(Boolean(themed.interior));
     if(themed.interior){canvas.dataset.castleDoors=String(props.filter(p=>p.exitDoor).length);canvas.dataset.castleTreeProps=String(props.filter(p=>p.kind==='tree'&&!p.renderHidden).length);canvas.dataset.redCarpet=String(props.some(p=>p.redCarpet));}
     if(themed.interior){canvas.dataset.castleRoom=themed.room;canvas.dataset.castleRoomName=themed.roomName;canvas.dataset.castleArchitecture='png-open-sides';canvas.dataset.castleMeshParts=String(props.filter(p=>p.blenderArchitecture).length);}
-    canvas.dataset.treeRenderer=castleInterior?'castle-interior-png':demon?'deadwood-png':heaven?'celestial-png':dragon?'mountain-pine-png':desert?'sparse-cactus-png':'blender-png';
+    canvas.dataset.treeRenderer=castleInterior?'castle-interior-png':binding?'ironwood-png':demon?'deadwood-png':heaven?'celestial-png':dragon?'mountain-pine-png':desert?'sparse-cactus-png':'blender-png';
   }
   if(bossRoom){
-    const room=await bossRoomScenery(demon?'demon':heaven?'heaven':dragon?'dragon':desert?'desert':moonlight?'moonlight':'training');
+    const room=await bossRoomScenery(binding?'binding':demon?'demon':heaven?'heaven':dragon?'dragon':desert?'desert':moonlight?'moonlight':'training');
     // Keep foreground canopies out of the door and guardian sightline.
     props=props.filter(p=>!['tree','shrub','thicket'].includes(p.kind)||p.z>GLADE_CENTER[1]+3||p.z<GLADE_CENTER[1]-30||Math.abs(p.x-GLADE_CENTER[0])-p.width/2>14);
     // Indoors retain the original closed door, guardians and contact/collision geometry.
     // The outdoor root-covered facade is replaced by the new dressed-stone throne room.
     if(castleInterior)room.props=room.props.map(p=>p.closedDoor||p.bossStatue||p.renderHidden?p:{...p,renderHidden:true});
     Object.assign(images,room.tiles);props.push(...room.props);
-    canvas.dataset.bossRoom=demon?'demon':heaven?'heaven':dragon?'dragon':desert?'desert':moonlight?'moonlight':'training';
+    canvas.dataset.bossRoom=binding?'binding':demon?'demon':heaven?'heaven':dragon?'dragon':desert?'desert':moonlight?'moonlight':'training';
     canvas.dataset.bossDoor='closed';
     canvas.dataset.bossStatues=String(room.props.filter(p=>p.bossStatue).length);
   }
@@ -393,7 +394,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const thicket = onSearch && !mist && !ruins ? thicketLayout.map(([x, z, width, variant]) => ({
     kind: "thicket", art: "shrub-" + variant, x: x + GLADE_CENTER[0], z: z + GLADE_CENTER[1],
     width, canopy: thicketCanopies[variant - 1], swayX: 0, swayY: 0, revealX: 0
-  })).map(p=>demon?{...demonThicket(p),renderHidden:castleInterior}:heaven?heavenThicket(p):dragon?dragonThicket(p):desert?desertThicket(p):moonlight?moonlightThicket(p):p) : [];
+  })).map(p=>binding?{...bindingThicket(p)}:demon?{...demonThicket(p),renderHidden:castleInterior}:heaven?heavenThicket(p):dragon?dragonThicket(p):desert?desertThicket(p):moonlight?moonlightThicket(p):p) : [];
   props.push(...thicket);
   if (feature && !trainingScene && !layeredBiome) {
     const [x, z] = GLADE_CENTER;
@@ -468,7 +469,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
   const gladeChest = ruins ? RUINS_CHEST : GLADE_CHEST;
   const searchPoint = ruins ? RUINS_ENTRY : GLADE_CENTER;
-  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert,dragon,heaven,demon,castleInterior,centerRoute);
+  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert,dragon,heaven,demon||binding,castleInterior,centerRoute);
   const surface = canvas.getContext("2d", { alpha: false }), groundShadows = window.WalkGroundShadows.create();
   let ctx = surface, shadowCasts = 0;
   canvas.dataset.groundShadows = 'country-upper-right';
@@ -812,7 +813,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const density = (.23 + .77 * smoothstep(approach)) * mistStrength;
     const x = screenX(player.x), y = screenY(player.z) - 40;
     const haze = ctx.createRadialGradient(x, y, 12, x, y, 185 - density * 130);
-    const dust=demon?'146,135,152':heaven?'224,220,238':desert?'209,177,120':'205,222,215';
+    const dust=binding?'136,154,145':demon?'146,135,152':heaven?'224,220,238':desert?'209,177,120':'205,222,215';
     haze.addColorStop(0, `rgba(${dust},0)`);
     haze.addColorStop(.43, `rgba(${dust},${density * .27})`);
     haze.addColorStop(1, `rgba(${desert?'201,169,112':'198,216,208'},${density * .98})`);
@@ -829,7 +830,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     // This changes framing only; playable bounds and event contacts stay fixed.
     centerZ = viewCenter(camera.z, SOUTH, centerRoute?NORTH+14:NORTH, vertical * .44, vertical * .56);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = demon ? '#41414a' : heaven ? '#aaa6ba' : dragon ? '#68717a' : desert ? '#c9a771' : "#2b5034";
+    ctx.fillStyle = binding ? '#37433f' : demon ? '#41414a' : heaven ? '#aaa6ba' : dragon ? '#68717a' : desert ? '#c9a771' : "#2b5034";
     ctx.fillRect(0, 0, width, height);
     ctx.drawImage(ground, screenX(-WIDTH / 2), screenY(NORTH), WIDTH * zoom, LENGTH * FLATTEN * zoom);
     const north = centerZ + (height * .56 + 34) / (zoom * FLATTEN);
