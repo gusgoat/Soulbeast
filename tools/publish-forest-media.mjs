@@ -4,10 +4,12 @@ import {MOON_FRAMES} from '../assets/forest-walk/moonlight-frames.js';
 import {BOSS_ROOM_FRAMES} from '../assets/forest-walk/boss-room-frames.js';
 import {BOSS_STATUE_FRAMES} from '../assets/forest-walk/boss-statue-frames.js';
 import {DESERT_FRAMES} from '../assets/forest-walk/desert-frames.js';
-const root=new URL('../',import.meta.url),output=new URL('../../desert-publish-20261119/',import.meta.url);
+import {DRAGON_FRAMES} from '../assets/forest-walk/dragon-frames.js';
+import {QUEST_FRAMES} from '../assets/forest-walk/quest-frames.js';
+const root=new URL('../',import.meta.url),output=new URL('../../dragon-city-publish-20261119/',import.meta.url);
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const manifest=[];
-for(const [folder,frames] of Object.entries({moonlight:MOON_FRAMES,'boss-rooms':BOSS_ROOM_FRAMES,'boss-statues':BOSS_STATUE_FRAMES,desert:DESERT_FRAMES})){
+for(const [folder,frames] of Object.entries({moonlight:MOON_FRAMES,'boss-rooms':BOSS_ROOM_FRAMES,'boss-statues':BOSS_STATUE_FRAMES,desert:DESERT_FRAMES,dragon:DRAGON_FRAMES,'city-quests':QUEST_FRAMES})){
   for(const id of Object.keys(frames)){
     const file='assets/forest-walk/generated/'+folder+'/'+id+'.png',bytes=await readFile(new URL(file,root)),sha256=hash(bytes);
     manifest.push({file,key:folder+'/'+id,object:'forest-scenes-v1--'+folder+'--'+id+'--'+sha256.slice(0,16)+'.png',bytes:bytes.length,sha256});
@@ -22,7 +24,7 @@ if(!key||key==='PASTE_YOUR_SECRET_KEY_HERE')throw Error('Storage upload credenti
 const base='https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/',bucket='soulbeast-game-assets/';
 const headers=key.startsWith('sb_secret_')?{apikey:key}:{apikey:key,Authorization:'Bearer '+key};
 const results=[];
-const selected=process.argv.includes('--desert-only')?manifest.filter(item=>item.key.startsWith('desert/')):manifest;
+const selected=process.argv.includes('--dragon-city-only')?manifest.filter(item=>/^(dragon|city-quests)\//.test(item.key)):process.argv.includes('--desert-only')?manifest.filter(item=>item.key.startsWith('desert/')):manifest;
 for(const item of selected){
   const url=base+'public/'+bucket+item.object,check=await fetch(url,{method:'HEAD',signal:AbortSignal.timeout(30000)});
   if(!check.ok){

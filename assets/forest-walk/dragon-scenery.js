@@ -1,5 +1,5 @@
-import {DRAGON_FRAMES} from './dragon-frames.js?v=dragon-preview-1';
-import {forestSceneAssetURL} from './storage-assets.js?v=dragon-preview-1';
+import {DRAGON_FRAMES} from './dragon-frames.js?v=dragon-city-release-1';
+import {forestSceneAssetURL} from './storage-assets.js?v=dragon-city-release-1';
 const cache=new Map();
 async function image(id){
   if(cache.has(id)){const ready=cache.get(id);cache.delete(id);cache.set(id,ready);return ready;}

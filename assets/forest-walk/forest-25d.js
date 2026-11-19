@@ -2,12 +2,12 @@ import {forestAssetURL} from "./storage-assets.js";
 import {trainingScenery} from "./training-scenery.js?v=desert-release-1";
 import {layerOpacity} from "./training-layers.js?v=layers-v1";
 import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-room-1';
-import {createPropEffects,propEffectSpec} from './prop-effects.js?v=desert-release-1';
-import {bossRoomScenery} from './boss-rooms.js?v=desert-release-1';
+import {createPropEffects,propEffectSpec} from './prop-effects.js?v=dragon-city-release-1';
+import {bossRoomScenery} from './boss-rooms.js?v=dragon-city-release-1';
 import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
-import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-preview-1';
-import {questScenery} from './quest-scenery.js?v=city-quests-1';
-import {reachedTrailEnd} from './trail-exit.js?v=wide-exits-1';
+import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-city-release-1';
+import {questScenery} from './quest-scenery.js?v=dragon-city-release-1';
+import {reachedTrailEnd} from './trail-exit.js?v=dragon-city-release-1';
 
 const FLATTEN = .64;
 // Player walking and running are 1.5 times the original forest pace.

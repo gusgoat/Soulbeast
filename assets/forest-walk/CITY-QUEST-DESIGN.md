@@ -26,4 +26,4 @@ Preview: `http://127.0.0.1:8835/?v=city-quests-1&scene=quest:0`. The existing D:
 - D: QA `check-city-quest-launcher.mjs`: every one of the 25 preview selections retains the level-60 sbwar hero and Eclipse beasts.
 - Existing quest logic, expansion and integration suites: original 549 routes / 1,334 objectives and all reward/visual models. Existing four-zone action/boss tests cover the surrounding chest and battle interfaces.
 
-The live release remains unchanged. This work stays local to D: until the user approves publication.
+Publication was authorized on 2026-11-19 together with Sleeping Dragon Peak and the wider Y exits. Images use immutable Supabase objects; release evidence is saved in D:/GameDev/soulbeast/tmp/dragon-city-publish-20261119/.

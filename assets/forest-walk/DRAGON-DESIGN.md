@@ -1,4 +1,4 @@
-# Sleeping Dragon Peak · zone 4 local preview
+# Sleeping Dragon Peak · zone 4
 
 Scope: continue from the published Golden Tomb Desert into the native next area, Sleeping Dragon Peak. Grey rocky ground, sparse wind-bent pines, outer rock faces, rope bridges, old mountain gates, echo pillars, a forge, signal station, ranger shelter and nesting alcoves replace the previous biome's scenery. Separated PNG floor/rear/side/overhead/detail parts retain the shared depth and actor-reveal behavior.
 
@@ -8,6 +8,6 @@ Shared behavior: Y routes and distinct left/right destination labels, original c
 
 User-requested preview character: level 60, War Spellblade (sbwar), with native skills including sbw_doom and the existing 3D class model. The dedicated disposable localhost profile satisfies the two native promotion-quest prerequisites, then uses the original spellblade and sbwar promotion handlers. Only the demo profile receives those prerequisite flags. Original saves, character progression and quest rules are unchanged.
 
-Preview: http://127.0.0.1:8835/?v=dragon-preview-1 . Fourteen event scenes, fourteen ordinary maps and six native hazard options are available, plus normal play. Changing the selection starts a fresh level-60 sbwar demo. Launcher/server sources are D:/GameDev/soulbeast/tmp/dragon-forest-preview.html and serve-dragon-forest-preview.py. Python server runs hidden and serves this D: checkout. The live website remains at the approved desert release f30338fb; zone 4 is not published.
+Preview: http://127.0.0.1:8835/?v=dragon-preview-1 . Fourteen event scenes, fourteen ordinary maps and six native hazard options are available, plus normal play. Changing the selection starts a fresh level-60 sbwar demo. Launcher/server sources are D:/GameDev/soulbeast/tmp/dragon-forest-preview.html and serve-dragon-forest-preview.py. Python server runs hidden and serves this D: checkout. Publication was authorized on 2026-11-19 with the city-quest sites and wider Y exits. New PNGs use immutable Supabase objects; deployment evidence is saved in D:/GameDev/soulbeast/tmp/dragon-city-publish-20261119/.
 
 Validation: native catalogue/RGBA bounds; all 14 native event contacts, full-page/mobile menus, same-place returns and duplicate rewards; all 34 preview selections at level 60/sbwar; original dragon boss; action hit targets across four zones and five viewport sizes; fire/water masks, exact shoreline containment, cache/reduced-motion behavior; shared pursuit speed and older scene checks. QA images are in D:/GameDev/soulbeast/tmp/dragon-preview-qa/ and dragon-forest-qa/.
