@@ -5,7 +5,7 @@ import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-r
 import {createPropEffects,propEffectSpec} from './prop-effects.js?v=dragon-city-release-1';
 import {bossRoomScenery} from './boss-rooms.js?v=dragon-city-release-1';
 import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
-import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-city-release-1';
+import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-blender-preview-1';
 import {questScenery} from './quest-scenery.js?v=dragon-city-release-1';
 import {reachedTrailEnd} from './trail-exit.js?v=dragon-city-release-1';
 
@@ -340,7 +340,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     canvas.dataset.forestTheme=zoneTheme;
     canvas.dataset[zoneTheme+'Scenery']=moonlightScene?.id||placeMap;
     canvas.dataset[zoneTheme+'Kit']=themed.kit;
-    canvas.dataset.treeRenderer=dragon?'mountain-pine-png':desert?'sparse-cactus-png':'blender-png';
+    canvas.dataset.treeRenderer=dragon?'blender-pine-png':desert?'sparse-cactus-png':'blender-png';
   }
   if(bossRoom){
     const room=await bossRoomScenery(dragon?'dragon':desert?'desert':moonlight?'moonlight':'training');

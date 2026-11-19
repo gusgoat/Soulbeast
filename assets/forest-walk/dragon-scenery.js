@@ -1,19 +1,22 @@
+import {DRAGON_TREE_FRAMES} from './dragon-tree-frames.js?v=dragon-blender-preview-1';
 import {DRAGON_FRAMES} from './dragon-frames.js?v=dragon-city-release-1';
 import {forestSceneAssetURL} from './storage-assets.js?v=dragon-city-release-1';
 const cache=new Map();
-async function image(id){
-  if(cache.has(id)){const ready=cache.get(id);cache.delete(id);cache.set(id,ready);return ready;}
-  if(!cache.has(id)){
-    const promise=new Promise((resolve,reject)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Dragon PNG failed: '+id));im.src=forestSceneAssetURL('dragon',id);});
-    cache.set(id,promise);promise.catch(()=>cache.delete(id));
+async function image(id,folder='dragon'){
+  const key=folder+'/'+id;
+  if(cache.has(key)){const ready=cache.get(key);cache.delete(key);cache.set(key,ready);return ready;}
+  if(!cache.has(key)){
+    const promise=new Promise((resolve,reject)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Dragon PNG failed: '+id));im.src=forestSceneAssetURL(folder,id);});
+    cache.set(key,promise);promise.catch(()=>cache.delete(key));
     while(cache.size>8)cache.delete(cache.keys().next().value);
   }
-  return cache.get(id);
+  return cache.get(key);
 }
 const ordinary={entrance:'gate',exit:'gate',footprints:'woodland',bandit:'camp',stranger:'camp',shrine:'shrine',spring:'spring',revival:'spring',cleanse:'spring',village:'settlement',hospital:'settlement',bush:'nest',mist:'avalanche',ruins:'ruins',boss:'woodland'};
 export async function dragonScenery(map,scene,baseProps,trapIndex=-1){
  const kit=map==='boss'?'woodland':scene?.kit||ordinary[map]||'woodland',tiles={},props=[];
  for(const id of new Set(['woodland','ruins','avalanche',kit,'ground-rock',...(scene?.id==='encounter-4'?['nest']:[]),...(trapIndex>=0?['traps']:[])]))tiles['dragon-'+id]=await image(id);
+ for(const id of Object.keys(DRAGON_TREE_FRAMES))tiles['dragon-tree-'+id]=await image(id,'dragon-trees');
  function cut(id,cell,x,z,width,extra={}){
   const source=DRAGON_FRAMES[id][cell],p={kind:'training-prop',art:'dragon-'+id,effectId:'dragon-'+id+'#'+cell,source,x,z,width,pivot:1,layered:true,...extra};
   if(p.height)p.width=p.height*source[2]/source[3];return p;
@@ -22,7 +25,11 @@ export async function dragonScenery(map,scene,baseProps,trapIndex=-1){
  for(const old of baseProps){
   const pick=Math.abs(Math.round(old.x*13+old.z*7));let cell=3,extra={};
   if(old.kind==='gate')continue;
-  if(old.kind==='tree'){if(pick%3)continue;cell=pick%2;extra={height:old.width*.8,canopy:undefined};}
+  if(old.kind==='tree'){
+   if(pick%3)continue;
+   const id=pick%2?'pine-upright':'pine-windswept',source=DRAGON_TREE_FRAMES[id][0],height=old.width*1.45;
+   props.push({...old,art:'dragon-tree-'+id,source,height,width:height*source[2]/source[3],pivot:1,layered:true,canopy:undefined});continue;
+  }
   else if(old.kind==='rock')cell=4;
   else if(old.kind==='direction-sign')cell=5;
   else if(old.kind==='shrub'){if(pick%3)continue;cell=2;extra={height:2.8};}
