@@ -1,4 +1,4 @@
-# Country-style forest shadows · local review
+# Country-style forest shadows · release
 
 The original Sleeping Dragon Peak trees are restored exactly from approved release `abf6a7e6`. The rejected Blender sources remain archived and unused.
 
@@ -12,4 +12,4 @@ Checks: `tools/test-forest-ground-shadows-browser.mjs` verifies actual shadow pi
 
 Preview: http://127.0.0.1:8835/?v=forest-shadows-preview-1&scene=map%3Afootprints&tour=1
 
-This change is for local D: review only. It has not been pushed to the live website.
+Publication of these shadows with the original trees was authorized on 2026-11-19. Deployment verification is recorded in D:/GameDev/soulbeast/tmp/forest-shadows-publish-20261119/. The unused Blender tree assets are not part of this release.

@@ -12,6 +12,6 @@ The walking scene keeps the previous deterministic sparse tree selection, world 
 
 Validated with `node tools/test-dragon-forest.mjs` (19 PNGs, original native catalogue, density/collisions, hazards and no scenery RNG) and `node tools/test-dragon-forest-browser.mjs` (all 14 native event scenes and 14 ordinary maps). Local preview retains the level-60 sbwar hero and Eclipse beasts.
 
-This change is only on D: for review. The live release remains `abf6a7e67a90245238bcee99609e6435b5e4ec75`. Before future publication, add the two `dragon-trees` PNGs to the immutable Supabase scene manifest and uploader; the current live manifest intentionally remains unchanged during review.
+These models are retained only as unused authoring experiments. Do not publish or reference their PNGs. The original mountain woodland sprites remain selected.
 
 Preview: http://127.0.0.1:8835/?v=dragon-blender-preview-1&scene=map%3Afootprints&tour=1

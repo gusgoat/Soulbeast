@@ -448,7 +448,7 @@ const ForestWalk = (() => {
       state.encounterAvatar = window.sealerSprites?.create();
       state.encounterAvatar?.sync(walk.enemies[0]);
     }
-    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js"].map(file => import(new URL(file + "?v=forest-shadows-preview-1", assets).href)));
+    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js"].map(file => import(new URL(file + "?v=forest-shadows-release-1", assets).href)));
     try {
       const [{openForest}, {WELLS}, {createWellEffects, startWellAudio}] = await modules;
       if (current !== state) return;
