@@ -43,13 +43,13 @@ try{
   await ready();
   const pixels=await evaluate(`(async()=>{
     const {createPropEffects,propEffectSpec,inPolygon}=await import('/Soulbeast/assets/forest-walk/prop-effects.js?v=fire-water-1');
-    const {MOON_FRAMES}=await import('/Soulbeast/assets/forest-walk/moonlight-frames.js');const {DESERT_FRAMES}=await import('/Soulbeast/assets/forest-walk/desert-frames.js');const {DRAGON_FRAMES}=await import('/Soulbeast/assets/forest-walk/dragon-frames.js');
+    const {HEAVEN_FRAMES}=await import('/Soulbeast/assets/forest-walk/heaven-frames.js');const {MOON_FRAMES}=await import('/Soulbeast/assets/forest-walk/moonlight-frames.js');const {DESERT_FRAMES}=await import('/Soulbeast/assets/forest-walk/desert-frames.js');const {DRAGON_FRAMES}=await import('/Soulbeast/assets/forest-walk/dragon-frames.js');
     const results=[];const random=Math.random;Math.random=()=>{throw Error('FX consumed gameplay RNG')};
-    try{for(const id of ['trap-fire','lantern#4','seedmap#4','yggdrasil#0','reflections#0','waterways#0','waterways#5','bandit-camp','shrine','desert-traps#2','desert-waterways#0','desert-waterways#1','desert-waterways#2','desert-waterways#3','desert-waterways#5','desert-spring#1','dragon-traps#1','dragon-traps#2','dragon-forge#1','dragon-forge#3','dragon-beacon#1','dragon-beacon#2','dragon-spring#1']){
+    try{for(const id of ['trap-fire','lantern#4','seedmap#4','yggdrasil#0','reflections#0','waterways#0','waterways#5','bandit-camp','shrine','desert-traps#2','desert-waterways#0','desert-waterways#1','desert-waterways#2','desert-waterways#3','desert-waterways#5','desert-spring#1','dragon-traps#1','dragon-traps#2','dragon-forge#1','dragon-forge#3','dragon-beacon#1','dragon-beacon#2','dragon-spring#1','heaven-traps#1','heaven-traps#2','heaven-camp#5','heaven-lantern#5','heaven-shrine#1','heaven-shrine#4','heaven-storm#3','heaven-spring#1','heaven-spring#5','heaven-garden#1','well-spring']){
       const im=new Image();im.crossOrigin='anonymous';
       const [kit,part]=id.split('#');
-      const mountain=kit.startsWith('dragon-'),desert=kit.startsWith('desert-');im.src=mountain?'/Soulbeast/assets/forest-walk/generated/dragon/'+kit.slice(7)+'.png':desert?'/Soulbeast/assets/forest-walk/generated/desert/'+kit.slice(7)+'.png':part!==undefined?'/Soulbeast/assets/forest-walk/generated/moonlight/'+kit+'.png':id==='trap-fire'?'/Soulbeast/assets/forest-walk/generated/trap-fire.png':'/Soulbeast/assets/forest-walk/art/forest-'+id+'.webp';
-      await im.decode();const source=part!==undefined?(mountain?DRAGON_FRAMES[kit.slice(7)]:desert?DESERT_FRAMES[kit.slice(7)]:MOON_FRAMES[kit])[Number(part)]:null,specs=propEffectSpec({effectId:id});
+      const heaven=kit.startsWith('heaven-'),mountain=kit.startsWith('dragon-'),desert=kit.startsWith('desert-');im.src=id==='well-spring'?'/Soulbeast/assets/forest-walk/art/well-spring.webp':heaven?'/Soulbeast/assets/forest-walk/generated/heaven/'+kit.slice(7)+'.png':mountain?'/Soulbeast/assets/forest-walk/generated/dragon/'+kit.slice(7)+'.png':desert?'/Soulbeast/assets/forest-walk/generated/desert/'+kit.slice(7)+'.png':part!==undefined?'/Soulbeast/assets/forest-walk/generated/moonlight/'+kit+'.png':id==='trap-fire'?'/Soulbeast/assets/forest-walk/generated/trap-fire.png':'/Soulbeast/assets/forest-walk/art/forest-'+id+'.webp';
+      await im.decode();const source=part!==undefined?(heaven?HEAVEN_FRAMES[kit.slice(7)]:mountain?DRAGON_FRAMES[kit.slice(7)]:desert?DESERT_FRAMES[kit.slice(7)]:MOON_FRAMES[kit])[Number(part)]:null,specs=propEffectSpec({effectId:id});
       const fx=createPropEffects(im,source,specs),c=document.createElement('canvas');c.width=fx.base.width;c.height=fx.base.height;
       const x=c.getContext('2d',{willReadFrequently:true});
       const render=t=>{x.clearRect(0,0,c.width,c.height);x.drawImage(fx.base,0,0);fx.paint(x,0,0,c.width,c.height,t);return x.getImageData(0,0,c.width,c.height).data;};
@@ -62,11 +62,11 @@ try{
   })()`);
   console.log('FX pixel diagnostics:',JSON.stringify(pixels));
   for(const p of pixels){if(p.id==='desert-spring#1')assert(p.masks[0].pixels>100,'white-waterfall mask must cover the stream');assert(p.changed>0,p.id+' must animate');assert(p.masks.every(m=>m.pixels>0),p.id+' missing artwork mask');assert(p.same&&p.reduced,p.id+' cache/reduced motion');assert.equal(p.outside,0,p.id+' water shimmer escaped its shoreline');}
-  for(const [zone,map,scene,trap]of [[7,'footprints',null,2],[1,'footprints',null,2],[1,'training','moon',-1],[1,'training','moon-reflections',-1],[1,'training','yggdrasil',-1],[1,'training','after-moon',-1],[7,'bandit',null,-1],[7,'shrine',null,-1],[3,'footprints',null,2],[3,'training','encounter-3',-1],[3,'spring',null,-1],[4,'footprints',null,2],[4,'training','dragon-elements',-1],[4,'training','dragon-1',-1],[4,'spring',null,-1]]){
+  for(const [zone,map,scene,trap]of [[7,'footprints',null,2],[1,'footprints',null,2],[1,'training','moon',-1],[1,'training','moon-reflections',-1],[1,'training','yggdrasil',-1],[1,'training','after-moon',-1],[7,'bandit',null,-1],[7,'shrine',null,-1],[3,'footprints',null,2],[3,'training','encounter-3',-1],[3,'spring',null,-1],[4,'footprints',null,2],[4,'training','dragon-elements',-1],[4,'training','dragon-1',-1],[4,'spring',null,-1],[5,'footprints',null,2],[5,'training','heaven-2',-1],[5,'training','heaven',-1],[5,'training','heaven-lightning',-1],[5,'shrine',null,-1],[5,'spring',null,-1],[5,'bandit',null,-1]]){
     await evaluate(`(()=>{
       S.P=structuredClone(qaBaseP);S.P.tutorial.enabled=false;S.ui={};S.battle=null;S.screen='zone';S.zone=structuredClone(qaBaseZ);S.zone.id=${zone};S.zone.ev=null;S.zone.fork=null;
       for(const k of ['secretSession','specialSession','riddleSession','taleSession'])delete S.zone[k];
-      S.zone.walk={map:${JSON.stringify(map)},phase:'cleared',position:${trap===2?'[0,-33]':'[1.05,-20]'},trapIndex:${trap},scene:${scene?(zone===4?'DragonForestScenes':zone===3?'DesertForestScenes':'MoonlightForestScenes')+'.describe('+JSON.stringify(scene)+')':'null'}};render();
+      S.zone.walk={map:${JSON.stringify(map)},phase:'cleared',position:${trap===2?'[0,-33]':'[1.05,-20]'},trapIndex:${trap},scene:${scene?(zone===5?'HeavenForestScenes':zone===4?'DragonForestScenes':zone===3?'DesertForestScenes':'MoonlightForestScenes')+'.describe('+JSON.stringify(scene)+')':'null'}};render();
     })()`);
     await ready();await delay(200);
     const counts=await evaluate(`({fire:Number(document.querySelector('.forest-walk-canvas').dataset.animatedFireProps),water:Number(document.querySelector('.forest-walk-canvas').dataset.animatedWaterProps)})`);
@@ -74,7 +74,7 @@ try{
     assert.equal(await evaluate('S.zone.walk.phase'),'cleared');assert.equal(await evaluate('!!S.battle'),false);
     await screenshot('effects-'+zone+'-'+(scene||map));console.log('PASS effect integration',zone,map,scene,counts);
   }
-  assert.deepEqual(errors,[]);console.log('PASS PNG fire/water animation, masks, cache, reduced motion and four forest integrations');
+  assert.deepEqual(errors,[]);console.log('PASS PNG fire/water animation, masks, cache, reduced motion and five forest integrations');
 }finally{
   if(socket?.readyState===WebSocket.OPEN){await send('Browser.close').catch(()=>{});socket.close();}
   chrome.kill();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));

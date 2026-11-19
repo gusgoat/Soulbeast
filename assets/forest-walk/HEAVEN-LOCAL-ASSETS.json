@@ -1,0 +1,186 @@
+{
+  "status": "uploaded-and-sha256-verified",
+  "generation": "built-in image_gen",
+  "assets": [
+    {
+      "id": "armor",
+      "file": "assets/forest-walk/generated/heaven/armor.png",
+      "bytes": 2759014,
+      "sha256": "f852742248ccc615e6d640722ddb32052d860fb83c43c171f036c3edd000be1f",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--armor--f852742248ccc615.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--armor--f852742248ccc615.png"
+    },
+    {
+      "id": "bell",
+      "file": "assets/forest-walk/generated/heaven/bell.png",
+      "bytes": 2086722,
+      "sha256": "684e82939227375c3fb3c7ab48fa7e740b2a288dc725cb20c8858ec38f2f1700",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--bell--684e82939227375c.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--bell--684e82939227375c.png"
+    },
+    {
+      "id": "camp",
+      "file": "assets/forest-walk/generated/heaven/camp.png",
+      "bytes": 2362083,
+      "sha256": "1f5aee5aeb60d454b77c80213457335052e693b3f1459885e20aa61196c359a7",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--camp--1f5aee5aeb60d454.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--camp--1f5aee5aeb60d454.png"
+    },
+    {
+      "id": "garden",
+      "file": "assets/forest-walk/generated/heaven/garden.png",
+      "bytes": 2591877,
+      "sha256": "c8a10bb1c5c7516862cc17437821c91fafe43258c46548a5505e8b620856ced1",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--garden--c8a10bb1c5c75168.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--garden--c8a10bb1c5c75168.png"
+    },
+    {
+      "id": "gate",
+      "file": "assets/forest-walk/generated/heaven/gate.png",
+      "bytes": 2165979,
+      "sha256": "e06a20ac929c97e2931ffb2f263761522153b670d3ffb542badb71946dc42b60",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--gate--e06a20ac929c97e2.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--gate--e06a20ac929c97e2.png"
+    },
+    {
+      "id": "ground-marble",
+      "file": "assets/forest-walk/generated/heaven/ground-marble.png",
+      "bytes": 3287178,
+      "sha256": "eb638f476f4ddaa7c271c73a05e2dbc34471efa248cb44cd112f9241a0c63cfa",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--ground-marble--eb638f476f4ddaa7.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--ground-marble--eb638f476f4ddaa7.png"
+    },
+    {
+      "id": "lantern",
+      "file": "assets/forest-walk/generated/heaven/lantern.png",
+      "bytes": 2265308,
+      "sha256": "d3d3db6173d59f960ce16fc04abe9c5396f74cb4b65ab6d6eee33425558053cf",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--lantern--d3d3db6173d59f96.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--lantern--d3d3db6173d59f96.png"
+    },
+    {
+      "id": "oath",
+      "file": "assets/forest-walk/generated/heaven/oath.png",
+      "bytes": 2843092,
+      "sha256": "a38f5b99b254784d92c921c58b5019e2b467fadc9be54785b2caa5d1c93ea1ea",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--oath--a38f5b99b254784d.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--oath--a38f5b99b254784d.png"
+    },
+    {
+      "id": "rescue",
+      "file": "assets/forest-walk/generated/heaven/rescue.png",
+      "bytes": 2627807,
+      "sha256": "10c0cfa8b04a122add179f4997cedbd7b985c5c84b6209c58432b1be96924579",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--rescue--10c0cfa8b04a122a.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--rescue--10c0cfa8b04a122a.png"
+    },
+    {
+      "id": "ruins",
+      "file": "assets/forest-walk/generated/heaven/ruins.png",
+      "bytes": 2475233,
+      "sha256": "2ccb3224581990b97b7e7f8a6e6dd4d02c9fcc45ada8d94bce20114392c940c2",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--ruins--2ccb3224581990b9.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--ruins--2ccb3224581990b9.png"
+    },
+    {
+      "id": "settlement",
+      "file": "assets/forest-walk/generated/heaven/settlement.png",
+      "bytes": 2471465,
+      "sha256": "c165b0b5588657fbc77ff11c27b447d7e04571e4b2d824506869f2eb03e14c89",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--settlement--c165b0b5588657fb.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--settlement--c165b0b5588657fb.png"
+    },
+    {
+      "id": "shrine",
+      "file": "assets/forest-walk/generated/heaven/shrine.png",
+      "bytes": 2353066,
+      "sha256": "a901bb5adcf3f0e81cc2e400c172e33989b910b2a6dff6fe8c58e5ac5643a1db",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--shrine--a901bb5adcf3f0e8.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--shrine--a901bb5adcf3f0e8.png"
+    },
+    {
+      "id": "spring",
+      "file": "assets/forest-walk/generated/heaven/spring.png",
+      "bytes": 2530382,
+      "sha256": "b4bd53b461c8ec90d11fef400d989e84733996b5a9d2940a86916c4f7b2b9f6d",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--spring--b4bd53b461c8ec90.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--spring--b4bd53b461c8ec90.png"
+    },
+    {
+      "id": "stars",
+      "file": "assets/forest-walk/generated/heaven/stars.png",
+      "bytes": 2509490,
+      "sha256": "b1e33da9c7669ac481b6a24a028ae943521e2c64266e701bf494ea3598b33f00",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--stars--b1e33da9c7669ac4.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--stars--b1e33da9c7669ac4.png"
+    },
+    {
+      "id": "storm",
+      "file": "assets/forest-walk/generated/heaven/storm.png",
+      "bytes": 2072245,
+      "sha256": "fcb046c818741ff1660a4bb87d864d17678721567438a553d6559a2779eee631",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--storm--fcb046c818741ff1.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--storm--fcb046c818741ff1.png"
+    },
+    {
+      "id": "traps",
+      "file": "assets/forest-walk/generated/heaven/traps.png",
+      "bytes": 2472653,
+      "sha256": "9e1bb7bff6c96cb63c4ecae5e981798d16713508f3e91e2b573b7e339d5054cf",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--traps--9e1bb7bff6c96cb6.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--traps--9e1bb7bff6c96cb6.png"
+    },
+    {
+      "id": "valhalla",
+      "file": "assets/forest-walk/generated/heaven/valhalla.png",
+      "bytes": 2494732,
+      "sha256": "7b74b123f3be324496fe80572f375e273954eebebe0c5ad39947079e1cdbc9f7",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--valhalla--7b74b123f3be3244.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--valhalla--7b74b123f3be3244.png"
+    },
+    {
+      "id": "watchpost",
+      "file": "assets/forest-walk/generated/heaven/watchpost.png",
+      "bytes": 2349771,
+      "sha256": "323d07e32e00f9445f7264b63e69ffdd2c67b6a4a42f402c8e6e9baf41e60ddc",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--watchpost--323d07e32e00f944.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--watchpost--323d07e32e00f944.png"
+    },
+    {
+      "id": "wind",
+      "file": "assets/forest-walk/generated/heaven/wind.png",
+      "bytes": 2563585,
+      "sha256": "7c6be2c3d7d2316bd05f8e66707f4afb8cfb3aa84898798d4a0760f0ec8af04f",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--wind--7c6be2c3d7d2316b.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--wind--7c6be2c3d7d2316b.png"
+    },
+    {
+      "id": "woodland",
+      "file": "assets/forest-walk/generated/heaven/woodland.png",
+      "bytes": 2359968,
+      "sha256": "db067572362733de8638dd5fdd0f655f437a38eedd0dd4327ca97dd4ab1b0f21",
+      "published": true,
+      "object": "forest-scenes-v1--heaven--woodland--db067572362733de.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--heaven--woodland--db067572362733de.png"
+    }
+  ]
+}

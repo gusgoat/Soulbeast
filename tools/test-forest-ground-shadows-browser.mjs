@@ -58,11 +58,12 @@ try{
  for(const dpr of [1,1.5,2])assert.deepEqual(pixels.find(p=>p.dpr===dpr&&p.copies===1).shade,pixels.find(p=>p.dpr===dpr&&p.copies===2).shade,'overlapping shadows doubled darkness');
  console.log('PASS Country silhouette direction, three DPRs, overlap density and foreground occlusion',JSON.stringify(pixels));
  await evaluate('window.shadowBaseZ=structuredClone(S.zone)');
- for(const zone of [7,1,3,4]){
+ for(const zone of [7,1,3,4,5]){
   await evaluate(`S.battle=null;S.ui={};S.zone=structuredClone(shadowBaseZ);S.zone.id=${zone};S.zone.ev=null;S.zone.depth=4;S.zone.fork=null;S.zone.walk={map:'footprints',phase:'cleared',position:[0,-30],trapIndex:-1};render()`);await ready();
   await until(()=>evaluate(`document.querySelector('.forest-walk-canvas')?.dataset.groundShadows==='country-upper-right'&&Number(document.querySelector('.forest-walk-canvas')?.dataset.shadowCasters)>0`),'shadow pipeline');await delay(200);await screenshot('shadows-zone-'+zone);
   assert.equal(await evaluate('S.zone.walk.phase'),'cleared');assert.equal(await evaluate('!!S.battle'),false);if(zone===4)assert.equal(await evaluate(`document.querySelector('.forest-walk-canvas').dataset.treeRenderer`),'mountain-pine-png');
+  if(zone===5)assert.equal(await evaluate(`document.querySelector('.forest-walk-canvas').dataset.treeRenderer`),'celestial-png');
   console.log('PASS original trees and directional shadows in forest',zone);
  }
- assert.deepEqual(errors,[]);console.log('PASS four forest shadow integrations without gameplay transitions');
+ assert.deepEqual(errors,[]);console.log('PASS five forest shadow integrations without gameplay transitions');
 }finally{if(socket?.readyState===WebSocket.OPEN){await send('Browser.close').catch(()=>{});socket.close();}chrome.kill();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
