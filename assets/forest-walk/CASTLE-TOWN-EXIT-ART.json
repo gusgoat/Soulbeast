@@ -1,0 +1,24 @@
+{
+  "tool": "built-in image_gen",
+  "savedAsset": "generated/demon-interior/town-exit-v1.png",
+  "published": true,
+  "prompt": "Create a single isolated transparent PNG environmental prop for a realistic painted dark fantasy 2.5D RPG: the EXIT from a demon castle to the outside world, unmistakably an exterior castle gate, NOT an interior room doorway. Three-quarter orthographic game camera looking down 40 degrees, frontal entrance slightly angled to show substantial stone thickness. Broad imposing charcoal dressed-stone gateway with two modest battlement piers, heavy double wooden doors swung wide OUTWARD, raised portcullis entirely above head height. THROUGH the wide open gate clearly show bright natural daylight, blue sky, distant town rooftops and a sunlit stone road leading away from the castle. A SHORT stone threshold/apron projects slightly forward. Weathered dark stone, antique brass edging, deep burgundy banners. High-detail hand-painted realistic RPG environment art, same softly lit realistic fantasy style as the existing castle PNG props. Whole object visible with 32px clear transparent padding on every side, no ground plane beyond its short threshold, no enclosing room, no side walls extending off the image, no characters, no text, no UI, no other props. Transparent alpha outside the gateway silhouette, preserve the outdoor view ONLY inside the opening. Distinct visual silhouette of a castle's final EXIT to the world, not a bedroom door or small indoor door.",
+  "sourceSize": [
+    1312,
+    1199
+  ],
+  "sourceCrop": [
+    29,
+    53,
+    1253,
+    1109
+  ],
+  "nativeContact": [
+    44,
+    -15
+  ],
+  "spriteBase": [
+    43,
+    -13.5
+  ]
+}

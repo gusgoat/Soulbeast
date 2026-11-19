@@ -7,7 +7,7 @@ const ForestWalk = (() => {
   const searches = ["bush", "mist", "ruins"];
   const services = ["village", "hospital"];
   let modules, current;
-  const sceneCatalog = zone => zone?.id === 5 ? HeavenForestScenes : zone?.id === 4 ? DragonForestScenes : zone?.id === 3 ? DesertForestScenes : zone?.id === 1 ? MoonlightForestScenes : TrainingForestScenes;
+  const sceneCatalog = zone => zone?.id === 6 ? DemonForestScenes : zone?.id === 5 ? HeavenForestScenes : zone?.id === 4 ? DragonForestScenes : zone?.id === 3 ? DesertForestScenes : zone?.id === 1 ? MoonlightForestScenes : TrainingForestScenes;
   let trainingFocusInstalled = false;
   const soundMix=()=>({enabled:Sound.enabled,context:Sound.ctx,destination:typeof audioBus==="function"?audioBus("effects"):Sound.master});
 
@@ -53,7 +53,7 @@ const ForestWalk = (() => {
   function view(legacy) {
     const zone = S.zone, walk = zone?.walk;
     if (walk?.storySession && !nativeEvent(zone)) returnToPlace(walk);
-    if ([1,3,4,5,7].includes(zone?.id) && walk && !walk.showService) {
+    if ([1,3,4,5,6,7].includes(zone?.id) && walk && !walk.showService) {
       const story = sceneCatalog(zone).session(zone);
       if (story) {
         rememberPlace(walk);
@@ -144,14 +144,25 @@ const ForestWalk = (() => {
     return result;
   }
 
-  function nextDestination(zone, walk, side) {
+  function nextPlaceDestination(zone, walk, side) {
     if (walk.map === "boss" || nativeEvent(zone) || walk.phase === "resolving"
       || walk.phase === "pending" && ["training", "bandit"].includes(walk.map)) return "";
     const plan = nextForkPreview(zone, walk), door = plan.fork?.[side === "left" ? 0 : 1];
     if (!door) return "ประตูบอส · " + (zone.boss || ZN[zone.id - 1].boss).n;
     if (door.h) return "ทางมืด · ยังไม่ทราบสถานที่";
-    if ([1,3,4,5,7].includes(zone.id) && !maps[door.k]) return sceneCatalog(zone).selected(plan.zone, door).title;
+    if ([1,3,4,5,6,7].includes(zone.id) && !maps[door.k]) return sceneCatalog(zone).selected(plan.zone, door).title;
     return EV[door.k]?.n || "เหตุการณ์ในป่า";
+  }
+
+  function nextDestination(zone,walk,side){
+    const label=nextPlaceDestination(zone,walk,side);
+    if(zone.id!==6||!label)return label;
+    const prediction=nextForkPreview(zone,walk),door=prediction.fork?.[side==='left'?0:1];
+    if(door?.h)return label;
+    const step=(walk.castleStep??DemonCastleRooms.stepFor(zone.depth,walk))+1;
+    const map=door?(maps[door.k]||'training'):'boss',scene=door&&!maps[door.k]?sceneCatalog(zone).selected(prediction.zone,door):null;
+    const room=DemonCastleRooms.roomFor(map,scene,step);
+    return room?DemonCastleRooms.names[room]+' · '+label:'นอกปราสาท · '+label;
   }
 
   function generateNextFork(preview) {
@@ -179,16 +190,16 @@ const ForestWalk = (() => {
     const door = zone.fork?.[slot];
     if (!door) {
       zone.walk = {map: "boss", phase: "pending"};
-      if ([1,3,4,5,7].includes(zone.id)) zone.walk.scene = sceneCatalog(zone).describe("boss");
+      if ([1,3,4,5,6,7].includes(zone.id)) zone.walk.scene = sceneCatalog(zone).describe("boss");
     } else {
       const selected = {map: maps[door.k] || "landmark", phase: "pending", fork: zone.fork, side: slot};
-      if ([1,3,4,5,7].includes(zone.id) && selected.map === "landmark") {
+      if ([1,3,4,5,6,7].includes(zone.id) && selected.map === "landmark") {
         selected.map = "training";
         selected.scene = sceneCatalog(zone).selected(zone, door);
       }
       // Roll the original 14% trap once, so its scenery can be seen before contact.
       // Native stories do not use chooseFork's ordinary trap roll.
-      if ([1,3,4,5,7].includes(zone.id) && maps[door.k] && !SAFE.includes(door.k)) {
+      if ([1,3,4,5,6,7].includes(zone.id) && maps[door.k] && !SAFE.includes(door.k)) {
         selected.trapIndex = Math.random() < .14 ? TRAPS.indexOf(pick(TRAPS)) : -1;
       }
       if (door.k === "stranger") {
@@ -219,7 +230,7 @@ const ForestWalk = (() => {
   function encounter(zone, walk, groupSize) {
     if (!active(zone, walk)) return;
     if (current?.walk === walk && current.scene) walk.position = current.scene.position();
-    if ([1,3,4,5,7].includes(zone.id) && (nativeEvent(zone) || walk.map === "boss")) {
+    if ([1,3,4,5,6,7].includes(zone.id) && (nativeEvent(zone) || walk.map === "boss")) {
       rememberPlace(walk);
       walk.showStory = true;
       render();
@@ -257,7 +268,7 @@ const ForestWalk = (() => {
     walk.phase = "cleared";
     delete walk.fork;
     delete walk.groupSize;
-    if ([1,3,4,5,7].includes(zone.id) && nativeEvent(zone)) {
+    if ([1,3,4,5,6,7].includes(zone.id) && nativeEvent(zone)) {
       rememberPlace(walk);
       walk.showStory = true;
       walk.storySession = true;
@@ -426,7 +437,7 @@ const ForestWalk = (() => {
       state.encounterAvatar = window.sealerSprites?.create();
       state.encounterAvatar?.sync(walk.enemies[0]);
     }
-    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js", "footstep-audio.js"].map(file => import(new URL(file + "?v=heaven-waterfall-release-1", assets).href)));
+    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js", "footstep-audio.js"].map(file => import(new URL(file + "?v=demon-castle-release-1", assets).href)));
     try {
       const [{openForest}, {WELLS}, {createWellEffects, startWellAudio}, {createFootstepAudio}] = await modules;
       if (current !== state) return;
@@ -456,8 +467,9 @@ const ForestWalk = (() => {
         entrance: map === "entrance" && zone.depth === 0,
         landmark: walk.scene?.landmark || (map === "boss" ? "gate" : map === "landmark" ? landmarkArt(walk.fork[walk.side]) : null),
         trainingScene: zone.id === 7 ? walk.scene : null,
-        zoneTheme: zone.id === 5 ? 'heaven' : zone.id === 4 ? 'dragon' : zone.id === 3 ? 'desert' : zone.id === 1 ? 'moonlight' : 'training',
-        moonlightScene: [1,3,4,5].includes(zone.id) ? walk.scene : null, placeMap: map,
+        zoneTheme: zone.id === 6 ? 'demon' : zone.id === 5 ? 'heaven' : zone.id === 4 ? 'dragon' : zone.id === 3 ? 'desert' : zone.id === 1 ? 'moonlight' : 'training',
+        moonlightScene: [1,3,4,5,6].includes(zone.id) ? walk.scene : null, placeMap: map,
+        castleStep:walk.castleStep, castleRoom:zone.id===6?(['localhost','127.0.0.1'].includes(location.hostname)?walk.roomPreview||walk.castleRoom:walk.castleRoom):null,
         storyActorURL: null,
         trapIndex: walk.trapIndex,
         onTrap: walk.trapIndex >= 0 ? resolve : null,
@@ -493,6 +505,10 @@ const ForestWalk = (() => {
       });
       if (current !== state) { scene.dispose(); return; }
       state.scene = scene;
+      if(canvas.dataset.castleInterior==='true'){
+        const roomName=canvas.dataset.castleRoomName;
+        node.querySelector('.forest-walk-note b').textContent=roomName+(canvas.dataset.castleServiceLabel?' · '+canvas.dataset.castleServiceLabel:'')+(walk.scene?.title?' · '+walk.scene.title:'');
+      }
       state.report(...scene.position(), 0, "", false, "clear");
       sync();
     } catch (error) {
@@ -516,8 +532,12 @@ const ForestWalk = (() => {
 
   function sync() {
     const zone = S.zone, walk = zone?.walk;
+    if(zone?.id===6&&walk){
+      walk.castleStep??=DemonCastleRooms.stepFor(zone.depth,walk);
+      if(walk.castleStep>=4)walk.castleRoom??=DemonCastleRooms.roomFor(walk.map,walk.scene,walk.castleStep);
+    }
     const host = document.getElementById("forest-walk-mount");
-    const questSites=[1,3,4,5,7].includes(zone?.id)&&!nativeEvent(zone)?ForestQuestSites.available(S.P,window.WorldQuestData.quests,questContext(zone)):[];
+    const questSites=[1,3,4,5,6,7].includes(zone?.id)&&!nativeEvent(zone)?ForestQuestSites.available(S.P,window.WorldQuestData.quests,questContext(zone)):[];
     const hasSearch=questSites.length>0,questSignature=JSON.stringify(questSites);
     if (walk && !hasSearch) walk.showSearch = false;
     if (current && (current.zone !== zone || current.walk !== walk || walk.map === "legacy" || current.sceneId !== walk.scene?.id || current.questSignature !== questSignature)) clear();
@@ -554,7 +574,7 @@ const ForestWalk = (() => {
 
   function presentSearch(box) {
     const zone = S.zone, layout = document.querySelector(".forest-walk-layout");
-    if (![1,3,4,5,7].includes(zone?.id) || !layout || nativeEvent(zone)) return false;
+    if (![1,3,4,5,6,7].includes(zone?.id) || !layout || nativeEvent(zone)) return false;
     const panel = document.createElement("aside");
     panel.className = "forest-walk-story forest-walk-search-panel";
     panel.hidden = !zone.walk.showSearch;
@@ -573,16 +593,16 @@ const ForestWalk = (() => {
   }
 
   function mount(zone) {
-    if (!zone || ![7, 1, 3, 4, 5].includes(zone.id)) return;
+    if (!zone || ![7, 1, 3, 4, 5, 6].includes(zone.id)) return;
     // Preserve a saved scene/session, including rolled trap identity and position.
     zone.walk ||= zone.depth >= ZDEPTH ? {map: "boss", phase: "pending"} : initialMap();
-    if ([1,3,4,5,7].includes(zone.id) && zone.walk.map === "boss") zone.walk.scene = sceneCatalog(zone).describe("boss");
+    if ([1,3,4,5,6,7].includes(zone.id) && zone.walk.map === "boss") zone.walk.scene = sceneCatalog(zone).describe("boss");
     if (!trainingFocusInstalled) {
       trainingFocusInstalled = true;
       for (const owner of [Secret, ForestSpecial, ForestRiddle, WorldTales]) {
         const previous = owner.focus;
         owner.focus = function(...args) {
-          const panel = [1,3,4,5,7].includes(S.zone?.id) && document.querySelector(".forest-walk-story:not([hidden])");
+          const panel = [1,3,4,5,6,7].includes(S.zone?.id) && document.querySelector(".forest-walk-story:not([hidden])");
           if (!panel) return previous?.apply(this, args);
           panel.scrollTop = 0;
           const heading = panel.querySelector("h2,h3");

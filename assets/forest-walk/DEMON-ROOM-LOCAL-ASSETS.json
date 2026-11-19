@@ -1,0 +1,141 @@
+{
+  "status": "supabase-sha256-verified",
+  "generation": "built-in image_gen",
+  "assets": [
+    {
+      "id": "armory",
+      "file": "assets/forest-walk/generated/demon-interior/armory.png",
+      "bytes": 2369065,
+      "sha256": "82d21c5fa24255821a1534920aeaa604a591da546acfa74b2dc35c2b71efa336",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--armory--82d21c5fa2425582.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--armory--82d21c5fa2425582.png"
+    },
+    {
+      "id": "banquet",
+      "file": "assets/forest-walk/generated/demon-interior/banquet.png",
+      "bytes": 2297548,
+      "sha256": "95df9d3b2dc1b612a252f8ed1d5ca1b3571f5728e3240b1bdce726764c12607d",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--banquet--95df9d3b2dc1b612.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--banquet--95df9d3b2dc1b612.png"
+    },
+    {
+      "id": "basement",
+      "file": "assets/forest-walk/generated/demon-interior/basement.png",
+      "bytes": 2367229,
+      "sha256": "5b6a59870ada2bbde4da7b3cee86bb5e444c065a7dda382b4af4b698eb05cd4c",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--basement--5b6a59870ada2bbd.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--basement--5b6a59870ada2bbd.png"
+    },
+    {
+      "id": "dining",
+      "file": "assets/forest-walk/generated/demon-interior/dining.png",
+      "bytes": 2281887,
+      "sha256": "323f5c015eb59745a09a5bdd3867c4e0f3be382146a58ae5984877225a746edd",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--dining--323f5c015eb59745.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--dining--323f5c015eb59745.png"
+    },
+    {
+      "id": "floor",
+      "file": "assets/forest-walk/generated/demon-interior/floor.png",
+      "bytes": 3064687,
+      "sha256": "8ca39205e9e87703475aa26c63b7bc871661bba8efd853a79ca721f1a6ec6bb4",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--floor--8ca39205e9e87703.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--floor--8ca39205e9e87703.png"
+    },
+    {
+      "id": "laboratory",
+      "file": "assets/forest-walk/generated/demon-interior/laboratory.png",
+      "bytes": 2479968,
+      "sha256": "60fa0cae40a5c885ed307f144c79cb3def08fa29414b19b40212c085ad45f0b1",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--laboratory--60fa0cae40a5c885.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--laboratory--60fa0cae40a5c885.png"
+    },
+    {
+      "id": "library",
+      "file": "assets/forest-walk/generated/demon-interior/library.png",
+      "bytes": 2400938,
+      "sha256": "45d9a7c4df3eda9e3fbaeeb9a8fc0c2b26049823b476a5e7d7347cec7eb05712",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--library--45d9a7c4df3eda9e.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--library--45d9a7c4df3eda9e.png"
+    },
+    {
+      "id": "lounge",
+      "file": "assets/forest-walk/generated/demon-interior/lounge.png",
+      "bytes": 2366122,
+      "sha256": "85a06ca3b7a51c8a101be944eba547dcbc86bb577817135b4596117534647e57",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--lounge--85a06ca3b7a51c8a.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--lounge--85a06ca3b7a51c8a.png"
+    },
+    {
+      "id": "music",
+      "file": "assets/forest-walk/generated/demon-interior/music.png",
+      "bytes": 2185364,
+      "sha256": "3827c2c8ef802cc982e0ddddae5ab03149202e453b0169b006b292db5e2bfc7e",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--music--3827c2c8ef802cc9.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--music--3827c2c8ef802cc9.png"
+    },
+    {
+      "id": "prison",
+      "file": "assets/forest-walk/generated/demon-interior/prison.png",
+      "bytes": 2386964,
+      "sha256": "bf6739334d952f22fbe88b1a226c32541ec9ffd73726fc2964d05ca5774b6e08",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--prison--bf6739334d952f22.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--prison--bf6739334d952f22.png"
+    },
+    {
+      "id": "ritual",
+      "file": "assets/forest-walk/generated/demon-interior/ritual.png",
+      "bytes": 2046195,
+      "sha256": "5149bdee180903be5f707a220ba89b7385f34e8d003e9e33748245b2b7e2798a",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--ritual--5149bdee180903be.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--ritual--5149bdee180903be.png"
+    },
+    {
+      "id": "shell",
+      "file": "assets/forest-walk/generated/demon-interior/shell.png",
+      "bytes": 2209815,
+      "sha256": "4fabe38040a660c90e39f12ff169650dbfc9a53884085dfd75335917e9bc9c61",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--shell--4fabe38040a660c9.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--shell--4fabe38040a660c9.png"
+    },
+    {
+      "id": "supports",
+      "file": "assets/forest-walk/generated/demon-interior/supports.png",
+      "bytes": 1731775,
+      "sha256": "00501cddf1666534e270966a6f265696ff6bb8a08721afc4fd9ecaed25f20eb5",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--supports--00501cddf1666534.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--supports--00501cddf1666534.png"
+    },
+    {
+      "id": "throne",
+      "file": "assets/forest-walk/generated/demon-interior/throne.png",
+      "bytes": 2237706,
+      "sha256": "af933111e8f72083b3e119718a122812b3881464bef996a85f336c15899831d3",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--throne--af933111e8f72083.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--throne--af933111e8f72083.png"
+    },
+    {
+      "id": "treasury",
+      "file": "assets/forest-walk/generated/demon-interior/treasury.png",
+      "bytes": 2453615,
+      "sha256": "94bee0e0a98ac6a4a5d383c875479d7cdf30b246e4bd19cae17192ba16eccce2",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon-interior--treasury--94bee0e0a98ac6a4.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon-interior--treasury--94bee0e0a98ac6a4.png"
+    }
+  ]
+}

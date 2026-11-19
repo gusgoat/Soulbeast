@@ -1,0 +1,13 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Generate ONE standalone transparent PNG game prop of a medieval gothic castle refuge / village entrance, based on the doorway in the top-right cell of the reference atlas. Only the doorway, not the other atlas objects. IMPORTANT: change it to a perfectly straight-on FRONT VIEW, facing the camera squarely. Symmetrical frontal stone jambs, horizontal level threshold, centreline vertical, no three-quarter rotation, no diagonal facade or oblique side wall. Both sides of arch equally sized. Open double wooden doors folded to either side, warm welcoming lanterns on both jambs, muted burgundy cloth and antique brass trim. Through the doorway see a small warm inhabited courtyard with humble timber homes and lamps, clearly a settlement/refuge entrance. Realistic detailed painted fantasy RPG art, charcoal dressed stone and warm wood matching the reference. Very slight elevated view of the ground only to match the 2.5D game, but facade remains directly front-facing like a front-facing castle exit gate. Entire object intact including both jambs, arch top and threshold, generous empty 60px padding on all edges. No characters, text, labels, UI, additional surrounding walls, trees, smoky matte or background. Genuine transparent alpha outside the isolated sprite. Single centred sprite.",
+  "reference": "generated/demon-interior/services-v2.png",
+  "asset": "generated/demon-interior/village-front-v1.png",
+  "source": [
+    293,
+    32,
+    950,
+    956
+  ],
+  "published": true
+}

@@ -1,16 +1,18 @@
+import {demonScenery,demonThicket} from './demon-scenery.js?v=demon-castle-release-1';
 import {startWaterfallAudio} from './waterfall-audio.js?v=heaven-waterfall-release-1';
 import {forestAssetURL} from "./storage-assets.js";
 import '../../tools/town-walk-demo/ground-shadows.js?v=cast-bridge-1';
 import {trainingScenery} from "./training-scenery.js?v=desert-release-1";
 import {layerOpacity} from "./training-layers.js?v=layers-v1";
 import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-room-1';
-import {createPropEffects,propEffectSpec} from './prop-effects.js?v=heaven-waterfall-release-1';
-import {bossRoomScenery} from './boss-rooms.js?v=dragon-city-release-1';
+import {createPropEffects,propEffectSpec} from './prop-effects.js?v=demon-castle-release-1';
+import {bossRoomScenery} from './boss-rooms.js?v=demon-castle-release-1';
 import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
 import {heavenScenery,heavenThicket} from './heaven-scenery.js?v=heaven-waterfall-release-1';
 import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-city-release-1';
 import {questScenery} from './quest-scenery.js?v=dragon-city-release-1';
 import {reachedTrailEnd} from './trail-exit.js?v=dragon-city-release-1';
+import {CASTLE_CENTER_CONTACT,CASTLE_CENTER_TRAIL,hasCastleCenterRoute} from './castle-center-route.js?v=demon-castle-release-1';
 
 const FLATTEN = .64;
 // Player walking and running are 1.5 times the original forest pace.
@@ -244,7 +246,7 @@ function paintFootprints(ctx, x, y, scale) {
   }
 }
 
-function makeGround(images, props, paths, openAreas, footprints, moonlight = false, desert = false, dragon = false, heaven = false) {
+function makeGround(images, props, paths, openAreas, footprints, moonlight = false, desert = false, dragon = false, heaven = false, demon = false, castleInterior = false, centerRoute = false) {
   const ground = document.createElement("canvas"), scale = 6;
   ground.width = WIDTH * scale;
   ground.height = Math.ceil(LENGTH * FLATTEN * scale);
@@ -254,9 +256,17 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
   pattern.setTransform(new DOMMatrix().scale(.225));
   ctx.fillStyle = pattern;
   ctx.fillRect(0, 0, ground.width, ground.height);
-  ctx.fillStyle = heaven ? '#b8a8ca12' : dragon ? '#53637118' : desert ? "#ca9a4818" : moonlight ? "#233b6350" : "#29452630";
+  if(castleInterior){
+    if(centerRoute){
+      ctx.beginPath();paths.forEach(path=>smoothStroke(ctx,path,x,y));ctx.lineJoin=ctx.lineCap='round';ctx.strokeStyle='#3d322f70';ctx.lineWidth=6.4*FLATTEN*scale;ctx.stroke();
+      const paving=ctx.createPattern(images.ground,'repeat');paving.setTransform(new DOMMatrix().scale(.15));ctx.strokeStyle=paving;ctx.lineWidth=5.7*FLATTEN*scale;ctx.stroke();
+      ctx.strokeStyle='#d8c7a82e';ctx.lineWidth=5.5*FLATTEN*scale;ctx.stroke();
+    }
+    return ground;
+  }
+  ctx.fillStyle = demon ? '#30283d12' : heaven ? '#b8a8ca12' : dragon ? '#53637118' : desert ? "#ca9a4818" : moonlight ? "#233b6350" : "#29452630";
   ctx.fillRect(0, 0, ground.width, ground.height);
-  for (const [thickness, color] of heaven ? [[15.6,'#e4dfd733'],[13.3,'#c9c3d050'],[11.8,'#d7d0ca70'],[TRAIL_FILL_WIDTH,'#d3cec680']] : dragon ? [[15.6,'#a4a8a330'],[13.3,'#969c9850'],[11.8,'#a4a9a180'],[TRAIL_FILL_WIDTH,'#a3a69b80']] : desert ? [[15.6,'#dec29230'],[13.3,'#c2a16c30'],[11.8,'#c4a06b55'],[TRAIL_FILL_WIDTH,'#c9a66d70']] : moonlight ? [[15.6,"#99a9b446"],[13.3,"#8b9ca346"],[11.8,"#8c9b9f88"],[TRAIL_FILL_WIDTH,"#859393"]] : [[15.6, "#a4a06a46"], [13.3, "#ad9c6246"], [11.8, "#a5966388"], [TRAIL_FILL_WIDTH, "#9e8e60"]]) {
+  for (const [thickness, color] of demon ? [[15.6,'#9b929030'],[13.3,'#968c8550'],[11.8,'#8c838880'],[TRAIL_FILL_WIDTH,'#807a7d90']] : heaven ? [[15.6,'#e4dfd733'],[13.3,'#c9c3d050'],[11.8,'#d7d0ca70'],[TRAIL_FILL_WIDTH,'#d3cec680']] : dragon ? [[15.6,'#a4a8a330'],[13.3,'#969c9850'],[11.8,'#a4a9a180'],[TRAIL_FILL_WIDTH,'#a3a69b80']] : desert ? [[15.6,'#dec29230'],[13.3,'#c2a16c30'],[11.8,'#c4a06b55'],[TRAIL_FILL_WIDTH,'#c9a66d70']] : moonlight ? [[15.6,"#99a9b446"],[13.3,"#8b9ca346"],[11.8,"#8c9b9f88"],[TRAIL_FILL_WIDTH,"#859393"]] : [[15.6, "#a4a06a46"], [13.3, "#ad9c6246"], [11.8, "#a5966388"], [TRAIL_FILL_WIDTH, "#9e8e60"]]) {
     ctx.beginPath();
     paths.forEach(path => smoothStroke(ctx, path, x, y));
     ctx.lineCap = ctx.lineJoin = "round";
@@ -285,16 +295,22 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
   return ground;
 }
 
-export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, soundMix, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, questSites = [], zoneTheme, moonlightScene, placeMap} = {}) {
+export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, soundMix, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, questSites = [], zoneTheme, moonlightScene, placeMap, castleStep=1,castleRoom} = {}) {
   const moonlight = zoneTheme === 'moonlight';
-  const heaven = zoneTheme === 'heaven';
-  const desert = zoneTheme === 'desert',dragon=zoneTheme==='dragon',layeredBiome=moonlight||desert||dragon||heaven;
+  const heaven = zoneTheme === 'heaven', demon=zoneTheme==='demon';
+  const desert = zoneTheme === 'desert',dragon=zoneTheme==='dragon',layeredBiome=moonlight||desert||dragon||heaven||demon;
   const bossRoom = placeMap === 'boss';
+  const castleInterior=demon&&(castleStep>=4||bossRoom);
+  const centerRoute=demon&&hasCastleCenterRoute(placeMap);
+  const townExitPoint=centerRoute?CASTLE_CENTER_CONTACT:TOWN_EXIT;
+  const activeTownTrail=centerRoute?smooth(CASTLE_CENTER_TRAIL):townTrail;
+  const activeTownTrails=[activeTownTrail];
   const banditCamp = Boolean(onBanditLoot);
   const humanPursuit = banditCamp || Boolean(traveler);
   const village = Boolean(onVisitVillage);
   const visitService = onVisitVillage || onVisitHealer;
-  const serviceEntrance = village ? VILLAGE_ENTRANCE : HEALER_ENTRANCE;
+  const villageEntrance=centerRoute?CASTLE_CENTER_CONTACT:VILLAGE_ENTRANCE;
+  const serviceEntrance = village ? villageEntrance : HEALER_ENTRANCE;
   const files = {...filenames};
   if (playerAvatar) for (const pose of ["idle", "walk", "run"]) delete files[pose];
   const feature = LANDMARKS[landmark];
@@ -323,28 +339,42 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       image.onerror = () => reject(new Error("Asset failed to load: " + file));
       image.src = id === "story-actor" ? file : forestAssetURL("art/" + file);
     }))));
-  const paths = onTownExit ? [...tracks, townTrail] : bossRoom ? [tracks[0].filter(p=>p[1]<=GLADE_CENTER[1]+2)] : tracks;
+  const paths = centerRoute ? [...tracks,activeTownTrail] : onTownExit ? [...tracks, townTrail] : bossRoom ? [tracks[0].filter(p=>p[1]<=GLADE_CENTER[1]+2)] : tracks;
   const openAreas = bossRoom ? [[SPAWN,5],[GLADE_CENTER,11.5]] : [...groundClearings];
   let props = makeScenery(showEntranceGate, paths);
-  const scenery = await trainingScenery(bossRoom?null:trainingScene, desert||dragon||heaven?-1:trapIndex);
+  const scenery = await trainingScenery(bossRoom?null:trainingScene, desert||dragon||heaven||demon?-1:trapIndex);
   if(layeredBiome){
-    const themed=heaven?await heavenScenery(placeMap,moonlightScene,props,trapIndex):dragon?await dragonScenery(placeMap,moonlightScene,props,trapIndex):desert?await desertScenery(placeMap,moonlightScene,props,trapIndex):await moonlightScenery(placeMap,moonlightScene,props);
+    const themed=demon?await demonScenery(placeMap,moonlightScene,props,trapIndex,{step:castleStep,room:castleRoom}):heaven?await heavenScenery(placeMap,moonlightScene,props,trapIndex):dragon?await dragonScenery(placeMap,moonlightScene,props,trapIndex):desert?await desertScenery(placeMap,moonlightScene,props,trapIndex):await moonlightScenery(placeMap,moonlightScene,props);
     props=themed.props;Object.assign(images,themed.tiles);
     canvas.dataset.forestTheme=zoneTheme;
     canvas.dataset[zoneTheme+'Scenery']=moonlightScene?.id||placeMap;
     canvas.dataset[zoneTheme+'Kit']=themed.kit;
-    canvas.dataset.treeRenderer=heaven?'celestial-png':dragon?'mountain-pine-png':desert?'sparse-cactus-png':'blender-png';
+    canvas.dataset.castleInterior=String(Boolean(themed.interior));
+    if(themed.interior){canvas.dataset.castleDoors=String(props.filter(p=>p.exitDoor).length);canvas.dataset.castleTreeProps=String(props.filter(p=>p.kind==='tree'&&!p.renderHidden).length);canvas.dataset.redCarpet=String(props.some(p=>p.redCarpet));}
+    if(themed.interior){canvas.dataset.castleRoom=themed.room;canvas.dataset.castleRoomName=themed.roomName;canvas.dataset.castleArchitecture='png-open-sides';canvas.dataset.castleMeshParts=String(props.filter(p=>p.blenderArchitecture).length);}
+    canvas.dataset.treeRenderer=castleInterior?'castle-interior-png':demon?'deadwood-png':heaven?'celestial-png':dragon?'mountain-pine-png':desert?'sparse-cactus-png':'blender-png';
   }
   if(bossRoom){
-    const room=await bossRoomScenery(heaven?'heaven':dragon?'dragon':desert?'desert':moonlight?'moonlight':'training');
+    const room=await bossRoomScenery(demon?'demon':heaven?'heaven':dragon?'dragon':desert?'desert':moonlight?'moonlight':'training');
     // Keep foreground canopies out of the door and guardian sightline.
     props=props.filter(p=>!['tree','shrub','thicket'].includes(p.kind)||p.z>GLADE_CENTER[1]+3||p.z<GLADE_CENTER[1]-30||Math.abs(p.x-GLADE_CENTER[0])-p.width/2>14);
+    // Indoors retain the original closed door, guardians and contact/collision geometry.
+    // The outdoor root-covered facade is replaced by the new dressed-stone throne room.
+    if(castleInterior)room.props=room.props.map(p=>p.closedDoor||p.bossStatue||p.renderHidden?p:{...p,renderHidden:true});
     Object.assign(images,room.tiles);props.push(...room.props);
-    canvas.dataset.bossRoom=heaven?'heaven':dragon?'dragon':desert?'desert':moonlight?'moonlight':'training';
+    canvas.dataset.bossRoom=demon?'demon':heaven?'heaven':dragon?'dragon':desert?'desert':moonlight?'moonlight':'training';
     canvas.dataset.bossDoor='closed';
     canvas.dataset.bossStatues=String(room.props.filter(p=>p.bossStatue).length);
   }
-  canvas.dataset.sceneryRenderer = "png";
+  canvas.dataset.sceneryRenderer = 'png';
+  canvas.dataset.castleServiceSite=props.find(p=>p.siteMarker)?.siteMarker||'';
+  canvas.dataset.castleServiceLabel=props.find(p=>p.siteLabel)?.siteLabel||'';
+  canvas.dataset.castleServicePieces=String(props.filter(p=>p.siteMarker).length);
+  canvas.dataset.castleTownExitDoor=String(props.some(p=>p.townExitDoor));
+  canvas.dataset.castleCenterRoute=String(centerRoute);
+  canvas.dataset.castleCenterContact=centerRoute?JSON.stringify(CASTLE_CENTER_CONTACT):'';
+  canvas.dataset.castleCenterRoute=String(centerRoute);
+  if(centerRoute)canvas.dataset.castleCenterContact=JSON.stringify(CASTLE_CENTER_CONTACT);
   canvas.dataset.trainingScenery = bossRoom&&trainingScene?'boss':[...new Set(scenery.props.map(p => p.art.slice("training-png-".length)))].join(",");
   canvas.dataset.sceneryLayers = String((layeredBiome||bossRoom?props:scenery.props).filter(p => p.layered).length);
   canvas.dataset.cameraMode = "layered-orthographic";
@@ -363,7 +393,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const thicket = onSearch && !mist && !ruins ? thicketLayout.map(([x, z, width, variant]) => ({
     kind: "thicket", art: "shrub-" + variant, x: x + GLADE_CENTER[0], z: z + GLADE_CENTER[1],
     width, canopy: thicketCanopies[variant - 1], swayX: 0, swayY: 0, revealX: 0
-  })).map(p=>heaven?heavenThicket(p):dragon?dragonThicket(p):desert?desertThicket(p):moonlight?moonlightThicket(p):p) : [];
+  })).map(p=>demon?{...demonThicket(p),renderHidden:castleInterior}:heaven?heavenThicket(p):dragon?dragonThicket(p):desert?desertThicket(p):moonlight?moonlightThicket(p):p) : [];
   props.push(...thicket);
   if (feature && !trainingScene && !layeredBiome) {
     const [x, z] = GLADE_CENTER;
@@ -395,15 +425,18 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     props.push({kind: "shrine", art: "shrine", x, z, width: 12.3, radius: 3.6, renderHidden:layeredBiome});
   }
   if (village) {
-    props.push({...VILLAGE,renderHidden:layeredBiome});
+    props.push({...VILLAGE,...(centerRoute?{x:0,z:43.1}:{}),renderHidden:layeredBiome});
   }
   if (onTownExit) {
-    openAreas.push([TOWN_EXIT, 7]);
+    openAreas.push([townExitPoint, 7]);
     props = props.filter(prop => prop.kind !== "tree"
-      || trailDistance(prop.x, prop.z, townTrails) > 12 + prop.width * .25);
-    props.push({kind: "direction-sign", art: "direction-sign", x: 8.8, z: -7.3, width: 5.6, radius: .35, label: "กลับเมือง →"});
+      || trailDistance(prop.x, prop.z, activeTownTrails) > 12 + prop.width * .25);
+    props.push({kind: "direction-sign", art: "direction-sign", x: centerRoute?5:8.8, z: centerRoute?2:-7.3, width: 5.6, radius: .35, label: centerRoute?"กลับเมือง ↑":"กลับเมือง →"});
   }
   if (onVisitHealer) props.push({...HEALER,renderHidden:layeredBiome});
+  // The old fork sign/tree occupied the new middle branch. Clear its approach
+  // on these two castle maps while retaining the service building's back wall.
+  if(centerRoute)props=props.filter(p=>!p.radius||p.roomBoundary||p.kind==='village'||trailDistance(p.x,p.z,[CASTLE_CENTER_TRAIL])>p.radius+1.2);
   // Moonlight kits append individual parts after the already-sorted woodland.
   // Sort those parts too before interleaving them with waiting/moving actors.
   if (layeredBiome || well || onPray || visitService || onTownExit || onSearch || banditCamp || feature || scenery.props.length || onQuest) {
@@ -435,7 +468,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
   const gladeChest = ruins ? RUINS_CHEST : GLADE_CHEST;
   const searchPoint = ruins ? RUINS_ENTRY : GLADE_CENTER;
-  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert,dragon,heaven);
+  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert,dragon,heaven,demon,castleInterior,centerRoute);
   const surface = canvas.getContext("2d", { alpha: false }), groundShadows = window.WalkGroundShadows.create();
   let ctx = surface, shadowCasts = 0;
   canvas.dataset.groundShadows = 'country-upper-right';
@@ -515,8 +548,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     if (well && distance(x, z, GLADE_CENTER) < GLADE_RADIUS) return "The Well";
     if (onPray && distance(x, z, GLADE_CENTER) < GLADE_RADIUS) return "The Shrine";
     if (onVisitHealer && distance(x, z, HEALER_ENTRANCE) < 7) return "Healer Pavilion";
-    if (village && distance(x, z, VILLAGE_ENTRANCE) <= 4.5) return "Village Entrance";
-    if (onTownExit && x > 6 && trailDistance(x, z, townTrails) < 6) return "Town Trail";
+    if (village && distance(x, z, villageEntrance) <= 4.5) return "Village Entrance";
+    if (onTownExit && (centerRoute?z>FORK[1]:x>6) && trailDistance(x, z, activeTownTrails) < 6) return "Town Trail";
     if (distance(x, z, SPAWN) < 5.6) return "South Entrance";
     if (z > FORK[1] + 3.5 && Math.abs(x) > 3.5) return x < 0 ? "Fernstone Trail" : "Sunbloom Trail";
     return "Woodland Trail";
@@ -779,7 +812,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const density = (.23 + .77 * smoothstep(approach)) * mistStrength;
     const x = screenX(player.x), y = screenY(player.z) - 40;
     const haze = ctx.createRadialGradient(x, y, 12, x, y, 185 - density * 130);
-    const dust=heaven?'224,220,238':desert?'209,177,120':'205,222,215';
+    const dust=demon?'146,135,152':heaven?'224,220,238':desert?'209,177,120':'205,222,215';
     haze.addColorStop(0, `rgba(${dust},0)`);
     haze.addColorStop(.43, `rgba(${dust},${density * .27})`);
     haze.addColorStop(1, `rgba(${desert?'201,169,112':'198,216,208'},${density * .98})`);
@@ -792,9 +825,11 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     ctx = surface;shadowCasts=0;
     const horizontal = width / (2 * zoom), vertical = height / (zoom * FLATTEN);
     centerX = viewCenter(camera.x, -WIDTH / 2, WIDTH / 2, horizontal, horizontal);
-    centerZ = viewCenter(camera.z, SOUTH, NORTH, vertical * .44, vertical * .56);
+    // The new north-facing doors need headroom above the original map boundary.
+    // This changes framing only; playable bounds and event contacts stay fixed.
+    centerZ = viewCenter(camera.z, SOUTH, centerRoute?NORTH+14:NORTH, vertical * .44, vertical * .56);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = heaven ? '#aaa6ba' : dragon ? '#68717a' : desert ? '#c9a771' : "#2b5034";
+    ctx.fillStyle = demon ? '#41414a' : heaven ? '#aaa6ba' : dragon ? '#68717a' : desert ? '#c9a771' : "#2b5034";
     ctx.fillRect(0, 0, width, height);
     ctx.drawImage(ground, screenX(-WIDTH / 2), screenY(NORTH), WIDTH * zoom, LENGTH * FLATTEN * zoom);
     const north = centerZ + (height * .56 + 34) / (zoom * FLATTEN);
@@ -840,9 +875,9 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     map.lineWidth = 3.5;
     map.lineJoin = map.lineCap = "round";
     map.stroke();
-    if (onTownExit) {
+    if (onTownExit||centerRoute) {
       map.beginPath();
-      smoothStroke(map, townTrail, x, y);
+      smoothStroke(map, activeTownTrail, x, y);
       map.strokeStyle = "#ffc773";
       map.stroke();
     }
@@ -852,12 +887,12 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     ];
     if (well) markers.push([GLADE_CENTER, 5, well.color]);
     if (onPray) markers.push([GLADE_CENTER, 5, "#f2cd85"]);
-    if (village) markers.push([VILLAGE_ENTRANCE, 5, "#f2cd85"]);
+    if (village) markers.push([villageEntrance, 5, "#f2cd85"]);
     if (onVisitHealer) markers.push([HEALER_ENTRANCE, 5, "#a5e0a8"]);
     if (banditCamp) markers.push([[BANDIT_LOOT.x, BANDIT_LOOT.z], 5, banditOutcome === "loot" ? "#ffd572" : "#dc8a60"]);
     if (travelerOutcome === "waiting") markers.push([GLADE_CENTER, 5, "#f2cd85"]);
     if (traveler && pursuers.length) markers.push([[travelerActor.x, travelerActor.z], 5, "#eb9e84"]);
-    if (onTownExit) markers.push([TOWN_EXIT, 5, "#ffc773"]);
+    if (onTownExit) markers.push([townExitPoint, 5, "#ffc773"]);
     if (onSearch) markers.push([searchPoint, 5, mist ? "#b7e2de" : ruins ? "#ead3a4" : "#a6d686"]);
     if (feature) markers.push([GLADE_CENTER, 5, "#f2cd85"]);
     if (trapIndex >= 0) markers.push([[0, -29], 5, "#efaa86"]);
@@ -912,7 +947,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
         wellAudio?.playStep();
       } else if (player.phase - lastDryStep >= FOOTSTEP_PHASE_INTERVAL) {
         const {x, z, running} = player;
-        const onTrail = trailDistance(x, z, paths, FLATTEN) <= TRAIL_FILL_WIDTH * TRAIL_STROKE_SCALE / 2
+        const onTrail = castleInterior || trailDistance(x, z, paths, FLATTEN) <= TRAIL_FILL_WIDTH * TRAIL_STROKE_SCALE / 2
           || openAreas.some(([point, radius]) => distance(x, z, point) <= radius * TRAIL_FILL_WIDTH / 13);
         const audioScale = onTrail && running ? TRAIL_RUN_AUDIO_SCALE : 1;
         const stepDue = running && !onTrail
@@ -992,7 +1027,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
         encounter, pursuers.length);
     }
     if (!battle && player.moving) {
-      if (onTownExit && distance(player.x, player.z, TOWN_EXIT) <= 2.8) onTownExit();
+      if (onTownExit && distance(player.x, player.z, townExitPoint) <= 2.8) onTownExit();
       else if (!onExit) return;
       else if (reachedTrailEnd(player.x, player.z, WEST, tracks[1].at(-2), clearings[2][1])) onExit("left");
       else if (reachedTrailEnd(player.x, player.z, EAST, tracks[2].at(-2), clearings[3][1])) onExit("right");

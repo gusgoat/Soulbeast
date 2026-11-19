@@ -67,11 +67,13 @@ try{
     let enabled=true;const api=createFootstepAudio(()=>({enabled,context:ctx,destination:bus}));
     const wait=ms=>new Promise(r=>setTimeout(r,ms));
     async function hear(onTrail,running=false,speed=1){await api.step(running,onTrail,speed);let peak=0;for(let i=0;i<35;i++){await wait(10);const a=new Float32Array(2048);analyser.getFloatTimeDomainData(a);for(const v of a)peak=Math.max(peak,Math.abs(v));}return peak;}
+    await api.step(false,true);await api.step(false,false);await wait(500);
     const trail=await hear(true),run=await hear(true,true,.65),outside=await hear(false);enabled=false;const muted=await hear(true);api.close();const ownerAlive=ctx.state==='running';await ctx.close();
     return {slices,leadPeak:Math.max(...lead.map(Math.abs)),trail,run,outside,muted,ownerAlive};
   })()`);
   console.log('FOOTSTEPS',JSON.stringify(steps));assert(steps.slices.every(s=>s.peak>steps.leadPeak*4));assert(steps.trail>.01&&steps.run>.01&&steps.outside>.01);assert(steps.muted<.0001&&steps.ownerAlive);
-  for(const zone of [7,1,3,4,5])for(const map of ['spring','revival','cleanse']){
+  const suiteZones=process.argv.includes('--demon-only')?[6]:[7,1,3,4,5,6];
+  for(const zone of suiteZones)for(const map of ['spring','revival','cleanse']){
     await evaluate(`(()=>{S.P=structuredClone(qaBaseP);S.P.tutorial.enabled=false;S.ui={};S.battle=null;S.screen='zone';S.zone=structuredClone(qaBaseZ);S.zone.id=${zone};S.zone.ev=null;S.zone.fork=null;for(const k of ['secretSession','specialSession','riddleSession','taleSession'])delete S.zone[k];S.zone.walk={map:${JSON.stringify(map)},phase:'cleared',position:[1.05,-20],trapIndex:-1};render();})()`);
     await ready();await delay(150);
     const n=await evaluate(`Number(document.querySelector('.forest-walk-canvas').dataset.flowingWaterfalls)`);
@@ -81,6 +83,7 @@ try{
   }
 
   await evaluate(`window.qaDryPlayed=[];Sound.enabled=true;Sound.unlock().then(()=>{const base=Sound.ctx.createBufferSource.bind(Sound.ctx);Sound.ctx.createBufferSource=()=>{const src=base(),start=src.start.bind(src);src.start=(...args)=>{qaDryPlayed.push({duration:src.buffer?.duration,offset:args[1],rate:src.playbackRate.value});return start(...args);};return src;};})`);
+  await evaluate(`(async()=>{const {createFootstepAudio}=await import('/Soulbeast/assets/forest-walk/footstep-audio.js?v=demon-preview-1');const warm=createFootstepAudio(()=>({enabled:Sound.enabled,context:Sound.ctx,destination:audioBus('effects')}));await warm.step(false,true);await warm.step(false,false);warm.close();})()`);
   for(const onTrail of [true,false])for(const running of [false,true]){
     await evaluate(`S.P=structuredClone(qaBaseP);S.P.tutorial.enabled=false;S.ui={};S.battle=null;S.screen='zone';S.zone=structuredClone(qaBaseZ);S.zone.id=7;S.zone.ev=null;S.zone.fork=null;S.zone.walk={map:'footprints',phase:'cleared',position:[${onTrail?0:9},-36],trapIndex:-1};render();`);await ready();
     await evaluate('qaDryPlayed=[]');
@@ -90,8 +93,8 @@ try{
     const played=await evaluate('qaDryPlayed');assert(played.some(s=>onTrail?s.duration>7&&s.offset>=.38:s.duration<1&&s.offset===0),'actual '+(onTrail?'trail':'outside')+' '+(running?'run':'walk')+' clip: '+JSON.stringify(played));
     console.log('PASS actual keyboard footsteps',onTrail?'trail':'outside',running?'run':'walk',JSON.stringify(played));
   }
-  assert.deepEqual(errors,[]);await writeFile(path.join(output,'verified.json'),JSON.stringify({audio,steps,forestWellScenes:15},null,2));
-  console.log('PASS supplied waterfall MP3 playback, distance/slider/mute, shared context lifetime and all 15 well scenes');
+  assert.deepEqual(errors,[]);await writeFile(path.join(output,'verified.json'),JSON.stringify({audio,steps,forestWellScenes:suiteZones.length*3},null,2));
+  console.log('PASS supplied waterfall MP3 playback, distance/slider/mute, shared context lifetime and selected well scenes');
 }finally{
   if(socket?.readyState===WebSocket.OPEN){await send('Browser.close').catch(()=>{});socket.close();}
   chrome.kill();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));

@@ -1,3 +1,4 @@
+import {CASTLE_FIRE_AREAS} from './castle-fire-areas.js?v=demon-castle-release-1';
 // Presentation only: animate pixels from the original prop, never event state/RNG.
 const cache=new WeakMap();
 const fire=area=>({kind:'fire',area});
@@ -5,6 +6,22 @@ const water=(polygon,flow=[1,.3])=>({kind:'water',polygon,flow});
 const cascade=(polygon,flow=[-.2,1])=>({...water(polygon,flow),cascade:true});
 export function propEffectSpec(prop){
   const id=prop.effectId||prop.art;
+  if(CASTLE_FIRE_AREAS[id])return CASTLE_FIRE_AREAS[id].map(fire);
+  if(id==='castle-laboratory#4')return [water([[0,0],[1,0],[1,1],[0,1]],[.2,.2])];
+  if(id==='demon-spring#1')return [cascade([[.55,.41],[.65,.41],[.70,.89],[.82,.97],[.41,.99],[.39,.94],[.57,.87]],[0,1])];
+  if(id==='demon-spring#5')return [water([[.14,.13],[.51,.13],[.65,.20],[.56,.28],[.22,.28],[.08,.20]],[.3,.2])];
+  if(id==='demon-traps#1')return [water([[.2,.29],[.67,.17],[.9,.46],[.65,.79],[.23,.78],[.10,.51]],[.2,.2])];
+  if(id==='demon-traps#2')return [fire([.10,0,.9,.65])];
+  if(id==='demon-camp#5')return [fire([.06,0,.26,.30])];
+  if(id==='demon-shrine#1')return [fire([.47,.48,.55,.66])];
+  if(id==='demon-shrine#4')return [fire([.43,.64,.59,.73])];
+  if(id==='demon-pandemonium#1')return [fire([.85,.43,.92,.52])];
+  if(id==='demon-pandemonium#5')return [fire([.88,.69,.94,.77])];
+  if(id==='demon-witness#5')return [fire([.64,.76,.70,.86])];
+  if(id==='demon-settlement#0')return [fire([.19,.44,.23,.52])];
+  if(id==='demon-settlement#2')return [fire([.87,.35,.95,.43])];
+  if(id==='demon-settlement#3')return [fire([.04,.34,.12,.42])];
+  if(id==='demon-settlement#5')return [fire([.85,.56,.94,.63])];
   if(id==='heaven-traps#2')return [fire([.10,0,.9,.63])];
   if(id==='heaven-camp#5')return [fire([.14,0,.44,.4])];
   if(id==='heaven-lantern#5')return [fire([.70,.47,.78,.63])];

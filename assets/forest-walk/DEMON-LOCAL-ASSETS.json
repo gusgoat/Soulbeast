@@ -1,0 +1,186 @@
+{
+  "status": "supabase-sha256-verified",
+  "generation": "built-in image_gen",
+  "assets": [
+    {
+      "id": "banquet",
+      "file": "assets/forest-walk/generated/demon/banquet.png",
+      "bytes": 2152489,
+      "sha256": "8e4ff229fec008eb76a6f71bd824ea2ae5d0132161a3a4436f2d7b37984a576e",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--banquet--8e4ff229fec008eb.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--banquet--8e4ff229fec008eb.png"
+    },
+    {
+      "id": "camp",
+      "file": "assets/forest-walk/generated/demon/camp.png",
+      "bytes": 2171537,
+      "sha256": "0a411cfd295863235e5da85bd1fd247a2e36a74e200065e5515f7268be84171a",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--camp--0a411cfd29586323.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--camp--0a411cfd29586323.png"
+    },
+    {
+      "id": "chains",
+      "file": "assets/forest-walk/generated/demon/chains.png",
+      "bytes": 2165560,
+      "sha256": "8a122038035ed6526d780b05c271b74122b2c252ad5f66b3095f683a232c393b",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--chains--8a122038035ed652.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--chains--8a122038035ed652.png"
+    },
+    {
+      "id": "gate",
+      "file": "assets/forest-walk/generated/demon/gate.png",
+      "bytes": 2033995,
+      "sha256": "2c50b21000701cda8571cd6b76603318c037406227b20960190f7005e041b128",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--gate--2c50b21000701cda.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--gate--2c50b21000701cda.png"
+    },
+    {
+      "id": "ground-basalt",
+      "file": "assets/forest-walk/generated/demon/ground-basalt.png",
+      "bytes": 3465327,
+      "sha256": "1c5466ac22a76427723991124b8d3eb121579b8d2cc0aece86b6407a65106438",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--ground-basalt--1c5466ac22a76427.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--ground-basalt--1c5466ac22a76427.png"
+    },
+    {
+      "id": "hounds",
+      "file": "assets/forest-walk/generated/demon/hounds.png",
+      "bytes": 2055208,
+      "sha256": "7375c42a74dfe2db0c440db084cea6a429a80afb7ca943aaca6f58aea30b30df",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--hounds--7375c42a74dfe2db.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--hounds--7375c42a74dfe2db.png"
+    },
+    {
+      "id": "knocking",
+      "file": "assets/forest-walk/generated/demon/knocking.png",
+      "bytes": 2059963,
+      "sha256": "1a610df4e006b633bb039afd107ecf6d93ed3085eb01278e6bd2e9e7f46b39c6",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--knocking--1a610df4e006b633.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--knocking--1a610df4e006b633.png"
+    },
+    {
+      "id": "messenger",
+      "file": "assets/forest-walk/generated/demon/messenger.png",
+      "bytes": 2173721,
+      "sha256": "342c93d1b4ab033f7c2b3f5839fae3b1cf8ee36e34d5cbdf6e8c6bfbc280e42d",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--messenger--342c93d1b4ab033f.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--messenger--342c93d1b4ab033f.png"
+    },
+    {
+      "id": "mirrors",
+      "file": "assets/forest-walk/generated/demon/mirrors.png",
+      "bytes": 2236939,
+      "sha256": "eb1006213e39bec755c5d5faf904b1fdc7ff55ce9a92c581c7f4e3a5a4415999",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--mirrors--eb1006213e39bec7.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--mirrors--eb1006213e39bec7.png"
+    },
+    {
+      "id": "pandemonium",
+      "file": "assets/forest-walk/generated/demon/pandemonium.png",
+      "bytes": 2264530,
+      "sha256": "bcfc26758280a036a81f6ffbe030453727ef8440e20c4e262758ff373055dce5",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--pandemonium--bcfc26758280a036.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--pandemonium--bcfc26758280a036.png"
+    },
+    {
+      "id": "parcel",
+      "file": "assets/forest-walk/generated/demon/parcel.png",
+      "bytes": 2348202,
+      "sha256": "42c3e1842cb3e1f3ad8020f72717feeb320adae5219c3a45565f843e86416a01",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--parcel--42c3e1842cb3e1f3.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--parcel--42c3e1842cb3e1f3.png"
+    },
+    {
+      "id": "prison",
+      "file": "assets/forest-walk/generated/demon/prison.png",
+      "bytes": 2260304,
+      "sha256": "07be5eea493334640f0c4e4a45ad36f9adf40815710288e205c31b4c2f947fbc",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--prison--07be5eea49333464.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--prison--07be5eea49333464.png"
+    },
+    {
+      "id": "ruins",
+      "file": "assets/forest-walk/generated/demon/ruins.png",
+      "bytes": 2179520,
+      "sha256": "e8a25b6c55af0d01aae8084acf5baf8918909a464b832315023fd9e3c1956038",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--ruins--e8a25b6c55af0d01.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--ruins--e8a25b6c55af0d01.png"
+    },
+    {
+      "id": "settlement",
+      "file": "assets/forest-walk/generated/demon/settlement.png",
+      "bytes": 2028089,
+      "sha256": "0189993d3f727a3a49a5975216f933563f57522ed958b1353affd4e09de19083",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--settlement--0189993d3f727a3a.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--settlement--0189993d3f727a3a.png"
+    },
+    {
+      "id": "shrine",
+      "file": "assets/forest-walk/generated/demon/shrine.png",
+      "bytes": 2041419,
+      "sha256": "f19e0fbeffccb140fa86c8df1ee7a48110ac4e283d090eeaf7121ca5804d2eba",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--shrine--f19e0fbeffccb140.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--shrine--f19e0fbeffccb140.png"
+    },
+    {
+      "id": "spring",
+      "file": "assets/forest-walk/generated/demon/spring.png",
+      "bytes": 2181655,
+      "sha256": "2a962b4d2f65fb144f2780fbfb4a249e89d798938ed44cfd9e8a7b7db1c42ba4",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--spring--2a962b4d2f65fb14.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--spring--2a962b4d2f65fb14.png"
+    },
+    {
+      "id": "supplies",
+      "file": "assets/forest-walk/generated/demon/supplies.png",
+      "bytes": 2424114,
+      "sha256": "793ec846117b2774668c7a530aaebb8c671fc8ea96c4f79130dbcef5c368d545",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--supplies--793ec846117b2774.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--supplies--793ec846117b2774.png"
+    },
+    {
+      "id": "traps",
+      "file": "assets/forest-walk/generated/demon/traps.png",
+      "bytes": 2493636,
+      "sha256": "93aa1460170506ccdbfdd90f488a1ef9943ea9ba4c41f5b23657221b73347bb7",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--traps--93aa1460170506cc.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--traps--93aa1460170506cc.png"
+    },
+    {
+      "id": "witness",
+      "file": "assets/forest-walk/generated/demon/witness.png",
+      "bytes": 2171118,
+      "sha256": "5c709bdb85af75324de72d11133482e67ee0753cfbbda8d785e68d45540859be",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--witness--5c709bdb85af7532.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--witness--5c709bdb85af7532.png"
+    },
+    {
+      "id": "woodland",
+      "file": "assets/forest-walk/generated/demon/woodland.png",
+      "bytes": 2104703,
+      "sha256": "1964b58ecca9a1394394360fed88418e61cc270a9eb0f92108878391da98056d",
+      "published": true,
+      "storageObject": "forest-scenes-v1--demon--woodland--1964b58ecca9a139.png",
+      "url": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/forest-scenes-v1--demon--woodland--1964b58ecca9a139.png"
+    }
+  ]
+}

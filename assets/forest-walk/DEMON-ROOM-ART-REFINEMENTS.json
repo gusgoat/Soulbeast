@@ -1,0 +1,19 @@
+{
+  "method": "Built-in image_gen; no pixel edits by scripts",
+  "additionalSupportPrompt": "Use case: stylized-concept. Soulbeast realistic hand-painted cutaway CASTLE INTERIOR prop atlas, charcoal dressed stone, dark oak, aged black iron and dull bronze, soft readable neutral light, orthographic frontal view looking down 30 degrees. TRUE transparent RGBA background, no landscape, no forest, no roots, no foliage, no backdrop, no baked shadows. Six COMPLETE separate silhouettes in equal cells in a strict 3-column 2-row grid, 10% transparent clearance on EVERY edge, no crossing cells, no text or numbers: 0 complete tall LEFT square dressed-stone column, plain shaft, intact base and simple capital; 1 matching RIGHT column; 2 short intact LEFT waist-high stone railing partition with full end posts; 3 matching RIGHT railing; 4 complete low stone stairs leading onto a low rectangular wooden dais, ground-only and no wall; 5 freestanding black iron torch stand with visible small orange flame, complete base and fully intact torch. No extra objects.",
+  "supportsActualCellOrder": [
+    "left column",
+    "low railing",
+    "right column",
+    "matching low railing",
+    "stair/dais",
+    "torch stand"
+  ],
+  "refined": [
+    "banquet",
+    "shell",
+    "supports"
+  ],
+  "preservedDrafts": "D:/GameDev/soulbeast/tmp/demon-interior-drafts/",
+  "editPrompt": "Preserve every prop design, material, color, view and six-cell position. Remove all white or gray backdrop, matte and baked ground shadows, replacing them with true zero-alpha transparency. Preserve actual complete opaque silhouettes, flame centers, candle wax, glass highlights and pale stone details. No new objects or lettering."
+}
