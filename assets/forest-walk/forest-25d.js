@@ -6,6 +6,7 @@ import {createPropEffects,propEffectSpec} from './prop-effects.js?v=desert-relea
 import {bossRoomScenery} from './boss-rooms.js?v=desert-release-1';
 import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
 import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-preview-1';
+import {reachedTrailEnd} from './trail-exit.js?v=wide-exits-1';
 
 const FLATTEN = .64;
 // Player walking and running are 1.5 times the original forest pace.
@@ -975,8 +976,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     if (!battle && player.moving) {
       if (onTownExit && distance(player.x, player.z, TOWN_EXIT) <= 2.8) onTownExit();
       else if (!onExit) return;
-      else if (distance(player.x, player.z, WEST) <= 2.8) onExit("left");
-      else if (distance(player.x, player.z, EAST) <= 2.8) onExit("right");
+      else if (reachedTrailEnd(player.x, player.z, WEST, tracks[1].at(-2), clearings[2][1])) onExit("left");
+      else if (reachedTrailEnd(player.x, player.z, EAST, tracks[2].at(-2), clearings[3][1])) onExit("right");
     }
   }
   animation = requestAnimationFrame(loop);
