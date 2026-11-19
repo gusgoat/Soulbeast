@@ -5,6 +5,7 @@ import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-r
 import {createPropEffects,propEffectSpec} from './prop-effects.js?v=desert-release-1';
 import {bossRoomScenery} from './boss-rooms.js?v=desert-release-1';
 import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
+import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-preview-1';
 
 const FLATTEN = .64;
 // Player walking and running are 1.5 times the original forest pace.
@@ -238,7 +239,7 @@ function paintFootprints(ctx, x, y, scale) {
   }
 }
 
-function makeGround(images, props, paths, openAreas, footprints, moonlight = false, desert = false) {
+function makeGround(images, props, paths, openAreas, footprints, moonlight = false, desert = false, dragon = false) {
   const ground = document.createElement("canvas"), scale = 6;
   ground.width = WIDTH * scale;
   ground.height = Math.ceil(LENGTH * FLATTEN * scale);
@@ -248,9 +249,9 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
   pattern.setTransform(new DOMMatrix().scale(.225));
   ctx.fillStyle = pattern;
   ctx.fillRect(0, 0, ground.width, ground.height);
-  ctx.fillStyle = desert ? "#ca9a4818" : moonlight ? "#233b6350" : "#29452630";
+  ctx.fillStyle = dragon ? '#53637118' : desert ? "#ca9a4818" : moonlight ? "#233b6350" : "#29452630";
   ctx.fillRect(0, 0, ground.width, ground.height);
-  for (const [thickness, color] of desert ? [[15.6,'#dec29230'],[13.3,'#c2a16c30'],[11.8,'#c4a06b55'],[TRAIL_FILL_WIDTH,'#c9a66d70']] : moonlight ? [[15.6,"#99a9b446"],[13.3,"#8b9ca346"],[11.8,"#8c9b9f88"],[TRAIL_FILL_WIDTH,"#859393"]] : [[15.6, "#a4a06a46"], [13.3, "#ad9c6246"], [11.8, "#a5966388"], [TRAIL_FILL_WIDTH, "#9e8e60"]]) {
+  for (const [thickness, color] of dragon ? [[15.6,'#a4a8a330'],[13.3,'#969c9850'],[11.8,'#a4a9a180'],[TRAIL_FILL_WIDTH,'#a3a69b80']] : desert ? [[15.6,'#dec29230'],[13.3,'#c2a16c30'],[11.8,'#c4a06b55'],[TRAIL_FILL_WIDTH,'#c9a66d70']] : moonlight ? [[15.6,"#99a9b446"],[13.3,"#8b9ca346"],[11.8,"#8c9b9f88"],[TRAIL_FILL_WIDTH,"#859393"]] : [[15.6, "#a4a06a46"], [13.3, "#ad9c6246"], [11.8, "#a5966388"], [TRAIL_FILL_WIDTH, "#9e8e60"]]) {
     ctx.beginPath();
     paths.forEach(path => smoothStroke(ctx, path, x, y));
     ctx.lineCap = ctx.lineJoin = "round";
@@ -292,7 +293,7 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
 
 export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, zoneTheme, moonlightScene, placeMap} = {}) {
   const moonlight = zoneTheme === 'moonlight';
-  const desert = zoneTheme === 'desert',layeredBiome=moonlight||desert;
+  const desert = zoneTheme === 'desert',dragon=zoneTheme==='dragon',layeredBiome=moonlight||desert||dragon;
   const bossRoom = placeMap === 'boss';
   const banditCamp = Boolean(onBanditLoot);
   const humanPursuit = banditCamp || Boolean(traveler);
@@ -330,21 +331,21 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const paths = onTownExit ? [...tracks, townTrail] : bossRoom ? [tracks[0].filter(p=>p[1]<=GLADE_CENTER[1]+2)] : tracks;
   const openAreas = bossRoom ? [[SPAWN,5],[GLADE_CENTER,11.5]] : [...groundClearings];
   let props = makeScenery(showEntranceGate, paths);
-  const scenery = await trainingScenery(bossRoom?null:trainingScene, desert?-1:trapIndex);
+  const scenery = await trainingScenery(bossRoom?null:trainingScene, desert||dragon?-1:trapIndex);
   if(layeredBiome){
-    const themed=desert?await desertScenery(placeMap,moonlightScene,props,trapIndex):await moonlightScenery(placeMap,moonlightScene,props);
+    const themed=dragon?await dragonScenery(placeMap,moonlightScene,props,trapIndex):desert?await desertScenery(placeMap,moonlightScene,props,trapIndex):await moonlightScenery(placeMap,moonlightScene,props);
     props=themed.props;Object.assign(images,themed.tiles);
     canvas.dataset.forestTheme=zoneTheme;
-    canvas.dataset[desert?'desertScenery':'moonlightScenery']=moonlightScene?.id||placeMap;
-    canvas.dataset[desert?'desertKit':'moonlightKit']=themed.kit;
-    canvas.dataset.treeRenderer=desert?'sparse-cactus-png':'blender-png';
+    canvas.dataset[zoneTheme+'Scenery']=moonlightScene?.id||placeMap;
+    canvas.dataset[zoneTheme+'Kit']=themed.kit;
+    canvas.dataset.treeRenderer=dragon?'mountain-pine-png':desert?'sparse-cactus-png':'blender-png';
   }
   if(bossRoom){
-    const room=await bossRoomScenery(desert?'desert':moonlight?'moonlight':'training');
+    const room=await bossRoomScenery(dragon?'dragon':desert?'desert':moonlight?'moonlight':'training');
     // Keep foreground canopies out of the door and guardian sightline.
     props=props.filter(p=>!['tree','shrub','thicket'].includes(p.kind)||p.z>GLADE_CENTER[1]+3||p.z<GLADE_CENTER[1]-30||Math.abs(p.x-GLADE_CENTER[0])-p.width/2>14);
     Object.assign(images,room.tiles);props.push(...room.props);
-    canvas.dataset.bossRoom=desert?'desert':moonlight?'moonlight':'training';
+    canvas.dataset.bossRoom=dragon?'dragon':desert?'desert':moonlight?'moonlight':'training';
     canvas.dataset.bossDoor='closed';
     canvas.dataset.bossStatues=String(room.props.filter(p=>p.bossStatue).length);
   }
@@ -363,7 +364,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const thicket = onSearch && !mist && !ruins ? thicketLayout.map(([x, z, width, variant]) => ({
     kind: "thicket", art: "shrub-" + variant, x: x + GLADE_CENTER[0], z: z + GLADE_CENTER[1],
     width, canopy: thicketCanopies[variant - 1], swayX: 0, swayY: 0, revealX: 0
-  })).map(p=>desert?desertThicket(p):moonlight?moonlightThicket(p):p) : [];
+  })).map(p=>dragon?dragonThicket(p):desert?desertThicket(p):moonlight?moonlightThicket(p):p) : [];
   props.push(...thicket);
   if (feature && !trainingScene && !layeredBiome) {
     const [x, z] = GLADE_CENTER;
@@ -432,7 +433,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
   const gladeChest = ruins ? RUINS_CHEST : GLADE_CHEST;
   const searchPoint = ruins ? RUINS_ENTRY : GLADE_CENTER;
-  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert), ctx = canvas.getContext("2d", { alpha: false });
+  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert,dragon), ctx = canvas.getContext("2d", { alpha: false });
   const mini = minimap, map = mini.getContext("2d");
   const start = resume.retreat ? FORK
     : Array.isArray(resume.position) && resume.position.length === 2 && resume.position.every(Number.isFinite) ? resume.position : SPAWN;
@@ -781,7 +782,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     centerX = viewCenter(camera.x, -WIDTH / 2, WIDTH / 2, horizontal, horizontal);
     centerZ = viewCenter(camera.z, SOUTH, NORTH, vertical * .44, vertical * .56);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = desert ? '#c9a771' : "#2b5034";
+    ctx.fillStyle = dragon ? '#68717a' : desert ? '#c9a771' : "#2b5034";
     ctx.fillRect(0, 0, width, height);
     ctx.drawImage(ground, screenX(-WIDTH / 2), screenY(NORTH), WIDTH * zoom, LENGTH * FLATTEN * zoom);
     const north = centerZ + (height * .56 + 34) / (zoom * FLATTEN);

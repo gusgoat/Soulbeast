@@ -41,12 +41,12 @@ try{
   await until(()=>evaluate(`typeof S!=='undefined' && !!S.zone?.walk`),'game bootstrap',45000);
   await evaluate(`window.qaBaseP=structuredClone(S.P);window.qaBaseZ=structuredClone(S.zone);S.P.tutorial.enabled=false;S.ui={};S.screen='zone';render();`);
   await ready();
-  for(const [zone,theme]of [[7,'training'],[1,'moonlight'],[3,'desert']]){
+  for(const [zone,theme]of [[7,'training'],[1,'moonlight'],[3,'desert'],[4,'dragon']]){
     await evaluate(`(()=>{
       S.P=structuredClone(qaBaseP);S.P.tutorial.enabled=false;S.ui={};S.battle=null;S.screen='zone';S.zone=structuredClone(qaBaseZ);
       S.zone.id=${zone};S.zone.depth=10;S.zone.boss=structuredClone(ZN[${zone-1}].boss);S.zone.ev=null;S.zone.fork=null;
       for(const k of ['secretSession','specialSession','riddleSession','taleSession'])delete S.zone[k];
-      S.zone.walk={map:'boss',phase:'pending',scene:${zone===7?'TrainingForestScenes':zone===3?'DesertForestScenes':'MoonlightForestScenes'}.describe('boss'),position:[1.05,-22]};render();
+      S.zone.walk={map:'boss',phase:'pending',scene:${zone===7?'TrainingForestScenes':zone===4?'DragonForestScenes':zone===3?'DesertForestScenes':'MoonlightForestScenes'}.describe('boss'),position:[1.05,-22]};render();
     })()`);
     await ready();await delay(400);
     assert.equal(await evaluate(`document.querySelector('.forest-walk-canvas').dataset.bossRoom`),theme);

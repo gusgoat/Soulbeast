@@ -1,0 +1,13 @@
+# Sleeping Dragon Peak · zone 4 local preview
+
+Scope: continue from the published Golden Tomb Desert into the native next area, Sleeping Dragon Peak. Grey rocky ground, sparse wind-bent pines, outer rock faces, rope bridges, old mountain gates, echo pillars, a forge, signal station, ranger shelter and nesting alcoves replace the previous biome's scenery. Separated PNG floor/rear/side/overhead/detail parts retain the shared depth and actor-reveal behavior.
+
+Native event IDs: dragongate, dragon, dragon-echo, dragon-elements, dragon-avalanche, dragon-nest, dragon-0 through dragon-3, encounter-4, after-dragon, villager and boss. Unit checks derive this set from the existing SECRET_LOCATIONS/WORLD_TALES data. The scene code does not define new gameplay probabilities, rewards, quests or combat. Original boss is the ancient fire dragon, using its already-prepared sealed door and two separate guardian statues.
+
+Shared behavior: Y routes and distinct left/right destination labels, original class/gender Blender actors, analogue joystick walking/running, current player speed and 1.7x pursuit, full-scene event menus and exact same-place returns. Existing calibrated spring/revival/cleanse basins and contacts remain. New fire and water pixels animate inside bounded masks with cache reuse and reduced-motion stills.
+
+User-requested preview character: level 60, War Spellblade (sbwar), with native skills including sbw_doom and the existing 3D class model. The dedicated disposable localhost profile satisfies the two native promotion-quest prerequisites, then uses the original spellblade and sbwar promotion handlers. Only the demo profile receives those prerequisite flags. Original saves, character progression and quest rules are unchanged.
+
+Preview: http://127.0.0.1:8835/?v=dragon-preview-1 . Fourteen event scenes, fourteen ordinary maps and six native hazard options are available, plus normal play. Changing the selection starts a fresh level-60 sbwar demo. Launcher/server sources are D:/GameDev/soulbeast/tmp/dragon-forest-preview.html and serve-dragon-forest-preview.py. Python server runs hidden and serves this D: checkout. The live website remains at the approved desert release f30338fb; zone 4 is not published.
+
+Validation: native catalogue/RGBA bounds; all 14 native event contacts, full-page/mobile menus, same-place returns and duplicate rewards; all 34 preview selections at level 60/sbwar; original dragon boss; action hit targets across four zones and five viewport sizes; fire/water masks, exact shoreline containment, cache/reduced-motion behavior; shared pursuit speed and older scene checks. QA images are in D:/GameDev/soulbeast/tmp/dragon-preview-qa/ and dragon-forest-qa/.

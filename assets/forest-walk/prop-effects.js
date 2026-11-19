@@ -4,6 +4,13 @@ const fire=area=>({kind:'fire',area});
 const water=(polygon,flow=[1,.3])=>({kind:'water',polygon,flow});
 export function propEffectSpec(prop){
   const id=prop.effectId||prop.art;
+  if(id==='dragon-traps#2')return [fire([.12,.01,.88,.6])];
+  if(id==='dragon-forge#1')return [fire([.32,.57,.58,.8])];
+  if(id==='dragon-beacon#1')return [fire([.4,.57,.65,.78])];
+  if(id==='dragon-beacon#2')return [fire([.38,0,.67,.39])];
+  if(id==='dragon-forge#3')return [water([[.12,.25],[.61,.13],[.92,.32],[.64,.58],[.15,.46]],[.2,.3])];
+  if(id==='dragon-traps#1')return [water([[.25,.29],[.68,.16],[.88,.48],[.56,.8],[.16,.67]],[.2,.2])];
+  if(id==='dragon-spring#1')return [{...water([[.47,.48],[.59,.48],[.57,.96],[.32,.96]],[-.3,1]),foam:true}];
   if(id==='desert-traps#2')return [fire([.12,.01,.86,.6])];
   if(/^desert-waterways#[01235]$/.test(id))return [water([[0,0],[1,0],[1,1],[0,1]],[.3,.7])];
   if(id==='desert-spring#1')return [{...water([[.46,.4],[.57,.4],[.65,1],[.49,1]],[0,1]),foam:true}];
