@@ -52,7 +52,7 @@ console.log('PASS isolated searches, depth, stale steps, countries, promotion or
 // Execute the actual menu bridge with small host stubs, including click closures.
 function bridgeHost(country='blue',playerCountry='red',zone=7,depth=2,worldCall){
  const p=fresh(playerCountry),main={prepend(n){this.box=n}},nodes={};
- const ctx={console,URLSearchParams,wbCall:worldCall,crypto:{randomUUID:()=> 'bridge-'+(++serial)},location:{origin:'http://local'},parent:{postMessage(){}},S:{P:p,zone:{id:zone,depth},battle:null},params:new URLSearchParams('city='+country+'-capital'),screen:'hero',canPromote:()=>true,tierOf:()=>0,vHero:()=>'',handlers:{},save(){},render(){},endBattle(){},startBattle(){},B:()=>null,toast(){},document:{getElementById:id=>nodes[id],createElement:tag=>({tag,style:{},children:[],append(...n){this.children.push(...n)}}),querySelector:()=>main,addEventListener(){}}};ctx.window={WalkQuestEngine:E,WorldQuestData:D};vm.createContext(ctx);vm.runInContext(file('tools/town-walk-demo/quest-menu-bridge.js'),ctx);return {p,ctx,main};
+ const ctx={console,URLSearchParams,wbCall:worldCall,crypto:{randomUUID:()=> 'bridge-'+(++serial)},location:{origin:'http://local'},parent:{postMessage(){}},S:{P:p,zone:{id:zone,depth},battle:null},params:new URLSearchParams('city='+country+'-capital'),screen:'hero',canPromote:()=>true,tierOf:()=>0,vHero:()=>'',handlers:{},save(){},render(){},endBattle(){},startBattle(){},B:()=>null,toast(){},document:{getElementById:id=>nodes[id],createElement:tag=>({tag,style:{},dataset:{},children:[],append(...n){this.children.push(...n)}}),querySelector:()=>main,addEventListener(){}}};ctx.window={WalkQuestEngine:E,WorldQuestData:D};vm.createContext(ctx);vm.runInContext(file('tools/town-walk-demo/quest-menu-bridge.js'),ctx);return {p,ctx,main};
 }
 for(const target of ['lost-person','moon-gem']){
  const zone=target==='lost-person'?7:1,country=zone===7?'blue':'green',h=bridgeHost(country,'red',zone,1),qs=['blue','green','red'].map(c=>qid(c+'-capital:'+(zone===7?'lost':'gem')));for(const q of qs)E.accept(h.p,q);
@@ -61,7 +61,11 @@ for(const target of ['lost-person','moon-gem']){
 }
 {const h=bridgeHost('blue','blue');const q=qid('blue-capital:lost');E.accept(h.p,q);vm.runInContext('questSearchUI()',h.ctx);const button=h.main.box.children.find(n=>n.tag==='button');h.ctx.S.zone.id=1;button.onclick();assert.equal(E.state(h.p).accepted[q.id].step,0);h.ctx.S.zone.id=7;h.ctx.S.battle={over:false};button.onclick();assert.equal(E.state(h.p).accepted[q.id].step,0)}
 // Embedded menu keeps the production bridge, deliberately omitting local practice fights.
-let bridge=file('tools/town-walk-demo/quest-menu-bridge.js');const start=bridge.indexOf('// The local preview supplies'),end=bridge.indexOf("questEmit('visit'",start);bridge=bridge.slice(0,start)+bridge.slice(end);assert(file('tools/town-walk-demo/menu.html').includes(bridge));
+const bridge=file('tools/town-walk-demo/quest-menu-bridge.js'),menu=file('tools/town-walk-demo/menu.html');
+// Compare the shared quest UI itself: production adds forest presentation and
+// has intentionally different tutorial/online hooks from the practice host.
+const searchFunction=s=>s.slice(s.indexOf('function questSearchUI(){'),s.indexOf('const questRender=render;',s.indexOf('function questSearchUI(){'))).trim();
+assert.equal(searchFunction(menu),searchFunction(bridge));
 console.log('PASS actual search buttons: map country vs nationality, depth, quest isolation, stale clicks and embedded menu parity');
 
 class Node{constructor(tag){this.tag=tag;this.children=[];this.dataset={};this.textContent='';this.classList={remove(){},add(){}};this.style={}}get firstChild(){return this.children[0]}append(...n){this.children.push(...n)}prepend(...n){this.children.unshift(...n)}replaceChildren(...n){this.children=n}querySelector(){return null}setAttribute(){}addEventListener(){}showModal(){this.open=true}}

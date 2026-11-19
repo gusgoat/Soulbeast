@@ -6,6 +6,7 @@ import {createPropEffects,propEffectSpec} from './prop-effects.js?v=desert-relea
 import {bossRoomScenery} from './boss-rooms.js?v=desert-release-1';
 import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
 import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-preview-1';
+import {questScenery} from './quest-scenery.js?v=city-quests-1';
 import {reachedTrailEnd} from './trail-exit.js?v=wide-exits-1';
 
 const FLATTEN = .64;
@@ -292,7 +293,7 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
   return ground;
 }
 
-export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, zoneTheme, moonlightScene, placeMap} = {}) {
+export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, questSites = [], zoneTheme, moonlightScene, placeMap} = {}) {
   const moonlight = zoneTheme === 'moonlight';
   const desert = zoneTheme === 'desert',dragon=zoneTheme==='dragon',layeredBiome=moonlight||desert||dragon;
   const bossRoom = placeMap === 'boss';
@@ -358,10 +359,14 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   props.push(...scenery.props);
   if (trainingScene) openAreas.push([GLADE_CENTER, 16]);
   if (storyActorURL) props.push({kind: "training-prop", art: "story-actor", x: 0, z: -9.5, width: 7.5});
-  if (onQuest) {
-    props.push({kind: "direction-sign", art: "direction-sign", x: 7, z: -26, width: 5.5, label: "ร่องรอยภารกิจ"});
-    openAreas.push([[7, -26], 6]);
+  if (questSites.length) {
+    const questArt=await questScenery(questSites);
+    Object.assign(images,questArt.tiles);
+    props=props.filter(p=>!['tree','shrub','grass','rock','wildflower'].includes(p.kind)||!questSites.some(s=>distance(p.x,p.z,s.position)<10+p.width*.5));
+    props.push(...questArt.props);
+    for(const site of questSites)openAreas.push([site.position,5.5]);
   }
+  canvas.dataset.questSites=JSON.stringify(questSites.map(s=>({id:s.id,label:s.label,position:s.position})));
   const thicket = onSearch && !mist && !ruins ? thicketLayout.map(([x, z, width, variant]) => ({
     kind: "thicket", art: "shrub-" + variant, x: x + GLADE_CENTER[0], z: z + GLADE_CENTER[1],
     width, canopy: thicketCanopies[variant - 1], swayX: 0, swayY: 0, revealX: 0
@@ -448,7 +453,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   let searchOutcome = resume.chest ? "chest" : resume.completed ? "clear" : "";
   let landmarkReached = Boolean(resume.completed);
   let trapReached = Boolean(resume.completed);
-  let questReached = false;
+  let questReached = null;
   let banditOutcome = resume.banditOutcome || "";
   let travelerOutcome = travelerActor && !onContact ? (resume.completed ? "met" : "waiting") : resume.travelerOutcome || "";
   let atServiceEntrance = false;
@@ -847,7 +852,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     if (onSearch) markers.push([searchPoint, 5, mist ? "#b7e2de" : ruins ? "#ead3a4" : "#a6d686"]);
     if (feature) markers.push([GLADE_CENTER, 5, "#f2cd85"]);
     if (trapIndex >= 0) markers.push([[0, -29], 5, "#efaa86"]);
-    if (onQuest) markers.push([[7, -26], 5, "#9fdce2"]);
+    for(const site of questSites)markers.push([site.position, 5, "#9fdce2"]);
     markers.push([[player.x, player.z], 5, "#faffd1"]);
     for (const [point, radius, color] of markers) {
       map.beginPath();
@@ -912,9 +917,9 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       }
     }
     if (onQuest) {
-      const near = distance(player.x, player.z, [7, -26]) <= 3.5;
-      if (!near) questReached = false;
-      else if (!questReached && player.moving) { questReached = true; onQuest(); return; }
+      const near = questSites.find(site=>distance(player.x,player.z,site.position)<=3.5);
+      if (!near) questReached = null;
+      else if (questReached!==near.id && player.moving) { questReached = near.id; onQuest(near.id); return; }
     }
     if (onTrap && !trapReached && player.moving && distance(player.x, player.z, [0, -29]) <= 3.2) {
       trapReached = true;

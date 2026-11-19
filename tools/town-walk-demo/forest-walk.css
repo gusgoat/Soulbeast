@@ -20,6 +20,8 @@
 .forest-walk-layout:has(.forest-walk-story:not([hidden])) > .forest-walk-mount{display:none}
 .forest-walk-story{width:100%;height:100%;overflow:auto;overscroll-behavior:contain;padding:16px;background:#17251e;color:#f1e3bc;min-height:0}
 .forest-walk-story[hidden]{display:none!important}
+.forest-walk-search-panel [hidden]{display:none!important}
+.forest-walk-quest-guide{font-size:12px;text-align:left}
 .forest-walk-story :is(.secret-location,.forest-special,.forest-riddle,#worldTales){max-width:100%;margin:0}
 .forest-walk-story :is(button,a){touch-action:manipulation}
 .forest-walk-story .secret-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:10px}

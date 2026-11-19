@@ -47,7 +47,7 @@ try{
    assert(await evaluate(`(()=>{const b=document.querySelector('.forest-walk-chest'),r=b.getBoundingClientRect(),nav=document.querySelector('nav.bottom').getBoundingClientRect(),scene=document.querySelector('.forest-walk-scene').getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return r.left>=scene.left+scene.width*.5&&r.right<=scene.right&&r.bottom<=nav.top-40&&r.top>=scene.top&&b.contains(hit);})()`),'action obscured or outside scene '+zone+' '+width+'x'+height);
    if(width===390)await screenshot('zone-'+zone+'-chest-right');
    await evaluate(`document.querySelector('.forest-walk-fallback').hidden=false`);
-   assert(await evaluate(`(()=>{const bs=[...document.querySelectorAll('.forest-walk-actions>.btn')];return bs.every(b=>{const r=b.getBoundingClientRect();return b.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2))&&r.bottom<=document.querySelector('nav.bottom').getBoundingClientRect().top-40;});})()`),'stacked actions obscured');
+   assert(await evaluate(`(()=>{const bs=[...document.querySelectorAll('.forest-walk-actions>.btn:not([hidden])')];return bs.every(b=>{const r=b.getBoundingClientRect();return b.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2))&&r.bottom<=document.querySelector('nav.bottom').getBoundingClientRect().top-40;});})()`),'stacked actions obscured');
    await evaluate(`document.querySelector('.forest-walk-fallback').hidden=true`);
   }
   await evaluate(`document.querySelector('.forest-walk-chest').click()`);assert.equal(await evaluate('S.zone.ev.opened'),true);

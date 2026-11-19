@@ -11,6 +11,8 @@ const ForestWalk = (() => {
   let trainingFocusInstalled = false;
   const footsteps = new Map();
 
+  function questContext(zone){const p=new URLSearchParams(location.search),place=p.get('city')||S.P.country+'-capital';return {place,country:p.get('country')||window.WalkQuestEngine.countryOf(place)||S.P.country,zone:zone.id,depth:zone.depth};}
+
   function initialMap() {
     return {map: "entrance", phase: "cleared"};
   }
@@ -357,6 +359,7 @@ const ForestWalk = (() => {
       + '<canvas class="forest-walk-map" width="160" height="160" aria-label="แผนที่ทางแยกตัว Y"></canvas>'
       + '<button type="button" class="forest-walk-stick" aria-label="จอยเดินทาง ลากน้อยเดิน ลากไกลวิ่ง ปล่อยหยุด"><span></span></button>'
       + '<div class="forest-walk-actions" role="group" aria-label="การกระทำกับสถานที่">'
+      + '<button type="button" class="btn forest-walk-quest-guide" aria-label="สลับจุดเควสที่ติดตาม" title="กดเพื่อดูจุดเควสถัดไป" hidden></button>'
       + '<button type="button" class="btn forest-walk-chest" hidden>เปิดหีบ</button>'
       + '<button type="button" class="btn forest-walk-fallback" hidden>กลับไปสำรวจแบบเดิม</button></div>';
     const state = {node, zone, walk, scene: null, water: null};
@@ -365,6 +368,9 @@ const ForestWalk = (() => {
     const status = note.querySelector("p");
     const destination = note.querySelector(".forest-walk-destination");
     const chest = node.querySelector(".forest-walk-chest");
+    const questGuide=node.querySelector('.forest-walk-quest-guide');
+    let guideIndex=0;
+    questGuide.onclick=()=>{if(state.questSites?.length)guideIndex=(guideIndex+1)%state.questSites.length;};
     const route = walk.fork?.[walk.side];
     note.querySelector("b").textContent = walk.scene?.title || (walk.map === "boss" ? "ประตูบอส"
       : route?.h ? ZN[zone.id - 1].n : EV[route?.k || walk.map]?.n || ZN[zone.id - 1].n);
@@ -419,6 +425,9 @@ const ForestWalk = (() => {
         "near-chest": "เปิดหีบสมบัติ", waiting: "เดินเข้าใกล้นักเดินทางเพื่อพูดคุย"}[situation];
       const instruction = walk.trapIndex >= 0 && walk.phase === "pending" ? "ระวังกับดักบนทางข้างหน้า"
         : {boss: "เดินไปที่ประตูห้องบอส", training: "เดินเข้าไปสำรวจสถานที่และพูดคุย", landmark: "เดินเข้าใกล้เพื่อสำรวจ"}[walk.map];
+      const site=state.questSites?.[guideIndex%state.questSites.length];
+      questGuide.hidden=!site;
+      if(site){const dx=site.position[0]-x,dz=site.position[1]-z;const horizontal=Math.abs(dx)>3?(dx<0?'ซ้าย':'ขวา'):'';const vertical=Math.abs(dz)>3?(dz>0?'ขึ้น':'ลง'):'';questGuide.textContent='ภารกิจ '+(guideIndex%state.questSites.length+1)+'/'+state.questSites.length+' · '+site.label+' · '+(vertical+horizontal||'อยู่ใกล้แล้ว')+' '+Math.round(Math.hypot(dx,dz))+' ม.';}
       const message = cue || walk.message || instruction || "ลากจอยเพื่อเดินหรือวิ่ง แล้วเลือกทางแยก";
       if (status.textContent !== message) status.textContent = message;
       const side = ["Fernstone Trail", "Fernstone Clearing"].includes(area) ? "left"
@@ -439,7 +448,7 @@ const ForestWalk = (() => {
       state.encounterAvatar = window.sealerSprites?.create();
       state.encounterAvatar?.sync(walk.enemies[0]);
     }
-    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js"].map(file => import(new URL(file + "?v=wide-exits-1", assets).href)));
+    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js"].map(file => import(new URL(file + "?v=city-quests-1", assets).href)));
     try {
       const [{openForest}, {WELLS}, {createWellEffects, startWellAudio}] = await modules;
       if (current !== state) return;
@@ -493,10 +502,12 @@ const ForestWalk = (() => {
         onTownExit: map === "exit" ? () => { resolve(); if (active(zone, walk) && zone.ev?.type === "exit") handlers.exitzone(); } : null,
         onExit: map === "boss" ? null : side => next(zone, walk, side),
         onStep: audioStep,
-        onQuest: state.hasSearch ? () => {
+        questSites: state.questSites,
+        onQuest: state.hasSearch ? siteId => {
           if (!active(zone, walk) || nativeEvent(zone)) return;
           walk.position = state.scene.position();
           walk.showSearch = true;
+          walk.questSite = siteId;
           render();
         } : null
       });
@@ -525,9 +536,10 @@ const ForestWalk = (() => {
   function sync() {
     const zone = S.zone, walk = zone?.walk;
     const host = document.getElementById("forest-walk-mount");
-    const hasSearch = Boolean([1,3,4,7].includes(zone?.id) && !nativeEvent(zone) && document.getElementById("walkQuestSearch"));
+    const questSites=[1,3,4,7].includes(zone?.id)&&!nativeEvent(zone)?ForestQuestSites.available(S.P,window.WorldQuestData.quests,questContext(zone)):[];
+    const hasSearch=questSites.length>0,questSignature=JSON.stringify(questSites);
     if (walk && !hasSearch) walk.showSearch = false;
-    if (current && (current.zone !== zone || current.walk !== walk || walk.map === "legacy" || current.sceneId !== walk.scene?.id || current.hasSearch !== hasSearch)) clear();
+    if (current && (current.zone !== zone || current.walk !== walk || walk.map === "legacy" || current.sceneId !== walk.scene?.id || current.questSignature !== questSignature)) clear();
     if (!host || !walk) {
       current?.release();
       current?.scene?.setPaused(true);
@@ -540,6 +552,8 @@ const ForestWalk = (() => {
       current = createNode(zone, walk);
       current.sceneId = walk.scene?.id;
       current.hasSearch = hasSearch;
+      current.questSites = questSites;
+      current.questSignature = questSignature;
       loadScene(current);
     }
     if (current.node.parentNode !== host) host.appendChild(current.node);
@@ -568,7 +582,11 @@ const ForestWalk = (() => {
     close.type = "button"; close.className = "btn full";
     close.textContent = "กลับไปเดินสำรวจ";
     close.onclick = () => { zone.walk.showSearch = false; render(); };
-    panel.append(box, close);
+    for(const card of box.children)if(card.dataset.forestQuestSite)card.hidden=card.dataset.forestQuestSite!==zone.walk.questSite;
+    const site=ForestQuestSites.available(S.P,window.WorldQuestData.quests,questContext(zone)).find(s=>s.id===zone.walk.questSite);
+    const heading=document.createElement('h2');heading.textContent=site?.label||'สำรวจภารกิจ';
+    if(zone.walk.showSearch&&![...box.children].some(c=>!c.hidden)){const done=document.createElement('p');done.textContent='ตรวจเบาะแสจุดนี้แล้ว กลับไปเดินต่อหรือรายงานผู้มอบหมาย';box.append(done);}
+    panel.append(heading,box,close);
     layout.append(panel);
     return true;
   }
