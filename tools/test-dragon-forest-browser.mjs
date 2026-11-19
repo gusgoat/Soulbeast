@@ -165,7 +165,7 @@ try{
     })()`);
     await ready();
     assert.equal(await evaluate(`document.querySelector('.forest-walk-canvas').dataset.forestTheme`),'dragon');
-    assert.equal(await evaluate(`document.querySelector('.forest-walk-canvas').dataset.treeRenderer`),'blender-pine-png');
+    assert.equal(await evaluate(`document.querySelector('.forest-walk-canvas').dataset.treeRenderer`),'mountain-pine-png');
     if(['entrance','village','spring','ruins','bush'].includes(map))await screenshot('dragon-'+map);
     console.log('PASS dragon PNG and Blender props '+map);
   }

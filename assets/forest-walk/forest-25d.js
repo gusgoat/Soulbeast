@@ -1,11 +1,12 @@
 import {forestAssetURL} from "./storage-assets.js";
+import '../../tools/town-walk-demo/ground-shadows.js?v=cast-bridge-1';
 import {trainingScenery} from "./training-scenery.js?v=desert-release-1";
 import {layerOpacity} from "./training-layers.js?v=layers-v1";
 import {moonlightScenery,moonlightThicket} from './moonlight-scenery.js?v=boss-room-1';
 import {createPropEffects,propEffectSpec} from './prop-effects.js?v=dragon-city-release-1';
 import {bossRoomScenery} from './boss-rooms.js?v=dragon-city-release-1';
 import {desertScenery,desertThicket} from './desert-scenery.js?v=desert-release-1';
-import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-blender-preview-1';
+import {dragonScenery,dragonThicket} from './dragon-scenery.js?v=dragon-city-release-1';
 import {questScenery} from './quest-scenery.js?v=dragon-city-release-1';
 import {reachedTrailEnd} from './trail-exit.js?v=dragon-city-release-1';
 
@@ -279,17 +280,6 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
   ctx.stroke();
   ctx.globalAlpha = 1;
   if (footprints) paintFootprints(ctx, x, y, scale);
-  for (const p of props) {
-    if (p.kind !== "tree" && p.kind !== "rock") continue;
-    const shift = p.kind === "tree" ? p.width * 1.9 : 0;
-    const radius = p.kind === "tree" ? p.width * 2.3 : p.width * 1.1;
-    const shadow = ctx.createRadialGradient(x(p.x) + shift, y(p.z) + shift * .36, 0,
-      x(p.x) + shift, y(p.z) + shift * .36, radius);
-    shadow.addColorStop(0, desert ? '#62482a45' : "#18311e53");
-    shadow.addColorStop(1, desert ? '#62482a00' : "#18311e00");
-    ctx.fillStyle = shadow;
-    ctx.fillRect(x(p.x) + shift - radius, y(p.z) + shift * .36 - radius, radius * 2, radius * 2);
-  }
   return ground;
 }
 
@@ -340,7 +330,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     canvas.dataset.forestTheme=zoneTheme;
     canvas.dataset[zoneTheme+'Scenery']=moonlightScene?.id||placeMap;
     canvas.dataset[zoneTheme+'Kit']=themed.kit;
-    canvas.dataset.treeRenderer=dragon?'blender-pine-png':desert?'sparse-cactus-png':'blender-png';
+    canvas.dataset.treeRenderer=dragon?'mountain-pine-png':desert?'sparse-cactus-png':'blender-png';
   }
   if(bossRoom){
     const room=await bossRoomScenery(dragon?'dragon':desert?'desert':moonlight?'moonlight':'training');
@@ -439,7 +429,10 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
   const gladeChest = ruins ? RUINS_CHEST : GLADE_CHEST;
   const searchPoint = ruins ? RUINS_ENTRY : GLADE_CENTER;
-  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert,dragon), ctx = canvas.getContext("2d", { alpha: false });
+  const ground = makeGround(images, props, paths, openAreas, Boolean(onContact && !humanPursuit),moonlight,desert,dragon);
+  const surface = canvas.getContext("2d", { alpha: false }), groundShadows = window.WalkGroundShadows.create();
+  let ctx = surface, shadowCasts = 0;
+  canvas.dataset.groundShadows = 'country-upper-right';
   const mini = minimap, map = mini.getContext("2d");
   const start = resume.retreat ? FORK
     : Array.isArray(resume.position) && resume.position.length === 2 && resume.position.every(Number.isFinite) ? resume.position : SPAWN;
@@ -473,6 +466,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     dpr = Math.min(devicePixelRatio || 1, 1.5);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
+    groundShadows.resize(canvas.width,canvas.height,width,height);
     baseZoom = zoom = clamp(width / 29, 10.8, 15.5);
     // Resizing a canvas clears it, even while a native conversation pauses walking.
     if (paused) { paint(); paintMap(); }
@@ -617,6 +611,18 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   const screenY = z => height * .56 - (z - centerZ) * zoom * FLATTEN;
   const sceneryMotion = reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  // Use Country Walk's exact silhouette projection and one shared ground mask.
+  // Foreground sprites are composited afterwards so shadows never cover actors.
+  function shadowSprite(x,y,opacity=1){
+    const target=ctx;
+    if(opacity<=0)return target;
+    return {drawImage(...args){
+      target.save();target.globalAlpha*=opacity;
+      groundShadows.cast(target,x,y,0,...args);shadowCasts++;
+      target.restore();target.drawImage(...args);
+    }};
+  }
+
   function paintProp(prop) {
     if(prop.renderHidden)return;
     const x = screenX(prop.x), y = screenY(prop.z) - (prop.elevation || 0) * zoom;
@@ -626,7 +632,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const h = canopy ? COUNTRY_PLAYER_SIZE * canopy.scale : w * source[3] / source[2];
     const pivot = {tree: .89, gate: .93, grass: .79, rock: .79, wildflower: .78, shrub: .84, thicket: .96, "glade-chest": .94, well: WELL_PIVOT, shrine: .96, ruins: .91, village: .77, healer: .98, "bandit-camp": .94, "direction-sign": .91, landmark: .94, "training-prop": .94};
     const left = x - w / 2, top = y - h * (prop.pivot ?? pivot[prop.kind]);
-    if (left + w < 0 || left > width || top + h < 0 || top > height) return;
+    if (left + w + h*.56 < 0 || left > width || top + h < 0 || top > height) return;
     const targetAlpha = layerOpacity(prop, player, {left,top,right:left+w,bottom:top+h}, {
       left:screenX(player.x)-COUNTRY_PLAYER_SIZE*.23, right:screenX(player.x)+COUNTRY_PLAYER_SIZE*.23,
       top:screenY(player.z)-COUNTRY_PLAYER_SIZE*.92, bottom:screenY(player.z)-8
@@ -637,16 +643,18 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       : (prop.opacity ?? targetAlpha) + (targetAlpha-(prop.opacity ?? targetAlpha))*(1-Math.exp(-elapsed*12));
     ctx.save();
     ctx.globalAlpha *= prop.opacity;
+    const caster = !prop.ground && prop.kind!=='well' && prop.castShadow!==false
+      ? shadowSprite(x,screenY(prop.z)) : ctx;
     if (canopy) {
       ctx.save();
       ctx.translate(x + (prop.swayX * .12 + prop.revealX * .5) * w, y + prop.swayY * w * .16);
       ctx.rotate(prop.swayX * .32);
       const crop=prop.source||[0,canopy.top,art.width,canopy.bottom-canopy.top];
-      ctx.drawImage(art, ...crop, -w / 2, top - y, w, h);
+      caster.drawImage(art, ...crop, -w / 2, top - y, w, h);
       ctx.restore();
     } else {
-      if(prop.effects&&!sceneryMotion.matches)ctx.drawImage(prop.effects.base,left,top,w,h);
-      else ctx.drawImage(art, ...source, left, top, w, h);
+      if(prop.effects&&!sceneryMotion.matches)caster.drawImage(prop.effects.base,left,top,w,h);
+      else caster.drawImage(art, ...source, left, top, w, h);
     }
     prop.effects?.paint(ctx,left,top,w,h,prior,sceneryMotion.matches);
     ctx.restore();
@@ -696,12 +704,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const x = screenX(player.x), y = screenY(player.z) - lift, cell = 160;
     const size = COUNTRY_PLAYER_SIZE;
     const {depth} = player;
-    if (depth < .14) {
-      ctx.fillStyle = `rgba(21,42,28,${.4 * (1 - depth / .14)})`;
-      ctx.beginPath();
-      ctx.ellipse(x, y + 1, size * .27, size * .079, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
+    const sprite = shadowSprite(x,screenY(player.z),Math.max(0,1-depth/.14));
     if (playerAvatar) {
       canvas.dataset.avatarRenderer = playerAvatar.renderer;
       canvas.dataset.avatarIdentity = playerAvatar.current?.key || "";
@@ -712,7 +715,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
         ctx.rect(x - size, y - size, size * 2, size);
         ctx.clip();
       }
-      playerAvatar.draw(ctx, x, y + submerged, size, player.direction, player.phase,
+      playerAvatar.draw(sprite, x, y + submerged, size, player.direction, player.phase,
         player.moving, player.running && !depth && player.rim < .2);
       ctx.restore();
       return;
@@ -723,7 +726,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const row = player.moving ? direction : Math.floor(direction / 4);
     const fraction = 1 - .67 * depth;
     const top = y - size * .9083 + size * .5783 * depth;
-    ctx.drawImage(art, column * cell, row * cell, cell, cell * fraction, x - size * .5, top, size, size * fraction);
+    sprite.drawImage(art, column * cell, row * cell, cell, cell * fraction, x - size * .5, top, size, size * fraction);
   }
 
   function paintLotus() {
@@ -738,7 +741,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const {x, z, facing, phase} = actor;
     const size = humanPursuit ? COUNTRY_BANDIT_SIZE : COUNTRY_SHADOW_SIZE;
     if (encounterAvatar) {
-      encounterAvatar.draw(ctx, screenX(x), screenY(z), size, actor.heading ?? 0, phase, walking, walking);
+      encounterAvatar.draw(shadowSprite(screenX(x),screenY(z)), screenX(x), screenY(z), size, actor.heading ?? 0, phase, walking, walking);
       return;
     }
     const cell = traveler ? 192 : 256;
@@ -748,12 +751,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     ctx.save();
     ctx.translate(screenX(x), screenY(z));
     ctx.scale(facing, 1);
-    ctx.fillStyle = "#13201b66";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, size * .32, size * .085, 0, 0, Math.PI * 2);
-    ctx.fill();
     const art = traveler ? images.traveler : banditCamp ? images.bandit : images.shadow;
-    ctx.drawImage(art, frame % 4 * cell, Math.floor(frame / 4) * cell, cell, cell,
+    shadowSprite(screenX(x),screenY(z)).drawImage(art, frame % 4 * cell, Math.floor(frame / 4) * cell, cell, cell,
       -size / 2, -size * (traveler ? 185 / 192 : .923), size, size);
     ctx.restore();
   }
@@ -784,6 +783,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   }
 
   function paint() {
+    ctx = surface;shadowCasts=0;
     const horizontal = width / (2 * zoom), vertical = height / (zoom * FLATTEN);
     centerX = viewCenter(camera.x, -WIDTH / 2, WIDTH / 2, horizontal, horizontal);
     centerZ = viewCenter(camera.z, SOUTH, NORTH, vertical * .44, vertical * .56);
@@ -797,6 +797,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     const wellSupportsPlayer = player.depth > 0 || player.rim > 0;
     // Mud, puddles and pit openings are ground art beneath standing actors.
     for (const prop of props) if (prop.ground) paintProp(prop);
+    ctx = groundShadows.begin(FLATTEN,0,[],screenX,screenY,zoom);
     const actors = [{z: wellSupportsPlayer ? GLADE_CENTER[1] : player.z, paint: paintPlayer}];
     if (lotus) {
       // Both sprites sit above the basin. Their true ground positions decide who is in front.
@@ -815,6 +816,8 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       paintProp(prop);
     }
     while (actor < actors.length) actors[actor++].paint();
+    ctx = surface;groundShadows.finish(surface);
+    canvas.dataset.shadowCasters = String(shadowCasts);
     canvas.dataset.fadedLayers = String(props.filter(p => p.layered && p.opacity < .9).length);
     if (mist) paintMist();
   }
@@ -1012,6 +1015,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     dispose() {
       cancelAnimationFrame(animation);
       input.abort();
+      groundShadows.release();
     },
     finishBattle: (outcome, chestFound) => {
       if (!battle) return;

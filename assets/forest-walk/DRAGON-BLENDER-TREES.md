@@ -1,3 +1,7 @@
+# Not selected · original mountain trees restored
+
+The user chose the original trees on 2026-11-19. These Blender sources are retained for reference and are not used by the walking scene.
+
 # Blender mountain pines · local review
 
 Two procedural Blender models replace the generated tree cells in Sleeping Dragon Peak: `pine-upright` and `pine-windswept`. Their tapered trunks, roots, boughs and individual paired needles use rough bark and cool mountain foliage materials. Orthographic Cycles renders have transparent backgrounds and match the existing moonlight Blender prop workflow.

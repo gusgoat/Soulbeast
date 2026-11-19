@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-import {DRAGON_TREE_FRAMES} from '../assets/forest-walk/dragon-tree-frames.js';
 import {DRAGON_FRAMES} from '../assets/forest-walk/dragon-frames.js';
 globalThis.location={hostname:'localhost',search:''};
 globalThis.Image=class{set src(value){this.url=value;queueMicrotask(()=>this.onload());}};
@@ -24,7 +23,7 @@ try{
   const cacti=result.props.filter(p=>p.kind==='tree');assert(cacti.length>0&&cacti.length<=12,'pine density');
   assert(result.tiles.ground===result.tiles['dragon-ground-rock']);assert(result.tiles.trail===result.tiles.ground);
   if(id!=='boss')assert(result.props.some(p=>p.ground),id+' ground layer');
-  for(const p of cacti){assert(p.art.startsWith('dragon-tree-pine-'),'tree is not Blender-rendered');assert.equal(p.radius,base.find(b=>b.x===p.x&&b.z===p.z).radius);}
+  for(const p of cacti)assert.equal(p.radius,base.find(b=>b.x===p.x&&b.z===p.z).radius);
  }
  for(const map of ['entrance','exit','footprints','bandit','stranger','shrine','spring','revival','cleanse','village','hospital','bush','mist','ruins']){
   const r=await dragonScenery(map,null,base);assert(r.props.length>0,map);
@@ -33,8 +32,8 @@ try{
  for(let i=0;i<6;i++){const r=await dragonScenery('footprints',null,base,i);const trap=r.props.find(p=>p.art==='dragon-traps'&&p.z===-29);assert(trap);assert.deepEqual(trap.source,DRAGON_FRAMES.traps[i]);}
  assert.equal(JSON.stringify(base),before,'mutated shared scene input');
 }finally{Math.random=random;}
-for(const [folder,assets]of [['dragon',DRAGON_FRAMES],['dragon-trees',DRAGON_TREE_FRAMES]])for(const [id,frames]of Object.entries(assets)){
- const png=await readFile(new URL('../assets/forest-walk/generated/'+folder+'/'+id+'.png',import.meta.url));if(id!=='ground-rock')assert.equal(png[25],6);
+for(const [id,frames]of Object.entries(DRAGON_FRAMES)){
+ const png=await readFile(new URL('../assets/forest-walk/generated/dragon/'+id+'.png',import.meta.url));if(id!=='ground-rock')assert.equal(png[25],6);
  const w=png.readUInt32BE(16),h=png.readUInt32BE(20);for(const [x,y,cw,ch]of frames)assert(x>=0&&y>=0&&cw>0&&ch>0&&x+cw<=w&&y+ch<=h,id);
 }
-console.log('PASS native zone-4 catalogue, 14 event scenes, 14 ordinary maps, 19 PNGs, sparse Blender pines, rock ground, original six hazards/basins and no scenery RNG');
+console.log('PASS native zone-4 catalogue, 14 event scenes, 14 ordinary maps, 17 PNGs, sparse pines, rock ground, original six hazards/basins and no scenery RNG');
