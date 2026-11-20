@@ -31,5 +31,9 @@ window.walkAudioCatalog={
     "tricephalos": "/Soulbeast/assets/audio/20261023/demon_roar.mp3",
     "pentapyros": "/Soulbeast/assets/audio/20261023/demon_roar.mp3"
   },
-  "door": "/Soulbeast/assets/audio/20261023/demon_threat.mp3"
+  "door": "/Soulbeast/assets/audio/20261023/demon_threat.mp3",
+  "countryWater": {
+    "steps": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/country-water-20261120--steps--003578e70166.mp3",
+    "ambience": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/country-water-20261120--ambience--5d4420e92283.mp3"
+  }
 };

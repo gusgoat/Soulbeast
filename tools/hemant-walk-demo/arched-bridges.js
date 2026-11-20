@@ -46,7 +46,7 @@
    function load(image,part){
     return new Promise(resolve=>{
      image.onload=image.onerror=resolve;
-     image.src=root+country+'-'+id+'-'+part+'.webp'+(country==='red'?'?v=timber-1':'');
+     const asset=crossing.regionArt?'/Soulbeast/assets/country-walk/region-bridges-v5/'+country+'-'+crossing.regionArt+'-'+part+'.png?v=midriver-1':root+country+'-'+id+'-'+part+'.webp'+(country==='red'?'?v=timber-1':'');image.crossOrigin='anonymous';image.src=window.CountryRegionMedia?.url(asset)||asset;
     });
    }
   });

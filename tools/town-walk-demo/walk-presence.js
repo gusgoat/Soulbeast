@@ -83,7 +83,7 @@ function receiveRealtime(id,row){
  Object.assign(peer,{targetX:row.x,targetY:row.y,dir:row.dir,moving:row.moving,running:row.running,realtimeAt:now,realtimeSeq:row.seq});
 }
 function syncPeers(place,p,moving,running){const now=performance.now();if(!online||heartbeatPending||now<nextHeartbeat||/^(?:town:)?(?:mine|deep-mine|dungeon-floor)/.test(place))return;nextHeartbeat=now+600;heartbeatPending=true;online.heartbeat(place.includes(':')?place:'town:'+place,p,moving,running).then(rows=>{if(place!==locationId)return;refreshWalkRanks(place,rows,now);const ids=new Set(rows.map(row=>row.id));
- if(online.walkRealtimeTest&&/^(country:(blue|green|red)|town:(blue|green|red)-(capital|city-[1-4]|village-([1-9]|1[0-6])))$/.test(place)){
+ if(online.walkRealtimeTest&&/^(country:(blue|green|red)(:[NWES])?|town:(blue|green|red)-(capital|city-[1-4]|village-([1-9]|1[0-6])))$/.test(place)){
   if(realtime)realtime.update(place,ids,receiveRealtime);
   else if(!realtimeLoading){
    realtimeLoading=true;

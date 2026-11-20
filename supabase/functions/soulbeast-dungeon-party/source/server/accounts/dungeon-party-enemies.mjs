@@ -1,3 +1,5 @@
+import '../../tools/town-walk-demo/beast-habitats.js';
+import '../../tools/town-walk-demo/living-species.js';
 import '../../tools/labyrinth-demo/progression.js';
 import '../../tools/labyrinth-demo/floors.js';
 import '../../tools/town-walk-demo/game-clock.js';
@@ -5,9 +7,10 @@ import '../../tools/labyrinth-demo/encounter-rules.js';
 // These are normal dungeon values. Party scaling is applied once by the service.
 export function partyEnemyAdapter({engine,random=Math.random,now=Date.now}){
  return {
+  prepareEnemyAppearances(room){if(!room.dungeon?.enemies||room.floor<1||room.floor>7)return;const pending=Object.values(room.dungeon.enemies).filter(e=>e.kind==='shadow'&&!e.encounterPlan);if(!pending.length)return;const floor=globalThis.MineFloors.get(room.floor),all=engine.catalog(),catalog={...all,species:Object.fromEntries(Object.entries(all.species).filter(([id,s])=>globalThis.LivingReadySpecies.has(id)&&globalThis.BeastHabitats.allowed(id,s,{habitat:'land'})))};for(const enemy of pending){enemy.encounterPlan=globalThis.DungeonEncounterRules.plan(null,'shadow',catalog,floor,random,now());const first=enemy.encounterPlan.units[0];enemy.appearance={sp:first.sp,lv:first.lv,form:all.species[first.sp].ev?.filter(e=>first.lv>=e[0]).length||0};}},
   soloEnemies(room,enemy){
    const floor=globalThis.MineFloors.get(room.floor);
-   const plan=globalThis.DungeonEncounterRules.plan(null,enemy.kind,engine.catalog(),floor,random,now());
+   const plan=enemy.encounterPlan||globalThis.DungeonEncounterRules.plan(null,enemy.kind,engine.catalog(),floor,random,now());
    return plan.units.map((spec,i)=>{
     if(spec.type==='human')return engine.human(spec.cls,spec.lv,'e'+i);
     const unit=engine.beast(spec.sp,spec.lv,'e'+i);

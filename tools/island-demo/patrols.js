@@ -8,10 +8,10 @@ function create(map,seed){
  const random=I.seeded(seed);
  const walkable=(x,y)=>map.walkable(x,y)&&!map.isSafe({x,y});
  const nav={distance:I.distance,walkable};
- function clear(from,to){
+ function clear(from,to,actor){
   const steps=Math.max(1,Math.ceil(I.distance(from,to)/14));
   for(let i=1;i<=steps;i++){
-   if(!walkable(from.x+(to.x-from.x)*i/steps,from.y+(to.y-from.y)*i/steps))return false;
+   if(!(actor?.habitatAllowed||walkable)(from.x+(to.x-from.x)*i/steps,from.y+(to.y-from.y)*i/steps))return false;
   }
   return true;
  }
@@ -23,14 +23,14 @@ function create(map,seed){
   for(let i=0;i<12;i++){
    const angle=random()*2*Math.PI,radius=45+random()*125;
    const target={x:a.home.x+Math.cos(angle)*radius,y:a.home.y+Math.sin(angle)*radius/I.F};
-   if(I.distance(a,target)>38&&clear(a.home,target)&&clear(a,target))return target;
+   if(I.distance(a,target)>38&&clear(a.home,target,a)&&clear(a,target,a))return target;
   }
   return null;
  }
  function move(a,target,dt,speed){
   if(!target)return;
   const from={x:a.x,y:a.y};
-  if(!pursuit.step(nav,a,target,dt,speed))return;
+  if(!pursuit.step(a.navigation||nav,a,target,dt,speed))return;
   const frameDistance=speed===chaseSpeed?runFrameDistance:walkFrameDistance;
   a.phase+=I.distance(from,a)/frameDistance;
  }
@@ -40,11 +40,11 @@ function create(map,seed){
   for(const a of actors){
    a.moving=false;
    const ready=available(a);
-   const near=I.distance(a,player);
+   const near=I.distance(a,player);if(a.beastHabitat==='water'&&ready&&!safe&&near<=contactDistance)contact??=a;
    if(a.mode!=='return'){
     // Keep a clear route back to the patrol area and never cut across the spiral.
     const canChase=ready&&!safe&&near<=(a.mode==='chase'?leash:aggroDistance)
-     &&I.distance(a.home,player)<=leash&&clear(a,player)&&clear(a.home,player);
+     &&I.distance(a.home,player)<=leash&&clear(a,player,a)&&clear(a.home,player,a);
     if(canChase)a.mode='chase';
     else if(a.mode==='chase'){a.mode='return';a.goal=null;}
    }

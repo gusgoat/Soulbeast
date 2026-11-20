@@ -1,3 +1,6 @@
+import '../../assets/living-beasts/catalog.js?v=living-177-2';
+import '../town-walk-demo/beast-habitats.js?v=living-177-2';
+import '../town-walk-demo/living-beasts.js?v=living-flight-idle-1';
 import '../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117';
 import '../town-walk-demo/sealer-sprites.js?v=bitmap-capture-1';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
@@ -431,7 +434,7 @@ export function drawMap(canvas,state,players,me,zoom=1){
  }
 }
 export class Scene{
- constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.camera=null;this.anim=new Map();this.siegeOrigins=new Map();this.traps=createArenaTraps();this.arena=TEAM_ARENA;}
+ constructor(canvas){this.beastSprites=globalThis.LivingBeasts.create();this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.camera=null;this.anim=new Map();this.siegeOrigins=new Map();this.traps=createArenaTraps();this.arena=TEAM_ARENA;}
  render(me,entities,now,chests=[],bases=BASES,traps=[],serverTime=0,zone=null,pan=null,baseEffects=[],warpArrivals=[]){
   const canvas=this.canvas,c=this.c,w=canvas.clientWidth,h=canvas.clientHeight;
   if(!w||!h||!me)return;
@@ -916,7 +919,7 @@ export class Scene{
   const prev=this.anim.get(p.id)??{x,y,dir:0,phase:0,movingUntil:0,warp:p.warp,at:now,vx:0,vy:0};
   updateWalkPose(prev,p,now);
   this.anim.set(p.id,prev);
-  if(globalThis.sealerSprites.use3d){
+  if(globalThis.sealerSprites.use3d&&!p.sp){
    prev.model??=globalThis.sealerSprites.createModel({beast:!!p.sp,primary:isMe});
    prev.model.sync(p.sp||p.cls+'-'+sealerGender(p));
   }
@@ -937,7 +940,7 @@ export class Scene{
     c.fillStyle=aura;c.fillRect(-42,-42,84,84);c.restore();
    }
    const spec=rareArt[p.sp];
-   const rendered=prev.model?.draw(c,x,y,p.boss?142:89,heading,moving,false);
+   const current=globalThis.LivingBeasts.model(p.sp,p.evo??p.form??globalThis.LivingBeasts.formFor(p.sp,p.lv));if(current){if(prev.livingActor?.beastModelId!==current.id)prev.livingActor={sp:p.sp,lv:p.lv,evo:p.evo??p.form};Object.assign(prev.livingActor,{x:p.x,y:p.y,moving});}const rendered=current?(this.beastSprites.draw(c,prev.livingActor,x,y,p.boss?180:130,now/1000,{heading,flatten:FLAT}),true):prev.model?.draw(c,x,y,p.boss?142:89,heading,moving,false);
    if(!rendered&&spec&&prev.model?.supported===false){
     if(!rareAtlases.has(p.sp))rareAtlases.set(p.sp,img(assets+'rare-beast-walk-20261103/'+p.sp+'-walk-v1.webp'));
     const a=rareAtlases.get(p.sp),size=p.boss?142:89;

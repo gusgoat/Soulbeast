@@ -7,18 +7,49 @@ function nearest(p,a,b){const dx=b.x-a.x,dy=(b.y-a.y)*F,t=Math.max(0,Math.min(1,
 function inside(p,points){let hit=false;for(let i=0,j=points.length-1;i<points.length;j=i++){const a=points[i],b=points[j];if((a.y>p.y)!==(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)hit=!hit}return hit}
 function smooth(points,closed=false){for(let pass=0;pass<2;pass++){const next=closed?[]:[points[0]];for(let i=0;i<points.length-(closed?0:1);i++){const a=points[i],b=points[(i+1)%points.length];next.push({x:a.x*.75+b.x*.25,y:a.y*.75+b.y*.25},{x:a.x*.25+b.x*.75,y:a.y*.25+b.y*.75})}if(!closed)next.push(points.at(-1));points=next}return points}
 function create(data,nav){
+ const coast=typeof module!=='undefined'?require('./region-coast.js'):scope.RegionCoast,seaSampleAt=(x,y)=>coast.seaSample(data,x,y);
  const settings=data.waterways||source,projectPoint=data.projection?([x,y])=>({x:Math.round((x-data.projection.x)*data.projection.scale+data.projection.pad),y:Math.round((y-data.projection.y)*data.projection.scale/F+data.projection.pad)}):project;
  const rivers=settings.rivers.map(r=>({...r,points:smooth(r.points.map(projectPoint))})),lakes=settings.lakes.map(l=>({...l,points:smooth(l.points.map(projectPoint),true)})),bridges=[];
  function raw(x,y,margin=0){const p={x,y};return lakes.some(l=>inside(p,l.points)||margin>0&&l.points.some((a,i)=>dist(p,nearest(p,a,l.points[(i+1)%l.points.length]))<margin))||rivers.some(r=>r.points.slice(1).some((b,i)=>dist(p,nearest(p,r.points[i],b))<r.width/2+margin))}
  // Shared crossings are perpendicular to the local river, away from lake mouths.
- for(const r of rivers)for(let i=2;i<r.points.length-2;i++){
+ for(const r of rivers){
+ const distances=[0];for(let i=1;i<r.points.length;i++)distances.push(distances[i-1]+dist(r.points[i-1],r.points[i]));
+ const length=distances.at(-1),indices=Array.from({length:Math.max(0,r.points.length-4)},(_,i)=>i+2);
+ if(data.regionLayout)indices.sort((a,b)=>Math.abs(distances[a]-length/2)-Math.abs(distances[b]-length/2));
+ for(const i of indices){
+  if(data.regionLayout&&(distances[i]<length*.3||distances[i]>length*.7||bridges.some(b=>b.riverId===r.id)))continue;
   const p=r.points[i],prev=r.points[i-1],next=r.points[i+1],len=dist(prev,next),nx=-(next.y-prev.y)*F/len,ny=(next.x-prev.x)/len;
   if(bridges.some(b=>dist(b,p)<650)||lakes.some(l=>inside(p,l.points)||l.points.some((a,j)=>dist(p,nearest(p,a,l.points[(j+1)%l.points.length]))<220)))continue;
   const a={x:p.x+nx*160,y:p.y+ny*160/F},b={x:p.x-nx*160,y:p.y-ny*160/F};
   if(raw(a.x,a.y,45)||raw(b.x,b.y,45))continue;
-  bridges.push({id:'bridge-'+bridges.length,a,b,x:p.x,y:p.y,width:146,length:320,crossingAngle:90});
+  bridges.push({id:'bridge-'+bridges.length,a,b,x:p.x,y:p.y,width:146,length:320,crossingAngle:90,riverId:r.id,riverFraction:distances[i]/length,regionArt:data.regionLayout?'region-'+data.regionId:null});
+ }
  }
  function onBridge(x,y){const p={x,y};return bridges.some(b=>dist(p,nearest(p,b.a,b.b))<=b.width/2-16)}
+ const bridgeRails=bridges.flatMap(b=>{const length=dist(b.a,b.b),nx=-(b.b.y-b.a.y)*F/length,ny=(b.b.x-b.a.x)/length;return [-1,1].map(side=>{const offset=(b.width/2-16)*side;return {bridgeId:b.id,a:{x:b.a.x+nx*offset,y:b.a.y+ny*offset/F},b:{x:b.b.x+nx*offset,y:b.b.y+ny*offset/F}};});});
+ function bridgeRailHit(x,y){const p={x,y};return bridgeRails.some(rail=>dist(p,nearest(p,rail.a,rail.b))<12);}
+ for(const lake of lakes)lake.center=lake.points.reduce((a,p)=>({x:a.x+p.x/lake.points.length,y:a.y+p.y/lake.points.length}),{x:0,y:0});
+ function lakeDepth(lake,p){
+  const c=lake.center,dx=p.x-c.x,dy=(p.y-c.y)*F,length=Math.hypot(dx,dy);if(length<.01)return 1;
+  const ux=dx/length,uy=dy/length;let radius=Infinity;
+  for(let i=0;i<lake.points.length;i++){const a=lake.points[i],b=lake.points[(i+1)%lake.points.length],ax=a.x-c.x,ay=(a.y-c.y)*F,ex=b.x-a.x,ey=(b.y-a.y)*F,den=ux*ey-uy*ex;if(Math.abs(den)<1e-9)continue;const t=(ax*ey-ay*ex)/den,u=(ax*uy-ay*ux)/den;if(t>0&&u>=0&&u<=1)radius=Math.min(radius,t);}
+  return Number.isFinite(radius)?Math.max(0,Math.min(1,1-length/radius)):0;
+ }
+ function sampleAt(x,y,ignoreBridge=false){
+  if(!ignoreBridge&&onBridge(x,y))return null;const p={x,y};let result=null,riverDepth=0;
+  for(const river of rivers){let closest=Infinity;for(let i=1;i<river.points.length;i++)closest=Math.min(closest,dist(p,nearest(p,river.points[i-1],river.points[i])));if(closest<river.width/2){const depth=1-closest/(river.width/2);riverDepth=Math.max(riverDepth,depth);if(!result||depth>result.depth)result={id:river.id,type:'river',body:river,depth};}}
+  for(const lake of lakes)if(inside(p,lake.points)){result={id:lake.id,type:'lake',body:lake,depth:Math.max(lakeDepth(lake,p),riverDepth)};break;}
+  if(!result)result=seaSampleAt(x,y);
+  if(result){const d=result.depth;result.depth=d*d*(3-2*d);}return result;
+ }
+ function pointAt(river,fraction){const distances=[0];for(let i=1;i<river.points.length;i++)distances.push(distances.at(-1)+dist(river.points[i-1],river.points[i]));const target=Math.max(0,Math.min(1,fraction))*distances.at(-1);let i=distances.findIndex(d=>d>=target);if(i<=0)return {...river.points[0]};const a=river.points[i-1],b=river.points[i],f=(target-distances[i-1])/(distances[i]-distances[i-1]||1);return {x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f};}
+ const depthAt=(x,y)=>sampleAt(x,y)?.depth||0;
+ const accessPoints=[];
+ function addAccess(bank,wet,bodyId){if(data.regionPolygon&&!inside(bank,data.regionPolygon))return;accessPoints.push({...bank,waterX:wet.x,waterY:wet.y,bodyId});}
+ if(data.waterTraversal==='wade'){
+  for(const r of rivers)for(const f of [.18,.82]){const p=pointAt(r,f),a=pointAt(r,f-.015),b=pointAt(r,f+.015),len=dist(a,b)||1,nx=-(b.y-a.y)*F/len,ny=(b.x-a.x)/len;for(const side of [-1,1])addAccess({x:p.x+nx*(r.width/2+70)*side,y:p.y+ny*(r.width/2+70)*side/F},{x:p.x+nx*(r.width/2-35)*side,y:p.y+ny*(r.width/2-35)*side/F},r.id);}
+  for(const l of lakes)for(let i=0;i<4;i++){const p=l.points[Math.floor(i*l.points.length/4)],len=dist(l.center,p)||1,nx=(p.x-l.center.x)/len,ny=(p.y-l.center.y)*F/len;addAccess({x:p.x+nx*70,y:p.y+ny*70/F},{x:p.x-nx*35,y:p.y-ny*35/F},l.id);}
+ }
  function hit(x,y){return raw(x,y,14)&&!onBridge(x,y)}
  function path(ctx,points,close=false){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y*F):ctx.moveTo(p.x,p.y*F));if(close)ctx.closePath()}
  function lakeFill(g,l){const xs=l.points.map(p=>p.x),ys=l.points.map(p=>p.y*F),fill=g.createLinearGradient(Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys));fill.addColorStop(0,'#6bb8ca');fill.addColorStop(.35,'#377e9b');fill.addColorStop(.65,'#255b78');fill.addColorStop(1,'#71bfd1');return fill}
@@ -46,6 +77,8 @@ function create(data,nav){
    path(g,lake.points,true);
    g.fillStyle=pattern||lakeFill(g,lake);
    g.fill();
+   const xs=lake.points.map(p=>p.x),ys=lake.points.map(p=>p.y*F),rx=(Math.max(...xs)-Math.min(...xs))/2,ry=(Math.max(...ys)-Math.min(...ys))/2;
+   g.save();g.translate(lake.center.x,lake.center.y*F);g.scale(rx,ry);const depthFill=g.createRadialGradient(0,0,0,0,0,1);depthFill.addColorStop(0,'#123e59');depthFill.addColorStop(.5,'#2d7b97');depthFill.addColorStop(1,'#8bc9d1');g.restore();g.globalAlpha=.56;g.fillStyle=depthFill;g.fill();g.globalAlpha=1;
    for(const [index,width] of [17,10,5].entries()){
     g.strokeStyle=shallows[index];g.lineWidth=width;g.stroke();
    }
@@ -56,6 +89,7 @@ function create(data,nav){
    for(const [trim,alpha] of [[-7,.23],[0,.5],[7,.72],[14,1]]){
     g.globalAlpha=alpha;g.lineWidth=Math.max(1,river.width-trim);g.stroke();
    }
+   g.globalAlpha=1;g.strokeStyle='#174b6548';g.lineWidth=river.width*.45;g.stroke();
   }
   g.globalAlpha=1;
  }
@@ -123,7 +157,7 @@ function create(data,nav){
  }
  const rails=[];for(const b of bridges){const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,nx=-dy*b.width/2,ny=dx*b.width/2,count=Math.ceil(b.length/80);for(const side of [-1,1])for(let i=0;i<count;i++){const a={x:b.a.x+(b.b.x-b.a.x)*i/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*i/count+ny*side/F},end={x:b.a.x+(b.b.x-b.a.x)*(i+1)/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*(i+1)/count+ny*side/F};rails.push({kind:'bridgeRail',crossing:b,x:(a.x+end.x)/2,y:(a.y+end.y)/2,a,b:end})}}
  function drawRail(c,o,sx,sy,z){const x=sx(o.a.x),y=sy(o.a.y),X=sx(o.b.x),Y=sy(o.b.y);c.save();c.lineCap='round';c.strokeStyle=data.countryId==='red'?'#522b24':data.countryId==='green'?'#53412e':'#647d92';c.lineWidth=5*z;c.beginPath();c.moveTo(x,y-22*z);c.lineTo(X,Y-22*z);c.stroke();c.strokeStyle=data.countryId==='red'?'#b47142':data.countryId==='green'?'#ae9366':'#f1fbff';c.lineWidth=3*z;c.beginPath();c.moveTo(x,y-25*z);c.lineTo(X,Y-25*z);c.stroke();for(const [a,b]of [[x,y],[X,Y]]){c.fillStyle='#635e56';c.fillRect(a-3*z,b-34*z,6*z,36*z);c.fillStyle=data.countryId==='red'?'#ce9453':data.countryId==='green'?'#b19a66':'#f0faff';c.fillRect(a-5*z,b-37*z,10*z,5*z)}c.restore()}
- return {source:settings,rivers,lakes,bridges,rails,raw,onBridge,hit,drawGround,drawDeck,drawFlow,drawRail};
+ return {source:settings,rivers,lakes,bridges,bridgeRails,bridgeRailHit,rails,accessPoints,raw,onBridge,hit,sampleAt,seaSampleAt,depthAt,pointAt,drawGround,drawDeck,drawFlow,drawRail};
 }
 const api={source,project,create};scope.hemantWaterways=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

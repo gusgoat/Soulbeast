@@ -1,0 +1,7489 @@
+{
+  "version": 5,
+  "status": "user-sketch-based-proposal",
+  "live_game_modified": false,
+  "source_sketch": "1-รูปภาพ-1.jpg",
+  "countries": {
+    "blue": {
+      "name": "เหมันตคีรี",
+      "mainland_outline": [
+        [
+          706,
+          50
+        ],
+        [
+          624,
+          54
+        ],
+        [
+          560,
+          67
+        ],
+        [
+          449,
+          80
+        ],
+        [
+          400,
+          105
+        ],
+        [
+          335,
+          143
+        ],
+        [
+          301,
+          186
+        ],
+        [
+          265,
+          250
+        ],
+        [
+          248,
+          328
+        ],
+        [
+          251,
+          411
+        ],
+        [
+          270,
+          475
+        ],
+        [
+          306,
+          559
+        ],
+        [
+          330,
+          625
+        ],
+        [
+          368,
+          593
+        ],
+        [
+          442,
+          540
+        ],
+        [
+          488,
+          503
+        ],
+        [
+          566,
+          456
+        ],
+        [
+          661,
+          404
+        ],
+        [
+          681,
+          373
+        ],
+        [
+          695,
+          320
+        ],
+        [
+          695,
+          260
+        ],
+        [
+          697,
+          210
+        ],
+        [
+          700,
+          160
+        ],
+        [
+          699,
+          132
+        ],
+        [
+          703,
+          90
+        ],
+        [
+          706,
+          50
+        ]
+      ],
+      "mainland_area": 176561.5,
+      "regions": [
+        {
+          "id": "BN",
+          "code": "N",
+          "name": "ภาคเหนือ",
+          "polygon": [
+            [
+              335,
+              143
+            ],
+            [
+              400,
+              105
+            ],
+            [
+              449,
+              80
+            ],
+            [
+              560,
+              67
+            ],
+            [
+              624,
+              54
+            ],
+            [
+              706,
+              50
+            ],
+            [
+              703,
+              90
+            ],
+            [
+              699,
+              132
+            ],
+            [
+              600,
+              165
+            ],
+            [
+              495,
+              207
+            ],
+            [
+              410,
+              173
+            ]
+          ],
+          "important_places": [
+            "ปราสาทจอมมาร"
+          ],
+          "city_count": 1,
+          "village_count": 2
+        },
+        {
+          "id": "BW",
+          "code": "W",
+          "name": "ภาคตะวันตก",
+          "polygon": [
+            [
+              335,
+              143
+            ],
+            [
+              410,
+              173
+            ],
+            [
+              495,
+              207
+            ],
+            [
+              514,
+              245
+            ],
+            [
+              531,
+              283
+            ],
+            [
+              510,
+              323
+            ],
+            [
+              484,
+              351
+            ],
+            [
+              397,
+              368
+            ],
+            [
+              318,
+              397
+            ],
+            [
+              251,
+              411
+            ],
+            [
+              248,
+              328
+            ],
+            [
+              265,
+              250
+            ],
+            [
+              301,
+              186
+            ]
+          ],
+          "important_places": [
+            "โคลอสเซียม"
+          ],
+          "city_count": 1,
+          "village_count": 0
+        },
+        {
+          "id": "BE",
+          "code": "E",
+          "name": "ภาคตะวันออก",
+          "polygon": [
+            [
+              495,
+              207
+            ],
+            [
+              600,
+              165
+            ],
+            [
+              699,
+              132
+            ],
+            [
+              700,
+              160
+            ],
+            [
+              697,
+              210
+            ],
+            [
+              695,
+              260
+            ],
+            [
+              695,
+              320
+            ],
+            [
+              681,
+              373
+            ],
+            [
+              661,
+              404
+            ],
+            [
+              606,
+              376
+            ],
+            [
+              567,
+              334
+            ],
+            [
+              531,
+              283
+            ],
+            [
+              514,
+              245
+            ]
+          ],
+          "important_places": [
+            "หุบเขาหมอกเซียน"
+          ],
+          "city_count": 1,
+          "village_count": 6
+        },
+        {
+          "id": "BS",
+          "code": "S",
+          "name": "ภาคใต้",
+          "polygon": [
+            [
+              251,
+              411
+            ],
+            [
+              318,
+              397
+            ],
+            [
+              397,
+              368
+            ],
+            [
+              484,
+              351
+            ],
+            [
+              510,
+              323
+            ],
+            [
+              531,
+              283
+            ],
+            [
+              567,
+              334
+            ],
+            [
+              606,
+              376
+            ],
+            [
+              661,
+              404
+            ],
+            [
+              566,
+              456
+            ],
+            [
+              488,
+              503
+            ],
+            [
+              442,
+              540
+            ],
+            [
+              368,
+              593
+            ],
+            [
+              330,
+              625
+            ],
+            [
+              306,
+              559
+            ],
+            [
+              270,
+              475
+            ]
+          ],
+          "important_places": [
+            "ท่าเรือเหมันตคีรี",
+            "ป่าฝึกหัด"
+          ],
+          "city_count": 2,
+          "village_count": 8
+        }
+      ],
+      "places": [
+        {
+          "x": 2244,
+          "y": 3483,
+          "id": "blue-colosseum",
+          "anchor": "blue-capital",
+          "type": "colosseum",
+          "art": "colosseum",
+          "name": "โคลอสเซียม",
+          "description": "สนามประลองของผู้ผนึก · โหมดทีมและเอาตัวรอด",
+          "kind": "colosseum",
+          "region": "W",
+          "position": [
+            323,
+            263
+          ],
+          "previous_region_v3": "C",
+          "world_position": [
+            323,
+            263
+          ],
+          "previous_playable_position": [
+            351,
+            249
+          ]
+        },
+        {
+          "id": "forest-6",
+          "name": "ปราสาทจอมมาร",
+          "levels": [
+            40,
+            50
+          ],
+          "description": "ป้อมปราการทมิฬบนยอดเหว ทุกห้องมีปีศาจเฝ้า จอมมารรออยู่บนบัลลังก์ชั้นบนสุด",
+          "zoneId": 6,
+          "type": "forest",
+          "x": 5400,
+          "y": 750,
+          "art": 6,
+          "chapter": 6,
+          "kind": "forest",
+          "region": "N",
+          "position": [
+            525,
+            111
+          ],
+          "previous_region_v3": "N",
+          "world_position": [
+            525,
+            111
+          ]
+        },
+        {
+          "id": "forest-2",
+          "name": "หุบเขาหมอกเซียน",
+          "levels": [
+            7,
+            15
+          ],
+          "description": "หมอกหนาปกคลุมศาลเจ้าร้าง ได้ยินเสียงกระดิ่งตลอดเวลา",
+          "zoneId": 2,
+          "type": "forest",
+          "x": 4300,
+          "y": 2780,
+          "art": 2,
+          "chapter": 2,
+          "kind": "forest",
+          "region": "E",
+          "position": [
+            580,
+            290
+          ],
+          "previous_region_v3": "E",
+          "world_position": [
+            580,
+            290
+          ],
+          "previous_playable_position": [
+            611,
+            232
+          ]
+        },
+        {
+          "x": 2046,
+          "y": 5225,
+          "id": "island-port",
+          "type": "islandPort",
+          "name": "ท่าเรือเหมันตคีรี",
+          "anchor": "blue-city-3",
+          "kind": "port",
+          "region": "S",
+          "position": [
+            279,
+            471
+          ],
+          "previous_region_v3": "W",
+          "world_position": [
+            279,
+            471
+          ]
+        },
+        {
+          "id": "forest-7",
+          "name": "ป่าฝึกหัด",
+          "levels": [
+            1,
+            4
+          ],
+          "description": "ป่าเล็กหลังเมือง อสูรตัวเล็กไม่ดุร้าย เหมาะสำหรับผู้ผนึกมือใหม่ฝึกต่อสู้และเก็บเลเวล",
+          "zoneId": 7,
+          "type": "forest",
+          "x": 1060,
+          "y": 4310,
+          "art": 0,
+          "chapter": 0,
+          "kind": "forest",
+          "region": "S",
+          "position": [
+            431,
+            421
+          ],
+          "previous_region_v3": "S",
+          "world_position": [
+            431,
+            421
+          ]
+        },
+        {
+          "id": "blue-capital",
+          "name": "เหมันตคีรี",
+          "type": "capital",
+          "x": 1574,
+          "y": 3803,
+          "source": {
+            "x": 0.212,
+            "y": 0.205
+          },
+          "art": 0,
+          "description": "เมืองหลวงแห่งเหมันตคีรี · ศูนย์กลางการเดินทางและบริการผู้ผนึก",
+          "kind": "capital",
+          "region": "W",
+          "position": [
+            395,
+            270
+          ],
+          "previous_region_v3": "C",
+          "world_position": [
+            395,
+            270
+          ]
+        },
+        {
+          "id": "blue-city-1",
+          "name": "วิมานเกล็ดหิมะ",
+          "type": "city",
+          "x": 3410,
+          "y": 1545,
+          "source": {
+            "x": 0.32,
+            "y": 0.12
+          },
+          "art": 1,
+          "description": "เมืองรองแห่งเหมันตคีรี · จุดหมายบนเส้นทางระหว่างเมือง",
+          "kind": "city",
+          "region": "N",
+          "position": [
+            526,
+            156
+          ],
+          "world_position": [
+            526,
+            156
+          ],
+          "war_children": [
+            "blue-village-1",
+            "blue-village-2",
+            "blue-village-3",
+            "blue-village-4"
+          ],
+          "previous_region_v3": "E"
+        },
+        {
+          "id": "blue-city-2",
+          "name": "ศิลาน้ำค้าง",
+          "type": "city",
+          "x": 5195,
+          "y": 4467,
+          "source": {
+            "x": 0.425,
+            "y": 0.23
+          },
+          "art": 2,
+          "description": "เมืองรองแห่งเหมันตคีรี · จุดหมายบนเส้นทางระหว่างเมือง",
+          "kind": "city",
+          "region": "E",
+          "position": [
+            562,
+            234
+          ],
+          "world_position": [
+            562,
+            234
+          ],
+          "war_children": [
+            "blue-village-5",
+            "blue-village-6",
+            "blue-village-7",
+            "blue-village-8"
+          ],
+          "previous_region_v3": "E"
+        },
+        {
+          "id": "blue-city-3",
+          "name": "ท่าจันทราเหมันต์",
+          "type": "city",
+          "x": 1625,
+          "y": 4733,
+          "source": {
+            "x": 0.215,
+            "y": 0.24
+          },
+          "art": 3,
+          "description": "เมืองรองแห่งเหมันตคีรี · จุดหมายบนเส้นทางระหว่างเมือง",
+          "kind": "city",
+          "region": "S",
+          "position": [
+            368,
+            476
+          ],
+          "world_position": [
+            368,
+            476
+          ],
+          "war_children": [
+            "blue-village-9",
+            "blue-village-10",
+            "blue-village-11",
+            "blue-village-12"
+          ],
+          "previous_region_v3": "S"
+        },
+        {
+          "id": "blue-city-4",
+          "name": "ด่านหมอกเงิน",
+          "type": "city",
+          "x": 4005,
+          "y": 6061,
+          "source": {
+            "x": 0.355,
+            "y": 0.29
+          },
+          "art": 4,
+          "description": "เมืองรองแห่งเหมันตคีรี · จุดหมายบนเส้นทางระหว่างเมือง",
+          "kind": "city",
+          "region": "S",
+          "position": [
+            486,
+            378
+          ],
+          "world_position": [
+            486,
+            378
+          ],
+          "war_children": [
+            "blue-village-13",
+            "blue-village-14",
+            "blue-village-15",
+            "blue-village-16"
+          ],
+          "previous_region_v3": "S"
+        },
+        {
+          "id": "blue-village-1",
+          "name": "สนขาว",
+          "type": "village",
+          "number": 1,
+          "x": 6589,
+          "y": 1811,
+          "source": {
+            "x": 0.507,
+            "y": 0.13
+          },
+          "art": 0,
+          "description": "หมู่บ้านสนขาว · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            686.0189692117215,
+            75.73969040213471
+          ],
+          "world_position": [
+            686.0189692117215,
+            75.73969040213471
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-1",
+          "border_gate": "border-1",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-1"
+        },
+        {
+          "id": "blue-village-2",
+          "name": "ระฆังน้ำแข็ง",
+          "type": "village",
+          "number": 2,
+          "x": 6385,
+          "y": 2873,
+          "source": {
+            "x": 0.495,
+            "y": 0.17
+          },
+          "art": 0,
+          "description": "หมู่บ้านระฆังน้ำแข็ง · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            682.1395173844147,
+            119.17985947608389
+          ],
+          "world_position": [
+            682.1395173844147,
+            119.17985947608389
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-2",
+          "border_gate": "border-2",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-2"
+        },
+        {
+          "id": "blue-village-3",
+          "name": "ธารแก้ว",
+          "type": "village",
+          "number": 3,
+          "x": 6300,
+          "y": 3936,
+          "source": {
+            "x": 0.49,
+            "y": 0.21
+          },
+          "art": 2,
+          "description": "หมู่บ้านธารแก้ว · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            681.745139689185,
+            163.70815697408244
+          ],
+          "world_position": [
+            681.745139689185,
+            163.70815697408244
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-3",
+          "border_gate": "border-3",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-3"
+        },
+        {
+          "id": "blue-village-4",
+          "name": "ยอดเมฆา",
+          "type": "village",
+          "number": 4,
+          "x": 6215,
+          "y": 4998,
+          "source": {
+            "x": 0.485,
+            "y": 0.25
+          },
+          "art": 0,
+          "description": "หมู่บ้านยอดเมฆา · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            679.1112838562622,
+            207.60575418946115
+          ],
+          "world_position": [
+            679.1112838562622,
+            207.60575418946115
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-4",
+          "border_gate": "border-4",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-4"
+        },
+        {
+          "id": "blue-village-5",
+          "name": "ผาผลึก",
+          "type": "village",
+          "number": 5,
+          "x": 6028,
+          "y": 6061,
+          "source": {
+            "x": 0.474,
+            "y": 0.29
+          },
+          "art": 1,
+          "description": "หมู่บ้านผาผลึก · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            677.3094265499046,
+            251.90448013729844
+          ],
+          "world_position": [
+            677.3094265499046,
+            251.90448013729844
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-5",
+          "border_gate": "border-5",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-5"
+        },
+        {
+          "id": "blue-village-6",
+          "name": "หุบหมอกคราม",
+          "type": "village",
+          "number": 6,
+          "x": 5892,
+          "y": 6991,
+          "source": {
+            "x": 0.466,
+            "y": 0.325
+          },
+          "art": 0,
+          "description": "หมู่บ้านหุบหมอกคราม · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            677,
+            296.59454821388124
+          ],
+          "world_position": [
+            677,
+            296.59454821388124
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-6",
+          "border_gate": "border-6",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-6"
+        },
+        {
+          "id": "blue-village-7",
+          "name": "เหมืองดาวเงิน",
+          "type": "village",
+          "number": 7,
+          "x": 5671,
+          "y": 7920,
+          "source": {
+            "x": 0.453,
+            "y": 0.36
+          },
+          "art": 1,
+          "description": "หมู่บ้านเหมืองดาวเงิน · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            672.3432453977806,
+            335.2918677581209
+          ],
+          "world_position": [
+            672.3432453977806,
+            335.2918677581209
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-7",
+          "border_gate": "border-7",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-7"
+        },
+        {
+          "id": "blue-village-8",
+          "name": "ดอกเหมันต์",
+          "type": "village",
+          "number": 8,
+          "x": 5535,
+          "y": 8850,
+          "source": {
+            "x": 0.445,
+            "y": 0.395
+          },
+          "art": 0,
+          "description": "หมู่บ้านดอกเหมันต์ · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            660.5999004839656,
+            371.4175941075992
+          ],
+          "world_position": [
+            660.5999004839656,
+            371.4175941075992
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-8",
+          "border_gate": "border-8",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-8"
+        },
+        {
+          "id": "blue-village-9",
+          "name": "อ่าวจันทร์เย็น",
+          "type": "village",
+          "number": 9,
+          "x": 690,
+          "y": 5663,
+          "source": {
+            "x": 0.16,
+            "y": 0.275
+          },
+          "art": 2,
+          "description": "หมู่บ้านอ่าวจันทร์เย็น · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            341.3013328030844,
+            591.950944768904
+          ],
+          "world_position": [
+            341.3013328030844,
+            591.950944768904
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-1",
+          "border_gate": "border-9",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-9"
+        },
+        {
+          "id": "blue-village-10",
+          "name": "สะพานหิมะ",
+          "type": "village",
+          "number": 10,
+          "x": 1370,
+          "y": 5928,
+          "source": {
+            "x": 0.2,
+            "y": 0.285
+          },
+          "art": 2,
+          "description": "หมู่บ้านสะพานหิมะ · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            380.86478371025913,
+            561.645552793536
+          ],
+          "world_position": [
+            380.86478371025913,
+            561.645552793536
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-2",
+          "border_gate": "border-10",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-10"
+        },
+        {
+          "id": "blue-village-11",
+          "name": "ทุ่งแสงเหนือ",
+          "type": "village",
+          "number": 11,
+          "x": 2050,
+          "y": 6459,
+          "source": {
+            "x": 0.24,
+            "y": 0.305
+          },
+          "art": 0,
+          "description": "หมู่บ้านทุ่งแสงเหนือ · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            420.26416832524427,
+            533.427074623344
+          ],
+          "world_position": [
+            420.26416832524427,
+            533.427074623344
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-3",
+          "border_gate": "border-11",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-11"
+        },
+        {
+          "id": "blue-village-12",
+          "name": "หอคอยลมหนาว",
+          "type": "village",
+          "number": 12,
+          "x": 2730,
+          "y": 6991,
+          "source": {
+            "x": 0.28,
+            "y": 0.325
+          },
+          "art": 0,
+          "description": "หมู่บ้านหอคอยลมหนาว · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            457.69357134394,
+            504.2766927384293
+          ],
+          "world_position": [
+            457.69357134394,
+            504.2766927384293
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-4",
+          "border_gate": "border-12",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-12"
+        },
+        {
+          "id": "blue-village-13",
+          "name": "ประตูน้ำค้าง",
+          "type": "village",
+          "number": 13,
+          "x": 3410,
+          "y": 7522,
+          "source": {
+            "x": 0.32,
+            "y": 0.345
+          },
+          "art": 0,
+          "description": "หมู่บ้านประตูน้ำค้าง · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            499.3067699982577,
+            475.17173623764984
+          ],
+          "world_position": [
+            499.3067699982577,
+            475.17173623764984
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-5",
+          "border_gate": "border-13",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-13"
+        },
+        {
+          "id": "blue-village-14",
+          "name": "กวางเงิน",
+          "type": "village",
+          "number": 14,
+          "x": 4090,
+          "y": 8053,
+          "source": {
+            "x": 0.36,
+            "y": 0.365
+          },
+          "art": 0,
+          "description": "หมู่บ้านกวางเงิน · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            540.8158153372713,
+            450.1598755846545
+          ],
+          "world_position": [
+            540.8158153372713,
+            450.1598755846545
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-6",
+          "border_gate": "border-14",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-14"
+        },
+        {
+          "id": "blue-village-15",
+          "name": "หุบสนธยา",
+          "type": "village",
+          "number": 15,
+          "x": 4770,
+          "y": 8584,
+          "source": {
+            "x": 0.4,
+            "y": 0.385
+          },
+          "art": 0,
+          "description": "หมู่บ้านหุบสนธยา · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            583.5902575187458,
+            425.8515522923412
+          ],
+          "world_position": [
+            583.5902575187458,
+            425.8515522923412
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-7",
+          "border_gate": "border-15",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-15"
+        },
+        {
+          "id": "blue-village-16",
+          "name": "ตะวันแรก",
+          "type": "village",
+          "number": 16,
+          "x": 5229,
+          "y": 9328,
+          "source": {
+            "x": 0.427,
+            "y": 0.413
+          },
+          "art": 0,
+          "description": "หมู่บ้านตะวันแรก · ชุมชนหิมะแห่งเหมันตคีรี · ตำแหน่งอ้างอิงแผนที่สงครามอาณาจักร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            626.1008430966754,
+            402.58260018652715
+          ],
+          "world_position": [
+            626.1008430966754,
+            402.58260018652715
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-8",
+          "border_gate": "border-16",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-16"
+        }
+      ],
+      "islands": [
+        {
+          "name": "เกาะวิมานน้ำแข็ง",
+          "status": "existing-map-unchanged",
+          "contents_preserved": {
+            "ruins": [
+              "เมืองร้างธารน้ำแข็ง",
+              "เมืองร้างหอคอยหิมะ",
+              "เมืองร้างมงกุฎขาว"
+            ],
+            "boss": "คริโอสเทล กวางมงกุฎเหมันต์",
+            "helper": "ออโรริออน มังกรแสงเหนือ"
+          },
+          "symbol_world_position": [
+            294,
+            87
+          ],
+          "display_scale": "Symbol only; existing runtime map unchanged"
+        },
+        {
+          "name": "เกาะจันทราผลึก",
+          "name_status": "proposed",
+          "status": "future-expansion-reserve",
+          "area_relative_to_mainland": 0.25,
+          "area_model_units": 44140.375,
+          "locations": [],
+          "quests": [],
+          "roads": [],
+          "geometry_is_proposal": true,
+          "proposed_world_position": [
+            102,
+            318
+          ],
+          "geometry_placeholder_only": true
+        }
+      ],
+      "border_villages": {
+        "green": [
+          "blue-village-1",
+          "blue-village-2",
+          "blue-village-3",
+          "blue-village-4",
+          "blue-village-5",
+          "blue-village-6",
+          "blue-village-7",
+          "blue-village-8"
+        ],
+        "red": [
+          "blue-village-9",
+          "blue-village-10",
+          "blue-village-11",
+          "blue-village-12",
+          "blue-village-13",
+          "blue-village-14",
+          "blue-village-15",
+          "blue-village-16"
+        ]
+      },
+      "domestic_war_edges": [
+        {
+          "a": "blue-capital",
+          "b": "blue-city-1",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-capital",
+          "b": "blue-city-2",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-capital",
+          "b": "blue-city-3",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-capital",
+          "b": "blue-city-4",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-1",
+          "b": "blue-village-1",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-1",
+          "b": "blue-village-2",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-1",
+          "b": "blue-village-3",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-1",
+          "b": "blue-village-4",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-2",
+          "b": "blue-village-5",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-2",
+          "b": "blue-village-6",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-2",
+          "b": "blue-village-7",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-2",
+          "b": "blue-village-8",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-3",
+          "b": "blue-village-9",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-3",
+          "b": "blue-village-10",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-3",
+          "b": "blue-village-11",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-3",
+          "b": "blue-village-12",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-4",
+          "b": "blue-village-13",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-4",
+          "b": "blue-village-14",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-4",
+          "b": "blue-village-15",
+          "type": "domestic"
+        },
+        {
+          "a": "blue-city-4",
+          "b": "blue-village-16",
+          "type": "domestic"
+        }
+      ],
+      "internal_gates": [
+        {
+          "id": "BN-BW",
+          "regions": [
+            "N",
+            "W"
+          ],
+          "position": [
+            476.08774038461536,
+            199.43509615384616
+          ],
+          "shared_boundary": [
+            [
+              495,
+              207
+            ],
+            [
+              410,
+              173
+            ],
+            [
+              335,
+              143
+            ]
+          ],
+          "road_route": [
+            [
+              526,
+              156
+            ],
+            [
+              476.08774038461536,
+              199.43509615384616
+            ],
+            [
+              395,
+              270
+            ]
+          ],
+          "approach_paths": {
+            "N": [
+              [
+                526,
+                156
+              ],
+              [
+                476.08774038461536,
+                199.43509615384616
+              ]
+            ],
+            "W": [
+              [
+                395,
+                270
+              ],
+              [
+                476.08774038461536,
+                199.43509615384616
+              ]
+            ]
+          }
+        },
+        {
+          "id": "BN-BE",
+          "regions": [
+            "N",
+            "E"
+          ],
+          "position": [
+            578.3711257016151,
+            173.65154971935394
+          ],
+          "shared_boundary": [
+            [
+              699,
+              132
+            ],
+            [
+              600,
+              165
+            ],
+            [
+              495,
+              207
+            ]
+          ],
+          "road_route": [
+            [
+              526,
+              156
+            ],
+            [
+              578.3711257016151,
+              173.65154971935394
+            ],
+            [
+              562,
+              234
+            ]
+          ],
+          "approach_paths": {
+            "N": [
+              [
+                526,
+                156
+              ],
+              [
+                578.3711257016151,
+                173.65154971935394
+              ]
+            ],
+            "E": [
+              [
+                562,
+                234
+              ],
+              [
+                578.3711257016151,
+                173.65154971935394
+              ]
+            ]
+          }
+        },
+        {
+          "id": "BW-BE",
+          "regions": [
+            "W",
+            "E"
+          ],
+          "position": [
+            513.7054054054054,
+            244.4108108108108
+          ],
+          "shared_boundary": [
+            [
+              495,
+              207
+            ],
+            [
+              514,
+              245
+            ],
+            [
+              531,
+              283
+            ]
+          ],
+          "road_route": [
+            [
+              395,
+              270
+            ],
+            [
+              513.7054054054054,
+              244.4108108108108
+            ],
+            [
+              562,
+              234
+            ]
+          ],
+          "approach_paths": {
+            "W": [
+              [
+                395,
+                270
+              ],
+              [
+                513.7054054054054,
+                244.4108108108108
+              ]
+            ],
+            "E": [
+              [
+                562,
+                234
+              ],
+              [
+                513.7054054054054,
+                244.4108108108108
+              ]
+            ]
+          }
+        },
+        {
+          "id": "BW-BS",
+          "regions": [
+            "W",
+            "S"
+          ],
+          "position": [
+            381.4050093602737,
+            373.7247433993932
+          ],
+          "shared_boundary": [
+            [
+              531,
+              283
+            ],
+            [
+              510,
+              323
+            ],
+            [
+              484,
+              351
+            ],
+            [
+              397,
+              368
+            ],
+            [
+              318,
+              397
+            ],
+            [
+              251,
+              411
+            ]
+          ],
+          "road_route": [
+            [
+              395,
+              270
+            ],
+            [
+              381.4050093602737,
+              373.7247433993932
+            ],
+            [
+              427,
+              427
+            ]
+          ],
+          "approach_paths": {
+            "W": [
+              [
+                395,
+                270
+              ],
+              [
+                381.4050093602737,
+                373.7247433993932
+              ]
+            ],
+            "S": [
+              [
+                427,
+                427
+              ],
+              [
+                381.4050093602737,
+                373.7247433993932
+              ]
+            ]
+          }
+        },
+        {
+          "id": "BE-BS",
+          "regions": [
+            "E",
+            "S"
+          ],
+          "position": [
+            586.2588278382381,
+            354.7402761334872
+          ],
+          "shared_boundary": [
+            [
+              661,
+              404
+            ],
+            [
+              606,
+              376
+            ],
+            [
+              567,
+              334
+            ],
+            [
+              531,
+              283
+            ]
+          ],
+          "road_route": [
+            [
+              562,
+              234
+            ],
+            [
+              586.2588278382381,
+              354.7402761334872
+            ],
+            [
+              427,
+              427
+            ]
+          ],
+          "approach_paths": {
+            "E": [
+              [
+                562,
+                234
+              ],
+              [
+                586.2588278382381,
+                354.7402761334872
+              ]
+            ],
+            "S": [
+              [
+                427,
+                427
+              ],
+              [
+                586.2588278382381,
+                354.7402761334872
+              ]
+            ]
+          }
+        }
+      ],
+      "routing_hubs": {
+        "N": [
+          526,
+          156
+        ],
+        "W": [
+          395,
+          270
+        ],
+        "E": [
+          562,
+          234
+        ],
+        "S": [
+          427,
+          427
+        ]
+      }
+    },
+    "green": {
+      "name": "พนาสมุทร",
+      "mainland_outline": [
+        [
+          706,
+          50
+        ],
+        [
+          812.9674796747967,
+          59
+        ],
+        [
+          853.9674796747967,
+          89
+        ],
+        [
+          972.9674796747967,
+          100
+        ],
+        [
+          1021.9674796747967,
+          113
+        ],
+        [
+          1066.9674796747966,
+          141
+        ],
+        [
+          1091.9674796747966,
+          215
+        ],
+        [
+          1112.9674796747966,
+          330
+        ],
+        [
+          1112.9674796747966,
+          358
+        ],
+        [
+          1107.9674796747966,
+          450
+        ],
+        [
+          1092.9674796747966,
+          520
+        ],
+        [
+          1072.9674796747966,
+          576
+        ],
+        [
+          1028,
+          640
+        ],
+        [
+          1007,
+          622
+        ],
+        [
+          982,
+          586
+        ],
+        [
+          950,
+          554
+        ],
+        [
+          880,
+          519
+        ],
+        [
+          810,
+          478
+        ],
+        [
+          750,
+          445
+        ],
+        [
+          713,
+          424
+        ],
+        [
+          661,
+          404
+        ],
+        [
+          681,
+          373
+        ],
+        [
+          695,
+          320
+        ],
+        [
+          695,
+          260
+        ],
+        [
+          697,
+          210
+        ],
+        [
+          700,
+          160
+        ],
+        [
+          699,
+          132
+        ],
+        [
+          703,
+          90
+        ],
+        [
+          706,
+          50
+        ]
+      ],
+      "mainland_area": 176561.4999999999,
+      "regions": [
+        {
+          "id": "GN",
+          "code": "N",
+          "name": "ภาคเหนือ",
+          "polygon": [
+            [
+              706,
+              50
+            ],
+            [
+              812.9674796747967,
+              59
+            ],
+            [
+              853.9674796747967,
+              89
+            ],
+            [
+              972.9674796747967,
+              100
+            ],
+            [
+              1021.9674796747967,
+              113
+            ],
+            [
+              904,
+              178
+            ],
+            [
+              852,
+              209
+            ],
+            [
+              804,
+              254
+            ],
+            [
+              756,
+              288
+            ],
+            [
+              695,
+              320
+            ],
+            [
+              695,
+              260
+            ],
+            [
+              697,
+              210
+            ],
+            [
+              700,
+              160
+            ],
+            [
+              699,
+              132
+            ],
+            [
+              703,
+              90
+            ]
+          ],
+          "important_places": [
+            "แดนสวรรค์ล่มสลาย"
+          ],
+          "city_count": 1,
+          "village_count": 6,
+          "waterways": {
+            "river": [
+              [
+                781,
+                115
+              ],
+              [
+                785,
+                124
+              ],
+              [
+                789,
+                133
+              ],
+              [
+                784,
+                143
+              ],
+              [
+                787,
+                154
+              ],
+              [
+                785,
+                162
+              ]
+            ],
+            "lake": [
+              [
+                771,
+                171
+              ],
+              [
+                775,
+                163
+              ],
+              [
+                786,
+                161
+              ],
+              [
+                797,
+                165
+              ],
+              [
+                800,
+                174
+              ],
+              [
+                791,
+                182
+              ],
+              [
+                777,
+                181
+              ]
+            ]
+          }
+        },
+        {
+          "id": "GW",
+          "code": "W",
+          "name": "ภาคตะวันตก",
+          "polygon": [
+            [
+              695,
+              320
+            ],
+            [
+              756,
+              288
+            ],
+            [
+              804,
+              254
+            ],
+            [
+              811,
+              293
+            ],
+            [
+              846,
+              344
+            ],
+            [
+              884,
+              365
+            ],
+            [
+              906,
+              406
+            ],
+            [
+              929,
+              485
+            ],
+            [
+              950,
+              554
+            ],
+            [
+              880,
+              519
+            ],
+            [
+              810,
+              478
+            ],
+            [
+              750,
+              445
+            ],
+            [
+              713,
+              424
+            ],
+            [
+              661,
+              404
+            ],
+            [
+              681,
+              373
+            ]
+          ],
+          "important_places": [
+            "ป่าแสงจันทร์"
+          ],
+          "city_count": 2,
+          "village_count": 8,
+          "waterways": {
+            "river": [
+              [
+                789.72,
+                359.76
+              ],
+              [
+                793,
+                367.14
+              ],
+              [
+                796.28,
+                374.52
+              ],
+              [
+                792.18,
+                382.72
+              ],
+              [
+                794.64,
+                391.74
+              ],
+              [
+                793,
+                398.3
+              ]
+            ],
+            "lake": [
+              [
+                781.52,
+                405.68
+              ],
+              [
+                784.8,
+                399.12
+              ],
+              [
+                793.82,
+                397.48
+              ],
+              [
+                802.84,
+                400.76
+              ],
+              [
+                805.3,
+                408.14
+              ],
+              [
+                797.92,
+                414.7
+              ],
+              [
+                786.44,
+                413.88
+              ]
+            ]
+          }
+        },
+        {
+          "id": "GE",
+          "code": "E",
+          "name": "ภาคตะวันออก",
+          "polygon": [
+            [
+              804,
+              254
+            ],
+            [
+              852,
+              209
+            ],
+            [
+              904,
+              178
+            ],
+            [
+              1021.9674796747967,
+              113
+            ],
+            [
+              1066.9674796747966,
+              141
+            ],
+            [
+              1091.9674796747966,
+              215
+            ],
+            [
+              1112.9674796747966,
+              330
+            ],
+            [
+              1112.9674796747966,
+              358
+            ],
+            [
+              977,
+              346
+            ],
+            [
+              905,
+              349
+            ],
+            [
+              846,
+              344
+            ],
+            [
+              811,
+              293
+            ]
+          ],
+          "important_places": [
+            "ป่าฝึกหัด",
+            "โคลอสเซียม"
+          ],
+          "city_count": 1,
+          "village_count": 0,
+          "waterways": {
+            "river": [
+              [
+                1045,
+                192
+              ],
+              [
+                1036,
+                196
+              ],
+              [
+                1027,
+                200
+              ],
+              [
+                1017,
+                195
+              ],
+              [
+                1006,
+                198
+              ],
+              [
+                998,
+                196
+              ]
+            ],
+            "lake": [
+              [
+                989,
+                182
+              ],
+              [
+                997,
+                186
+              ],
+              [
+                999,
+                197
+              ],
+              [
+                995,
+                208
+              ],
+              [
+                986,
+                211
+              ],
+              [
+                978,
+                202
+              ],
+              [
+                979,
+                188
+              ]
+            ]
+          }
+        },
+        {
+          "id": "GS",
+          "code": "S",
+          "name": "ภาคใต้",
+          "polygon": [
+            [
+              846,
+              344
+            ],
+            [
+              905,
+              349
+            ],
+            [
+              977,
+              346
+            ],
+            [
+              1112.9674796747966,
+              358
+            ],
+            [
+              1107.9674796747966,
+              450
+            ],
+            [
+              1092.9674796747966,
+              520
+            ],
+            [
+              1072.9674796747966,
+              576
+            ],
+            [
+              1028,
+              640
+            ],
+            [
+              1007,
+              622
+            ],
+            [
+              982,
+              586
+            ],
+            [
+              950,
+              554
+            ],
+            [
+              929,
+              485
+            ],
+            [
+              906,
+              406
+            ],
+            [
+              884,
+              365
+            ]
+          ],
+          "important_places": [
+            "ท่าเรือพนาสมุทร",
+            "ป่าทมิฬพันธนาการ"
+          ],
+          "city_count": 1,
+          "village_count": 2,
+          "waterways": {
+            "river": [
+              [
+                1030,
+                395
+              ],
+              [
+                1034,
+                404
+              ],
+              [
+                1038,
+                413
+              ],
+              [
+                1033,
+                423
+              ],
+              [
+                1036,
+                434
+              ],
+              [
+                1034,
+                442
+              ]
+            ],
+            "lake": [
+              [
+                1020,
+                451
+              ],
+              [
+                1024,
+                443
+              ],
+              [
+                1035,
+                441
+              ],
+              [
+                1046,
+                445
+              ],
+              [
+                1049,
+                454
+              ],
+              [
+                1040,
+                462
+              ],
+              [
+                1026,
+                461
+              ]
+            ]
+          }
+        }
+      ],
+      "places": [
+        {
+          "id": "forest-7",
+          "name": "ป่าฝึกหัด",
+          "levels": [
+            1,
+            4
+          ],
+          "description": "ป่าเล็กหลังเมือง อสูรตัวเล็กไม่ดุร้าย เหมาะสำหรับผู้ผนึกมือใหม่ฝึกต่อสู้และเก็บเลเวล",
+          "zoneId": 7,
+          "type": "forest",
+          "x": 3800,
+          "y": 8547,
+          "art": 0,
+          "chapter": 0,
+          "kind": "forest",
+          "region": "E",
+          "position": [
+            914,
+            307
+          ],
+          "previous_region_v3": "C",
+          "world_position": [
+            914,
+            307
+          ]
+        },
+        {
+          "x": 4960,
+          "y": 8477,
+          "id": "green-colosseum",
+          "anchor": "green-capital",
+          "type": "colosseum",
+          "art": "colosseum",
+          "name": "โคลอสเซียม",
+          "description": "สนามประลองของผู้ผนึก · โหมดทีมและเอาตัวรอด",
+          "kind": "colosseum",
+          "region": "E",
+          "position": [
+            991,
+            257
+          ],
+          "previous_region_v3": "C",
+          "world_position": [
+            991,
+            257
+          ]
+        },
+        {
+          "id": "forest-5",
+          "name": "แดนสวรรค์ล่มสลาย",
+          "levels": [
+            33,
+            46
+          ],
+          "description": "ซากอาณาจักรเทพที่ร่วงจากฟากฟ้า อสูรวันสิ้นโลกเดินเพ่นพ่าน",
+          "zoneId": 5,
+          "type": "forest",
+          "x": 3800,
+          "y": 1437,
+          "art": 5,
+          "chapter": 5,
+          "kind": "forest",
+          "region": "N",
+          "position": [
+            885,
+            142
+          ],
+          "previous_region_v3": "N",
+          "world_position": [
+            885,
+            142
+          ]
+        },
+        {
+          "x": 4973,
+          "y": 14022,
+          "id": "island-port",
+          "type": "islandPort",
+          "name": "ท่าเรือพนาสมุทร",
+          "anchor": "green-city-4",
+          "kind": "port",
+          "region": "S",
+          "position": [
+            1076,
+            481
+          ],
+          "previous_region_v3": "E",
+          "world_position": [
+            1076,
+            481
+          ]
+        },
+        {
+          "id": "forest-1",
+          "name": "ป่าแสงจันทร์",
+          "levels": [
+            4,
+            9
+          ],
+          "description": "ป่าโปร่งริมลำธาร อสูรตัวเล็กชอบซ่อนในพุ่มหญ้า",
+          "zoneId": 1,
+          "type": "forest",
+          "x": 2960,
+          "y": 3844,
+          "art": 1,
+          "chapter": 1,
+          "kind": "forest",
+          "region": "W",
+          "position": [
+            739,
+            336
+          ],
+          "previous_region_v3": "W",
+          "world_position": [
+            739,
+            336
+          ]
+        },
+        {
+          "id": "forest-8",
+          "name": "ป่าทมิฬพันธนาการ",
+          "levels": [
+            55,
+            60
+          ],
+          "description": "เมื่อจอมมารล่มสลาย ประตูหลังบัลลังก์เผยป่าเหล็กดำ เฟอร์รอธและมอร์ทิวาร์ยังคงรวบรวมวิญญาณไว้ในป้อมนิรันดร์ จงปลดพันธนาการที่เหลืออยู่",
+          "zoneId": 8,
+          "type": "forest",
+          "x": 4500,
+          "y": 13797,
+          "art": 7,
+          "chapter": 7,
+          "kind": "forest",
+          "region": "S",
+          "position": [
+            992,
+            488
+          ],
+          "previous_region_v3": "S",
+          "world_position": [
+            992,
+            488
+          ]
+        },
+        {
+          "id": "green-capital",
+          "name": "พนาสมุทร",
+          "type": "capital",
+          "x": 4290,
+          "y": 8197,
+          "source": {
+            "x": 0.695,
+            "y": 0.414
+          },
+          "art": 0,
+          "description": "เมืองหลวงแห่งพนาสมุทร",
+          "kind": "capital",
+          "region": "E",
+          "position": [
+            936,
+            273
+          ],
+          "previous_region_v3": "C",
+          "world_position": [
+            936,
+            273
+          ]
+        },
+        {
+          "id": "green-city-1",
+          "name": "คีรีมรกต",
+          "type": "city",
+          "x": 3170,
+          "y": 2859,
+          "source": {
+            "x": 0.615,
+            "y": 0.17
+          },
+          "art": 1,
+          "description": "เมืองรองแห่งพนาสมุทร",
+          "kind": "city",
+          "region": "N",
+          "position": [
+            836,
+            175
+          ],
+          "world_position": [
+            836,
+            175
+          ],
+          "war_children": [
+            "green-village-1",
+            "green-village-2",
+            "green-village-3",
+            "green-village-4"
+          ],
+          "previous_region_v3": "W"
+        },
+        {
+          "id": "green-city-2",
+          "name": "ธารพฤกษา",
+          "type": "city",
+          "x": 3520,
+          "y": 6031,
+          "source": {
+            "x": 0.64,
+            "y": 0.315
+          },
+          "art": 2,
+          "description": "เมืองรองแห่งพนาสมุทร",
+          "kind": "city",
+          "region": "W",
+          "position": [
+            784,
+            304
+          ],
+          "world_position": [
+            784,
+            304
+          ],
+          "war_children": [
+            "green-village-5",
+            "green-village-6",
+            "green-village-7",
+            "green-village-8"
+          ],
+          "previous_region_v3": "W"
+        },
+        {
+          "id": "green-city-3",
+          "name": "เวียงเมฆไพร",
+          "type": "city",
+          "x": 4080,
+          "y": 11172,
+          "source": {
+            "x": 0.68,
+            "y": 0.55
+          },
+          "art": 3,
+          "description": "เมืองรองแห่งพนาสมุทร",
+          "kind": "city",
+          "region": "W",
+          "position": [
+            850,
+            409
+          ],
+          "world_position": [
+            850,
+            409
+          ],
+          "war_children": [
+            "green-village-9",
+            "green-village-10",
+            "green-village-11",
+            "green-village-12"
+          ],
+          "previous_region_v3": "S"
+        },
+        {
+          "id": "green-city-4",
+          "name": "ท่าแก้วสมุทร",
+          "type": "city",
+          "x": 4850,
+          "y": 14563,
+          "source": {
+            "x": 0.735,
+            "y": 0.705
+          },
+          "art": 4,
+          "description": "เมืองรองแห่งพนาสมุทร",
+          "kind": "city",
+          "region": "S",
+          "position": [
+            976,
+            439
+          ],
+          "world_position": [
+            976,
+            439
+          ],
+          "war_children": [
+            "green-village-13",
+            "green-village-14",
+            "green-village-15",
+            "green-village-16"
+          ],
+          "previous_region_v3": "S"
+        },
+        {
+          "id": "green-village-1",
+          "name": "รากสนโบราณ",
+          "type": "village",
+          "number": 1,
+          "x": 2260,
+          "y": 1984,
+          "source": {
+            "x": 0.55,
+            "y": 0.13
+          },
+          "art": 1,
+          "description": "หมู่บ้านรากสนโบราณ · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            721.918144367706,
+            78.43212853883354
+          ],
+          "world_position": [
+            721.918144367706,
+            78.43212853883354
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-1",
+          "border_gate": "border-1",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-1"
+        },
+        {
+          "id": "green-village-2",
+          "name": "ดอยเฟิร์น",
+          "type": "village",
+          "number": 2,
+          "x": 2190,
+          "y": 2859,
+          "source": {
+            "x": 0.545,
+            "y": 0.17
+          },
+          "art": 0,
+          "description": "หมู่บ้านดอยเฟิร์น · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            717.9773543977971,
+            122.59298681069174
+          ],
+          "world_position": [
+            717.9773543977971,
+            122.59298681069174
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-2",
+          "border_gate": "border-2",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-2"
+        },
+        {
+          "id": "green-village-3",
+          "name": "สะพานเถาวัลย์",
+          "type": "village",
+          "number": 3,
+          "x": 2120,
+          "y": 3734,
+          "source": {
+            "x": 0.54,
+            "y": 0.21
+          },
+          "art": 1,
+          "description": "หมู่บ้านสะพานเถาวัลย์ · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            717.6805141259529,
+            165.8642794402885
+          ],
+          "world_position": [
+            717.6805141259529,
+            165.8642794402885
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-3",
+          "border_gate": "border-3",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-3"
+        },
+        {
+          "id": "green-village-4",
+          "name": "น้ำตกเจ็ดม่าน",
+          "type": "village",
+          "number": 4,
+          "x": 2050,
+          "y": 4609,
+          "source": {
+            "x": 0.535,
+            "y": 0.25
+          },
+          "art": 0,
+          "description": "หมู่บ้านน้ำตกเจ็ดม่าน · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            715.0466582930301,
+            209.7618766556672
+          ],
+          "world_position": [
+            715.0466582930301,
+            209.7618766556672
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-4",
+          "border_gate": "border-4",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-4"
+        },
+        {
+          "id": "green-village-5",
+          "name": "ลำธารมรกต",
+          "type": "village",
+          "number": 5,
+          "x": 1910,
+          "y": 5484,
+          "source": {
+            "x": 0.525,
+            "y": 0.29
+          },
+          "art": 1,
+          "description": "หมู่บ้านลำธารมรกต · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            713.280661063889,
+            253.3433295178578
+          ],
+          "world_position": [
+            713.280661063889,
+            253.3433295178578
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-5",
+          "border_gate": "border-5",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-5"
+        },
+        {
+          "id": "green-village-6",
+          "name": "บึงบัวจันทร์",
+          "type": "village",
+          "number": 6,
+          "x": 1812,
+          "y": 6250,
+          "source": {
+            "x": 0.518,
+            "y": 0.325
+          },
+          "art": 0,
+          "description": "หมู่บ้านบึงบัวจันทร์ · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            713,
+            296.59454821388124
+          ],
+          "world_position": [
+            713,
+            296.59454821388124
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-6",
+          "border_gate": "border-6",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-6"
+        },
+        {
+          "id": "green-village-7",
+          "name": "หุบกล้วยไม้",
+          "type": "village",
+          "number": 7,
+          "x": 1658,
+          "y": 7016,
+          "source": {
+            "x": 0.507,
+            "y": 0.36
+          },
+          "art": 1,
+          "description": "หมู่บ้านหุบกล้วยไม้ · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            707.1494069958561,
+            344.48594818025407
+          ],
+          "world_position": [
+            707.1494069958561,
+            344.48594818025407
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-7",
+          "border_gate": "border-7",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-7"
+        },
+        {
+          "id": "green-village-8",
+          "name": "ไทรพันปี",
+          "type": "village",
+          "number": 8,
+          "x": 1462,
+          "y": 7781,
+          "source": {
+            "x": 0.493,
+            "y": 0.395
+          },
+          "art": 0,
+          "description": "หมู่บ้านไทรพันปี · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            690.8505798200384,
+            390.9341614211946
+          ],
+          "world_position": [
+            690.8505798200384,
+            390.9341614211946
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-8",
+          "border_gate": "border-8",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-8"
+        },
+        {
+          "id": "green-village-9",
+          "name": "ผานกคราม",
+          "type": "village",
+          "number": 9,
+          "x": 1630,
+          "y": 9313,
+          "source": {
+            "x": 0.505,
+            "y": 0.465
+          },
+          "art": 1,
+          "description": "หมู่บ้านผานกคราม · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            698.4623951872372,
+            399.1231528420671
+          ],
+          "world_position": [
+            698.4623951872372,
+            399.1231528420671
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-9",
+          "border_gate": "border-17",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-17"
+        },
+        {
+          "id": "green-village-10",
+          "name": "ทุ่งหญ้ารุ่ง",
+          "type": "village",
+          "number": 10,
+          "x": 1910,
+          "y": 10078,
+          "source": {
+            "x": 0.525,
+            "y": 0.5
+          },
+          "art": 0,
+          "description": "หมู่บ้านทุ่งหญ้ารุ่ง · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            749.0862958188924,
+            423.78428395389636
+          ],
+          "world_position": [
+            749.0862958188924,
+            423.78428395389636
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-10",
+          "border_gate": "border-18",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-18"
+        },
+        {
+          "id": "green-village-11",
+          "name": "วังวารี",
+          "type": "village",
+          "number": 11,
+          "x": 2190,
+          "y": 10953,
+          "source": {
+            "x": 0.545,
+            "y": 0.54
+          },
+          "art": 1,
+          "description": "หมู่บ้านวังวารี · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            795.9218726258746,
+            449.714147965307
+          ],
+          "world_position": [
+            795.9218726258746,
+            449.714147965307
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-11",
+          "border_gate": "border-19",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-19"
+        },
+        {
+          "id": "green-village-12",
+          "name": "ป่าแสงหิ่งห้อย",
+          "type": "village",
+          "number": 12,
+          "x": 2470,
+          "y": 11828,
+          "source": {
+            "x": 0.565,
+            "y": 0.58
+          },
+          "art": 0,
+          "description": "หมู่บ้านป่าแสงหิ่งห้อย · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            843.0933349075794,
+            476.52294571315775
+          ],
+          "world_position": [
+            843.0933349075794,
+            476.52294571315775
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-12",
+          "border_gate": "border-20",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-20"
+        },
+        {
+          "id": "green-village-13",
+          "name": "อ่าวไข่มุก",
+          "type": "village",
+          "number": 13,
+          "x": 2750,
+          "y": 12703,
+          "source": {
+            "x": 0.585,
+            "y": 0.62
+          },
+          "art": 1,
+          "description": "หมู่บ้านอ่าวไข่มุก · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            888.4630336018665,
+            503.1069050034351
+          ],
+          "world_position": [
+            888.4630336018665,
+            503.1069050034351
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-13",
+          "border_gate": "border-21",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-21"
+        },
+        {
+          "id": "green-village-14",
+          "name": "ทรายแก้ว",
+          "type": "village",
+          "number": 14,
+          "x": 3030,
+          "y": 13578,
+          "source": {
+            "x": 0.605,
+            "y": 0.66
+          },
+          "art": 0,
+          "description": "หมู่บ้านทรายแก้ว · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            936.5618770918077,
+            527.1563267484057
+          ],
+          "world_position": [
+            936.5618770918077,
+            527.1563267484057
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-14",
+          "border_gate": "border-22",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-22"
+        },
+        {
+          "id": "green-village-15",
+          "name": "ปะการังเงิน",
+          "type": "village",
+          "number": 15,
+          "x": 3170,
+          "y": 14453,
+          "source": {
+            "x": 0.615,
+            "y": 0.7
+          },
+          "art": 1,
+          "description": "หมู่บ้านปะการังเงิน · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            983.7656666259296,
+            562.3098225032139
+          ],
+          "world_position": [
+            983.7656666259296,
+            562.3098225032139
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-15",
+          "border_gate": "border-23",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-23"
+        },
+        {
+          "id": "green-village-16",
+          "name": "เกาะลมอุ่น",
+          "type": "village",
+          "number": 16,
+          "x": 3170,
+          "y": 15328,
+          "source": {
+            "x": 0.615,
+            "y": 0.74
+          },
+          "art": 0,
+          "description": "หมู่บ้านเกาะลมอุ่น · ชุมชนแห่งพนาสมุทร",
+          "kind": "village",
+          "region": "S",
+          "position": [
+            1018.615516039119,
+            607.1693090151634
+          ],
+          "world_position": [
+            1018.615516039119,
+            607.1693090151634
+          ],
+          "neighbor_country": "red",
+          "paired_village": "red-village-16",
+          "border_gate": "border-24",
+          "previous_region_v3": "S",
+          "war_border_link": "war-border-24"
+        }
+      ],
+      "islands": [
+        {
+          "name": "เกาะศิลามรกต",
+          "status": "existing-map-unchanged",
+          "contents_preserved": {
+            "ruins": [
+              "เมืองร้างป่าชายเลน",
+              "เมืองร้างรากมรกต",
+              "เมืองร้างวิหารวายุ"
+            ],
+            "boss": "ไรจาคุ ราชันนยุราวายุ",
+            "helper": "อิดดราซิล ผู้พิทักษ์รากจักรวาล"
+          },
+          "symbol_world_position": [
+            1140,
+            110
+          ],
+          "display_scale": "Symbol only; existing runtime map unchanged"
+        },
+        {
+          "name": "เกาะรากวารี",
+          "name_status": "proposed",
+          "status": "future-expansion-reserve",
+          "area_relative_to_mainland": 0.25,
+          "area_model_units": 44140.37499999998,
+          "locations": [],
+          "quests": [],
+          "roads": [],
+          "geometry_is_proposal": true,
+          "proposed_world_position": [
+            1310,
+            365
+          ],
+          "geometry_placeholder_only": true
+        }
+      ],
+      "border_villages": {
+        "blue": [
+          "green-village-1",
+          "green-village-2",
+          "green-village-3",
+          "green-village-4",
+          "green-village-5",
+          "green-village-6",
+          "green-village-7",
+          "green-village-8"
+        ],
+        "red": [
+          "green-village-9",
+          "green-village-10",
+          "green-village-11",
+          "green-village-12",
+          "green-village-13",
+          "green-village-14",
+          "green-village-15",
+          "green-village-16"
+        ]
+      },
+      "domestic_war_edges": [
+        {
+          "a": "green-capital",
+          "b": "green-city-1",
+          "type": "domestic"
+        },
+        {
+          "a": "green-capital",
+          "b": "green-city-2",
+          "type": "domestic"
+        },
+        {
+          "a": "green-capital",
+          "b": "green-city-3",
+          "type": "domestic"
+        },
+        {
+          "a": "green-capital",
+          "b": "green-city-4",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-1",
+          "b": "green-village-1",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-1",
+          "b": "green-village-2",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-1",
+          "b": "green-village-3",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-1",
+          "b": "green-village-4",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-2",
+          "b": "green-village-5",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-2",
+          "b": "green-village-6",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-2",
+          "b": "green-village-7",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-2",
+          "b": "green-village-8",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-3",
+          "b": "green-village-9",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-3",
+          "b": "green-village-10",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-3",
+          "b": "green-village-11",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-3",
+          "b": "green-village-12",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-4",
+          "b": "green-village-13",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-4",
+          "b": "green-village-14",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-4",
+          "b": "green-village-15",
+          "type": "domestic"
+        },
+        {
+          "a": "green-city-4",
+          "b": "green-village-16",
+          "type": "domestic"
+        }
+      ],
+      "internal_gates": [
+        {
+          "id": "GN-GW",
+          "regions": [
+            "N",
+            "W"
+          ],
+          "position": [
+            758.8474309972971,
+            285.9830697102479
+          ],
+          "shared_boundary": [
+            [
+              804,
+              254
+            ],
+            [
+              756,
+              288
+            ],
+            [
+              695,
+              320
+            ]
+          ],
+          "road_route": [
+            [
+              836,
+              175
+            ],
+            [
+              758.8474309972971,
+              285.9830697102479
+            ],
+            [
+              817,
+              356.5
+            ]
+          ],
+          "approach_paths": {
+            "N": [
+              [
+                836,
+                175
+              ],
+              [
+                758.8474309972971,
+                285.9830697102479
+              ]
+            ],
+            "W": [
+              [
+                817,
+                356.5
+              ],
+              [
+                758.8474309972971,
+                285.9830697102479
+              ]
+            ]
+          }
+        },
+        {
+          "id": "GN-GE",
+          "regions": [
+            "N",
+            "E"
+          ],
+          "position": [
+            863.6232308443143,
+            202.070766227428
+          ],
+          "shared_boundary": [
+            [
+              1021.9674796747967,
+              113
+            ],
+            [
+              904,
+              178
+            ],
+            [
+              852,
+              209
+            ],
+            [
+              804,
+              254
+            ]
+          ],
+          "road_route": [
+            [
+              836,
+              175
+            ],
+            [
+              863.6232308443143,
+              202.070766227428
+            ],
+            [
+              936,
+              273
+            ]
+          ],
+          "approach_paths": {
+            "N": [
+              [
+                836,
+                175
+              ],
+              [
+                863.6232308443143,
+                202.070766227428
+              ]
+            ],
+            "E": [
+              [
+                936,
+                273
+              ],
+              [
+                863.6232308443143,
+                202.070766227428
+              ]
+            ]
+          }
+        },
+        {
+          "id": "GW-GE",
+          "regions": [
+            "W",
+            "E"
+          ],
+          "position": [
+            814.3071178001584,
+            297.81894308023084
+          ],
+          "shared_boundary": [
+            [
+              804,
+              254
+            ],
+            [
+              811,
+              293
+            ],
+            [
+              846,
+              344
+            ]
+          ],
+          "road_route": [
+            [
+              817,
+              356.5
+            ],
+            [
+              814.3071178001584,
+              297.81894308023084
+            ],
+            [
+              936,
+              273
+            ]
+          ],
+          "approach_paths": {
+            "W": [
+              [
+                817,
+                356.5
+              ],
+              [
+                814.3071178001584,
+                297.81894308023084
+              ]
+            ],
+            "E": [
+              [
+                936,
+                273
+              ],
+              [
+                814.3071178001584,
+                297.81894308023084
+              ]
+            ]
+          }
+        },
+        {
+          "id": "GW-GS",
+          "regions": [
+            "W",
+            "S"
+          ],
+          "position": [
+            926.2211106150145,
+            475.455119068963
+          ],
+          "shared_boundary": [
+            [
+              846,
+              344
+            ],
+            [
+              884,
+              365
+            ],
+            [
+              906,
+              406
+            ],
+            [
+              929,
+              485
+            ],
+            [
+              950,
+              554
+            ]
+          ],
+          "road_route": [
+            [
+              817,
+              356.5
+            ],
+            [
+              926.2211106150145,
+              475.455119068963
+            ],
+            [
+              976,
+              439
+            ]
+          ],
+          "approach_paths": {
+            "W": [
+              [
+                817,
+                356.5
+              ],
+              [
+                926.2211106150145,
+                475.455119068963
+              ]
+            ],
+            "S": [
+              [
+                976,
+                439
+              ],
+              [
+                926.2211106150145,
+                475.455119068963
+              ]
+            ]
+          }
+        },
+        {
+          "id": "GE-GS",
+          "regions": [
+            "E",
+            "S"
+          ],
+          "position": [
+            953.8230616302187,
+            346.96570576540756
+          ],
+          "shared_boundary": [
+            [
+              1112.9674796747966,
+              358
+            ],
+            [
+              977,
+              346
+            ],
+            [
+              905,
+              349
+            ],
+            [
+              846,
+              344
+            ]
+          ],
+          "road_route": [
+            [
+              936,
+              273
+            ],
+            [
+              953.8230616302187,
+              346.96570576540756
+            ],
+            [
+              976,
+              439
+            ]
+          ],
+          "approach_paths": {
+            "E": [
+              [
+                936,
+                273
+              ],
+              [
+                953.8230616302187,
+                346.96570576540756
+              ]
+            ],
+            "S": [
+              [
+                976,
+                439
+              ],
+              [
+                953.8230616302187,
+                346.96570576540756
+              ]
+            ]
+          }
+        }
+      ],
+      "routing_hubs": {
+        "N": [
+          836,
+          175
+        ],
+        "W": [
+          817,
+          356.5
+        ],
+        "E": [
+          936,
+          273
+        ],
+        "S": [
+          976,
+          439
+        ]
+      }
+    },
+    "red": {
+      "name": "อัคนีบรรพต",
+      "mainland_outline": [
+        [
+          330,
+          625
+        ],
+        [
+          329,
+          657
+        ],
+        [
+          346,
+          716
+        ],
+        [
+          393,
+          754
+        ],
+        [
+          480,
+          778
+        ],
+        [
+          607,
+          783
+        ],
+        [
+          705,
+          796
+        ],
+        [
+          818,
+          780
+        ],
+        [
+          876,
+          748
+        ],
+        [
+          900,
+          734
+        ],
+        [
+          958,
+          686
+        ],
+        [
+          1008,
+          674
+        ],
+        [
+          1028,
+          640
+        ],
+        [
+          1007,
+          622
+        ],
+        [
+          982,
+          586
+        ],
+        [
+          950,
+          554
+        ],
+        [
+          880,
+          519
+        ],
+        [
+          810,
+          478
+        ],
+        [
+          750,
+          445
+        ],
+        [
+          713,
+          424
+        ],
+        [
+          661,
+          404
+        ],
+        [
+          566,
+          456
+        ],
+        [
+          488,
+          503
+        ],
+        [
+          442,
+          540
+        ],
+        [
+          368,
+          593
+        ],
+        [
+          330,
+          625
+        ]
+      ],
+      "mainland_area": 176532.5,
+      "regions": [
+        {
+          "id": "RW",
+          "code": "W",
+          "name": "ภาคตะวันตก",
+          "polygon": [
+            [
+              330,
+              625
+            ],
+            [
+              329,
+              657
+            ],
+            [
+              346,
+              716
+            ],
+            [
+              393,
+              754
+            ],
+            [
+              480,
+              778
+            ],
+            [
+              607,
+              783
+            ],
+            [
+              572,
+              708
+            ],
+            [
+              530,
+              610
+            ],
+            [
+              488,
+              503
+            ],
+            [
+              442,
+              540
+            ],
+            [
+              368,
+              593
+            ]
+          ],
+          "important_places": [
+            "มหาวงกตดันเจี้ยน 7 ชั้น"
+          ],
+          "city_count": 1,
+          "village_count": 4,
+          "waterways": {
+            "river": [
+              [
+                429,
+                659
+              ],
+              [
+                433,
+                668
+              ],
+              [
+                437,
+                677
+              ],
+              [
+                432,
+                687
+              ],
+              [
+                435,
+                698
+              ],
+              [
+                433,
+                706
+              ]
+            ],
+            "lake": [
+              [
+                419,
+                715
+              ],
+              [
+                423,
+                707
+              ],
+              [
+                434,
+                705
+              ],
+              [
+                445,
+                709
+              ],
+              [
+                448,
+                718
+              ],
+              [
+                439,
+                726
+              ],
+              [
+                425,
+                725
+              ]
+            ]
+          }
+        },
+        {
+          "id": "RN",
+          "code": "N",
+          "name": "ภาคเหนือ",
+          "polygon": [
+            [
+              488,
+              503
+            ],
+            [
+              566,
+              456
+            ],
+            [
+              661,
+              404
+            ],
+            [
+              713,
+              424
+            ],
+            [
+              659,
+              536
+            ],
+            [
+              572,
+              708
+            ],
+            [
+              530,
+              610
+            ]
+          ],
+          "important_places": [
+            "ยอดเขามังกรหลับ"
+          ],
+          "city_count": 1,
+          "village_count": 5,
+          "waterways": {
+            "river": [
+              [
+                531.5441558772843,
+                565.2010101267766
+              ],
+              [
+                540.7365440327094,
+                568.7365440327094
+              ],
+              [
+                549.9289321881346,
+                572.2720779386422
+              ],
+              [
+                553.4644660940672,
+                582.8786796564403
+              ],
+              [
+                563.363961030679,
+                588.5355339059328
+              ],
+              [
+                567.6066017177982,
+                595.6066017177982
+              ]
+            ],
+            "lake": [
+              [
+                564.0710678118654,
+                611.8700576850888
+              ],
+              [
+                561.2426406871193,
+                603.3847763108503
+              ],
+              [
+                567.6066017177982,
+                594.1923881554251
+              ],
+              [
+                578.2132034355964,
+                589.2426406871193
+              ],
+              [
+                586.698484809835,
+                593.4852813742385
+              ],
+              [
+                585.9913780286485,
+                605.5060966544099
+              ],
+              [
+                575.3847763108503,
+                614.698484809835
+              ]
+            ]
+          }
+        },
+        {
+          "id": "RE",
+          "code": "E",
+          "name": "ภาคตะวันออก",
+          "polygon": [
+            [
+              713,
+              424
+            ],
+            [
+              750,
+              445
+            ],
+            [
+              810,
+              478
+            ],
+            [
+              880,
+              519
+            ],
+            [
+              950,
+              554
+            ],
+            [
+              982,
+              586
+            ],
+            [
+              1007,
+              622
+            ],
+            [
+              1028,
+              640
+            ],
+            [
+              1008,
+              674
+            ],
+            [
+              958,
+              686
+            ],
+            [
+              850,
+              632
+            ],
+            [
+              750,
+              585
+            ],
+            [
+              659,
+              536
+            ]
+          ],
+          "important_places": [
+            "ทะเลทรายสุสานทอง"
+          ],
+          "city_count": 1,
+          "village_count": 7,
+          "waterways": {
+            "river": [
+              [
+                892,
+                573
+              ],
+              [
+                896,
+                582
+              ],
+              [
+                900,
+                591
+              ],
+              [
+                895,
+                601
+              ],
+              [
+                898,
+                612
+              ],
+              [
+                896,
+                620
+              ]
+            ],
+            "lake": [
+              [
+                882,
+                629
+              ],
+              [
+                886,
+                621
+              ],
+              [
+                897,
+                619
+              ],
+              [
+                908,
+                623
+              ],
+              [
+                911,
+                632
+              ],
+              [
+                902,
+                640
+              ],
+              [
+                888,
+                639
+              ]
+            ]
+          }
+        },
+        {
+          "id": "RS",
+          "code": "S",
+          "name": "ภาคใต้",
+          "polygon": [
+            [
+              607,
+              783
+            ],
+            [
+              572,
+              708
+            ],
+            [
+              659,
+              536
+            ],
+            [
+              750,
+              585
+            ],
+            [
+              850,
+              632
+            ],
+            [
+              958,
+              686
+            ],
+            [
+              900,
+              734
+            ],
+            [
+              876,
+              748
+            ],
+            [
+              818,
+              780
+            ],
+            [
+              705,
+              796
+            ]
+          ],
+          "important_places": [
+            "ป่าฝึกหัด",
+            "โคลอสเซียม",
+            "ท่าเรืออัคนีบรรพต"
+          ],
+          "city_count": 2,
+          "village_count": 0,
+          "waterways": {
+            "river": [
+              [
+                784,
+                664
+              ],
+              [
+                788,
+                673
+              ],
+              [
+                792,
+                682
+              ],
+              [
+                787,
+                692
+              ],
+              [
+                790,
+                703
+              ],
+              [
+                788,
+                711
+              ]
+            ],
+            "lake": [
+              [
+                774,
+                720
+              ],
+              [
+                778,
+                712
+              ],
+              [
+                789,
+                710
+              ],
+              [
+                800,
+                714
+              ],
+              [
+                803,
+                723
+              ],
+              [
+                794,
+                731
+              ],
+              [
+                780,
+                730
+              ]
+            ]
+          }
+        }
+      ],
+      "places": [
+        {
+          "id": "forest-7",
+          "name": "ป่าฝึกหัด",
+          "levels": [
+            1,
+            4
+          ],
+          "description": "ป่าเล็กหลังเมือง อสูรตัวเล็กไม่ดุร้าย เหมาะสำหรับผู้ผนึกมือใหม่ฝึกต่อสู้และเก็บเลเวล",
+          "zoneId": 7,
+          "type": "forest",
+          "x": 4150,
+          "y": 8328,
+          "art": 0,
+          "chapter": 0,
+          "kind": "forest",
+          "region": "S",
+          "position": [
+            653,
+            722
+          ],
+          "previous_region_v3": "C",
+          "world_position": [
+            653,
+            722
+          ]
+        },
+        {
+          "x": 4400,
+          "y": 7549,
+          "id": "red-colosseum",
+          "anchor": "red-capital",
+          "type": "colosseum",
+          "art": "colosseum",
+          "name": "โคลอสเซียม",
+          "description": "สนามประลองของผู้ผนึก · โหมดทีมและเอาตัวรอด",
+          "kind": "colosseum",
+          "region": "S",
+          "position": [
+            731,
+            689
+          ],
+          "previous_region_v3": "C",
+          "world_position": [
+            731,
+            689
+          ]
+        },
+        {
+          "id": "forest-4",
+          "name": "ยอดเขามังกรหลับ",
+          "levels": [
+            23,
+            34
+          ],
+          "description": "ยอดเขาเหนือเมฆ ที่อยู่ของอสูรระดับตำนาน",
+          "zoneId": 4,
+          "type": "forest",
+          "x": 2470,
+          "y": 10187,
+          "art": 4,
+          "chapter": 4,
+          "kind": "forest",
+          "region": "N",
+          "position": [
+            609,
+            490
+          ],
+          "previous_region_v3": "N",
+          "world_position": [
+            609,
+            490
+          ]
+        },
+        {
+          "id": "forest-3",
+          "name": "ทะเลทรายสุสานทอง",
+          "levels": [
+            14,
+            23
+          ],
+          "description": "ซากวิหารใต้ผืนทราย ผู้เฝ้าประตูยังไม่เคยหลับ",
+          "zoneId": 3,
+          "type": "forest",
+          "x": 6040,
+          "y": 6906,
+          "art": 3,
+          "chapter": 3,
+          "kind": "forest",
+          "region": "E",
+          "position": [
+            831,
+            552
+          ],
+          "previous_region_v3": "E",
+          "world_position": [
+            831,
+            552
+          ]
+        },
+        {
+          "id": "seven-floor-dungeon",
+          "name": "มหาวงกตดันเจี้ยน 7 ชั้น",
+          "kind": "dungeon",
+          "region": "W",
+          "position": [
+            410,
+            641
+          ],
+          "previous_region_v3": "W",
+          "world_position": [
+            410,
+            641
+          ]
+        },
+        {
+          "x": 5474,
+          "y": 10435,
+          "id": "island-port",
+          "type": "islandPort",
+          "name": "ท่าเรืออัคนีบรรพต",
+          "anchor": "red-city-4",
+          "kind": "port",
+          "region": "S",
+          "position": [
+            826,
+            768
+          ],
+          "previous_region_v3": "S",
+          "world_position": [
+            826,
+            768
+          ]
+        },
+        {
+          "id": "red-capital",
+          "name": "อัคนีบรรพต",
+          "type": "capital",
+          "x": 3730,
+          "y": 8109,
+          "source": {
+            "x": 0.325,
+            "y": 0.605
+          },
+          "art": 0,
+          "description": "เมืองหลวงแห่งอัคนีบรรพต",
+          "kind": "capital",
+          "region": "S",
+          "position": [
+            691,
+            660
+          ],
+          "previous_region_v3": "C",
+          "world_position": [
+            691,
+            660
+          ]
+        },
+        {
+          "id": "red-city-1",
+          "name": "ป้อมเพลิงกาฬ",
+          "type": "city",
+          "x": 2470,
+          "y": 3953,
+          "source": {
+            "x": 0.235,
+            "y": 0.415
+          },
+          "art": 1,
+          "description": "เมืองรองแห่งอัคนีบรรพต",
+          "kind": "city",
+          "region": "W",
+          "position": [
+            482,
+            665
+          ],
+          "world_position": [
+            482,
+            665
+          ],
+          "war_children": [
+            "red-village-1",
+            "red-village-2",
+            "red-village-3",
+            "red-village-4"
+          ],
+          "previous_region_v3": "W"
+        },
+        {
+          "id": "red-city-2",
+          "name": "ศิลาสุริยัน",
+          "type": "city",
+          "x": 4640,
+          "y": 5703,
+          "source": {
+            "x": 0.39,
+            "y": 0.495
+          },
+          "art": 2,
+          "description": "เมืองรองแห่งอัคนีบรรพต",
+          "kind": "city",
+          "region": "N",
+          "position": [
+            584,
+            549
+          ],
+          "world_position": [
+            584,
+            549
+          ],
+          "war_children": [
+            "red-village-5",
+            "red-village-6",
+            "red-village-7",
+            "red-village-8"
+          ],
+          "previous_region_v3": "N"
+        },
+        {
+          "id": "red-city-3",
+          "name": "เวียงเถ้าคราม",
+          "type": "city",
+          "x": 5620,
+          "y": 8219,
+          "source": {
+            "x": 0.46,
+            "y": 0.61
+          },
+          "art": 3,
+          "description": "เมืองรองแห่งอัคนีบรรพต",
+          "kind": "city",
+          "region": "E",
+          "position": [
+            756,
+            561
+          ],
+          "world_position": [
+            756,
+            561
+          ],
+          "war_children": [
+            "red-village-9",
+            "red-village-10",
+            "red-village-11",
+            "red-village-12"
+          ],
+          "previous_region_v3": "N"
+        },
+        {
+          "id": "red-city-4",
+          "name": "ท่าอรุณอัคนี",
+          "type": "city",
+          "x": 5340,
+          "y": 11938,
+          "source": {
+            "x": 0.44,
+            "y": 0.78
+          },
+          "art": 4,
+          "description": "เมืองรองแห่งอัคนีบรรพต",
+          "kind": "city",
+          "region": "S",
+          "position": [
+            828,
+            648
+          ],
+          "world_position": [
+            828,
+            648
+          ],
+          "war_children": [
+            "red-village-13",
+            "red-village-14",
+            "red-village-15",
+            "red-village-16"
+          ],
+          "previous_region_v3": "E"
+        },
+        {
+          "id": "red-village-1",
+          "name": "ผาถ่านแดง",
+          "type": "village",
+          "number": 1,
+          "x": 1420,
+          "y": 1984,
+          "source": {
+            "x": 0.16,
+            "y": 0.325
+          },
+          "art": 1,
+          "description": "หมู่บ้านผาถ่านแดง · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            364.4902196512645,
+            619.4877479011179
+          ],
+          "world_position": [
+            364.4902196512645,
+            619.4877479011179
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-9",
+          "border_gate": "border-9",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-9"
+        },
+        {
+          "id": "red-village-2",
+          "name": "ระฆังเพลิง",
+          "type": "village",
+          "number": 2,
+          "x": 1980,
+          "y": 2203,
+          "source": {
+            "x": 0.2,
+            "y": 0.335
+          },
+          "art": 0,
+          "description": "หมู่บ้านระฆังเพลิง · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            401.82675462193896,
+            590.9132102928626
+          ],
+          "world_position": [
+            401.82675462193896,
+            590.9132102928626
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-10",
+          "border_gate": "border-10",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-10"
+        },
+        {
+          "id": "red-village-3",
+          "name": "หุบควันเทา",
+          "type": "village",
+          "number": 3,
+          "x": 2540,
+          "y": 2641,
+          "source": {
+            "x": 0.24,
+            "y": 0.355
+          },
+          "art": 1,
+          "description": "หมู่บ้านหุบควันเทา · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            441.2261392369241,
+            562.6947321226705
+          ],
+          "world_position": [
+            441.2261392369241,
+            562.6947321226705
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-11",
+          "border_gate": "border-11",
+          "previous_region_v3": "W",
+          "war_border_link": "war-border-11"
+        },
+        {
+          "id": "red-village-4",
+          "name": "ดอกไม้เถ้าถ่าน",
+          "type": "village",
+          "number": 4,
+          "x": 3100,
+          "y": 3078,
+          "source": {
+            "x": 0.28,
+            "y": 0.375
+          },
+          "art": 0,
+          "description": "หมู่บ้านดอกไม้เถ้าถ่าน · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "W",
+          "position": [
+            480.2568825573343,
+            532.3283769496762
+          ],
+          "world_position": [
+            480.2568825573343,
+            532.3283769496762
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-12",
+          "border_gate": "border-12",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-12"
+        },
+        {
+          "id": "red-village-5",
+          "name": "เหมืองทับทิม",
+          "type": "village",
+          "number": 5,
+          "x": 3660,
+          "y": 3516,
+          "source": {
+            "x": 0.32,
+            "y": 0.395
+          },
+          "art": 1,
+          "description": "หมู่บ้านเหมืองทับทิม · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            517.8867193595563,
+            506.0065458159751
+          ],
+          "world_position": [
+            517.8867193595563,
+            506.0065458159751
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-13",
+          "border_gate": "border-13",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-13"
+        },
+        {
+          "id": "red-village-6",
+          "name": "ธารทองแดง",
+          "type": "village",
+          "number": 6,
+          "x": 4220,
+          "y": 3953,
+          "source": {
+            "x": 0.36,
+            "y": 0.415
+          },
+          "art": 0,
+          "description": "หมู่บ้านธารทองแดง · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            559.3957646985698,
+            480.99468516297975
+          ],
+          "world_position": [
+            559.3957646985698,
+            480.99468516297975
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-14",
+          "border_gate": "border-14",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-14"
+        },
+        {
+          "id": "red-village-7",
+          "name": "ทุ่งสุริยแสง",
+          "type": "village",
+          "number": 7,
+          "x": 4780,
+          "y": 4391,
+          "source": {
+            "x": 0.4,
+            "y": 0.435
+          },
+          "art": 1,
+          "description": "หมู่บ้านทุ่งสุริยแสง · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            600.8754950232467,
+            457.4303515794102
+          ],
+          "world_position": [
+            600.8754950232467,
+            457.4303515794102
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-15",
+          "border_gate": "border-15",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-15"
+        },
+        {
+          "id": "red-village-8",
+          "name": "ศิลาร้อน",
+          "type": "village",
+          "number": 8,
+          "x": 5396,
+          "y": 4872,
+          "source": {
+            "x": 0.444,
+            "y": 0.457
+          },
+          "art": 0,
+          "description": "หมู่บ้านศิลาร้อน · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            643.3860806011762,
+            434.1613994735962
+          ],
+          "world_position": [
+            643.3860806011762,
+            434.1613994735962
+          ],
+          "neighbor_country": "blue",
+          "paired_village": "blue-village-16",
+          "border_gate": "border-16",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-16"
+        },
+        {
+          "id": "red-village-9",
+          "name": "ด่านภูผาแดง",
+          "type": "village",
+          "number": 9,
+          "x": 5704,
+          "y": 5594,
+          "source": {
+            "x": 0.466,
+            "y": 0.49
+          },
+          "art": 1,
+          "description": "หมู่บ้านด่านภูผาแดง · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "N",
+          "position": [
+            685.539148332118,
+            432.7235946653772
+          ],
+          "world_position": [
+            685.539148332118,
+            432.7235946653772
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-9",
+          "border_gate": "border-17",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-17"
+        },
+        {
+          "id": "red-village-10",
+          "name": "บ่ออำพัน",
+          "type": "village",
+          "number": 10,
+          "x": 5970,
+          "y": 6359,
+          "source": {
+            "x": 0.485,
+            "y": 0.525
+          },
+          "art": 0,
+          "description": "หมู่บ้านบ่ออำพัน · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            731.3164971183907,
+            455.09297690239947
+          ],
+          "world_position": [
+            731.3164971183907,
+            455.09297690239947
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-10",
+          "border_gate": "border-18",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-18"
+        },
+        {
+          "id": "red-village-11",
+          "name": "สนเพลิง",
+          "type": "village",
+          "number": 11,
+          "x": 6250,
+          "y": 7234,
+          "source": {
+            "x": 0.505,
+            "y": 0.565
+          },
+          "art": 1,
+          "description": "หมู่บ้านสนเพลิง · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            778.572797634077,
+            481.25792067766633
+          ],
+          "world_position": [
+            778.572797634077,
+            481.25792067766633
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-11",
+          "border_gate": "border-19",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-19"
+        },
+        {
+          "id": "red-village-12",
+          "name": "หุบตะวันดับ",
+          "type": "village",
+          "number": 12,
+          "x": 6530,
+          "y": 8109,
+          "source": {
+            "x": 0.525,
+            "y": 0.605
+          },
+          "art": 0,
+          "description": "หมู่บ้านหุบตะวันดับ · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            824.8988228933329,
+            507.5867467130908
+          ],
+          "world_position": [
+            824.8988228933329,
+            507.5867467130908
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-12",
+          "border_gate": "border-20",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-20"
+        },
+        {
+          "id": "red-village-13",
+          "name": "อ่าวประกายไฟ",
+          "type": "village",
+          "number": 13,
+          "x": 6810,
+          "y": 8984,
+          "source": {
+            "x": 0.545,
+            "y": 0.645
+          },
+          "art": 1,
+          "description": "หมู่บ้านอ่าวประกายไฟ · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            872.3633441638681,
+            535.306283879432
+          ],
+          "world_position": [
+            872.3633441638681,
+            535.306283879432
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-13",
+          "border_gate": "border-21",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-21"
+        },
+        {
+          "id": "red-village-14",
+          "name": "ทรายดำ",
+          "type": "village",
+          "number": 14,
+          "x": 7090,
+          "y": 9859,
+          "source": {
+            "x": 0.565,
+            "y": 0.685
+          },
+          "art": 0,
+          "description": "หมู่บ้านทรายดำ · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            920.4621876538092,
+            559.3557056244026
+          ],
+          "world_position": [
+            920.4621876538092,
+            559.3557056244026
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-14",
+          "border_gate": "border-22",
+          "previous_region_v3": "N",
+          "war_border_link": "war-border-22"
+        },
+        {
+          "id": "red-village-15",
+          "name": "ประภาคารอรุณ",
+          "type": "village",
+          "number": 15,
+          "x": 7230,
+          "y": 10734,
+          "source": {
+            "x": 0.575,
+            "y": 0.725
+          },
+          "art": 1,
+          "description": "หมู่บ้านประภาคารอรุณ · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            958.3098225032139,
+            587.7656666259296
+          ],
+          "world_position": [
+            958.3098225032139,
+            587.7656666259296
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-15",
+          "border_gate": "border-23",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-23"
+        },
+        {
+          "id": "red-village-16",
+          "name": "ลมทะเลแดง",
+          "type": "village",
+          "number": 16,
+          "x": 7230,
+          "y": 11609,
+          "source": {
+            "x": 0.575,
+            "y": 0.765
+          },
+          "art": 0,
+          "description": "หมู่บ้านลมทะเลแดง · ชุมชนแห่งอัคนีบรรพต",
+          "kind": "village",
+          "region": "E",
+          "position": [
+            989.0461972748803,
+            627.7035581569958
+          ],
+          "world_position": [
+            989.0461972748803,
+            627.7035581569958
+          ],
+          "neighbor_country": "green",
+          "paired_village": "green-village-16",
+          "border_gate": "border-24",
+          "previous_region_v3": "E",
+          "war_border_link": "war-border-24"
+        }
+      ],
+      "islands": [
+        {
+          "name": "เกาะเถ้าทมิฬ",
+          "status": "existing-map-unchanged",
+          "contents_preserved": {
+            "ruins": [
+              "เมืองร้างหาดดำ",
+              "เมืองร้างเตาหลอม",
+              "เมืองร้างปราการเถ้า"
+            ],
+            "boss": "แพนทาไพโรส มังกรห้าเศียรสุริยัน",
+            "helper": "พญาราชสีห์สุริยะ"
+          },
+          "symbol_world_position": [
+            475,
+            840
+          ],
+          "display_scale": "Symbol only; existing runtime map unchanged"
+        },
+        {
+          "name": "เกาะอรุณเพลิง",
+          "name_status": "proposed",
+          "status": "future-expansion-reserve",
+          "area_relative_to_mainland": 0.25,
+          "area_model_units": 44133.125,
+          "locations": [],
+          "quests": [],
+          "roads": [],
+          "geometry_is_proposal": true,
+          "proposed_world_position": [
+            941,
+            950
+          ],
+          "geometry_placeholder_only": true
+        }
+      ],
+      "border_villages": {
+        "blue": [
+          "red-village-1",
+          "red-village-2",
+          "red-village-3",
+          "red-village-4",
+          "red-village-5",
+          "red-village-6",
+          "red-village-7",
+          "red-village-8"
+        ],
+        "green": [
+          "red-village-9",
+          "red-village-10",
+          "red-village-11",
+          "red-village-12",
+          "red-village-13",
+          "red-village-14",
+          "red-village-15",
+          "red-village-16"
+        ]
+      },
+      "domestic_war_edges": [
+        {
+          "a": "red-capital",
+          "b": "red-city-1",
+          "type": "domestic"
+        },
+        {
+          "a": "red-capital",
+          "b": "red-city-2",
+          "type": "domestic"
+        },
+        {
+          "a": "red-capital",
+          "b": "red-city-3",
+          "type": "domestic"
+        },
+        {
+          "a": "red-capital",
+          "b": "red-city-4",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-1",
+          "b": "red-village-1",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-1",
+          "b": "red-village-2",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-1",
+          "b": "red-village-3",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-1",
+          "b": "red-village-4",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-2",
+          "b": "red-village-5",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-2",
+          "b": "red-village-6",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-2",
+          "b": "red-village-7",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-2",
+          "b": "red-village-8",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-3",
+          "b": "red-village-9",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-3",
+          "b": "red-village-10",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-3",
+          "b": "red-village-11",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-3",
+          "b": "red-village-12",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-4",
+          "b": "red-village-13",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-4",
+          "b": "red-village-14",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-4",
+          "b": "red-village-15",
+          "type": "domestic"
+        },
+        {
+          "a": "red-city-4",
+          "b": "red-village-16",
+          "type": "domestic"
+        }
+      ],
+      "internal_gates": [
+        {
+          "id": "RW-RN",
+          "regions": [
+            "W",
+            "N"
+          ],
+          "position": [
+            552.8450608930988,
+            663.3051420838972
+          ],
+          "shared_boundary": [
+            [
+              572,
+              708
+            ],
+            [
+              530,
+              610
+            ],
+            [
+              488,
+              503
+            ]
+          ],
+          "road_route": [
+            [
+              482,
+              665
+            ],
+            [
+              552.8450608930988,
+              663.3051420838972
+            ],
+            [
+              584,
+              549
+            ]
+          ],
+          "approach_paths": {
+            "W": [
+              [
+                482,
+                665
+              ],
+              [
+                552.8450608930988,
+                663.3051420838972
+              ]
+            ],
+            "N": [
+              [
+                584,
+                549
+              ],
+              [
+                552.8450608930988,
+                663.3051420838972
+              ]
+            ]
+          }
+        },
+        {
+          "id": "RW-RS",
+          "regions": [
+            "W",
+            "S"
+          ],
+          "position": [
+            589.5,
+            745.5
+          ],
+          "shared_boundary": [
+            [
+              607,
+              783
+            ],
+            [
+              572,
+              708
+            ]
+          ],
+          "road_route": [
+            [
+              482,
+              665
+            ],
+            [
+              589.5,
+              745.5
+            ],
+            [
+              759.5,
+              654
+            ]
+          ],
+          "approach_paths": {
+            "W": [
+              [
+                482,
+                665
+              ],
+              [
+                589.5,
+                745.5
+              ]
+            ],
+            "S": [
+              [
+                759.5,
+                654
+              ],
+              [
+                589.5,
+                745.5
+              ]
+            ]
+          }
+        },
+        {
+          "id": "RN-RE",
+          "regions": [
+            "N",
+            "E"
+          ],
+          "position": [
+            697.9235114774197,
+            455.26975397275925
+          ],
+          "shared_boundary": [
+            [
+              713,
+              424
+            ],
+            [
+              659,
+              536
+            ]
+          ],
+          "road_route": [
+            [
+              584,
+              549
+            ],
+            [
+              697.9235114774197,
+              455.26975397275925
+            ],
+            [
+              756,
+              561
+            ]
+          ],
+          "approach_paths": {
+            "N": [
+              [
+                584,
+                549
+              ],
+              [
+                697.9235114774197,
+                455.26975397275925
+              ]
+            ],
+            "E": [
+              [
+                756,
+                561
+              ],
+              [
+                697.9235114774197,
+                455.26975397275925
+              ]
+            ]
+          }
+        },
+        {
+          "id": "RN-RS",
+          "regions": [
+            "N",
+            "S"
+          ],
+          "position": [
+            628.8766259220982,
+            595.5542567976908
+          ],
+          "shared_boundary": [
+            [
+              659,
+              536
+            ],
+            [
+              572,
+              708
+            ]
+          ],
+          "road_route": [
+            [
+              584,
+              549
+            ],
+            [
+              628.8766259220982,
+              595.5542567976908
+            ],
+            [
+              759.5,
+              654
+            ]
+          ],
+          "approach_paths": {
+            "N": [
+              [
+                584,
+                549
+              ],
+              [
+                628.8766259220982,
+                595.5542567976908
+              ]
+            ],
+            "S": [
+              [
+                759.5,
+                654
+              ],
+              [
+                628.8766259220982,
+                595.5542567976908
+              ]
+            ]
+          }
+        },
+        {
+          "id": "RE-RS",
+          "regions": [
+            "E",
+            "S"
+          ],
+          "position": [
+            836.7501214303013,
+            625.7725570722416
+          ],
+          "shared_boundary": [
+            [
+              958,
+              686
+            ],
+            [
+              850,
+              632
+            ],
+            [
+              750,
+              585
+            ],
+            [
+              659,
+              536
+            ]
+          ],
+          "road_route": [
+            [
+              756,
+              561
+            ],
+            [
+              836.7501214303013,
+              625.7725570722416
+            ],
+            [
+              759.5,
+              654
+            ]
+          ],
+          "approach_paths": {
+            "E": [
+              [
+                756,
+                561
+              ],
+              [
+                836.7501214303013,
+                625.7725570722416
+              ]
+            ],
+            "S": [
+              [
+                759.5,
+                654
+              ],
+              [
+                836.7501214303013,
+                625.7725570722416
+              ]
+            ]
+          }
+        }
+      ],
+      "routing_hubs": {
+        "W": [
+          482,
+          665
+        ],
+        "N": [
+          584,
+          549
+        ],
+        "E": [
+          756,
+          561
+        ],
+        "S": [
+          759.5,
+          654
+        ]
+      }
+    }
+  },
+  "border_links": [
+    {
+      "id": "war-border-1",
+      "number": 1,
+      "a": "blue-village-1",
+      "b": "green-village-1",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "border_world_position": [
+        703.9685567897137,
+        77.08590947048413
+      ],
+      "suggested_walking_gate": "border-2"
+    },
+    {
+      "id": "war-border-2",
+      "number": 2,
+      "a": "blue-village-2",
+      "b": "green-village-2",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "border_world_position": [
+        700.0584358911059,
+        120.88642314338782
+      ],
+      "suggested_walking_gate": "border-2"
+    },
+    {
+      "id": "war-border-3",
+      "number": 3,
+      "a": "blue-village-3",
+      "b": "green-village-3",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "border_world_position": [
+        699.7128269075689,
+        164.78621820718547
+      ],
+      "suggested_walking_gate": "border-2"
+    },
+    {
+      "id": "war-border-4",
+      "number": 4,
+      "a": "blue-village-4",
+      "b": "green-village-4",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "border_world_position": [
+        697.0789710746461,
+        208.68381542256418
+      ],
+      "suggested_walking_gate": "border-7"
+    },
+    {
+      "id": "war-border-5",
+      "number": 5,
+      "a": "blue-village-5",
+      "b": "green-village-5",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "border_world_position": [
+        695.2950438068968,
+        252.62390482757812
+      ],
+      "suggested_walking_gate": "border-7"
+    },
+    {
+      "id": "war-border-6",
+      "number": 6,
+      "a": "blue-village-6",
+      "b": "green-village-6",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "border_world_position": [
+        695,
+        296.59454821388124
+      ],
+      "suggested_walking_gate": "border-7"
+    },
+    {
+      "id": "war-border-7",
+      "number": 7,
+      "a": "blue-village-7",
+      "b": "green-village-7",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "border_world_position": [
+        689.7463261968184,
+        339.88890796918747
+      ],
+      "suggested_walking_gate": "new-BG-E-W"
+    },
+    {
+      "id": "war-border-8",
+      "number": 8,
+      "a": "blue-village-8",
+      "b": "green-village-8",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "border_world_position": [
+        675.725240152002,
+        381.1758777643969
+      ],
+      "suggested_walking_gate": "new-BG-E-W"
+    },
+    {
+      "id": "war-border-9",
+      "number": 9,
+      "a": "blue-village-9",
+      "b": "red-village-1",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "border_world_position": [
+        352.89577622717445,
+        605.719346335011
+      ],
+      "suggested_walking_gate": "border-10"
+    },
+    {
+      "id": "war-border-10",
+      "number": 10,
+      "a": "blue-village-10",
+      "b": "red-village-2",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "border_world_position": [
+        391.34576916609905,
+        576.2793815431993
+      ],
+      "suggested_walking_gate": "border-10"
+    },
+    {
+      "id": "war-border-11",
+      "number": 11,
+      "a": "blue-village-11",
+      "b": "red-village-3",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "border_world_position": [
+        430.7451537810842,
+        548.0609033730072
+      ],
+      "suggested_walking_gate": "border-10"
+    },
+    {
+      "id": "war-border-12",
+      "number": 12,
+      "a": "blue-village-12",
+      "b": "red-village-4",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "border_world_position": [
+        468.97522695063714,
+        518.3025348440527
+      ],
+      "suggested_walking_gate": "border-10"
+    },
+    {
+      "id": "war-border-13",
+      "number": 13,
+      "a": "blue-village-13",
+      "b": "red-village-5",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "border_world_position": [
+        508.596744678907,
+        490.58914102681246
+      ],
+      "suggested_walking_gate": "border-15"
+    },
+    {
+      "id": "war-border-14",
+      "number": 14,
+      "a": "blue-village-14",
+      "b": "red-village-6",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "border_world_position": [
+        550.1057900179205,
+        465.57728037381713
+      ],
+      "suggested_walking_gate": "border-15"
+    },
+    {
+      "id": "war-border-15",
+      "number": 15,
+      "a": "blue-village-15",
+      "b": "red-village-7",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "border_world_position": [
+        592.2328762709963,
+        441.6409519358757
+      ],
+      "suggested_walking_gate": "border-15"
+    },
+    {
+      "id": "war-border-16",
+      "number": 16,
+      "a": "blue-village-16",
+      "b": "red-village-8",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "border_world_position": [
+        634.7434618489258,
+        418.37199983006167
+      ],
+      "suggested_walking_gate": "border-15"
+    },
+    {
+      "id": "war-border-17",
+      "number": 17,
+      "a": "green-village-9",
+      "b": "red-village-9",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "border_world_position": [
+        692.0007717596776,
+        415.92337375372216
+      ],
+      "suggested_walking_gate": "new-GR-W-N"
+    },
+    {
+      "id": "war-border-18",
+      "number": 18,
+      "a": "green-village-10",
+      "b": "red-village-10",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "border_world_position": [
+        740.2013964686415,
+        439.4386304281479
+      ],
+      "suggested_walking_gate": "new-GR-W-N"
+    },
+    {
+      "id": "war-border-19",
+      "number": 19,
+      "a": "green-village-11",
+      "b": "red-village-11",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "border_world_position": [
+        787.2473351299758,
+        465.48603432148667
+      ],
+      "suggested_walking_gate": "border-18"
+    },
+    {
+      "id": "war-border-20",
+      "number": 20,
+      "a": "green-village-12",
+      "b": "red-village-12",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "border_world_position": [
+        833.9960789004562,
+        492.0548462131243
+      ],
+      "suggested_walking_gate": "border-18"
+    },
+    {
+      "id": "war-border-21",
+      "number": 21,
+      "a": "green-village-13",
+      "b": "red-village-13",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "border_world_position": [
+        880.4131888828673,
+        519.2065944414336
+      ],
+      "suggested_walking_gate": "border-18"
+    },
+    {
+      "id": "war-border-22",
+      "number": 22,
+      "a": "green-village-14",
+      "b": "red-village-14",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "border_world_position": [
+        928.5120323728084,
+        543.2560161864042
+      ],
+      "suggested_walking_gate": "border-23"
+    },
+    {
+      "id": "war-border-23",
+      "number": 23,
+      "a": "green-village-15",
+      "b": "red-village-15",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "border_world_position": [
+        971.0377445645718,
+        575.0377445645718
+      ],
+      "suggested_walking_gate": "border-23"
+    },
+    {
+      "id": "war-border-24",
+      "number": 24,
+      "a": "green-village-16",
+      "b": "red-village-16",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "border_world_position": [
+        1003.8308566569997,
+        617.4364335860796
+      ],
+      "suggested_walking_gate": "border-23"
+    }
+  ],
+  "international_gates": [
+    {
+      "id": "border-2",
+      "code": "P1",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "regions": [
+        "N",
+        "N"
+      ],
+      "world_position": [
+        702.6826902189126,
+        93.33175270141741
+      ],
+      "newly_added": false,
+      "border": "BG",
+      "approach_paths": {
+        "blue": [
+          [
+            526,
+            156
+          ],
+          [
+            702.6826902189126,
+            93.33175270141741
+          ]
+        ],
+        "green": [
+          [
+            836,
+            175
+          ],
+          [
+            702.6826902189126,
+            93.33175270141741
+          ]
+        ]
+      }
+    },
+    {
+      "id": "border-7",
+      "code": "P2",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "regions": [
+        "E",
+        "N"
+      ],
+      "world_position": [
+        695,
+        263.22411347498104
+      ],
+      "newly_added": false,
+      "border": "BG",
+      "approach_paths": {
+        "blue": [
+          [
+            562,
+            234
+          ],
+          [
+            695,
+            263.22411347498104
+          ]
+        ],
+        "green": [
+          [
+            836,
+            175
+          ],
+          [
+            695,
+            263.22411347498104
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-BG-E-W",
+      "code": "P3",
+      "countries": [
+        "blue",
+        "green"
+      ],
+      "regions": [
+        "E",
+        "W"
+      ],
+      "world_position": [
+        683.3247119028673,
+        364.199304939145
+      ],
+      "newly_added": true,
+      "border": "BG",
+      "approach_paths": {
+        "blue": [
+          [
+            562,
+            234
+          ],
+          [
+            683.3247119028673,
+            364.199304939145
+          ]
+        ],
+        "green": [
+          [
+            817,
+            356.5
+          ],
+          [
+            683.3247119028673,
+            364.199304939145
+          ]
+        ]
+      }
+    },
+    {
+      "id": "border-10",
+      "code": "P4",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "regions": [
+        "S",
+        "W"
+      ],
+      "world_position": [
+        424.9511266318217,
+        552.2106795745061
+      ],
+      "newly_added": false,
+      "border": "BR",
+      "approach_paths": {
+        "blue": [
+          [
+            427,
+            427
+          ],
+          [
+            424.9511266318217,
+            552.2106795745061
+          ]
+        ],
+        "red": [
+          [
+            482,
+            665
+          ],
+          [
+            424.9511266318217,
+            552.2106795745061
+          ]
+        ]
+      }
+    },
+    {
+      "id": "border-15",
+      "code": "P5",
+      "countries": [
+        "blue",
+        "red"
+      ],
+      "regions": [
+        "S",
+        "N"
+      ],
+      "world_position": [
+        566.4764626561331,
+        455.73919938822183
+      ],
+      "newly_added": false,
+      "border": "BR",
+      "approach_paths": {
+        "blue": [
+          [
+            427,
+            427
+          ],
+          [
+            566.4764626561331,
+            455.73919938822183
+          ]
+        ],
+        "red": [
+          [
+            584,
+            549
+          ],
+          [
+            566.4764626561331,
+            455.73919938822183
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-GR-W-N",
+      "code": "P6",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "regions": [
+        "W",
+        "N"
+      ],
+      "world_position": [
+        687.0406482781292,
+        414.0156339531266
+      ],
+      "newly_added": true,
+      "border": "GR",
+      "approach_paths": {
+        "green": [
+          [
+            817,
+            356.5
+          ],
+          [
+            687.0406482781292,
+            414.0156339531266
+          ]
+        ],
+        "red": [
+          [
+            584,
+            549
+          ],
+          [
+            687.0406482781292,
+            414.0156339531266
+          ]
+        ]
+      }
+    },
+    {
+      "id": "border-18",
+      "code": "P7",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "regions": [
+        "W",
+        "E"
+      ],
+      "world_position": [
+        818.9834930706106,
+        483.26176022707193
+      ],
+      "newly_added": false,
+      "border": "GR",
+      "approach_paths": {
+        "green": [
+          [
+            817,
+            356.5
+          ],
+          [
+            818.9834930706106,
+            483.26176022707193
+          ]
+        ],
+        "red": [
+          [
+            756,
+            561
+          ],
+          [
+            818.9834930706106,
+            483.26176022707193
+          ]
+        ]
+      }
+    },
+    {
+      "id": "border-23",
+      "code": "P8",
+      "countries": [
+        "green",
+        "red"
+      ],
+      "regions": [
+        "S",
+        "E"
+      ],
+      "world_position": [
+        989.9374812528953,
+        597.4299730041691
+      ],
+      "newly_added": false,
+      "border": "GR",
+      "approach_paths": {
+        "green": [
+          [
+            976,
+            439
+          ],
+          [
+            989.9374812528953,
+            597.4299730041691
+          ]
+        ],
+        "red": [
+          [
+            756,
+            561
+          ],
+          [
+            989.9374812528953,
+            597.4299730041691
+          ]
+        ]
+      }
+    }
+  ],
+  "walking_gate_policy": "One primary international gate per touching pair of regions; war village pairs remain independent of walking gates.",
+  "canonical_war_graph": {
+    "countries": [
+      {
+        "id": "blue",
+        "name": "เหมันตคีรี",
+        "color": "#7edbff",
+        "capitalId": "blue-capital",
+        "flag": "assets/ui/country-war/flag-blue-v1.webp"
+      },
+      {
+        "id": "green",
+        "name": "พนาสมุทร",
+        "color": "#8ff0a6",
+        "capitalId": "green-capital",
+        "flag": "assets/ui/country-war/flag-green-v1.webp"
+      },
+      {
+        "id": "red",
+        "name": "อัคนีบรรพต",
+        "color": "#ff947a",
+        "capitalId": "red-capital",
+        "flag": "assets/ui/country-war/flag-red-v1.webp"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "blue-capital",
+        "country": "blue",
+        "type": "capital",
+        "name": "เหมันตคีรี · เมืองหลวง",
+        "placeName": "เหมันตคีรี",
+        "x": 0.212,
+        "y": 0.205,
+        "capacity": 32,
+        "capturable": true,
+        "weeklyGold": 4000,
+        "weeklyCouponEighths": 8,
+        "terrain": "snow",
+        "dailyGold": 1000,
+        "monthlyScore": 16
+      },
+      {
+        "id": "blue-city-1",
+        "country": "blue",
+        "type": "city",
+        "name": "เหมันตคีรี · เมืองวิมานเกล็ดหิมะ",
+        "placeName": "วิมานเกล็ดหิมะ",
+        "number": 1,
+        "x": 0.32,
+        "y": 0.12,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "snow",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "blue-city-2",
+        "country": "blue",
+        "type": "city",
+        "name": "เหมันตคีรี · เมืองศิลาน้ำค้าง",
+        "placeName": "ศิลาน้ำค้าง",
+        "number": 2,
+        "x": 0.425,
+        "y": 0.23,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "snow",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "blue-city-3",
+        "country": "blue",
+        "type": "city",
+        "name": "เหมันตคีรี · เมืองท่าจันทราเหมันต์",
+        "placeName": "ท่าจันทราเหมันต์",
+        "number": 3,
+        "x": 0.215,
+        "y": 0.24,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "snow",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "blue-city-4",
+        "country": "blue",
+        "type": "city",
+        "name": "เหมันตคีรี · เมืองด่านหมอกเงิน",
+        "placeName": "ด่านหมอกเงิน",
+        "number": 4,
+        "x": 0.355,
+        "y": 0.29,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "snow",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "green-capital",
+        "country": "green",
+        "type": "capital",
+        "name": "พนาสมุทร · เมืองหลวง",
+        "placeName": "พนาสมุทร",
+        "x": 0.695,
+        "y": 0.414,
+        "capacity": 32,
+        "capturable": true,
+        "weeklyGold": 4000,
+        "weeklyCouponEighths": 8,
+        "terrain": "mountain",
+        "dailyGold": 1000,
+        "monthlyScore": 16
+      },
+      {
+        "id": "green-city-1",
+        "country": "green",
+        "type": "city",
+        "name": "พนาสมุทร · เมืองคีรีมรกต",
+        "placeName": "คีรีมรกต",
+        "number": 1,
+        "x": 0.615,
+        "y": 0.17,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "mountain",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "green-city-2",
+        "country": "green",
+        "type": "city",
+        "name": "พนาสมุทร · เมืองธารพฤกษา",
+        "placeName": "ธารพฤกษา",
+        "number": 2,
+        "x": 0.64,
+        "y": 0.315,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "forest",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "green-city-3",
+        "country": "green",
+        "type": "city",
+        "name": "พนาสมุทร · เมืองเวียงเมฆไพร",
+        "placeName": "เวียงเมฆไพร",
+        "number": 3,
+        "x": 0.68,
+        "y": 0.55,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "mountain",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "green-city-4",
+        "country": "green",
+        "type": "city",
+        "name": "พนาสมุทร · เมืองท่าแก้วสมุทร",
+        "placeName": "ท่าแก้วสมุทร",
+        "number": 4,
+        "x": 0.735,
+        "y": 0.705,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "coast",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "red-capital",
+        "country": "red",
+        "type": "capital",
+        "name": "อัคนีบรรพต · เมืองหลวง",
+        "placeName": "อัคนีบรรพต",
+        "x": 0.325,
+        "y": 0.605,
+        "capacity": 32,
+        "capturable": true,
+        "weeklyGold": 4000,
+        "weeklyCouponEighths": 8,
+        "terrain": "volcano",
+        "dailyGold": 1000,
+        "monthlyScore": 16
+      },
+      {
+        "id": "red-city-1",
+        "country": "red",
+        "type": "city",
+        "name": "อัคนีบรรพต · เมืองป้อมเพลิงกาฬ",
+        "placeName": "ป้อมเพลิงกาฬ",
+        "number": 1,
+        "x": 0.235,
+        "y": 0.415,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "volcano",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "red-city-2",
+        "country": "red",
+        "type": "city",
+        "name": "อัคนีบรรพต · เมืองศิลาสุริยัน",
+        "placeName": "ศิลาสุริยัน",
+        "number": 2,
+        "x": 0.39,
+        "y": 0.495,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "volcano",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "red-city-3",
+        "country": "red",
+        "type": "city",
+        "name": "อัคนีบรรพต · เมืองเวียงเถ้าคราม",
+        "placeName": "เวียงเถ้าคราม",
+        "number": 3,
+        "x": 0.46,
+        "y": 0.61,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "volcano",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "red-city-4",
+        "country": "red",
+        "type": "city",
+        "name": "อัคนีบรรพต · เมืองท่าอรุณอัคนี",
+        "placeName": "ท่าอรุณอัคนี",
+        "number": 4,
+        "x": 0.44,
+        "y": 0.78,
+        "capacity": 16,
+        "capturable": true,
+        "weeklyGold": 1000,
+        "weeklyCouponEighths": 4,
+        "terrain": "coast",
+        "dailyGold": 100,
+        "monthlyScore": 4
+      },
+      {
+        "id": "blue-village-1",
+        "country": "blue",
+        "type": "village",
+        "number": 1,
+        "name": "เหมันตคีรี · หมู่บ้านสนขาว",
+        "placeName": "สนขาว",
+        "x": 0.507,
+        "y": 0.13,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-1",
+        "country": "green",
+        "type": "village",
+        "number": 1,
+        "name": "พนาสมุทร · หมู่บ้านรากสนโบราณ",
+        "placeName": "รากสนโบราณ",
+        "x": 0.55,
+        "y": 0.13,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "mountain",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-2",
+        "country": "blue",
+        "type": "village",
+        "number": 2,
+        "name": "เหมันตคีรี · หมู่บ้านระฆังน้ำแข็ง",
+        "placeName": "ระฆังน้ำแข็ง",
+        "x": 0.495,
+        "y": 0.17,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-2",
+        "country": "green",
+        "type": "village",
+        "number": 2,
+        "name": "พนาสมุทร · หมู่บ้านดอยเฟิร์น",
+        "placeName": "ดอยเฟิร์น",
+        "x": 0.545,
+        "y": 0.17,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "mountain",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-3",
+        "country": "blue",
+        "type": "village",
+        "number": 3,
+        "name": "เหมันตคีรี · หมู่บ้านธารแก้ว",
+        "placeName": "ธารแก้ว",
+        "x": 0.49,
+        "y": 0.21,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-3",
+        "country": "green",
+        "type": "village",
+        "number": 3,
+        "name": "พนาสมุทร · หมู่บ้านสะพานเถาวัลย์",
+        "placeName": "สะพานเถาวัลย์",
+        "x": 0.54,
+        "y": 0.21,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "mountain",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-4",
+        "country": "blue",
+        "type": "village",
+        "number": 4,
+        "name": "เหมันตคีรี · หมู่บ้านยอดเมฆา",
+        "placeName": "ยอดเมฆา",
+        "x": 0.485,
+        "y": 0.25,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-4",
+        "country": "green",
+        "type": "village",
+        "number": 4,
+        "name": "พนาสมุทร · หมู่บ้านน้ำตกเจ็ดม่าน",
+        "placeName": "น้ำตกเจ็ดม่าน",
+        "x": 0.535,
+        "y": 0.25,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "mountain",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-5",
+        "country": "blue",
+        "type": "village",
+        "number": 5,
+        "name": "เหมันตคีรี · หมู่บ้านผาผลึก",
+        "placeName": "ผาผลึก",
+        "x": 0.474,
+        "y": 0.29,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-5",
+        "country": "green",
+        "type": "village",
+        "number": 5,
+        "name": "พนาสมุทร · หมู่บ้านลำธารมรกต",
+        "placeName": "ลำธารมรกต",
+        "x": 0.525,
+        "y": 0.29,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "forest",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-6",
+        "country": "blue",
+        "type": "village",
+        "number": 6,
+        "name": "เหมันตคีรี · หมู่บ้านหุบหมอกคราม",
+        "placeName": "หุบหมอกคราม",
+        "x": 0.466,
+        "y": 0.325,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-6",
+        "country": "green",
+        "type": "village",
+        "number": 6,
+        "name": "พนาสมุทร · หมู่บ้านบึงบัวจันทร์",
+        "placeName": "บึงบัวจันทร์",
+        "x": 0.518,
+        "y": 0.325,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "forest",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-7",
+        "country": "blue",
+        "type": "village",
+        "number": 7,
+        "name": "เหมันตคีรี · หมู่บ้านเหมืองดาวเงิน",
+        "placeName": "เหมืองดาวเงิน",
+        "x": 0.453,
+        "y": 0.36,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-7",
+        "country": "green",
+        "type": "village",
+        "number": 7,
+        "name": "พนาสมุทร · หมู่บ้านหุบกล้วยไม้",
+        "placeName": "หุบกล้วยไม้",
+        "x": 0.507,
+        "y": 0.36,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "forest",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-8",
+        "country": "blue",
+        "type": "village",
+        "number": 8,
+        "name": "เหมันตคีรี · หมู่บ้านดอกเหมันต์",
+        "placeName": "ดอกเหมันต์",
+        "x": 0.445,
+        "y": 0.395,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-8",
+        "country": "green",
+        "type": "village",
+        "number": 8,
+        "name": "พนาสมุทร · หมู่บ้านไทรพันปี",
+        "placeName": "ไทรพันปี",
+        "x": 0.493,
+        "y": 0.395,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "forest",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-9",
+        "country": "blue",
+        "type": "village",
+        "number": 9,
+        "name": "เหมันตคีรี · หมู่บ้านอ่าวจันทร์เย็น",
+        "placeName": "อ่าวจันทร์เย็น",
+        "x": 0.16,
+        "y": 0.275,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-1",
+        "country": "red",
+        "type": "village",
+        "number": 1,
+        "name": "อัคนีบรรพต · หมู่บ้านผาถ่านแดง",
+        "placeName": "ผาถ่านแดง",
+        "x": 0.16,
+        "y": 0.325,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-10",
+        "country": "blue",
+        "type": "village",
+        "number": 10,
+        "name": "เหมันตคีรี · หมู่บ้านสะพานหิมะ",
+        "placeName": "สะพานหิมะ",
+        "x": 0.2,
+        "y": 0.285,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-2",
+        "country": "red",
+        "type": "village",
+        "number": 2,
+        "name": "อัคนีบรรพต · หมู่บ้านระฆังเพลิง",
+        "placeName": "ระฆังเพลิง",
+        "x": 0.2,
+        "y": 0.335,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-11",
+        "country": "blue",
+        "type": "village",
+        "number": 11,
+        "name": "เหมันตคีรี · หมู่บ้านทุ่งแสงเหนือ",
+        "placeName": "ทุ่งแสงเหนือ",
+        "x": 0.24,
+        "y": 0.305,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-3",
+        "country": "red",
+        "type": "village",
+        "number": 3,
+        "name": "อัคนีบรรพต · หมู่บ้านหุบควันเทา",
+        "placeName": "หุบควันเทา",
+        "x": 0.24,
+        "y": 0.355,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-12",
+        "country": "blue",
+        "type": "village",
+        "number": 12,
+        "name": "เหมันตคีรี · หมู่บ้านหอคอยลมหนาว",
+        "placeName": "หอคอยลมหนาว",
+        "x": 0.28,
+        "y": 0.325,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-4",
+        "country": "red",
+        "type": "village",
+        "number": 4,
+        "name": "อัคนีบรรพต · หมู่บ้านดอกไม้เถ้าถ่าน",
+        "placeName": "ดอกไม้เถ้าถ่าน",
+        "x": 0.28,
+        "y": 0.375,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-13",
+        "country": "blue",
+        "type": "village",
+        "number": 13,
+        "name": "เหมันตคีรี · หมู่บ้านประตูน้ำค้าง",
+        "placeName": "ประตูน้ำค้าง",
+        "x": 0.32,
+        "y": 0.345,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-5",
+        "country": "red",
+        "type": "village",
+        "number": 5,
+        "name": "อัคนีบรรพต · หมู่บ้านเหมืองทับทิม",
+        "placeName": "เหมืองทับทิม",
+        "x": 0.32,
+        "y": 0.395,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-14",
+        "country": "blue",
+        "type": "village",
+        "number": 14,
+        "name": "เหมันตคีรี · หมู่บ้านกวางเงิน",
+        "placeName": "กวางเงิน",
+        "x": 0.36,
+        "y": 0.365,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-6",
+        "country": "red",
+        "type": "village",
+        "number": 6,
+        "name": "อัคนีบรรพต · หมู่บ้านธารทองแดง",
+        "placeName": "ธารทองแดง",
+        "x": 0.36,
+        "y": 0.415,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-15",
+        "country": "blue",
+        "type": "village",
+        "number": 15,
+        "name": "เหมันตคีรี · หมู่บ้านหุบสนธยา",
+        "placeName": "หุบสนธยา",
+        "x": 0.4,
+        "y": 0.385,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-7",
+        "country": "red",
+        "type": "village",
+        "number": 7,
+        "name": "อัคนีบรรพต · หมู่บ้านทุ่งสุริยแสง",
+        "placeName": "ทุ่งสุริยแสง",
+        "x": 0.4,
+        "y": 0.435,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "blue-village-16",
+        "country": "blue",
+        "type": "village",
+        "number": 16,
+        "name": "เหมันตคีรี · หมู่บ้านตะวันแรก",
+        "placeName": "ตะวันแรก",
+        "x": 0.427,
+        "y": 0.413,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "snow",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-8",
+        "country": "red",
+        "type": "village",
+        "number": 8,
+        "name": "อัคนีบรรพต · หมู่บ้านศิลาร้อน",
+        "placeName": "ศิลาร้อน",
+        "x": 0.444,
+        "y": 0.457,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-9",
+        "country": "green",
+        "type": "village",
+        "number": 9,
+        "name": "พนาสมุทร · หมู่บ้านผานกคราม",
+        "placeName": "ผานกคราม",
+        "x": 0.505,
+        "y": 0.465,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "mountain",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-9",
+        "country": "red",
+        "type": "village",
+        "number": 9,
+        "name": "อัคนีบรรพต · หมู่บ้านด่านภูผาแดง",
+        "placeName": "ด่านภูผาแดง",
+        "x": 0.466,
+        "y": 0.49,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-10",
+        "country": "green",
+        "type": "village",
+        "number": 10,
+        "name": "พนาสมุทร · หมู่บ้านทุ่งหญ้ารุ่ง",
+        "placeName": "ทุ่งหญ้ารุ่ง",
+        "x": 0.525,
+        "y": 0.5,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "mountain",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-10",
+        "country": "red",
+        "type": "village",
+        "number": 10,
+        "name": "อัคนีบรรพต · หมู่บ้านบ่ออำพัน",
+        "placeName": "บ่ออำพัน",
+        "x": 0.485,
+        "y": 0.525,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-11",
+        "country": "green",
+        "type": "village",
+        "number": 11,
+        "name": "พนาสมุทร · หมู่บ้านวังวารี",
+        "placeName": "วังวารี",
+        "x": 0.545,
+        "y": 0.54,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "mountain",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-11",
+        "country": "red",
+        "type": "village",
+        "number": 11,
+        "name": "อัคนีบรรพต · หมู่บ้านสนเพลิง",
+        "placeName": "สนเพลิง",
+        "x": 0.505,
+        "y": 0.565,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-12",
+        "country": "green",
+        "type": "village",
+        "number": 12,
+        "name": "พนาสมุทร · หมู่บ้านป่าแสงหิ่งห้อย",
+        "placeName": "ป่าแสงหิ่งห้อย",
+        "x": 0.565,
+        "y": 0.58,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "mountain",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-12",
+        "country": "red",
+        "type": "village",
+        "number": 12,
+        "name": "อัคนีบรรพต · หมู่บ้านหุบตะวันดับ",
+        "placeName": "หุบตะวันดับ",
+        "x": 0.525,
+        "y": 0.605,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "volcano",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-13",
+        "country": "green",
+        "type": "village",
+        "number": 13,
+        "name": "พนาสมุทร · หมู่บ้านอ่าวไข่มุก",
+        "placeName": "อ่าวไข่มุก",
+        "x": 0.585,
+        "y": 0.62,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "coast",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-13",
+        "country": "red",
+        "type": "village",
+        "number": 13,
+        "name": "อัคนีบรรพต · หมู่บ้านอ่าวประกายไฟ",
+        "placeName": "อ่าวประกายไฟ",
+        "x": 0.545,
+        "y": 0.645,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "coast",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-14",
+        "country": "green",
+        "type": "village",
+        "number": 14,
+        "name": "พนาสมุทร · หมู่บ้านทรายแก้ว",
+        "placeName": "ทรายแก้ว",
+        "x": 0.605,
+        "y": 0.66,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "coast",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-14",
+        "country": "red",
+        "type": "village",
+        "number": 14,
+        "name": "อัคนีบรรพต · หมู่บ้านทรายดำ",
+        "placeName": "ทรายดำ",
+        "x": 0.565,
+        "y": 0.685,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "coast",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-15",
+        "country": "green",
+        "type": "village",
+        "number": 15,
+        "name": "พนาสมุทร · หมู่บ้านปะการังเงิน",
+        "placeName": "ปะการังเงิน",
+        "x": 0.615,
+        "y": 0.7,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "coast",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-15",
+        "country": "red",
+        "type": "village",
+        "number": 15,
+        "name": "อัคนีบรรพต · หมู่บ้านประภาคารอรุณ",
+        "placeName": "ประภาคารอรุณ",
+        "x": 0.575,
+        "y": 0.725,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "coast",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "green-village-16",
+        "country": "green",
+        "type": "village",
+        "number": 16,
+        "name": "พนาสมุทร · หมู่บ้านเกาะลมอุ่น",
+        "placeName": "เกาะลมอุ่น",
+        "x": 0.615,
+        "y": 0.74,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "coast",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      },
+      {
+        "id": "red-village-16",
+        "country": "red",
+        "type": "village",
+        "number": 16,
+        "name": "อัคนีบรรพต · หมู่บ้านลมทะเลแดง",
+        "placeName": "ลมทะเลแดง",
+        "x": 0.575,
+        "y": 0.765,
+        "capacity": 4,
+        "capturable": true,
+        "weeklyGold": 100,
+        "weeklyCouponEighths": 1,
+        "terrain": "coast",
+        "dailyGold": 10,
+        "monthlyScore": 1
+      }
+    ],
+    "edges": [
+      {
+        "a": "blue-capital",
+        "b": "blue-city-1",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-capital",
+        "b": "blue-city-2",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-capital",
+        "b": "blue-city-3",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-capital",
+        "b": "blue-city-4",
+        "type": "domestic"
+      },
+      {
+        "a": "green-capital",
+        "b": "green-city-1",
+        "type": "domestic"
+      },
+      {
+        "a": "green-capital",
+        "b": "green-city-2",
+        "type": "domestic"
+      },
+      {
+        "a": "green-capital",
+        "b": "green-city-3",
+        "type": "domestic"
+      },
+      {
+        "a": "green-capital",
+        "b": "green-city-4",
+        "type": "domestic"
+      },
+      {
+        "a": "red-capital",
+        "b": "red-city-1",
+        "type": "domestic"
+      },
+      {
+        "a": "red-capital",
+        "b": "red-city-2",
+        "type": "domestic"
+      },
+      {
+        "a": "red-capital",
+        "b": "red-city-3",
+        "type": "domestic"
+      },
+      {
+        "a": "red-capital",
+        "b": "red-city-4",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-city-1",
+        "b": "blue-village-1",
+        "type": "domestic"
+      },
+      {
+        "a": "green-city-1",
+        "b": "green-village-1",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-1",
+        "b": "green-village-1",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-1",
+        "b": "blue-village-2",
+        "type": "domestic"
+      },
+      {
+        "a": "green-city-1",
+        "b": "green-village-2",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-2",
+        "b": "green-village-2",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-1",
+        "b": "blue-village-3",
+        "type": "domestic"
+      },
+      {
+        "a": "green-city-1",
+        "b": "green-village-3",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-3",
+        "b": "green-village-3",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-1",
+        "b": "blue-village-4",
+        "type": "domestic"
+      },
+      {
+        "a": "green-city-1",
+        "b": "green-village-4",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-4",
+        "b": "green-village-4",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-2",
+        "b": "blue-village-5",
+        "type": "domestic"
+      },
+      {
+        "a": "green-city-2",
+        "b": "green-village-5",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-5",
+        "b": "green-village-5",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-2",
+        "b": "blue-village-6",
+        "type": "domestic"
+      },
+      {
+        "a": "green-city-2",
+        "b": "green-village-6",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-6",
+        "b": "green-village-6",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-2",
+        "b": "blue-village-7",
+        "type": "domestic"
+      },
+      {
+        "a": "green-city-2",
+        "b": "green-village-7",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-7",
+        "b": "green-village-7",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-2",
+        "b": "blue-village-8",
+        "type": "domestic"
+      },
+      {
+        "a": "green-city-2",
+        "b": "green-village-8",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-8",
+        "b": "green-village-8",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-3",
+        "b": "blue-village-9",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-1",
+        "b": "red-village-1",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-9",
+        "b": "red-village-1",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-3",
+        "b": "blue-village-10",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-1",
+        "b": "red-village-2",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-10",
+        "b": "red-village-2",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-3",
+        "b": "blue-village-11",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-1",
+        "b": "red-village-3",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-11",
+        "b": "red-village-3",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-3",
+        "b": "blue-village-12",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-1",
+        "b": "red-village-4",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-12",
+        "b": "red-village-4",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-4",
+        "b": "blue-village-13",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-2",
+        "b": "red-village-5",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-13",
+        "b": "red-village-5",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-4",
+        "b": "blue-village-14",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-2",
+        "b": "red-village-6",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-14",
+        "b": "red-village-6",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-4",
+        "b": "blue-village-15",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-2",
+        "b": "red-village-7",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-15",
+        "b": "red-village-7",
+        "type": "border"
+      },
+      {
+        "a": "blue-city-4",
+        "b": "blue-village-16",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-2",
+        "b": "red-village-8",
+        "type": "domestic"
+      },
+      {
+        "a": "blue-village-16",
+        "b": "red-village-8",
+        "type": "border"
+      },
+      {
+        "a": "green-city-3",
+        "b": "green-village-9",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-3",
+        "b": "red-village-9",
+        "type": "domestic"
+      },
+      {
+        "a": "green-village-9",
+        "b": "red-village-9",
+        "type": "border"
+      },
+      {
+        "a": "green-city-3",
+        "b": "green-village-10",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-3",
+        "b": "red-village-10",
+        "type": "domestic"
+      },
+      {
+        "a": "green-village-10",
+        "b": "red-village-10",
+        "type": "border"
+      },
+      {
+        "a": "green-city-3",
+        "b": "green-village-11",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-3",
+        "b": "red-village-11",
+        "type": "domestic"
+      },
+      {
+        "a": "green-village-11",
+        "b": "red-village-11",
+        "type": "border"
+      },
+      {
+        "a": "green-city-3",
+        "b": "green-village-12",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-3",
+        "b": "red-village-12",
+        "type": "domestic"
+      },
+      {
+        "a": "green-village-12",
+        "b": "red-village-12",
+        "type": "border"
+      },
+      {
+        "a": "green-city-4",
+        "b": "green-village-13",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-4",
+        "b": "red-village-13",
+        "type": "domestic"
+      },
+      {
+        "a": "green-village-13",
+        "b": "red-village-13",
+        "type": "border"
+      },
+      {
+        "a": "green-city-4",
+        "b": "green-village-14",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-4",
+        "b": "red-village-14",
+        "type": "domestic"
+      },
+      {
+        "a": "green-village-14",
+        "b": "red-village-14",
+        "type": "border"
+      },
+      {
+        "a": "green-city-4",
+        "b": "green-village-15",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-4",
+        "b": "red-village-15",
+        "type": "domestic"
+      },
+      {
+        "a": "green-village-15",
+        "b": "red-village-15",
+        "type": "border"
+      },
+      {
+        "a": "green-city-4",
+        "b": "green-village-16",
+        "type": "domestic"
+      },
+      {
+        "a": "red-city-4",
+        "b": "red-village-16",
+        "type": "domestic"
+      },
+      {
+        "a": "green-village-16",
+        "b": "red-village-16",
+        "type": "border"
+      }
+    ]
+  },
+  "notes": [
+    "Stars are capitals, squares are cities, dotted country-colored lines are original kingdom-war relationships, not extra walking border gates.",
+    "Gold gates connect all touching regions; purple gates connect all touching cross-country region pairs.",
+    "Village names and all 24 war pairings remain unchanged.",
+    "Existing islands keep their runtime maps and content; hatched second islands remain empty reserves."
+  ]
+}

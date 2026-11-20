@@ -1,5 +1,7 @@
 (function(scope){'use strict';
-function draw(c,width,height,time,id,compact){
+function butterfliesActive(light){const value=light||(scope.SoulBeastClock?.at(Date.now()));return !value||value.hour>=6&&value.hour<18;}
+function draw(c,width,height,time,id,compact,light){
+ if(id==='green'&&!butterfliesActive(light))return;
  // The town scene has its own winter layer. Country maps pass a detail mode.
  if(id==='blue'&&compact===undefined)return;
  c.save();
@@ -32,5 +34,5 @@ function draw(c,width,height,time,id,compact){
  }
  c.restore();
 }
-scope.countryWeather={draw};if(typeof module!=='undefined')module.exports={draw};
+scope.countryWeather={draw,butterfliesActive};if(typeof module!=='undefined')module.exports={draw,butterfliesActive};
 })(typeof window==='undefined'?globalThis:window);

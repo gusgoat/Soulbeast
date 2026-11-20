@@ -18,19 +18,19 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-snapshot.mjs",
-      "sha256": "be36ba51607e7418f42c55e1a13c6386bc64f40cccce138153bfa3ad4dd6943d"
+      "sha256": "dba61411bacd08ad60455c23814ec704caa7c553533deda3992c5fae77600896"
     },
     {
       "file": "source/server/accounts/dungeon-party-world.mjs",
-      "sha256": "9492571ff48dba8e0ee4fd4ef10a8ad809076ea42a17da07acd0aa135f980d40"
+      "sha256": "9d792b8e37753140c6e0fa334e0fe1a2b183d51b2503bda0554ffc22b33fac4f"
     },
     {
       "file": "source/server/accounts/dungeon-party-movement.mjs",
-      "sha256": "a3e3a511aba07b1646f54f0aa5d6c66b7c0461de54405a92d6b8adb025fd48f7"
+      "sha256": "be2dcb29699122fcfb9ad48eec193d452f3c64832f90992e2114d9ae3ed5d3bf"
     },
     {
       "file": "source/server/accounts/dungeon-party-service.mjs",
-      "sha256": "cc344ba79aa34681b8253dc45c86290ae7aa7280fa707bae93625aa35b6d2cb3"
+      "sha256": "b11fca5968694a159cca168c6f44d07927f41bc395b9ab8140600f11c8b794d9"
     },
     {
       "file": "source/server/accounts/dungeon-party-store.mjs",
@@ -46,7 +46,7 @@
     },
     {
       "file": "source/tools/labyrinth-demo/progression.js",
-      "sha256": "74c126d19eb8224d5d816c9d44894f7ef71e6343b5100f29f8ae31479025ffd3"
+      "sha256": "76352c816d86c84f8ac4cecdcdcd1f19929a0ede528e51f2c6cc85153c5c5a8f"
     },
     {
       "file": "source/tools/labyrinth-demo/floors.js",
@@ -58,7 +58,7 @@
     },
     {
       "file": "source/tools/labyrinth-demo/traps.js",
-      "sha256": "6e7b5b57d723d059e40157f5c568f6ae6a199748a30e8fe00fa4940f0ad1ba5d"
+      "sha256": "f6e14c0e2dba5e9dacffbbe01cf5e89942644f78df16ac05a9849848fea5cc14"
     },
     {
       "file": "source/server/accounts/dungeon-party-map.mjs",
@@ -66,11 +66,11 @@
     },
     {
       "file": "source/tools/labyrinth-demo/encounter-rules.js",
-      "sha256": "9dfbdf74e680fb64a26c7802b4ce525938452f6b3d3992fc51d6abeeaf479add"
+      "sha256": "7198a7f5dbef4db912e19be0c10172409edf3e63c43aa3a61a870d49483220e3"
     },
     {
       "file": "source/server/accounts/dungeon-party-enemies.mjs",
-      "sha256": "1cb89f19b5261e2c2ecb9d208397af874631c9613cebb6bf7faa295414c5823d"
+      "sha256": "cba2dcfd6caf1287514cf286cfec3a7a24863b90db2c73bc129bb15fb92b9044"
     },
     {
       "file": "source/server/accounts/dungeon-party-combat-runtime.mjs",
@@ -78,7 +78,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-respawn.mjs",
-      "sha256": "0b54823cab3412e5b6e90d3672a96a958814a60a56a10701da390f686c66478e"
+      "sha256": "b64ff84e138060d165ea4ad2621db19ce55f87b9de98bea391a7f106c5706b06"
     },
     {
       "file": "source/server/accounts/dungeon-party-rewards.mjs",
@@ -86,23 +86,31 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-broadcast.mjs",
-      "sha256": "430481c2c2910c2fbadef72a0c49acee8ce084d53e6c0bc47c730946bb223b0b"
+      "sha256": "112abf614dfe0d8b9cf5796beaf906c668fde17e11a69db81f1d4bf45a4b3e44"
     },
     {
       "file": "source/server/accounts/dungeon-party-app.mjs",
-      "sha256": "d28d92e993b9855978b44c1715dd58c616eeaa01987fdf0528c9d7eec05ba45d"
+      "sha256": "1a4537875a5d5439cf0dde56a5e3b7af3273ba27fe973f47872b6cdbfa75168b"
     },
     {
       "file": "solo-combat.mjs",
-      "sha256": "aa97b752a7dbfb04e5b8144ec66e72565316a2fe622c46f7ddb8a597c202757c"
+      "sha256": "e32889029a26e396faa5685f2f50ebb771a042df2c081cf564f31effe9ae0412"
     },
     {
       "file": "source/server/accounts/dungeon-party-solo-start.mjs",
-      "sha256": "a78f0c8b7cf7deb28b0f937f1135ec258f3cd3c72aa95927cccdfffa74a37fe7"
+      "sha256": "aa86c675ef0c343347f02ae51a57352d5a467faf432a343d0dd4d1e25d82ffea"
     },
     {
       "file": "source/tools/town-walk-demo/game-clock.js",
-      "sha256": "c09df928c53abba74c520eb10105c89c46dc405799ff5010e7d34f5907bd9a05"
+      "sha256": "f159a0139e9ab9e976dd97d5c1a69fc5d10d80056ad4a80893fbfdb7cc3d3f38"
+    },
+    {
+      "file": "source/tools/town-walk-demo/beast-habitats.js",
+      "sha256": "2afaeb343f2e8eef3361716219621d4275d228461444f584885f9fbbbeb3c126"
+    },
+    {
+      "file": "source/tools/town-walk-demo/living-species.js",
+      "sha256": "7b85170af24ab0e3ceb6c80647ee784f222e6cc65e46070407a5b0a3118a72e1"
     }
   ]
 }

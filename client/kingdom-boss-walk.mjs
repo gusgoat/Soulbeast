@@ -50,7 +50,7 @@ function mount(scene,context){
  let health=null,healthWatch=null,realtimeClient=null,motion=null,playerPosition=null;
  let impact=null;
  const impactDuration=260;
- const sameMap=()=>event?.country===scene.country;
+ const sameMap=()=>event?.country===scene.country&&(!scene.containsBoss||scene.containsBoss(event));
  const now=()=>window.SoulbeastKingdomBoss?.now()??Date.now();
  const active=()=>event?.status==='active'&&now()<event.end;
  function bossPosition(){
@@ -243,7 +243,7 @@ function mount(scene,context){
   finally{requesting=false;}
  }
  window.walkKingdomBoss={tick(position,running){
-  playerPosition={x:position.x,y:position.y,running};
+  playerPosition=scene.toServer?scene.toServer({x:position.x,y:position.y,running},event):{x:position.x,y:position.y,running};
   if(impact){
    if(impact.reply&&(impact.painted||!active()||!sameMap())){
     const next=impact.reply;impact=null;scene.resume();show(next);
@@ -255,15 +255,17 @@ function mount(scene,context){
  drawMinimap(context,worldWidth,worldHeight){
   if(!sameMap()||!active())return;
   const boss=bossPosition();if(!boss)return;
-  const x=boss.x/worldWidth*context.canvas.width;
-  const y=boss.y/worldHeight*context.canvas.height;
+  const local=scene.fromServer?scene.fromServer(boss,event):boss;
+  const x=local.x/worldWidth*context.canvas.width;
+  const y=local.y/worldHeight*context.canvas.height;
   context.save();
   drawBossMarker(context,x,y,6);
   context.restore();
  },draw(c,x,y,zoom,overview,time,shadows){
   if(!sameMap()||!active())return;
   const boss=bossPosition();if(!boss)return;
-  const px=x(boss.x),py=y(boss.y,boss.x);c.save();
+  const local=scene.fromServer?scene.fromServer(boss,event):boss;
+  const px=x(local.x),py=y(local.y,local.x);c.save();
   const running=!!impact?.to||event.motion==='chase'||event.motion==='return';
   if(overview){drawBossMarker(c,px,py,10);}
   else if(!art?.draw(shadows?.sprite(c,px,py)??c,px,py,210*zoom,boss.dir||0,running?time*1.7:time,!!event.motion)){c.beginPath();c.arc(px,py,20*zoom,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.strokeStyle='#ffe283';c.stroke();}

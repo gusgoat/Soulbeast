@@ -3,7 +3,8 @@
 function create(data,water){
  const F=.64,S=45,cols=Math.ceil(data.width/S),rows=Math.ceil(data.height*F/S),cache=new Map();
  const point=k=>({x:(k%cols)*S,y:Math.floor(k/cols)*S/F});
- function dry(p){return !water.raw(p.x,p.y,32)||water.onBridge(p.x,p.y)}
+ const regionAPI=typeof module!=='undefined'?require('./country-regions.js'):scope.CountryRegions;
+ function dry(p){return (!data.regionPolygon||regionAPI.inside(p.x,p.y,data.regionPolygon))&&(!water.raw(p.x,p.y,32)||water.onBridge(p.x,p.y))}
  function clear(a,b){const n=Math.ceil(Math.hypot(a.x-b.x,(a.y-b.y)*F)/12);for(let i=0;i<=n;i++)if(!dry({x:a.x+(b.x-a.x)*i/n,y:a.y+(b.y-a.y)*i/n}))return false;return true}
  function valid(k){if(!cache.has(k))cache.set(k,dry(point(k)));return cache.get(k)}
  function snap(p){const x=Math.round(p.x/S),y=Math.round(p.y*F/S);let best=null;for(let r=0;r<5&&!best;r++)for(let dx=-r;dx<=r;dx++)for(let dy=-r;dy<=r;dy++){const k=(y+dy)*cols+x+dx;if(valid(k)&&clear(p,point(k)))best=k}if(best===null)throw Error('No dry road approach');return best}

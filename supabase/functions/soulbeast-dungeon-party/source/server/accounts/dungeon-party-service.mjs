@@ -12,12 +12,13 @@ const snapshotActions=new Set(['claim','bossContact','battleCommand','battleAuto
 // Storage and combat are server adapters. The transaction must atomically persist
 // battle state, member vitals, progression and reward receipts.
 export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=()=>crypto.randomUUID()}) {
+ const snapshot=(...args)=>{combat.prepareEnemyAppearances?.(args[0]);return partySnapshot(...args);};
  return async function command(actor,roomId,action,data={}) {
   return transaction(roomId,async room=>{
    // An ejected player's reconnect must still deliver their persisted respawn.
    // The gateway must authenticate ownership of actor before this service call.
-   if(['status','pulse','leave'].includes(action)&&room.departures?.[actor])return partySnapshot(room,actor,now());
-   if(['status','pulse','leave'].includes(action)&&room.completed&&room.members.some(p=>p.code===actor))return partySnapshot(room,actor,now());
+   if(['status','pulse','leave'].includes(action)&&room.departures?.[actor])return snapshot(room,actor,now());
+   if(['status','pulse','leave'].includes(action)&&room.completed&&room.members.some(p=>p.code===actor))return snapshot(room,actor,now());
    if(room.state!=='active'||!room.members.some(p=>p.code===actor))throw Error('party_not_member');
    room.dungeon??=createFloor(room.startedSize,1);
    if(action==='leave'){
@@ -27,7 +28,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
     const city=player.country+'-capital';
     await departPartyMember(room,member,'left',{city});
     room.revision=(room.revision||0)+1;
-    return partySnapshot(room,actor,now());
+    return snapshot(room,actor,now());
    }
    const floor=room.dungeon;
    const me=room.members.find(p=>p.code===actor);
@@ -36,7 +37,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
    if(data.requestId!==undefined&&(!/^[a-zA-Z0-9-]{1,128}$/.test(data.requestId)||typeof data.requestId!=='string'))throw Error('bad_request_id');
    const fingerprint=action==='soloFinish'?'':JSON.stringify(Object.fromEntries(Object.keys(data).filter(k=>k!=='requestId').sort().map(k=>[k,data[k]])));
    const receipt=data.requestId&&Object.hasOwn(room.receipts||{},data.requestId)&&room.receipts[data.requestId];
-   if(receipt){if(receipt.actor!==actor||receipt.action!==action||receipt.fingerprint!==fingerprint)throw Error('request_mismatch');return snapshotActions.has(action)?{...receipt.result,snapshot:partySnapshot(room,actor,now(),true)}:receipt.result;}
+   if(receipt){if(receipt.actor!==actor||receipt.action!==action||receipt.fingerprint!==fingerprint)throw Error('request_mismatch');return snapshotActions.has(action)?{...receipt.result,snapshot:snapshot(room,actor,now(),true)}:receipt.result;}
    if(data.localExploration===true&&!room.localExploration){
     room.localExploration=true;room.revision=(room.revision||0)+1;
    }
@@ -55,7 +56,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
    }
    let result;
    switch(action){
-    case 'status':return partySnapshot(room,actor,now(),data.soloStart!==false);
+    case 'status':return snapshot(room,actor,now(),data.soloStart!==false);
     case 'inventory':{
      if(!me.exploring||me.hp<=0||Object.values(room.battles||{}).some(b=>b.status==='active'&&b.participants.includes(actor)))throw Error('already_fighting');
      const inventory=await combat.inventory(room,me,data);if(!data.op)return inventory;result={changed:true};break;
@@ -170,7 +171,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
      // Multiple viewers can request the same due turn. Don't write or broadcast
      // another revision when one viewer has already advanced it.
      if(action==='tick'&&battle.status==='active'&&!battle.loading&&!battle.presentation&&now()<(battle.waiting?.deadline??battle.nextTurnAt))
-      return {snapshot:partySnapshot(room,actor,now())};
+      return {snapshot:snapshot(room,actor,now())};
      // Advance only turns due by server time; manual turns retain their deadline.
      if(action==='battleReady')await combat.ready(room,battle,actor,data);
      else if(action==='battleCommand')await combat.choose(room,battle,actor,data);
@@ -191,9 +192,9 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
    }
    if(data.requestId&&action!=='soloFinish'){room.receipts??={};room.receipts[data.requestId]={actor,action,fingerprint,result:structuredClone(result)};}
    room.revision=(room.revision||0)+1;
-   if(action==='pulse')return partySnapshot(room,actor,now());
+   if(action==='pulse')return snapshot(room,actor,now());
    // Return the same allowlisted view already sent over realtime in this committed reply.
-   if(snapshotActions.has(action))return {...result,snapshot:partySnapshot(room,actor,now(),action==='claim')};
+   if(snapshotActions.has(action))return {...result,snapshot:snapshot(room,actor,now(),action==='claim')};
    return result;
   });
  };

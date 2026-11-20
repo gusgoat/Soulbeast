@@ -22,7 +22,7 @@ function attach(data,canonical,countries){
  }
  return data.gates;
 }
-function arrival(gate,data){const v=data.villages.find(v=>v.id===gate.localId),dx=v.x-gate.x,dy=(v.y-gate.y)*F,len=Math.hypot(dx,dy);return {x:gate.x+dx/len*160,y:gate.y+dy/len*160/F};}
-function travelURL(gate,search=''){const q=new URLSearchParams(search);q.set('country',gate.targetCountry);q.set('from',gate.targetId);q.set('arrival',gate.id);q.delete('gate');q.delete('view');return 'index.html?'+q.toString();}
+function arrival(gate,data){if(gate.inward)return {x:gate.x+gate.inward.x*180,y:gate.y+gate.inward.y*180};const v=data.villages.find(v=>v.id===gate.localId),dx=v.x-gate.x,dy=(v.y-gate.y)*F,len=Math.hypot(dx,dy);return {x:gate.x+dx/len*160,y:gate.y+dy/len*160/F};}
+function travelURL(gate,search=''){if(gate.inward)return scope.CountryRegions.travelURL(gate,search);const q=new URLSearchParams(search);q.set('country',gate.targetCountry);q.set('from',gate.targetId);q.set('arrival',gate.id);q.delete('gate');q.delete('view');return 'index.html?'+q.toString();}
 const api={attach,arrival,travelURL};scope.walkBorderLinks=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

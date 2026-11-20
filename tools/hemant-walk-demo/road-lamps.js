@@ -10,39 +10,13 @@ function facing(x,y){return Math.abs(x)>.62?(x<0?'left':'right'):(y<0?'away':'to
 function create(data,nav,terrain,excluded=[]){
  const {flatten:F,countryId,lane}=data,{rgb}=styles[countryId]||styles.blue;
  const setbacks=lane?[lane+36,lane+51,lane+72]:[132,151,172];
- const poles=[];
+ const poles=g.CountryRoadLampPlacement.create(data,nav,terrain,excluded);
  const sprites=Object.fromEntries(directions.map(dir=>{
   const image=new Image();
   image.src='/Soulbeast/assets/country-walk/road-lamps-v1/'+countryId+'-'+dir+'.webp';
   return [dir,image];
  }));
  const reduceMotion=g.matchMedia('(prefers-reduced-motion: reduce)');
- // Anchor each post to the shoulder in projected map units. The arm faces the road.
- for(const [i,[ai,bi]] of nav.edges.entries()){
-  const a=nav.nodes[ai],b=nav.nodes[bi],dx=b.x-a.x,dy=(b.y-a.y)*F,len=Math.hypot(dx,dy);
-  if(len<195)continue;
-  const count=Math.max(1,Math.round(len/375));
-  for(let j=0;j<count;j++){
-   const t=(j+.5)/count,foot={x:a.x+t*dx,y:a.y+t*(b.y-a.y)};
-   const nx=-dy/len,ny=dx/len,side=(i+j)%2===0?1:-1;
-   let pole=null;
-   for(const s of [side,-side]){
-    for(const setback of setbacks){
-     const x=foot.x+nx*s*setback,y=foot.y+ny*s*setback/F,p={x,y};
-     if(!nav.walkable(x,y)||terrain.water.raw(x,y,42)||terrain.water.onBridge(x,y))continue;
-     if(nav.nearest(p).distance<(lane?lane+21:119)||nav.places.some(o=>nav.distance(o,p)<(o.type==='capital'?340:245)))continue;
-     if(excluded.some(o=>nav.distance(o,p)<(o.clearance??(o.w?Math.min(125,o.w*.50):70))))continue;
-     if(poles.some(o=>nav.distance(o,p)<225))continue;
-     pole={...p,kind:'roadLamp',dir:facing(-nx*s,-ny*s),phase:((i*97+j*31)%89)*.17,
-      lightX:x+(foot.x-x)*.60,lightY:y+(foot.y-y)*.60};
-     break;
-    }
-    if(pole)break;
-   }
-   if(pole)poles.push(pole);
-  }
- }
-
  // Small cached halos let both mobile and desktop reuse the same textures.
  function halo(stops){
   const tile=g.document.createElement('canvas');tile.width=96;tile.height=96;

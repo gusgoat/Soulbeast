@@ -1,7 +1,13 @@
+import '../../assets/living-beasts/catalog.js?v=living-177-2';
+import '../town-walk-demo/beast-habitats.js?v=living-177-2';
+import '../town-walk-demo/living-beasts.js?v=living-flight-idle-1';
+import '../hemant-walk-demo/beast-groups.js';
+import './encounter-rules.js';
 import {drawWalkRank} from '../town-walk-demo/walk-rank-badge.mjs?v=1';
 // Visual-only adapter: never changes party state or waits for network movement.
 const root=new URL('../../',import.meta.url);
 export function partyArt(){
+ const living=globalThis.LivingBeasts.create();
  let map,cfg,props=[],environment=[],art={},avatars=new Map(),boss=MineBossSprites.create(),generation=0,waterImage=null,waterPattern=null,shadeCache=null;
  let groundTiles=null;
  const url=p=>p.startsWith(root.pathname)&&root.pathname!=='/'?new URL(p,root).href:new URL(p.replace(/^\//,''),root).href;
@@ -15,7 +21,7 @@ export function partyArt(){
  let paths=Object.fromEntries(names.map(n=>[n,'assets/dungeon-mine-v1/'+n+'.webp']));
  if(c.theme==='desert')Object.assign(paths,{floor:'assets/dungeon-desert-v1/floor-v1.webp',rock:'assets/dungeon-desert-v1/rock-v1.webp',support:'assets/dungeon-desert-v1/ruin-v1.webp',stalagmites:'assets/dungeon-desert-v1/rock-v1.webp'});
  if(c.theme==='jungle')Object.assign(paths,JungleTheme.assets);
- Object.assign(paths,ExtendedThemes.assets(c.theme),{boss:c.bossArt,door:c.bossDoorArt,well:c.wellArt,shadow:'assets/hemant-walk-preview/shadow-beast-walk-v2.png.webp',bandit:'assets/hemant-walk-preview/forest-bandit-walk-v2.png.webp',chest:'assets/hemant-walk-preview/bandit-treasure-v1.png.webp'});
+ Object.assign(paths,ExtendedThemes.assets(c.theme),{boss:c.bossArt,door:c.bossDoorArt,well:c.wellArt,bandit:'assets/hemant-walk-preview/forest-bandit-walk-v2.png.webp',chest:'assets/hemant-walk-preview/bandit-treasure-v1.png.webp'});
  for(const [name,path]of Object.entries(paths))if(path)load(name,path,ticket);
  if(c.theme==='jungle')props=JungleTheme.decorate(m);
  else if(['snow','castle','lava'].includes(c.theme))props=ExtendedThemes.decorate(m,c.theme);
@@ -71,7 +77,7 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
   ctx.globalAlpha=t.burst ? .35 : .1;ctx.fill();ctx.globalAlpha=1;ctx.stroke();
   ctx.restore();
  }
- for(const e of local.enemies.values())if(visible(e.position))draws.push({y:e.position.y,run:()=>{const im=art[e.kind==='bandit'?'bandit':'shadow'];if(!im)return;const q=screen(e.position),f=e.moving?Math.floor(e.phase||0)%8:0,z=(e.kind==='bandit'?135:115)*s;ctx.save();ctx.translate(q.x,q.y);ctx.scale(e.facing||1,1);ctx.drawImage(im,f%4*256,Math.floor(f/4)*256,256,256,-z/2,-z*.92,z,z);ctx.restore();}});
+ for(const e of local.enemies.values())if(visible(e.position))draws.push({y:e.position.y,run:()=>{if(e.kind==='shadow'){if(!e.beastModelId){if(!e.appearance){label(e.position,'กำลังโหลดอสูร…');return;}if(e.appearance){e.sp=e.appearance.sp;e.lv=e.appearance.lv;e.form=e.appearance.form;}globalThis.LivingBeasts.ensure(e,{scene:'dungeon',floor:cfg,seed:globalThis.LivingBeasts.hash(cfg.seed+':'+e.id)});}const q=screen(e.position);living.draw(ctx,e,q.x,q.y,145*s,performance.now()/1000);return;}const im=art.bandit;if(!im)return;const q=screen(e.position),f=e.moving?Math.floor(e.phase||0)%8:0,z=(e.kind==='bandit'?135:115)*s;ctx.save();ctx.translate(q.x,q.y);ctx.scale(e.facing||1,1);ctx.drawImage(im,f%4*256,Math.floor(f/4)*256,256,256,-z/2,-z*.92,z,z);ctx.restore();}});
  const guard=local.boss;
  const bp=guard?.position||world.bossPosition||map.boss;
  const dir=guard?.dir??(world.bossPosition?((world.bossDir||0)+6)%8:0);
@@ -118,5 +124,5 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
  ctx.fillStyle=shadeCache.shade;ctx.fillRect(0,0,w,h);
  ExtendedThemes.weather(ctx,w,h,time,cfg.theme);
  }
- return {setFloor,draw};
+ return {setFloor,draw,stats:living.stats,readyEnemy:living.ready};
 }

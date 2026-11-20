@@ -28,7 +28,7 @@ export function partySnapshot(room,code,serverTime,includeSolo=false){
   dungeon:floor?{floor:floor.floor,rules:structuredClone(floor.rules),kills:structuredClone(floor.kills),
    doorOpen:floor.doorOpen,boss:floor.boss,bossBattle:floor.bossBattle,
    bossPosition:floor.bossPosition?structuredClone(floor.bossPosition):null,bossDir:floor.bossDir||0,bossMoving:!!floor.bossMoving,
-   enemies:Object.fromEntries(Object.entries(floor.enemies).map(([id,e])=>[id,pick(e,['kind','state','position','home','patrol','dir','moving','actor'])])),
+   enemies:Object.fromEntries(Object.entries(floor.enemies).map(([id,e])=>[id,pick(e,['kind','state','position','home','patrol','dir','moving','actor','appearance'])])),
    traps:visiblePartyTraps(floor.traps||[])}:null,
   battleTransition:room.battleTransition?structuredClone(room.battleTransition):null,
   chestClaims:structuredClone({...room.members.find(m=>m.code===code)?.save?.P?.labyrinthBossChests,...Object.assign({},...Object.values(room.chestClaims||{}))}),

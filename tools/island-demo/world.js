@@ -31,7 +31,7 @@ let ctx=surface;
 const patrols=IslandPatrols.create({
  ...data,actors:[...data.actors,{...data.boss,id:'boss',kind:'boss',lv:60}],
 },cfg.seed);
-const boss=patrols.actors.find(a=>a.kind==='boss');
+const boss=patrols.actors.find(a=>a.kind==='boss');LivingBeasts.assign(patrols.actors.filter(a=>a.kind==='shadow'),{scene:'island',country,player});BeastHabitats.islandActors(patrols.actors,data,country,player);const livingBeasts=LivingBeasts.create();void livingBeasts.preload(patrols.actors.filter(a=>a.kind==='shadow').slice(0,3));window.islandLivingBeasts={actors:patrols.actors.filter(a=>a.kind==='shadow'),renderer:livingBeasts};
 const mini=$('mini').getContext('2d'),avatar=sealerSprites.create({preloadDirections:true}),keys=new Set(),joy={x:0,y:0,id:null};
 const visit=()=>I.state(player,country).visit;
 const saved=visit().position;
@@ -50,7 +50,7 @@ const asset=Object.fromEntries(Object.entries({
  wreck:'assets/island-props/'+country+'-wreck.webp',
  chest:'assets/hemant-walk-preview/bandit-treasure-v1.png.webp',
  bandit:'assets/hemant-walk-preview/forest-bandit-walk-v2.png.webp',
- shadow:'assets/hemant-walk-preview/shadow-beast-walk-v2.png.webp',
+
  port:'assets/island-props/'+country+'-port.webp',
  boss:country==='green'?'assets/beasts/solar/solar_raijaku.webp':
   'assets/beasts/motion/'+cfg.boss.replace('_','-')+'-idle-v1.webp',
@@ -259,7 +259,7 @@ function draw(){
    if(drawn)label((o.mode==='chase'?'! ':'')+'♛ '+cfg.bossName+' · Lv 60',x,y-145);
    continue;
   }
-  if(o.art==='shadow'||o.art==='bandit'){
+  if(o.art==='shadow'){livingBeasts.draw(ctx,o,x,y,150,performance.now()/1000);if(I.distance(p,o)<240)label((o.mode==='chase'?'! ':'')+o.beastName+' · Lv '+o.lv,x,y-130);continue;}if(o.art==='bandit'){
    const im=asset[o.art],frame=o.moving?Math.floor(o.phase)%8:0,cell=im.naturalWidth/4;
    if(cell){
     ctx.fillStyle='#32384b50';ctx.beginPath();ctx.ellipse(x,y-3,25,7,0,0,Math.PI*2);ctx.fill();
@@ -395,7 +395,7 @@ function openFrame(id,screen='bag',quickItem){
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title=id?'เหตุการณ์บนเกาะ':'กระเป๋าผู้ผนึก';
   const query=new URLSearchParams({city:country+'-capital',v:'quest-editorial-2',walkScene:'island',screen:id?'town':screen});
   if(quickItem)query.set('quickItem',quickItem);
-  if(id){query.set('island',country);query.set('islandEncounter',id);}
+  if(id){query.set('island',country);query.set('islandEncounter',id);const actor=patrols.actors.find(a=>a.id===id&&a.kind==='shadow');if(actor)query.set('beastPlan',LivingBeasts.remember(actor,{scene:'island',country}));}
   frame.src=screen==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+query;
   kind=id||'menu';document.body.append(frame);
  };
@@ -500,7 +500,7 @@ function update(dt){
  }
  const available=a=>!visit().cleared[a.id]&&(cooldown.get(a.id)||0)<=clock;
  const contact=patrols.update(dt,p,available);
- if(contact&&I.begin(player,country,contact.id,contact.kind,contact.lv)){openFrame(contact.id);return;}
+ if(contact&&(contact.kind!=='shadow'||livingBeasts.ready(contact))&&I.begin(player,country,contact.id,contact.kind,contact.lv)){if(contact.kind==='shadow')visit().pending.plan=contact.encounterPlan.units.map(u=>({...u}));openFrame(contact.id);return;}
  const sites=[{...data.spawn,id:'port',name:cfg.port},...data.sites,
   ...(!visit().cleared.chest?[data.chest]:[])];
  near=sites.filter(o=>I.distance(p,o)<112).sort((a,b)=>I.distance(p,a)-I.distance(p,b))[0];

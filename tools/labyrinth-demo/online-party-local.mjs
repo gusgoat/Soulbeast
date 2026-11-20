@@ -5,8 +5,8 @@ export function localPartyWorld(){
  function reset(){enemies.clear();effects.clear();boss=null;}
  function receive(world,code,now,serverTime){
   for(const [id,e] of Object.entries(world.enemies||{})){
-   if(e.state!=='roaming'){enemies.delete(id);continue;}
-   if(!enemies.has(id)&&e.position)enemies.set(id,{...e,position:{...e.position},home:{...(e.home||e.position)},index:0});
+   if(e.state!=='roaming'){enemies.delete(id);continue;}if(enemies.has(id)&&e.appearance)enemies.get(id).appearance=e.appearance;
+   if(!enemies.has(id)&&e.position)enemies.set(id,{...e,id,position:{...e.position},home:{...(e.home||e.position)},index:0});
   }
   for(const t of world.traps||[]){
    const eligible=t.eligible?.includes(code)&&!t.resolved?.includes(code);

@@ -1,6 +1,6 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-gait-1';
 import {partyMenu} from './online-party-menu.mjs?v=quest-editorial-2';
-import {partyArt} from './online-party-art.mjs?v=world-3d-live-1';
+import {partyArt} from './online-party-art.mjs?v=living-177-2';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=motion-cadence-1';
 import {partyScene} from './online-party-scene.mjs?v=adaptive-buffer-1';
 import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
@@ -313,7 +313,7 @@ try{
     nextContact=now+750;void controller.command(trapRequest.action,{trap:trapRequest.trap,position:trapRequest.position});
    }
    const confirmed=position,bossPosition=localWorld.boss?.position||world.bossPosition||maze.boss;
-   if(!trapRequest&&!contactPending&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
+   if(!trapRequest&&!contactPending&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&(e.kind!=='shadow'||visuals.readyEnemy(e))&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
     if(target){
      nextContact=now+500;
      openEncounter('claim',{floor:controller.state.floor,enemy:target[0],enemyPosition:{...target[1].position},

@@ -33,6 +33,7 @@
    });
   }
   function place(point,edge,w,variant){
+   if(water.accessPoints?.some(p=>nav.distance(p,point)<125))return false;
    if(point.x<0||point.x>width||point.y<0||point.y>height)return false;
    const blocker=terrain.hit(point.x,point.y);
    if(blocker==='mountain'||blocker==='tree'||blocker==='scenery'||overlapsBase(point,w,variant))return false;

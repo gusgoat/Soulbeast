@@ -1,0 +1,20 @@
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const maps=require('./hemant-walk-demo/country-regions-data.js').countries,N=require('./hemant-walk-demo/navigation.js'),T=require('./hemant-walk-demo/terrain.js'),R=require('./hemant-walk-demo/roamers.js'),B=require('./hemant-walk-demo/bandits.js'),C=require('./hemant-walk-demo/region-coast.js'),Q=require('./hemant-walk-demo/quest-targets.js'),E=require('./hemant-walk-demo/encounters.js'),W=require('./town-walk-demo/country-weather.js');
+const rows=[];let palms=0,canonical;
+for(const[country,c]of Object.entries(maps))for(const[region,d]of Object.entries(c.regions)){
+ const n=N.create(d),t=T.create(d,n);n.setTerrain(t);const b=B.create(d,n,t),shadows=R.createRegional(d,n);assert.equal(b.actors.length,1);const a=b.actors[0],camp={...a.home};
+ for(const tree of t.trees){if(C.isBeach(d,tree.x,tree.y,tree.w*.25)){assert(tree.beachPalm,country+region+' non-coconut tree on sand');assert(!tree.shrub);palms++;}}
+ function safe(){assert.equal(b.actors.length,1);assert(n.nearest(a).distance>=400-1e-7);assert(b.edgeDistance(a)>=18-1e-7&&b.edgeDistance(a)<=650+1e-7);assert(!C.isBeach(d,a.x,a.y,120));for(const p of n.places.filter(p=>p.type!=='junction'))assert(n.distance(a,p)>=(p.type==='islandPort'?1300:p.type==='capital'?1200:['dungeon'].includes(p.type)?900:p.type==='colosseum'?1000:p.type==='forest'?800:550)-1e-7,country+region+' bandit too close to '+p.id);}
+ safe();for(let i=0;i<1200;i++){b.update(.1);if(i%25===0)safe();}safe();
+ const places=[...d.cities,...d.villages],quests=places.slice(0,4).map((p,i)=>({id:'camp-quest-'+i,steps:[{type:i===0?'chest':'defeat',kind:'bandit',count:5,place:p.id,country}]}));
+ const player={worldQuests:{accepted:Object.fromEntries(quests.map(q=>[q.id,{step:0,count:0}]))}};Q.populate(d,n,shadows,b,player,{quests});assert.equal(b.actors.length,1,'Quest targets must share the single camp');assert.equal(shadows.actors.length,10);
+ const probe={...a,...camp,home:camp,goal:null,chasing:false,cooldown:0},threat=E.create(n,[{kind:'bandit',actors:[probe]}],{now:()=>5000});assert.equal(threat.update(4,n.nearest(camp).foot),null);assert(!probe.chasing,'Ordinary road travel must not aggro the guard');const contact=threat.update(.1,camp);assert.equal(contact.kind,'bandit','A deliberate approach must still encounter the guard');
+ const o=d.regionOrigin,raw=d.worldCoastline.map(edge=>edge.map(p=>[(p.x-o.pad)/o.scale+o.left,(p.y-o.topPad)*.64/o.scale+o.top]).map(p=>p.map(n=>+n.toFixed(6))));
+ const key=JSON.stringify(raw);if(!canonical)canonical=key;else assert.equal(key,canonical,'World shore must be continuous across region projections');
+ rows.push({country,region,bandits:1,road:Math.round(n.nearest(camp).distance),edge:Math.round(b.edgeDistance(camp)),aggro:a.aggroRadius,palms:t.trees.filter(p=>p.beachPalm).length,questCampShared:true});
+}
+for(const hour of [0,3,5.99,18,20,23.99])assert(!W.butterfliesActive({hour}));for(const hour of [6,9,12,17.99])assert(W.butterfliesActive({hour}));
+let ellipses=0;const ctx={save(){},restore(){},translate(){},rotate(){},beginPath(){},ellipse(){ellipses++;},fill(){},fillRect(){}};W.draw(ctx,390,844,1,'green',false,{hour:0});assert.equal(ellipses,0);W.draw(ctx,390,844,1,'green',false,{hour:12});assert(ellipses>0);
+const source=fs.readFileSync(require.resolve('./hemant-walk-demo/world.js'),'utf8');assert(!source.includes('drawLandmarkWater(LandmarkWater.mountain'));assert(!source.includes('LandmarkWater.sources(site,LandmarkWater.mountain'));assert(!source.includes("files.mountain='/Soulbeast/assets/country-walk/green/mountain-dry-v2.webp"));
+assert(palms>0);console.log('PASS 12 single remote camps, road/port/landmark safety through patrols, shared quest guards, coconut-only beaches, continuous world shore, daytime-only butterflies and original green mountain art without water animation/audio');console.table(rows);
+if(process.env.COAST_CAMP_AUDIT_OUTPUT)fs.writeFileSync(process.env.COAST_CAMP_AUDIT_OUTPUT,JSON.stringify({passed:true,camps:rows,totalBandits:12,beachPalms:palms,nightButterflies:false,greenMountainWaterEffects:false},null,2));

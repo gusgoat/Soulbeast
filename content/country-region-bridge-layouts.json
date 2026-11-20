@@ -1,0 +1,98 @@
+[
+  {
+    "region": "N",
+    "country": "blue",
+    "artId": "region-N",
+    "angle": 0.1601670720582408,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "W",
+    "country": "blue",
+    "artId": "region-W",
+    "angle": -0.6227323870267627,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "E",
+    "country": "blue",
+    "artId": "region-E",
+    "angle": -0.35475698987565063,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "S",
+    "country": "blue",
+    "artId": "region-S",
+    "angle": -0.6820835684862662,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "N",
+    "country": "green",
+    "artId": "region-N",
+    "angle": 0.3733116279702606,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "W",
+    "country": "green",
+    "artId": "region-W",
+    "angle": 0.37167970531685635,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "E",
+    "country": "green",
+    "artId": "region-E",
+    "angle": 1.9416631812626475,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "S",
+    "country": "green",
+    "artId": "region-S",
+    "angle": 0.3733116279702606,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "W",
+    "country": "red",
+    "artId": "region-W",
+    "angle": 0.3746894301529248,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "N",
+    "country": "red",
+    "artId": "region-N",
+    "angle": -0.4146375044064013,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "E",
+    "country": "red",
+    "artId": "region-E",
+    "angle": 0.3733116279702606,
+    "length": 320,
+    "width": 146
+  },
+  {
+    "region": "S",
+    "country": "red",
+    "artId": "region-S",
+    "angle": 0.374689430152925,
+    "length": 320,
+    "width": 146
+  }
+]

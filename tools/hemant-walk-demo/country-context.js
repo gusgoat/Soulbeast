@@ -1,7 +1,8 @@
 (()=>{'use strict';
 const q=new URLSearchParams(location.search),inferred=(q.get('from')||'').split('-')[0],id=q.get('country')||inferred||'blue';
 if(window.walkCountries[id])window.hemantMap=window.walkCountries[id];
-const data=window.hemantMap;data.countryId||='blue';
+let data=window.hemantMap;data.countryId||='blue';
+if(window.CountryRegions)data=window.hemantMap=CountryRegions.select(data,location.search);
 window.walkForestPolicy.apply(data);
 document.documentElement.dataset.country=data.countryId;window.WalkLoading.message('loading','กำลังเปิดเส้นทางสู่'+data.country+'…');
 document.title='Soulbeast · ประเทศ'+data.country;
@@ -12,4 +13,5 @@ document.querySelector('#townDialog>small').textContent='แผนที่ป�
 document.querySelector('#world').setAttribute('aria-label','แผนที่เดินทางประเทศ'+data.country);
 
 document.querySelector('.joystick-wrap>small').textContent='ลากน้อยเดิน · ลากไกลวิ่ง · ปล่อยหยุด';
+window.CountryRegions?.mount(data);
 })();

@@ -5,18 +5,19 @@ function create(nav,groups,options={}){
  let grace=3,locked=false;
  const chaseDurationMs=options.chaseDurationMs??Infinity;
  const now=options.now??(()=>performance.now());
- const entries=groups.flatMap(group=>group.actors.map(actor=>({actor,kind:group.kind})));
+ const entries=groups.flatMap(group=>group.actors.map(actor=>({actor,kind:group.kind,nav:actor.navigation||group.nav||nav})));
  function update(dt,player,effects={}){
   if(locked)return null;
   grace=Math.max(0,grace-dt);
   const time=now();
   for(const entry of entries){
-   const a=entry.actor,shadow=entry.kind==='shadow';
-   const aggro=shadow?SHADOW_AGGRO:AGGRO,speed=(entry.kind==='bandit'?330:320)*CHASE_SPEED_SCALE;
+   const a=entry.actor,actorNav=a.navigation||entry.nav||nav,shadow=entry.kind==='shadow';
+   const aggro=shadow?SHADOW_AGGRO:(a.aggroRadius??AGGRO),speed=a.chaseSpeed??((entry.kind==='bandit'?330:320)*CHASE_SPEED_SCALE);
+   if(options.canChase&&!options.canChase(entry,player)){if(a.chasing)pursuit.beginReturn(a);if(a.returning)pursuit.returnHome(actorNav,a,dt,speed);if(a.cooldown>0)a.cooldown=Math.max(0,a.cooldown-dt);continue;}
    if(entry.waitForClear&&nav.distance(a,player)>aggro)entry.waitForClear=false;
    if(a.returning){
     if(a.cooldown>0)a.cooldown=Math.max(0,a.cooldown-dt);
-    if(pursuit.returnHome(nav,a,dt,speed))a.phase+=dt*18*CHASE_SPEED_SCALE;
+    if(pursuit.returnHome(actorNav,a,dt,speed))a.phase+=dt*18*CHASE_SPEED_SCALE;
     continue;
    }
    if(a.cooldown>0){a.cooldown=Math.max(0,a.cooldown-dt);continue;}
@@ -33,7 +34,7 @@ function create(nav,groups,options={}){
    if(!a.chasing)continue;
    if(distance>pursuit.limit(options.leashDistance)){
     pursuit.beginReturn(a);
-    if(pursuit.returnHome(nav,a,dt,speed))a.phase+=dt*18*CHASE_SPEED_SCALE;
+    if(pursuit.returnHome(actorNav,a,dt,speed))a.phase+=dt*18*CHASE_SPEED_SCALE;
     continue;
    }
    if(time>=entry.chaseUntil){
@@ -44,7 +45,7 @@ function create(nav,groups,options={}){
    }
    if(distance<=CONTACT){locked=true;return entry;}
    a.repath-=dt;
-   if(a.repath<=0){a.path=nav.pathBetween(a,player);a.repath=.6;}
+   if(a.repath<=0){a.path=actorNav.pathBetween(a,player);a.repath=.6;}
    while(a.path?.length&&nav.distance(a,a.path[0])<6)a.path.shift();
    a.moving=false;
    const target=a.path?.[0];
@@ -53,10 +54,11 @@ function create(nav,groups,options={}){
     if(!len)continue;
     const step=Math.min(speed*dt,len);
     const x=a.x+dx/len*step,y=a.y+dy/len*step/.64;
-    if(nav.walkable(x,a.y))a.x=x;
-    if(nav.walkable(a.x,y))a.y=y;
+    if(actorNav.walkable(x,a.y))a.x=x;
+    if(actorNav.walkable(a.x,y))a.y=y;
     a.moving=true;a.phase+=dt*18*CHASE_SPEED_SCALE;
-    if(Math.abs(dx)>2)a.facing=dx<0?-1:1;
+    if(entry.kind==='water')a.facing=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;
+    else if(Math.abs(dx)>2)a.facing=dx<0?-1:1;
     if(nav.distance(a,player)<=CONTACT){locked=true;return entry;}
    }
   }
