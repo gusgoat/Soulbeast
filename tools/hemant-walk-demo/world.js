@@ -204,7 +204,7 @@ function draw(light){LivingEnvironment.viewport(c,W,H);if(diagnosticsDue(t)){can
  canvas.dataset.oceanExtensionBands=String(coast.paintExtension(c,sx,sy,zoom(),W,H));
  canvas.dataset.seaWaveFronts=String(coast.draw(c,sx,sy,zoom(),t,{width:W,height:H,effects:graphics.effects,overview}));
  if(!overview&&graphics.effects){
-  terrain.water.drawFlow(c,sx,sy,zoom(),t,images.water,{width:W,height:H},graphics.effects===1,archedBridges.hasModel);
+  terrain.water.drawFlow(c,sx,sy,zoom(),t,images.water,{width:W,height:H,nightEffects:light.night>.005},graphics.effects===1,archedBridges.hasModel);
   lava.drawGroundHeat(c,sx,sy,zoom(),t,graphics.effects===1,W,H,images);
  }
  const q=zoom(),rect={left:(overview?data.width/2:cam.x)-(W/2+100)/q,right:(overview?data.width/2:cam.x)+(W/2+100)/q,top:(overview?data.height/2:cam.y)*F-(H*(overview?.53:.57)+100)/q,bottom:(overview?data.height/2:cam.y)*F+(H*(overview?.47:.43)+100)/q};sceneryIndex.query(rect,drawObjects);
