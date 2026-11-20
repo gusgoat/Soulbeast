@@ -1,4 +1,4 @@
-import {createActor} from './world-actors.mjs?v=bitmap-capture-1';
+import {createActor} from './world-actors.mjs?v=beasts-3d-six-20261121';
 
 const publishedRoot='https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/';
 // Published Blender models live in Storage, including when playing a local copy.

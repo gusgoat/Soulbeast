@@ -1,5 +1,5 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-gait-1';
-import {partyMenu} from './online-party-menu.mjs?v=quest-editorial-2';
+import {partyMenu} from './online-party-menu.mjs?v=beasts-3d-six-20261121';
 import {partyArt} from './online-party-art.mjs?v=living-177-2';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=motion-cadence-1';
 import {partyScene} from './online-party-scene.mjs?v=adaptive-buffer-1';
@@ -129,7 +129,7 @@ function warmBattleFrame(){
  const floor=config?.id||'mine-floor-1';
  if(warmFloor===floor)return;
  warmFloor=floor;battleFrameReady=false;
- battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=quest-editorial-2&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
+ battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=beasts-3d-six-20261121&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
  const backdrop=new Image();
  backdrop.src=asset(config?.battleArt||'assets/ui/battle-scenes/training-v2.webp');
  encounterPanel.style.setProperty('--party-encounter-art',`url("${backdrop.src}")`);

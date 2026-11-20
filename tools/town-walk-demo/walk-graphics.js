@@ -1,24 +1,12 @@
 (function(g){'use strict';
-const KEY='soulbeast-country-graphics-v1';
-const CHANGE='walk-graphics-changed';
 const storage=g.localStorage;
-const levels=Object.freeze([
- Object.freeze({name:'ประหยัด',description:'ภาพพื้นฐาน ปิดน้ำไหล สภาพอากาศ และไอร้อน',scale:1,pixels:900000,frameMs:32,effects:0}),
- Object.freeze({name:'สมดุล',description:'เพิ่มความคม พร้อมเอฟเฟกต์แบบเบา',scale:1.5,pixels:900000,frameMs:32,effects:1}),
- Object.freeze({name:'คมชัด',description:'ภาพละเอียดขึ้นและการเคลื่อนไหวลื่นขึ้น พร้อมเอฟเฟกต์แบบเบา',scale:2,pixels:1600000,frameMs:16,effects:1}),
- Object.freeze({name:'สูงสุด',description:'ภาพคมที่สุด พร้อมเอฟเฟกต์ทุกอย่าง',scale:3,pixels:3200000,frameMs:16,effects:2})
-]);
+const KEY='soulbeast-country-graphics-v1',SCHEMA='soulbeast-country-graphics-schema-v2',CHANGE='walk-graphics-changed';
+const levels=Object.freeze([{"name":"ประหยัดสุด","description":"ประหยัดสุด · อสูร 3D พร้อมกันสูงสุด 1 ตัว · เป้าหมาย 20 FPS","scale":0.75,"pixels":500000,"frameMs":50,"fps":20,"effects":0,"beastBudget":1,"beastInterval":0.16},{"name":"ประหยัด","description":"ประหยัด · อสูร 3D พร้อมกันสูงสุด 2 ตัว · เป้าหมาย 25 FPS","scale":1,"pixels":700000,"frameMs":40,"fps":25,"effects":0,"beastBudget":2,"beastInterval":0.125},{"name":"ค่อนข้างประหยัด","description":"ค่อนข้างประหยัด · อสูร 3D พร้อมกันสูงสุด 3 ตัว · เป้าหมาย 30 FPS","scale":1.3,"pixels":700000,"frameMs":32,"fps":30,"effects":1,"beastBudget":3,"beastInterval":0.1},{"name":"สมดุล","description":"สมดุล · อสูร 3D พร้อมกันสูงสุด 3 ตัว · เป้าหมาย 30 FPS","scale":1.5,"pixels":900000,"frameMs":32,"fps":30,"effects":1,"beastBudget":3,"beastInterval":0.1},{"name":"สูง","description":"สูง · อสูร 3D พร้อมกันสูงสุด 4 ตัว · เป้าหมาย 30 FPS","scale":2,"pixels":1600000,"frameMs":32,"fps":30,"effects":1,"beastBudget":4,"beastInterval":0.083},{"name":"สูงสุด","description":"สูงสุด · อสูร 3D พร้อมกันสูงสุด 4 ตัว · เป้าหมาย 60 FPS","scale":2.5,"pixels":2400000,"frameMs":16,"fps":60,"effects":2,"beastBudget":4,"beastInterval":0.067}].map(Object.freeze));
 const valid=level=>Number.isInteger(level)&&level>=1&&level<=levels.length;
-function read(){
- let saved;
- try{saved=Number(storage.getItem(KEY));}catch{}
- return valid(saved)?saved:(g.matchMedia?.('(pointer: coarse)').matches?2:4);
-}
-function write(level){
- if(!valid(level))return read();
- try{storage.setItem(KEY,String(level));}catch{return read();}
- g.dispatchEvent(new Event(CHANGE));
- return level;
-}
-g.WalkGraphics=Object.freeze({KEY,CHANGE,levels,read,write});
+function read(){let saved;try{saved=Number(storage.getItem(KEY));if(storage.getItem(SCHEMA)!=='2'){if(saved>=1&&saved<=4)saved=[0,2,4,5,6][saved];if(valid(saved))storage.setItem(KEY,String(saved));storage.setItem(SCHEMA,'2');}}catch{}return valid(saved)?saved:(g.matchMedia?.('(pointer: coarse)').matches?4:6);}
+function write(level){if(!valid(level))return read();try{storage.setItem(KEY,String(level));storage.setItem(SCHEMA,'2');}catch{return read();}g.dispatchEvent(new Event(CHANGE));return level;}
+function active(){return levels[read()-1];}
+function settingsHTML(){const level=read(),setting=levels[level-1];return '<section class="card stack" aria-labelledby="walkGraphicsTitle"><h3 id="walkGraphicsTitle">กราฟิกฉากประเทศและอสูร 3D</h3><label class="row" for="walkGraphicsLevel"><span class="grow">ระดับกราฟิก</span><output id="walkGraphicsValue" for="walkGraphicsLevel">'+level+' · '+setting.name+'</output></label><input id="walkGraphicsLevel" type="range" min="1" max="6" step="1" value="'+level+'" aria-valuetext="'+level+' · '+setting.name+'" aria-describedby="walkGraphicsDescription"><div class="row" aria-hidden="true"><small class="grow">1 · ประหยัดสุด</small><small>6 · สูงสุด</small></div><p id="walkGraphicsDescription">'+setting.description+'</p><small>ใช้ทันทีและจดจำไว้ในเบราว์เซอร์เครื่องนี้</small></section>';}
+if(g.document)g.document.addEventListener('input',event=>{const slider=event.target;if(slider.id!=='walkGraphicsLevel')return;const level=write(Number(slider.value)),setting=levels[level-1],label=level+' · '+setting.name;slider.value=level;slider.setAttribute('aria-valuetext',label);const value=g.document.getElementById('walkGraphicsValue'),description=g.document.getElementById('walkGraphicsDescription');if(value)value.textContent=label;if(description)description.textContent=setting.description;});
+g.WalkGraphics=Object.freeze({KEY,SCHEMA,CHANGE,levels,read,write,active,settingsHTML});
 })(typeof window==='undefined'?globalThis:window);

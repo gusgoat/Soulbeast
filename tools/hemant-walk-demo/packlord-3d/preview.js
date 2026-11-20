@@ -14,7 +14,7 @@
 
   update('กำลังโหลดโมเดล 3D…');
   try{
-   catalog??=await import('./actor-catalog.mjs?v=bitmap-capture-1');
+   catalog??=await import('./actor-catalog.mjs?v=beasts-3d-six-20261121');
    const loaded=await catalog.loadActor(entry.key,{beast:entry.beast,primary:true});
    if(released||token!==revision){loaded.dispose();return;}
    model?.dispose();
@@ -45,7 +45,7 @@
  }
  async function mountRoster(panel,before){
   try{
-   catalog??=await import('./actor-catalog.mjs?v=bitmap-capture-1');
+   catalog??=await import('./actor-catalog.mjs?v=beasts-3d-six-20261121');
    const entries=catalog.roster(window.sealerSpriteCatalog);
    const picker=document.createElement('select');
    picker.setAttribute('aria-label','เลือกตัวละคร 3D');

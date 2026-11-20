@@ -40,13 +40,13 @@ function discardAsset(gltf){
  for(const resource of [...textures,...materials,...geometries])resource.dispose();
  for(const image of new Set([...textures].map(texture=>texture.source?.data)))image?.close?.();
 }
-function release(url,entry){
+function release(url,entry,delay=12000){
  if(--entry.count>0)return;
  entry.timer=setTimeout(()=>{
   if(entry.count||cache.get(url)!==entry)return;
   cache.delete(url);
   entry.ready.then(discardAsset,()=>{});
- },12000);
+ },delay);
 }
 function renderer(){
  if(shared)return shared;
@@ -73,7 +73,7 @@ function renderer(){
  return shared;
 }
 
-export async function createActor(url,{beast=false,primary=false}={}){
+export async function createActor(url,{beast=false,primary=false,locomotionOnly=false,alwaysAnimate=false,motionKind='walk',phaseOffset=0,renderInterval=null}={}){
  const raster=renderer(),ref=retain(url);
  try{
   const model=await ref.ready;
@@ -112,33 +112,37 @@ export async function createActor(url,{beast=false,primary=false}={}){
   }
   const mixer=new AnimationMixer(asset);
   const actions=Object.fromEntries(model.animations.map(clip=>[clip.name.toLowerCase(),mixer.clipAction(clip)]));
+  const locomotionClip=locomotionOnly?model.animations[0]:null;
+  if(locomotionOnly){if(!locomotionClip)throw new Error('Missing locomotion animation');const action=mixer.clipAction(locomotionClip);actions.idle=actions.walk=actions.run=action;}
   if(beast){
    actions.run??=actions.walk;
    actions.walk??=actions.run;
   }
   if(!actions.idle||!actions.walk||!actions.run)throw new Error('Incomplete actor animation');
-  let motion='idle',angle=null,last=null,painted=-Infinity,generation=-1,disposed=false;
+  let motion='idle',angle=null,last=null,painted=-Infinity,generation=-1,disposed=false,rasterCount=0;
   actions.idle.play();
   return {
    draw(ctx,x,y,width,heading,moving,running){
     if(disposed||raster.lost)return false;
-    const now=performance.now()/1000,next=moving?(running?'run':'walk'):'idle';
-    if(now-painted>=(primary?.029:.079)||next!==motion||generation!==raster.generation){
+    const now=performance.now()/1000,next=locomotionOnly?(alwaysAnimate?motionKind:moving?'walk':'idle'):moving?(running?'run':'walk'):'idle';
+    const targetAngle=-heading*Math.PI/4;
+    const idleSettled=locomotionOnly&&next==='idle'&&motion==='idle'&&generation===raster.generation&&angle!==null&&Math.abs(Math.atan2(Math.sin(targetAngle-angle),Math.cos(targetAngle-angle)))<.002;
+    if(!idleSettled&&(now-painted>=(renderInterval??(primary?.029:.079))||next!==motion||generation!==raster.generation)){
      const dt=last===null?1/60:Math.min(.12,Math.max(0,now-last));
      last=now;
      const target=-heading*Math.PI/4;
      angle=angle===null?target:angle+Math.atan2(Math.sin(target-angle),Math.cos(target-angle))*(1-Math.exp(-dt*19));
      pivot.rotation.y=angle;
-     if(next!==motion){
+     if(next!==motion&&!locomotionOnly){
       const to=actions[next],from=actions[motion],speed=next==='run'&&to===actions.walk?1.35:1;
       if(to===from)to.setEffectiveTimeScale(speed);
       else to.reset().setEffectiveWeight(1).setEffectiveTimeScale(speed).play().crossFadeFrom(from,.16,false);
       motion=next;
      }
-     mixer.update(dt);
+     if(locomotionOnly){motion=next;mixer.setTime((next==='idle'?0:((now+phaseOffset)%3+3)%3)*locomotionClip.duration/3);}else mixer.update(dt);
      raster.scene.add(pivot);
      try{
-      raster.webgl.render(raster.scene,camera);
+      raster.webgl.render(raster.scene,camera);rasterCount++;
       capture();
      }finally{raster.scene.remove(pivot);}
      painted=now;
@@ -147,7 +151,12 @@ export async function createActor(url,{beast=false,primary=false}={}){
     ctx.drawImage(bitmap||cached,x-width*.5,y-width*anchor,width,width);
     return true;
    },
+   setRenderInterval(seconds){renderInterval=Math.max(.016,Number(seconds)||.1);},
+   get rasterCount(){return rasterCount;},
+   get available(){return !disposed&&!raster.lost;},
    get motion(){return motion;},
+   get animationTime(){return mixer.time;},
+   get clipDuration(){return locomotionClip?.duration??null;},
    get angle(){return angle;},
    dispose(){
     if(disposed)return;
@@ -157,8 +166,8 @@ export async function createActor(url,{beast=false,primary=false}={}){
     asset.traverse(node=>{if(node.isSkinnedMesh)node.skeleton.dispose();});
     bitmap?.close();
     if(cached)cached.width=cached.height=1;
-    release(url,ref);
+    release(url,ref,locomotionOnly?0:12000);
    },
   };
- }catch(error){release(url,ref);throw error;}
+ }catch(error){release(url,ref,locomotionOnly?0:12000);throw error;}
 }

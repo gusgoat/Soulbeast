@@ -58,7 +58,7 @@ function createModel({beast=false,primary=false}={}){
   next=key;
   const revision=ticket;
   supported=beast?null:true;
-  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=storage-local-1')
+  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=beasts-3d-six-20261121')
    .then(catalog=>{
     if(revision!==ticket)return null;
     supported=catalog.hasActor(key,{beast});
