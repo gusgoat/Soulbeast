@@ -1,3 +1,4 @@
+function personalGrant(record){if(!record)return;return {version:2,...pick(record,['id','code','floor','issuedAt','enemies','traps','seq','state','spent','stateRevision','suspended'])};}
 import {soloStart} from './dungeon-party-solo-start.mjs';
 import {visiblePartyTraps} from './dungeon-party-traps.mjs';
 const pick=(value,keys)=>Object.fromEntries(keys.filter(k=>value?.[k]!==undefined).map(k=>[k,structuredClone(value[k])]));
@@ -12,7 +13,7 @@ export function partyBattleSnapshot(run){
 function publicUnit(u){return pick(u,['id','ownerCode','side','kind','name','cls','gender','sp','evo','img','lv','hp','mp','st','types','stab','form','status','buffs','taunt','boss','bossHelper','nightAura','temporary','captured','class10Barrier','archerVeil','elementalBarrierHits']);}
 // Explicit allowlist: room storage also contains saves, credentials and receipts.
 // Never serialize that storage object directly to a player or broadcast channel.
-export function partySnapshot(room,code,serverTime,includeSolo=false){
+export function partySnapshot(room,code,serverTime,includeSolo=false,includePersonal=false){
  const departure=room.departures?.[code];
  if(departure)return {id:room.id,revision:room.revision||0,serverTime,departure:structuredClone(departure)};
  if(!room.members.some(m=>m.code===code))throw Error('party_not_member');
@@ -23,10 +24,11 @@ export function partySnapshot(room,code,serverTime,includeSolo=false){
  const run=mine.find(b=>b.status==='active')||recent||mine.filter(b=>b.status==='finished').sort((a,b)=>
   (b.finishedAt??b.startedAt??0)-(a.finishedAt??a.startedAt??0)||(b.startedAt??0)-(a.startedAt??0))[0];
  return {
+  ...(includePersonal?{personal:personalGrant(room.personal?.[code])}:{}),personalMode:!!room.personal?.[code],bossGather:room.personalGather?{id:room.personalGather.id,floor:room.personalGather.floor,ready:Object.keys(room.personalGather.ready)}:null,
   ...pick(room,['id','host','state','floor','startedSize','completed','localExploration']),revision:room.revision||0,serverTime,
   members:room.members.map(m=>pick(m,['code','name','cls','level','gender','avatar','country','hp','mp','maxHp','maxMp','online','position','exploring','ailments'])),
   dungeon:floor?{floor:floor.floor,rules:structuredClone(floor.rules),kills:structuredClone(floor.kills),
-   doorOpen:floor.doorOpen,boss:floor.boss,bossBattle:floor.bossBattle,
+   contributions:structuredClone(floor.contributions||{}),doorOpen:floor.doorOpen,boss:floor.boss,bossBattle:floor.bossBattle,
    bossPosition:floor.bossPosition?structuredClone(floor.bossPosition):null,bossDir:floor.bossDir||0,bossMoving:!!floor.bossMoving,
    enemies:Object.fromEntries(Object.entries(floor.enemies).map(([id,e])=>[id,pick(e,['kind','state','position','home','patrol','dir','moving','actor','appearance'])])),
    traps:visiblePartyTraps(floor.traps||[])}:null,

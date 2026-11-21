@@ -1,8 +1,8 @@
 // Mutations stay ordered. Read-only refreshes never hold up a manual command.
-export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},onResult=()=>{},localExploration=false,getPosition=()=>null,canAdvanceBattle=()=>true}){
+export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},onResult=()=>{},personalExploration=false,localExploration=false,getPosition=()=>null,canAdvanceBattle=()=>true}){
  let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null,commands=[],reading=false,snapshotAt=0,soloKnown=null;
  async function refresh(next){
-  next??=await connection.run(roomId,'status',localExploration?{localExploration:true}:{});
+  next??=await connection.run(roomId,'status',localExploration?{localExploration:true,...(personalExploration?{personalVersion:2}:{})}:{});
   if(closed)return;
   if(!next||next.id!==roomId)throw Error('invalid_party_snapshot');
   if(snapshot&&next.revision<snapshot.revision){
@@ -42,7 +42,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
  async function readStatus(){
   if(reading||closed)return false;reading=true;
   try{
-   const next=await connection.run(roomId,'status',{...(localExploration?{localExploration:true}:{}),...(soloKnown&&snapshot?.battle?.id===soloKnown?{soloStart:false}:{})});
+   const next=await connection.run(roomId,'status',{...(localExploration?{localExploration:true,...(personalExploration?{personalVersion:2}:{})}:{}),...(soloKnown&&snapshot?.battle?.id===soloKnown?{soloStart:false}:{})});
    if(closed||snapshot&&next.revision<snapshot.revision)return false;
    if(!pendingState||next.revision>pendingState.revision)pendingState=next;
    if(!busy&&!commands.length)await drain();return true;
@@ -50,6 +50,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
  }
  return {
   refresh:()=>snapshot?readStatus():lane(refresh),
+  receive:next=>next?refresh(next):Promise.resolve(),
   async flushSave(){
    if(closed||!snapshot?.savePending)return;
    // Account persistence does not occupy the gameplay command lane.
@@ -92,6 +93,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
      const result=await connection.run(roomId,'tick',{battle:snapshot.battle.id});
      await refresh(result.snapshot);return;
     }
+    if(personalExploration)return readStatus();
     const position=getPosition();
     await refresh(await connection.run(roomId,'pulse',{localExploration:true,floor:snapshot.floor,...(position?{position}:{})}));return;
    }
@@ -129,7 +131,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   get state(){return snapshot;},get busy(){return busy;},
   get pollDelay(){
    const b=snapshot?.battle;
-   if(b?.localCombatVersion||!(b?.status==='active'||b?.presentation))return 5000;
+   if(b?.localCombatVersion||!(b?.status==='active'||b?.presentation))return personalExploration?60000:5000;
    if(!canAdvanceBattle(b)||b.presentation)return 750;
    if(b.loading)return b.loading.pending.includes(connection.code)?0:750;
    if(manualWait())return Math.max(100,Math.min(5000,b.waiting.deadline-serverNow()));

@@ -1,13 +1,20 @@
 // Render-local actors keep moving while account requests are in flight.
 export function localPartyWorld(){
  const enemies=new Map(),effects=new Map();
- let boss=null;
- function reset(){enemies.clear();effects.clear();boss=null;}
+ let boss=null,personal=null,grantId=null;
+ function setPersonal(value){personal=value;}
+ function reset(){enemies.clear();effects.clear();boss=null;grantId=null;}
  function receive(world,code,now,serverTime){
-  for(const [id,e] of Object.entries(world.enemies||{})){
+  const grant=personal?.grant&&personal.grant.floor===world.floor?personal.grant:null;
+  if(grant&&grantId!==grant.id){enemies.clear();effects.clear();grantId=grant.id;}
+  const roster=grant?grant.enemies:world.enemies||{};
+  for(const [id,raw] of Object.entries(roster)){
+   if(grant&&(personal.spent[id]||personal.retired[id])){enemies.delete(id);continue;}
+   const e=grant?{...raw,state:'roaming'}:raw;
    if(e.state!=='roaming'){enemies.delete(id);continue;}if(enemies.has(id)&&e.appearance)enemies.get(id).appearance=e.appearance;
    if(!enemies.has(id)&&e.position)enemies.set(id,{...e,id,position:{...e.position},home:{...(e.home||e.position)},index:0});
   }
+  if(grant)return;
   for(const t of world.traps||[]){
    const eligible=t.eligible?.includes(code)&&!t.resolved?.includes(code);
    const effect=effects.get(t.id);
@@ -66,15 +73,28 @@ export function localPartyWorld(){
  function trigger(placements,position,nav,now){
   for(const trap of placements){
    if(!effects.has(trap.id)&&nav.distance(position,trap)<=32)
-    effects.set(trap.id,{...trap,deadline:now+2000,remaining:2,burst:0,armPosition:{...position}});
+    effects.set(trap.id,{...trap,deadline:now+2000,remaining:2,burst:0,armPosition:{...position},armed:!!personal?.grant});
   }
  }
  function request(){
   for(const effect of effects.values()){
    if(effect.resolved)continue;
    if(!effect.armed)return {action:'trapArm',trap:effect.id,position:effect.armPosition};
-   if(effect.done)return {action:'trapResolve',trap:effect.id,position:effect.hitPosition};
+   if(effect.done)return personal?.grant?{action:'personalTrap',effect}:{action:'trapResolve',trap:effect.id,position:effect.hitPosition};
   }
  }
- return {reset,receive,update,trigger,request,enemies,effects,get boss(){return boss;}};
+ function reconcile(world,code,position,nav,viewport){
+  const grant=personal?.grant;if(!grant||grant.floor!==world.floor)return;
+  for(const id of Object.keys(personal.spent))enemies.delete(id);
+  for(const kind of ['shadow','bandit']){
+   const wanted=Math.max(0,(world.kills?.[kind]||0)-(world.contributions?.[code]?.[kind]||0));
+   const retired=Object.keys(personal.retired).filter(id=>grant.enemies[id]?.kind===kind).length;
+   let count=wanted-retired;if(count<=0)continue;
+   const safe=[...enemies.values()].filter(e=>e.kind===kind&&e.id!==personal.active?.run.enemyId&&nav.distance(position,e.position)>1400&&
+    (!viewport||Math.abs((e.position.x-viewport.x)*.9)>viewport.width/2+240||Math.abs((e.position.y-viewport.y)*.9*viewport.flatten)>viewport.height/2+240))
+    .sort((a,b)=>nav.distance(position,b.position)-nav.distance(position,a.position));
+   for(const e of safe){if(count--<=0)break;personal.retire(e.id);enemies.delete(e.id);}
+  }
+ }
+ return {setPersonal,reconcile,reset,receive,update,trigger,request,enemies,effects,get boss(){return boss;}};
 }

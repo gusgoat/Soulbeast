@@ -1,3 +1,4 @@
+import {ensurePersonal,finishPersonal,rebasePersonal} from './dungeon-party-personal.mjs';
 import {acceptLocalPosition,localEnemyContact,armLocalTrap,resolveLocalTrap} from './dungeon-party-local.mjs';
 import {createFloor,claimEnemy,settleEnemy,openBossDoor,beginBoss,settleBoss,nextFloor,scaleBossTeam} from '../../tools/labyrinth-demo/online-party-rules.mjs';
 import {departPartyMember,evacuateDeadMembers} from './dungeon-party-death.mjs';
@@ -15,6 +16,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
  const snapshot=(...args)=>{combat.prepareEnemyAppearances?.(args[0]);return partySnapshot(...args);};
  return async function command(actor,roomId,action,data={}) {
   return transaction(roomId,async room=>{
+   if(action==='personalFinish')return finishPersonal(room,actor,data,{combat,now,snapshot});
    // An ejected player's reconnect must still deliver their persisted respawn.
    // The gateway must authenticate ownership of actor before this service call.
    if(['status','pulse','leave'].includes(action)&&room.departures?.[actor])return snapshot(room,actor,now());
@@ -46,17 +48,43 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
     floor.traps??=createPartyTraps(await combat.trapPlacements(floor.floor));
     if(data.position&&me.exploring)acceptLocalPosition(room,me,data,await combat.navigation(room));
    }
+   if(room.personal?.[actor]?.suspended&&(['chest','heal'].includes(action)||action==='inventory'&&data.op))throw Error('already_fighting');
+   if(data.personalVersion===2)await ensurePersonal(room,me,combat,uuid,now);
    async function finishBattle(battle){
     if(battle.presentation)return;
     await evacuateDeadMembers(room,combat.evacuate);
     if(battle.status==='finished'&&!battle.settled){
      const changed=battle.kind==='boss'?settleBoss(floor,battle.id,battle.result):settleEnemy(floor,battle.enemyId,battle.id,battle.result);
-     if(changed){await combat.settle(room,battle);battle.settled=true;}
+     if(changed){if(battle.kind!=='boss'&&battle.result==='win'){floor.contributions??={};const own=floor.contributions[battle.participants[0]]??={shadow:0,bandit:0};own[floor.enemies[battle.enemyId].kind]++;}await combat.settle(room,battle);battle.settled=true;}
     }
    }
+   async function startSharedBoss(){
+     const id=uuid();
+     const interrupted=Object.values(floor.enemies).filter(e=>e.state==='fighting').map(e=>e.battle);
+     beginBoss(floor,id);
+     for(const oldId of interrupted){const old=room.battles[oldId];
+      if(old?.status==='active'){await combat.interrupt(room,old);old.status='interrupted';}
+     }
+     // Build from each member's current server vitals, after interrupt processing.
+     const enemies=scaleBossTeam(await combat.bossTeam(floor.floor),room.startedSize);
+     room.battles??={};room.battles[id]=await combat.createBoss(room,enemies,id);
+     for(const member of room.members)if(room.battles[id].participants.includes(member.code))member.lastBattleId=id;
+     // Persistent transition lets a member returning from an iframe or a lost
+     // socket switch battles too. Never depend solely on a broadcast arriving.
+     room.battleTransition={revision:(room.revision||0)+1,battle:id,
+      interrupted,participants:room.members.map(member=>member.code),floor:floor.floor};
+
+     delete room.personalGather;return {battle:id,interrupted};
+   }
+   async function startGatherIfReady(){const g=room.personalGather;if(!g||floor.boss!=='guarding')return null;const required=room.members.filter(m=>m.hp>0&&room.personal?.[m.code]?.floor===room.floor);if(required.every(m=>g.ready[m.code]))return startSharedBoss();return null;}
    let result;
+   if(room.personalGather&&action==='status'){const started=await startGatherIfReady();if(started)room.revision=(room.revision||0)+1;}
    switch(action){
-    case 'status':return snapshot(room,actor,now(),data.soloStart!==false);
+    case 'personalBossReady':{
+     const p=room.personal?.[actor],g=room.personalGather;if(!p||!g||me.hp<=0||g.floor!==room.floor||data.gather!==g.id||data.grant!==p.id||data.afterSeq!==p.seq)throw Error('personal_sequence');
+     p.suspended=true;g.ready[actor]=true;result=await startGatherIfReady()||{gathering:true};break;
+    }
+    case 'status':return snapshot(room,actor,now(),data.soloStart!==false,data.personalVersion===2);
     case 'inventory':{
      if(!me.exploring||me.hp<=0||Object.values(room.battles||{}).some(b=>b.status==='active'&&b.participants.includes(actor)))throw Error('already_fighting');
      const inventory=await combat.inventory(room,me,data);if(!data.op)return inventory;result={changed:true};break;
@@ -126,21 +154,8 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
       if(!active)throw Error('boss_battle_missing');
       result={battle:active.id,interrupted:[],joined:true};break;
      }
-     const id=uuid();
-     const interrupted=Object.values(floor.enemies).filter(e=>e.state==='fighting').map(e=>e.battle);
-     beginBoss(floor,id);
-     for(const oldId of interrupted){const old=room.battles[oldId];
-      if(old?.status==='active'){await combat.interrupt(room,old);old.status='interrupted';}
-     }
-     // Build from each member's current server vitals, after interrupt processing.
-     const enemies=scaleBossTeam(await combat.bossTeam(floor.floor),room.startedSize);
-     room.battles??={};room.battles[id]=await combat.createBoss(room,enemies,id);
-     for(const member of room.members)if(room.battles[id].participants.includes(member.code))member.lastBattleId=id;
-     // Persistent transition lets a member returning from an iframe or a lost
-     // socket switch battles too. Never depend solely on a broadcast arriving.
-     room.battleTransition={revision:(room.revision||0)+1,battle:id,
-      interrupted,participants:room.members.map(member=>member.code),floor:floor.floor};
-     result={battle:id,interrupted};break;
+     if(room.members.some(m=>room.personal?.[m.code]?.floor===room.floor)){room.personalGather??={id:uuid(),floor:room.floor,ready:{}};result={gathering:true};break;}
+     result=await startSharedBoss();break;
     }
     case 'soloFinish':{
      const run=room.battles?.[data.battle];
@@ -190,10 +205,12 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
     }
     default:throw Error('bad_party_action');
    }
+   if(['chest','heal'].includes(action)||action==='inventory'&&data.op)rebasePersonal(room,me);
    if(data.requestId&&action!=='soloFinish'){room.receipts??={};room.receipts[data.requestId]={actor,action,fingerprint,result:structuredClone(result)};}
    room.revision=(room.revision||0)+1;
    if(action==='pulse')return snapshot(room,actor,now());
    // Return the same allowlisted view already sent over realtime in this committed reply.
+   if(action==='personalBossReady'||['chest','heal','inventory'].includes(action))return {...result,snapshot:snapshot(room,actor,now(),false,!!room.personal?.[actor])};
    if(snapshotActions.has(action))return {...result,snapshot:snapshot(room,actor,now(),action==='claim')};
    return result;
   });

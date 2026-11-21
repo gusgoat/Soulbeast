@@ -1,5 +1,5 @@
-const actions=new Set(['inventory','status','pulse','move','claim','openDoor','bossContact','tick','nextFloor','worldTick','battleCommand','battleAuto','battleReady','chest','heal','leave','trapArm','trapResolve','soloFinish','flushSave']);
-const publicErrors=new Set(['invalid_inventory_action','login_required','character_not_owned','party_not_member','party_unavailable','party_save_busy',
+const actions=new Set(['inventory','status','pulse','move','claim','openDoor','bossContact','tick','nextFloor','worldTick','battleCommand','battleAuto','battleReady','chest','heal','leave','trapArm','trapResolve','soloFinish','flushSave','personalFinish','personalBossReady']);
+const publicErrors=new Set(['personal_sequence','personal_receipt_mismatch','personal_wrong_floor','personal_suspended','personal_enemy_unavailable','invalid_personal_result','invalid_personal_trap','invalid_inventory_action','login_required','character_not_owned','party_not_member','party_unavailable','party_save_busy',
  'trap_unavailable','trap_not_due','trap_out_of_reach','enemy_unavailable','already_fighting','boss_battle_active','enemy_out_of_reach','door_out_of_reach',
  'floor_quota_incomplete','boss_out_of_reach','boss_door_closed','boss_unavailable',
  'battle_not_member','stairs_out_of_reach','boss_not_defeated','player_defeated','bad_request_id','request_mismatch',
@@ -25,11 +25,11 @@ export function dungeonPartyHttp({verifyToken,command,origins,environment,waitUn
    const reader=request.body?.getReader();if(!reader)throw Error();
    const chunks=[];
    while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;
-    if(bytes>32768){await reader.cancel();return reply(413,{ok:false,error:'request_too_large'});}chunks.push(value);}
+    if(bytes>262144){await reader.cancel();return reply(413,{ok:false,error:'request_too_large'});}chunks.push(value);}
    const joined=new Uint8Array(bytes);let offset=0;for(const chunk of chunks){joined.set(chunk,offset);offset+=chunk.length;}
    packet=JSON.parse(new TextDecoder().decode(joined));
   }catch{return reply(400,{ok:false,error:'bad_request'});}
-  if(packet?.action!=='soloFinish'&&bytes>8192)return reply(413,{ok:false,error:'request_too_large'});
+  if(packet?.action!=='personalFinish'&&bytes>(packet?.action==='soloFinish'?32768:8192))return reply(413,{ok:false,error:'request_too_large'});
   if(!packet||(environment&&packet.environment!==environment)||!actions.has(packet.action)||!['live','test'].includes(packet.environment)||
    !/^[A-Z0-9]{16}$/.test(packet.code||'')||
    !/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(packet.room||'')||

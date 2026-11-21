@@ -1,10 +1,10 @@
 // The map keeps using realtime for teammates; this encounter has its own local
 // clock. Only the completed transcript and vitals cross the network.
-import {simulateSolo,soloChoice,SOLO_EVENT_LIMIT} from '../../supabase/functions/soulbeast-dungeon-party/solo-combat.mjs?v=party-combat-latency-1';
-export function localPartyCombat({publish,finish,report}){
+import {simulateSolo,soloChoice,SOLO_EVENT_LIMIT} from '../../supabase/functions/soulbeast-dungeon-party/solo-combat.mjs?v=personal-party-2';
+export function localPartyCombat({publish,finish,completePersonal,report}){
  let session,timer=0;
  const storageKey=id=>'party-combat-v1:'+id;
- function read(id){try{const events=JSON.parse(sessionStorage.getItem(storageKey(id))||'[]');return Array.isArray(events)&&events.length<=SOLO_EVENT_LIMIT?events:[];}catch{return [];}}
+ function read(id){try{const events=JSON.parse(sessionStorage.getItem(storageKey(id))||'[]');return Array.isArray(events)&&events.length<=2048?events:[];}catch{return [];}}
  function save(s){try{sessionStorage.setItem(storageKey(s.id),JSON.stringify(s.events));}catch{}}
  function clear(id){try{sessionStorage.removeItem(storageKey(id));}catch{}}
  function schedule(s,ms,fn){clearTimeout(timer);timer=setTimeout(()=>{if(session===s)void fn();},ms);}
@@ -13,7 +13,7 @@ export function localPartyCombat({publish,finish,report}){
   clearTimeout(timer);
   const run=s.sim.view(),result=run.result;
   if(redraw){
-   s.view={...run,status:'active',localCombatVersion:1};
+   s.view={...run,status:'active',localCombatVersion:s.start.personalVersion||1};
    publish(s.view,s.sim.auto);
   }
   if(!s.visible||document.hidden)return;
@@ -23,7 +23,7 @@ export function localPartyCombat({publish,finish,report}){
    // the fight recover from an iframe reload or a lost presentation message.
    schedule(s,Math.max(0,run.presentation.deadline-Date.now()),()=>step(s,[0]));return;
   }
-  if(s.events.length>=SOLO_EVENT_LIMIT-16||run.status==='finished'){
+  if((!s.start.personalVersion&&s.events.length>=SOLO_EVENT_LIMIT-16)||run.status==='finished'){
    schedule(s,0,()=>settle(s,result));return;
   }
   const due=s.view.waiting?.deadline??s.view.nextTurnAt;
@@ -34,6 +34,10 @@ export function localPartyCombat({publish,finish,report}){
   s.sending=true;
   const {hp,mp}=s.sim.member;
   try{
+   if(s.start.personalVersion===2){
+    await s.sim.reward();await completePersonal({start:s.start,sim:s.sim,events:s.events});
+    s.view={...s.sim.view(),status:'finished',localCombatVersion:2};publish(s.view,s.sim.auto);clear(s.id);session=undefined;return;
+   }
    const ok=await finish({battle:s.id,events:s.events,result,hp,mp});
    if(ok){clear(s.id);return;}
   }catch(error){report(error);}

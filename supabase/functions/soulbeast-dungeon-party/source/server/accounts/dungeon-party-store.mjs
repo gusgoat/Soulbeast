@@ -26,13 +26,13 @@ export function dungeonPartyStore({pool,initialize,buildCombat,persist,uuid,publ
    const record=await tx.query('select state from public.sb_dungeon_party_runs where room_id=$1 for update'+(background?' nowait':''),[roomId]);
    let room=record.rows[0]?.state;
    const serverNow=Number(lobby.server_now);
-   const terminalStatus=['status','pulse','leave'].includes(action)&&(room?.departures?.[code]||room?.completed&&room.members?.some(m=>m.code===code));
+   const terminalStatus=['status','pulse','leave','personalFinish'].includes(action)&&(room?.departures?.[code]||room?.completed&&room.members?.some(m=>m.code===code));
    const expired=new Date(room?.accountSaveExpiry??lobby.expires_at).getTime()<=serverNow;
    const recoveringExpiry=expired&&room?.accountSaveExpiry&&['status','pulse','leave','flushSave'].includes(action);
    if(!terminalStatus&&(lobby.state!=='active'||expired&&!recoveringExpiry))throw Error('party_unavailable');
    const roster=await tx.query('select code from public.sb_dungeon_party_members where room_id=$1 order by joined_at,code',[roomId]);
    const codes=roster.rows.map(m=>m.code);
-   if(!codes.includes(code)&&!(['status','pulse','leave'].includes(action)&&room?.departures?.[code]))throw Error('party_not_member');
+   if(!codes.includes(code)&&!(['status','pulse','leave','personalFinish'].includes(action)&&room?.departures?.[code]))throw Error('party_not_member');
    if(!room){
     room=await initialize(tx,{roomId,environment,codes,floor:lobby.floor});
     if(!room||!Array.isArray(room.members)||room.members.length!==codes.length||
@@ -58,14 +58,14 @@ export function dungeonPartyStore({pool,initialize,buildCombat,persist,uuid,publ
     const service=dungeonPartyService({combat,uuid,now:()=>serverNow,transaction:async(_,fn)=>fn(room)});
     result=await service(code,roomId,effective,data);
     const battle=result.snapshot?.battle;
-    const defer=action==='soloFinish'&&data.deferAccountSave===true&&battle?.id===data.battle&&battle?.settled&&
+    const defer=(action==='personalFinish'&&!!result.personalAck&&data.deferAccountSave===true&&room.state==='active'&&room.members.includes(member)&&member.hp>0)||action==='soloFinish'&&data.deferAccountSave===true&&battle?.id===data.battle&&battle?.settled&&
      room.state==='active'&&room.members.includes(member)&&member.hp>0;
     const pendingChanged=await persist?.(tx,{environment,roomId,serverNow,deferCode:defer?code:null,
      flushCode:passiveActions.has(effective)||defer?null:code,flushAll:action==='nextFloor'||action==='bossContact',background},room,participants);
     if(pendingChanged){
      if((room.revision||0)===previousRevision)room.revision=previousRevision+1;
-     if(result.snapshot)result.snapshot=partySnapshot(room,code,serverNow,action==='claim'||!!result.snapshot.soloStart);
-     else if(['status','pulse','leave'].includes(effective))result=partySnapshot(room,code,serverNow,!!result.soloStart);
+     if(result.snapshot)result.snapshot=partySnapshot(room,code,serverNow,action==='claim'||!!result.snapshot.soloStart,!!result.snapshot.personal);
+     else if(['status','pulse','leave'].includes(effective))result=partySnapshot(room,code,serverNow,!!result.soloStart,!!result.personal);
     }
     if(background)result={snapshot:result};
    }

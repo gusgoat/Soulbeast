@@ -1,5 +1,6 @@
 import {createEngine,createWorkbook,createUtilities} from './engine.mjs';
 import {partyCombatRuntime} from './source/server/accounts/dungeon-party-combat-runtime.mjs';
+import {partyRewardAdapter} from './source/server/accounts/dungeon-party-rewards.mjs';
 import {partyBattleSnapshot} from './source/server/accounts/dungeon-party-snapshot.mjs';
 
 export const SOLO_EVENT_LIMIT=512;
@@ -31,20 +32,10 @@ export function simulateSolo(start){
  const room={members:[member],autoPlayers:{[code]:!!auto},dungeon:{enemies:{[run.enemyId]:{kind}}}};
  const unexpected=()=>{throw Error('unsupported_solo_engine_operation');};
  const engine=createEngine(createWorkbook(),createUtilities(unexpected,unexpected),rng(run.id)).partyCombat;
- let time=run.startedAt;
+ let time=run.startedAt,rewarded=false,inputs=0;
  const combat=partyCombatRuntime({engine,now:()=>time,turnMs:TURN_MS});
  const ready={presentationVersion:2};
- return {
-  run,member,get auto(){return room.autoPlayers[code];},
-  view(now=Date.now()){
-   const state=partyBattleSnapshot(run);
-   if(state.waiting)state.waiting.deadline=now+Math.max(0,state.waiting.deadline-time);
-   if(state.presentation)state.presentation.deadline=now+Math.max(0,state.presentation.deadline-time);
-   if(state.loading)state.loading.deadline=now+Math.max(0,state.loading.deadline-time);
-   state.nextTurnAt=now+Math.max(0,run.nextTurnAt-time);
-   return state;
-  },
-  async apply(event){
+ async function apply(event){
    if(!Array.isArray(event)||!event.length)throw Error('invalid_solo_event');
    if(event[0]===0&&event.length===1&&(run.loading||run.presentation)){
     const p=run.presentation;
@@ -67,6 +58,26 @@ export function simulateSolo(start){
    }
    if(event[0]===3&&event.length===2&&typeof event[1]==='boolean'){await combat.setAuto(room,run,code,event[1]);return;}
    throw Error('invalid_solo_event');
+ }
+ return {
+  run,member,async reward(){if(run.status!=='finished'||run.presentation)throw Error('unfinished_personal_battle');if(!rewarded){await partyRewardAdapter({engine}).settle(room,run);rewarded=true;}return run.rewards?.[code];},get auto(){return room.autoPlayers[code];},
+  view(now=Date.now()){
+   const state=partyBattleSnapshot(run);
+   if(state.waiting)state.waiting.deadline=now+Math.max(0,state.waiting.deadline-time);
+   if(state.presentation)state.presentation.deadline=now+Math.max(0,state.presentation.deadline-time);
+   if(state.loading)state.loading.deadline=now+Math.max(0,state.loading.deadline-time);
+   state.nextTurnAt=now+Math.max(0,run.nextTurnAt-time);
+   return state;
+  },
+  async apply(event){
+   await apply(event);
+   // Bound replay work even for a stalled fight or repeated auto toggles. The
+   // same deterministic draw is produced locally and on the server, with no win.
+   if(start.personalVersion===2&&++inputs>=2000&&run.status==='active'){
+    run.status='finished';run.result='draw';run.finishedAt=time;
+    delete run.loading;delete run.waiting;delete run.presentation;
+    member.exploring=member.hp>0;run.battle.log.push('สิ้นสุดการต่อสู้ที่ยืดเยื้อ · กลับไปสำรวจต่อ');
+   }
   },
  };
 }

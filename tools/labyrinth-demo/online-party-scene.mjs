@@ -31,7 +31,7 @@ export function partyScene({code,roomId,view,clock=()=>performance.now()}){
   }
   view.vitals(next.members);
   view.roster?.(next.members);
-  view.world(next.dungeon,next.serverTime);
+  view.world(next.dungeon,next.serverTime,next.personal);
   if(next.state==='closed'){closed=true;battle.reset();await view.complete();return;}
   await battle.apply(next.battleTransition);
   await view.battle?.(next.battle);

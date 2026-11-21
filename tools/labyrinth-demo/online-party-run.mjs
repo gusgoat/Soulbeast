@@ -1,11 +1,12 @@
+import {personalParty} from './online-party-personal.mjs?v=personal-party-2';
 import {partyAudio} from './online-party-audio.mjs?v=party-gait-1';
 import {partyMenu} from './online-party-menu.mjs?v=beasts-3d-six-20261121';
 import {partyArt} from './online-party-art.mjs?v=dungeon-bandit-class-20261121';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=motion-cadence-1';
-import {partyScene} from './online-party-scene.mjs?v=adaptive-buffer-1';
-import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
+import {partyScene} from './online-party-scene.mjs?v=personal-party-2';
+import {localPartyWorld} from './online-party-local.mjs?v=personal-party-2';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
-import {partyRunController} from './online-party-controller.mjs?v=contact-response-1';
+import {partyRunController} from './online-party-controller.mjs?v=personal-party-2';
 import {bindWalkJoystick} from '../colosseum/walk-joystick.mjs?v=1';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),vitals=mountPartyVitals();
 const base=new URL('../../',import.meta.url),images=new Map(),keys=new Set(),peers=new Map();
@@ -13,14 +14,16 @@ const visuals=partyArt();let selfDir=0,selfSpriteDir=0,selfPhase=0,selfMoving=fa
 const localWorld=localPartyWorld();let trapPlacements=[];
 const sceneAudio=partyAudio();
 let camera=null;
+let personal,bossReadyPending=false,bossReadyId=null;
 let controller,connection,maze,nav,config,world={},traps=[],me=null,position=null,last=performance.now(),frameId,ready=false,seenBattle='';
 let partyRanks={},partyRankPoll=0,partyRankPending=false;
 let nextPulse=0,nextContact=0,contactPending=false,nextSave=0,saving=false,savePending=false,heartbeatTimer,localCombat;
-void import('./online-party-solo.mjs?v=party-combat-latency-1').then(({localPartyCombat})=>{
- localCombat=localPartyCombat({publish:run=>drawBattle(run,true),finish:data=>controller.command('soloFinish',{...data,deferAccountSave:true}),report:failure});
+const combatReady=import('./online-party-solo.mjs?v=personal-party-2').then(({localPartyCombat})=>{
+ localCombat=localPartyCombat({publish:run=>drawBattle(run,true),finish:data=>controller.command('soloFinish',{...data,deferAccountSave:true}),completePersonal:data=>personal.complete(data),report:failure});
  if(controller?.state?.battle?.localCombatVersion)syncLocal(controller.state);
-}).catch(()=>{});
+});
 function syncLocal(state){
+ if(personal?.active||shownBattle?.localCombatVersion===2&&seenBattle!==shownBattle.id)return;
  const active=state.battle?.status==='active'&&state.battle.localCombatVersion===1;
  localCombat?.stop(active?state.battle.id:null);
  if(active&&state.soloStart)void localCombat?.start(state.soloStart).then(()=>{
@@ -71,7 +74,7 @@ function offerReturn(city,automatic=false){
  };
  if(automatic)void button.onclick();
 }
-const menus=partyMenu({canOpen:()=>ready&&!contactPending&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>connection.run(new URL(location.href).searchParams.get('room'),'inventory',data),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{clearMovement();selfMoving=false;}});
+const menus=partyMenu({canOpen:()=>ready&&!contactPending&&!DungeonFeedback.isOpen&&$('battle').hidden&&controller?.state?.battle?.status!=='active',request:data=>personal.exclusive(async()=>{const result=await connection.run(new URL(location.href).searchParams.get('room'),'inventory',data);if(result.snapshot)await controller.receive(result.snapshot);return result;}),refresh:()=>controller.refresh(),getFloor:()=>config?.id,onOpen:()=>{clearMovement();selfMoving=false;}});
 let clockOffset=0, shownBattle=null, battleFrameReady=false, visibleBattleId=null, victory=null, queuedBattle=null;
 const battleFrame=$('partyBattleFrame'),encounterPanel=$('partyEncounter'),openingAttack=$('partyOpeningAttack');
  let warmFloor,encounter=null;
@@ -92,7 +95,7 @@ const battleFrame=$('partyBattleFrame'),encounterPanel=$('partyEncounter'),openi
   if(!encounter.battle)return;
   if(!encounter.attack||encounter.battle!==run.id||run.status!=='active'){clearEncounter();return;}
   if(run.loading||run.presentation)return;
-  const local=run.localCombatVersion===1;
+  const local=!!run.localCombatVersion;
   const state=local?localCombat?.current():run;
   const turn=state?.waiting;
   if(turn?.ownerCode!==connection.code)return;
@@ -111,8 +114,14 @@ const battleFrame=$('partyBattleFrame'),encounterPanel=$('partyEncounter'),openi
   openingAttack.setAttribute('aria-pressed','false');
   $('partyEncounterTitle').textContent=action==='bossContact'?'เผชิญบอส':'เผชิญอสูร';
   encounterPanel.hidden=false;
+  if(action==='claim'&&personal?.grant){
+   controller.broadcast({...position,dir:selfDir,spriteDir:selfSpriteDir},false,false);
+   try{const start=personal.begin(details.enemy,!!controller.state?.autoPlayers?.[connection.code]);if(!start){contactPending=false;clearEncounter();return;}
+    pending.battle=start.run.id;void localCombat.start(start).catch(failure).finally(()=>{contactPending=false;});
+   }catch(error){contactPending=false;clearEncounter();failure(error);}return;
+  }
   let rejection;
-  void controller.command(action,details,error=>{rejection=error.message;}).then(ok=>{
+  void partyCommand(action,details,error=>{rejection=error.message;}).then(ok=>{
    contactPending=false;
    if(encounter!==pending||(pending.battle&&(ok||shownBattle?.id===pending.battle)))return;
    clearEncounter();
@@ -170,13 +179,14 @@ addEventListener('message',event=>{
   if(turn?.ownerCode!==connection.code||message.turn!==turn.turn||message.actor!==turn.actor){reply(false);return;}
   if(encounter?.battle===battleId)clearEncounter();
   const command={battle:battleId,actor:turn.actor,turn:turn.turn,presentationVersion:2,skill:message.skill,item:message.item,seal:message.seal,escape:message.escape,swap:message.swap,target:message.target,friend:message.friend};
-  const local=shownBattle.localCombatVersion===1;
+  const local=!!shownBattle.localCombatVersion;
   const choice=local?localCombat?.command(battleId,command):controller.command('battleCommand',command);
   if(!choice){reply(false);return;}
   void choice.then(ok=>{reply(ok);if(!ok&&!local)void controller.refresh();});
  }
 });
 function drawBattle(run,local=false){
+ if(!local&&(personal?.active||shownBattle?.localCombatVersion===2&&seenBattle!==shownBattle.id)&&!(run?.kind==='boss'&&run.status==='active'))return;
  if(run?.status==='active')WalkTutorial.dismissShadow();
  if(victory&&run?.id!==victory.id){if(run)queuedBattle=run;return;}
  if(victory&&run?.status==='active')return;
@@ -198,13 +208,13 @@ function drawBattle(run,local=false){
 }
 const view={
  loadFloor(floor){config=MineFloors.get(floor);warmBattleFrame();maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);sceneAudio.setFloor(config,maze);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
- vitals:members=>vitals.update(members),
- roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);menus.update(me);},
- world(data,serverTime){world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
+ vitals:members=>vitals.update(members.map(m=>m.code===connection?.code&&personal?.state&&!personal.grant.suspended?{...m,...personal.state.member}:m)),
+ roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);if(personal?.state&&!personal.grant.suspended)me={...me,...personal.state.member};menus.update(me);},
+ world(data,serverTime,grant){if(grant)personal?.receive(grant);world=data||{};nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
   localWorld.receive(world,connection.code,performance.now(),serverTime);
   if(!trapPlacements.length)trapPlacements=DungeonTraps.create(maze,nav,{}, {seed:config.seed+71371,count:35}).list;
 
-  $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · กับดักเหลือ ${trapPlacements.length-(world.traps||[]).filter(t=>t.state==='spent').length} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
+  $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · กับดักเหลือ ${trapPlacements.length-(personal?.state?Object.keys(personal.state.traps).length:(world.traps||[]).filter(t=>t.state==='spent').length)} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
  stopSolo(){localCombat?.stop(null);clearMovement();if(!victory)$('battle').hidden=true;},enterBoss(){clearMovement();notice('รวมทีมต่อสู้บอส · เลือกคำสั่งในเทิร์นของคุณ');},battle:drawBattle,
  respawn(destination,reason){clearEncounter();victory=null;queuedBattle=null;drawBattle(null);freeze();notice(reason==='left'?'ออกจากดันเจี้ยนและปาร์ตี้แล้ว':'พ่ายแพ้ · ออกจากปาร์ตี้แล้ว');
@@ -215,6 +225,14 @@ const view={
   offerReturn();
  }
 };
+async function partyCommand(action,data={},rejected){try{return await personal.exclusive(()=>controller.command(action,data,rejected));}catch(error){failure(error);return false;}}
+async function maybeBossReady(){
+ const state=controller?.state,g=state?.bossGather;
+ if(!personal||!g||bossReadyPending||bossReadyId===g.id||personal.active||personal.grant?.floor!==g.floor)return;
+ personal.join(true);bossReadyPending=true;
+ try{await personal.flush();const ok=await controller.command('personalBossReady',{gather:g.id,grant:personal.grant.id,afterSeq:personal.seq});if(ok)bossReadyId=g.id;}
+ catch(error){failure(error);}finally{bossReadyPending=false;}
+}
 function failure(error){
  $('loading').hidden=true;
  if(!$('battle').hidden){
@@ -233,23 +251,37 @@ function failure(error){
  if(error.message==='login_required')freeze();$('retry').hidden=false;notice(error.message==='login_required'?'กรุณาเข้าสู่ระบบออนไลน์ก่อน':'กำลังเชื่อมต่อปาร์ตี้ใหม่ · เดินต่อได้ รอยืนยันกิจกรรม');
 }
 try{
+ await combatReady;
  connection=connectDungeonParty();const roomId=new URL(location.href).searchParams.get('room');
  if(!/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(roomId||''))throw Error('invalid_room');
+ personal=personalParty({roomId,code:connection.code,send:data=>connection.run(roomId,'personalFinish',data),receive:next=>controller.receive(next),changed:()=>{
+  if(me&&personal?.state&&!personal.grant.suspended){me={...me,...personal.state.member};menus.update(me);vitals.update((controller?.state?.members||[]).map(m=>m.code===connection.code?{...m,...personal.state.member}:m));}
+  if(personal?.grant&&world.floor===personal.grant.floor){localWorld.receive(world,connection.code,performance.now(),controller?.state?.serverTime||Date.now());}
+  queueMicrotask(()=>void maybeBossReady());
+ },report:error=>{if(navigator.onLine)notice('ผลการต่อสู้อยู่ในคิว · จะส่งซ้ำอัตโนมัติ');}});
+ localWorld.setPersonal(personal);
  const scene=partyScene({code:connection.code,roomId,view});
  controller=partyRunController({onResult:async(action,result)=>{
+  if(action==='bossContact'&&result.gathering){clearEncounter();notice('รอเพื่อนจบการต่อสู้ แล้วรวมทีมเข้าห้องบอส');}
   if(encounter?.action===action&&result.battle){encounter.battle=result.battle;tryOpeningAttack();}
-  if(action==='chest'){clearMovement();await DungeonFeedback.reward(result)}if(action==='trapResolve'&&result?.hit){clearMovement();await DungeonFeedback.trap(result.type,result.damage?'เสีย '+result.damage+' HP':'')}},canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
+  if(action==='chest'){clearMovement();await DungeonFeedback.reward(result)}if(action==='trapResolve'&&result?.hit){clearMovement();await DungeonFeedback.trap(result.type,result.damage?'เสีย '+result.damage+' HP':'')}},canAdvanceBattle:b=>visibleBattleId===b.id,connection,roomId,scene,openMotion:partyMotion,onError:failure,personalExploration:true,localExploration:true,getPosition:()=>position?{...position}:null,onState:(state,queued=[])=>{
+  if(state.personal)personal.receive(state.personal);
   clockOffset=state.serverTime-Date.now();
   if(state.departure||state.state!=='active')return;
   const member=state.members.find(m=>m.code===connection.code);
   // Reconcile the overlay even if the scene already consumed this revision.
   syncLocal(state);drawBattle(state.battle);
-  if(state.savePending&&!savePending)nextSave=performance.now()+750;
+  if(personal.active&&!localCombat.current())void localCombat.start(personal.active).catch(failure);
+  if(!state.personal&&personal.grant?.floor!==state.floor&&state.battle?.status!=='active')void controller.refresh();
+  if(state.bossGather)personal.join(true);else if(!personal.grant?.suspended)personal.join(false);
+  void maybeBossReady();
+  if(state.savePending&&!savePending)nextSave=performance.now()+150000;
   savePending=!!state.savePending;
+  if(nextPulse===0)nextPulse=performance.now()+controller.pollDelay;
   $('battleError').hidden=true;
   if(!position&&member?.position)position={...member.position};
   if((state.battle?.status==='active'||state.battle?.presentation)&&nextPulse!==Infinity)nextPulse=Math.min(nextPulse,performance.now()+controller.pollDelay);
-  ready=!!position;if(ready)window.WalkLoading.ready();$('retry').hidden=true;$('action').disabled=!ready;
+  ready=!!position&&personal.grant?.floor===state.floor;if(ready)window.WalkLoading.ready();$('retry').hidden=true;$('action').disabled=!ready;
 
  }});
  $('leaveParty').onclick=async()=>{
@@ -257,7 +289,7 @@ try{
   const button=$('leaveParty');button.disabled=true;
   try{
    while(controller.busy)await new Promise(resolve=>setTimeout(resolve,50));
-   if(!button.hidden)await controller.command('leave');
+   if(!button.hidden)await partyCommand('leave');
   }finally{button.disabled=false;}
  };
  $('retry').onclick=()=>void controller.refresh();
@@ -267,15 +299,15 @@ try{
   const near=p=>nav.distance(confirmed,p)<210;
   const door=maze.rooms.find(r=>r.id==='boss').gate;
   const chest=maze.chests.find(c=>!controller.state?.chestClaims?.[c.id]&&nav.distance(confirmed,c)<145&&nav.clear(confirmed,c));
-  if(chest)void controller.command('chest',{chest:chest.id});
-  else if(nav.distance(confirmed,maze.mini)<180&&nav.clear(confirmed,maze.mini))void controller.command('heal');
-  else if(near(door)&&!world.doorOpen){const a=Math.max(0,(world.rules?.shadows||0)-(world.kills?.shadow||0)),b=Math.max(0,(world.rules?.bandits||0)-(world.kills?.bandit||0));if(a||b)notice('ยังเปิดประตูไม่ได้ · ต้องปราบอสูรเงาอีก '+a+' ตัว และโจรป่าอีก '+b+' ตัว');else void controller.command('openDoor');}
-  else if(near(maze.stairs)&&world.boss==='defeated')void controller.command('nextFloor');
+  if(chest)void partyCommand('chest',{chest:chest.id});
+  else if(nav.distance(confirmed,maze.mini)<180&&nav.clear(confirmed,maze.mini))void partyCommand('heal');
+  else if(near(door)&&!world.doorOpen){const a=Math.max(0,(world.rules?.shadows||0)-(world.kills?.shadow||0)),b=Math.max(0,(world.rules?.bandits||0)-(world.kills?.bandit||0));if(a||b)notice('ยังเปิดประตูไม่ได้ · ต้องปราบอสูรเงาอีก '+a+' ตัว และโจรป่าอีก '+b+' ตัว');else void partyCommand('openDoor');}
+  else if(near(maze.stairs)&&world.boss==='defeated')void partyCommand('nextFloor');
   else notice('เดินเข้าใกล้หีบ บ่อน้ำ ประตูห้องบอส หรือประตูชั้นถัดไป');
  };
  void controller.refresh();
  function pulseIfDue(){
-  if(document.hidden||!ready||contactPending||controller.busy||performance.now()<nextPulse)return;
+  if(personal?.active||document.hidden||!ready||contactPending||controller.busy||performance.now()<nextPulse)return;
   nextPulse=Infinity;
   void controller.pulse().finally(()=>{nextPulse=performance.now()+controller.pollDelay;});
  }
@@ -283,7 +315,7 @@ try{
  // Combat progression is independent of the canvas.
  heartbeatTimer=setInterval(()=>{
   if(!$('battle').hidden||menus.open||!$('mapPanel').hidden||DungeonFeedback.isOpen||performance.now()-last>250) pulseIfDue();
-  if(!document.hidden&&ready&&savePending&&!saving&&!contactPending&&!controller.busy&&performance.now()>=nextSave){
+  if(!document.hidden&&ready&&!personal.active&&!personal.pending&&savePending&&!saving&&!contactPending&&!controller.busy&&performance.now()>=nextSave){
    saving=true;
    void controller.flushSave().finally(()=>{saving=false;nextSave=performance.now()+1500;});
   }
@@ -296,7 +328,7 @@ try{
    const length=Math.hypot(dx,dy),tilt=Math.hypot(joystick.x,joystick.y);
    selfMoving=length>0&&!contactPending;
    selfRunning=selfMoving&&(tilt>0?tilt>.72:keys.has('Shift'));
-   if(selfMoving){
+   if(selfMoving&&personal.available){
     selfSpriteDir=(-Math.atan2(dx,dy)/(Math.PI/4)+8)%8;
     selfDir=Math.round(selfSpriteDir)%8;
     selfPhase+=dt*(selfRunning?12:8);
@@ -305,15 +337,17 @@ try{
     if(nav.clear(position,point)&&controller.move(point,position))position=point;
    }
    controller.broadcast({...position,dir:selfDir,spriteDir:selfSpriteDir},selfMoving,selfRunning);
+   localWorld.reconcile(world,connection.code,position,nav,{...(camera||position),width:innerWidth,height:innerHeight,flatten:maze.flatten});
    localWorld.update(dt,position,nav,world,maze.boss,now);
-   localWorld.trigger(trapPlacements,position,nav,now);
+   if(personal.available)localWorld.trigger(trapPlacements,position,nav,now);
    traps=[...localWorld.effects.values()];
    const trapRequest=localWorld.request();
-   if(trapRequest&&!contactPending&&!controller.busy&&now>=nextContact){
+   if(trapRequest?.action==='personalTrap'&&personal.available){try{const result=personal.trap(trapRequest.effect);trapRequest.effect.resolved=true;if(result?.hit)void DungeonFeedback.trap(result.type,result.damage?'เสีย '+result.damage+' HP':'');}catch(error){failure(error);}}
+   else if(trapRequest&&trapRequest.action!=='personalTrap'&&!contactPending&&!controller.busy&&now>=nextContact){
     nextContact=now+750;void controller.command(trapRequest.action,{trap:trapRequest.trap,position:trapRequest.position});
    }
    const confirmed=position,bossPosition=localWorld.boss?.position||world.bossPosition||maze.boss;
-   if(!trapRequest&&!contactPending&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&(e.kind!=='shadow'||visuals.readyEnemy(e))&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
+   if(personal.available&&!trapRequest&&!contactPending&&confirmed&&now>=nextContact){const target=[...localWorld.enemies.entries()].find(([,e])=>e.state==='roaming'&&e.position&&(e.kind!=='shadow'||visuals.readyEnemy(e))&&nav.distance(confirmed,e.position)<38&&nav.clear(confirmed,e.position));
     if(target){
      nextContact=now+500;
      openEncounter('claim',{floor:controller.state.floor,enemy:target[0],enemyPosition:{...target[1].position},
@@ -339,8 +373,8 @@ const moveKeys=new Set(['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','Arrow
 const moveKey=key=>key.length===1?key.toLowerCase():key;
 addEventListener('keydown',e=>{const key=moveKey(e.key);if(!menus.open&&moveKeys.has(key)){e.preventDefault();keys.add(key);}});
 addEventListener('keyup',e=>keys.delete(moveKey(e.key)));
-addEventListener('blur',clearMovement);document.addEventListener('visibilitychange',()=>{if(document.hidden)freeze();else void controller?.refresh();});
-addEventListener('pagehide',()=>{freeze();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();sceneAudio.dispose();void controller?.close();});
+addEventListener('blur',clearMovement);document.addEventListener('visibilitychange',()=>{if(document.hidden)freeze();else{ready=!!position&&personal?.state?.member.hp>0;personal?.background();void controller?.refresh();}});
+addEventListener('pagehide',()=>{freeze();personal?.close();clearInterval(heartbeatTimer);cancelAnimationFrame(frameId);vitals.remove();sceneAudio.dispose();void controller?.close();});
 const daylight=CountryDaylight.create('dungeon');
 function render(){
  const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,1.5);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#07131c';ctx.fillRect(0,0,w,h);
@@ -348,7 +382,7 @@ function render(){
  const focus=camera||position;
  const screen=p=>({x:w/2+(p.x-focus.x)*scale,y:h/2+(p.y-focus.y)*scale*F});
  if(!partyRankPending&&performance.now()>=partyRankPoll&&connection?.walkRanks&&me?.code){
-  partyRankPending=true;partyRankPoll=performance.now()+30_000;
+  partyRankPending=true;partyRankPoll=performance.now()+120_000;
   const roomId=new URLSearchParams(location.search).get('room');
   if(roomId)void connection.walkRanks(roomId).then(result=>{
    if(result)partyRanks={...result.peers,[connection.code]:result.own};
