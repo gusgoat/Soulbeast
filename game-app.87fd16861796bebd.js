@@ -1888,7 +1888,23 @@ function gachaRevealTile(r,i,slot){const opened=GachaReveal.opened.has(i),color=
 function gachaRevealScene(){gachaRevealSync();const count=GACHA.rewards.length,dealing=gachaDealing(),elapsed=Date.now()-GachaReveal.entryAt;let scenes='';for(let offset=0;offset<count;offset+=10){const rewards=GACHA.rewards.slice(offset,offset+10),single=count===1;scenes+=`<div class="gacha-reveal-stage ${dealing?'is-dealing':''} ${single?'single':'ten'}" style="--deal-elapsed:${elapsed}ms" aria-label="${single?ct('เปิดรางวัลหนึ่งใบ','Single reward reveal','单抽奖励'):ct('เปิดรางวัลสิบใบ','Ten reward reveal','十连奖励')}"><img class="gacha-scene-art" src="assets/ui/gacha-reveal-v2/summoning-open.png" alt="${ct('ฉากอัญเชิญการ์ด','Summoning scene','召唤场景')}" />${dealing?'<span class="gacha-arrival-portal" aria-hidden="true"><i></i><b>✦</b></span>':''}<button class="btn gacha-draw-again" data-a="gachaContinue" ${gachaCanContinue()?'':'disabled'} translate="no">${ct('สุ่มต่อ','Draw again','继续抽取')}</button><button class="btn pri gacha-open-all" data-a="gachaRevealAll" ${dealing||GachaReveal.opened.size===count?'disabled':''} translate="no">${ct('เปิดทุกใบ','Reveal all','全部翻开')}</button><span class="gacha-card-grid">${rewards.map((r,j)=>gachaRevealTile(r,offset+j,j)).join('')}</span></div>`;}GachaReveal.fresh.clear();return `<section class="gacha-reveal gacha-results"><h3 translate="no">${ct('ผนึกแห่งโชคชะตา','Seals of destiny','命运封印')}</h3><p translate="no">${dealing?ct('กำลังอัญเชิญผนึกแห่งโชคชะตา…','Summoning the seals of destiny…','正在召唤命运封印…'):ct('แตะหลังการ์ดเพื่อเปิดรางวัลแต่ละใบ','Tap each card to reveal your reward','点击卡背翻开奖励')}</p><div class="row"><span class="grow" role="status" translate="no">${ct('เปิดแล้ว','Revealed','已翻开')} ${GachaReveal.opened.size}/${count}</span></div>${scenes}<div class="gacha-opened-list">${GACHA.rewards.map((r,i)=>GachaReveal.opened.has(i)?`<p>${i+1}. ${esc(r.type==='pet'?SP[r.key].n:r.type==='gear'?EQ[r.key].n:CON[r.key].n)}</p>`:'').join('')}</div></section>`;}
 /* Every card gets a flip whoosh; the uploaded gold/red fanfare plays once when the receipt arrives. */
 function gachaRevealSound(rewards){Sound.run(()=>rewards.forEach((_,n)=>Sound.hiss(.24,.085,2200,n*.09)));}
-function gachaPlaySolarIntro(rewards){window.SoulbeastCinematics?.gacha(rewards,{nameFor:key=>SP[key]?.n,muted:!Sound.enabled,volume:Sound.volume,syncMusic:()=>Music.sync()});}
+// Only explicit card reveals enqueue intros; receiving a draw never starts a video.
+const GachaCardIntro={receipt:null,pending:[],timer:null};
+function gachaPlaySolarIntro(rewards){
+ const solar=rewards.filter(r=>r.type==='pet'&&SP[r.key]?.solar);if(!solar.length)return;
+ const receipt=GACHA.rewards;
+ if(GachaCardIntro.receipt!==receipt){clearTimeout(GachaCardIntro.timer);GachaCardIntro.receipt=receipt;GachaCardIntro.pending=[];}
+ GachaCardIntro.pending.push(...solar);clearTimeout(GachaCardIntro.timer);
+ function afterFlip(){
+  GachaCardIntro.timer=null;
+  if(GACHA.rewards!==receipt||S.screen!=='gacha'){GachaCardIntro.pending=[];return;}
+  const wait=GachaReveal.flipUntil-Date.now();
+  if(wait>0||window.SoulbeastCinematics?.isOpen()){GachaCardIntro.timer=setTimeout(afterFlip,Math.max(50,wait));return;}
+  const queue=GachaCardIntro.pending.splice(0);
+  window.SoulbeastCinematics?.gacha(queue,{nameFor:key=>SP[key]?.n,muted:!Sound.enabled,volume:Sound.volume,syncMusic:()=>Music.sync()});
+ }
+ GachaCardIntro.timer=setTimeout(afterFlip,Math.max(0,GachaReveal.flipUntil-Date.now()));
+}
 handlers.gachaRevealOne=i=>{gachaRevealSync();if(gachaDealing())return;i=Number(i);if(!Number.isInteger(i)||!GACHA.rewards[i]||GachaReveal.opened.has(i))return;GachaReveal.opened.add(i);GachaReveal.fresh.add(i);const reward=GACHA.rewards[i];gachaRevealSound([reward]);gachaFinishFlip();render();gachaPlaySolarIntro([reward]);};
 handlers.gachaRevealAll=()=>{gachaRevealSync();if(gachaDealing())return;const rewards=[];GACHA.rewards.forEach((r,i)=>{if(!GachaReveal.opened.has(i)){GachaReveal.fresh.add(i);rewards.push(r);}GachaReveal.opened.add(i);});if(rewards.length){gachaRevealSound(rewards);gachaFinishFlip();}render();gachaPlaySolarIntro(rewards);};
 
