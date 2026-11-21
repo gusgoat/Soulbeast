@@ -5,8 +5,8 @@ import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=blast-vfx-20
 import {teamResults} from './ranking.mjs?v=team-balance-2';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
-import {battlePresentation} from './battle-presentation.mjs?v=storage-run-audio-1';
-import {siegeAudio} from './siege-audio.mjs?v=infantry-audio-1';
+import {battlePresentation} from './battle-presentation.mjs?v=trap-sfx-20261121';
+import {siegeAudio} from './siege-audio.mjs?v=trap-sfx-20261121';
 import {clientAnnouncer} from './client-announcer.mjs?v=team-warp-1';
 import {killCallouts} from './match-announcer.mjs?v=team-warp-1';
 import {bindJoystickPosition,bindWalkJoystick} from './walk-joystick.mjs?v=colosseum-walk-tools-1';
@@ -181,7 +181,7 @@ async function connect(payload){
  };
  socket.onclose=event=>{
   if(ws!==socket)return;
-  presentation.setSiegeAudio(false,false);
+  presentation.setSiegeAudio(false,false);presentation.setTrapAudio(false);
   release();lastInput='';
   if(event.code===4001){reset('เปิดห้องเดิมในอีกแท็บแล้ว');return;}
   if(event.code===1000&&event.reason==='left'){reset('',true);return;}
@@ -234,7 +234,7 @@ function reset(message='',clearInvite=false){
  presentation.walk(false);
  presentation.setActive(false);
  presentation.setMusicScene('lobby');
- presentation.setSiegeAudio(false,false);
+ presentation.setSiegeAudio(false,false);presentation.setTrapAudio(false);
  siegeSounds.reset();
  announcer.reset();
  hideBattle();
@@ -327,7 +327,9 @@ function applyState(next){
   state.phase==='finished'&&state.reason==='base-captured'&&player?.phase!=='battle');
  const repairing=fieldAudio&&state.phase==='match'&&state.players.some(p=>p.repairingBase&&p.phase==='walk');
  presentation.setSiegeAudio(fieldAudio,repairing,fieldAudio?player?.recallEndsAt:null,state.now);
- siegeSounds.sync(state,fieldAudio?player:null);
+ const trapViewer=state.phase==='match'?(watchedPlayer()||player):null;
+ presentation.setTrapAudio(trapViewer?.phase==='walk');
+ siegeSounds.sync(state,fieldAudio?player:null,trapViewer?.phase==='walk'?trapViewer:null);
  announcer.sync(state);
  if(entering)updateEntryControls();
  $('lobby').hidden=state.phase!=='lobby';$('arena').hidden=state.phase==='lobby';

@@ -1,5 +1,5 @@
 import {personalParty} from './online-party-personal.mjs?v=instant-party-3';
-import {partyAudio} from './online-party-audio.mjs?v=party-gait-1';
+import {partyAudio} from './online-party-audio.mjs?v=trap-sfx-20261121';
 import {partyMenu} from './online-party-menu.mjs?v=instant-party-3';
 import {partyArt} from './online-party-art.mjs?v=dungeon-bandit-class-20261121';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=motion-cadence-1';
@@ -371,7 +371,7 @@ try{
    camera.x+=(position.x-camera.x)*follow;
    camera.y+=(position.y-camera.y)*follow;
   }
-  scene.frame();sceneAudio.tick(dt,{position,moving:selfMoving,running:selfRunning,ready,world,nav,blocked:menus.open||!$('mapPanel').hidden||!$('battle').hidden||!!window.WalkControls?.editing});render();renderMinimap();frameId=requestAnimationFrame(frame);
+  scene.frame();sceneAudio.tick(dt,{position,moving:selfMoving,running:selfRunning,ready,world,nav,traps,blocked:menus.open||!$('mapPanel').hidden||!$('battle').hidden||!!window.WalkControls?.editing});render();renderMinimap();frameId=requestAnimationFrame(frame);
  }
  frameId=requestAnimationFrame(frame);
 }catch(error){failure(error);}

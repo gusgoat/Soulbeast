@@ -16,6 +16,8 @@ const walkingFiles={
  stone:'audio/forest-journey/stone.mp3',leaves:'audio/forest-journey/leaves.mp3',
 };
 const siegeClips={
+ 'trap-blast':{file:"https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/audio/traps/trap-blast-v1-3205325b322f6c4b.mp3",level:.85,trap:true},
+ 'trap-other':{file:"https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/audio/traps/trap-other-v1-6edd5dcf249df943.mp3",level:.85,trap:true},
  'ranged-impact':{duration:.56,level:.75},
  'dagger-impact':{duration:.72,level:.7},
  'heavy-melee-impact':{duration:.85,level:.7},
@@ -33,13 +35,12 @@ const siegeClips={
   `fall-${gender}-${take}`,{file:`audio/humanoid-death/${gender}-${take}.mp3`,level:.9,afterFall:true},
  ]))),
 };
-const audioUrl=key=>assets+(walkingFiles[key]||(siegeClips[key]?
- siegeClips[key].file||'audio/colosseum-siege/'+key+'.mp3':'media/'+audioFiles[key]+'.mp3'));
+const audioUrl=key=>{const file=walkingFiles[key]||(siegeClips[key]?siegeClips[key].file||'audio/colosseum-siege/'+key+'.mp3':'media/'+audioFiles[key]+'.mp3');return file.startsWith('https://')?file:assets+file;};
 const prefsKey='soulbeast-colosseum-battle-sound';
 
 export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=='off'}={}){
  let active=false, playing=false, walking=false, surface=null;
- let fieldAudio=false, repairing=false, voicePlaying=false;
+ let trapAudio=false,fieldAudio=false, repairing=false, voicePlaying=false;
  let warpAt=null, warpDeadline=null;
  let enabled=sound, context, gain;
  const clips=new Map(), timers=new Set(), loops=new Map();
@@ -147,7 +148,7 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
  }
  function play(key,field=false){
   const fieldClip=field?siegeClips[key]:null;
-  const audible=()=>enabled&&!document.hidden&&(field?fieldAudio||fieldClip.afterFall:active)&&context?.state==='running';
+  const audible=()=>enabled&&!document.hidden&&(field?fieldClip.trap?trapAudio:fieldAudio||fieldClip.afterFall:active)&&context?.state==='running';
   if(!audible())return;
   const requestedAt=context.currentTime;
   void clip(key).then(buffer=>{
@@ -345,6 +346,6 @@ export function battlePresentation(layer,{sound=localStorage.getItem(prefsKey)!=
  addEventListener('pointerdown',unlock,{passive:true});
  addEventListener('keydown',unlock);
  document.addEventListener('visibilitychange',syncMusic);
- return {action,setActive,setMusicScene,setSiegeAudio,duckMusic,playSiege:key=>play(key,true),syncPoses,toggle,walk,holdHp,hp:unit=>heldHp.get(unit.id)?.value??unit.hp,
+ return {action,setTrapAudio:value=>{trapAudio=!!value;},setActive,setMusicScene,setSiegeAudio,duckMusic,playSiege:key=>play(key,true),syncPoses,toggle,walk,holdHp,hp:unit=>heldHp.get(unit.id)?.value??unit.hp,
   get busy(){return playing;},get enabled(){return enabled;}};
 }

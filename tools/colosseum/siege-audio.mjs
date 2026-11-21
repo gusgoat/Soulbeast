@@ -15,14 +15,19 @@ function infantryWeapon(effect,attacker){
 const maxEffectAge=280;
 
 export function siegeAudio(play,sealerGender){
- const seen=new Map(),baseStages=new Map(),lastWeaponAt=new Map();
- function reset(){seen.clear();baseStages.clear();lastWeaponAt.clear();}
- function sync(state,viewer){
+ const seen=new Map(),baseStages=new Map(),lastWeaponAt=new Map(),soundedTraps=new Set();
+ function reset(){soundedTraps.clear();seen.clear();baseStages.clear();lastWeaponAt.clear();}
+ function sync(state,viewer,trapViewer=viewer){
   for(const [id,until] of seen)if(until<=state.now)seen.delete(id);
   for(const base of state.bases??[]){
    const damage=baseDamageStage(base),previous=baseStages.get(base.id);
    baseStages.set(base.id,{side:base.side,damage});
    if(viewer&&base.hp>0&&previous?.side===base.side&&damage>previous.damage&&inSight(viewer,base))play('damage-start');
+  }
+  for(const trap of state.traps??[]){
+   if(!trap.burstUntil||soundedTraps.has(trap.id))continue;
+   soundedTraps.add(trap.id);
+   if(trapViewer&&trap.burstUntil>state.now&&trap.burstUntil-state.now>=400)play(trap.type==='blast'?'trap-blast':'trap-other');
   }
   for(const effect of state.baseEffects??[]){
    if(seen.has(effect.id))continue;

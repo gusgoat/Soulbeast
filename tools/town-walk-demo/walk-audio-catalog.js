@@ -1,4 +1,5 @@
 window.walkAudioCatalog={
+  "traps":{"blast":"https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/audio/traps/trap-blast-v1-3205325b322f6c4b.mp3","other":"https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/audio/traps/trap-other-v1-6edd5dcf249df943.mp3"},
   "music": {
     "town": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/music--media--f11e0ab2f409af4b1e6c1211.mp3",
     "peace": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/music--media--1982e3e87e1b5a7ab25a933d.mp3",

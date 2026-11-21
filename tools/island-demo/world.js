@@ -63,7 +63,7 @@ const atlasReady=fetch('island-props.json?v=1').then(res=>res.json()).then(async
  for(const [id,bounds] of Object.entries(beach))atlas[id]={image,bounds};
 }).catch(console.error);
 const shore=Array.from({length:81},(_,i)=>data.coast(i*Math.PI/40));
-const music=WalkAudio.create({kind:'country',music:{blue:'countryBlue',green:'countryGreen',red:'countryRed'}[country],surface:'leaves',waterSources:[{points:shore,width:85}]});
+const music=WalkAudio.create({kind:'country',trapSounds:true,music:{blue:'countryBlue',green:'countryGreen',red:'countryRed'}[country],surface:'leaves',waterSources:[{points:shore,width:85}]});
 async function loadBossSprite(){
  let entry;
  if(country==='green'){
@@ -505,7 +505,7 @@ function update(dt){
  const events=traps.update(dt,[{id:'player',position:p,alive:!safe&&player.hp>0}]);
  for(const event of events){
   if(event.kind==='armed')status('กับดัก'+DungeonTraps.types[event.trap.type].name+' · ออกจากวงภายใน 2 วินาที');
-  else if(event.hit.includes('player')){
+  else {music.trap(event.trap.type);if(!event.hit.includes('player'))continue;
    const damage=DungeonTraps.apply(event.trap.type,player,WalkVitals.maximum(player).hp);
    persist();reset();queueSave();
    if(player.hp<=0){goHome(true);return;}
