@@ -9114,6 +9114,129 @@ if(params.get('walkScene')==='island'&&params.get('island')&&params.get('islandE
 if(params.get('quickItem')==='teleportScroll'&&['country','island'].includes(params.get('walkScene'))&&S.screen==='bag'){
  queueMicrotask(()=>{if(S.P.items?.teleportScroll>0)handlers.useTeleport();else toast('ไม่มีใบเทเลพอร์ต');});
 }
+// Only monitors presentation. Recovery never executes a move or settles rewards.
+function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=45000,actionMs=30000,heartbeatMs=15000}){
+ let key=null,phase='stopped',sequence=0,deadline=0,lastPulse=0,pausedAt=null;
+ function start(id){key=id;phase='loading';sequence=0;lastPulse=now();deadline=lastPulse+loadMs;pausedAt=null;}
+ function ready(id){if(id!==key||phase==='stopped'||phase==='failed')return;lastPulse=now();if(phase==='loading'){phase='idle';deadline=0;}}
+ function action(id,seq){if(id!==key||phase==='stopped'||phase==='failed')return;phase='action';sequence=seq;lastPulse=now();deadline=lastPulse+actionMs;}
+ function acknowledge(id,seq){if(id!==key||phase!=='action'||seq!==sequence)return false;phase='idle';deadline=0;sequence=0;lastPulse=now();return true;}
+ function pulse(id){if(id===key)lastPulse=now();}
+ function pause(hidden){if(hidden){pausedAt??=now();}else if(pausedAt!==null){const elapsed=now()-pausedAt;if(deadline)deadline+=elapsed;lastPulse+=elapsed;pausedAt=null;}}
+ function tick(){
+  if(pausedAt!==null||['stopped','failed'].includes(phase))return;
+  const reason=phase==='loading'&&now()>=deadline?'load-timeout':phase==='action'&&now()>=deadline?'action-timeout':phase!=='loading'&&now()-lastPulse>=heartbeatMs?'heartbeat-timeout':null;
+  if(reason){phase='failed';recover(reason,key);}
+ }
+ function stop(){key=null;phase='stopped';sequence=0;deadline=0;pausedAt=null;}
+ return {start,ready,action,acknowledge,pulse,pause,tick,stop,inspect:()=>({phase,sequence,deadline,lastPulse,paused:pausedAt!==null})};
+}
+
+/* Injected into the existing game's lexical scope on the isolated staging server only. */
+(()=>{
+ const rolloutContext=(()=>{try{return JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')}catch{return null}})();if(rolloutContext?.environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')!=='on')return;
+ const clone=v=>JSON.parse(JSON.stringify(v)),channel=crypto.randomUUID();
+ let frame=null,battle=null,battleId='',revision=0,sequence=0,presenting=0,ready=false,closing=false,depth=0,forcedAuto=false,saveError='';
+ const requests=new Set(),failedBattles=new WeakSet();let recoveryButton=null,recoveryReason='';
+ const recovery=createOrdinaryStageRecovery({recover:(reason,id)=>{if(id===battleId)useLegacy(reason);}});
+ const useStage=b=>ordinary(b)&&!failedBattles.has(b);
+ const nativeRender=render,nativeAct=act,nativeLater=battleLater,nativeTeamAuto=teamAutoUnit;
+ const nativeToast=toast;toast=function(message){if(frame)post('ordinary-notice',{message:String(message)});return nativeToast(message);};
+ const ordinary=b=>b&&!b.towerRun&&!b.dungeonDuo&&!b.dungeonParty&&['wild','bandit','traveler','npc','boss','secret','warpBoss','riddleMirror','taleTrial'].includes(b.kind);
+ // One presentation layer owns battle audio; the walking game's settings are preserved.
+ const stageAudio=()=>!!frame&&useStage(B());
+ for(const [owner,key]of [[Sound,'fx'],[Sound,'skill'],[ExtraAudio,'play']]){const original=owner[key];owner[key]=function(...args){if(stageAudio())return;return original.apply(this,args);};}
+ const nativeMusicSync=Music.sync;Music.sync=function(...args){if(stageAudio()){this.stop();ExtraAudio.stop();Sound.stopAmb();return;}return nativeMusicSync.apply(this,args);};
+ function view(){
+  const b=B(),u=b&&uById(b.cur);if(!b)return null;
+  const skills=u?[...new Set([...u.skills,'rest'])].filter(id=>SK[id]).map(id=>{const s=SK[id];return {id,...s,cost:costOf(u,s),coinCost:s.gc?s.gc*u.lv:s.pctGold?Math.floor(S.P.gold*s.pctGold):0,cooldown:cooldownOf(u,id),available:!cooldownOf(u,id)&&costOf(u,s)<=u.mp&&(!s.gc||S.P.gold>=s.gc*u.lv)&&(!s.pctGold||Math.floor(S.P.gold*s.pctGold)>=1)&&(!s.summon||battleHasRoom(u)),element:effectiveElement(u,s),range:s.range||(['m','h'].includes(s.t)||s.t==='auto'&&u.atkType==='m'?'ranged':'melee')};}):[];
+  return clone({battle:battleId,revision,current:b.cur,round:b.round,turn:b.round||1,clockKey:[b.cur,b.round,sequence].join(':'),kind:b.kind,zone:S.zone?.id||b.meta||1,auto:!!S.ui.autoTeam||forcedAuto,autoPet:!!S.ui.autoPet,autoAllowed:teamAutoAllowed()&&S.P.lv>=10||forcedAuto,speed:BattleSpeed.value||1,waiting:b.menu==='wait'||u?.side==='enemy',over:b.over||null,saving:closing,saveError,
+   units:[...b.allies,...b.enemies].map(x=>({...x,maxHp:x.st.hp,maxMp:x.st.mp})),queue:b.queue,skills,log:b.log.slice(-12),
+   items:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]&&!CON[id].seal&&!CON[id].petExp&&(CON[id].hp||CON[id].mp||CON[id].rev||CON[id].cure)).map(([id,n])=>({id,name:CON[id].n,count:n,rev:!!CON[id].rev})),
+   seals:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]?.seal).map(([id,n])=>({id,name:CON[id].n,count:n})),
+   captureTargets:b.enemies.filter(sealable).map(x=>x.id),summons:carriedPets().filter(p=>p.hp>0&&!b.allies.some(x=>x.uid===p.uid)).map(p=>({uid:p.uid,name:petName(p),lv:p.lv})),canEscape:['wild','bandit','traveler'].includes(b.kind),
+   vitals:{hp:S.P.hp,mp:S.P.mp,gold:S.P.gold,exp:S.P.exp,lv:S.P.lv},saveMode:WALK_ONLINE?'test-account':'local-test-draft'});
+ }
+ function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin);}
+ function publish(){if(recoveryButton)recoveryButton.disabled=closing;revision++;if(ready&&!presenting)post('ordinary-state',{view:view()});}
+ function removeStage(){frame?.remove();frame=null;recoveryButton?.remove();recoveryButton=null;ready=false;presenting=0;recovery.stop();}
+ function useLegacy(reason='manual'){
+  const b=B();if(!b||!frame||closing)return;failedBattles.add(b);recoveryReason=reason;
+  removeStage();nativeRender();Music.sync();nativeToast('เปลี่ยนกลับสนามเดิมแล้ว · ต่อสู้ต่อจากตาเดิมได้');
+ }
+ setInterval(()=>{recovery.pause(document.hidden);recovery.tick();},500);
+ document.addEventListener('visibilitychange',()=>recovery.pause(document.hidden));
+ function mount(){
+  const b=B();if(!useStage(b)||S.screen!=='battle'){if(frame)removeStage();battle=null;return;}
+  if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';requests.clear();recovery.start(battleId);if(ready)recovery.ready(battleId);}
+  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary';document.body.append(frame);
+   frame.addEventListener('error',()=>useLegacy('frame-error'));
+   recoveryButton=document.createElement('button');recoveryButton.id='ordinary-use-legacy';recoveryButton.textContent='ใช้สนามเดิม';recoveryButton.title='กลับไปสู้ต่อจากสถานะปัจจุบันในสนามเดิม';
+   Object.assign(recoveryButton.style,{position:'fixed',right:'10px',top:'60px',zIndex:'2147483001',padding:'7px 10px',border:'1px solid #b89a5b',borderRadius:'7px',background:'#142331',color:'#f4dfad',font:'12px system-ui'});
+   recoveryButton.onclick=()=>useLegacy();document.body.append(recoveryButton);Music.stop();ExtraAudio.stop();Sound.stopAmb();}
+  publish();
+ }
+ render=function(...args){const r=nativeRender.apply(this,args);mount();return r;};
+ teamAutoUnit=function(u){return forcedAuto&&u?.side==='ally'||nativeTeamAuto(u);};
+ // Keep the original engine's next turn behind the renderer's presentation barrier.
+ battleLater=function(fn,ms){const b=B();return nativeLater(()=>{const resume=()=>{if(B()!==b)return;if(useStage(b)&&(!ready||presenting)){setTimeout(resume,50);return;}fn();};resume();},ms);};
+ act=function(u,id,target,friend,free){
+  const capture=useStage(B())&&depth===0,before=capture?view():null;depth++;
+  let ok;try{ok=nativeAct(u,id,target,friend,free);}finally{depth--;}
+  if(capture&&ok&&useStage(B())){
+   const sk=SK[id]||{},seq=++sequence;presenting=seq;recovery.action(battleId,seq);
+   const action={actor:u.id,skill:id,name:sk.n||id,target:target?.id,friend:sk.tg==='self'||['rest','form','revert','summon'].includes(sk.t)?u.id:friend?.id,support:['heal','buff','rest','form','revert','summon'].includes(sk.t),all:!!sk.all||sk.tg==='team',charging:!!u.charging&&u.charging.id===id,range:sk.range||(['m','h'].includes(sk.t)||sk.t==='auto'&&u.atkType==='m'?'ranged':'melee'),events:clone(B().effects||[])};
+   queueMicrotask(()=>{if(B()!==battle)return;revision++;post('ordinary-action',{sequence:seq,before,action,view:view()});});
+  }
+  return ok;
+ };
+ async function command(m){
+  const b=B();if(!useStage(b)||m.battle!==battleId||closing)return;
+  if(requests.has(m.request))return;requests.add(m.request);if(requests.size>128)requests.delete(requests.values().next().value);
+  if(m.revision!==revision||presenting){post('ordinary-state',{view:view()});return;}
+  if(m.command==='done'){
+   if(!b.over)return;closing=true;saveError='';publish();
+   try{
+    save();
+    if(WALK_ONLINE){const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');if(context?.environment!=='test')throw Error('test_account_required');await (await getWalkAccountConnection()).flush(true);}
+    if(B()!==b)return;const button=document.querySelector('main [data-a="bt"][data-v="done"]');if(button)button.click();else battleAction('done');mount();
+   }catch(error){closing=false;saveError='ยังบันทึกไม่สำเร็จ กรุณาลองรับผลอีกครั้ง';post('ordinary-notice',{message:saveError});publish();}
+   return;
+  }
+  if(m.command==='auto'||m.command==='timeout'){if(b.over)return;if(m.command==='timeout'){forcedAuto=true;S.ui.autoTeam=true;const u=uById(b.cur);if(u?.side==='ally'&&b.menu!=='wait'){b.menu='wait';battleLater(aiAct,150);}render();}else{forcedAuto=false;handlers.teamAuto();}return;}
+  if(m.command==='pet-auto'){battleAction('auto:1');return;}
+  if(m.command==='speed'){if(BattleSpeed.value!==m.speed)handlers.battleSpeed();render();return;}
+  if(b.over||b.menu==='wait'||uById(b.cur)?.side!=='ally')return;
+  const u=uById(b.cur),target=uById(m.target),friend=uById(m.friend);
+  if(target?.side==='enemy'&&target.hp>0)b.target=b.enemies.indexOf(target);
+  if(friend?.side==='ally')b.atarget=b.allies.indexOf(friend);
+  const issue=(value,side)=>{battleAction(value);const pending=BattleSkillTarget.current();if(pending&&pending.mode==='local'&&pending.side===side)BattleSkillTarget.confirm(side,side==='enemy'?b.target:b.atarget);};
+  if(m.command==='skill'){
+   const sk=SK[m.id];if(!sk||!u.skills.includes(m.id)&&m.id!=='rest'||cooldownOf(u,m.id)||costOf(u,sk)>u.mp||sk.summon&&!battleHasRoom(u))return publish();
+   const support=['heal','buff'].includes(sk.t);if(support&&sk.tg!=='self'&&sk.tg!=='team'&&(!friend||friend.side!=='ally'||friend.hp<=0&&!sk.rev&&!sk.revAll))return publish();
+   if(['p','m','h','auto','status','debuff'].includes(sk.t)&&(!target||target.side!=='enemy'||target.hp<=0))return publish();
+   issue('sk:'+m.id,support?'ally':'enemy');
+  }else if(m.command==='item'&&S.P.items[m.id]>0&&CON[m.id]&&!CON[m.id].seal)issue('item:'+m.id,'ally');
+  else if(m.command==='seal'&&S.P.items[m.id]>0&&CON[m.id]?.seal&&sealable(target))issue('seal:'+m.id,'enemy');
+  else if(m.command==='swap'&&S.P.carried.includes(Number(m.id)))battleAction('swap:'+Number(m.id));
+  else if(m.command==='flee')battleAction('flee');
+  // Item/seal/swap commands are still settled by the original game, never by the renderer.
+  if(!presenting)publish();
+ }
+ addEventListener('message',e=>{
+  if(e.origin!==location.origin||e.source!==frame?.contentWindow)return;const m=e.data;
+  if(m?.type==='ordinary-ready'){ready=true;recovery.ready(battleId);post('ordinary-state',{view:view()});return;}
+  if(m?.type==='ordinary-render-error'&&(!ready||m.channel===channel)){useLegacy('renderer-error');return;}
+  if(m?.channel!==channel)return;
+  if(m.type==='ordinary-heartbeat'&&m.battle===battleId){recovery.pulse(battleId);return;}
+  if(m.type==='ordinary-presented'&&m.battle===battleId&&m.sequence===presenting){if(!recovery.acknowledge(battleId,m.sequence))return;presenting=0;post('ordinary-state',{view:view()});}
+  if(m.type==='ordinary-command')void command(m).catch(error=>{post('ordinary-notice',{message:'ดำเนินการไม่สำเร็จ กรุณาลองอีกครั้ง'});publish();console.error(error);});
+ });
+ // Only read-only diagnostics are exposed; commands still require the owned frame and nonce.
+ window.ordinaryBattleDiagnostics=()=>({battle:battleId,revision,presenting,ready,active:!!frame,recoveryReason,recovery:recovery.inspect(),saveMode:WALK_ONLINE?'test-account':'local-test-draft'});
+ mount();
+})();
+
 }
 
 </script><script type="module" src="/Soulbeast/client/event-announcements.mjs?v=boss-portrait-1"></script><script src="/Soulbeast/client/game-voice-hooks.js?v=1"></script></body>
