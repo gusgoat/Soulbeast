@@ -22,6 +22,13 @@ function create(nav,groups,options={}){
    }
    if(a.cooldown>0){a.cooldown=Math.max(0,a.cooldown-dt);continue;}
    const distance=nav.distance(a,player);
+   // Passive beasts still patrol and can be encountered by deliberate contact.
+   if((shadow||entry.kind==='water')&&scope.LivingBeasts?.isPassive(a)){
+    if(a.chasing)pursuit.beginReturn(a);
+    if(a.returning)pursuit.returnHome(actorNav,a,dt,speed);
+    if(grace===0&&distance<=CONTACT){locked=true;return entry;}
+    continue;
+   }
    if(shadow&&effects.repellent){
     if(a.chasing)pursuit.beginReturn(a);
     if(grace===0&&distance<=CONTACT){locked=true;return entry;}

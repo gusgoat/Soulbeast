@@ -40,10 +40,12 @@ function create(map,seed){
   for(const a of actors){
    a.moving=false;
    const ready=available(a);
-   const near=I.distance(a,player);if(a.beastHabitat==='water'&&ready&&!safe&&near<=contactDistance)contact??=a;
+   const near=I.distance(a,player),passive=a.kind==='shadow'&&g.LivingBeasts?.isPassive(a);
+   const inHabitat=a.beastHabitat!=='water'||!!a.habitatAllowed?.(player.x,player.y);
+   if((passive||a.beastHabitat==='water')&&ready&&!safe&&inHabitat&&near<=contactDistance)contact??=a;
    if(a.mode!=='return'){
     // Keep a clear route back to the patrol area and never cut across the spiral.
-    const canChase=ready&&!safe&&near<=(a.mode==='chase'?leash:aggroDistance)
+    const canChase=ready&&!passive&&inHabitat&&!safe&&near<=(a.mode==='chase'?leash:aggroDistance)
      &&I.distance(a.home,player)<=leash&&clear(a,player,a)&&clear(a.home,player,a);
     if(canChase)a.mode='chase';
     else if(a.mode==='chase'){a.mode='return';a.goal=null;}

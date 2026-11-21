@@ -12,6 +12,10 @@
   const rule=typeof module!=='undefined'?require('../hemant-walk-demo/encounter-rules.js'):g.hemantEncounterRules;
   return rule.plan(options.player||{lv:1},'shadow',catalog,rng,options.country||null,now,options.habitat==='water'?'water':null);
  }
+ // Curated from the existing model contact sheets: gentle faces and guardian/herbivore silhouettes.
+ // Model IDs keep evolved warriors distinct from their gentle first form; no random temperament rolls.
+ const passiveModels=new Set(["wisp","wisp_ghostfire","wisp_death_lantern","jackalope","tanuki","tanuki_shifter","tanuki_thousand","pixie","pixie_flower","pixie_titania","kodama","kodama_ancient","kodama_sacred","kitsune","kitsune_six","kitsune_nine","nilmangkorn","nilmangkorn_war","nilmangkorn_royal","baku","nekomata","nekomata_evolved","amabie","amabie_seer","kinnaree","kinnaree_queen","moon_tortoise","moss_treant","silver_fox","moon_cat","mermaid","night_horse","celestial_deer","unicorn","pegasus","erawan","lamassu","lunar_stag","jade_moon_hare","bloom_jade_mare","aurora_whale","dawn_valkyrie","cosmic_tortoise","legend2_aurorion","legend2_selestia","qilin","kappa","mandrake","scarab","griffin","scarab_gold","dragon_young","yeti"]);
+ const isPassive=a=>passiveModels.has(a?.beastModelId);
  function ensure(a,options={}){
   if(a.beastModelId)return a;
   const seed=options.seed??hash((options.scene||'')+':'+(options.country||'')+':'+(options.floor?.floor||'')+':'+(a.id||a.questId||point(a).x+','+point(a).y)+':'+(options.at||Date.now())),rng=random(seed);
@@ -47,5 +51,5 @@
  }
  function create(options={}){if(options.mode==='2d'||new URLSearchParams(g.location?.search||'').get('beast3d')==='0')return createSprites(options);const fallback=createSprites({...options,cell:96,cacheSize:4});let renderer=null,disposed=false,error=null;import('./living-beasts-3d.mjs?v=beasts-3d-six-20261121').then(m=>{if(!disposed)renderer=m.createLiving3D({data,ensure,fallback,maxActors:options.maxActors});}).catch(e=>{error=String(e);});g.addEventListener?.('pagehide',e=>{if(!e.persisted)disposed=true;});return {draw:(...args)=>(renderer||fallback).draw(...args),preload:()=>Promise.resolve([]),ready:a=>renderer?renderer.ready(a):fallback.ready(a),stats:()=>renderer?.stats()||{mode:'3d',loaded:0,queued:0,loading:renderer?0:1,errors:error?[['module',error]]:[]},dispose(){disposed=true;renderer?.dispose();fallback.dispose();}};}
  const canPlan=options=>{try{return !!plan(options,random(1807)).units.length;}catch{return false;}};
- const api={data,model,formFor,hash,random,plan,canPlan,ensure,assign,remember,restore,create};g.LivingBeasts=api;if(typeof module!=='undefined')module.exports=api;
+ const api={data,model,formFor,hash,random,plan,canPlan,isPassive,passiveModels:Object.freeze([...passiveModels]),ensure,assign,remember,restore,create};g.LivingBeasts=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

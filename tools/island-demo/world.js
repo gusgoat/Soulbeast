@@ -157,12 +157,27 @@ Promise.all([atlasReady,...[asset.floor,...Object.values(landscapeArt)].map(wait
  renderGround();
  canvas.dataset.scenery='ready';
 });
+const touchDisplay=matchMedia('(pointer: coarse)').matches;
+let graphics,shouldPaint;
 function resize(){
- dpr=Math.min(2,devicePixelRatio||1);width=innerWidth;height=innerHeight;
+ width=innerWidth;height=innerHeight;
+ const pixelLimit=touchDisplay?Math.max(1,Math.sqrt(graphics.pixels/Math.max(1,width*height))):2;
+ dpr=Math.min(devicePixelRatio||1,graphics.scale,pixelLimit);
  canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
  shadowLayer.resize(canvas.width,canvas.height,width,height);
 }
-addEventListener('resize',resize);resize();
+function applyGraphics(){
+ const level=WalkGraphics.read();
+ graphics=WalkGraphics.levels[level-1];
+ const fps=graphics.fps||(graphics.frameMs===32?30:touchDisplay?60:0);
+ shouldPaint=CountryRenderBudget.paintCadence(fps?1000/fps:0);
+ canvas.dataset.graphicsLevel=String(level);
+ resize();
+}
+addEventListener('resize',resize);
+addEventListener('storage',event=>{if(event.key===WalkGraphics.KEY||event.key===null)applyGraphics();});
+addEventListener(WalkGraphics.CHANGE,applyGraphics);
+applyGraphics();
 const sx=x=>width/2+(x-cam.x)*zoom,sy=y=>height*.54+(y-cam.y)*F*zoom;
 function stamp(img,x,y,size,anchor=1){
  if(!img?.naturalWidth)return false;
@@ -519,7 +534,7 @@ function tick(now){
   if(visit()){
    companion.sync(CompanionFollowers.first(player));companion.update(dt,p);
    if(companion.key)canvas.dataset.companion=companion.key;else delete canvas.dataset.companion;
-   draw();
+   if(shouldPaint(now))draw();
   }
   if(needsSave)void saveProgress();
   if(clock>=miniAt&&visit()){
