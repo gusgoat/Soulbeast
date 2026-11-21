@@ -9015,7 +9015,9 @@ if(params.has('partyInventory')&&parent!==window){
   if(event.data?.type==='party-inventory-idle'){sending=false;return;}
   if(event.data?.type!=='party-inventory-state'||!event.data.player)return;
   current=event.data.player;capacity=event.data.capacity||1;
+  if(allowedTabs.has(event.data.screen))S.screen=event.data.screen;
   S.P={...S.P,...current};S.battle=null;S.zone=null;render();
+  window.WalkLoading?.ready();send('walk-screen-ready',{href:location.href});
  });
  send('party-inventory-ready');
 }

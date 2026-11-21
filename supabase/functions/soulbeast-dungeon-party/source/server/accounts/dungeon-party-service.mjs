@@ -1,6 +1,6 @@
 import {ensurePersonal,finishPersonal,rebasePersonal} from './dungeon-party-personal.mjs';
 import {acceptLocalPosition,localEnemyContact,armLocalTrap,resolveLocalTrap} from './dungeon-party-local.mjs';
-import {createFloor,claimEnemy,settleEnemy,openBossDoor,beginBoss,settleBoss,nextFloor,scaleBossTeam} from '../../tools/labyrinth-demo/online-party-rules.mjs';
+import {createFloor,claimEnemy,settleEnemy,openBossDoor,beginBoss,settleBoss,nextFloor,scaleBossTeam,doorReady} from '../../tools/labyrinth-demo/online-party-rules.mjs';
 import {departPartyMember,evacuateDeadMembers} from './dungeon-party-death.mjs';
 import {createPartyTraps,advancePartyTraps,visiblePartyTraps} from './dungeon-party-traps.mjs';
 import {partySnapshot,partyBattleSnapshot} from './dungeon-party-snapshot.mjs';
@@ -48,14 +48,17 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
     floor.traps??=createPartyTraps(await combat.trapPlacements(floor.floor));
     if(data.position&&me.exploring)acceptLocalPosition(room,me,data,await combat.navigation(room));
    }
+   if(room.personal?.[actor]?.actionsVersion===3&&(['chest','heal'].includes(action)||action==='inventory'&&data.op))throw Error('personal_action_required');
    if(room.personal?.[actor]?.suspended&&(['chest','heal'].includes(action)||action==='inventory'&&data.op))throw Error('already_fighting');
-   if(data.personalVersion===2)await ensurePersonal(room,me,combat,uuid,now);
+   if(data.personalVersion===2)await ensurePersonal(room,me,combat,uuid,now,data.personalActions);
    async function finishBattle(battle){
     if(battle.presentation)return;
     await evacuateDeadMembers(room,combat.evacuate);
     if(battle.status==='finished'&&!battle.settled){
      const changed=battle.kind==='boss'?settleBoss(floor,battle.id,battle.result):settleEnemy(floor,battle.enemyId,battle.id,battle.result);
-     if(changed){if(battle.kind!=='boss'&&battle.result==='win'){floor.contributions??={};const own=floor.contributions[battle.participants[0]]??={shadow:0,bandit:0};own[floor.enemies[battle.enemyId].kind]++;}await combat.settle(room,battle);battle.settled=true;}
+     if(changed){if(battle.kind!=='boss'&&battle.result==='win'){floor.contributions??={};const own=floor.contributions[battle.participants[0]]??={shadow:0,bandit:0};own[floor.enemies[battle.enemyId].kind]++;}await combat.settle(room,battle);battle.settled=true;if(doorReady(floor))floor.doorOpen=true;
+      if(battle.kind==='boss')for(const member of room.members)if(room.personal?.[member.code]?.actionsVersion===3){rebasePersonal(room,member);room.personal[member.code].suspended=false;room.personal[member.code].bossDefeated=floor.boss==='defeated';}
+     }
     }
    }
    async function startSharedBoss(){
@@ -76,7 +79,8 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
 
      delete room.personalGather;return {battle:id,interrupted};
    }
-   async function startGatherIfReady(){const g=room.personalGather;if(!g||floor.boss!=='guarding')return null;const required=room.members.filter(m=>m.hp>0&&room.personal?.[m.code]?.floor===room.floor);if(required.every(m=>g.ready[m.code]))return startSharedBoss();return null;}
+   async function advanceFloor(){const next=nextFloor(floor);if(next){room.dungeon=next;room.floor=next.floor;room.battles={};room.battleTransition=null;await combat.arrive(room);}else{room.state='closed';room.completed=true;}delete room.personalGather;return {floor:room.floor,completed:!next};}
+   async function startGatherIfReady(){const g=room.personalGather;if(!g||(g.kind==='nextFloor'?floor.boss!=='defeated':floor.boss!=='guarding'))return null;const required=room.members.filter(m=>m.hp>0&&room.personal?.[m.code]?.floor===room.floor);if(required.every(m=>g.ready[m.code]))return g.kind==='nextFloor'?advanceFloor():startSharedBoss();return null;}
    let result;
    if(room.personalGather&&action==='status'){const started=await startGatherIfReady();if(started)room.revision=(room.revision||0)+1;}
    switch(action){
@@ -196,12 +200,11 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
      result={battle:partyBattleSnapshot(battle)};break;
     }
     case 'nextFloor':{
+     if(floor.boss!=='defeated')throw Error('boss_not_defeated');
      if(!combat.atStairs(room,actor))throw Error('stairs_out_of_reach');
      // Progress is team-wide; no member can farm the next floor in a separate instance.
-     const next=nextFloor(floor);
-     if(next){room.dungeon=next;room.floor=next.floor;room.battles={};room.battleTransition=null;await combat.arrive(room);}
-     else {room.state='closed';room.completed=true;}
-     result={floor:room.floor,completed:!next};break;
+     if(room.members.some(m=>room.personal?.[m.code]?.actionsVersion===3)){room.personalGather??={id:uuid(),kind:'nextFloor',floor:room.floor,ready:{}};result={gathering:true};break;}
+     result=await advanceFloor();break;
     }
     default:throw Error('bad_party_action');
    }
@@ -211,7 +214,7 @@ export function dungeonPartyService({transaction,combat,now=()=>Date.now(),uuid=
    if(action==='pulse')return snapshot(room,actor,now());
    // Return the same allowlisted view already sent over realtime in this committed reply.
    if(action==='personalBossReady'||['chest','heal','inventory'].includes(action))return {...result,snapshot:snapshot(room,actor,now(),false,!!room.personal?.[actor])};
-   if(snapshotActions.has(action))return {...result,snapshot:snapshot(room,actor,now(),action==='claim')};
+   if(snapshotActions.has(action))return {...result,snapshot:snapshot(room,actor,now(),action==='claim',!!(room.personal?.[actor]?.actionsVersion===3&&room.battles?.[data.battle]?.status==='finished'))};
    return result;
   });
  };

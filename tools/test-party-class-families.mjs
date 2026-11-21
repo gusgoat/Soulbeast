@@ -1,0 +1,6 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
+import {partyClassFamily,partyClassNames,partyDuplicateFamilies} from '../client/party-class-families.mjs';
+const source=fs.readFileSync(new URL('../supabase/functions/soulbeast-dungeon-party/engine.mjs',import.meta.url),'utf8'),a=source.indexOf('const CLS='),b=source.indexOf('const BASES=',a),classes=vm.runInNewContext(source.slice(a,b)+';CLS');
+assert.equal(Object.keys(partyClassNames).length,9);const groups=new Set();for(const cls of Object.keys(classes)){let base=cls;while(classes[base].p)base=classes[base].p;assert.equal(partyClassFamily(cls),base);groups.add(base);}assert.equal(groups.size,9);
+assert(partyDuplicateFamilies([{cls:'mage'},{cls:'warlock'}]));assert(partyDuplicateFamilies([{cls:'sage'},{cls:'archmage'}]));assert(partyDuplicateFamilies([{cls:'swordsman'},{cls:'sbsummon'}]));assert(partyDuplicateFamilies([{cls:'summoner'},{cls:'spiritlord'}]));assert(!partyDuplicateFamilies([{cls:'swordsman'},{cls:'warlock'},{cls:'spiritlord'},{cls:'packlord'}]));assert(partyDuplicateFamilies([{cls:'unknown'}]));
+console.log('PASS all 63 careers follow engine parents across 9 main families, cross-tier duplicate prevention and valid mixed parties');

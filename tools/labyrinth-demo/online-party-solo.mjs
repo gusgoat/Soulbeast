@@ -4,9 +4,9 @@ import {simulateSolo,soloChoice,SOLO_EVENT_LIMIT} from '../../supabase/functions
 export function localPartyCombat({publish,finish,completePersonal,report}){
  let session,timer=0;
  const storageKey=id=>'party-combat-v1:'+id;
- function read(id){try{const events=JSON.parse(sessionStorage.getItem(storageKey(id))||'[]');return Array.isArray(events)&&events.length<=2048?events:[];}catch{return [];}}
- function save(s){try{sessionStorage.setItem(storageKey(s.id),JSON.stringify(s.events));}catch{}}
- function clear(id){try{sessionStorage.removeItem(storageKey(id));}catch{}}
+ function read(id){try{const events=JSON.parse(localStorage.getItem(storageKey(id))||sessionStorage.getItem(storageKey(id))||'[]');return Array.isArray(events)&&events.length<=2048?events:[];}catch{return [];}}
+ function save(s){try{localStorage.setItem(storageKey(s.id),JSON.stringify(s.events));}catch{}}
+ function clear(id){try{localStorage.removeItem(storageKey(id));sessionStorage.removeItem(storageKey(id));}catch{}}
  function schedule(s,ms,fn){clearTimeout(timer);timer=setTimeout(()=>{if(session===s)void fn();},ms);}
  function next(s,redraw=true){
   if(session!==s)return;

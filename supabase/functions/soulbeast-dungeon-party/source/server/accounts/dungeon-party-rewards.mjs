@@ -1,7 +1,21 @@
 import '../../tools/labyrinth-demo/progression.js';
+export function rollPartyChest(engine,floor,chest,random=Math.random){
+ const rules=globalThis.DungeonProgression;
+   const roll=random(),category=chest.big?'equipment':roll<.25?'gold':roll<.65?'items':'equipment';
+   const catalog=category==='gold'?null:engine.lootCatalog();
+   const pool=category==='equipment'?rules.pool(catalog,floor,chest.big):category==='items'?catalog.items.filter(i=>(i.minFloor||1)<=floor):[];
+   if(category!=='gold'&&!pool.length)throw Error('reward_catalog_empty');
+   const entry=pool.length?pool[Math.floor(random()*pool.length)]:null;
+   const progression=rules.get(floor),gold=chest.big?progression.grandGold:progression.gold[0]+Math.floor(random()*(progression.gold[1]-progression.gold[0]+1));
+   const qty=category==='items'?1+Math.floor(random()*Math.min(5,floor+1)):entry?1:0;
+
+ const reward={id:entry?.id||'gold',name:entry?.name||'เหรียญ',gold,qty,type:category};
+ return reward;
+}
 export function partyRewardAdapter({engine,map,random=Math.random}){
  const rules=globalThis.DungeonProgression;
  return {
+  planChest:(floor,chest)=>rollPartyChest(engine,floor,chest,random),
   async settle(room,battle){
    if(battle.status!=='finished'||battle.result!=='win')return;
    battle.rewards??={};
@@ -25,17 +39,11 @@ export function partyRewardAdapter({engine,map,random=Math.random}){
    for(const legacy of Object.values(p.labyrinth||{}))for(const [key,value] of Object.entries(legacy.opened||{}))if(key.endsWith("-grand"))p.labyrinthBossChests[key]??=value;
    const previous=Object.values(opened).find(claims=>claims[id])?.[id]||(chest.big&&p.labyrinthBossChests[id]);
    if(previous)return {...previous,alreadyClaimed:true};
-   const roll=random(),category=chest.big?'equipment':roll<.25?'gold':roll<.65?'items':'equipment';
-   const catalog=category==='gold'?null:engine.lootCatalog();
-   const pool=category==='equipment'?rules.pool(catalog,room.floor,chest.big):category==='items'?catalog.items.filter(i=>(i.minFloor||1)<=room.floor):[];
-   if(category!=='gold'&&!pool.length)throw Error('reward_catalog_empty');
-   const entry=pool.length?pool[Math.floor(random()*pool.length)]:null;
-   const progression=rules.get(room.floor),gold=chest.big?progression.grandGold:progression.gold[0]+Math.floor(random()*(progression.gold[1]-progression.gold[0]+1));
-   const qty=category==='items'?1+Math.floor(random()*Math.min(5,room.floor+1)):entry?1:0;
+   const reward=rollPartyChest(engine,room.floor,chest,random),{gold,qty,id:rewardId,type:category}=reward;
    p.gold=(p.gold||0)+gold;
-   if(category==='items'){p.items??={};p.items[entry.id]=(p.items[entry.id]||0)+qty;}
-   if(category==='equipment'){p.owned??=[];p.owned.push(entry.id);}
-   const reward={id:entry?.id||'gold',name:entry?.name||'เหรียญ',gold,qty,type:category};
+   if(category==='items'){p.items??={};p.items[rewardId]=(p.items[rewardId]||0)+qty;}
+   if(category==='equipment'){p.owned??=[];p.owned.push(rewardId);}
+
    opened[member.code][id]=reward;if(chest.big)p.labyrinthBossChests[id]=reward;
    return reward;
   }

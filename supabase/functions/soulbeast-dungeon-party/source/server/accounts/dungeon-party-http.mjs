@@ -1,5 +1,5 @@
 const actions=new Set(['inventory','status','pulse','move','claim','openDoor','bossContact','tick','nextFloor','worldTick','battleCommand','battleAuto','battleReady','chest','heal','leave','trapArm','trapResolve','soloFinish','flushSave','personalFinish','personalBossReady']);
-const publicErrors=new Set(['personal_sequence','personal_receipt_mismatch','personal_wrong_floor','personal_suspended','personal_enemy_unavailable','invalid_personal_result','invalid_personal_trap','invalid_inventory_action','login_required','character_not_owned','party_not_member','party_unavailable','party_save_busy',
+const publicErrors=new Set(['personal_action_required','invalid_personal_action','personal_sequence','personal_receipt_mismatch','personal_wrong_floor','personal_suspended','personal_enemy_unavailable','invalid_personal_result','invalid_personal_trap','invalid_inventory_action','login_required','character_not_owned','party_not_member','party_unavailable','party_save_busy',
  'trap_unavailable','trap_not_due','trap_out_of_reach','enemy_unavailable','already_fighting','boss_battle_active','enemy_out_of_reach','door_out_of_reach',
  'floor_quota_incomplete','boss_out_of_reach','boss_door_closed','boss_unavailable',
  'battle_not_member','stairs_out_of_reach','boss_not_defeated','player_defeated','bad_request_id','request_mismatch',

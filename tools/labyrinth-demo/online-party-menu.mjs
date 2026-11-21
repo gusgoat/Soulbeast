@@ -1,5 +1,5 @@
 // Private inventory requests only when a menu opens; never part of motion broadcasts.
-export function partyMenu({request,refresh,getFloor,onOpen,canOpen}){
+export function partyMenu({request,refresh,getFloor,onOpen,canOpen,localInventory=()=>null}){
  const $=id=>document.getElementById(id),panel=$('gameMenu'),aux=$('menuFrame'),quest=$('townDialog'),hud=[$('hudTop'),$('hudBottom')];
  const feedback=document.createElement('div');
  feedback.className='party-menu-feedback';feedback.hidden=true;
@@ -11,10 +11,11 @@ export function partyMenu({request,refresh,getFloor,onOpen,canOpen}){
  }
  let member=null;
  let tab='bag',data=null,busy=false,pending=null,generation=0;
- function close(){generation++;panel.hidden=true;if(quest.open)quest.close();aux.removeAttribute('src');report();onOpen(false);window.focus();}
- function sendInventory(){if(data?.player&&!panel.hidden&&inventoryTabs.has(tab))aux.contentWindow.postMessage({type:'party-inventory-state',player:data.player,capacity:data.capacity},location.origin);}
+ function close(){generation++;panel.hidden=true;if(quest.open)quest.close();if(!localInventory())aux.removeAttribute('src');report();onOpen(false);window.focus();}
+ function sendInventory(){if(data?.player&&!panel.hidden&&inventoryTabs.has(tab))aux.contentWindow.postMessage({type:'party-inventory-state',player:data.player,capacity:data.capacity,screen:tab},location.origin);}
  async function load(){
   const current=generation;
+  const cached=localInventory();if(cached){data=cached;syncHud();sendInventory();report();return;}
   report('กำลังโหลดข้อมูล…');
   try{const result=await request({});if(current!==generation)return;
    if(!result.player)throw Error('ข้อมูลกระเป๋ายังไม่พร้อม');
@@ -25,7 +26,7 @@ export function partyMenu({request,refresh,getFloor,onOpen,canOpen}){
   if(busy)return;
   busy=true;pending??={...command,requestId:crypto.randomUUID()};
   const current=generation;report('กำลังบันทึก…');
-  try{await request(pending);pending=null;await refresh();if(current===generation)await load();}
+  try{await request(pending);pending=null;if(!localInventory())await refresh();if(current===generation)await load();}
   catch(e){if(current===generation)report(e.message==='invalid_inventory_action'?'ใช้คำสั่งนี้ไม่ได้ในสถานะปัจจุบัน':'บันทึกไม่สำเร็จ · กดอีกครั้งเพื่อตรวจรายการเดิม');if(['invalid_inventory_action','already_fighting'].includes(e.message))pending=null;}
   finally{busy=false;aux.contentWindow?.postMessage({type:'party-inventory-idle'},location.origin);}
  }
@@ -48,10 +49,12 @@ export function partyMenu({request,refresh,getFloor,onOpen,canOpen}){
   tab=screen;panel.hidden=false;onOpen(true);
   const inventory=inventoryTabs.has(tab);
   const country=['blue','green','red'].includes(member?.country)?member.country:'blue';
-  const params=new URLSearchParams({v:'beasts-3d-six-20261121',screen:tab,dungeon:getFloor()||'mine-floor-1',country,city:country+'-capital'});
+  const params=new URLSearchParams({v:'instant-party-3',screen:tab,dungeon:getFloor()||'mine-floor-1',country,city:country+'-capital'});
   params.set(inventory?'partyInventory':'partyAux','1');
-  aux.src=tab==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+params;
-  if(inventory){data=null;void load();}
+  const src=tab==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+params;
+  const reuse=inventory&&localInventory()&&aux.getAttribute('src')?.includes('partyInventory=1');
+  if(!reuse&&aux.getAttribute('src')!==src)aux.src=src;
+  if(inventory){if(!localInventory())data=null;void load();}
  }
  quest.addEventListener('close',()=>onOpen(false));
  addEventListener('message',event=>{
@@ -65,5 +68,5 @@ export function partyMenu({request,refresh,getFloor,onOpen,canOpen}){
    if(event.data?.type==='party-menu-open')open(event.data.screen);
   }
  });
- return {close,get open(){return !panel.hidden||quest.open;},update(m){member=m;syncHud();}};
+ return {close,get open(){return !panel.hidden||quest.open;},update(m){member=m;const cached=localInventory();if(cached){data=cached;sendInventory();if(!aux.getAttribute('src')){const params=new URLSearchParams({v:'instant-party-3',screen:'hero',dungeon:getFloor()||'mine-floor-1',country:m?.country||'blue',city:(m?.country||'blue')+'-capital',partyInventory:'1'});aux.src='../town-walk-demo/menu.html?'+params;}}syncHud();}};
 }

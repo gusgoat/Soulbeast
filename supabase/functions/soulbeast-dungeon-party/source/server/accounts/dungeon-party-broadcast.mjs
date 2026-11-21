@@ -7,7 +7,7 @@ export async function broadcastPartyState(tx,{environment,serverNow,action,actor
  if(action==='pulse'&&serverNow-(room.lastBroadcastAt||0)<500)return;
  // Pulse already returns this same snapshot to its caller.
  const messages=participants.filter(member=>action!=='pulse'||member.code!==actor).map(member=>({
-  payload:partySnapshot(room,member.code,serverNow),
+  payload:partySnapshot(room,member.code,serverNow,false,room.personal?.[member.code]?.actionsVersion===3&&room.dungeon.boss!=='fighting'&&['tick','battleCommand','battleReady','battleAuto'].includes(action)),
   topic:`sb-party-state:${environment}:${room.id}:${member.code}`
  }));
  if(messages.length)await tx.query(`select realtime.send(message.payload,'state',message.topic,true)

@@ -2,7 +2,7 @@
 export function partyRunController({connection,roomId,scene,openMotion,onState=()=>{},onError=()=>{},onResult=()=>{},personalExploration=false,localExploration=false,getPosition=()=>null,canAdvanceBattle=()=>true}){
  let closed=false,busy=false,snapshot=null,motion=null,motionKey='',path=[],seq=0,pendingState=null,commands=[],reading=false,snapshotAt=0,soloKnown=null;
  async function refresh(next){
-  next??=await connection.run(roomId,'status',localExploration?{localExploration:true,...(personalExploration?{personalVersion:2}:{})}:{});
+  next??=await connection.run(roomId,'status',localExploration?{localExploration:true,...(personalExploration?{personalVersion:2,personalActions:3}:{})}:{});
   if(closed)return;
   if(!next||next.id!==roomId)throw Error('invalid_party_snapshot');
   if(snapshot&&next.revision<snapshot.revision){

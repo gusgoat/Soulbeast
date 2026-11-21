@@ -1,8 +1,9 @@
+import {partyClassFamily,partyClassNames,partyDuplicateFamilies} from '../../client/party-class-families.mjs?v=instant-party-3';
 import {connectOnlineWalk} from '../../client/online-walk.mjs?v=revision-retry-1';
 import {connectDungeonParty,partySessionKey} from '../../client/dungeon-party.mjs?v=public-rooms-1';
 import {partyRules} from './online-party-rules.mjs';
 const $=id=>document.getElementById(id);
-const errors={public_room_unavailable:'ยังไม่มีห้องสาธารณะที่ว่าง ลองสร้างห้องสาธารณะเพื่อรอผู้เล่นคนอื่น',login_required:'กรุณาเข้าสู่ระบบออนไลน์ก่อน',party_full:'ห้องนี้มีผู้ผนึกครบ 4 คนแล้ว',
+const errors={party_duplicate_class_family:'ปาร์ตี้นี้มีสายอาชีพหลักของคุณแล้ว · สมาชิกต้องต่างกันทั้ง 9 สาย แม้เป็นคนละขั้นอาชีพ',party_class_unknown:'ไม่พบสายอาชีพหลัก กรุณาบันทึกตัวละครแล้วเข้าเกมใหม่',public_room_unavailable:'ยังไม่มีห้องสาธารณะที่ว่าง ลองสร้างห้องสาธารณะเพื่อรอผู้เล่นคนอื่น',login_required:'กรุณาเข้าสู่ระบบออนไลน์ก่อน',party_full:'ห้องนี้มีผู้ผนึกครบ 4 คนแล้ว',
  party_not_ready:'สมาชิกต้องออนไลน์และกดพร้อมทุกคน',party_host_only:'เฉพาะหัวหน้าห้องเท่านั้นที่เริ่มได้',
  save_conflict:'เซฟตัวละครมีการเปลี่ยนแปลง กรุณาเข้าเกมใหม่ก่อนเริ่มปาร์ตี้',party_already_active:'ตัวละครนี้อยู่ในปาร์ตี้แล้ว',party_unavailable:'ห้องปิดหรือหมดเวลาแล้ว',
  ready_not_confirmed:'เซิร์ฟเวอร์ยังไม่ยืนยันสถานะพร้อม กรุณากดอีกครั้ง',party_started:'ห้องนี้เริ่มดันเจี้ยนแล้ว',party_size:'ต้องมีสมาชิกอย่างน้อย 2 คน',
@@ -22,15 +23,17 @@ function render(){
  $('roomId').textContent=room.joinCode||'…';$('copy').disabled=!room.joinCode;
  $('count').textContent=room.members.length+'/4';$('members').replaceChildren();
  for(const m of room.members){const row=document.createElement('li');row.dataset.ready=String(m.ready&&m.online);
-  row.textContent=`${m.name} · Lv ${m.level}${m.code===room.host?' · หัวหน้าห้อง':''} · ${!m.online?'ขาดการเชื่อมต่อ':m.ready?'พร้อมแล้ว':'ยังไม่พร้อม'}`;$('members').append(row);}
+  row.textContent=`${m.name} · ${partyClassNames[partyClassFamily(m.cls)]||'ไม่พบสายอาชีพ'} · Lv ${m.level}${m.code===room.host?' · หัวหน้าห้อง':''} · ${!m.online?'ขาดการเชื่อมต่อ':m.ready?'พร้อมแล้ว':'ยังไม่พร้อม'}`;$('members').append(row);}
  const me=room.members.find(m=>m.code===connection.code);$('ready').textContent=me?.ready?'ยกเลิกพร้อม':'ยืนยันพร้อม';
  $('ready').hidden=room.state!=='waiting';$('ready').disabled=busy;$('leave').disabled=busy;
  $('resume').hidden=room.state!=='active';$('resume').disabled=busy;
  $('start').hidden=room.host!==connection.code||room.state!=='waiting';
- $('start').disabled=busy||room.state!=='waiting'||room.members.length<2||!room.members.every(m=>m.ready&&m.online);
+ $('start').disabled=partyDuplicateFamilies(room.members)||busy||room.state!=='waiting'||room.members.length<2||!room.members.every(m=>m.ready&&m.online);
  const size=room.startedSize||room.members.length;
  if(size>=2){const rule=partyRules(size);$('requirements').textContent=`ต่อชั้น: อสูรเงา ${rule.shadows} ตัว · โจรป่า ${rule.bandits} ตัว · พลังบอสและสมุน ×${rule.bossMultiplier.toFixed(1)}`;}
  else $('requirements').textContent='รอผู้ผนึกอีกอย่างน้อย 1 คน';
+ $('requirements').textContent+=' · สมาชิกต้องไม่ซ้ำสายอาชีพหลักทั้ง 9 สาย';
+ if(partyDuplicateFamilies(room.members)&&room.state==='waiting')$('requirements').textContent='มีสมาชิกสายอาชีพหลักซ้ำกัน · กรุณาจัดทีมใหม่ก่อนเริ่ม';
 }
 function resume(){stopped=true;clearInterval(timer);location.assign('index.html?room='+encodeURIComponent(room.id));}
 async function update(action='status',extra={}){
