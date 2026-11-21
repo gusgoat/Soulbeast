@@ -15,10 +15,12 @@ export function gameSessionId(token){
 let watchingGameSession=false, leavingGame=false;
 function leaveEndedGameSession(storage){
  if(leavingGame||typeof window==='undefined'||location.hostname!=='gusgoat.github.io')return;
+ let testWorld=new URLSearchParams(location.search).get('world')==='test';
+ if(!location.pathname.endsWith('/accounts.html')){try{testWorld=testWorld||JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')?.environment==='test'}catch{}}
  leavingGame=true;backupActiveWalk(storage??localStorage,sessionStorage,'session-ended');
  sessionStorage.removeItem('soulbeast-online-walk-v1');
  sessionStorage.removeItem('soulbeast-walk-preview-player-v1');
- window.top.location.replace('/Soulbeast/accounts.html?session=ended');
+ window.top.location.replace('/Soulbeast/accounts.html?'+(testWorld?'world=test&':'')+'session=ended');
 }
 function watchGameSession(client){
  if(watchingGameSession||typeof window==='undefined'||window.top!==window||location.hostname!=='gusgoat.github.io')return;

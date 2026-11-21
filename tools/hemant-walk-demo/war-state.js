@@ -1,7 +1,13 @@
 (function(scope){'use strict';
 const playerKey='soulbeast-walk-preview-player-v1',warKey='soulbeast-walk-war-view-v1';
 function read(key){try{return JSON.parse(sessionStorage.getItem(key)||'null')}catch{return null}}
-function playerCountry(){const id=read(playerKey)?.country;return ['blue','green','red'].includes(id)?id:null}
+function playerCountry(){
+ const player=read(playerKey),id=player?.country;if(['blue','green','red'].includes(id))return id;
+ // Old test fixtures have no permanent country. Use their navigation context only;
+ // do not assign a country to the character or change live/local character rules.
+ const online=read('soulbeast-online-walk-v1');
+ return online?.environment==='test'&&online.owner&&player?.code&&online.code===player.code&&online.snapshot?.P?.code===player.code&&['blue','green','red'].includes(online.navigationCountry)?online.navigationCountry:null;
+}
 function owner(id){return read(warKey)?.map?.locations?.find(n=>n.id===id)?.owner||id.split('-')[0]}
 function canEnter(id){return !!playerCountry()&&owner(id)===playerCountry()}
 function requirement(id){const view=read(warKey),top=scope.walkWarTopology;if(top){const locations=Object.fromEntries((view?.map?.locations||[]).map(n=>[n.id,n]));return top.attackRequirement({locations},playerCountry(),id)}const cached=view?.map?.locations?.find(n=>n.id===id);return cached?.attack||{allowed:false,connected:false,held:0,required:id.includes('-village-')?0:2,total:4}}

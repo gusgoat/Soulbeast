@@ -1,6 +1,6 @@
 export {mountSaveNotice} from './walk-save-notice.mjs?v=save-safe-20261106';
 import {mergeWalkPlayer,backupWalkDraft,backupActiveWalk} from './walk-save-merge.mjs?v=lesson-progress-1';
-import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=gacha-recovery-1';
+import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=test-world-entry-20261122-1';
 
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
@@ -23,9 +23,9 @@ export function enterOnlineWalk(state, environment, owner) {
  const country = ['blue','green','red'].includes(player.country) ? player.country : 'blue';
  sessionStorage.setItem(playerKey, JSON.stringify(player));
  sessionStorage.setItem(contextKey, JSON.stringify({
-  code: player.code, environment, owner, sessionId, revision: player.gsAt, snapshot: {...state, P: player}
+  code: player.code, environment, owner, sessionId, navigationCountry: country, revision: player.gsAt, snapshot: {...state, P: player}
  }));
- location.assign('./tools/town-walk-demo/index.html?city=' + country + '-capital');
+ location.assign('./tools/town-walk-demo/index.html?city=' + country + '-capital' + (environment==='test'?'&world=test&entry=test-world-entry-20261122-1':''));
 }
 
 export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {

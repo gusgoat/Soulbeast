@@ -14,7 +14,8 @@
    // Missing, blocked, or corrupt browser storage cannot establish a selected character.
   }
   document.documentElement.style.visibility = 'hidden';
-  location.replace('/Soulbeast/accounts.html');
+  let testWorld=new URLSearchParams(location.search).get('world')==='test';try{testWorld=testWorld||JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')?.environment==='test'}catch{}
+  location.replace('/Soulbeast/accounts.html'+(testWorld?'?world=test&entry=test-world-entry-20261122-1':''));
  }
  checkSelectedCharacter();
  addEventListener('pageshow', event => {
