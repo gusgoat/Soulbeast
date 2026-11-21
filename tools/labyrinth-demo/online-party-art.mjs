@@ -7,6 +7,7 @@ import {drawWalkRank} from '../town-walk-demo/walk-rank-badge.mjs?v=1';
 // Visual-only adapter: never changes party state or waits for network movement.
 const root=new URL('../../',import.meta.url);
 export function partyArt(){
+ DungeonTraps.preloadEffects();
  const living=globalThis.LivingBeasts.create(),banditActors=new Map();let banditVisual=globalThis.CountryBanditActors.create([]);
  let map,cfg,props=[],environment=[],art={},avatars=new Map(),boss=MineBossSprites.create(),generation=0,waterImage=null,waterPattern=null,shadeCache=null;
  let groundTiles=null;
@@ -76,6 +77,7 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
   ctx.beginPath();ctx.arc(q.x,q.y,radius,0,Math.PI*2);
   ctx.globalAlpha=t.burst ? .35 : .1;ctx.fill();ctx.globalAlpha=1;ctx.stroke();
   ctx.restore();
+  if(t.burst)DungeonTraps.drawEffect(ctx,t.type,q,t.burst,s);
  }
  for(const e of local.enemies.values())if(visible(e.position))draws.push({y:e.position.y,run:()=>{if(e.kind==='shadow'){if(!e.beastModelId){if(!e.appearance){label(e.position,'กำลังโหลดอสูร…');return;}if(e.appearance){e.sp=e.appearance.sp;e.lv=e.appearance.lv;e.form=e.appearance.form;}globalThis.LivingBeasts.ensure(e,{scene:'dungeon',floor:cfg,seed:globalThis.LivingBeasts.hash(cfg.seed+':'+e.id)});}const q=screen(e.position);living.draw(ctx,e,q.x,q.y,145*s,performance.now()/1000);return;}if(e.kind==='bandit'&&e.appearance?.cls&&sealerSpriteCatalog[e.appearance.cls]&&['male','female'].includes(e.appearance.gender)){
  let actor=banditActors.get(e.id);if(!actor){actor={banditClass:e.appearance.cls,banditGender:e.appearance.gender,banditPose:{...e.position,heading:0}};banditActors.set(e.id,actor);}
