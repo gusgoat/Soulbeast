@@ -7,12 +7,12 @@ import {drawWalkRank} from '../town-walk-demo/walk-rank-badge.mjs?v=1';
 // Visual-only adapter: never changes party state or waits for network movement.
 const root=new URL('../../',import.meta.url);
 export function partyArt(){
- const living=globalThis.LivingBeasts.create();
+ const living=globalThis.LivingBeasts.create(),banditActors=new Map();let banditVisual=globalThis.CountryBanditActors.create([]);
  let map,cfg,props=[],environment=[],art={},avatars=new Map(),boss=MineBossSprites.create(),generation=0,waterImage=null,waterPattern=null,shadeCache=null;
  let groundTiles=null;
  const url=p=>p.startsWith(root.pathname)&&root.pathname!=='/'?new URL(p,root).href:new URL(p.replace(/^\//,''),root).href;
  function load(name,path,ticket){const im=new Image();im.onload=()=>{if(ticket===generation)art[name]=im;};im.src=url(path);}
- function setFloor(m,c){map=m;cfg=c;art={};props=[];groundTiles?.release();groundTiles=null;shadeCache=null;const ticket=++generation;
+ function setFloor(m,c){banditVisual.release();banditActors.clear();banditVisual=globalThis.CountryBanditActors.create([]);map=m;cfg=c;art={};props=[];groundTiles?.release();groundTiles=null;shadeCache=null;const ticket=++generation;
  // The solo scenery planner carves decorative niches. Keep those edits on a visual copy.
  environment=LivingEnvironment.dungeonMap({...m,grid:m.grid.map(row=>row.slice())}).environmentPlan;
  void LivingEnvironment.ready(environment.filter(o=>!o.key.startsWith('native:')).map(o=>o.key));
@@ -77,7 +77,10 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
   ctx.globalAlpha=t.burst ? .35 : .1;ctx.fill();ctx.globalAlpha=1;ctx.stroke();
   ctx.restore();
  }
- for(const e of local.enemies.values())if(visible(e.position))draws.push({y:e.position.y,run:()=>{if(e.kind==='shadow'){if(!e.beastModelId){if(!e.appearance){label(e.position,'กำลังโหลดอสูร…');return;}if(e.appearance){e.sp=e.appearance.sp;e.lv=e.appearance.lv;e.form=e.appearance.form;}globalThis.LivingBeasts.ensure(e,{scene:'dungeon',floor:cfg,seed:globalThis.LivingBeasts.hash(cfg.seed+':'+e.id)});}const q=screen(e.position);living.draw(ctx,e,q.x,q.y,145*s,performance.now()/1000);return;}const im=art.bandit;if(!im)return;const q=screen(e.position),f=e.moving?Math.floor(e.phase||0)%8:0,z=(e.kind==='bandit'?135:115)*s;ctx.save();ctx.translate(q.x,q.y);ctx.scale(e.facing||1,1);ctx.drawImage(im,f%4*256,Math.floor(f/4)*256,256,256,-z/2,-z*.92,z,z);ctx.restore();}});
+ for(const e of local.enemies.values())if(visible(e.position))draws.push({y:e.position.y,run:()=>{if(e.kind==='shadow'){if(!e.beastModelId){if(!e.appearance){label(e.position,'กำลังโหลดอสูร…');return;}if(e.appearance){e.sp=e.appearance.sp;e.lv=e.appearance.lv;e.form=e.appearance.form;}globalThis.LivingBeasts.ensure(e,{scene:'dungeon',floor:cfg,seed:globalThis.LivingBeasts.hash(cfg.seed+':'+e.id)});}const q=screen(e.position);living.draw(ctx,e,q.x,q.y,145*s,performance.now()/1000);return;}if(e.kind==='bandit'&&e.appearance?.cls&&sealerSpriteCatalog[e.appearance.cls]&&['male','female'].includes(e.appearance.gender)){
+ let actor=banditActors.get(e.id);if(!actor){actor={banditClass:e.appearance.cls,banditGender:e.appearance.gender,banditPose:{...e.position,heading:0}};banditActors.set(e.id,actor);}
+ Object.assign(actor,e.position,{moving:!!e.moving,phase:e.phase||0});const q=screen(e.position);banditVisual.draw(ctx,actor,q.x,q.y,145*s);return;
+ }const im=art.bandit;if(!im)return;const q=screen(e.position),f=e.moving?Math.floor(e.phase||0)%8:0,z=(e.kind==='bandit'?135:115)*s;ctx.save();ctx.translate(q.x,q.y);ctx.scale(e.facing||1,1);ctx.drawImage(im,f%4*256,Math.floor(f/4)*256,256,256,-z/2,-z*.92,z,z);ctx.restore();}});
  const guard=local.boss;
  const bp=guard?.position||world.bossPosition||map.boss;
  const dir=guard?.dir??(world.bossPosition?((world.bossDir||0)+6)%8:0);
@@ -124,5 +127,5 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
  ctx.fillStyle=shadeCache.shade;ctx.fillRect(0,0,w,h);
  ExtendedThemes.weather(ctx,w,h,time,cfg.theme);
  }
- return {setFloor,draw,stats:living.stats,readyEnemy:living.ready};
+ return {setFloor,draw,stats:living.stats,readyEnemy:living.ready,banditStats:()=>banditVisual.stats()};
 }

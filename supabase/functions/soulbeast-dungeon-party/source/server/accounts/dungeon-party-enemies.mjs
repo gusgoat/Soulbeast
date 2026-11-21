@@ -6,13 +6,21 @@ import '../../tools/town-walk-demo/game-clock.js';
 import '../../tools/labyrinth-demo/encounter-rules.js';
 // These are normal dungeon values. Party scaling is applied once by the service.
 export function partyEnemyAdapter({engine,random=Math.random,now=Date.now}){
+ function prepare(room,enemy){
+  const floor=globalThis.MineFloors.get(room.floor),all=engine.catalog();
+  const catalog=enemy.kind==='shadow'?{...all,species:Object.fromEntries(Object.entries(all.species).filter(([id,s])=>globalThis.LivingReadySpecies.has(id)&&globalThis.BeastHabitats.allowed(id,s,{habitat:'land'})))}:all;
+  const plan=enemy.encounterPlan||(enemy.encounterPlan=globalThis.DungeonEncounterRules.plan(null,enemy.kind,catalog,floor,random,now())),first=plan.units[0];
+  if(first.type==='human'){first.gender||=random()<.5?'female':'male';enemy.appearance={cls:first.cls,gender:first.gender,lv:first.lv};}
+  else enemy.appearance={sp:first.sp,lv:first.lv,form:all.species[first.sp].ev?.filter(e=>first.lv>=e[0]).length||0};
+  return plan;
+ }
  return {
-  prepareEnemyAppearances(room){if(!room.dungeon?.enemies||room.floor<1||room.floor>7)return;const pending=Object.values(room.dungeon.enemies).filter(e=>e.kind==='shadow'&&!e.encounterPlan);if(!pending.length)return;const floor=globalThis.MineFloors.get(room.floor),all=engine.catalog(),catalog={...all,species:Object.fromEntries(Object.entries(all.species).filter(([id,s])=>globalThis.LivingReadySpecies.has(id)&&globalThis.BeastHabitats.allowed(id,s,{habitat:'land'})))};for(const enemy of pending){enemy.encounterPlan=globalThis.DungeonEncounterRules.plan(null,'shadow',catalog,floor,random,now());const first=enemy.encounterPlan.units[0];enemy.appearance={sp:first.sp,lv:first.lv,form:all.species[first.sp].ev?.filter(e=>first.lv>=e[0]).length||0};}},
+  prepareEnemyAppearances(room){if(!room.dungeon?.enemies||room.floor<1||room.floor>7)return;for(const enemy of Object.values(room.dungeon.enemies)){if(enemy.kind==='shadow'&&!enemy.encounterPlan||enemy.kind==='bandit'&&enemy.state==='roaming'&&(!enemy.encounterPlan||!enemy.appearance))prepare(room,enemy);}},
   soloEnemies(room,enemy){
    const floor=globalThis.MineFloors.get(room.floor);
-   const plan=enemy.encounterPlan||globalThis.DungeonEncounterRules.plan(null,enemy.kind,engine.catalog(),floor,random,now());
+   const plan=prepare(room,enemy);
    return plan.units.map((spec,i)=>{
-    if(spec.type==='human')return engine.human(spec.cls,spec.lv,'e'+i);
+    if(spec.type==='human'){const unit=engine.human(spec.cls,spec.lv,'e'+i);if(spec.gender)unit.gender=spec.gender;return unit;}
     const unit=engine.beast(spec.sp,spec.lv,'e'+i);
     if(enemy.kind==='shadow'){
      for(const k of ['patk','matk'])unit.st[k]=Math.round(unit.st[k]*1.25);

@@ -1,6 +1,6 @@
 import {partyAudio} from './online-party-audio.mjs?v=party-gait-1';
 import {partyMenu} from './online-party-menu.mjs?v=beasts-3d-six-20261121';
-import {partyArt} from './online-party-art.mjs?v=living-177-2';
+import {partyArt} from './online-party-art.mjs?v=dungeon-bandit-class-20261121';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=motion-cadence-1';
 import {partyScene} from './online-party-scene.mjs?v=adaptive-buffer-1';
 import {localPartyWorld} from './online-party-local.mjs?v=party-boss-facing-1';
