@@ -152,7 +152,7 @@
  }
  function loadContent(){
   if(lang==='th'||contentLoading)return;
-  contentLoading=fetch(new URL('client/game-locale-content.json?v=beast-names-1',base))
+  contentLoading=fetch(new URL('client/game-locale-content.json?v=map-locales-20261121',base))
    .then(response=>{
     if(!response.ok)throw Error('locale_content_unavailable');
     return response.json();
@@ -196,6 +196,7 @@
  addEventListener('storage',event=>{if(event.key===key||event.key===previousKey||event.key===null)update(get());});
  window.SoulbeastLocale={get,set,text,extend,replaceKnown,key};
  loadContent();
+ loadScript('client/game-map-locales.js?v=map-locales-20261121').catch(()=>{});
  if(script.hasAttribute('data-translate-page')){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});
   else mount();
