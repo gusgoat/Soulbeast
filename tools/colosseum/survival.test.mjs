@@ -109,6 +109,7 @@ Deno.test('free-for-all supports odd rooms and ten unique spawns, and randomizes
   eq(room.bases.length,0);eq(room.bosses.length,0);eq(room.shadows.length,10);eq(room.chests.length,15);
   eq(new Set(room.chests.map(chest=>arena.indexAt(chest))).size,15);
   eq(room.traps.controller.list.length,20);
+  eq([...new Set(room.traps.controller.list.map(trap=>trap.type))],['blast']);
   eq(new Set(players.map(p=>arena.indexAt(p))).size,n);
   const view=room.snapshot(players[0],0);
   eq(view.mode,'survival');eq(view.survivors,n);eq(view.chestsTotal,15);eq(view.chestsLeft,15);

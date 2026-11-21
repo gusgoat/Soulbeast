@@ -12,7 +12,7 @@ import rareArt from './rare-art.mjs';
 import maleSiegeArt from './siege-male-catalog.mjs?v=1';
 import femaleSiegeArt from './siege-female-catalog.mjs?v=1';
 import pvpCardArt from './pvp-card-art.mjs?v=battle-parity-1';
-import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs';
+import {createArenaTraps,drawArenaTraps} from './arena-traps.mjs?v=blast-vfx-20261121';
 import {drawInfantry} from './infantry-art.mjs?v=team-bot-tactics-1';
 const TILE=CELL*FLAT;
 const WALL_HEIGHT=54;

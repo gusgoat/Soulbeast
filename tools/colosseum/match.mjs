@@ -5,7 +5,7 @@ import {inSight} from './sight.mjs?v=colosseum-ranges';
 import {advanceCombat, bossUnit, botLoadout, careerInfo, combatAction, combatView, demoProfile, makeCombat, rareSpecies, setCombatAuto, settleCombat, syncCombatBonuses} from './combat.mjs?v=colosseum-walk-tools-1';
 import rareArt from './rare-art.mjs';
 import {dispatchTeamDefense, resetBotRoute, stepBot} from './practice.mjs?v=team-bot-defense-1';
-import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs';
+import {applyTrap,createArenaTraps,trapTypes} from './arena-traps.mjs?v=blast-vfx-20261121';
 import {matchAnnouncer} from './match-announcer.mjs?v=team-warp-1';
 import {SURVIVAL_ARENA, SURVIVAL_CHEST_COUNT, SURVIVAL_SITES, SURVIVAL_SPAWNS, fogZone, insideFogSafe, walkInArena} from './survival-arena.mjs';
 import {INFANTRY_WAVE_MS, spawnInfantry, stepInfantry} from './infantry.mjs?v=team-bot-tactics-1';

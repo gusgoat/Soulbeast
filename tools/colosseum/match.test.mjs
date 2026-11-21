@@ -1302,6 +1302,7 @@ Deno.test('boss runs at 200 units per second, switches to the nearest visible se
 Deno.test('rare creature kill scores once and island traps are randomized ten per side',()=>{
  const {r,p:[a,b]}=match();start(r,[a,b]);
  const traps=r.traps.controller.list;
+ eq([...new Set(traps.map(trap=>trap.type))],['blast']);
  eq(traps.filter(trap=>trap.side===0).length,10);eq(traps.filter(trap=>trap.side===1).length,10);
  const other=new Match('OTHER',0,()=>.01);start(other,[other.join({}),other.join({})]);
  ok(JSON.stringify(traps.map(({x,y})=>[x,y]))!==JSON.stringify(other.traps.controller.list.map(({x,y})=>[x,y])));
