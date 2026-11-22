@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="dark"><title>Soulbeast · ทดลองจัดแถว 1–8 ตัว</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#080e13;color:#f5ebd5;font:13px system-ui,"Leelawadee UI",Tahoma,sans-serif;height:100dvh;display:flex;flex-direction:column}header{flex:none;background:#13212d;border-bottom:1px solid #9e8145;padding:8px max(10px,env(safe-area-inset-left));box-shadow:0 2px 12px #0005;z-index:1}.controls{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}label{display:flex;gap:5px;align-items:center;white-space:nowrap}select,button{font:inherit;color:#ffe7aa;background:#1c3040;border:1px solid #a48951;border-radius:6px;padding:6px 9px;min-height:34px}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #77d4ff;outline-offset:2px}button:disabled{opacity:.5;cursor:wait}input{accent-color:#d6b86f}#status{margin:5px 0 0;text-align:center;color:#b9c5cb;font-size:11px;min-height:15px}iframe{display:block;width:100%;flex:1;min-height:0;border:0;background:#101b25}#error{margin:0;padding:12px;color:#ffd2b0;background:#482518;text-align:center}#error[hidden]{display:none}@media(max-width:370px){.controls{gap:5px}label{gap:3px}select,button{padding:5px 6px}#fallen-label{font-size:11px}}</style></head>
+<body><header><div class="controls"><label for="left-count">ฝั่งซ้าย <select id="left-count" aria-label="จำนวนตัวละครฝั่งซ้าย"></select></label><label for="right-count">ฝั่งขวา <select id="right-count" aria-label="จำนวนตัวละครฝั่งขวา"></select></label><button id="menu-toggle" disabled aria-pressed="false">ซ่อนเมนู</button><label id="fallen-label"><input type="checkbox" id="fallen">ลองหมดสติ</label></div><p id="status" role="status">กำลังเตรียมตัวละคร…</p></header><p id="error" role="alert" hidden></p><iframe id="field" title="สนามทดลองจัดแถวตัวละคร" src="./index.html?connected=ordinary&amp;ui=count-formation-20261122-1&amp;preview=formation"></iframe>
+<script>
+(()=>{
+ const roster={"enemy":[{"name":"อิกนิส ฟีนิกซ์","kind":"pet","sp":"phoenix","types":["normal"]},{"name":"เนเฟรา สฟิงซ์","kind":"pet","sp":"sphinx","types":["normal"]},{"name":"วารินทรา พญานาค","kind":"pet","sp":"naga-great","types":["normal"]},{"name":"น็อกเทิร์น หมาป่าคราสนิรันดร์","kind":"pet","sp":"eclipse-wolf","types":["normal"]},{"name":"wyvern","kind":"pet","sp":"wyvern","types":["normal"]},{"name":"บาเคดานุกิ","kind":"pet","sp":"tanuki","types":["normal"]},{"name":"จินหลิน กิเลน","kind":"pet","sp":"qilin","types":["normal"]},{"name":"จิ้งจอกสามหาง","kind":"pet","sp":"kitsune","types":["normal"]}],"ally":[{"name":"นักดาบ · หญิง","kind":"player","cls":"swordsman","gender":"female","types":["normal"]},{"name":"จิ้งจอกสามหาง","kind":"pet","sp":"kitsune","types":["normal"]},{"name":"จินหลิน กิเลน","kind":"pet","sp":"qilin","types":["normal"]},{"name":"พญาครุฑ","kind":"pet","sp":"garuda","types":["normal"]},{"name":"เสือขาวไป๋หู่","kind":"pet","sp":"baihu","types":["normal"]},{"name":"อิกนิส ฟีนิกซ์","kind":"pet","sp":"phoenix","types":["normal"]},{"name":"เนเฟรา สฟิงซ์","kind":"pet","sp":"sphinx","types":["normal"]},{"name":"วารินทรา พญานาค","kind":"pet","sp":"naga-great","types":["normal"]}]};
+ const $=id=>document.getElementById(id),frame=$('field'),params=new URLSearchParams(location.search),channel=crypto.randomUUID(),battle='formation-sandbox';
+ let ready=false,revision=0,speed=1,observer;
+ const count=k=>Math.max(1,Math.min(8,Number.parseInt(params.get(k),10)||4));
+ for(const id of ['left-count','right-count'])for(let n=1;n<=8;n++)$(id).add(new Option(n+' ตัว',n));
+ $('left-count').value=count('left');$('right-count').value=count('right');$('fallen').checked=params.get('down')==='1';
+ function units(){return ['enemy','ally'].flatMap(side=>Array.from({length:Number($(side==='enemy'?'left-count':'right-count').value)},(_,i)=>{
+  const c=roster[side][i],down=$('fallen').checked&&side==='enemy'&&i===Number($('left-count').value)-1;
+  return {...c,id:side+'-'+i,side,lv:25,hp:down?0:1000,maxHp:1000,mp:100,maxMp:100,status:{},buffs:[],dots:[],skills:['attack'],atkType:'m',st:{hp:1000,mp:100,spd:20}};
+ }));}
+ function post(type,data={}){frame.contentWindow.postMessage({type,channel,...data},location.origin);}
+ function saveUrl(){const p=new URLSearchParams({left:$('left-count').value,right:$('right-count').value,menu:$('menu-toggle').getAttribute('aria-pressed')==='true'?'hidden':'shown'});if($('fallen').checked)p.set('down','1');history.replaceState(null,'','?'+p);}
+ function publish(){
+  saveUrl();if(!ready)return;
+  const team=units();revision++;$('status').textContent='กำลังจัดแถว…';
+  post('ordinary-state',{view:{battle,revision,kind:'wild',zone:7,turn:1,round:1,current:'ally-0',clockKey:String(revision),units:team,queue:team.map(u=>u.id),auto:false,autoPet:false,autoAllowed:false,speed,waiting:false,over:null,saving:false,saveError:'',saveMode:'layout-preview',skills:[{id:'attack',n:'โจมตีปกติ',t:'p',cost:0,cooldown:0,available:true,element:'normal',range:'melee'}],items:[],seals:[],summons:[],captureTargets:[],canEscape:false,log:[]}});
+ }
+ function syncMenu(){const hidden=frame.contentDocument.getElementById('game').classList.contains('menu-collapsed');$('menu-toggle').textContent=hidden?'แสดงเมนู':'ซ่อนเมนู';$('menu-toggle').setAttribute('aria-pressed',String(hidden));saveUrl();}
+ function syncStatus(){if(frame.contentDocument.body.dataset.connectedRevision===String(revision))$('status').textContent='ซ้าย '+$('left-count').value+' ตัว · ขวา '+$('right-count').value+' ตัว · แตะตัวละครเพื่อดูการ์ด';}
+ function connectUi(){
+  const doc=frame.contentDocument;observer?.disconnect();
+  const style=doc.createElement('style');style.textContent='.game{min-height:0;max-height:none;grid-template-columns:minmax(0,1fr)}.commands{min-width:0}#turn-clock{display:none!important}';doc.head.append(style);
+  if(params.get('menu')==='hidden'&&!doc.getElementById('game').classList.contains('menu-collapsed'))doc.getElementById('toggle-menu').click();
+  observer=new MutationObserver(()=>{syncMenu();syncStatus()});observer.observe(doc.body,{attributes:true,attributeFilter:['data-connected-revision']});observer.observe(doc.getElementById('game'),{attributes:true,attributeFilter:['class']});
+  $('menu-toggle').disabled=false;syncMenu();syncStatus();
+ }
+ addEventListener('message',e=>{
+  if(e.origin!==location.origin||e.source!==frame.contentWindow)return;const m=e.data;
+  if(m?.type==='ordinary-ready'){ready=true;connectUi();publish();return;}
+  if(m?.channel!==channel)return;
+  if(m.type==='ordinary-field-ready'){syncStatus();return;}
+  if(m.type==='ordinary-render-error'){$('error').hidden=false;$('error').textContent='โหลดสนามไม่สำเร็จ กรุณารีเฟรชเพื่อลองใหม่';return;}
+  if(m.type==='ordinary-command'){
+   if(m.command==='speed'){speed=m.speed;publish()}
+   else if(m.command==='timeout')publish();
+   else {post('ordinary-notice',{message:'ตัวทดลองสำหรับดูการจัดแถว · เลือกจำนวนได้จากแถบด้านบน'});publish();}
+  }
+ });
+ $('left-count').onchange=publish;$('right-count').onchange=publish;$('fallen').onchange=publish;
+ $('menu-toggle').onclick=()=>frame.contentDocument.getElementById('toggle-menu').click();
+ addEventListener('pagehide',()=>observer?.disconnect());
+})();
+</script></body></html>
