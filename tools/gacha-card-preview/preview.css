@@ -11,3 +11,35 @@ body.gacha-trial{display:block;margin:0;padding:20px 12px 40px;background:radial
 .gacha-trial .gacha-face-name{overflow-wrap:anywhere}.gacha-trial .gacha-opened-list{text-align:left;padding:12px;color:#ded2bc}
 @media(max-width:480px){.trial-actions .btn{flex:1 1 100%}.gacha-trial .gacha-face-name{font-size:10px}}
 @media(orientation:landscape) and (max-height:480px){body.gacha-trial{padding:12px}.trial-panel{padding:14px}.trial-panel h1{font-size:23px}.trial-actions{margin:12px 0}}
+
+/* The trial keeps the live reveal handlers; this layer changes only the card artwork. */
+.gacha-trial .gacha-flip{container-type:inline-size;border-radius:6%;box-shadow:0 4px 12px #000b,0 0 0 1px #ca9f6c,0 0 18px #c22e4c66}
+.gacha-trial .gacha-flip:focus-visible{outline:3px solid #fff0bb;outline-offset:5px}
+.gacha-trial .gacha-flip:hover{box-shadow:0 5px 16px #000c,0 0 0 1px #ffe6ab,0 0 22px #df3b5266}
+.gacha-trial .gacha-reveal-stage.single .gacha-flip{width:82%;left:9%;top:34%;translate:none}
+.gacha-trial .gacha-front,.gacha-trial .gacha-back{border:0;border-radius:6%;background:#160e19;overflow:hidden}
+.gacha-trial .gacha-front::after,.gacha-trial .gacha-back::after{content:"";position:absolute;inset:0;z-index:8;background:url('eclipse-frame.svg') center/100% 100% no-repeat;pointer-events:none}
+.gacha-trial .gacha-face-content{display:block;inset:0;padding:0;background:radial-gradient(ellipse at 50% 20%,#72323e,#1a101b 70%);isolation:isolate}
+.gacha-trial .gacha-face-art{position:absolute;inset:5.5% 5.2% 24%;display:block;overflow:hidden;border-radius:3% 3% 0 0;background:#16151c}
+.gacha-trial .gacha-portrait{position:absolute;inset:0;display:block;overflow:hidden}
+.gacha-trial .gacha-art-ambience{position:absolute;inset:-8%;width:116%;height:116%;max-height:none;object-fit:cover;filter:blur(8px) saturate(.7);opacity:.65}
+.gacha-trial .gacha-portrait::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#130d1b88,transparent 30%,transparent 70%,#130d1b88),linear-gradient(0deg,#1a101b,transparent 25%);pointer-events:none}
+.gacha-trial .gacha-beast-preview{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:contain;object-position:center;filter:drop-shadow(0 3px 9px #000a)}
+.gacha-trial .gacha-face-name{position:absolute;left:9%;right:9%;bottom:11%;height:15%;display:flex;align-items:center;justify-content:center;margin:0;font-size:clamp(7px,4.3cqw,21px);line-height:1.2;font-weight:700;white-space:normal;text-overflow:clip;overflow:hidden;overflow-wrap:anywhere;text-wrap:balance;color:#fff1ce;text-shadow:0 2px 3px #000;z-index:4}
+.gacha-trial .gacha-face-type{position:absolute;left:12%;right:12%;bottom:6.5%;margin:0;font-size:clamp(5px,2.7cqw,13px);line-height:1.2;letter-spacing:.035em;color:#d5b777;text-shadow:0 1px 2px #000;z-index:4}
+.gacha-trial .gacha-face-content::before{content:"";position:absolute;inset:75% 5% 4%;background:linear-gradient(100deg,#291420,#3f2127 48%,#291420);border-top:1px solid #e8ca8055;box-shadow:0 -6px 12px #110a18aa;pointer-events:none}
+.gacha-trial .ten .gacha-face-name{font-size:clamp(5px,4cqw,14px)}
+.gacha-trial .ten .gacha-face-type{font-size:clamp(4px,2.8cqw,10px);letter-spacing:0}
+@media(prefers-reduced-motion:reduce){.gacha-trial .gacha-flip{transition:none}}
+.gacha-trial .rarity-white{--frame-art:url('frame-white.svg');--panel:#243c52;--plaque-a:#121e2b;--plaque-b:#24374b;--title:#eff7ff;--label:#b3c9e4}
+.gacha-trial .rarity-green{--frame-art:url('frame-green.svg');--panel:#1e5342;--plaque-a:#102b24;--plaque-b:#204838;--title:#edffe6;--label:#abd6aa}
+.gacha-trial .rarity-blue{--frame-art:url('frame-blue.svg');--panel:#23477d;--plaque-a:#101d35;--plaque-b:#25395e;--title:#eaf6ff;--label:#a9cbed}
+.gacha-trial .rarity-purple{--frame-art:url('frame-purple.svg');--panel:#56326f;--plaque-a:#26152e;--plaque-b:#422549;--title:#fff0ff;--label:#d7b7eb}
+.gacha-trial .rarity-gold{--frame-art:url('frame-gold.svg');--panel:#76532b;--plaque-a:#2e2013;--plaque-b:#513b22;--title:#fff3cf;--label:#e5c584}
+.gacha-trial .rarity-red{--frame-art:url('frame-red.svg');--panel:#72323e;--plaque-a:#291420;--plaque-b:#3f2127;--title:#fff1ce;--label:#d5b777}
+.gacha-trial .gacha-front::after,.gacha-trial .gacha-back::after{background-image:var(--frame-art)}
+.gacha-trial .gacha-face-content{background:radial-gradient(ellipse at 50% 20%,var(--panel),#101019 75%)}
+.gacha-trial .gacha-face-content::before{background:linear-gradient(100deg,var(--plaque-a),var(--plaque-b) 48%,var(--plaque-a))}
+.gacha-trial .gacha-face-name{color:var(--title)}.gacha-trial .gacha-face-type{color:var(--label)}
+.gacha-trial .gacha-flip{box-shadow:0 4px 12px #000b,0 0 0 1px color-mix(in srgb,var(--glow) 65%,#897d76),0 0 18px color-mix(in srgb,var(--glow) 30%,transparent)}
+.gacha-trial .gacha-face-art>.item-art{inset:7% 18%;width:64%!important;height:86%!important;max-width:none!important;border:0;box-shadow:none;background:transparent}
