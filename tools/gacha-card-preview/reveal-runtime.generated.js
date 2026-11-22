@@ -69,14 +69,19 @@ handlers.gachaRevealAll=()=>{gachaRevealSync();if(gachaDealing())return;const re
 
 
 
+const cardEffects=window.GachaRevealCanvas.create();
+for(const name of ['gachaRevealOne','gachaRevealAll']){
+ const reveal=handlers[name];handlers[name]=value=>{const before=new Set(GachaReveal.opened);reveal(value);const cards=[];for(const i of GachaReveal.opened)if(!before.has(i)){const card=document.querySelector('[data-a="gachaRevealOne"][data-v="'+i+'"]');if(card)cards.push(card);}if(cards.length)cardEffects.play(cards);};
+}
 const keys=Object.keys(SP).filter(k=>SP[k].solar);
 function draw(count,all=false){
  if(window.SoulbeastCinematics?.isOpen())return;
+ cardEffects.clear();
  const picked=all?[...keys]:Array.from({length:count},()=>keys[Math.floor(Math.random()*keys.length)]);
  GACHA.rewards=picked.map(key=>({type:'pet',key,category:'solarBeast',form:0}));
  render();document.getElementById('trialStatus').textContent='ได้การ์ดทดลอง '+picked.length+' ใบ · รอเรียงการ์ด แล้วแตะใบที่ต้องการเปิด';
 }
 document.addEventListener('click',event=>{const button=event.target.closest('[data-a]');if(button&&!button.disabled)handlers[button.dataset.a]?.(button.dataset.v);});
-function drawMixed(){if(window.SoulbeastCinematics?.isOpen())return;GACHA.rewards=fixtures.mixed.map(r=>({...r}));render();document.getElementById('trialStatus').textContent='ชุดทดลองคละ '+GACHA.rewards.length+' ใบ · ครบทุกระดับสีและทุกประเภท · ไม่ใช้คูปองจริง';}
-window.GachaCardTrial={draw,drawMixed,setSound:enabled=>{Sound.enabled=!!enabled;},source:{"file":"game-app.0e426607c32eede3.js","sectionSha256":"4d53e087d4020cfeafa783c030e558a61ef3a9db021f452398ae55a4dd3b97d3"}};
+function drawMixed(){if(window.SoulbeastCinematics?.isOpen())return;cardEffects.clear();GACHA.rewards=fixtures.mixed.map(r=>({...r}));render();document.getElementById('trialStatus').textContent='ชุดทดลองคละ '+GACHA.rewards.length+' ใบ · ครบทุกระดับสีและทุกประเภท · ไม่ใช้คูปองจริง';}
+window.GachaCardTrial={draw,drawMixed,effects:cardEffects,setSound:enabled=>{Sound.enabled=!!enabled;},source:{"file":"game-app.0e426607c32eede3.js","sectionSha256":"4d53e087d4020cfeafa783c030e558a61ef3a9db021f452398ae55a4dd3b97d3"}};
 })();

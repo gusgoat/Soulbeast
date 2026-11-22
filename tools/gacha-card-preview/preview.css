@@ -43,3 +43,8 @@ body.gacha-trial{display:block;margin:0;padding:20px 12px 40px;background:radial
 .gacha-trial .gacha-face-name{color:var(--title)}.gacha-trial .gacha-face-type{color:var(--label)}
 .gacha-trial .gacha-flip{box-shadow:0 4px 12px #000b,0 0 0 1px color-mix(in srgb,var(--glow) 65%,#897d76),0 0 18px color-mix(in srgb,var(--glow) 30%,transparent)}
 .gacha-trial .gacha-face-art>.item-art{inset:7% 18%;width:64%!important;height:86%!important;max-width:none!important;border:0;box-shadow:none;background:transparent}
+
+/* Transient Canvas reveal layer: runs only while opening newly revealed cards. */
+.gacha-reveal-canvas{position:fixed;inset:0;display:block;width:100vw;height:100vh;pointer-events:none;z-index:20}
+.gacha-reveal-canvas[hidden]{display:none}
+.gacha-trial .gacha-unseal,.gacha-trial .gacha-motes{display:none!important}
