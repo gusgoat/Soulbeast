@@ -9135,9 +9135,11 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
 
 /* Injected into the existing game's lexical scope on the isolated staging server only. */
 (()=>{
- const rolloutContext=(()=>{try{return JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')}catch{return null}})();if(rolloutContext?.environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')!=='on')return;
+ const rolloutContext=(()=>{try{return JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')}catch{return null}})();
+ if(rolloutContext?.environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')!=='on')return;
+
  const clone=v=>JSON.parse(JSON.stringify(v)),channel=crypto.randomUUID();
- let frame=null,battle=null,battleId='',revision=0,sequence=0,presenting=0,ready=false,closing=false,depth=0,forcedAuto=false,saveError='';
+ let frame=null,battle=null,battleId='',revision=0,sequence=0,presenting=0,ready=false,fieldReady=false,closing=false,depth=0,forcedAuto=false,saveError='';
  const requests=new Set(),failedBattles=new WeakSet();let recoveryButton=null,recoveryReason='';
  const recovery=createOrdinaryStageRecovery({recover:(reason,id)=>{if(id===battleId)useLegacy(reason);}});
  const useStage=b=>ordinary(b)&&!failedBattles.has(b);
@@ -9160,7 +9162,7 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
  }
  function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin);}
  function publish(){if(recoveryButton)recoveryButton.disabled=closing;revision++;if(ready&&!presenting)post('ordinary-state',{view:view()});}
- function removeStage(){frame?.remove();frame=null;recoveryButton?.remove();recoveryButton=null;ready=false;presenting=0;recovery.stop();}
+ function removeStage(){frame?.remove();frame=null;recoveryButton?.remove();recoveryButton=null;ready=false;fieldReady=false;presenting=0;recovery.stop();}
  function useLegacy(reason='manual'){
   const b=B();if(!b||!frame||closing)return;failedBattles.add(b);recoveryReason=reason;
   removeStage();nativeRender();Music.sync();nativeToast('เปลี่ยนกลับสนามเดิมแล้ว · ต่อสู้ต่อจากตาเดิมได้');
@@ -9169,8 +9171,8 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
  document.addEventListener('visibilitychange',()=>recovery.pause(document.hidden));
  function mount(){
   const b=B();if(!useStage(b)||S.screen!=='battle'){if(frame)removeStage();battle=null;return;}
-  if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';requests.clear();recovery.start(battleId);if(ready)recovery.ready(battleId);}
-  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary';document.body.append(frame);
+  if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';fieldReady=false;requests.clear();recovery.start(battleId);}
+  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=field-ready-20261122-1';document.body.append(frame);
    frame.addEventListener('error',()=>useLegacy('frame-error'));
    recoveryButton=document.createElement('button');recoveryButton.id='ordinary-use-legacy';recoveryButton.textContent='ใช้สนามเดิม';recoveryButton.title='กลับไปสู้ต่อจากสถานะปัจจุบันในสนามเดิม';
    Object.assign(recoveryButton.style,{position:'fixed',right:'10px',top:'60px',zIndex:'2147483001',padding:'7px 10px',border:'1px solid #b89a5b',borderRadius:'7px',background:'#142331',color:'#f4dfad',font:'12px system-ui'});
@@ -9180,7 +9182,7 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
  render=function(...args){const r=nativeRender.apply(this,args);mount();return r;};
  teamAutoUnit=function(u){return forcedAuto&&u?.side==='ally'||nativeTeamAuto(u);};
  // Keep the original engine's next turn behind the renderer's presentation barrier.
- battleLater=function(fn,ms){const b=B();return nativeLater(()=>{const resume=()=>{if(B()!==b)return;if(useStage(b)&&(!ready||presenting)){setTimeout(resume,50);return;}fn();};resume();},ms);};
+ battleLater=function(fn,ms){const b=B();return nativeLater(()=>{const resume=()=>{if(B()!==b)return;if(useStage(b)&&(!ready||!fieldReady||presenting)){setTimeout(resume,50);return;}fn();};resume();},ms);};
  act=function(u,id,target,friend,free){
   const capture=useStage(B())&&depth===0,before=capture?view():null;depth++;
   let ok;try{ok=nativeAct(u,id,target,friend,free);}finally{depth--;}
@@ -9195,6 +9197,7 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
   const b=B();if(!useStage(b)||m.battle!==battleId||closing)return;
   if(requests.has(m.request))return;requests.add(m.request);if(requests.size>128)requests.delete(requests.values().next().value);
   if(m.revision!==revision||presenting){post('ordinary-state',{view:view()});return;}
+  if(!fieldReady)return;
   if(m.command==='done'){
    if(!b.over)return;closing=true;saveError='';publish();
    try{
@@ -9226,15 +9229,16 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
  }
  addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==frame?.contentWindow)return;const m=e.data;
-  if(m?.type==='ordinary-ready'){ready=true;recovery.ready(battleId);post('ordinary-state',{view:view()});return;}
+  if(m?.type==='ordinary-ready'){ready=true;post('ordinary-state',{view:view()});return;}
   if(m?.type==='ordinary-render-error'&&(!ready||m.channel===channel)){useLegacy('renderer-error');return;}
   if(m?.channel!==channel)return;
+  if(m.type==='ordinary-field-ready'&&m.battle===battleId){fieldReady=true;recovery.ready(battleId);return;}
   if(m.type==='ordinary-heartbeat'&&m.battle===battleId){recovery.pulse(battleId);return;}
   if(m.type==='ordinary-presented'&&m.battle===battleId&&m.sequence===presenting){if(!recovery.acknowledge(battleId,m.sequence))return;presenting=0;post('ordinary-state',{view:view()});}
   if(m.type==='ordinary-command')void command(m).catch(error=>{post('ordinary-notice',{message:'ดำเนินการไม่สำเร็จ กรุณาลองอีกครั้ง'});publish();console.error(error);});
  });
  // Only read-only diagnostics are exposed; commands still require the owned frame and nonce.
- window.ordinaryBattleDiagnostics=()=>({battle:battleId,revision,presenting,ready,active:!!frame,recoveryReason,recovery:recovery.inspect(),saveMode:WALK_ONLINE?'test-account':'local-test-draft'});
+ window.ordinaryBattleDiagnostics=()=>({battle:battleId,revision,presenting,ready:ready&&fieldReady,transportReady:ready,fieldReady,active:!!frame,recoveryReason,recovery:recovery.inspect(),saveMode:WALK_ONLINE?'test-account':'local-test-draft'});
  mount();
 })();
 
