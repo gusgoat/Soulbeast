@@ -9136,7 +9136,7 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
 /* Injected into the existing game's lexical scope on the isolated staging server only. */
 (()=>{
  const rolloutContext=(()=>{try{return JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')}catch{return null}})();
- if(rolloutContext?.environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')!=='on')return;
+ if(rolloutContext?.environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')==='off')return;
 
  const clone=v=>JSON.parse(JSON.stringify(v)),channel=crypto.randomUUID();
  let frame=null,battle=null,battleId='',revision=0,sequence=0,presenting=0,ready=false,fieldReady=false,closing=false,depth=0,forcedAuto=false,saveError='';
@@ -9174,7 +9174,7 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
  function mount(){
   const b=B();if(!useStage(b)||S.screen!=='battle'){if(frame)removeStage();battle=null;return;}
   if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';fieldReady=false;requests.clear();recovery.start(battleId);}
-  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=hp-frame-v3-20261122-1';document.body.append(frame);
+  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=ordinary-test-default-20261122-1';document.body.append(frame);
    frame.addEventListener('error',()=>useLegacy('frame-error'));
    recoveryButton=document.createElement('button');recoveryButton.id='ordinary-use-legacy';recoveryButton.textContent='ใช้สนามเดิม';recoveryButton.title='กลับไปสู้ต่อจากสถานะปัจจุบันในสนามเดิม';
    Object.assign(recoveryButton.style,{position:'fixed',right:'10px',top:'60px',zIndex:'2147483001',padding:'7px 10px',border:'1px solid #b89a5b',borderRadius:'7px',background:'#142331',color:'#f4dfad',font:'12px system-ui'});
