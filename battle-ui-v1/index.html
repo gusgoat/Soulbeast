@@ -19,9 +19,10 @@ dialog{max-width:calc(100% - 32px);width:330px;border:1px solid #b39761;border-r
 @media(prefers-reduced-motion:reduce){.actor-health i{transition:none}}
 
 .roster{gap:9px;bottom:12px;left:12px;right:12px}
-.unit{position:relative;isolation:isolate;aspect-ratio:5/3;min-height:82px;max-height:132px;padding:0;border:0!important;border-radius:5px;background:#07121e;overflow:hidden;box-shadow:0 3px 14px #000b;text-align:left}
-.card-background{position:absolute;inset:0;width:100%;height:100%;opacity:.5;object-fit:cover;z-index:-2}
-.unit::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 22%,#07121db3 43%,#07121ddb);z-index:-1;pointer-events:none}
+.unit{position:relative;isolation:isolate;aspect-ratio:5/3;min-height:82px;max-height:132px;padding:0;border:0!important;border-radius:5px;background:transparent;overflow:hidden;box-shadow:none;text-align:left}
+.unit::before{content:"";position:absolute;inset:5% 2.4%;border-radius:6px;background:#07121e;z-index:-3;pointer-events:none}
+.card-background{position:absolute;inset:0;width:100%;height:100%;opacity:.5;object-fit:cover;z-index:-2;clip-path:inset(5% 2.4% round 6px)}
+.unit::after{content:"";position:absolute;inset:5% 2.4%;border-radius:6px;background:linear-gradient(90deg,transparent 22%,#07121db3 43%,#07121ddb);z-index:-1;pointer-events:none}
 .card-picture{position:absolute;bottom:7%;left:4%;width:42%;height:82%;object-fit:cover;object-position:center;mask-image:linear-gradient(90deg,#000 82%,transparent),linear-gradient(0deg,transparent,#000 15%);mask-composite:intersect;z-index:0}
 .card-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:3;pointer-events:none}
 .card-elements{display:flex;gap:2px;align-items:center;min-height:clamp(13px,3.8vw,18px);margin-bottom:3px;flex-shrink:0}
