@@ -83,5 +83,6 @@ function draw(count,all=false){
 }
 document.addEventListener('click',event=>{const button=event.target.closest('[data-a]');if(button&&!button.disabled)handlers[button.dataset.a]?.(button.dataset.v);});
 function drawMixed(){if(window.SoulbeastCinematics?.isOpen())return;cardEffects.clear();GACHA.rewards=fixtures.mixed.map(r=>({...r}));render();document.getElementById('trialStatus').textContent='ชุดทดลองคละ '+GACHA.rewards.length+' ใบ · ครบทุกระดับสีและทุกประเภท · ไม่ใช้คูปองจริง';}
-window.GachaCardTrial={draw,drawMixed,effects:cardEffects,setSound:enabled=>{Sound.enabled=!!enabled;},source:{"file":"game-app.0e426607c32eede3.js","sectionSha256":"4d53e087d4020cfeafa783c030e558a61ef3a9db021f452398ae55a4dd3b97d3"}};
+function drawLegend(){if(window.SoulbeastCinematics?.isOpen())return;cardEffects.clear();GACHA.rewards=[{type:'pet',key:'trial_legend',category:'legendBeast',form:0}];render();document.getElementById('trialStatus').textContent='อสูรในตำนาน 1 ใบ · แตะเปิดเพื่อทดลองเอฟเฟกต์สีทอง · ไม่ใช้คูปองจริง';}
+window.GachaCardTrial={draw,drawMixed,drawLegend,effects:cardEffects,setSound:enabled=>{Sound.enabled=!!enabled;},source:{"file":"game-app.0e426607c32eede3.js","sectionSha256":"4d53e087d4020cfeafa783c030e558a61ef3a9db021f452398ae55a4dd3b97d3"}};
 })();
