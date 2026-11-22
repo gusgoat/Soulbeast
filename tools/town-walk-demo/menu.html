@@ -9161,7 +9161,9 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
    vitals:{hp:S.P.hp,mp:S.P.mp,gold:S.P.gold,exp:S.P.exp,lv:S.P.lv},saveMode:WALK_ONLINE?'test-account':'local-test-draft'});
  }
  function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin);}
- function publish(){if(recoveryButton)recoveryButton.disabled=closing;revision++;if(ready&&!presenting)post('ordinary-state',{view:view()});}
+ const defeatHandoffs=new WeakSet();
+ function autoHospital(){queueMicrotask(()=>{const b=B();if(!useStage(b)||!fieldReady||presenting||closing||b.over?.res!=='lose'||defeatHandoffs.has(b))return;defeatHandoffs.add(b);void finishBattle(b);});}
+ function publish(){if(recoveryButton)recoveryButton.disabled=closing;revision++;if(ready&&!presenting)post('ordinary-state',{view:view()});autoHospital();}
  function removeStage(){frame?.remove();frame=null;recoveryButton?.remove();recoveryButton=null;ready=false;fieldReady=false;presenting=0;recovery.stop();}
  function useLegacy(reason='manual'){
   const b=B();if(!b||!frame||closing)return;failedBattles.add(b);recoveryReason=reason;
@@ -9172,7 +9174,7 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
  function mount(){
   const b=B();if(!useStage(b)||S.screen!=='battle'){if(frame)removeStage();battle=null;return;}
   if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';fieldReady=false;requests.clear();recovery.start(battleId);}
-  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=field-ready-20261122-1';document.body.append(frame);
+  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=auto-hospital-20261122-1';document.body.append(frame);
    frame.addEventListener('error',()=>useLegacy('frame-error'));
    recoveryButton=document.createElement('button');recoveryButton.id='ordinary-use-legacy';recoveryButton.textContent='ใช้สนามเดิม';recoveryButton.title='กลับไปสู้ต่อจากสถานะปัจจุบันในสนามเดิม';
    Object.assign(recoveryButton.style,{position:'fixed',right:'10px',top:'60px',zIndex:'2147483001',padding:'7px 10px',border:'1px solid #b89a5b',borderRadius:'7px',background:'#142331',color:'#f4dfad',font:'12px system-ui'});
@@ -9193,18 +9195,21 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
   }
   return ok;
  };
+ async function finishBattle(b){
+  if(B()!==b||!b.over||closing)return;closing=true;saveError='';publish();
+  try{
+   save();
+   if(WALK_ONLINE){const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');if(context?.environment!=='test')throw Error('test_account_required');await (await getWalkAccountConnection()).flush(true);}
+   if(B()!==b)return;const button=document.querySelector('main [data-a="bt"][data-v="done"]');if(button)button.click();else battleAction('done');mount();
+  }catch(error){closing=false;saveError='ยังบันทึกไม่สำเร็จ กรุณาลองบันทึกอีกครั้ง';post('ordinary-notice',{message:saveError});publish();}
+ }
  async function command(m){
   const b=B();if(!useStage(b)||m.battle!==battleId||closing)return;
   if(requests.has(m.request))return;requests.add(m.request);if(requests.size>128)requests.delete(requests.values().next().value);
   if(m.revision!==revision||presenting){post('ordinary-state',{view:view()});return;}
   if(!fieldReady)return;
   if(m.command==='done'){
-   if(!b.over)return;closing=true;saveError='';publish();
-   try{
-    save();
-    if(WALK_ONLINE){const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');if(context?.environment!=='test')throw Error('test_account_required');await (await getWalkAccountConnection()).flush(true);}
-    if(B()!==b)return;const button=document.querySelector('main [data-a="bt"][data-v="done"]');if(button)button.click();else battleAction('done');mount();
-   }catch(error){closing=false;saveError='ยังบันทึกไม่สำเร็จ กรุณาลองรับผลอีกครั้ง';post('ordinary-notice',{message:saveError});publish();}
+   await finishBattle(b);
    return;
   }
   if(m.command==='auto'||m.command==='timeout'){if(b.over)return;if(m.command==='timeout'){forcedAuto=true;S.ui.autoTeam=true;const u=uById(b.cur);if(u?.side==='ally'&&b.menu!=='wait'){b.menu='wait';battleLater(aiAct,150);}render();}else{forcedAuto=false;handlers.teamAuto();}return;}
@@ -9232,9 +9237,9 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
   if(m?.type==='ordinary-ready'){ready=true;post('ordinary-state',{view:view()});return;}
   if(m?.type==='ordinary-render-error'&&(!ready||m.channel===channel)){useLegacy('renderer-error');return;}
   if(m?.channel!==channel)return;
-  if(m.type==='ordinary-field-ready'&&m.battle===battleId){fieldReady=true;recovery.ready(battleId);return;}
+  if(m.type==='ordinary-field-ready'&&m.battle===battleId){fieldReady=true;recovery.ready(battleId);autoHospital();return;}
   if(m.type==='ordinary-heartbeat'&&m.battle===battleId){recovery.pulse(battleId);return;}
-  if(m.type==='ordinary-presented'&&m.battle===battleId&&m.sequence===presenting){if(!recovery.acknowledge(battleId,m.sequence))return;presenting=0;post('ordinary-state',{view:view()});}
+  if(m.type==='ordinary-presented'&&m.battle===battleId&&m.sequence===presenting){if(!recovery.acknowledge(battleId,m.sequence))return;presenting=0;post('ordinary-state',{view:view()});autoHospital();}
   if(m.type==='ordinary-command')void command(m).catch(error=>{post('ordinary-notice',{message:'ดำเนินการไม่สำเร็จ กรุณาลองอีกครั้ง'});publish();console.error(error);});
  });
  // Only read-only diagnostics are exposed; commands still require the owned frame and nonce.
