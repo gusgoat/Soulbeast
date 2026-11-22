@@ -11,6 +11,27 @@ function create(){
  function fit(){const next=Math.min(1.5,scope.devicePixelRatio||1),w=Math.max(1,Math.round(innerWidth*next)),h=Math.max(1,Math.round(innerHeight*next));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}ratio=next;ctx.setTransform(ratio,0,0,ratio,0,0);}
  function clear(){if(raf)cancelAnimationFrame(raf);raf=0;bursts=[];if(ctx){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);}canvas.hidden=true;canvas.dataset.active='0';}
  function star(x,y,size,color,alpha){ctx.globalAlpha=alpha;ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x,y-size);ctx.lineTo(x+size*.24,y-size*.24);ctx.lineTo(x+size,y);ctx.lineTo(x+size*.24,y+size*.24);ctx.lineTo(x,y+size);ctx.lineTo(x-size*.24,y+size*.24);ctx.lineTo(x-size,y);ctx.lineTo(x-size*.24,y-size*.24);ctx.closePath();ctx.fill();}
+ function roundedAuraPath(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+ function eclipseAura(b,now,rect){
+  if(b.theme.rank!==5||b.reduced)return;
+  const age=now-b.at,w=rect.width,h=rect.height,power=clamp(age/100)*clamp((b.duration-age)/260),phase=age/650;
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  // A transparent centre keeps the artwork and title readable inside the aura.
+  for(let layer=0;layer<3;layer++){
+   const spread=w*(.018+layer*.028),alpha=power*(.48-layer*.12),pulse=1+Math.sin(phase*4-layer)*.12;
+   ctx.globalAlpha=alpha;ctx.strokeStyle=layer===0?'#ffd98f':'#f13268';ctx.lineWidth=w*(layer===0?.012:.024)*pulse;ctx.shadowColor=layer===0?'#ffcf72':'#f32668';ctx.shadowBlur=w*(.045+layer*.025);
+   roundedAuraPath(rect.left-spread,rect.top-spread,w+spread*2,h+spread*2,w*.06);ctx.stroke();
+  }
+  ctx.shadowBlur=0;
+  // Energy ribbons stream out from the perimeter rather than covering the beast.
+  for(let i=0;i<12;i++){
+   const side=i%4,t=(Math.floor(i/4)+.5)/3,flow=(phase+i*.173)%1,reach=w*(.06+.13*flow),bend=Math.sin(phase*5+i)*w*.025;
+   let x,y,dx,dy;if(side===0){x=rect.left+w*t;y=rect.top;dx=bend;dy=-reach;}else if(side===1){x=rect.right;y=rect.top+h*t;dx=reach;dy=bend;}else if(side===2){x=rect.right-w*t;y=rect.bottom;dx=bend;dy=reach;}else{x=rect.left;y=rect.bottom-h*t;dx=-reach;dy=bend;}
+   const light=ctx.createLinearGradient(x,y,x+dx,y+dy);light.addColorStop(0,`rgba(255,203,115,${power*.65})`);light.addColorStop(.4,`rgba(255,65,121,${power*.48})`);light.addColorStop(1,'rgba(221,25,99,0)');ctx.globalAlpha=1;ctx.strokeStyle=light;ctx.lineWidth=Math.max(1.5,w*.012*(1-flow*.5));ctx.beginPath();ctx.moveTo(x,y);ctx.bezierCurveTo(x+dx*.3-dy*.15,y+dy*.3+dx*.15,x+dx*.7+dy*.12,y+dy*.7-dx*.12,x+dx,y+dy);ctx.stroke();
+  }
+  for(let wave=0;wave<2;wave++){const p=(phase*.8+wave*.5)%1,spread=w*(.035+p*.23);ctx.globalAlpha=power*(1-p)*.38;ctx.strokeStyle=wave?'#ffcf84':'#ff4979';ctx.lineWidth=Math.max(1,w*.005);roundedAuraPath(rect.left-spread,rect.top-spread,w+spread*2,h+spread*2,w*(.07+p*.08));ctx.stroke();}
+  ctx.restore();
+ }
  function grandeur(b,now,focus=false){
   if(b.reduced||b.theme.rank<4)return;
   const rect=b.card.getBoundingClientRect(),age=now-b.at,x=rect.left+rect.width/2,y=rect.top+rect.height*.51,w=rect.width,red=b.theme.rank===5;
@@ -39,6 +60,7 @@ function create(){
  function draw(b,now){
   const rect=b.card.getBoundingClientRect(),t=clamp((now-b.at)/b.duration),x=rect.left+rect.width/2,y=rect.top+rect.height*.51,w=rect.width,theme=b.theme;
   if(!rect.width||!rect.height)return;
+  eclipseAura(b,now,rect);
   grandeur(b,now);
   const pulse=Math.sin(Math.PI*t),r=Math.max(18,w*(.18+.5*ease(t))),fade=(1-t)**1.3;
   ctx.save();ctx.globalCompositeOperation='lighter';
