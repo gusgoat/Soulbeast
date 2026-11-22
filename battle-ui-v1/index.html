@@ -164,7 +164,7 @@ dialog{max-width:calc(100% - 32px);width:330px;border:1px solid #b39761;border-r
 .menu-collapsed .actions #team-auto,.menu-collapsed #speed,.menu-collapsed #toggle-menu{display:block;min-height:40px;font-size:12px}
 .battle-ground-shadows{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
 html[data-connected-loading] .game{visibility:hidden}html[data-connected-loading] #loading{visibility:visible;position:fixed;inset:0;transform:none;width:auto;height:auto;z-index:100;display:grid;place-items:center;background:#101b25;color:#ead6a6;font-size:14px;pointer-events:none}
-</style></head><body>
+</style><style id="battle-responsive-width">.game{grid-template-columns:minmax(0,1fr)}.arena,.commands{min-width:0;max-width:100%}.prompt b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.prompt span{min-width:0;overflow-wrap:anywhere}</style></head><body>
 <main class="game" id="game">
 <section class="arena" id="arena" aria-label="สนามต่อสู้">
 <div class="atmosphere"></div><canvas class="world" id="world" aria-label="พื้นสนามรบมุมกล้อง 45 องศา"></canvas><img id="header-scenery" class="header-scenery" alt=""><canvas id="scenery-motion" class="header-scenery scenery-motion" aria-hidden="true" hidden></canvas><canvas id="ground-shadows" class="battle-ground-shadows" aria-hidden="true"></canvas><div id="actor-sprites" class="actor-sprites" aria-hidden="true"></div><div class="actor-health-bars" id="actor-health-bars" aria-label="HP ของตัวละครแต่ละตัว"></div><div class="effects" id="effects"></div>
