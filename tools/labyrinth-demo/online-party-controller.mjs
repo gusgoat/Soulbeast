@@ -12,16 +12,18 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    return;
   }
   if(next.soloStart)soloKnown=next.soloStart.run.id;
+  const oldFloor=snapshot?.floor;
   await scene.receiveState(next);if(snapshot&&next.revision<snapshot.revision)return;snapshot=next;snapshotAt=Date.now();seq=Math.max(seq,next.movementSeq||0);
   if(next.departure||next.state==='closed'){path=[];await motion?.close();motion=null;onState(next);return;}
-  const key=JSON.stringify([next.floor,next.members.map(m=>m.code).sort()]);
+  if(oldFloor!==next.floor){path=[];motion?.setFloor(next.floor);}
+  const key=JSON.stringify(next.members.map(m=>m.code).sort());
   if(key!==motionKey){
    path=[];await motion?.close();motion=null;
    const created=await openMotion(connection,next,(sender,p)=>scene.receiveMotion(sender,p),incoming=>{
     if(closed||incoming.revision<=(snapshot?.revision??-1))return;
     if(!pendingState||incoming.revision>pendingState.revision)pendingState=incoming;
     // A committed combat update can be displayed while an older HTTP call is pending.
-    if(busy&&snapshot&&incoming.floor===snapshot.floor&&JSON.stringify([incoming.floor,incoming.members?.map(m=>m.code).sort()])===motionKey&&incoming.state==='active'&&!incoming.departure){if(pendingState===incoming)pendingState=null;void refresh(incoming).catch(onError);}
+    if(busy&&snapshot&&incoming.floor===snapshot.floor&&JSON.stringify(incoming.members?.map(m=>m.code).sort())===motionKey&&incoming.state==='active'&&!incoming.departure){if(pendingState===incoming)pendingState=null;void refresh(incoming).catch(onError);}
     else if(!busy)void drain();
    });
    if(closed){await created.close();return;}motion=created;motionKey=key;
@@ -39,10 +41,10 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   const w=snapshot?.battle?.waiting;
   return snapshot?.battle?.status==='active'&&!snapshot.battle.presentation&&w&&!snapshot.autoPlayers?.[w.ownerCode]&&w.deadline>serverNow()+120;
  }
- async function readStatus(){
+ async function readStatus(full=true){
   if(reading||closed)return false;reading=true;
   try{
-   const next=await connection.run(roomId,'status',{...(localExploration?{localExploration:true,...(personalExploration?{personalVersion:2}:{})}:{}),...(soloKnown&&snapshot?.battle?.id===soloKnown?{soloStart:false}:{})});
+   const next=await connection.run(roomId,'status',{...(localExploration?{localExploration:true,...(personalExploration&&full?{personalVersion:2,personalActions:3}:{})}:{}),...(soloKnown&&snapshot?.battle?.id===soloKnown?{soloStart:false}:{})});
    if(closed||snapshot&&next.revision<snapshot.revision)return false;
    if(!pendingState||next.revision>pendingState.revision)pendingState=next;
    if(!busy&&!commands.length)await drain();return true;
@@ -50,6 +52,17 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
  }
  return {
   refresh:()=>snapshot?readStatus():lane(refresh),
+  fieldVisible(id){
+   const work=async()=>{
+    const battle=snapshot?.battle;
+    if(battle?.id!==id||!battle.loading?.pending.includes(connection.code))return;
+    const result=await connection.run(roomId,'battleReady',{battle:id,presentationVersion:2});
+    await refresh(result.snapshot);
+   };
+   if(closed)return Promise.resolve(false);
+   if(!busy)return lane(work);
+   return new Promise(resolve=>commands.push({work,resolve}));
+  },
   receive:next=>next?refresh(next):Promise.resolve(),
   async flushSave(){
    if(closed||!snapshot?.savePending)return;
@@ -78,12 +91,12 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
    path.push({x:point.x,y:point.y});return true;
   },
   broadcast(position,moving,running){if(!closed&&snapshot?.state==='active'&&snapshot.battle?.status!=='active')motion?.send(position,moving,running);},
-  pulse:()=>(snapshot?.battle?.localCombatVersion&&snapshot.battle.status==='active')||manualWait()||(snapshot?.battle?.presentation?.deadline>serverNow())?readStatus():lane(async()=>{
+  pulse:()=>(snapshot?.battle?.localCombatVersion&&snapshot.battle.status==='active')||manualWait()||(snapshot?.battle?.presentation?.deadline>serverNow())?readStatus(false):lane(async()=>{
    if(!snapshot)return refresh();
    if(snapshot.departure||snapshot.state==='closed')return;
    if(snapshot.battle?.status==='active'||snapshot.battle?.presentation){
-    if(!canAdvanceBattle(snapshot.battle))return refresh();
-    if(snapshot.battle.loading&&!snapshot.battle.loading.pending.includes(connection.code))return refresh();
+    if(!canAdvanceBattle(snapshot.battle))return readStatus(false);
+    if(snapshot.battle.loading&&!snapshot.battle.loading.pending.includes(connection.code)&&snapshot.battle.loading.deadline>serverNow())return readStatus(false);
     if(snapshot.battle.loading?.pending?.includes(connection.code)){const result=await connection.run(roomId,'battleReady',{battle:snapshot.battle.id,presentationVersion:2});await refresh(result.snapshot);return;}
    }
    if(localExploration){
@@ -93,7 +106,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
      const result=await connection.run(roomId,'tick',{battle:snapshot.battle.id});
      await refresh(result.snapshot);return;
     }
-    if(personalExploration)return readStatus();
+    if(personalExploration)return readStatus(!snapshot.bossGather&&!snapshot.dungeon?.doorOpen);
     const position=getPosition();
     await refresh(await connection.run(roomId,'pulse',{localExploration:true,floor:snapshot.floor,...(position?{position}:{})}));return;
    }
@@ -115,6 +128,7 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
     await onResult(action,result,data);
     if(action==='leave'){await refresh(result);return;}
     if(result.snapshot){await refresh(result.snapshot);return;}
+    if(action==='nextFloor'&&result.gathering&&(snapshot.bossGather?.kind==='nextFloor'||snapshot.floor!==data.floor))return;
    }
    catch(error){
     if(['trap_unavailable','trap_out_of_reach','enemy_out_of_reach','boss_out_of_reach','enemy_unavailable','door_out_of_reach','stairs_out_of_reach','chest_out_of_reach','spring_out_of_reach'].includes(error.message)){
@@ -131,7 +145,11 @@ export function partyRunController({connection,roomId,scene,openMotion,onState=(
   get state(){return snapshot;},get busy(){return busy;},
   get pollDelay(){
    const b=snapshot?.battle;
-   if(b?.localCombatVersion||!(b?.status==='active'||b?.presentation))return personalExploration?60000:5000;
+   if(b?.localCombatVersion||!(b?.status==='active'||b?.presentation)){
+    if(snapshot?.bossGather)return 1000;
+    if(snapshot?.dungeon?.doorOpen||snapshot?.dungeon?.boss==='defeated')return 3000;
+    return personalExploration?60000:5000;
+   }
    if(!canAdvanceBattle(b)||b.presentation)return 750;
    if(b.loading)return b.loading.pending.includes(connection.code)?0:750;
    if(manualWait())return Math.max(100,Math.min(5000,b.waiting.deadline-serverNow()));

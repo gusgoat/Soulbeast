@@ -43,6 +43,7 @@ export async function partyMotion(connection,room,receive,receiveState=()=>{}) {
  const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.76.1');
  const api=createClient(connection.config.url,connection.config.key,{accessToken:connection.token});
  await api.realtime.setAuth();
+ let floor=room.floor;
  const channels=[],sequence=new Map();let publisher,ready=false,seq=0,nextSend=0,lastGait=null,closed=false;
  const state=api.channel(`sb-party-state:${connection.environment}:${room.id}:${connection.code}`,{config:{private:true}})
   .on('broadcast',{event:'state'},({payload})=>{
@@ -55,7 +56,7 @@ export async function partyMotion(connection,room,receive,receiveState=()=>{}) {
   if(member.code===connection.code) {
    publisher=channel;channel.subscribe(status=>{ready=status==='SUBSCRIBED';if(ready)lastGait=null;});
   }else channel.on('broadcast',{event:'motion'},({payload:p})=>{
-   if(closed||!p||p.floor!==room.floor||!Number.isSafeInteger(p.seq)||p.seq<0||
+   if(closed||!p||p.floor!==floor||!Number.isSafeInteger(p.seq)||p.seq<0||
     !Number.isFinite(p.x)||!Number.isFinite(p.y)||p.x<0||p.y<0||p.x>20000||p.y>20000||
     !Number.isFinite(p.dir)||p.dir<0||p.dir>7||typeof p.session!=='string'||p.session.length>40)return;
    const prior=sequence.get(member.code);
@@ -66,6 +67,7 @@ export async function partyMotion(connection,room,receive,receiveState=()=>{}) {
  const session=crypto.randomUUID();
  const refresh=setInterval(()=>void api.realtime.setAuth().catch(()=>{}),60000);
  return {
+  setFloor(next){if(next!==floor){floor=next;sequence.clear();lastGait=null;nextSend=0;}},
   send(position,moving,running) {
    if(!ready||closed)return;
    const time=performance.now(),gait=moving?(running?'run':'walk'):'idle';
@@ -79,7 +81,7 @@ export async function partyMotion(connection,room,receive,receiveState=()=>{}) {
     nextSend+=interval;
     if(nextSend-time<interval*.75)nextSend=time+interval;
    }
-   void publisher.send({type:'broadcast',event:'motion',payload:{session,seq:++seq,floor:room.floor,
+   void publisher.send({type:'broadcast',event:'motion',payload:{session,seq:++seq,floor,
     x:position.x,y:position.y,sentAt:time,dir:position.dir||0,spriteDir:position.spriteDir,moving:!!moving,running:!!running}}).catch(()=>{});
   },
   async close(){closed=true;ready=false;clearInterval(refresh);await Promise.all(channels.map(c=>api.removeChannel(c)));}
