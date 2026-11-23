@@ -9272,6 +9272,121 @@ function ordinaryBattleContext(battle,floor){
  mount();
 })();
 
+// pvp-connected-host · test opt-in only
+// Presentation projection only. The existing room service owns combat and settlement.
+function createPvpConnectedView(room, options = {}) {
+ if (!room?.battle || !['active','finished'].includes(room.status)) return null;
+ const b=room.battle, own=room.side??room.me;
+ const units=[...b.allies.map(u=>({...u,side:own===0?'ally':'enemy'})),...b.enemies.map(u=>({...u,side:own===1?'ally':'enemy'}))].map(u=>({...u,maxHp:u.st.hp,maxMp:u.st.mp}));
+ const actor=units.find(u=>u.id===b.cur), over=room.status==='finished';
+ const skills=actor?[...new Set([...(actor.skills||[]),'rest','defend'])].map(id=>{
+  const s=options.skill?.(id)||(id==='defend'?{n:'ตั้งรับ',t:'buff',tg:'self',mp:0}:null);if(!s)return null;
+  const cost=options.cost?.(actor,s)||0, cooldown=options.cooldown?.(actor,id)||0;
+  return {id,...s,cost,coinCost:0,cooldown,available:cost<=actor.mp&&!cooldown,element:options.element?.(actor,s)||s.el||'normal',range:s.range||(['m','h'].includes(s.t)||s.t==='auto'&&actor.atkType==='m'?'ranged':'melee')};
+ }).filter(Boolean):[];
+ return {battle:'pvp:'+room.id,revision:options.revision??room.rev,current:b.cur,round:b.round,turn:b.round||1,clockKey:[room.id,b.cur,room.deadline].join(':'),kind:'pvp',zone:1,
+  context:{mode:'pvp',online:true,stage:'pvp-arena',returnLabel:'กลับห้อง PVP',autoHospital:false,modeLabel:room.mode==='2v2'?'PVP 2 vs 2':'PVP 1 vs 1'},
+  units,queue:b.queue||[],skills,items:[],seals:[],summons:[],captureTargets:[],canEscape:false,
+  auto:!!room.players?.[room.me]?.auto,autoPet:false,autoAllowed:!over,petAutoAllowed:false,
+  waiting:over||!!options.pending||!!options.busy||room.replaying||actor?.owner!==room.me,
+  pending:!!options.pending,notice:options.error||'',speed:options.speed||1,
+  seconds:Math.max(0,Math.ceil((room.deadline-(options.now??Date.now())+(options.clock||0))/1000)),
+  log:(b.log||[]).slice(-12),saveMode:'server-room',saving:false,
+  over:over?{res:room.winner===-1?'draw':room.winner===own?'win':'lose',title:room.winner===-1?'เสมอ':room.winner===own?'ชัยชนะ':'พ่ายแพ้',lines:[room.reason||'บันทึกผลการประลองแล้ว']}:null};
+}
+
+function validatePvpConnectedCommand(room, message, options={}) {
+ if(!room||message.battle!=='pvp:'+room.id||message.revision!==options.revision)return {ok:false,reason:'stale'};
+ if(options.presenting||options.busy)return {ok:false,reason:'busy'};
+ if(message.command==='speed')return {ok:message.speed===1||message.speed===2,kind:'speed',speed:message.speed};
+ if(message.command==='done')return {ok:room.status==='finished',kind:'done'};
+ if(room.status!=='active'||room.replaying)return {ok:false,reason:'inactive'};
+ if(message.command==='retry')return {ok:!!options.pending,kind:'retry'};
+ if(message.command==='timeout')return {ok:true,kind:'poll'}; // Server decides whether the deadline elapsed.
+ if(message.command==='auto')return {ok:!options.pending,kind:'auto',enabled:!room.players?.[room.me]?.auto};
+ if(message.command!=='skill'||options.pending)return {ok:false,reason:'unsupported'};
+ const all=[...room.battle.allies,...room.battle.enemies], actor=all.find(u=>u.id===room.battle.cur);
+ if(!actor||actor.owner!==room.me||actor.hp<=0)return {ok:false,reason:'ownership'};
+ const skill=options.skills?.find(s=>s.id===message.id);
+ if(!skill?.available)return {ok:false,reason:'skill'};
+ const own=room.side??room.me, friends=own===0?room.battle.allies:room.battle.enemies, foes=own===0?room.battle.enemies:room.battle.allies;
+ const support=['heal','buff','rest','form','revert','summon'].includes(skill.t);
+ if(!skill.all&&skill.tg!=='team'&&skill.tg!=='self'&&!['rest','form','revert','summon'].includes(skill.t)){
+  const target=(support?friends:foes).find(u=>u.id===(support?message.friend:message.target));
+  if(!target||target.hp<=0&&!(support&&(skill.rev||skill.revAll)))return {ok:false,reason:'target'};
+ }
+ return {ok:true,kind:'skill',skill:message.id,target:foes.some(u=>u.id===message.target)?message.target:'',friend:friends.some(u=>u.id===message.friend)?message.friend:actor.id};
+}
+
+/* Install after the native PVP handlers. Test-world presentation only. */
+(()=>{
+ let context;try{context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')}catch{}
+ if(context?.environment!=='test'||sessionStorage.getItem('soulbeast-new-pvp-test')!=='on')return;
+ const nativeRender=render,nativeReceive=pvpReceive,channel=crypto.randomUUID(),failed=new Set(),requests=new Set();
+ let frame=null,legacyButton=null,ready=false,fieldReady=false,revision=0,sequence=0,presenting=0,receiving=false,roomId='',latest=null;
+ const eligible=()=>S.screen==='pvp'&&PVP.room?.battle&&['active','finished'].includes(PVP.room.status)&&!failed.has(PVP.room.id)&&!PVP.room.replaying;
+ const view=()=>createPvpConnectedView(PVP.room,{revision,pending:PVP.pending,busy:PVP.busy,error:PVP.error,clock:PVP.clock,speed:BattleSpeed.value,skill:id=>pvpSkill(id,true),cost:costOf,cooldown:cooldownOf,element:effectiveElement});
+ function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin)}
+ function unmount(){frame?.remove();legacyButton?.remove();frame=null;legacyButton=null;ready=false;fieldReady=false;presenting=0;latest=null;recovery.stop();}
+ function fallback(){if(roomId)failed.add(roomId);unmount();nativeRender();Music.sync();toast('กลับไปใช้สนาม PVP เดิมแล้ว · สถานะห้องยังคงเดิม')}
+ const recovery=createOrdinaryStageRecovery({recover:fallback});
+ for(const [owner,key]of [[Sound,'fx'],[Sound,'skill'],[Sound,'cry'],[ExtraAudio,'play'],[ExtraAudio,'skill']]){const original=owner[key];if(typeof original==='function')owner[key]=function(...args){if(frame&&eligible())return;return original.apply(this,args)}}
+ const nativeMusicSync=Music.sync;Music.sync=function(...args){if(frame&&eligible()){Music.stop();return}return nativeMusicSync.apply(this,args)};
+ function publish(){revision++;latest=view();if(!presenting)post('ordinary-state',{view:latest})}
+ function mount(){
+  if(!eligible()){if(frame)unmount();return;}
+  if(roomId!==PVP.room.id){unmount();roomId=PVP.room.id;sequence=0;requests.clear();}
+  if(!frame){
+   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP ใหม่ · โลกทดสอบ';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=pvp-connected-test-v1';
+   Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});document.body.append(frame);
+   legacyButton=document.createElement('button');legacyButton.textContent='ใช้สนามเดิม';legacyButton.id='pvp-use-legacy';Object.assign(legacyButton.style,{position:'fixed',right:'10px',top:'60px',zIndex:'2147483001',padding:'7px 10px',border:'1px solid #b89a5b',borderRadius:'7px',background:'#142331',color:'#f4dfad'});legacyButton.onclick=fallback;document.body.append(legacyButton);
+   frame.addEventListener('error',fallback);recovery.start('pvp:'+roomId);Music.stop();ExtraAudio.stop();Sound.stopAmb();
+  }
+  publish();
+ }
+ render=function(...args){const result=nativeRender.apply(this,args);if(!receiving)mount();return result};
+ pvpReceive=function(result){
+  const prior=PVP.room?JSON.parse(JSON.stringify(PVP.room)):null;
+  receiving=true;try{nativeReceive(result)}finally{receiving=false}
+  const next=PVP.room;
+  if(!eligible()){mount();return;}
+  if(!frame||!fieldReady||presenting||!prior||prior.id!==next.id||next.rev<=prior.rev){mount();return;}
+  const a=next.last,sk=a&&pvpSkill(a.skill,true),actor=a&&[...prior.battle.allies,...prior.battle.enemies].find(u=>u.id===a.actor);
+  // A poll or automatic toggle can increment revision without a new combat action.
+  const stamp=r=>JSON.stringify([r.last,r.battle.turns,r.battle.round,r.battle.cur,r.battle.effects,r.battle.log]);
+  const changedAction=a&&stamp(next)!==stamp(prior);
+  if(!sk||!actor||!changedAction){mount();return;}
+  revision++;const before=createPvpConnectedView(prior,{revision,skill:id=>pvpSkill(id,true),cost:costOf,cooldown:cooldownOf,element:effectiveElement});latest=view();
+  const effects=next.battle.effects||[],hit=effects.find(e=>e.k==='hit'),old=[...prior.battle.allies,...prior.battle.enemies];
+  const affected=latest.units.find(u=>u.side===before.units.find(x=>x.id===actor.id)?.side&&u.hp!==(old.find(x=>x.id===u.id)?.hp));
+  presenting=++sequence;recovery.action('pvp:'+roomId,presenting);
+  post('ordinary-action',{sequence:presenting,before,view:latest,action:{actor:a.actor,skill:a.skill,name:sk.n,target:a.target||hit?.id,friend:sk.tg==='self'?a.actor:a.friend||affected?.id||a.actor,support:['heal','buff','rest','form','revert','summon'].includes(sk.t),all:!!sk.all||sk.tg==='team',range:sk.range||(['m','h'].includes(sk.t)||sk.t==='auto'&&actor.atkType==='m'?'ranged':'melee'),charging:!!next.battle.allies.concat(next.battle.enemies).find(u=>u.id===actor.id)?.charging,events:effects}});
+ };
+ async function command(m){
+  const r=PVP.room,current=view(),decision=validatePvpConnectedCommand(r,m,{revision,presenting,busy:PVP.busy,pending:PVP.pending,skills:current?.skills});
+  if(!decision.ok){publish();return;}
+  const key=roomId+':'+m.request;if(requests.has(key))return;requests.add(key);if(requests.size>256)requests.delete(requests.values().next().value);
+  if(decision.kind==='speed'){if(BattleSpeed.value!==decision.speed)handlers.battleSpeed();publish();return;}
+  if(decision.kind==='done'){handlers.pvpClear();mount();return;}
+  if(decision.kind==='retry'){handlers.pvpRetry();return;}
+  if(decision.kind==='poll'){await pvpRequest({action:'pvp_poll'},true);publish();return;}
+  if(decision.kind==='auto'){await pvpRequest({action:'pvp_auto',enabled:decision.enabled});return;}
+  if(decision.kind==='skill'){PVP.target=decision.target;PVP.friend=decision.friend;handlers.pvpMove(decision.skill);}
+ }
+ addEventListener('message',e=>{
+  if(e.origin!==location.origin||e.source!==frame?.contentWindow)return;const m=e.data;
+  if(m?.type==='ordinary-ready'){ready=true;publish();return;}
+  if(m?.type==='ordinary-render-error'&&(!ready||m.channel===channel)){fallback();return;}
+  if(m?.channel!==channel||m.battle!=='pvp:'+roomId)return;
+  if(m.type==='ordinary-field-ready'){fieldReady=true;recovery.ready(m.battle);return;}
+  if(m.type==='ordinary-heartbeat'){recovery.pulse(m.battle);return;}
+  if(m.type==='ordinary-presented'&&m.sequence===presenting&&recovery.acknowledge(m.battle,m.sequence)){presenting=0;publish();return;}
+  if(m.type==='ordinary-command'&&fieldReady)void command(m).catch(()=>{post('ordinary-notice',{message:'ตรวจสถานะห้องไม่สำเร็จ · ลองคำสั่งเดิมอีกครั้ง'});publish()});
+ });
+ setInterval(()=>{recovery.pause(document.hidden);recovery.tick()},500);
+ mount();
+})();
+
 }
 
 </script><script type="module" src="/Soulbeast/client/event-announcements.mjs?v=boss-portrait-1"></script><script src="/Soulbeast/client/game-voice-hooks.js?v=1"></script><link rel="stylesheet" href="/Soulbeast/client/gacha-presentation.generated.css?v=live-gacha-20261123"><script src="/Soulbeast/client/gacha-reveal-canvas.generated.js?v=live-gacha-20261123"></script><script src="/Soulbeast/client/gacha-presentation.js?v=live-gacha-20261123"></script></body>
