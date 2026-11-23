@@ -6,13 +6,11 @@ const pet=p=>(p.party||[]).map(id=>p.pets?.find(v=>v.uid===id)).find(Boolean);
 let context;
 try{context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');}catch{}
 const online=Boolean(context?.code&&['live','test'].includes(context.environment));
-if(online&&context.environment==='live'){
+if(online){
  const link=document.createElement('a');
- link.href='online-party-lobby.html';
+ link.href=context.environment==='test'?'online-party-lobby.html?world=test':'online-party-lobby.html';
  link.textContent='สร้างหรือเข้าร่วมปาร์ตี้ออนไลน์ (2–4 คน)';
- const modes=document.createElement('p');
- modes.append(link);
- $('identity').before(modes);
+ $('clearFriend').after(link);
 }
 
 if(!online&&!api.player()){
