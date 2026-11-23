@@ -91,7 +91,7 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
  if(world.boss!=='defeated'&&visible(bp))draws.push({y:bp.y,run:()=>{
   const q=screen(bp);
   if(boss.current)boss.draw(ctx,q.x,q.y,Math.min(cfg.bossSize||260,330)*s,dir,time,!!moving);
-  else sprite('boss',bp,125);
+  else sprite('boss',bp,125*boss.visualScale);
   label(bp,cfg.bossName);
  }});
  const gate=map.rooms.find(r=>r.id==='boss').gate;
