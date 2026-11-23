@@ -22,14 +22,14 @@ export function encounterView(b, me, mode, now, pending) {
 }
 
 export function createConnectedField(submit, toggleAuto) {
-  let frame, fallback, timer, ready=false, channel, latest, previous, key, failed, speed=1;
+  let frame, timer, ready=false, channel, latest, previous, key, failed, speed=1;
   let latestBattle, latestTime, pendingTurn, lastRequest=0;
   let awaitingSequence=null, releaseTimer, releaseRequested=false, warmFailed=false;
   const post=(type,body)=>frame?.contentWindow?.postMessage({type,channel,...body},location.origin);
   function deactivate() {
     clearTimeout(timer); clearTimeout(releaseTimer);
     if(frame){frame.style.visibility='hidden';frame.inert=true;}
-    fallback?.remove();fallback=null;
+    
     awaitingSequence=null; releaseRequested=false; latestBattle=null;
     previous=null; latest=null; key=null; pendingTurn=null; lastRequest=0;
   }
@@ -105,9 +105,7 @@ export function createConnectedField(submit, toggleAuto) {
       const now=time();
       prepare();
       if(!latest){
-        fallback=document.createElement('button');fallback.textContent='ใช้สนามเดิม';fallback.onclick=exitField;
-        Object.assign(fallback.style,{position:'fixed',right:'8px',top:'56px',zIndex:10001});
-        document.body.append(fallback);timer=setTimeout(()=>{if(!latestBattle?.finished)exitField();},30000);
+        timer=setTimeout(()=>{if(!latestBattle?.finished)exitField();},30000);
       }
       latestTime=time;latestBattle=b;
       const stamp=[b.id,b.turn,b.cur,b.last?.n,b.finished,b.auto,now>=b.openAt,now>=b.deadline,pendingTurn,b.commands.length,

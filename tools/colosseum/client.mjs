@@ -86,7 +86,7 @@ if(accountContext && selectedCharacter){
 }
 const channel=testArena?'soulbeast-colosseum-test-session':'soulbeast-colosseum-session';
 const endpoint=(path,base)=>new URL((testArena?'/test':'')+path,base);
-const field=testArena?(await import('./connected-field.mjs?v=vfx-charge-test-20261123-1')).createConnectedField(
+const field=testArena?(await import('./connected-field.mjs?v=vfx-charge-test-20261123-1-country-entry')).createConnectedField(
  (turn,skill,target)=>send({type:'combat',turn,skill,target}),
  enabled=>send({type:'combatAuto',enabled})):null;
 const practiceType=type=>type==='practice'||type==='survivalPractice';
