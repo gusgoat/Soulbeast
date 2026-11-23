@@ -58,7 +58,7 @@ function createModel({beast=false,primary=false}={}){
   next=key;
   const revision=ticket;
   supported=beast?null:true;
-  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=beasts-3d-six-20261121')
+  pending=import('/Soulbeast/tools/hemant-walk-demo/packlord-3d/actor-catalog.mjs?v=live-siege-20261124')
    .then(catalog=>{
     if(revision!==ticket)return null;
     supported=catalog.hasActor(key,{beast});
@@ -72,7 +72,7 @@ function createModel({beast=false,primary=false}={}){
    .catch(()=>false);
   return pending;
  }
- return {sync,release,whenReady:()=>pending||Promise.resolve(false),get ready(){return !!current;},get supported(){return supported;},draw(...args){return current?.draw(...args)||false}};
+ return {sync,release,whenReady:()=>pending||Promise.resolve(false),get ready(){return !!current;},get attackOrigin(){return current?.attackOrigin??null;},get supported(){return supported;},draw(...args){return current?.draw(...args)||false}};
 }
 let loadingMarker;
 function getLoadingMarker(){

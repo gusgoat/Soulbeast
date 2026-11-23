@@ -2,7 +2,7 @@ import '../../assets/living-beasts/catalog.js?v=living-177-2';
 import '../town-walk-demo/beast-habitats.js?v=living-177-2';
 import '../town-walk-demo/living-beasts.js?v=living-flight-idle-1';
 import '../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117';
-import '../town-walk-demo/sealer-sprites.js?v=bitmap-capture-1';
+import '../town-walk-demo/sealer-sprites.js?v=live-siege-20261124';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASES, BASE_RECALL_MS, BASE_REPAIR_RANGE, CELL, COLORS, FLAT, TEAM_ARENA, WARP_PADS, WARP_PAD_RANGE, baseDamageStage, capitalSpawn, distance} from './arena.mjs?v=team-bot-tactics-1';
@@ -823,7 +823,8 @@ export class Scene{
    }
    if(!player)continue;
    const tower=e.kind==='tower',bx=base.x,by=base.y*FLAT-34;
-   const release=tower?null:this.siegeOrigins.get(e.id)??siegeRelease(player,e.kind,base);
+   const model=this.anim.get(player.id)?.model;
+   const release=tower?null:this.siegeOrigins.get(e.id)??(model?.ready?{...(model.attackOrigin||{x:player.x,y:player.y*FLAT-70}),at:.5}:siegeRelease(player,e.kind,base));
    if(release){
     if(t<release.at)continue;
     release.until=e.until;
@@ -963,11 +964,14 @@ export class Scene{
    const pose=moving?(p.walkRunning===false?'walk':'run'):'idle';
    const entry=atlas?.entry;
    const [,ay]=entry?.anchor||[.5,.962],size=145*(entry?.renderScale||1);
-   const target=attack&&bases.get(attack.baseId);
-   const attackSheet=target&&siegeSheet(p);
+   const target=attack&&(bases.get(attack.baseId)||attack.targetInfantry);
+   const progress=attack?Math.max(0,Math.min(1,(serverTime-attack.at)/Math.max(1,attack.until-attack.at))):0;
+   const attackHeading=target?globalThis.sealerSprites.heading(target.x-p.x,(target.y-p.y)*FLAT):heading;
+   if(target){prev.spriteDir=attackHeading;prev.dir=globalThis.sealerSprites.nearestDirection(attackHeading);}
+   const rendered3d=prev.model?.draw(c,x,y,145,attackHeading,target?false:moving,target?false:pose==='run',target?{kind:attack.kind,progress}:null);
+   const attackSheet=!rendered3d&&target&&siegeSheet(p);
    const directional=ready(attackSheet?.image);
-   const action=target&&!directional&&pvpCardArt[`${p.cls}-${sealerGender(p)}`];
-   const progress=attack?Math.max(0,(serverTime-attack.at)/(attack.until-attack.at)):0;
+   const action=!rendered3d&&target&&!directional&&pvpCardArt[`${p.cls}-${sealerGender(p)}`];
    const close=attack?.kind==='melee'||attack?.kind==='hammer';
    const posePath=action&&(progress<.25?action.windup:close?action.melee:action.power);
    if(posePath&&!siegePoses.has(posePath))siegePoses.set(posePath,img(posePath.replace(/^\/assets\//,assets)));
@@ -985,7 +989,7 @@ export class Scene{
     c.save();c.translate(x+direction*reach,y);c.scale(direction,1);
     globalThis.sealerSprites.drawColoredFrame(c,strike,0,0,strike.naturalWidth,strike.naturalHeight,-width/2,-height,width,height);
     c.restore();
-   }else if(!prev.model?.draw(c,x,y,145,heading,moving,pose==='run')){
+   }else if(!rendered3d){
     const face=portrait(p);
     if(face&&!beastArt.has(face))beastArt.set(face,img(face));
     const image=beastArt.get(face),width=size*.55;
