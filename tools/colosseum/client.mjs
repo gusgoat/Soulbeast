@@ -32,9 +32,11 @@ let characterKey="";
 let resultKey='',liveScoreKey='';
 const characterDialog=$('walk-character');
 const characterIcon=$('walk-character-icon'),characterLabel=$('walk-character-label');
+let characterIconSource;
 function showCharacterIcon(loaded){
  characterIcon.hidden=!loaded;
- characterLabel.hidden=loaded;
+ characterLabel.hidden=true;
+ characterIcon.parentElement.dataset.portraitReady=String(loaded);
 }
 characterIcon.onload=()=>showCharacterIcon(true);
 characterIcon.onerror=()=>showCharacterIcon(false);
@@ -382,7 +384,8 @@ function applyState(next){
  renderMatchResults();
  if(!me||!Number.isFinite(me.x))return;
  const characterArt=portrait(me);
- if(characterArt!==(characterIcon.getAttribute('src')||undefined)){
+ if(characterArt!==characterIconSource){
+  characterIconSource=characterArt;
   showCharacterIcon(false);
   if(characterArt)characterIcon.src=characterArt;
   else characterIcon.removeAttribute('src');
