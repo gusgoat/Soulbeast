@@ -9318,16 +9318,31 @@ function validatePvpConnectedCommand(room, message, options={}) {
  return {ok:true,kind:'skill',skill:message.id,target:foes.some(u=>u.id===message.target)?message.target:'',friend:friends.some(u=>u.id===message.friend)?message.friend:actor.id};
 }
 
+function createPvpReplaySteps(room, applyFrame=()=>{}) {
+ if(room?.status!=='finished'||!room.replay?.initial||!room.replay.frames?.length)return [];
+ let before={...structuredClone(room),replay:undefined,status:'active',replaying:true,battle:structuredClone(room.replay.initial)};
+ const steps=[];
+ for(const f of room.replay.frames){
+  const after=structuredClone(before),b=after.battle;applyFrame(b,f);
+  for(const [id,hp,mp,status,taunt]of f.units||[]){const u=[...b.allies,...b.enemies].find(u=>u.id===id);if(u)Object.assign(u,{hp,mp,status,taunt});}
+  for(const key of ['cur','round','turns','bossTurns','damageTotal','damageBy','effects','log'])if(f[key]!==undefined)b[key]=structuredClone(f[key]);
+  const effects=f.effects||[],cast=effects.find(e=>e.k==='cast'||e.k==='charge'),hit=effects.find(e=>e.k==='hit');
+  steps.push({before,after,last:{actor:cast?.source||cast?.id||before.battle.cur,skill:cast?.skill||hit?.skill||'attack',target:hit?.id}});before=after;
+ }
+ steps.push({after:structuredClone(room)});return steps;
+}
+
 /* Install after the native PVP handlers. Test-world presentation only. */
 (()=>{
  let context;try{context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')}catch{}
  if(context?.environment!=='test'||sessionStorage.getItem('soulbeast-new-pvp-test')!=='on')return;
  const nativeRender=render,nativeReceive=pvpReceive,channel=crypto.randomUUID(),failed=new Set(),requests=new Set();
- let frame=null,legacyButton=null,ready=false,fieldReady=false,revision=0,sequence=0,presenting=0,receiving=false,roomId='',latest=null;
+ let frame=null,legacyButton=null,ready=false,fieldReady=false,revision=0,sequence=0,presenting=0,receiving=false,roomId='',latest=null,playback=[],playbackRoom=null;
+ const replayed=new Set();
  const eligible=()=>S.screen==='pvp'&&PVP.room?.battle&&['active','finished'].includes(PVP.room.status)&&!failed.has(PVP.room.id)&&!PVP.room.replaying;
- const view=()=>createPvpConnectedView(PVP.room,{revision,pending:PVP.pending,busy:PVP.busy,error:PVP.error,clock:PVP.clock,speed:BattleSpeed.value,skill:id=>pvpSkill(id,true),cost:costOf,cooldown:cooldownOf,element:effectiveElement});
+ const view=(room=playbackRoom||PVP.room)=>createPvpConnectedView(room,{revision,pending:PVP.pending,busy:PVP.busy,error:PVP.error,clock:PVP.clock,speed:BattleSpeed.value,skill:id=>pvpSkill(id,true),cost:costOf,cooldown:cooldownOf,element:effectiveElement});
  function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin)}
- function unmount(){frame?.remove();legacyButton?.remove();frame=null;legacyButton=null;ready=false;fieldReady=false;presenting=0;latest=null;recovery.stop();}
+ function unmount(){frame?.remove();legacyButton?.remove();frame=null;legacyButton=null;ready=false;fieldReady=false;presenting=0;latest=null;playback=[];playbackRoom=null;recovery.stop();}
  function fallback(){if(roomId)failed.add(roomId);unmount();nativeRender();Music.sync();toast('กลับไปใช้สนาม PVP เดิมแล้ว · สถานะห้องยังคงเดิม')}
  const recovery=createOrdinaryStageRecovery({recover:fallback});
  for(const [owner,key]of [[Sound,'fx'],[Sound,'skill'],[Sound,'cry'],[ExtraAudio,'play'],[ExtraAudio,'skill']]){const original=owner[key];if(typeof original==='function')owner[key]=function(...args){if(frame&&eligible())return;return original.apply(this,args)}}
@@ -9337,7 +9352,7 @@ function validatePvpConnectedCommand(room, message, options={}) {
   if(!eligible()){if(frame)unmount();return;}
   if(roomId!==PVP.room.id){unmount();roomId=PVP.room.id;sequence=0;requests.clear();}
   if(!frame){
-   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP ใหม่ · โลกทดสอบ';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=pvp-connected-test-v1';
+   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP ใหม่ · โลกทดสอบ';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=pvp-connected-test-v2';
    Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});document.body.append(frame);
    legacyButton=document.createElement('button');legacyButton.textContent='ใช้สนามเดิม';legacyButton.id='pvp-use-legacy';Object.assign(legacyButton.style,{position:'fixed',right:'10px',top:'60px',zIndex:'2147483001',padding:'7px 10px',border:'1px solid #b89a5b',borderRadius:'7px',background:'#142331',color:'#f4dfad'});legacyButton.onclick=fallback;document.body.append(legacyButton);
    frame.addEventListener('error',fallback);recovery.start('pvp:'+roomId);Music.stop();ExtraAudio.stop();Sound.stopAmb();
@@ -9345,23 +9360,37 @@ function validatePvpConnectedCommand(room, message, options={}) {
   publish();
  }
  render=function(...args){const result=nativeRender.apply(this,args);if(!receiving)mount();return result};
+ // Completed auto matches contain authoritative replay frames. Keep their playback in this renderer.
+ if(typeof localReplay==='function'){const nativeReplay=localReplay;localReplay=function(mode,room){if(mode==='pvp'&&S.screen==='pvp'&&!failed.has(room?.id))return;return nativeReplay(mode,room)}}
  pvpReceive=function(result){
   const prior=PVP.room?JSON.parse(JSON.stringify(PVP.room)):null;
   receiving=true;try{nativeReceive(result)}finally{receiving=false}
   const next=PVP.room;
   if(!eligible()){mount();return;}
+  const steps=createPvpReplaySteps(next,typeof applyClass10Replay==='function'?applyClass10Replay:()=>{});
+  if(steps.length&&!replayed.has(next.id)){if(!frame||roomId!==next.id)mount();replayed.add(next.id);playback=steps;playbackRoom=steps[0].before;publish();drainPlayback();return;}
   if(!frame||!fieldReady||presenting||!prior||prior.id!==next.id||next.rev<=prior.rev){mount();return;}
   const a=next.last,sk=a&&pvpSkill(a.skill,true),actor=a&&[...prior.battle.allies,...prior.battle.enemies].find(u=>u.id===a.actor);
   // A poll or automatic toggle can increment revision without a new combat action.
   const stamp=r=>JSON.stringify([r.last,r.battle.turns,r.battle.round,r.battle.cur,r.battle.effects,r.battle.log]);
   const changedAction=a&&stamp(next)!==stamp(prior);
   if(!sk||!actor||!changedAction){mount();return;}
-  revision++;const before=createPvpConnectedView(prior,{revision,skill:id=>pvpSkill(id,true),cost:costOf,cooldown:cooldownOf,element:effectiveElement});latest=view();
+  presentAction(prior,next,a);
+ };
+ function presentAction(prior,next,a){
+  const sk=pvpSkill(a.skill,true),actor=[...prior.battle.allies,...prior.battle.enemies].find(u=>u.id===a.actor);if(!sk||!actor)return false;
+  revision++;const before=view(prior);latest=view(next);
   const effects=next.battle.effects||[],hit=effects.find(e=>e.k==='hit'),old=[...prior.battle.allies,...prior.battle.enemies];
   const affected=latest.units.find(u=>u.side===before.units.find(x=>x.id===actor.id)?.side&&u.hp!==(old.find(x=>x.id===u.id)?.hp));
   presenting=++sequence;recovery.action('pvp:'+roomId,presenting);
   post('ordinary-action',{sequence:presenting,before,view:latest,action:{actor:a.actor,skill:a.skill,name:sk.n,target:a.target||hit?.id,friend:sk.tg==='self'?a.actor:a.friend||affected?.id||a.actor,support:['heal','buff','rest','form','revert','summon'].includes(sk.t),all:!!sk.all||sk.tg==='team',range:sk.range||(['m','h'].includes(sk.t)||sk.t==='auto'&&actor.atkType==='m'?'ranged':'melee'),charging:!!next.battle.allies.concat(next.battle.enemies).find(u=>u.id===actor.id)?.charging,events:effects}});
- };
+  return true;
+ }
+ function drainPlayback(){
+  if(!fieldReady||presenting)return;
+  while(playback.length){const step=playback.shift();playbackRoom=step.after;if(step.before&&presentAction(step.before,step.after,step.last))return;}
+  playbackRoom=null;publish();
+ }
  async function command(m){
   const r=PVP.room,current=view(),decision=validatePvpConnectedCommand(r,m,{revision,presenting,busy:PVP.busy,pending:PVP.pending,skills:current?.skills});
   if(!decision.ok){publish();return;}
@@ -9378,14 +9407,15 @@ function validatePvpConnectedCommand(room, message, options={}) {
   if(m?.type==='ordinary-ready'){ready=true;publish();return;}
   if(m?.type==='ordinary-render-error'&&(!ready||m.channel===channel)){fallback();return;}
   if(m?.channel!==channel||m.battle!=='pvp:'+roomId)return;
-  if(m.type==='ordinary-field-ready'){fieldReady=true;recovery.ready(m.battle);return;}
+  if(m.type==='ordinary-field-ready'){fieldReady=true;recovery.ready(m.battle);if(playback.length)drainPlayback();return;}
   if(m.type==='ordinary-heartbeat'){recovery.pulse(m.battle);return;}
-  if(m.type==='ordinary-presented'&&m.sequence===presenting&&recovery.acknowledge(m.battle,m.sequence)){presenting=0;publish();return;}
+  if(m.type==='ordinary-presented'&&m.sequence===presenting&&recovery.acknowledge(m.battle,m.sequence)){presenting=0;if(playback.length)drainPlayback();else{playbackRoom=null;publish()}return;}
   if(m.type==='ordinary-command'&&fieldReady)void command(m).catch(()=>{post('ordinary-notice',{message:'ตรวจสถานะห้องไม่สำเร็จ · ลองคำสั่งเดิมอีกครั้ง'});publish()});
  });
  setInterval(()=>{recovery.pause(document.hidden);recovery.tick()},500);
  mount();
 })();
+
 
 }
 
