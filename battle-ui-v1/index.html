@@ -164,7 +164,38 @@ dialog{max-width:calc(100% - 32px);width:330px;border:1px solid #b39761;border-r
 .menu-collapsed .actions #team-auto,.menu-collapsed #speed,.menu-collapsed #toggle-menu{display:block;min-height:40px;font-size:12px}
 .battle-ground-shadows{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
 html[data-connected-loading] .game{visibility:hidden}html[data-connected-loading] #loading{visibility:visible;position:fixed;inset:0;transform:none;width:auto;height:auto;z-index:100;display:grid;place-items:center;background:#101b25;color:#ead6a6;font-size:14px;pointer-events:none}
-</style><style id="battle-responsive-width">.game{grid-template-columns:minmax(0,1fr)}.arena,.commands{min-width:0;max-width:100%}.prompt b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.prompt span{min-width:0;overflow-wrap:anywhere}</style></head><body>
+</style><style id="battle-responsive-width">.game{grid-template-columns:minmax(0,1fr)}.arena,.commands{min-width:0;max-width:100%}.prompt b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.prompt span{min-width:0;overflow-wrap:anywhere}</style><style id="battle-menu-polish">.commands{
+ background:
+  radial-gradient(ellipse at 50% 0%,#b78b4033,transparent 65%),
+  repeating-linear-gradient(135deg,#d6b57606 0 1px,transparent 1px 20px),
+  repeating-linear-gradient(45deg,#d6b57604 0 1px,transparent 1px 20px),
+  linear-gradient(180deg,#1d2b39,#101b28 70%,#0b1420);
+ border-top-color:#d6b576;
+ box-shadow:inset 1px 0 #c7a56233,inset -1px 0 #c7a56233,inset 0 2px #f0d89b22,0 -5px 24px #060b1499;
+}
+.commands>.queue{border-bottom-color:#c7a56255}
+.commands>.actions{padding-top:7px;border-top:1px solid #c7a56233}
+body[data-battle-mode="ordinary-connected"] #menu:has(>.pvp-result){
+ display:flex;flex-direction:column;align-items:stretch;gap:12px;
+ overflow-y:auto;overflow-x:hidden;padding:5px 3px 9px;scroll-padding-block:8px;
+}
+body[data-battle-mode="ordinary-connected"] #menu>.pvp-result{
+ flex:none;min-width:0;min-height:min-content;height:auto;gap:8px;padding:15px 16px;
+ border:1px solid #c8a76499;border-radius:12px;
+ background:radial-gradient(ellipse at 0 0,#c2984540,transparent 65%),linear-gradient(135deg,#26394aee,#101d2aee);
+ box-shadow:inset 0 0 0 3px #09142080,inset 0 0 0 4px #c8a76422,0 3px 12px #0005;
+ overflow-wrap:anywhere;
+}
+body[data-battle-mode="ordinary-connected"] #menu>.pvp-result>b{
+ display:block;font-size:20px;line-height:1.4;color:#f1d080;text-shadow:0 2px 4px #0008;
+}
+body[data-battle-mode="ordinary-connected"] #menu>.pvp-result p{margin:0;line-height:1.65}
+body[data-battle-mode="ordinary-connected"] #menu:has(>.pvp-result)>button{
+ flex:none;align-self:stretch;width:100%;min-height:82px;padding:9px 13px;
+ background:radial-gradient(ellipse at 0 0,#bd8c3644,transparent 75%),linear-gradient(125deg,#26394a,#152432);
+}
+body[data-battle-mode="ordinary-connected"] #menu:has(>.pvp-result)>.pvp-message{flex:none}
+</style></head><body>
 <main class="game" id="game">
 <section class="arena" id="arena" aria-label="สนามต่อสู้">
 <div class="atmosphere"></div><canvas class="world" id="world" aria-label="พื้นสนามรบมุมกล้อง 45 องศา"></canvas><img id="header-scenery" class="header-scenery" alt=""><canvas id="scenery-motion" class="header-scenery scenery-motion" aria-hidden="true" hidden></canvas><canvas id="ground-shadows" class="battle-ground-shadows" aria-hidden="true"></canvas><div id="actor-sprites" class="actor-sprites" aria-hidden="true"></div><div class="actor-health-bars" id="actor-health-bars" aria-label="HP ของตัวละครแต่ละตัว"></div><div class="effects" id="effects"></div>
