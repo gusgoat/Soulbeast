@@ -56,10 +56,12 @@ function create(data,nav){
   tree.shrub=1+(signature>>>6)%4;
   tree.w=data.regionLayout?tree.w*.44:tree.w*.73;
  }
- const trunks=trees.map(o=>({kind:'tree',x:o.x,y:o.y*F,rx:o.w*.12+PLAYER_RADIUS,ry:o.w*.07+PLAYER_RADIUS}));
+ const trunks=trees.map(o=>({kind:'tree',x:o.x,y:o.y*F,rx:o.w*.12+PLAYER_RADIUS,ry:o.w*.07+PLAYER_RADIUS,...(o.shrub?{shrub:true,slowY:o.y*F-o.w*.18,slowRx:o.w*.4+PLAYER_RADIUS,slowRy:o.w*.24+PLAYER_RADIUS}:{})}));
  const buckets=new Map(),CELL=256;
- for(const o of [...rocks,...trunks]){const box=o.points?{left:Math.min(...o.points.map(p=>p.x))-PLAYER_RADIUS,right:Math.max(...o.points.map(p=>p.x))+PLAYER_RADIUS,top:Math.min(...o.points.map(p=>p.y))-PLAYER_RADIUS,bottom:Math.max(...o.points.map(p=>p.y))+PLAYER_RADIUS}:{left:o.x-o.rx,right:o.x+o.rx,top:o.y-o.ry,bottom:o.y+o.ry};for(let x=Math.floor(box.left/CELL);x<=Math.floor(box.right/CELL);x++)for(let y=Math.floor(box.top/CELL);y<=Math.floor(box.bottom/CELL);y++){const key=x+','+y;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o)}}
- function hit(x,y,allowWater=false){if(!insideEnclosure(x,y)&&!(allowWater&&water.seaSampleAt(x,y)))return 'mountain';if(!allowWater&&water.hit(x,y))return 'water';const py=y*F,list=buckets.get(Math.floor(x/CELL)+','+Math.floor(py/CELL))||[];for(const o of list){if(o.kind==='tree'||o.kind==='scenery'){if(((x-o.x)/o.rx)**2+((py-o.y)/o.ry)**2<1)return o.kind}else if(inside(x,py,o.points)||o.points.some((a,i)=>segmentDistance(x,py,a,o.points[(i+1)%o.points.length])<PLAYER_RADIUS))return o.kind}return null}
+ for(const o of [...rocks,...trunks]){const box=o.points?{left:Math.min(...o.points.map(p=>p.x))-PLAYER_RADIUS,right:Math.max(...o.points.map(p=>p.x))+PLAYER_RADIUS,top:Math.min(...o.points.map(p=>p.y))-PLAYER_RADIUS,bottom:Math.max(...o.points.map(p=>p.y))+PLAYER_RADIUS}:{left:o.x-(o.slowRx||o.rx),right:o.x+(o.slowRx||o.rx),top:o.shrub?Math.min(o.y-o.ry,o.slowY-o.slowRy):o.y-o.ry,bottom:o.shrub?Math.max(o.y+o.ry,o.slowY+o.slowRy):o.y+o.ry};for(let x=Math.floor(box.left/CELL);x<=Math.floor(box.right/CELL);x++)for(let y=Math.floor(box.top/CELL);y<=Math.floor(box.bottom/CELL);y++){const key=x+','+y;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o)}}
+ function hit(x,y,allowWater=false,allowShrubs=false){if(!insideEnclosure(x,y)&&!(allowWater&&water.seaSampleAt(x,y)))return 'mountain';if(!allowWater&&water.hit(x,y))return 'water';const py=y*F,list=buckets.get(Math.floor(x/CELL)+','+Math.floor(py/CELL))||[];for(const o of list){if(allowShrubs&&o.shrub)continue;if(o.kind==='tree'||o.kind==='scenery'){if(((x-o.x)/o.rx)**2+((py-o.y)/o.ry)**2<1)return o.kind}else if(inside(x,py,o.points)||o.points.some((a,i)=>segmentDistance(x,py,a,o.points[(i+1)%o.points.length])<PLAYER_RADIUS))return o.kind}return null}
+ // Use the foliage footprint rather than the trunk, sharing the scenery spatial index.
+ function shrubSpeedFactor(x,y){const py=y*F,list=buckets.get(Math.floor(x/CELL)+','+Math.floor(py/CELL))||[];return list.some(o=>o.shrub&&((x-o.x)/o.slowRx)**2+((py-o.slowY)/o.slowRy)**2<1)?.5:1;}
  function removeCollision(entries){
   if(!entries.size)return;
   for(const [key,items] of buckets){
@@ -91,7 +93,7 @@ function create(data,nav){
   }
   return ()=>removeCollision(entries);
  }
- return {addScenery,removeTrees,trees,mountains,rocks,trunks,border,water,insideEnclosure,hit,playerBlocked:(x,y)=>!!hit(x,y,data.waterTraversal==='wade'),blocked:(x,y)=>!!hit(x,y)};
+ return {shrubSpeedFactor,addScenery,removeTrees,trees,mountains,rocks,trunks,border,water,insideEnclosure,hit,playerBlocked:(x,y)=>!!hit(x,y,data.waterTraversal==='wade',true),blocked:(x,y)=>!!hit(x,y)};
 }
 const api={create,inside,PLAYER_RADIUS};scope.hemantTerrain=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

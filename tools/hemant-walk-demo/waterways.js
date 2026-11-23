@@ -42,6 +42,24 @@ function create(data,nav){
   if(!result)result=seaSampleAt(x,y);
   if(result){const d=result.depth;result.depth=d*d*(3-2*d);}return result;
  }
+ // A bridge has two independent walk layers. Only its dry end approaches mount the deck.
+ function bridgeCoordinates(b,p){const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,x=p.x-b.x,y=(p.y-b.y)*F;return {along:x*dx+y*dy,across:-x*dy+y*dx};}
+ function underBridge(p){if(p.bridgeDeck||!sampleAt(p.x,p.y,true))return null;return bridges.find(b=>{const q=bridgeCoordinates(b,p);return Math.abs(q.along)<=b.length/2+12&&Math.abs(q.across)<=b.width/2+30;})||null;}
+ function playerStep(from,to){
+  const deck=bridges.find(b=>b.id===from.bridgeDeck);
+  if(deck){
+   const q=bridgeCoordinates(deck,to);
+   if(Math.abs(q.across)>deck.width/2-28)return {allowed:false,bridgeDeck:deck.id};
+   if(Math.abs(q.along)<=deck.length/2)return {allowed:true,bridgeDeck:deck.id};
+   return {allowed:!sampleAt(to.x,to.y,true),bridgeDeck:null};
+  }
+  if(!sampleAt(from.x,from.y,true))for(const b of bridges){
+   const a=bridgeCoordinates(b,from),q=bridgeCoordinates(b,to),half=b.length/2,lane=b.width/2-28;
+   if(Math.abs(a.across)<=lane&&Math.abs(q.across)<=lane&&Math.abs(a.along)>=half&&Math.abs(q.along)<half&&Math.sign(a.along)===Math.sign(q.along))return {allowed:true,bridgeDeck:b.id};
+  }
+  return {allowed:true,bridgeDeck:null};
+ }
+
  function pointAt(river,fraction){const distances=[0];for(let i=1;i<river.points.length;i++)distances.push(distances.at(-1)+dist(river.points[i-1],river.points[i]));const target=Math.max(0,Math.min(1,fraction))*distances.at(-1);let i=distances.findIndex(d=>d>=target);if(i<=0)return {...river.points[0]};const a=river.points[i-1],b=river.points[i],f=(target-distances[i-1])/(distances[i]-distances[i-1]||1);return {x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f};}
  const depthAt=(x,y)=>sampleAt(x,y)?.depth||0;
  const accessPoints=[];
@@ -104,7 +122,7 @@ function create(data,nav){
   drawLayeredBanks(g,pattern);
   g.restore();
  }
- function drawDeck(g,images={},hasModel=()=>false){g.save();for(const [i,b] of bridges.entries()){if(hasModel(b))continue;const angle=Math.atan2((b.b.y-b.a.y)*F,b.b.x-b.a.x);g.save();g.translate(b.a.x,b.a.y*F);g.rotate(angle);g.fillStyle='#263c4b55';g.fillRect(-9,-b.width/2+10,b.length+18,b.width);const art=images['bridge'+i]?.naturalWidth?images['bridge'+i]:images['bridge'+i%3];if(art?.naturalWidth){if(Math.cos(angle)<0){g.translate(b.length,0);g.rotate(Math.PI);}g.drawImage(art,-12,-b.width/2,b.length+24,b.width);g.restore();continue;}g.fillStyle='#706557';g.fillRect(-12,-b.width/2,b.length+24,b.width);g.fillStyle='#a9916c';g.fillRect(0,-b.width/2+8,b.length,b.width-16);for(let x=0;x<b.length;x+=19){g.fillStyle=(Math.floor(x/19)%2)?'#bca582':'#aa9271';g.fillRect(x,-b.width/2+10,17,b.width-20);g.fillStyle=data.countryId&&data.countryId!=='blue'?'#c1a176':'#e8f3f5';g.fillRect(x,-b.width/2+9,17,7)}g.fillStyle=data.countryId&&data.countryId!=='blue'?'#bca27b':'#ecf8ff';g.fillRect(-13,-b.width/2,22,b.width);g.fillRect(b.length-9,-b.width/2,22,b.width);g.restore()}g.restore()}
+ function drawDeck(g,images={},hasModel=()=>false,include=()=>true){g.save();for(const [i,b] of bridges.entries()){if(hasModel(b)||!include(b))continue;const angle=Math.atan2((b.b.y-b.a.y)*F,b.b.x-b.a.x);g.save();g.translate(b.a.x,b.a.y*F);g.rotate(angle);g.fillStyle='#263c4b55';g.fillRect(-9,-b.width/2+10,b.length+18,b.width);const art=images['bridge'+i]?.naturalWidth?images['bridge'+i]:images['bridge'+i%3];if(art?.naturalWidth){if(Math.cos(angle)<0){g.translate(b.length,0);g.rotate(Math.PI);}g.drawImage(art,-12,-b.width/2,b.length+24,b.width);g.restore();continue;}g.fillStyle='#706557';g.fillRect(-12,-b.width/2,b.length+24,b.width);g.fillStyle='#a9916c';g.fillRect(0,-b.width/2+8,b.length,b.width-16);for(let x=0;x<b.length;x+=19){g.fillStyle=(Math.floor(x/19)%2)?'#bca582':'#aa9271';g.fillRect(x,-b.width/2+10,17,b.width-20);g.fillStyle=data.countryId&&data.countryId!=='blue'?'#c1a176':'#e8f3f5';g.fillRect(x,-b.width/2+9,17,7)}g.fillStyle=data.countryId&&data.countryId!=='blue'?'#bca27b':'#ecf8ff';g.fillRect(-13,-b.width/2,22,b.width);g.fillRect(b.length-9,-b.width/2,22,b.width);g.restore()}g.restore()}
  // Cache current distances and shoreline polygons, rather than rebuilding world geometry per frame.
  const currents=rivers.map(r=>{let length=0;const segments=r.points.slice(1).map((b,i)=>{const a=r.points[i],len=dist(a,b),start=length;length+=len;return {a,b,len,start}});const banks=[-1,1].map(side=>r.points.map((p,i)=>{const a=r.points[Math.max(0,i-1)],b=r.points[Math.min(r.points.length-1,i+1)],len=dist(a,b);return {x:p.x-(b.y-a.y)*F/len*(r.width/2-5)*side,y:p.y+(b.x-a.x)/len*(r.width/2-5)*side/F}}));return {...r,segments,length,outline:[...banks[0],...banks[1].reverse()]}});
  let flowPattern=null,flowTexture=null;
@@ -158,7 +176,7 @@ function create(data,nav){
  }
  const rails=[];for(const b of bridges){const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,nx=-dy*b.width/2,ny=dx*b.width/2,count=Math.ceil(b.length/80);for(const side of [-1,1])for(let i=0;i<count;i++){const a={x:b.a.x+(b.b.x-b.a.x)*i/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*i/count+ny*side/F},end={x:b.a.x+(b.b.x-b.a.x)*(i+1)/count+nx*side,y:b.a.y+(b.b.y-b.a.y)*(i+1)/count+ny*side/F};rails.push({kind:'bridgeRail',crossing:b,x:(a.x+end.x)/2,y:(a.y+end.y)/2,a,b:end})}}
  function drawRail(c,o,sx,sy,z){const x=sx(o.a.x),y=sy(o.a.y),X=sx(o.b.x),Y=sy(o.b.y);c.save();c.lineCap='round';c.strokeStyle=data.countryId==='red'?'#522b24':data.countryId==='green'?'#53412e':'#647d92';c.lineWidth=5*z;c.beginPath();c.moveTo(x,y-22*z);c.lineTo(X,Y-22*z);c.stroke();c.strokeStyle=data.countryId==='red'?'#b47142':data.countryId==='green'?'#ae9366':'#f1fbff';c.lineWidth=3*z;c.beginPath();c.moveTo(x,y-25*z);c.lineTo(X,Y-25*z);c.stroke();for(const [a,b]of [[x,y],[X,Y]]){c.fillStyle='#635e56';c.fillRect(a-3*z,b-34*z,6*z,36*z);c.fillStyle=data.countryId==='red'?'#ce9453':data.countryId==='green'?'#b19a66':'#f0faff';c.fillRect(a-5*z,b-37*z,10*z,5*z)}c.restore()}
- return {source:settings,rivers,lakes,bridges,bridgeRails,bridgeRailHit,rails,accessPoints,raw,onBridge,hit,sampleAt,seaSampleAt,depthAt,pointAt,drawGround,drawDeck,drawFlow,drawRail};
+ return {playerStep,underBridge,bridgeCoordinates,source:settings,rivers,lakes,bridges,bridgeRails,bridgeRailHit,rails,accessPoints,raw,onBridge,hit,sampleAt,seaSampleAt,depthAt,pointAt,drawGround,drawDeck,drawFlow,drawRail};
 }
 const api={source,project,create};scope.hemantWaterways=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

@@ -11,8 +11,10 @@ function create(data){
  for(const road of data.roads){const points=reroute([byId.get(road.a),...road.via.map(([x,y])=>({x,y})),byId.get(road.b)]);for(let i=1;i<points.length;i++){const a=add(points[i-1]),b=add(points[i]);if(a===b||nodes[a].links.some(l=>l.to===b))continue;const cost=distance(nodes[a],nodes[b]);nodes[a].links.push({to:b,cost});nodes[b].links.push({to:a,cost});edges.push([a,b])}}
  function nearest(p){let result;for(const [a,b]of edges){const foot=projection(p,nodes[a],nodes[b]),d=distance(p,foot);if(!result||d<result.distance)result={a,b,foot,distance:d}}return result}
  function walkable(x,y){return x>=80&&x<=data.width-80&&y>=80&&y<=data.height-80&&!terrain?.blocked(x,y)}
- function playerWalkable(x,y){return x>=80&&x<=data.width-80&&y>=80&&y<=data.height-80&&!(data.waterTraversal==='wade'&&terrain?.water.bridgeRailHit(x,y))&&!(terrain?.playerBlocked?terrain.playerBlocked(x,y):terrain?.blocked(x,y));}
- function playerClear(a,b){const steps=Math.max(1,Math.ceil(distance(a,b)/8));for(let i=0;i<=steps;i++)if(!playerWalkable(a.x+(b.x-a.x)*i/steps,a.y+(b.y-a.y)*i/steps))return false;return true;}
+ function playerWalkable(x,y,underpass=false){return x>=80&&x<=data.width-80&&y>=80&&y<=data.height-80&&!(!underpass&&data.waterTraversal==='wade'&&terrain?.water.bridgeRailHit(x,y))&&!(terrain?.playerBlocked?terrain.playerBlocked(x,y):terrain?.blocked(x,y));}
+ function playerTrace(a,b){const steps=Math.max(1,Math.ceil(distance(a,b)/8));let point={...a};for(let i=0;i<=steps;i++){const next={x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps},layer=data.waterTraversal==='wade'&&terrain?.water.playerStep?terrain.water.playerStep(point,next):{allowed:true,bridgeDeck:point.bridgeDeck};if(!layer.allowed||!playerWalkable(next.x,next.y,data.waterTraversal==='wade'&&!layer.bridgeDeck))return null;point={...next,bridgeDeck:layer.bridgeDeck};}return point;}
+ function playerClear(a,b){return !!playerTrace(a,b);}
+ function playerMove(a,b){const next=playerTrace(a,b);if(!next)return false;Object.assign(a,next);return true;}
  function clear(a,b){const steps=Math.max(1,Math.ceil(distance(a,b)/8));for(let i=0;i<=steps;i++)if(!walkable(a.x+(b.x-a.x)*i/steps,a.y+(b.y-a.y)*i/steps))return false;return true}
  // Connect an explorer on open snow back to the road without crossing solid scenery.
  function connect(start,goal,canWalk=walkable){const canClear=canWalk===playerWalkable?playerClear:clear;if(canClear(start,goal))return [goal];const STEP=45,key=(x,y)=>x+','+y,open=new Map(),seen=new Map(),first={x:start.x,y:start.y,g:0,prev:null,ix:0,iy:0};first.f=distance(start,goal);open.set('0,0',first);seen.set('0,0',first);let count=0;
@@ -25,7 +27,7 @@ function create(data){
  function safeRoute(start,id){const path=roadRoute(start,id);if(!path.length)return [];const approach=connect(start,path[0]);return approach.length?[...approach,...path.slice(1)]:[]}
  function spawnAt(place,gate='south'){const preferred=gate==='west'?{x:place.x-285,y:place.y+210}:gate==='east'?{x:place.x+295,y:place.y+190}:{x:place.x,y:place.y+265};const candidates=[preferred,{x:place.x,y:place.y+265},{x:place.x+200,y:place.y+150},{x:place.x-200,y:place.y+150},{x:place.x,y:place.y+120},{x:place.x,y:place.y}];return candidates.find(p=>walkable(p.x,p.y)&&clear(p,place))||{x:place.x,y:place.y}}
  function playerRoute(start,id){const path=roadRoute(start,id);if(!path.length)return [];const result=[];let previous=start;for(const point of path){if(!playerWalkable(point.x,point.y)){if(point===path.at(-1))return [];continue;}const section=connect(previous,point,playerWalkable);if(!section.length)return [];result.push(...section);previous=point;}return result;}
- return {playerWalkable,playerClear,playerRoute,spawnAt,places,byId,nodes,edges,nearest,walkable,route:safeRoute,pathBetween:connect,distance,clear,setTerrain:value=>{terrain=value}};
+ return {playerMove,playerWalkable,playerClear,playerRoute,spawnAt,places,byId,nodes,edges,nearest,walkable,route:safeRoute,pathBetween:connect,distance,clear,setTerrain:value=>{terrain=value}};
 }
 const api={create,distance,projection};scope.hemantNavigation=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

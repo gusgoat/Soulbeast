@@ -81,7 +81,7 @@
    return visible;
   }
 
-  function drawDecks(ctx,sx,sy,zoom,width,height,overview){
+  function drawDecks(ctx,sx,sy,zoom,width,height,overview,opacity=()=>1,underY=0){
    const rails=[];
    for(const bridge of bridges){
     if(!hasArt(bridge))continue;
@@ -89,9 +89,11 @@
     const left=sx(crossing.x)-FRAME_WIDTH*zoom/2,top=sy(crossing.y)-FRAME_HEIGHT*zoom/2;
     const w=FRAME_WIDTH*zoom,h=FRAME_HEIGHT*zoom;
     if(left+w<0||left>width||top+h<0||top>height)continue;
-    ctx.drawImage(deck,left,top,w,h);
+    const alpha=overview?1:opacity(crossing);
+    if(alpha<1)rails.push({kind:'archedBridgeRail',x:crossing.x,y:Math.max(nearY,underY)+.1,rail:deck,left,top,w,h,alpha});
+    else ctx.drawImage(deck,left,top,w,h);
     if(overview)ctx.drawImage(rail,left,top,w,h);
-    else rails.push({kind:'archedBridgeRail',x:crossing.x,y:nearY,rail,left,top,w,h});
+    else rails.push({kind:'archedBridgeRail',x:crossing.x,y:alpha<1?Math.max(nearY,underY)+.2:nearY,rail,left,top,w,h,alpha});
    }
    return rails;
   }

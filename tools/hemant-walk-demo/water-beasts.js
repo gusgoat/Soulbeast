@@ -23,7 +23,7 @@
   function update(dt){for(const a of actors){if(a.chasing||a.returning||a.cooldown>0)continue;a.moving=false;if(a.wait>0){a.wait-=dt;continue;}if(!a.goal){for(let i=0;i<20;i++){const angle=random()*Math.PI*2,r=45+random()*100,p={x:a.home.x+Math.cos(angle)*r,y:a.home.y+Math.sin(angle)*r/F};if(allowed(p,a.bodyId)&&clear(a,p)){a.goal=p;break;}}if(!a.goal){a.wait=1;continue;}}
    const dx=a.goal.x-a.x,dy=(a.goal.y-a.y)*F,len=Math.hypot(dx,dy);if(len<4){a.goal=null;a.wait=.8+random()*2;continue;}const step=Math.min(45*dt,len),p={x:a.x+dx/len*step,y:a.y+dy/len*step/F};if(!allowed(p,a.bodyId)){a.goal=null;continue;}Object.assign(a,p);a.facing=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;a.phase+=dt*2;a.moving=true;
   }}
-  return {actors,nav:waterNav,update,eligible:(a,p)=>{const s=water.sampleAt(p.x,p.y);return !!s&&s.depth>.2&&s.id===a.bodyId;}};
+  return {actors,nav:waterNav,update,eligible:(a,p)=>{const s=p.bridgeDeck?null:water.sampleAt(p.x,p.y,p.bridgeDeck===null);return !!s&&s.depth>.2&&s.id===a.bodyId;}};
  }
  function draw(ctx,a,image,x,y,zoom,time){if(!image?.naturalWidth)return;const frame=a.facing||0,w=108*zoom,h=w;
   g.WaterInteraction.ripple(ctx,x,y,zoom,time,a.moving);ctx.save();g.WaterInteraction.clipAbove(ctx,x,y,zoom);ctx.drawImage(image,(frame%2)*256,Math.floor(frame/2)*256,256,256,x-w/2,y-h*.82+Math.sin(time*2+a.phase)*2*zoom,w,h);ctx.restore();g.WaterInteraction.ripple(ctx,x,y,zoom,time,a.moving,true);

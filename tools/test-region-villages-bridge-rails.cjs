@@ -9,8 +9,8 @@ for(const[country,c]of Object.entries(M))for(const[region,d]of Object.entries(c.
   const length=n.distance(bridge.a,bridge.b),ux=(bridge.b.x-bridge.a.x)/length,uy=(bridge.b.y-bridge.a.y)*.64/length,nx=-uy,ny=ux;
   const at=(along,side)=>({x:bridge.a.x+ux*along+nx*side,y:bridge.a.y+(uy*along+ny*side)/.64});
   assert(n.playerClear(bridge.a,bridge.b),country+region+' bridge end-to-end');
-  for(const side of [-1,1])for(const along of [35,length/2,length-35]){const inside=at(along,0),outside=at(along,side*105);assert(!n.playerClear(inside,outside),'Cannot exit bridge sideways');assert(!n.playerClear(outside,inside),'Cannot enter bridge sideways');}
-  for(const end of [0,length]){const inner=at(end===0?25:length-25,0),outer=at(end===0?-25:length+25,0);assert(n.playerClear(inner,outer),'Road entrance stays open');}
+  for(const side of [-1,1])for(const along of [35,length/2,length-35]){const inside={...at(along,0),bridgeDeck:bridge.id},outside={...at(along,side*105),bridgeDeck:null};assert(!n.playerClear(inside,outside),'Cannot exit bridge sideways');if(n.playerMove(outside,inside))assert.equal(outside.bridgeDeck,null,'Side approach stays below bridge');}
+  for(const end of [0,length]){const inner={...at(end===0?25:length-25,0),bridgeDeck:bridge.id},outer=at(end===0?-25:length+25,0);assert(n.playerClear(inner,outer),'Road entrance stays open');}
  }
  rows.push({country,region,minVillageDistance:Math.round(minimum),bridgeRailSides:t.water.bridgeRails.length});
 }
