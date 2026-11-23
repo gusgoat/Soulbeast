@@ -1,0 +1,53 @@
+:root{--arena-metal:#bc9153;--arena-light:#f2d79e;--arena-teal:#12373e;--arena-action-size:clamp(64px,17vw,76px)}
+:is(#lobby,#room,#walk-tools,#base-recall,#stick-settings,#large-map,#walk-character,#spectator,#overlay,#live-team-scores,#scoreboard,#objectives) button:not(.arena-art-control),#arena>button:not(.arena-art-control){
+ border-color:var(--arena-metal);color:#ffedc8;
+ background:radial-gradient(ellipse at 50% 0%,#3d646b66,transparent 65%),linear-gradient(180deg,#23434a,#102b33 55%,#0b1e28);
+ box-shadow:inset 0 1px #ffe9b566,inset 0 0 0 3px #0b1a2488,inset 0 -2px #030d16aa,0 3px 8px #0006;
+ text-shadow:0 1px 2px #000c;letter-spacing:.015em;transition:filter .15s,transform .12s,border-color .15s;
+}
+:is(#lobby,#room,#stick-settings,#large-map,#walk-character,#spectator,#overlay,#live-team-scores) button:not(.arena-art-control){border-radius:10px}
+:is(#create,#ready,#start,#stick-save){background:linear-gradient(180deg,#f4dfaa,#d3ac64 48%,#916831)!important;color:#201a11!important;text-shadow:0 1px #fff7!important;border-color:#f4d699!important}
+:is(#leave,#rank-leave-respawn,.remove-bot){border-color:#b18170!important}
+:is(#lobby,#arena,#large-map,#walk-character,#stick-settings,#live-team-scores) button:focus-visible{outline:2px solid #fff1c5;outline-offset:3px}
+@media(hover:hover){:is(#lobby,#arena,#large-map,#walk-character,#stick-settings,#live-team-scores) button:not(:disabled):hover{filter:brightness(1.13);border-color:#f5da9d}}
+:is(#lobby,#arena,#large-map,#walk-character,#stick-settings,#live-team-scores) button:not(:disabled):active{transform:translateY(1px) scale(.97)}
+:is(#lobby,#arena,#large-map,#walk-character,#stick-settings,#live-team-scores) button:disabled{opacity:.52;filter:saturate(.35)}
+#walk-tools{gap:9px;bottom:max(108px,calc(env(safe-area-inset-bottom) + 92px))}
+#walk-sound,#stick-settings-button{border-radius:50%;border-width:2px;box-shadow:inset 0 0 0 2px #18343a,inset 0 0 12px #0007,0 2px 6px #0008}
+#walk-sound{width:46px;min-height:46px;font-size:0;position:relative}
+#walk-sound::before{content:'';display:block;width:25px;height:25px;margin:auto;background:#f7ddaa;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 9h4l5-4v14l-5-4H3z' fill='black'/%3E%3Cpath d='M15 8q4 4 0 8m3-11q7 7 0 14' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat}
+#walk-sound[aria-pressed=false]::after{content:'';position:absolute;width:3px;height:29px;left:21px;top:7px;rotate:-45deg;background:#ed9983;box-shadow:0 0 0 2px #14323b;border-radius:2px}
+#open-walk-character{border-width:2px;border-radius:11px!important;box-shadow:0 0 0 2px #0b1c25,0 2px 8px #0009}
+#stick-settings-button{color:#f4d39b;font-size:23px}
+#objectives-toggle{border-radius:0 8px 8px 0!important;color:#eed6a6}
+#map{border-color:#bd985c;box-shadow:0 0 0 2px #12282d,inset 0 0 12px #0008,0 3px 10px #0007}
+#warp-map-targets button{border-color:#f4dbaa;box-shadow:inset 0 0 0 2px #134354,0 0 8px #6cdae6;color:#fff3d7;background:linear-gradient(#346571,#12313e)}
+#warp-map-targets[data-side='1'] button{background:linear-gradient(#754b43,#3c242b);box-shadow:inset 0 0 0 2px #743c39,0 0 8px #e59d76}
+/* The native button remains the touch target; generated artwork has no baked text. */
+#base-recall-button.arena-art-control,#raid.arena-art-control{
+ display:grid;place-items:center;position:relative;width:var(--arena-action-size);height:var(--arena-action-size);min-height:var(--arena-action-size);max-width:none;
+ padding:0;border:0;border-radius:50%;background:none;box-shadow:none;overflow:visible;touch-action:manipulation;
+ filter:drop-shadow(0 3px 4px #0009);text-shadow:none;
+}
+#raid.arena-art-control{position:absolute}
+.arena-art-control>img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
+.arena-control-name{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+#base-recall{right:max(84px,calc(env(safe-area-inset-right) + 76px));bottom:max(108px,calc(env(safe-area-inset-bottom) + 92px));justify-items:center}
+#base-recall-progress{width:calc(var(--arena-action-size) - 5px);height:8px;border:1px solid #bd9c65;border-radius:5px;overflow:hidden;background:#102b33;accent-color:#7ce7ed;box-shadow:0 1px 4px #0009}
+#base-recall-progress::-webkit-progress-bar{background:#102b33}
+#base-recall-progress::-webkit-progress-value{background:linear-gradient(90deg,#399fb6,#96eeec)}
+#raid.arena-art-control{right:max(15px,env(safe-area-inset-right));bottom:max(23px,env(safe-area-inset-bottom))}
+#stick-area[data-stick-on-right]~#base-recall{left:max(84px,calc(env(safe-area-inset-left) + 76px));right:auto}
+#stick-area[data-stick-on-right]~#raid.arena-art-control{left:max(15px,env(safe-area-inset-left));right:auto}
+.arena-cancel-mark{display:none;position:absolute;right:0;bottom:0;width:25px;height:25px;border:1px solid #e6b982;border-radius:50%;background:linear-gradient(#b24d4a,#59272d);box-shadow:0 2px 4px #0008;pointer-events:none}
+[data-channeling=true]>.arena-cancel-mark{display:block}
+.arena-cancel-mark::before,.arena-cancel-mark::after{content:'';position:absolute;left:5px;top:10px;width:13px;height:2px;border-radius:2px;background:#fff0d2;rotate:45deg}
+.arena-cancel-mark::after{rotate:-45deg}
+#base-recall-button[data-channeling=true]>img{filter:drop-shadow(0 0 5px #76e4eb99)}
+#base-recall-button.arena-art-control:disabled,#raid.arena-art-control:disabled{opacity:.65;filter:saturate(.25) brightness(.7)}
+@media(max-height:450px){:root{--arena-action-size:64px}#base-recall{bottom:max(94px,calc(env(safe-area-inset-bottom) + 78px))}#walk-tools{bottom:max(94px,calc(env(safe-area-inset-bottom) + 78px));gap:6px}}
+@media(prefers-reduced-motion:reduce){:is(#lobby,#arena,#large-map,#walk-character,#stick-settings,#live-team-scores) button{transition:none!important}button:active{transform:none!important}}
+
+.arena-art-control.arena-art-missing{background:linear-gradient(#23434a,#102b33)!important;border:1px solid #c7a060!important}
+.arena-art-control.arena-art-missing>img{display:none}
+.arena-art-control.arena-art-missing>.arena-control-name{position:static!important;clip:auto!important;width:auto!important;height:auto!important;margin:0!important;padding:5px!important;overflow:visible!important;white-space:normal!important;font-size:11px;line-height:1.35;text-align:center}

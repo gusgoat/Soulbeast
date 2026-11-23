@@ -1,3 +1,4 @@
+import {paintActionControl} from './control-art.mjs?v=ornate-controls-20261124';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, personalCombatBonus, siegeProfile} from './arena.mjs?v=team-bot-tactics-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
@@ -1225,7 +1226,7 @@ function frame(t){
   $('base-recall').hidden=!walking||solo;
   const recallButton=$('base-recall-button');
   const recallLabel=recall?'ยกเลิกวาร์ป':'วาร์ปกลับฐานใหญ่';
-  if(recallButton.textContent!==recallLabel)recallButton.textContent=recallLabel;
+  paintActionControl(recallButton,recallLabel,{image:'recall-base',channeling:Boolean(recall)});
   $('base-recall-progress').hidden=!recall;
   if(recall)$('base-recall-progress').value=Math.max(0,Math.min(1,1-(recall-now)/BASE_RECALL_MS));
   $('arena').toggleAttribute('data-spectating',Boolean(watch));
@@ -1262,7 +1263,7 @@ function frame(t){
    state.nextBossAt?`บอสเกิดอีก ${clock(state.nextBossAt-now)}`:'ไม่มีบอสเกิดเพิ่ม';
   const target=walking&&!recall&&objective();
   $('raid').hidden=!target;
-  if(target){const button=$('raid');button.textContent=target.label;button.dataset.action=target.type;button.disabled=Boolean(target.disabled);}
+  if(target){const button=$('raid');paintActionControl(button,target.label,{image:target.type==='selectWarp'?'select-warp':null});button.dataset.action=target.type;button.disabled=Boolean(target.disabled);}
   if((walking||watch)&&t-lastMap>80){
    drawMap($('mini'),state,all,focus);
    if(mapDialog.open)drawMap($('full-map'),state,all,focus,2);
