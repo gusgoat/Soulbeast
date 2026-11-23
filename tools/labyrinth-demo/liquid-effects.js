@@ -5,5 +5,19 @@ function waterfall(c,x,y,size,t){c.save();c.lineCap='round';for(let k=0;k<15;k++
 function well(c,x,y,size,t,theme){const cy=y-size*.34,rx=size*.29,ry=size*.105;c.save();c.beginPath();c.ellipse(x,cy,rx,ry,0,0,TAU);c.clip();c.fillStyle=theme==='castle'?'#b09af513':'#90eaff15';c.fillRect(x-rx,cy-ry,rx*2,ry*2);for(let k=0;k<6;k++){const a=(t*.25+k/6)%1;c.strokeStyle='rgba(201,250,255,'+((1-a)*.62)+')';c.lineWidth=1.3;c.beginPath();c.ellipse(x+Math.sin(k*17)*rx*.25,cy+Math.cos(k*7)*ry*.17,rx*a,ry*a,0,0,TAU);c.stroke()}for(let k=0;k<10;k++){const px=x+Math.sin(k*8+t*.5)*rx*.9,py=cy+Math.cos(k*3+t*.9)*ry*.9;c.fillStyle='#efffff90';c.fillRect(px,py,2,1)}c.restore();{c.save();c.strokeStyle=theme==='castle'?'#d7c8ff77':'#c2faff77';c.lineWidth=1.5;for(let k=0;k<4;k++){const dx=(k-1.5)*size*.045;c.beginPath();c.moveTo(x,y-size*.58);c.quadraticCurveTo(x+dx*1.3,y-size*.63,x+dx*2,cy+Math.sin(t*4+k)*3);c.stroke()}c.restore()}}
 function lavaPool(c,x,y,size,t,im){c.save();c.beginPath();c.ellipse(x,y-size*.12,size*.43,size*.18,0,0,TAU);c.fillStyle='#25191b';c.fill();c.clip();c.globalAlpha=.9;const p=pattern(c,im);p.setTransform(new DOMMatrix().translate(t*9,t*4).scale(.2*patternScale(p)));c.fillStyle=p;c.fillRect(x-size/2,y-size*.35,size,size*.7);for(let i=0;i<4;i++){const a=(t*.35+i/4)%1;c.strokeStyle='rgba(255,219,110,'+((1-a)*.8)+')';c.beginPath();c.ellipse(x+Math.sin(i*4)*size*.25,y-size*.1+Math.cos(i*9)*size*.08,a*12,a*5,0,0,TAU);c.stroke()}c.restore()}
 function patternScale(p){return patternScales.get(p)||1}
-const api={pattern,patternScale,river,waterfall,well,lavaPool};s.LiquidEffects=api;if(typeof module!=='undefined')module.exports=api;
+// The map point is the centre of the walkable water and the healing interaction.
+function wellAnchor(point,size,flatten){return {x:point.x,y:point.y+size*.34/flatten}}
+function wellWater(point,centre,size,flatten){
+ const radius=Math.hypot((point.x-centre.x)/(size*.29),(point.y-centre.y)*flatten/(size*.105));
+ return radius<1?{depth:Math.min(1,(1-radius)*2)}:null;
+}
+function wader(ctx,water,x,y,height,zoom,time,moving,draw){
+ if(!water){draw(y);return 0;}
+ const sink=s.WaterInteraction.sink(water,height);
+ s.WaterInteraction.ripple(ctx,x,y,zoom,time,moving);
+ ctx.save();s.WaterInteraction.clipAbove(ctx,x,y,zoom);draw(y+sink);ctx.restore();
+ s.WaterInteraction.ripple(ctx,x,y,zoom,time,moving,true);
+ return sink;
+}
+const api={wellAnchor,wellWater,wader,pattern,patternScale,river,waterfall,well,lavaPool};s.LiquidEffects=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

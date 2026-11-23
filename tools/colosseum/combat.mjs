@@ -42,6 +42,7 @@ function battleBadges(u){
  if(u.immune==='m')add(4,'ป้องกันเวท 100%');
  if(u.enchant)add(5,'ประทับธาตุอาวุธ · '+(core.elementName(u.enchant)||u.enchant));
  if(u.class10Barrier>0)add(3,'บาเรียเวท · ป้องกันได้ 1 ท่า');
+ if(u.elementalBarrierHits>0)add('🛡'+u.elementalBarrierHits,'บาเรียธาตุ · ลดดาเมจบอส 50% เหลือ '+u.elementalBarrierHits+' ฮิต');
  if(u.archerVeil>0)add(14,'ล่องหน · ลดดาเมจท่าเดี่ยวแรก 50%');
  if(u.form&&Object.hasOwn(formIcons,u.form))add(formIcons[u.form],core.formName(u.form));
  if(u.summonLife>0)add(23,`อสูรอัญเชิญชั่วคราว · เหลือ ${u.summonLife} เทิร์น`);
@@ -56,7 +57,7 @@ function battleBadges(u){
  for(const [id,amount] of stats){
   if(!amount)continue;
   const [icon,label]=statIcons[id],up=amount>0;
-  badges.push({icon:icon+(up?'↑':'↓'),label:label+(up?'เพิ่มขึ้น':'ลดลง'),down:!up});
+  badges.push({icon:icon+(up?'↑':'↓'),label:label+(up?'เพิ่มขึ้น':'ลดลง')+' '+Math.round(Math.abs(amount)*100)+'%',down:!up});
  }
  return badges;
 }

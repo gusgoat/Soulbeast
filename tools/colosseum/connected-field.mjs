@@ -111,7 +111,7 @@ export function createConnectedField(submit, toggleAuto) {
       }
       latestTime=time;latestBattle=b;
       const stamp=[b.id,b.turn,b.cur,b.last?.n,b.finished,b.auto,now>=b.openAt,now>=b.deadline,pendingTurn,b.commands.length,
-        ...b.allies.map(u=>u.hp),...b.enemies.map(u=>u.hp)].join('|');
+        JSON.stringify([...b.allies,...b.enemies].map(u=>[u.hp,u.mp,u.statuses,u.badges]))].join('|');
       if(key===stamp)return true;
       key=stamp;previous=latest;latest=encounterView(b,me,mode,now,pendingTurn===b.turn);
       const a=b.last;

@@ -62,7 +62,7 @@ export function partyField({frame,floor,receive,fallback}){
     support:friendly,all:!!(s?.all||s?.tg==='team'),range:s?.range||(['m','h'].includes(s?.t)?'ranged':'melee'),events:b.effects}});
   }else{
    if(!visible)lastSequence=seq;
-   const key=JSON.stringify([run.id,run.status,run.result,run.rewards,b.turns,run.effectSequence,b.cur,run.waiting,run.presentation?.sequence,!!run.loading,next.auto,!!locked,speed,view.units.map(u=>[u.id,u.hp,u.mp])]);
+   const key=JSON.stringify([run.id,run.status,run.result,run.rewards,b.turns,run.effectSequence,b.cur,run.waiting,run.presentation?.sequence,!!run.loading,next.auto,!!locked,speed,view.units.map(u=>[u.id,u.hp,u.mp,u.status,u.buffs,u.pas,u.taunt,u.charging,u.charge,u.immune,u.enchant,u.dots,u.form,u.summonLife,u.class10Barrier,u.archerVeil,u.elementalBarrierHits])]);
    if(stamp!==key){stamp=key;publish();}
    acknowledge();
   }

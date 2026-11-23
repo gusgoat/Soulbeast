@@ -96,7 +96,7 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
  }});
  const gate=map.rooms.find(r=>r.id==='boss').gate;
  if(!world.doorOpen)draws.push({y:gate.y,run:()=>{sprite('door',gate,290);label(gate,'ประตูห้องบอส');}});
- for(const [p,n,z,text]of [[map.exit,'entrance',230,'ทางออก'],[map.stairs,'stairs',300,'ชั้นถัดไป'],[map.mini,'well',cfg.wellSize||330,'บ่อน้ำศักดิ์สิทธิ์']])if(visible(p))draws.push({y:p.y,run:()=>{sprite(n,p,z,n==='stairs'&&world.boss!=='defeated'?.58:1);if(n==='well'&&art.well){const q=screen(p);LiquidEffects.well(ctx,q.x,q.y,z*s,time,cfg.theme);}label(p,text);}});
+ for(const [p,n,z,text]of [[map.exit,'entrance',230,'ทางออก'],[map.stairs,'stairs',300,'ชั้นถัดไป'],[map.mini,'well',cfg.wellSize||330,'บ่อน้ำศักดิ์สิทธิ์']])if(visible(p))draws.push({y:p.y-(n==='well'?z*.11/F:0),run:()=>{const anchor=n==='well'?LiquidEffects.wellAnchor(p,z,F):p;sprite(n,anchor,z,n==='stairs'&&world.boss!=='defeated'?.58:1);if(n==='well'&&art.well){const q=screen(anchor);LiquidEffects.well(ctx,q.x,q.y,z*s,time,cfg.theme);}label(p,text);}});
  for(const c of map.chests)if(visible(c))draws.push({y:c.y,run:()=>{sprite(c.big?'grand-chest':'chest',c,c.big?200:88,chests?.[c.id]?.4:1);if(chests?.[c.id])label(c,'เปิดแล้ว');}});
  function person(p,m){
   if(m?.exploring===false||!visible(p))return;
@@ -106,11 +106,12 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
   void a.sync(player).catch(()=>{});
   draws.push({y:p.y,run:()=>{
    const q=screen(p),size=145*s;
-   a.draw(ctx,q.x,q.y,size,Math.round(p.spriteDir??p.dir??0)%8,p.phase||0,!!p.moving,!!p.running);
+   const water=LiquidEffects.wellWater(p,map.mini,cfg.wellSize||330,F);
+   const sink=LiquidEffects.wader(ctx,water,q.x,q.y,size,s,time,!!p.moving,y=>a.draw(ctx,q.x,y,size,Math.round(p.spriteDir??p.dir??0)%8,p.phase||0,!!p.moving,!!p.running));
    const {cls,gender}=sealerSprites.identity(player);
    const entry=a.current??sealerSpriteCatalog[cls]?.[gender];
    // Idle breathing can stretch the rendered sprite by up to 0.9%.
-   const top=q.y-size*(entry?.renderScale||1)*(entry?.anchor?.[1]??.962)*1.009;
+   const top=q.y+sink-size*(entry?.renderScale||1)*(entry?.anchor?.[1]??.962)*1.009;
    const name=m?.name||'ผู้ผนึก',badge=27;
    ctx.font='12px Tahoma';ctx.textAlign='center';
    const width=ctx.measureText(name).width,left=q.x-(width+badge+5)/2;

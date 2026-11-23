@@ -1,7 +1,7 @@
 import {personalParty} from './online-party-personal.mjs?v=instant-party-3';
 import {partyAudio} from './online-party-audio.mjs?v=trap-sfx-20261121';
 import {partyMenu} from './online-party-menu.mjs?v=instant-party-3';
-import {partyArt} from './online-party-art.mjs?v=party-traps-2';
+import {partyArt} from './online-party-art.mjs?v=well-wade-1';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=party-transition-1';
 import {partyScene} from './online-party-scene.mjs?v=instant-party-3';
 import {localPartyWorld} from './online-party-local.mjs?v=instant-party-3';
@@ -152,7 +152,7 @@ function warmBattleFrame(force=false){
  if(connection?.environment==='test'&&(new URLSearchParams(location.search).get('battleUi')==='new'||sessionStorage.getItem('soulbeast-new-battle-test')!=='off')){
   $('retryPartyField').onclick=()=>warmBattleFrame(true);
   $('oldPartyField').onclick=legacy;
-  import('./online-party-field.mjs?v=party-transition-1').then(({partyField})=>{
+  import('./online-party-field.mjs?v=card-status-1').then(({partyField})=>{
    if(warmFloor!==floor)return;
    field=partyField({frame:battleFrame,floor:config.floor,receive:receiveBattle,fallback:failed});
    field.start();if(shownBattle)field.waitForRenderer();
@@ -375,7 +375,8 @@ try{
     selfSpriteDir=(-Math.atan2(dx,dy)/(Math.PI/4)+8)%8;
     selfDir=Math.round(selfSpriteDir)%8;
     selfPhase+=dt*(selfRunning?12:8);
-    const speed=tilt>0?145*Math.min(1,tilt/.72)+35*Math.max(0,(tilt-.72)/.28):selfRunning?180:145;
+    const pace=tilt>0?145*Math.min(1,tilt/.72)+35*Math.max(0,(tilt-.72)/.28):selfRunning?180:145;
+    const speed=pace*WaterInteraction.speedFactor(LiquidEffects.wellWater(position,maze.mini,config.wellSize||330,maze.flatten));
     const point={x:position.x+dx/length*speed*dt,y:position.y+dy/length*speed*dt/maze.flatten};
     if(nav.clear(position,point)&&controller.move(point,position))position=point;
    }
