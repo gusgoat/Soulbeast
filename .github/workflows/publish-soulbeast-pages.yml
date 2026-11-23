@@ -21,7 +21,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Reuse verified public media between site builds
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/soulbeast-media-cache
+          key: website-media-v1-${{ hashFiles('tools/media-storage.json') }}
+          restore-keys: website-media-v1-
       - name: Stage and measure the public site
+        env:
+          SOULBEAST_MEDIA_CACHE: ${{ runner.temp }}/soulbeast-media-cache
         run: node tools/prepare-pages.mjs "$RUNNER_TEMP/soulbeast-pages"
       - uses: actions/upload-pages-artifact@v4
         with:

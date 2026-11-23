@@ -3,13 +3,16 @@ import {copyFileSync, mkdirSync, readFileSync, statSync, writeFileSync} from 'no
 import {dirname, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
+import {media, mediaSize, restoreMedia, directMediaRoot} from './media-storage.mjs';
+
 const root=fileURLToPath(new URL('../',import.meta.url));
 const destination=process.argv[2];
 if(!destination)throw new Error('Usage: node tools/prepare-pages.mjs <new output directory>');
 const output=resolve(destination);
 const git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8'});
-const revision=git('rev-parse','HEAD').trim();
-const files=new Set(git('ls-files','--cached','-z').split('\0').filter(Boolean));
+
+const tracked=new Set(git('ls-files','--cached','-z').split('\0').filter(Boolean));
+const files=new Set([...tracked,...Object.keys(media.paths)]);
 
 // Editing inputs. The game loads the processed tiles, props and sprites.
 const sourceArt=new Set([
@@ -84,7 +87,7 @@ const signatureManifest='assets/vfx/signature-portraits-v9/available.js';
 const signaturePng=/^assets\/vfx\/signature-portraits-(?:v9\/[a-z0-9_-]+|v7\/[a-z0-9_-]+-expanded)\.png$/;
 const publishedSignatureManifest=files.has(signatureManifest)
  ?readFileSync(resolve(root,signatureManifest),'utf8')+
-  'globalThis.SoulbeastSignaturePortraitRoot='+JSON.stringify('https://raw.githubusercontent.com/gusgoat/Soulbeast/'+revision+'/')+';\n'
+  'globalThis.SoulbeastSignaturePortraitRoot='+JSON.stringify(directMediaRoot)+';\n'
  :null;
 for(let zone=1;zone<=8;zone++){
  for(const phase of ['before','after'])streamedVideos.add('assets/video/forest-story/zone-'+zone+'-'+phase+'.mp4');
@@ -94,18 +97,19 @@ const originals=new Set();
 const publishedCatalog=readFileSync(resolve(root,catalog),'utf8').replace(
  /("png":\s*")\/Soulbeast\/(assets\/rare-beast-walk-20261103\/[a-z0-9_]+-walk-v\d+\.png)(")/g,
  (entry,start,path,end)=>{
-  if(!files.has(path)||!files.has(path.replace(/\.png$/,'.webp')))return entry;
+  if(!media.direct[path]||!files.has(path.replace(/\.png$/,'.webp')))return entry;
   originals.add(path);
-  return start+'https://raw.githubusercontent.com/gusgoat/Soulbeast/'+revision+'/'+path+end;
+  return start+directMediaRoot+path+end;
  },
 );
 
 let bytes=0, count=0, omittedBytes=0, streamedBytes=0, movementBytes=0, musicBytes=0, signatureBytes=0;
 const staged=[];
 for(const file of files){
- if(file.startsWith('.github/')||file==='tools/prepare-pages.mjs')continue;
+ if(file.startsWith('.github/')||['tools/prepare-pages.mjs','tools/media-storage.mjs','tools/media-storage.json'].includes(file))continue;
  const source=resolve(root,file);
- const size=statSync(source).size;
+ const stored=!!media.paths[file]&&!tracked.has(file);
+ const size=stored?mediaSize(file):statSync(source).size;
  if(streamedVideos.has(file)){streamedBytes+=size;continue;}
  if(retiredSealerAtlas.test(file)||retiredBeastAtlas.test(file)||retiredRareAtlas.test(file)){movementBytes+=size;continue;}
  if(streamedMusic.has(file)){musicBytes+=size;continue;}
@@ -113,17 +117,20 @@ for(const file of files){
  if(sourceArt.has(file)||originals.has(file)){omittedBytes+=size;continue;}
  const rewritten=file===catalog?publishedCatalog:file===signatureManifest?publishedSignatureManifest:null;
  bytes+=rewritten===null?size:Buffer.byteLength(rewritten);
- staged.push({file,source,rewritten});
+ staged.push({file,source,rewritten,stored});
  count++;
 }
 if(bytes>=1_000_000_000)throw new Error(`Pages would publish ${bytes} bytes. The site must be smaller than 1 GB.`);
 if(process.argv.includes('--measure-only')){console.log(`PASS Pages size: ${bytes} bytes in ${count} files, below 1 GB; no output copy requested.`);process.exit(0);}
 
 mkdirSync(output);
-for(const {file,source,rewritten} of staged){
+const fromStorage=[];
+for(const {file,source,rewritten,stored} of staged){
+ if(stored){fromStorage.push(file);continue;}
  const target=resolve(output,file);
  mkdirSync(dirname(target),{recursive:true});
  if(rewritten!==null)writeFileSync(target,rewritten);
  else copyFileSync(source,target);
 }
-console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video and ${movementBytes} bytes of retired movement sprites and ${musicBytes} bytes of streamed music. ${signatureBytes} bytes of portrait PNGs are served from the release commit.`);
+await restoreMedia(fromStorage,output);
+console.log(`Pages site: ${bytes} bytes in ${count} files. Excluded ${omittedBytes} bytes of source art and ${streamedBytes} bytes of streamed video and ${movementBytes} bytes of retired movement sprites and ${musicBytes} bytes of streamed music. ${signatureBytes} bytes of portrait PNGs are served from Supabase Storage.`);
