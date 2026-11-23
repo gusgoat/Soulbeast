@@ -9387,12 +9387,12 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
  const nativeMusicSync=Music.sync;Music.sync=function(...args){if(frame&&eligible()){Music.stop();return}return nativeMusicSync.apply(this,args)};
  if(typeof flushVfx==='function'){const nativeFlush=flushVfx;flushVfx=function(...args){if(frame&&eligible()){if(typeof VQ!=='undefined')VQ.length=0;return}return nativeFlush.apply(this,args)}}
  if(typeof reliabilityPvp==='function'){const nativeRequest=pvpRequest;pvpRequest=function(packet,silent=false){return frame&&eligible()?reliabilityPvp(packet,silent):nativeRequest(packet,silent)}}
- function publish(){revision++;latest=view();if(!presenting)post('ordinary-state',{view:latest})}
+ function publish(){if(!frame||!eligible())return;revision=PVP.room.rev;latest=view();if(!presenting)post('ordinary-state',{view:latest})}
  function mount(){
   if(!eligible()){if(frame)unmount();return;}
   if(roomId!==PVP.room.id){unmount();roomId=PVP.room.id;sequence=0;requests.clear();}
   if(!frame){
-   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP ใหม่ · โลกทดสอบ';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=pvp-performance-v2';
+   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP ใหม่ · โลกทดสอบ';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=pvp-performance-v3';
    Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});document.body.append(frame);
    legacyButton=document.createElement('button');legacyButton.textContent='ใช้สนามเดิม';legacyButton.id='pvp-use-legacy';Object.assign(legacyButton.style,{position:'fixed',right:'10px',top:'60px',zIndex:'2147483001',padding:'7px 10px',border:'1px solid #b89a5b',borderRadius:'7px',background:'#142331',color:'#f4dfad'});legacyButton.onclick=fallback;document.body.append(legacyButton);
    frame.addEventListener('error',fallback);recovery.start('pvp:'+roomId);Music.stop();ExtraAudio.stop();Sound.stopAmb();
@@ -9424,7 +9424,7 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
  };
  function presentAction(prior,next,a){
   const sk=pvpSkill(a.skill,true),actor=[...prior.battle.allies,...prior.battle.enemies].find(u=>u.id===a.actor);if(!sk||!actor)return false;
-  revision++;const before=view(prior);latest=view(next);
+  revision=next.rev;const before=view(prior);latest=view(next);
   const effects=next.battle.effects||[],hit=effects.find(e=>e.k==='hit'),old=[...prior.battle.allies,...prior.battle.enemies];
   const affected=latest.units.find(u=>u.side===before.units.find(x=>x.id===actor.id)?.side&&u.hp!==(old.find(x=>x.id===u.id)?.hp));
   presenting=++sequence;recovery.action('pvp:'+roomId,presenting);
@@ -9438,14 +9438,23 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
  }
  async function command(m){
   const r=PVP.room,current=view(),decision=validatePvpConnectedCommand(r,m,{revision,presenting,busy:PVP.busy,pending:PVP.pending,skills:current?.skills});
-  if(!decision.ok){publish();return;}
+  if(!decision.ok){
+   if(m.command==='skill')post('ordinary-notice',{message:decision.reason==='target'?'เลือกเป้าหมายที่ใช้สกิลนี้ได้':decision.reason==='stale'?'เทิร์นเปลี่ยนแล้ว กรุณาเลือกคำสั่งอีกครั้ง':'ยังใช้สกิลนี้ไม่ได้ในจังหวะนี้'});
+   publish();return;
+  }
   const key=roomId+':'+m.request;if(requests.has(key))return;requests.add(key);if(requests.size>256)requests.delete(requests.values().next().value);
   if(decision.kind==='speed'){if(BattleSpeed.value!==decision.speed)handlers.battleSpeed();publish();return;}
   if(decision.kind==='done'){handlers.pvpClear();mount();return;}
   if(decision.kind==='retry'){handlers.pvpRetry();return;}
   if(decision.kind==='poll'){await pvpRequest({action:'pvp_poll'},true);publish();return;}
   if(decision.kind==='auto'){await pvpRequest({action:'pvp_auto',enabled:decision.enabled});return;}
-  if(decision.kind==='skill'){PVP.target=decision.target;PVP.friend=decision.friend;handlers.pvpMove(decision.skill);}
+  if(decision.kind==='skill'){
+   // The connected field already collected the target. Use the native submission
+   // handler captured before the legacy field installs its target picker.
+   PVP.target=decision.target;
+   PVP.friend=decision.friend;
+   targetPvpMove(decision.skill);
+  }
  }
  addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==frame?.contentWindow)return;const m=e.data;
@@ -9460,7 +9469,6 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
  setInterval(()=>{recovery.pause(document.hidden);recovery.tick()},500);
  mount();
 })();
-
 
 }
 
