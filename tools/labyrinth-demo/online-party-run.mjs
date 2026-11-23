@@ -140,13 +140,18 @@ function warmBattleFrame(){
  if(warmFloor===floor)return;
  warmFloor=floor;battleFrameReady=false;
  field?.stop();field=null;
- const legacy=()=>{field?.stop();field=null;battleFrameReady=false;battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=beasts-3d-six-20261121&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;};
- if(connection?.environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off'){
-  import('./online-party-field.mjs?v=party-browser-3').then(({partyField})=>{
+ const recovery=$('partyFieldRecovery');
+ recovery.hidden=true;
+ const failed=reason=>{console.warn('Dungeon field not ready:',reason);recovery.hidden=false;};
+ const legacy=()=>{recovery.hidden=true;field?.stop();field=null;battleFrameReady=false;delete battleFrame.dataset.loadingOwner;battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=beasts-3d-six-20261121&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;};
+ if(connection?.environment==='test'&&(new URLSearchParams(location.search).get('battleUi')==='new'||sessionStorage.getItem('soulbeast-new-battle-test')!=='off')){
+  $('retryPartyField').onclick=()=>{warmFloor=null;warmBattleFrame();};
+  $('oldPartyField').onclick=legacy;
+  import('./online-party-field.mjs?v=party-loading-4').then(({partyField})=>{
    if(warmFloor!==floor)return;
-   field=partyField({frame:battleFrame,floor:config.floor,receive:receiveBattle,fallback:reason=>{console.warn('Dungeon field fallback:',reason);legacy();}});
-   field.start();
-  }).catch(error=>{console.error('Dungeon field import failed',error);if(warmFloor===floor)legacy();});
+   field=partyField({frame:battleFrame,floor:config.floor,receive:receiveBattle,fallback:failed});
+   field.start();if(shownBattle)field.waitForRenderer();
+  }).catch(error=>{console.error('Dungeon field import failed',error);if(warmFloor===floor)failed(error.message);});
  }else legacy();
  const backdrop=new Image();
  backdrop.src=asset(config?.battleArt||'assets/ui/battle-scenes/training-v2.webp');
@@ -165,9 +170,9 @@ addEventListener('message',event=>{
  receiveBattle(event.data);
 });
 function receiveBattle(message){
- if(message?.type==='party-battle-ready'){battleFrameReady=true;sendBattle();return;}
+ if(message?.type==='party-battle-ready'){battleFrameReady=true;$('partyFieldRecovery').hidden=true;sendBattle();return;}
  if(!shownBattle||$('battle').hidden||message?.battle!==shownBattle.id)return;
- if(message.type==='party-battle-visible'){visibleBattleId=shownBattle.id;
+ if(message.type==='party-battle-visible'){$('partyFieldRecovery').hidden=true;visibleBattleId=shownBattle.id;
   if(shownBattle.localCombatVersion)localCombat?.visible(shownBattle.id);
   else if(nextPulse!==Infinity)nextPulse=performance.now();tryOpeningAttack();return;}
  if(message.type==='party-battle-done'&&shownBattle.status!=='active'&&!shownBattle.presentation){
@@ -175,6 +180,7 @@ function receiveBattle(message){
   seenBattle=shownBattle.id;clearMovement();drawBattle(next);if(!next)window.focus();return;
  }
  if(message.type==='party-battle-presented'){
+  $('partyFieldRecovery').hidden=true;
   if(shownBattle.localCombatVersion)localCombat?.presented(shownBattle.id,message.turn,message.sequence);
   else void controller.command('battleReady',{battle:shownBattle.id,turn:message.turn,sequence:message.sequence});return;
  }
@@ -215,7 +221,7 @@ function drawBattle(run,local=false){
  }
  if(menus.open)menus.close();
  if(shownBattle?.id!==run.id){
-  clearMovement();visibleBattleId=null;warmBattleFrame();
+  clearMovement();visibleBattleId=null;warmBattleFrame();if(field&&!battleFrameReady)field.waitForRenderer();
  }
  if(run.status==='finished'&&run.result==='win'&&!run.presentation)victory=run;
  shownBattle=run;$('battle').hidden=false;sendBattle();tryOpeningAttack();
