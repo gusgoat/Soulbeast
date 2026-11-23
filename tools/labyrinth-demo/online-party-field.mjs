@@ -1,7 +1,6 @@
 // The map owns commands, rewards and reconnects. The field only presents its snapshots.
 import '../../content/beast-names.js';
-import '../hemant-walk-demo/war-engine.generated.js?v=colosseum-walk-tools-1';
-const catalog=globalThis.SoulbeastColosseumEngine();
+import {partySkills} from './party-skill-display.mjs';
 const support=skill=>['heal','buff','rest'].includes(skill?.t);
 
 export function dungeonView(packet,floor,speed,locked){
@@ -9,7 +8,7 @@ export function dungeonView(packet,floor,speed,locked){
  const units=[...b.allies.map(u=>({...u,side:'ally'})),...b.enemies.map(u=>({...u,side:'enemy'}))]
   .map(u=>({...u,name:globalThis.SoulbeastBeastNames?.display(u.sp,u.name,u.evo||0)??u.name,maxHp:u.st.hp,maxMp:u.st.mp}));
  const skills=(w?.choices||[]).map(c=>{
-  const s=catalog.skill(c.id)||{};
+  const s=partySkills[c.id]||{};
   return {...s,id:c.id,n:c.name,t:c.type||s.t,rev:c.revive||s.rev,element:s.el,cost:c.mp,cooldown:c.cooldown,available:!c.disabled};
  });
  const ended=run.status!=='active'&&!run.presentation,r=run.rewards?.[code],lines=[];
@@ -33,7 +32,7 @@ export function partyField({frame,floor,receive,fallback}){
  const channel=crypto.randomUUID(),post=(type,data)=>frame.contentWindow.postMessage({type,channel,...data},location.origin);
  let packet,view,visible=false,speed=1,lastSequence=null,animating=null,acked=null,locked=null,lastRequest=0,timer,ackTimer,stamp;
  const emit=(type,extra)=>receive({type:'party-battle-'+type,battle:packet?.run.id,...extra});
- function watch(ms){clearTimeout(timer);timer=setTimeout(fallback,ms);}
+ function watch(ms){clearTimeout(timer);timer=setTimeout(()=>fallback(visible?'action timed out':'field timed out'),ms);}
  function acknowledge(){
   const p=packet?.run.presentation;
   if(!visible||!p||animating!==null||acked===p.sequence&&acked!=null)return;
@@ -54,7 +53,7 @@ export function partyField({frame,floor,receive,fallback}){
   const seq=run.effectSequence??run.presentation?.sequence;
   if(visible&&before&&Number.isSafeInteger(seq)&&seq!==lastSequence&&b.effects?.length){
    lastSequence=seq;animating=seq;watch(18000);
-   const actor=run.effectActor||b.cur,skill=run.effectSkill||'attack',s=catalog.skill(skill),
+   const actor=run.effectActor||b.cur,skill=run.effectSkill||'attack',s=partySkills[skill],
     caster=before.units.find(u=>u.id===actor),friendly=support(s)||skill.startsWith('item:');
    const targets=view.units.filter(u=>friendly?u.side===caster?.side:u.side!==caster?.side);
    const target=targets.find(u=>b.effects.some(e=>e.id===u.id)&&before.units.find(old=>old.id===u.id)?.hp!==u.hp)
@@ -70,7 +69,7 @@ export function partyField({frame,floor,receive,fallback}){
  }
  function message(m){
   if(m?.type==='ordinary-ready'){clearTimeout(timer);emit('ready');return;}
-  if(m?.type==='ordinary-render-error'&&(!m.channel||m.channel===channel)){fallback();return;}
+  if(m?.type==='ordinary-render-error'&&(!m.channel||m.channel===channel)){fallback('renderer error');return;}
   if(!packet||m?.channel!==channel||m.battle!==view.battle)return;
   if(m.type==='ordinary-field-ready'){clearTimeout(timer);visible=true;emit('visible');acknowledge();return;}
   if(m.type==='ordinary-presented'&&m.sequence===animating){clearTimeout(timer);animating=null;acknowledge();return;}

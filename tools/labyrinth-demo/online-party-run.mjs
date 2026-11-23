@@ -142,11 +142,11 @@ function warmBattleFrame(){
  field?.stop();field=null;
  const legacy=()=>{field?.stop();field=null;battleFrameReady=false;battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=beasts-3d-six-20261121&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;};
  if(connection?.environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off'){
-  import('./online-party-field.mjs?v=party-field-1').then(({partyField})=>{
+  import('./online-party-field.mjs?v=party-browser-3').then(({partyField})=>{
    if(warmFloor!==floor)return;
-   field=partyField({frame:battleFrame,floor:config.floor,receive:receiveBattle,fallback:legacy});
+   field=partyField({frame:battleFrame,floor:config.floor,receive:receiveBattle,fallback:reason=>{console.warn('Dungeon field fallback:',reason);legacy();}});
    field.start();
-  }).catch(()=>{if(warmFloor===floor)legacy();});
+  }).catch(error=>{console.error('Dungeon field import failed',error);if(warmFloor===floor)legacy();});
  }else legacy();
  const backdrop=new Image();
  backdrop.src=asset(config?.battleArt||'assets/ui/battle-scenes/training-v2.webp');
