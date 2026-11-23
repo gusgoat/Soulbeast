@@ -1,11 +1,11 @@
 import {partyClassFamily,partyClassNames,partyDuplicateFamilies} from '../../client/party-class-families.mjs?v=instant-party-3';
 import {connectOnlineWalk} from '../../client/online-walk.mjs?v=revision-retry-1';
-import {connectDungeonParty,partySessionKey} from '../../client/dungeon-party.mjs?v=public-rooms-1';
+import {connectDungeonParty,partySessionKey} from '../../client/dungeon-party.mjs?v=party-field-1';
 import {partyRules} from './online-party-rules.mjs';
 const $=id=>document.getElementById(id);
 const errors={party_duplicate_class_family:'ปาร์ตี้นี้มีสายอาชีพหลักของคุณแล้ว · สมาชิกต้องต่างกันทั้ง 9 สาย แม้เป็นคนละขั้นอาชีพ',party_class_unknown:'ไม่พบสายอาชีพหลัก กรุณาบันทึกตัวละครแล้วเข้าเกมใหม่',public_room_unavailable:'ยังไม่มีห้องสาธารณะที่ว่าง ลองสร้างห้องสาธารณะเพื่อรอผู้เล่นคนอื่น',login_required:'กรุณาเข้าสู่ระบบออนไลน์ก่อน',party_full:'ห้องนี้มีผู้ผนึกครบ 4 คนแล้ว',
  party_not_ready:'สมาชิกต้องออนไลน์และกดพร้อมทุกคน',party_host_only:'เฉพาะหัวหน้าห้องเท่านั้นที่เริ่มได้',
- save_conflict:'เซฟตัวละครมีการเปลี่ยนแปลง กรุณาเข้าเกมใหม่ก่อนเริ่มปาร์ตี้',party_already_active:'ตัวละครนี้อยู่ในปาร์ตี้แล้ว',party_unavailable:'ห้องปิดหรือหมดเวลาแล้ว',
+ save_conflict:'เซฟตัวละครมีการเปลี่ยนแปลง กรุณาเข้าเกมใหม่ก่อนเริ่มปาร์ตี้',party_already_active:'ตัวละครนี้อยู่ในปาร์ตี้แล้ว',party_unavailable:'ไม่พบห้องที่เปิดอยู่ในโลกนี้ · ตรวจรหัสและชื่อโลกให้ตรงกับหัวหน้าห้อง',
  ready_not_confirmed:'เซิร์ฟเวอร์ยังไม่ยืนยันสถานะพร้อม กรุณากดอีกครั้ง',party_started:'ห้องนี้เริ่มดันเจี้ยนแล้ว',party_size:'ต้องมีสมาชิกอย่างน้อย 2 คน',
  one_character_per_account:'หนึ่งบัญชีเข้าร่วมได้หนึ่งตัวละคร',party_run_active:'ปาร์ตี้เริ่มเดินทางแล้ว'};
 let connection,walkSave,room=null,busy=false,timer,stopped=false,checked=false,polling=false,actionVersion=0;
@@ -102,8 +102,23 @@ $('joinPublic').onclick=()=>update('joinPublic');$('retryLobby').onclick=()=>upd
 $('ready').onclick=()=>update('ready',{ready:!room.members.find(m=>m.code===connection.code)?.ready});
 $('start').onclick=()=>update('start');$('leave').onclick=()=>{if(room?.state!=='active'||window.confirm(window.SoulbeastLocale?.text('ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?')??'ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?'))void update('leave');};$('resume').onclick=resume;
 $('copy').onclick=async()=>{if(!room?.joinCode)return;try{await navigator.clipboard.writeText(room.joinCode);$('status').textContent='คัดลอกรหัสห้องแล้ว';}catch{$('status').textContent='เลือกและคัดลอกรหัสห้องด้านบนได้เลย';}};
-try{connection=connectDungeonParty();walkSave=connectOnlineWalk();void update();
- timer=setInterval(pollRoom,5000);
-}catch{$('status').textContent=errors.login_required;setEntryDisabled(true);}
+const requestedWorld=new URL(location.href).searchParams.get('world');
+const worldLabel=world=>world==='test'?'โลกทดสอบ':'โลกจริง';
+function chooseCharacter(world,message){
+ $('status').textContent=message;
+ const link=$('chooseWorld');link.href='../../accounts.html'+(world?'?world='+world:'');
+ link.textContent=world?'เลือกตัวละคร'+worldLabel(world):'เข้าสู่ระบบและเลือกตัวละคร';
+ link.hidden=false;setEntryDisabled(true);
+}
+const intended=['test','live'].includes(requestedWorld)?requestedWorld:null;
+try{
+ connection=connectDungeonParty();
+ $('worldName').textContent=' · '+worldLabel(connection.environment);
+ if(intended&&connection.environment!==intended){
+  chooseCharacter(intended,'ตัวละครในแท็บนี้อยู่'+worldLabel(connection.environment)+' · กรุณาเลือกตัวละคร'+worldLabel(intended)+'เพื่อเข้าห้อง');
+ }else{
+  walkSave=connectOnlineWalk();void update();timer=setInterval(pollRoom,5000);
+ }
+}catch{chooseCharacter(intended,errors.login_required);}
 addEventListener('pagehide',()=>{stopped=true;clearInterval(timer);});
 addEventListener('pageshow',event=>{if(event.persisted)location.reload();});

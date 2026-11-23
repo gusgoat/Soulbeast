@@ -3,8 +3,9 @@
 <title>Soulbeast · ห้องปาร์ตี้ดันเจี้ยน</title><link rel="stylesheet" href="online-party-lobby.css?v=frame-fit-1"><script defer src="../town-walk-demo/music-channel.js?v=ios-audio-2-20261107"></script><script defer src="../town-walk-demo/standalone-menu-music.js?v=storage-run-audio-1"></script><link rel="stylesheet" href="../../client/game-menu-art.css?v=5"></head>
 <body class="dungeon-party-menu"><main>
 <a class="back" href="lobby.html">‹ กลับไปเลือกโหมด</a>
-<header class="intro"><img src="../../assets/ui/soulbeast-logo-v2.webp" alt="SoulBeast"><h1>ปาร์ตี้มหาวงกต</h1><p>รวมทีมผู้ผนึก 2–4 คน</p></header>
+<header class="intro"><img src="../../assets/ui/soulbeast-logo-v2.webp" alt="SoulBeast"><h1>ปาร์ตี้มหาวงกต</h1><p>รวมทีมผู้ผนึก 2–4 คน <strong id="worldName"></strong></p></header>
 <div class="feedback"><p id="status" role="status" aria-live="polite">กำลังตรวจสอบห้องปาร์ตี้…</p><button id="retryLobby" type="button" hidden>ลองอีกครั้ง</button></div>
+<a class="back" id="chooseWorld" hidden>เลือกตัวละคร</a>
 <div id="joinPanel" hidden>
 <section aria-labelledby="publicTitle"><h2 id="publicTitle">ห้องสาธารณะ</h2><p>เปิดให้ผู้เล่นออนไลน์เข้าร่วมได้โดยไม่ต้องใช้รหัส</p>
 <div class="actions"><button id="createPublic" class="primary" type="button">สร้างห้องสาธารณะ</button><button id="joinPublic" type="button">เข้าร่วมห้องสาธารณะ</button></div></section>
@@ -16,4 +17,4 @@
 <ul id="members"></ul><p id="requirements"></p>
 <div class="actions"><button id="ready">ยืนยันพร้อม</button><button id="start" disabled>เริ่มดันเจี้ยน</button><button id="resume" hidden>กลับเข้าดันเจี้ยน</button><button id="leave">ออกจากห้อง</button></div></section>
 
-</main><script type="module" src="online-party-lobby.mjs?v=instant-party-3"></script><script type="module" src="../../client/event-announcements.mjs?v=boss-portrait-1"></script></body></html>
+</main><script type="module" src="online-party-lobby.mjs?v=party-field-1"></script><script type="module" src="../../client/event-announcements.mjs?v=boss-portrait-1"></script></body></html>

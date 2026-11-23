@@ -18,7 +18,7 @@ export function connectDungeonParty({storage=localStorage,session=sessionStorage
   return result;
  }
  const run=async(room,action,data={})=>{
-  const response=await client.request('/functions/v1/soulbeast-dungeon-party',{
+  const response=await client.request(context.environment==='test'?'/functions/v1/soulbeast-dungeon-party-test':'/functions/v1/soulbeast-dungeon-party',{
    code:context.code,environment:context.environment,room,action,data
   },await client.sessions.token());
   return response.result;

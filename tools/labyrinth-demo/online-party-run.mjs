@@ -2,7 +2,7 @@ import {personalParty} from './online-party-personal.mjs?v=instant-party-3';
 import {partyAudio} from './online-party-audio.mjs?v=trap-sfx-20261121';
 import {partyMenu} from './online-party-menu.mjs?v=instant-party-3';
 import {partyArt} from './online-party-art.mjs?v=elemental-traps-20261121';
-import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=motion-cadence-1';
+import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=party-field-1';
 import {partyScene} from './online-party-scene.mjs?v=instant-party-3';
 import {localPartyWorld} from './online-party-local.mjs?v=instant-party-3';
 import {mountPartyVitals} from './online-party-view.mjs?v=party-controls-2-20261107';
@@ -134,11 +134,20 @@ const battleFrame=$('partyBattleFrame'),encounterPanel=$('partyEncounter'),openi
    else notice('ยังเริ่มต่อสู้ไม่ได้ · ลองเดินเข้าใกล้อีกครั้ง');
   });
  }
+let field=null;
 function warmBattleFrame(){
  const floor=config?.id||'mine-floor-1';
  if(warmFloor===floor)return;
  warmFloor=floor;battleFrameReady=false;
- battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=beasts-3d-six-20261121&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;
+ field?.stop();field=null;
+ const legacy=()=>{field?.stop();field=null;battleFrameReady=false;battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=beasts-3d-six-20261121&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(floor)}`;};
+ if(connection?.environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off'){
+  import('./online-party-field.mjs?v=party-field-1').then(({partyField})=>{
+   if(warmFloor!==floor)return;
+   field=partyField({frame:battleFrame,floor:config.floor,receive:receiveBattle,fallback:legacy});
+   field.start();
+  }).catch(()=>{if(warmFloor===floor)legacy();});
+ }else legacy();
  const backdrop=new Image();
  backdrop.src=asset(config?.battleArt||'assets/ui/battle-scenes/training-v2.webp');
  encounterPanel.style.setProperty('--party-encounter-art',`url("${backdrop.src}")`);
@@ -146,12 +155,16 @@ function warmBattleFrame(){
 }
 function sendBattle(){
  if(!shownBattle||!battleFrameReady)return;
- battleFrame.contentWindow.postMessage({type:'party-battle-state',run:shownBattle,code:connection.code,
-  auto:localCombat?.active(shownBattle.id)?localCombat.auto():!!controller?.state?.autoPlayers?.[connection.code],clockOffset:localCombat?.active(shownBattle.id)?0:clockOffset,member:me},location.origin);
+ const packet={type:'party-battle-state',run:shownBattle,code:connection.code,
+  auto:localCombat?.active(shownBattle.id)?localCombat.auto():!!controller?.state?.autoPlayers?.[connection.code],clockOffset:localCombat?.active(shownBattle.id)?0:clockOffset,member:me};
+ if(field)field.show(packet);else battleFrame.contentWindow.postMessage(packet,location.origin);
 }
 addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==battleFrame.contentWindow)return;
- const message=event.data;
+ if(field){field.message(event.data);return;}
+ receiveBattle(event.data);
+});
+function receiveBattle(message){
  if(message?.type==='party-battle-ready'){battleFrameReady=true;sendBattle();return;}
  if(!shownBattle||$('battle').hidden||message?.battle!==shownBattle.id)return;
  if(message.type==='party-battle-visible'){visibleBattleId=shownBattle.id;
@@ -174,7 +187,9 @@ addEventListener('message',event=>{
   const turn=shownBattle.waiting;
   const battleId=shownBattle.id;
   const reply=ok=>{
-   if(shownBattle?.id===battleId)battleFrame.contentWindow.postMessage({type:'party-battle-command-result',battle:battleId,request:message.request,ok},location.origin);
+   if(shownBattle?.id!==battleId)return;
+   if(field){field.replied(message.request,ok);return;}
+   battleFrame.contentWindow.postMessage({type:'party-battle-command-result',battle:battleId,request:message.request,ok},location.origin);
   };
   if(turn?.ownerCode!==connection.code||message.turn!==turn.turn||message.actor!==turn.actor){reply(false);return;}
   if(encounter?.battle===battleId)clearEncounter();
@@ -184,7 +199,7 @@ addEventListener('message',event=>{
   if(!choice){reply(false);return;}
   void choice.then(ok=>{reply(ok);if(!ok&&!local)void controller.refresh();});
  }
-});
+}
 function drawBattle(run,local=false){
  if(!local&&(personal?.active||shownBattle?.localCombatVersion===2&&seenBattle!==shownBattle.id)&&!(run?.kind==='boss'&&run.status==='active'))return;
  if(run?.status==='active')WalkTutorial.dismissShadow();
