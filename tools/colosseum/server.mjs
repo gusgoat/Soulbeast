@@ -14,7 +14,7 @@ STATIC.add('signature-motion.js');
 const TICK=50, LOBBY_TTL=30*60_000, LOBBY_RECONNECT_MS=60_000, FINISH_TTL=5*60_000;
 const MAX_ROOMS=32, MAX_CONNECTIONS=160;
 
-export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReconnectMs=LOBBY_RECONNECT_MS,rankedReconnectMs=RANKED_RECONNECT_MS,...options}={}){
+function createArena({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReconnectMs=LOBBY_RECONNECT_MS,rankedReconnectMs=RANKED_RECONNECT_MS,...options}={}){
  const rooms=new Map(), peers=new Set(),tickets=new Map(),rankedQueue=new Map(),rankRoomAliases=new Map();
  let rankProbe=null,rankProbeAt=0;
  function rankedReady(){
@@ -426,8 +426,7 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
   });
   return response;
  }
- const server=Deno.serve({hostname:'127.0.0.1',port:8788,...options},async req=>{
-  const url=new URL(req.url);
+ async function handle(req,url){
   if(url.pathname==='/healthz'&&['GET','HEAD'].includes(req.method)){
    return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':siteOrigin||'*','Cache-Control':'no-store'}});
   }
@@ -479,8 +478,20 @@ export function serve({loadCharacter=null,ranking=null,siteOrigin=null,lobbyReco
    if(error instanceof Deno.errors.NotFound)return new Response('Not found',{status:404});
    return new Response('File unavailable',{status:500});
   }
+ }
+ return {handle,stop:()=>clearInterval(timer)};
+}
+export function serve({testCharacter=null,...options}={}){
+ const live=createArena(options);
+ const test=testCharacter && createArena({...options,loadCharacter:testCharacter,ranking:null});
+ const {hostname='127.0.0.1',port=8788,signal,onListen}=options;
+ const server=Deno.serve({hostname,port,signal,onListen},req=>{
+  const url=new URL(req.url);
+  if(!url.pathname.startsWith('/test/'))return live.handle(req,url);
+  if(!test)return new Response('Test arena unavailable',{status:404});
+  url.pathname=url.pathname.slice(5);return test.handle(req,url);
  });
- server.finished.finally(()=>clearInterval(timer));
+ server.finished.finally(()=>{live.stop();test?.stop();});
  return server;
 }
 if(import.meta.main){
@@ -493,5 +504,5 @@ if(import.meta.main){
  const rankKey=publicServer?Deno.env.get('SB_COLOSSEUM_RANK_KEY'):null;
  if(publicServer&&(!siteOrigin||!accountURL||!accountKey))throw Error('Missing Colosseum public server settings');
  serve({hostname:publicServer||Deno.args.includes('--lan')?'0.0.0.0':'127.0.0.1',
-  port:Number(port),siteOrigin,ranking:publicServer?createRankingStore(accountURL,accountKey,rankKey):null,loadCharacter:publicServer?createAccountLoader(accountURL,accountKey):null});
+  port:Number(port),siteOrigin,testCharacter:publicServer?createAccountLoader(accountURL,accountKey,fetch,'test'):null,ranking:publicServer?createRankingStore(accountURL,accountKey,rankKey):null,loadCharacter:publicServer?createAccountLoader(accountURL,accountKey):null});
 }

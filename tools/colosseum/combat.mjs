@@ -252,7 +252,7 @@ function perform(b,u,id,target,now,active=false){
   return target.owner!==u.owner&&(target.hp>previous.hp||target.buffs.length>previous.buffs);
  }))b.onContribution(b.roster[u.owner]);
  syncCombatBonuses(b);
- b.last={actor:u.id,target:aim?.id,skill:sk.n,skillId:id,...actionVisual(u,id,sk),element:sk.el,n:(b.last?.n||0)+1};
+ b.last={actor:u.id,target:aim?.id,skill:sk.n,skillId:id,all:!!sk.all||sk.tg==='team',...actionVisual(u,id,sk),element:sk.el,n:(b.last?.n||0)+1};
  if(!core.takeFreeForm(u)){b.turns++;next(b,now);}
  else if(!checkEnd(b,now))openTurn(b,u,now);
  b.log=b.log.slice(-18);
@@ -278,7 +278,7 @@ export function combatView(b,player){
  const auto=b.autoOwners.has(player);
  const commands=!b.finished&&!auto&&cur&&b.roster[cur.owner]===player&&!cur.charging?[...new Set([...cur.skills,'rest','defend'])].filter(id=>activeSkill(b,cur,id)).map(id=>{
   const sk=core.skill(id);
-  return {id,name:sk.n,mp:core.cost(cur,sk),
+  return {id,name:sk.n,t:sk.t,tg:sk.tg,el:sk.el,rev:!!(sk.rev||sk.revAll),all:!!sk.all,mp:core.cost(cur,sk),
    targets:skillTargets(b,cur,sk).map(u=>u.id)};
  }):[];
  const show=u=>({id:u.id,owner:u.owner,name:u.name,kind:u.kind,cls:u.cls,baseCls:careerInfo(u.cls)?.base,sp:u.sp,lv:u.lv,hp:u.hp,mp:u.mp,maxHp:u.st.hp,maxMp:u.st.mp,

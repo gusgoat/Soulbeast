@@ -22,7 +22,7 @@ const presentation=battlePresentation($('battle-vfx'));
 const siegeSounds=siegeAudio(presentation.playSiege,sealerGender);
 const announcerVoice=window.SoulbeastVoicePlayer({enabled:()=>presentation.enabled,volume:()=>.72,duck:presentation.duckMusic});
 const announcer=clientAnnouncer(announcerVoice);
-const mapDialog=$('large-map'), channel='soulbeast-colosseum-session';
+const mapDialog=$('large-map');
 let warpMap=false,warpMapKey='';
 let ws,state,battle,me,local,lastInput='',seq=0,offset=0,retry,packet;
 let lobbyKey='',battleKey='',teamHpKey='',survivalRankKey='',selected=null,pendingTurn=null,now=0,previous=performance.now(),lastMap=0;
@@ -78,6 +78,12 @@ try{
  accountContext=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');
  if(accountContext&&selectedCharacter?.code!==accountContext.code)selectedCharacter=null;
 }catch{}
+const testArena=accountContext?.environment==='test' && !!selectedCharacter;
+const channel=testArena?'soulbeast-colosseum-test-session':'soulbeast-colosseum-session';
+const endpoint=(path,base)=>new URL((testArena?'/test':'')+path,base);
+const field=testArena?(await import('./connected-field.mjs?v=1')).createConnectedField(
+ (turn,skill,target)=>send({type:'combat',turn,skill,target}),
+ enabled=>send({type:'combatAuto',enabled})):null;
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
@@ -88,10 +94,10 @@ function practiceSocket(){
  return socket;
 }
 async function onlineTicket(base){
- if(!accountContext?.code||accountContext.environment!=='live')throw Error('กรุณาเข้าสู่ระบบและเลือกตัวละครออนไลน์');
+ if(!accountContext?.code||!['test','live'].includes(accountContext.environment))throw Error('กรุณาเข้าสู่ระบบและเลือกตัวละครออนไลน์');
  const {connectAccounts}=await import('../../client/account-client.mjs?v=admin-session-20261107');
  const client=connectAccounts(()=>{});
- const result=await fetch(new URL('/ticket',base),{
+ const result=await fetch(endpoint('/ticket',base),{
   method:'POST',headers:{Authorization:'Bearer '+await client.sessions.token(),'Content-Type':'application/json'},
   body:JSON.stringify({code:accountContext.code}),signal:AbortSignal.timeout(12000),
  });
@@ -106,7 +112,7 @@ function saved(){try{return JSON.parse(sessionStorage.getItem(channel)||'null');
 function store(value){try{if(value)sessionStorage.setItem(channel,JSON.stringify(value));else sessionStorage.removeItem(channel);}catch{}}
 async function waitForHost(base,payload){
  const deadline=Date.now()+105_000;
- const url=new URL('/healthz',base);
+ const url=endpoint('/healthz',base);
  while(packet===payload&&Date.now()<deadline){
   try{
    const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(12_000)});
@@ -120,7 +126,7 @@ let opening=false,queued=false,leaving=false,leaveTimer;
 function updateEntryControls(){
  $('country-return').hidden=!$('country-return').hasAttribute('href')||opening||queued||Boolean(state);
  for(const button of $('entry-form').querySelectorAll('button[type="submit"]')){
-  button.disabled=opening||(!onlineEnabled&&!practiceType(button.value));
+  button.disabled=opening||(testArena&&['ranked','createRankTeam'].includes(button.value))||(!onlineEnabled&&!practiceType(button.value));
  }
 }
 async function connect(payload){
@@ -128,13 +134,13 @@ async function connect(payload){
  pendingMoves=[];pendingChest=null;correction=null;oneWay=0;bestRtt=Infinity;
  const useWorker=practiceType(payload.type)&&Boolean(selectedCharacter);
  const base=new URL(gameWeb&&serverURL?serverURL:location.origin);
- const url=new URL('/ws',base);
+ const url=endpoint('/ws',base);
  url.protocol=base.protocol==='https:'?'wss:':'ws:';
  $('notice').textContent='กำลังเชื่อมต่อสนาม…';
  let ticket=null;
  if(gameWeb&&!useWorker){
   try{
-   if(!accountContext?.code||accountContext.environment!=='live')throw Error('กรุณาเข้าสู่ระบบและเลือกตัวละครออนไลน์');
+   if(!accountContext?.code||!['test','live'].includes(accountContext.environment))throw Error('กรุณาเข้าสู่ระบบและเลือกตัวละครออนไลน์');
    $('notice').textContent='กำลังเปิดเซิร์ฟเวอร์สนาม อาจใช้เวลาประมาณหนึ่งนาที…';
    await waitForHost(base,payload);
    if(packet!==payload)return;
@@ -169,6 +175,7 @@ async function connect(payload){
   else if(m.type==='pong'){acceptPong(m);}
   else if(m.type==='chest-result'){pendingChest=null;}
   else if(m.type==='error'){
+   if(m.action==='combat')field?.rejected();
    if(m.action==='chest')pendingChest=null;
    if(opening||queued&&m.action==='ranked'){reset(m.message);return;}
    if(m.action==='leave'){leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;}
@@ -224,11 +231,13 @@ function continueBattle(){
  else{battleKey='';renderBattle();}
 }
 function hideBattle(){
+ field?.close();
  if(presentation.busy)return;
  $('battle').hidden=true;
  presentation.setActive(false);
 }
 function reset(message='',clearInvite=false){
+ field?.reset();
  battleUpdates.length=0;
  spectatorPan.x=spectatorPan.y=0;spectatorDrag=null;
  presentation.walk(false);
@@ -669,6 +678,8 @@ function skillButton(skill,enabled,onClick){
 function renderBattle(){
  const panel=$('battle'),inCombat=me?.phase==='battle'&&state?.phase==='match',watch=watchedPlayer();
  if(!battle||(!viewingBattle()&&panel.hidden))return;
+ if(field && inCombat && !watch && field.show(battle,me,state.mode,()=>performance.now()+offset)){panel.hidden=true;return;}
+ field?.close();
  const b=battle,effectKey=`${b.id}:${b.last?.n??0}`,playEffect=panel.dataset.last!==effectKey&&!!b.last;
  const can=inCombat&&!playEffect&&!presentation.busy&&!battleUpdates.length&&b.commands.length>0&&now>=b.openAt&&now<b.deadline&&pendingTurn!==b.turn;
  const position=watch||me,inFog=!insideFogSafe(state.zone,position.x,position.y);

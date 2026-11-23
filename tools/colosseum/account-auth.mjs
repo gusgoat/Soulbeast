@@ -1,10 +1,10 @@
 // Verify ownership and load the combat profile through the existing accounts service.
-export function createAccountLoader(url,key,fetcher=fetch){
+export function createAccountLoader(url,key,fetcher=fetch,environment='live'){
  return async (token,code)=>{
   if(typeof token!=='string'||token.length>4096||typeof code!=='string'||!code||code.length>80)throw Error('กรุณาเข้าสู่ระบบและเลือกตัวละคร');
   const response=await fetcher(url,{
    method:'POST',
-   headers:{apikey:key,Authorization:'Bearer '+token,'Content-Type':'application/json','x-soulbeast-environment':'live'},
+   headers:{apikey:key,Authorization:'Bearer '+token,'Content-Type':'application/json','x-soulbeast-environment':environment},
    body:JSON.stringify({action:'load',code}),
    signal:AbortSignal.timeout(10_000),
   });
