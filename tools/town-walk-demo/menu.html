@@ -9222,7 +9222,7 @@ function ordinaryBattleContext(battle,floor){
  function mount(){
   const b=B();if(!useStage(b)||S.screen!=='battle'){if(frame)removeStage();battle=null;return;}
   if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';fieldReady=false;requests.clear();recovery.start(battleId);}
-  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=dungeon-solo-context-20261123-1'+(ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor)?'':'&entry=country');document.body.append(frame);
+  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=dungeon-solo-context-20261123-1'+(ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor)?'&entry=dungeon':'&entry=country');document.body.append(frame);
    frame.addEventListener('error',()=>useLegacy('frame-error'));
    Music.stop();ExtraAudio.stop();Sound.stopAmb();}
   publish();

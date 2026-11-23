@@ -96,7 +96,7 @@ export function partyField({frame,floor,receive,fallback}){
   locked={request:m.request,turn:w.turn,actor:w.actor};show(packet);
   emit('command',{...data,...locked});
  }
- return {show,message,setFloor(next){floor=next;},waitForRenderer(){watch(30000);},start(){frame.dataset.loadingOwner='field';frame.src='../../battle-ui-v1/test-effects.html?connected=ordinary&ui=colosseum-v3';},
+ return {show,message,setFloor(next){floor=next;},waitForRenderer(){watch(30000);},start(){frame.dataset.loadingOwner='field';frame.src='../../battle-ui-v1/test-effects.html?connected=ordinary&ui=colosseum-v3&entry=dungeon';},
   stop(){clearTimeout(timer);clearTimeout(ackTimer);},
   replied(request,ok){if(request===locked?.request&&!ok){locked=null;show(packet);post('ordinary-notice',{message:'คำสั่งยังไม่สำเร็จ กรุณาลองอีกครั้ง'});}}};
 }

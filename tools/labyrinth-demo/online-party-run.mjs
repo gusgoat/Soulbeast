@@ -152,7 +152,7 @@ function warmBattleFrame(force=false){
  if(connection?.environment==='test'&&(new URLSearchParams(location.search).get('battleUi')==='new'||sessionStorage.getItem('soulbeast-new-battle-test')!=='off')){
   $('retryPartyField').onclick=()=>warmBattleFrame(true);
   $('oldPartyField').onclick=legacy;
-  import('./online-party-field.mjs?v=vfx-charge-test-20261123-1').then(({partyField})=>{
+  import('./online-party-field.mjs?v=dungeon-entry-1').then(({partyField})=>{
    if(warmFloor!==floor)return;
    field=partyField({frame:battleFrame,floor:config.floor,receive:receiveBattle,fallback:failed});
    field.start();if(shownBattle)field.waitForRenderer();
@@ -233,7 +233,7 @@ function drawBattle(run,local=false){
 
 }
 const view={
- loadFloor(floor){config=MineFloors.get(floor);warmBattleFrame();maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);sceneAudio.setFloor(config,maze);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
+ loadFloor(floor){config=MineFloors.get(floor);warmBattleFrame();window.prewarmDungeonBoss?.(floor,connection?.environment);maze=MineLabyrinth.create(config.seed,{floor});visuals.setFloor(maze,config);sceneAudio.setFloor(config,maze);peers.clear();localWorld.reset();trapPlacements=[];position=null;camera=null;document.documentElement.dataset.floor=floor;document.querySelector('header small').textContent=`มหาเขาวงกต · ชั้น ${floor} / 7`;document.querySelector('header h1').textContent=config.name;document.querySelector('#mapPanel small').textContent=`ชั้น ${floor} · ${config.name}`;document.title=`มหาเขาวงกต · ${config.name}`;},
  vitals:members=>vitals.update(members.map(m=>m.code===connection?.code&&personal?.state&&!personal.grant.suspended?{...m,...personal.state.member}:m)),
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);if(personal?.state&&!personal.grant.suspended)me={...me,...personal.state.member};menus.update(me);},
  world(data,serverTime,grant){if(grant)personal?.receive(grant);world={...(data||{})};if(personal?.grant?.actionsVersion===3){world.kills=personal.counts(world);world.doorOpen=world.doorOpen||(world.kills.shadow>=world.rules?.shadows&&world.kills.bandit>=world.rules?.bandits);}nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
