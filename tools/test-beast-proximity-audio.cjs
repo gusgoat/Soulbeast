@@ -1,0 +1,24 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),{create}=require('./town-walk-demo/beast-proximity-audio.js');
+const box={window:{}};vm.runInNewContext(fs.readFileSync(__dirname+'/town-walk-demo/beast-voice-catalog.generated.js','utf8'),box);const catalog=box.window.BeastVoiceCatalog;
+const played=[],created=[];class Audio{constructor(src){this.src=src;this.dataset={};this.volume=0;this.paused=true;this.ended=false;created.push(this);}play(){this.paused=false;played.push({src:this.src,volume:this.volume});return Promise.resolve();}pause(){this.paused=true;}remove(){}removeAttribute(){this.src='';}load(){}}
+const actor=(sp,x=0)=>({beastSpecies:sp,x,y:0,cooldown:0}),keys=Object.keys(catalog.species),wolf=actor('ice_wolf',40),other=actor('kappa',160),p={x:0,y:0};
+const engine=create({catalog,makeAudio:src=>new Audio(src),random:()=>0}),frame={position:p,actors:[wolf,other],enabled:false,volume:.5};
+engine.tick(.1,frame);assert.equal(played.length,0,'Muted/locked game must not create a voice');frame.enabled=true;engine.tick(.1,frame);assert.equal(engine.stats().species,'ice_wolf');assert(catalog.species.ice_wolf.urls.includes(engine.stats().src));const near=engine.stats().volume;
+frame.actors=[wolf];frame.position={x:-160,y:0};engine.tick(.3,frame);assert(engine.stats().volume<near,'Voice falls off with distance');assert.equal(played.length,1,'Frames do not restart a cry');
+frame.position={x:-500,y:0};engine.tick(.3,frame);assert(!engine.stats().playing,'Leaving radius stops voice');frame.position=p;engine.tick(.3,frame);assert.equal(played.length,1,'Re-entry cannot spam a cry');engine.tick(10,frame);assert.equal(played.length,2);assert.equal(created.length,1,'Reuse one unlocked audio element');
+wolf.cooldown=10;engine.tick(.1,frame);assert(!engine.stats().playing,'Defeated/disappeared beast stops');wolf.cooldown=0;frame.actors=[other];engine.tick(10,frame);assert.equal(engine.stats().species,'kappa');assert.equal(created.length,1);frame.volume=0;engine.tick(.1,frame);assert(!engine.stats().playing,'Effect volume zero stops voice');frame.volume=.5;frame.enabled=false;engine.tick(20,frame);assert(!engine.stats().playing);const count=played.length;engine.dispose();engine.tick(20,{...frame,enabled:true});assert.equal(played.length,count);
+// Every walking species uses the latest recorded battle-cry file, including uploaded overrides.
+for(const sp of keys){const sound=create({catalog,makeAudio:src=>new Audio(src),random:()=>0}),a=actor(sp,0);sound.tick(.1,{position:p,actors:[a],enabled:true,volume:.5});assert.equal(sound.stats().species,sp);assert(catalog.species[sp].urls.includes(sound.stats().src));sound.dispose();}
+assert.equal(catalog.modelCount,177);assert.equal(keys.length,132);
+assert.equal(catalog.species.demon_knight.group,'demonLaughFx','Latest uploaded demon-knight revision');assert.equal(catalog.species.mermaid.group,'voice_mermaid','Latest uploaded mermaid revision');
+// The walking mixer must use the gesture-unlocked shared context on iOS, with effect gain.
+const events={},attached=[];let prefs={enabled:true,volume:.5,effectsVolume:.4,musicVolume:0};
+const context={state:'running',destination:{},createGain(){return {gain:{value:0},connect(){},disconnect(){this.disconnected=true;}};},resume:async()=>{},suspend:async()=>{},close(){throw Error('Do not close shared context');}};
+const document={hidden:false,documentElement:{dataset:{}},body:{append(){}},addEventListener:(name,fn)=>{events[name]=fn;},removeEventListener(){}};
+const scope={BeastVoiceCatalog:catalog,BeastProximityAudio:{create:config=>create({...config,random:()=>0})},walkAudioCatalog:{steps:{},music:{}},AudioContext:function(){},SoulbeastAudioBridge:{enabled:true,getContext:()=>context,owns:c=>c===context,attach(audio,c,gain){assert.equal(c,context);attached.push({audio,gain});return true;}},addEventListener(){},removeEventListener(){}};
+vm.runInNewContext(fs.readFileSync(__dirname+'/town-walk-demo/walk-audio.js','utf8'),{window:scope,Audio,document,localStorage:{getItem:()=>JSON.stringify(prefs)}});
+const sharedActor=actor('ice_wolf'),mixer=scope.WalkAudio.create({kind:'country',waterSrc:'water',beastSources:()=>[sharedActor]}),state={position:p,moving:false,running:false};
+events.pointerdown({type:'pointerdown'});mixer.tick(.1,state);assert.equal(attached.length,1);assert(Math.abs(attached[0].gain.gain.value-.15)<.00001);
+prefs.effectsVolume=.2;mixer.tick(.3,state);assert(Math.abs(attached[0].gain.gain.value-.075)<.00001,'Preference changes reach shared effect gain');
+mixer.tick(10,state);assert.equal(attached.length,1,'Replayed cries reuse the same shared attachment');mixer.dispose();assert(attached[0].gain.disconnected);
+console.log('PASS latest 132 species / 177 models, nearest voice, distance volume, cooldown, mute, defeat, pooling and disposal');

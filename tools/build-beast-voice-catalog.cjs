@@ -1,0 +1,12 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto'),assert=require('node:assert/strict'),{extract}=require('./beast-voice-policy.cjs');
+const root=path.resolve(__dirname,'..'),html=fs.readFileSync(path.join(root,'accounts.html'),'utf8');
+const entry=prefix=>{const file=html.match(new RegExp('(?:\\./)?('+prefix+'\\.[a-f0-9]+\\.js)'))?.[1];assert(file,'Missing '+prefix+' entry');return file;};
+const files={main:entry('game-app'),presentation:entry('game-data-presentation'),beasts:entry('game-data-beasts')},read=f=>fs.readFileSync(path.join(root,f),'utf8'),box={window:{}};
+vm.runInNewContext(read('assets/living-beasts/catalog.js'),box);
+const result=extract(read(files.main),read(files.presentation),read(files.beasts),box.window.LivingBeastCatalog.species);
+const species=Object.fromEntries(Object.keys(box.window.LivingBeastCatalog.species).map(sp=>[sp,result.species[sp]]));
+for(const model of box.window.LivingBeastCatalog.models)assert(species[model.sp]?.urls.length,'Voice missing for '+model.id);
+const fingerprint=Object.fromEntries(Object.entries(files).map(([key,file])=>[key,{file,sha256:crypto.createHash('sha256').update(read(file).replace(/\r/g,'')).digest('hex')}]));
+const output='/* Generated from the current recorded beast cries, including all uploaded overrides. */\nwindow.BeastVoiceCatalog='+JSON.stringify({version:'recorded-latest-20261123',source:fingerprint,modelCount:box.window.LivingBeastCatalog.models.length,species})+';\n',target=path.join(root,'tools/town-walk-demo/beast-voice-catalog.generated.js');
+if(process.argv.includes('--check'))assert.equal(fs.readFileSync(target,'utf8').replace(/\r/g,''),output);else fs.writeFileSync(target,output);
+console.log('PASS latest recorded voices for',Object.keys(species).length,'species /',box.window.LivingBeastCatalog.models.length,'walking models');
