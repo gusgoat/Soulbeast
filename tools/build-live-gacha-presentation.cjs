@@ -1,0 +1,9 @@
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const root=path.join(__dirname,'..'),preview=path.join(__dirname,'gacha-card-preview'),check=process.argv.includes('--check');
+function output(file,bytes){const target=path.join(root,file);if(check)assert.equal(fs.readFileSync(target,'utf8'),String(bytes),'Approved presentation drift: '+file);else{fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,bytes);}}
+// Explicit release snapshot: later preview experiments cannot change the live game.
+for(const file of ['eclipse-frame.svg',...['white','green','blue','purple','gold','red'].map(c=>'frame-'+c+'.svg')])output('assets/ui/gacha-cards-v1/'+file,fs.readFileSync(path.join(preview,file),'utf8'));
+output('client/gacha-reveal-canvas.generated.js',fs.readFileSync(path.join(preview,'reveal-canvas.js'),'utf8'));
+let css=fs.readFileSync(path.join(preview,'preview.css'),'utf8');const start=css.indexOf('/* The trial keeps the live reveal handlers;');assert.ok(start>=0);css=css.slice(start).replaceAll('.gacha-trial','.gacha-live').replaceAll("url('eclipse-frame.svg')","url('../assets/ui/gacha-cards-v1/eclipse-frame.svg')").replace(/url\('(frame-(?:white|green|blue|purple|gold|red)\.svg)'\)/g,"url('../assets/ui/gacha-cards-v1/$1')");
+css='/* Generated from the approved card trial; scoped to real gacha receipts only. */\n'+css+'\n.gacha-live .gacha-face-art>.pt{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none;max-height:none;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden}\n.gacha-live .gacha-face-art>.pt img{width:100%;height:100%;object-fit:contain;border-radius:0}\n.gacha-live .gacha-face-art>.gacha-art-ambience{pointer-events:none}\n';
+output('client/gacha-presentation.generated.css',css);console.log('PASS live card frames and Canvas are exact snapshots of the approved trial');
