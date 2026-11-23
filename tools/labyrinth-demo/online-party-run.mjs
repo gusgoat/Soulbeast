@@ -152,7 +152,7 @@ function warmBattleFrame(force=false){
  if(connection?.environment==='test'&&(new URLSearchParams(location.search).get('battleUi')==='new'||sessionStorage.getItem('soulbeast-new-battle-test')!=='off')){
   $('retryPartyField').onclick=()=>warmBattleFrame(true);
   $('oldPartyField').onclick=legacy;
-  import('./online-party-field.mjs?v=card-status-1').then(({partyField})=>{
+  import('./online-party-field.mjs?v=vfx-charge-test-20261123-1').then(({partyField})=>{
    if(warmFloor!==floor)return;
    field=partyField({frame:battleFrame,floor:config.floor,receive:receiveBattle,fallback:failed});
    field.start();if(shownBattle)field.waitForRenderer();

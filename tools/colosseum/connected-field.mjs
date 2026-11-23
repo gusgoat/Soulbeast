@@ -54,7 +54,7 @@ export function createConnectedField(submit, toggleAuto) {
     frame.title='สนามต่อสู้โคลอสเซียม';frame.allow='autoplay';
     frame.inert=true;
     Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:10000,visibility:'hidden'});
-    frame.src='/Soulbeast/battle-ui-v1/colosseum.html?connected=ordinary&ui=colosseum-v3';
+    frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=colosseum-v3';
     document.body.append(frame);
   }
   function exitField(){
