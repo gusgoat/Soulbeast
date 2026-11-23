@@ -1,7 +1,7 @@
 import {personalParty} from './online-party-personal.mjs?v=instant-party-3';
 import {partyAudio} from './online-party-audio.mjs?v=trap-sfx-20261121';
 import {partyMenu} from './online-party-menu.mjs?v=instant-party-3';
-import {partyArt} from './online-party-art.mjs?v=elemental-traps-20261121';
+import {partyArt} from './online-party-art.mjs?v=party-traps-2';
 import {connectDungeonParty,partyMotion} from '../../client/dungeon-party.mjs?v=party-field-1';
 import {partyScene} from './online-party-scene.mjs?v=instant-party-3';
 import {localPartyWorld} from './online-party-local.mjs?v=instant-party-3';
@@ -227,7 +227,7 @@ const view={
  roster(members){for(const code of peers.keys())if(!members.some(m=>m.code===code))peers.delete(code);me=members.find(m=>m.code===connection.code);if(personal?.state&&!personal.grant.suspended)me={...me,...personal.state.member};menus.update(me);},
  world(data,serverTime,grant){if(grant)personal?.receive(grant);world={...(data||{})};if(personal?.grant?.actionsVersion===3){world.kills=personal.counts(world);world.doorOpen=world.doorOpen||(world.kills.shadow>=world.rules?.shadows&&world.kills.bandit>=world.rules?.bandits);}nav=MineLabyrinth.navigation(maze,{bossDoorOpen:world.doorOpen,bossCleared:world.boss==='defeated',discovered:{mini:true},treasureDoorOpen:world.boss==='defeated'});
   localWorld.receive(world,connection.code,performance.now(),serverTime);
-  if(!trapPlacements.length)trapPlacements=DungeonTraps.create(maze,nav,{}, {seed:config.seed+71371,count:35}).list;
+  if(!trapPlacements.length)trapPlacements=globalThis.DungeonTrapArt.create(maze,nav,{}, {seed:config.seed+71371,count:35}).list;
 
   $('progress').textContent=`อสูรเงา ${world.kills?.shadow||0}/${world.rules?.shadows||0} · โจร ${world.kills?.bandit||0}/${world.rules?.bandits||0} · กับดักเหลือ ${trapPlacements.length-(personal?.state?Object.keys(personal.state.traps).length:(world.traps||[]).filter(t=>t.state==='spent').length)} · ${world.doorOpen?'เปิดห้องบอสแล้ว':'รวบรวมยอดปราบเพื่อเปิดห้องบอส'}`;},
  peer:(member,p)=>peers.set(member.code,{member,...p}),traps:value=>{traps=value;},
