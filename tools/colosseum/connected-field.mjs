@@ -24,20 +24,66 @@ export function encounterView(b, me, mode, now, pending) {
 export function createConnectedField(submit, toggleAuto) {
   let frame, fallback, timer, ready=false, channel, latest, previous, key, failed, speed=1;
   let latestBattle, latestTime, pendingTurn, lastRequest=0;
+  let awaitingSequence=null, releaseTimer, releaseRequested=false, warmFailed=false;
   const post=(type,body)=>frame?.contentWindow?.postMessage({type,channel,...body},location.origin);
-  function close() {
-    clearTimeout(timer); frame?.remove(); fallback?.remove(); frame=null; ready=false;
+  function deactivate() {
+    clearTimeout(timer); clearTimeout(releaseTimer);
+    if(frame){frame.style.visibility='hidden';frame.inert=true;}
+    fallback?.remove();fallback=null;
+    awaitingSequence=null; releaseRequested=false; latestBattle=null;
     previous=null; latest=null; key=null; pendingTurn=null; lastRequest=0;
   }
-  function exitField(){failed=latestBattle?.id;close();}
+  function dispose() {
+    deactivate();frame?.remove();frame=null;ready=false;
+  }
+  function close() {
+    if(!latest)return;
+    if(latestBattle.finished && awaitingSequence!==null){
+      if(!releaseRequested){
+        releaseRequested=true;
+        releaseTimer=setTimeout(dispose,6500);
+      }
+      return;
+    }
+    if(awaitingSequence!==null)dispose();else deactivate();
+  }
+  function prepare() {
+    if(frame)return;
+    channel=crypto.randomUUID();
+    frame=document.createElement('iframe');
+    frame.title='สนามต่อสู้โคลอสเซียม';frame.allow='autoplay';
+    frame.inert=true;
+    Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:10000,visibility:'hidden'});
+    frame.src='/Soulbeast/battle-ui-v1/colosseum.html?connected=ordinary&ui=colosseum-v3';
+    document.body.append(frame);
+  }
+  function exitField(){
+    if(!latestBattle)warmFailed=true;
+    failed=latestBattle?.id;dispose();
+  }
   function publish(){if(ready && latest)post('ordinary-state',{view:{...latest,speed}});}
   window.addEventListener('message',event=>{
     if(!frame || event.source!==frame.contentWindow || event.origin!==location.origin)return;
     const m=event.data;
     if(m?.type==='ordinary-ready'){ready=true;publish();return;}
-    if(m?.type==='ordinary-render-error' && (!ready || m.channel===channel)){exitField();return;}
-    if(m?.channel!==channel || m.battle!==latest?.battle)return;
-    if(m.type==='ordinary-field-ready'){clearTimeout(timer);return;}
+    if(m?.type==='ordinary-render-error' && (!ready || (m.channel===channel && (!m.battle || m.battle===latest?.battle)))){
+      if(latestBattle?.finished){
+        awaitingSequence=null;
+        if(releaseRequested)dispose();
+      }else exitField();
+      return;
+    }
+    if(!latest || m?.channel!==channel || m.battle!==latest.battle)return;
+    if(m.type==='ordinary-field-ready'){
+      clearTimeout(timer);
+      frame.style.visibility='visible';frame.inert=false;
+      return;
+    }
+    if(m.type==='ordinary-presented' && m.sequence===awaitingSequence){
+      awaitingSequence=null;
+      if(releaseRequested)deactivate();
+      return;
+    }
     if(m.type!=='ordinary-command' || m.revision!==latest.revision || !Number.isSafeInteger(m.request) || m.request<=lastRequest)return;
     lastRequest=m.request;
     if(m.command==='speed'){speed=m.speed===2?2:1;publish();return;}
@@ -51,28 +97,27 @@ export function createConnectedField(submit, toggleAuto) {
       pendingTurn=latest.revision;latest.waiting=true;publish();
     }
   });
-  return {close,reset(){close();failed=null;},rejected(){pendingTurn=null;key=null;},
+  return {close,warm(){if(!warmFailed)prepare();},reset(){dispose();failed=null;warmFailed=false;},rejected(){pendingTurn=null;key=null;},
     show(b,me,mode,time){
-      if(!b || b.finished || b.id===failed){close();return false;}
-      if(latest && latest.battle!=='colosseum:'+b.id)close();
+      if(!b || b.id===failed){close();return false;}
+      if(latest && latest.battle!=='colosseum:'+b.id)dispose();
+      if(b.finished && !latest)return true;
       const now=time();
-      if(!frame){
-        channel=crypto.randomUUID();
-        frame=document.createElement('iframe');frame.title='สนามต่อสู้โคลอสเซียม';frame.allow='autoplay';
-        frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=colosseum-v1';
-        Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:10000});
+      prepare();
+      if(!latest){
         fallback=document.createElement('button');fallback.textContent='ใช้สนามเดิม';fallback.onclick=exitField;
         Object.assign(fallback.style,{position:'fixed',right:'8px',top:'56px',zIndex:10001});
-        document.body.append(frame,fallback);timer=setTimeout(exitField,30000);
+        document.body.append(fallback);timer=setTimeout(()=>{if(!latestBattle?.finished)exitField();},30000);
       }
       latestTime=time;latestBattle=b;
-      const stamp=[b.id,b.turn,b.cur,b.last?.n,b.auto,now>=b.openAt,now>=b.deadline,pendingTurn,b.commands.length,
+      const stamp=[b.id,b.turn,b.cur,b.last?.n,b.finished,b.auto,now>=b.openAt,now>=b.deadline,pendingTurn,b.commands.length,
         ...b.allies.map(u=>u.hp),...b.enemies.map(u=>u.hp)].join('|');
       if(key===stamp)return true;
       key=stamp;previous=latest;latest=encounterView(b,me,mode,now,pendingTurn===b.turn);
       const a=b.last;
       if(ready && previous && a && previous.lastNumber!==a.n){
         const support=['heal','buff'].includes(a.kind);
+        awaitingSequence=a.n;
         post('ordinary-action',{sequence:a.n,before:{...previous,speed},view:{...latest,speed},
           action:{actor:a.actor,name:a.skill,skill:a.skillId,target:a.target,friend:a.target,support,
             all:!!a.all,range:a.kind==='melee'?'melee':'ranged',events:b.effects||[]}});

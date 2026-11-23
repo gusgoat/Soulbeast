@@ -86,7 +86,7 @@ if(accountContext && selectedCharacter){
 }
 const channel=testArena?'soulbeast-colosseum-test-session':'soulbeast-colosseum-session';
 const endpoint=(path,base)=>new URL((testArena?'/test':'')+path,base);
-const field=testArena?(await import('./connected-field.mjs?v=1')).createConnectedField(
+const field=testArena?(await import('./connected-field.mjs?v=arena-transition-3')).createConnectedField(
  (turn,skill,target)=>send({type:'combat',turn,skill,target}),
  enabled=>send({type:'combatAuto',enabled})):null;
 const practiceType=type=>type==='practice'||type==='survivalPractice';
@@ -347,6 +347,8 @@ function applyState(next){
   }
  }
  opening=false;state=next;offset=next.now+oneWay-arrival;
+ if(state.phase==='lobby'||state.phase==='match')field?.warm();
+ else field?.reset();
  presentation.setMusicScene(state.phase==='match'?'arena':state.phase==='finished'?'results':'lobby');
  const player=own();
  const fieldAudio=state.mode!=='survival'&&(state.phase==='match'&&player?.phase==='walk'||
