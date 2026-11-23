@@ -25,6 +25,19 @@ export function enterOnlineWalk(state, environment, owner) {
  sessionStorage.setItem(contextKey, JSON.stringify({
   code: player.code, environment, owner, sessionId, navigationCountry: country, revision: player.gsAt, snapshot: {...state, P: player}
  }));
+ const inviteKey = 'soulbeast-colosseum-test-invite';
+ const pendingInvite = sessionStorage.getItem(inviteKey);
+ if (pendingInvite) {
+  sessionStorage.removeItem(inviteKey);
+  let invite;
+  try { invite = JSON.parse(pendingInvite); } catch {}
+  if (environment === 'test' && invite && Date.now() - invite.at < 30 * 60_000 && /^(?:[A-F0-9]{8})?$/.test(invite.code)) {
+   const arena = new URL('./tools/colosseum/index.html?world=test&v=room-code-2', location.href);
+   if (invite.code) arena.searchParams.set('room', invite.code);
+   location.assign(arena.href);
+   return;
+  }
+ }
  location.assign('./tools/town-walk-demo/index.html?city=' + country + '-capital' + (environment==='test'?'&world=test&entry=test-world-entry-20261122-1':''));
 }
 

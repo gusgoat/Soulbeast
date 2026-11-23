@@ -79,6 +79,11 @@ try{
  if(accountContext&&selectedCharacter?.code!==accountContext.code)selectedCharacter=null;
 }catch{}
 const testArena=accountContext?.environment==='test' && !!selectedCharacter;
+const arenaWorld=testArena?'โลกทดสอบ':'โลกจริง';
+if(accountContext && selectedCharacter){
+ $('arena-environment').textContent=arenaWorld;
+ $('arena-environment').hidden=false;
+}
 const channel=testArena?'soulbeast-colosseum-test-session':'soulbeast-colosseum-session';
 const endpoint=(path,base)=>new URL((testArena?'/test':'')+path,base);
 const field=testArena?(await import('./connected-field.mjs?v=1')).createConnectedField(
@@ -177,7 +182,19 @@ async function connect(payload){
   else if(m.type==='error'){
    if(m.action==='combat')field?.rejected();
    if(m.action==='chest')pendingChest=null;
-   if(opening||queued&&m.action==='ranked'){reset(m.message);return;}
+   if(opening||queued&&m.action==='ranked'){
+    if(m.action==='join' && m.message==='ไม่พบห้อง'){
+     reset('ไม่พบห้อง '+payload.code+' ใน'+arenaWorld+' · ตรวจว่าเจ้าห้องยังอยู่และทั้งสองคนเลือกตัวละครในโลกเดียวกัน');
+     if(!testArena && gameWeb){
+      const link=node('a','เลือกตัวละครโลกทดสอบเพื่อเข้าห้องนี้');
+      const url=new URL(location.pathname,location.href);
+      url.search=new URLSearchParams({world:'test',room:payload.code,v:'room-code-2'}).toString();
+      link.href=url.href;
+      $('notice').append(document.createElement('br'),link);
+     }
+    }else reset(m.message);
+    return;
+   }
    if(m.action==='leave'){leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;}
    if(state?.phase==='match'){
     $('signal').textContent=m.message;$('signal').hidden=false;
@@ -915,9 +932,20 @@ world.addEventListener('pointermove',e=>{
 world.addEventListener('lostpointercapture',()=>{spectatorDrag=null;});
 $('leave-practice').onclick=leavePractice;
 $('copy').onclick=async()=>{
- const link=new URL(location.pathname,location.href);link.searchParams.set('room',state.code);
- try{await navigator.clipboard.writeText(link.href);$('notice').textContent='คัดลอกลิงก์ห้องแล้ว';}
- catch{$('notice').textContent=link.href;}
+ const code=$('room-code').textContent.trim();
+ if(!/^[A-F0-9]{8}$/.test(code))return;
+ let copied=false;
+ try{await navigator.clipboard.writeText(code);copied=true;}catch{
+  const range=document.createRange();
+  range.selectNodeContents($('room-code'));
+  const selection=window.getSelection();
+  if(selection){
+   selection.removeAllRanges();selection.addRange(range);
+   try{copied=document.execCommand('copy');}catch{}
+   if(copied)selection.removeAllRanges();
+  }
+ }
+ $('notice').textContent=copied?'คัดลอกรหัสห้อง '+code+' แล้ว':'เลือกรหัส '+code+' ไว้แล้ว · กดคัดลอก หรือกด Ctrl+C';
 };
 function renderWarpTargets(){
  if(!me||me.phase!=='walk'||me.recallEndsAt||!WARP_ACCESS(me,state.bases)){mapDialog.close();return;}
@@ -1275,5 +1303,6 @@ function syncWalkSound(){
 }
 $('walk-sound').onclick=()=>{presentation.toggle();if(!presentation.enabled)announcerVoice.clear();syncWalkSound();};
 syncWalkSound();
-if(onlineEnabled&&saved())connect(saved());
+const previousRoom=saved();
+if(onlineEnabled&&previousRoom&&(!fromLink||previousRoom.code===fromLink.toUpperCase()))connect(previousRoom);
 requestAnimationFrame(frame);

@@ -5,6 +5,18 @@
  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
  <meta name="theme-color" content="#100f1a">
  <meta name="colosseum-server" content="https://soulbeast-colosseum.onrender.com">
+ <script>
+ (() => {
+  const query = new URLSearchParams(location.search);
+  if (query.get('world') !== 'test') return;
+  const online = JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1') || 'null');
+  const player = JSON.parse(sessionStorage.getItem('soulbeast-walk-preview-player-v1') || 'null');
+  if (online?.environment === 'test' && online.owner && online.code && online.code === player?.code && online.code === online.snapshot?.P?.code) return;
+  const code = (query.get('room') || '').toUpperCase();
+  sessionStorage.setItem('soulbeast-colosseum-test-invite', JSON.stringify({code:/^[A-F0-9]{8}$/.test(code) ? code : '', at:Date.now()}));
+  location.replace('../../accounts.html?world=test&entry=colosseum-room-code-2');
+ })();
+ </script>
  <script src="../town-walk-demo/walk-entry-guard.js?v=test-world-entry-20261122-1"></script>
  <script src="../town-walk-demo/music-channel.js?v=ios-audio-2-20261107"></script>
  <script src="../../client/voice-player.js?v=1"></script>
@@ -16,6 +28,7 @@
   <header><img src="../../assets/ui/soulbeast-logo-transparent-v3.webp" alt="SoulBeast">
    <p class="eyebrow">THE TWIN ARENA</p><h1>โคลอสเซียม</h1>
    <p>ศึกเขาวงกต · โหมดทีมและเอาตัวรอด</p>
+   <p id="arena-environment" hidden></p>
   </header>
   <div id="entry" class="panel">
    <form id="entry-form">
@@ -118,7 +131,7 @@
   <div id="room" class="panel" hidden>
    <p id="public-room-label" hidden>ห้องสาธารณะ</p>
    <p id="rank-team-label" hidden>ห้องจัดอันดับทีมจัดเอง</p>
-   <div class="room-title"><div>รหัสห้อง <strong id="room-code"></strong></div><button id="copy" class="secondary">คัดลอกลิงก์</button></div>
+   <div class="room-title"><div>รหัสห้อง <strong id="room-code" style="user-select:all"></strong></div><button id="copy" type="button" class="secondary">คัดลอกรหัสห้อง</button></div>
    <div id="rosters" class="pair"></div>
    <p id="rank-team-status" role="status" hidden></p>
    <div class="pair"><button id="ready">ยืนยันพร้อม</button><button id="start">เปิดประตูสนาม</button></div>
@@ -219,6 +232,6 @@
   </div>
   <section id="overlay" hidden aria-live="polite"><h2 id="overlay-title"></h2><p id="overlay-text"></p><div id="match-results" class="team-score-results" hidden></div><button id="dead-team-scores" class="secondary" type="button" aria-haspopup="dialog" hidden>ตารางคะแนน</button><button id="rank-leave-respawn" class="secondary" hidden>ออกจากแมตช์จัดอันดับ</button><button id="back" hidden>กลับห้องโคลอสเซียม</button></section>
  </section>
- <script type="module" src="./client.mjs?v=colosseum-connected-1"></script>
+ <script type="module" src="./client.mjs?v=room-code-2"></script>
 </body>
 </html>
