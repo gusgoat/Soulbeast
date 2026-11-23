@@ -3208,6 +3208,21 @@ function pvpError(message){return ({
  'pvp swap pending':'มีคำขอสลับทีมอยู่แล้ว',
  'pvp teams changed':'ทีมเปลี่ยนแล้ว กรุณาตรวจรายชื่อและยืนยันใหม่',
  'pvp team full':'ทีมนี้ครบ 2 คนแล้ว',save_conflict:'เซฟออนไลน์มีการเปลี่ยนแปลง กรุณาลองบันทึกเกมในหน้าตั้งค่าอีกครั้งก่อนเข้าห้อง','camp pets selection':'เลือกอสูรที่พกติดตัวตามจำนวนที่อาชีพใช้ได้','bad action':'ต้องอัปเดต ระบบต่อสู้ แล้ว Deploy เวอร์ชันใหม่ก่อนใช้ PVP',pin:'PIN ของเซฟไม่ตรงกับ เซิร์ฟเวอร์ออนไลน์',notfound:'ไม่พบเซฟบน ระบบออนไลน์ โปรดบันทึกเซฟก่อน','room not found':'ไม่พบห้องนี้','room expired':'ห้องหมดอายุ','room full':'ห้องมีผู้เล่นครบแล้ว','same player':'ใช้ตัวละครเดียวกันสู้กันไม่ได้','already in room':'ตัวละครนี้อยู่ในห้องอื่น กดเชื่อมต่อห้องเดิม','no active room':'ไม่มีห้องที่ยังเปิดอยู่',unauthorized:'สิทธิ์ห้องหมดอายุหรือเปิดจากอีกเครื่อง กดเชื่อมต่อห้องเดิม','bad points':'แต้มสถานะในเซฟเกินเกณฑ์ PVP','bad class':'อาชีพไม่ตรงกับระดับเลเวล','bad equipment':'อุปกรณ์ในเซฟไม่ตรงกับระดับหรือช่อง','bad weapon':'อาวุธไม่ตรงกับอาชีพ','not your turn':'ยังไม่ถึงเทิร์นของคุณ','stale turn':'เทิร์นเปลี่ยนแล้ว กำลังตรวจข้อมูลใหม่','items not allowed':'PVP ห้ามใช้ยาและไอเท็มรักษา','illegal skill':'สกิลนี้ใช้ไม่ได้','not enough mp':'MP ไม่พอ','not enough gold':'เหรียญเฉพาะแมตช์ไม่พอ','not lobby':'ห้องเริ่มหรือปิดไปแล้ว กดรีเฟรช','not active':'การประลองจบแล้ว','stake changed':'เดิมพันมีการเปลี่ยน โปรดตรวจของอีกฝ่ายแล้วกดยืนยันใหม่','stake unavailable':'ของเดิมพันไม่พอหรือไม่อยู่ในเซฟออนไลน์','stake pet must rest':'อสูรต้องพักค่ายและไม่เฝ้าค่าย จึงใช้เดิมพันได้','stake history full':'เปลี่ยนเดิมพันครบจำนวนที่รองรับแล้ว'})[message]||'เชื่อมต่อ PVP ไม่สำเร็จ: '+String(message||'โปรดลองอีกครั้ง')}
+const PVP_FAST_MODE=(()=>{try{return JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')?.environment==='test'}catch{return false}})();
+// Realtime remains immediate; fallback reads should not repeatedly run the full engine.
+function pvpPollDelay({room,me,now=Date.now(),clock=0,realtime=false,wake=false,failures=0,presentationBusy=false}){
+ if(!room||!['waiting','lobby','active'].includes(room.status))return null;
+ if(failures)return Math.min(15000,1000*2**Math.min(4,failures-1));
+ if(wake)return 0;
+ if(room.status!=='active')return realtime?15000:3000;
+ const actor=[...(room.battle?.allies||[]),...(room.battle?.enemies||[])].find(u=>u.id===room.battle.cur);
+ const automatic=!!room.players?.[actor?.owner]?.auto;
+ const base=automatic?(actor.owner===me?800:2000):(realtime?15000:1500);
+ if(automatic&&presentationBusy)return Math.max(base,1200);
+ const remaining=Number(room.deadline)-(now-clock);
+ return !automatic&&remaining>0?Math.min(base,remaining+40):base;
+}
+
 let pvpRealtime=null,pvpRealtimeLoading=false;
 function pvpWake(hint){
  if(hint?.rev<=PVP.room?.rev)return;
@@ -3243,19 +3258,19 @@ async function pvpRequest(packet,silent=false){
  const room=PVP.room?.id||PVP.restore;
  if(poll){PVP.polling=true;PVP.wake=false;}else{PVP.busy=true;clearTimeout(PVP.timer);}
  if(!silent){PVP.error='';render();}
- let changed=false;
+ let changed=false;const requestStarted=performance.now();
  try{
-  const body={room,token:PVP.token,...packet},r=await lbPost(body);
+  const body={room,token:PVP.token,...packet};const fast= PVP_FAST_MODE&&poll?await pvpTryRoomRead(body):null;const r=fast||await lbPost(body);
   if(!r.ok){if(packet.action==='pvp_move'){PVP.pending=null;pvpSessionSave();}throw Error(r.error);}
   if(!r.room||r.pvpVersion!==1)throw Error('bad action');
   // A slower background read must not rewind a newer command response.
   if(PVP.room&&PVP.room.id!==room||PVP.room?.id===r.room.id&&r.room.rev<PVP.room.rev)return;
-  PVP.error='';changed=!PVP.room||PVP.room.rev!==r.room.rev||PVP.room.status!==r.room.status;
+  PVP.error='';if(PVP_FAST_MODE)PVP.failureCount=0;changed=!PVP.room||PVP.room.rev!==r.room.rev||PVP.room.status!==r.room.status;
   if(!poll||changed)pvpReceive(r);
   else PVP.clock=Date.now()-r.room.serverTime;
- }catch(e){if(!poll||!PVP.busy)PVP.error=pvpError(e.message);if(!silent)toast(PVP.error);}
+ }catch(e){if(PVP_FAST_MODE&&(poll||/network|fetch|unavailable|database|HTTP/.test(String(e.message))))PVP.failureCount=Math.min(5,(PVP.failureCount||0)+1);if(!poll||!PVP.busy)PVP.error=pvpError(e.message);if(!silent)toast(PVP.error);}
  finally{
-  if(poll)PVP.polling=false;else PVP.busy=false;
+  if(PVP_FAST_MODE){document.documentElement.dataset.pvpNetworkMs=String(Math.round(performance.now()-requestStarted));document.documentElement.dataset.pvpNetworkRequests=String((Number(document.documentElement.dataset.pvpNetworkRequests)||0)+1);}if(poll)PVP.polling=false;else PVP.busy=false;
   if(S.screen==='pvp'&&(!poll||changed))render();
   if(!PVP.busy&&!PVP.polling)pvpSchedule();
  }
@@ -9273,6 +9288,28 @@ function ordinaryBattleContext(battle,floor){
 })();
 
 // pvp-connected-host · test opt-in only
+// Room reads are optional. If the scoped RPC has not been installed, retain the native transport.
+let pvpRoomReaderPromise=null;
+async function pvpTryRoomRead(packet){
+ if(!PVP_FAST_MODE||PVP.room?.status!=='active')return null;
+ pvpRoomReaderPromise??=import(new URL('../../client/pvp-room-read.mjs?v=pvp-performance-v1',location.href).href)
+  .then(m=>m.connectPvpRoomReader(walkStorage,JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')))).catch(()=>null);
+ const reader=await pvpRoomReaderPromise;return reader?reader.poll(packet,PVP.room,PVP.balanceVersion):null;
+}
+const pvpOriginalSchedule=pvpSchedule;
+pvpSchedule=function(){
+ if(!PVP_FAST_MODE)return pvpOriginalSchedule();
+ clearTimeout(PVP.timer);
+ const r=PVP.room;
+ if(r?.replaying)return;
+ if(S.screen!=='pvp'||!PVP.token||r&&!['waiting','lobby','active'].includes(r.status)){pvpRealtime?.close();return;}
+ if(document.hidden||PVP.busy||PVP.polling)return;
+ pvpWatch();
+ const delay=pvpPollDelay({room:r,me:r?.me,clock:PVP.clock||0,realtime:!!pvpRealtime?.ready,
+  wake:!!PVP.wake||(PVP.wakeRev||0)>(r?.rev||0),failures:PVP.failureCount||0});
+ PVP.timer=setTimeout(()=>pvpRequest({action:'pvp_poll'},true),delay??1500);
+};
+
 // Presentation projection only. The existing room service owns combat and settlement.
 function createPvpConnectedView(room, options = {}) {
  if (!room?.battle || !['active','finished'].includes(room.status)) return null;
@@ -9347,19 +9384,26 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
  const recovery=createOrdinaryStageRecovery({recover:fallback});
  for(const [owner,key]of [[Sound,'fx'],[Sound,'skill'],[Sound,'cry'],[ExtraAudio,'play'],[ExtraAudio,'skill']]){const original=owner[key];if(typeof original==='function')owner[key]=function(...args){if(frame&&eligible())return;return original.apply(this,args)}}
  const nativeMusicSync=Music.sync;Music.sync=function(...args){if(frame&&eligible()){Music.stop();return}return nativeMusicSync.apply(this,args)};
+ if(typeof flushVfx==='function'){const nativeFlush=flushVfx;flushVfx=function(...args){if(frame&&eligible()){if(typeof VQ!=='undefined')VQ.length=0;return}return nativeFlush.apply(this,args)}}
+ if(typeof reliabilityPvp==='function'){const nativeRequest=pvpRequest;pvpRequest=function(packet,silent=false){return frame&&eligible()?reliabilityPvp(packet,silent):nativeRequest(packet,silent)}}
  function publish(){revision++;latest=view();if(!presenting)post('ordinary-state',{view:latest})}
  function mount(){
   if(!eligible()){if(frame)unmount();return;}
   if(roomId!==PVP.room.id){unmount();roomId=PVP.room.id;sequence=0;requests.clear();}
   if(!frame){
-   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP ใหม่ · โลกทดสอบ';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=pvp-connected-test-v2';
+   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP ใหม่ · โลกทดสอบ';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/index.html?connected=ordinary&ui=pvp-performance-v1';
    Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});document.body.append(frame);
    legacyButton=document.createElement('button');legacyButton.textContent='ใช้สนามเดิม';legacyButton.id='pvp-use-legacy';Object.assign(legacyButton.style,{position:'fixed',right:'10px',top:'60px',zIndex:'2147483001',padding:'7px 10px',border:'1px solid #b89a5b',borderRadius:'7px',background:'#142331',color:'#f4dfad'});legacyButton.onclick=fallback;document.body.append(legacyButton);
    frame.addEventListener('error',fallback);recovery.start('pvp:'+roomId);Music.stop();ExtraAudio.stop();Sound.stopAmb();
   }
   publish();
  }
- render=function(...args){const result=nativeRender.apply(this,args);if(!receiving)mount();return result};
+ render=function(...args){
+  // The native renderer serializes the save and rebuilds every old battle card.
+  // While the connected field owns presentation, its view is the only necessary redraw.
+  if(frame&&eligible()&&fieldReady&&!S.ui?.confirm){if(!receiving)mount();return;}
+  const result=nativeRender.apply(this,args);if(!receiving)mount();return result;
+ };
  // Completed auto matches contain authoritative replay frames. Keep their playback in this renderer.
  if(typeof localReplay==='function'){const nativeReplay=localReplay;localReplay=function(mode,room){if(mode==='pvp'&&S.screen==='pvp'&&!failed.has(room?.id))return;return nativeReplay(mode,room)}}
  pvpReceive=function(result){
