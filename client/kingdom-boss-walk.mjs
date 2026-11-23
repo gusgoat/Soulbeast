@@ -160,8 +160,10 @@ function mount(scene,context){
   message.style.cssText='position:fixed;left:8px;right:8px;bottom:100px;z-index:10001;margin:auto;max-width:380px;padding:10px;background:#102831;color:#ffedb1;border:1px solid #e4bc68;border-radius:8px;text-align:center;pointer-events:none';
   document.body.append(message);setTimeout(()=>{message.remove();if(feedback===message)feedback=null;},2800);
  }
+ let field=null;
  function drawBattle(){
   if(!ready||!fight||!frame)return;
+  if(field){field.show(fight);return;}
   const p=window.walkPresence?.player();
   frame.contentWindow.postMessage({type:'party-battle-state',code:context.code,auto:true,clockOffset:0,
    member:p?{name:p.name,cls:p.cls,gender:p.gender,country:p.country,level:p.lv}:null,
@@ -174,13 +176,22 @@ function mount(scene,context){
   fight=data.fight;fight.round=data.event.id;fight.respawn=data.respawn;fight.hospital=data.hospital;
   sessionStorage.setItem(doneKey,JSON.stringify({id:fight.id,round:fight.round}));
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title='ต่อสู้กิจกรรมบอสอาณาจักร';
-  frame.src=new URL('../tools/town-walk-demo/menu.html?v=projectile-2&partyBattle=1&kingdomBoss=1&city='+scene.country+'-capital',import.meta.url);
+  const opened=frame;
+  const legacy=()=>{if(opened!==frame)return;field?.stop();field=null;ready=visible=false;clearTimeout(polling);waitTurn=null;frame.src=new URL('../tools/town-walk-demo/menu.html?v=projectile-2&partyBattle=1&kingdomBoss=1&city='+scene.country+'-capital',import.meta.url);};
+  if(context.environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off'){
+   import('./kingdom-battle-field.mjs?v=activity-1').then(({kingdomBattleField})=>{
+    if(opened!==frame)return;
+    field=kingdomBattleField(frame,context.code,scene.country==='blue'?'moon-1':scene.country==='red'?'dragon-1':'training-1',()=>{
+     if(fight?.status==='active'&&!withdrawing&&!requesting){withdrawing=true;clearTimeout(polling);void advance(true);}
+    },legacy);
+   }).catch(legacy);
+  }else legacy();
   frame.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000;background:#122b40';
   scene.pause();button.hidden=true;document.body.append(frame);
  }
  function readBattle(){try{return JSON.parse(sessionStorage.getItem(doneKey)||'null');}catch{return null;}}
  function close(){
-  clearTimeout(polling);polling=null;frame?.remove();frame=null;ready=visible=false;waitTurn=null;stayClear=true;
+  clearTimeout(polling);polling=null;field?.stop();field=null;frame?.remove();frame=null;ready=visible=false;waitTurn=null;stayClear=true;
   sessionStorage.setItem(doneKey,JSON.stringify({id:fight.id,round:fight.round,done:true}));
   const respawn=fight.respawn,hospital=fight.hospital,reward=fight.reward;fight=null;
   if(respawn){location.assign(new URL('../tools/town-walk-demo/index.html?city='+encodeURIComponent(respawn)+(hospital?'&arrival=hospital':''),import.meta.url));return;}
@@ -206,7 +217,7 @@ function mount(scene,context){
  }
  addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==frame?.contentWindow)return;
-  const d=e.data;if(d?.type==='party-battle-ready'){ready=true;drawBattle();return;}
+  const d=field?field.message(e.data):e.data;if(d?.type==='party-battle-ready'){ready=true;drawBattle();return;}
   if(!fight||d?.battle!==fight.id)return;
   if(d.type==='party-battle-visible'){visible=true;if(fight.status==='active')schedule();}
   if(d.type==='party-battle-presented'&&d.turn===waitTurn){waitTurn=null;schedule();}

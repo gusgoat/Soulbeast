@@ -9176,7 +9176,11 @@ function createOrdinaryStageRecovery({recover,now=()=>performance.now(),loadMs=4
 /* Injected into the existing game's lexical scope on the isolated staging server only. */
 // Presentation metadata only. The legacy game still owns encounters and rewards.
 function ordinaryBattleContext(battle,floor){
- if(!floor||battle?.towerRun||battle?.dungeonDuo||battle?.dungeonParty||battle?.partyRunId)return null;
+ if(battle?.towerRun){
+  const floor=battle.towerFloor||1;
+  return {mode:'tower',stage:floor<=Math.ceil(TOWER_FLOORS.length/2)?'tower-lower':'tower-upper',modeLabel:'หอคอยประลองยุทธ · ชั้น '+floor,autoHospital:false,returnLabel:battle.over?.res==='lose'?'จบการท้าทาย':floor===TOWER_FLOORS.length?'เคลียร์หอคอย · กลับเมือง':floor%5===0?'ไปจุดพัก':'ขึ้นชั้นถัดไป'};
+ }
+ if(!floor||battle?.dungeonParty||battle?.partyRunId)return null;
  const number=Number(floor.floor);
  if(!Number.isInteger(number)||number<1||number>7)return null;
  return {mode:'dungeon-solo',floor:number,stage:'dungeon-'+number,name:String(floor.name||'ดันเจี้ยน ชั้น '+number),returnLabel:'รับผลและกลับดันเจี้ยน'};
@@ -9193,7 +9197,7 @@ function ordinaryBattleContext(battle,floor){
  const useStage=b=>ordinary(b)&&!failedBattles.has(b);
  const nativeRender=render,nativeAct=act,nativeLater=battleLater,nativeTeamAuto=teamAutoUnit;
  const nativeToast=toast;toast=function(message){if(frame)post('ordinary-notice',{message:String(message)});return nativeToast(message);};
- const ordinary=b=>b&&!b.towerRun&&!b.dungeonDuo&&!b.dungeonParty&&['wild','bandit','traveler','npc','boss','secret','warpBoss','riddleMirror','taleTrial'].includes(b.kind);
+ const ordinary=b=>b&&!b.dungeonParty&&!b.partyRunId&&['wild','bandit','traveler','npc','boss','secret','warpBoss','riddleMirror','taleTrial'].includes(b.kind);
  // One presentation layer owns battle audio; the walking game's settings are preserved.
  const stageAudio=()=>!!frame&&useStage(B());
  for(const [owner,key]of [[Sound,'fx'],[Sound,'skill'],[ExtraAudio,'play']]){const original=owner[key];owner[key]=function(...args){if(stageAudio())return;return original.apply(this,args);};}
@@ -9201,16 +9205,16 @@ function ordinaryBattleContext(battle,floor){
  function view(){
   const b=B(),u=b&&uById(b.cur);if(!b)return null;
   const skills=u?[...new Set([...u.skills,'rest'])].filter(id=>SK[id]).map(id=>{const s=SK[id];return {id,...s,cost:costOf(u,s),coinCost:s.gc?s.gc*u.lv:s.pctGold?Math.floor(S.P.gold*s.pctGold):0,cooldown:cooldownOf(u,id),available:!cooldownOf(u,id)&&costOf(u,s)<=u.mp&&(!s.gc||S.P.gold>=s.gc*u.lv)&&(!s.pctGold||Math.floor(S.P.gold*s.pctGold)>=1)&&(!s.summon||battleHasRoom(u)),element:effectiveElement(u,s),range:s.range||(['m','h'].includes(s.t)||s.t==='auto'&&u.atkType==='m'?'ranged':'melee')};}):[];
-  return clone({battle:battleId,revision,current:b.cur,round:b.round,turn:b.round||1,clockKey:[b.cur,b.round,sequence].join(':'),kind:b.kind,zone:S.zone?.id||b.meta||1,auto:!!S.ui.autoTeam||forcedAuto,autoPet:!!S.ui.autoPet,autoAllowed:teamAutoAllowed()&&S.P.lv>=10||forcedAuto,speed:BattleSpeed.value||1,waiting:b.menu==='wait'||u?.side==='enemy',over:b.over||null,saving:closing,saveError,
+  return clone({battle:battleId,revision,current:b.cur,round:b.round,turn:b.round||1,clockKey:[b.cur,b.round,sequence].join(':'),kind:b.kind,zone:S.zone?.id||b.meta||1,auto:!!S.ui.autoTeam||forcedAuto,autoPet:!!S.ui.autoPet,autoAllowed:teamAutoAllowed()&&S.P.lv>=10||forcedAuto,speed:BattleSpeed.value||1,waiting:b.menu==='wait'||u?.side==='enemy',over:b.over||null,saving:closing||!!(b.towerRun&&TOWER_UI.busy),saveError:saveError||(b.towerRun?TOWER_UI.error:''),
    context:ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor),units:[...b.allies,...b.enemies].map(x=>({...x,maxHp:x.st.hp,maxMp:x.st.mp})),queue:b.queue,skills,log:b.log.slice(-12),
-   items:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]&&!CON[id].seal&&!CON[id].petExp&&(CON[id].hp||CON[id].mp||CON[id].rev||CON[id].cure)).map(([id,n])=>({id,name:CON[id].n,count:n,rev:!!CON[id].rev})),
-   seals:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]?.seal).map(([id,n])=>({id,name:CON[id].n,count:n})),
-   captureTargets:b.enemies.filter(sealable).map(x=>x.id),summons:carriedPets().filter(p=>p.hp>0&&!b.allies.some(x=>x.uid===p.uid)).map(p=>({uid:p.uid,name:petName(p),lv:p.lv})),canEscape:['wild','bandit','traveler'].includes(b.kind),
+   items:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]&&!CON[id].seal&&!CON[id].petExp&&(CON[id].hp||CON[id].mp||CON[id].rev||CON[id].cure)).map(([id,n])=>({id,name:CON[id].n,count:n,rev:!!CON[id].rev})),
+   seals:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]?.seal).map(([id,n])=>({id,name:CON[id].n,count:n})),
+   captureTargets:b.enemies.filter(sealable).map(x=>x.id),summons:carriedPets().filter(p=>p.hp>0&&!b.allies.some(x=>x.uid===p.uid)).map(p=>({uid:p.uid,name:petName(p),lv:p.lv})),canEscape:!!b.towerRun||['wild','bandit','traveler'].includes(b.kind),
    vitals:{hp:S.P.hp,mp:S.P.mp,gold:S.P.gold,exp:S.P.exp,lv:S.P.lv},saveMode:WALK_ONLINE?'test-account':'local-test-draft'});
  }
  function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin);}
  const defeatHandoffs=new WeakSet();
- function autoHospital(){queueMicrotask(()=>{const b=B();if(!useStage(b)||!fieldReady||presenting||closing||b.over?.res!=='lose'||defeatHandoffs.has(b))return;defeatHandoffs.add(b);void finishBattle(b);});}
+ function autoHospital(){queueMicrotask(()=>{const b=B();if(!useStage(b)||!fieldReady||presenting||closing||b.towerRun||b.over?.res!=='lose'||defeatHandoffs.has(b))return;defeatHandoffs.add(b);void finishBattle(b);});}
  function publish(){revision++;if(ready&&!presenting)post('ordinary-state',{view:view()});autoHospital();}
  function removeStage(){frame?.remove();frame=null;ready=false;fieldReady=false;presenting=0;recovery.stop();}
  function useLegacy(reason='manual'){
@@ -9222,10 +9226,10 @@ function ordinaryBattleContext(battle,floor){
  function mount(){
   const b=B();if(!useStage(b)||S.screen!=='battle'){if(frame)removeStage();battle=null;return;}
   if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';fieldReady=false;requests.clear();recovery.start(battleId);}
-  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=dungeon-solo-context-20261123-1'+(ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor)?'&entry=dungeon':'&entry=country');document.body.append(frame);
+  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=dungeon-solo-context-20261123-1'+(b.towerRun?'&entry=country':ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor)?'&entry=dungeon':'&entry=country');document.body.append(frame);
    frame.addEventListener('error',()=>useLegacy('frame-error'));
    Music.stop();ExtraAudio.stop();Sound.stopAmb();}
-  publish();
+  frame.style.visibility=b.towerRun&&S.ui.confirm?.act==='towerSurrenderConfirm'?'hidden':'';publish();
  }
  render=function(...args){const r=nativeRender.apply(this,args);mount();return r;};
  teamAutoUnit=function(u){return forcedAuto&&u?.side==='ally'||nativeTeamAuto(u);};
@@ -9242,7 +9246,9 @@ function ordinaryBattleContext(battle,floor){
   return ok;
  };
  async function finishBattle(b){
-  if(B()!==b||!b.over||closing)return;closing=true;saveError='';publish();
+  if(B()!==b||!b.over||closing)return;
+  if(b.towerRun){if(TOWER_UI.busy)return;await handlers.towerNext();mount();return;}
+  closing=true;saveError='';publish();
   try{
    save();
    if(WALK_ONLINE){const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');if(context?.environment!=='test')throw Error('test_account_required');await (await getWalkAccountConnection()).flush(true);}
@@ -9274,7 +9280,7 @@ function ordinaryBattleContext(battle,floor){
   }else if(m.command==='item'&&S.P.items[m.id]>0&&CON[m.id]&&!CON[m.id].seal)issue('item:'+m.id,'ally');
   else if(m.command==='seal'&&S.P.items[m.id]>0&&CON[m.id]?.seal&&sealable(target))issue('seal:'+m.id,'enemy');
   else if(m.command==='swap'&&S.P.carried.includes(Number(m.id)))battleAction('swap:'+Number(m.id));
-  else if(m.command==='flee')battleAction('flee');
+  else if(m.command==='flee'){if(b.towerRun)handlers.towerSurrender();else battleAction('flee');}
   // Item/seal/swap commands are still settled by the original game, never by the renderer.
   if(!presenting)publish();
  }
@@ -9466,6 +9472,130 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
  setInterval(()=>{recovery.pause(document.hidden);recovery.tick()},500);
  mount();
 })();
+// Present authoritative automatic battles. Settlement stays with each activity's receipt handler.
+(()=>{
+ let account;try{account=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1'));}catch{return;}
+ if(account?.environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')==='off')return;
+ const modes={
+  camp:{room:()=>CAMP.room,title:'จู่โจมค่าย',stage:()=>'raid-camp',done:()=>handlers.campClear()},
+  world:{room:()=>WORLD.room,title:'บอสโลก',stage:()=>'castle-throne',done:()=>handlers.wbClear()},
+  countrywar:{room:()=>COUNTRY_WAR.battleOpen&&COUNTRY_WAR.room,title:'สงครามอาณาจักร',stage:r=>String(r.target).includes('village')?'war-village':'war-capital',done:()=>handlers.cwCloseBattle()},
+  guildwar:{room:()=>GUILD_UI.warRoom,title:'สงครามกิล',stage:()=>'war-capital',done:()=>{GUILD_UI.warRoom=null;render();}}
+ };
+ let playing=null;
+ const closed=new Set(),failed=new Set();
+ function remove(){
+  if(!playing)return;
+  clearTimeout(playing.timer);playing.frame.remove();playing.skip.remove();playing=null;
+ }
+ function fail(){
+  if(!playing)return;
+  failed.add(playing.key);remove();render();toast('โหลดสนามไม่สำเร็จ · กลับหน้ากิจกรรมแล้ว');
+ }
+ function timeout(){
+  const p=playing;clearTimeout(p.timer);
+  p.timer=setTimeout(()=>{if(playing!==p)return;if(document.hidden)timeout();else fail();},45000);
+ }
+ function showResult(p){
+  const r=p.room,w=r.reward,lines=[r.reason].filter(Boolean);
+  if(p.mode==='world'){
+   lines.push('ดาเมจรวม '+fmt(r.battle.damageTotal||0),'คะแนนส่วนแบ่ง '+fmt(r.sharedScore||0));
+   if(w){lines.push('ได้รับ '+fmt(w.gold||0)+' เหรียญ · EXP '+fmt(w.xp||0)+' · พลัง '+fmt(w.power||0));for(const [k,n] of Object.entries(w.loot||{}))lines.push((EQ[k]?.n||CON[k]?.n||k)+' ×'+n);}
+   return {res:'complete',title:'จบการท้าทายบอสโลก',lines};
+  }
+  if(p.mode==='countrywar')lines.push(r.captured?'ยึดฐานสำเร็จ':r.remaining?'เหลือผู้ป้องกัน '+r.remaining+' คน':'ฐานยังไม่เปลี่ยนเจ้าของ');
+  if(p.mode==='camp')lines.push('เงินปัจจุบัน '+fmt(S.P.gold)+' เหรียญ');
+  const winner=r.winner,draw=winner===-1,won=winner===0;
+  return {res:draw?'draw':won?'win':'lose',title:draw?'เสมอ':won?'ชัยชนะ':'พ่ายแพ้',lines};
+ }
+ function view(p,battle,over=false){
+  const r=p.room;
+  const v=createPvpConnectedView({...r,battle,status:'active',side:0,me:0},{revision:p.seq,speed:p.speed});
+  Object.assign(v,{battle:p.key,kind:p.mode,context:{mode:p.mode,stage:modes[p.mode].stage(r),online:true,autoHospital:false,modeLabel:modes[p.mode].title,returnLabel:'กลับหน้ากิจกรรม'},auto:true,autoAllowed:false,waiting:true,seconds:0,over:over?showResult(p):null});
+  if(p.mode==='world'){
+   v.editorProfile='worldboss-'+Math.max(1,r.players?.length||1);
+   v.worldStats={damage:battle.damageTotal||0,score:Math.floor((battle.damageTotal||0)/Math.max(1,r.players?.length||1)/25),turns:battle.bossTurns||0};
+   for(const u of v.units){if(u.immortalWorld||u.id==='worldboss'){u.immortal=true;u.form='demonlord';}}
+  }
+  return v;
+ }
+ function post(p,type,data){
+  p.frame.contentWindow.postMessage({type,channel:p.channel,...data},location.origin);
+ }
+ function updateState(p){
+  if(!p.ready)return;
+  post(p,'ordinary-state',{view:view(p,p.battle,p.ended)});
+ }
+ function finish(p){
+  clearTimeout(p.timer);p.battle=p.room.battle;p.ended=true;p.skip.hidden=true;updateState(p);
+ }
+ function advance(p){
+  if(!p.visible||p.pending||p.ended||!p.frames)return;
+  if(p.skipRequested||p.index>=p.frames.length)return finish(p);
+  const f=p.frames[p.index++],b=p.battle,before=view(p,b);
+  const previous=b.effects||[];
+  applyClass10Replay(b,f);
+  const units=new Map([...b.allies,...b.enemies].map(u=>[u.id,u]));
+  for(const [id,hp,mp,status,taunt] of f.units||[]){const u=units.get(id);if(u)Object.assign(u,{hp,mp,status,taunt});}
+  for(const [field,name] of [['archerVeils','archerVeil'],['elementalBarrierHits','elementalBarrierHits']])for(const [id,value] of f[field]||[]){if(units.has(id))units.get(id)[name]=value;}
+  for(const key of ['cur','round','turns','bossTurns','damageBy','damageTotal','log','effects'])if(f[key]!==undefined)b[key]=f[key];
+  const events=p.mode==='camp'?campFrameEffects(f,previous):f.effects||[];
+  const cast=events.find(e=>['cast','charge'].includes(e.k)),hit=events.find(e=>e.k==='hit');
+  const actor=f.actor||cast?.source||cast?.id||before.current||f.cur;
+  const id=f.skill||cast?.skill||hit?.skill||'attack',sk=SK[id]||{};
+  const unit=before.units.find(u=>u.id===actor),support=['heal','buff','rest','form','revert','summon'].includes(sk.t);
+  ++p.seq;
+  const after=view(p,b);
+  if(!unit||!events.length){post(p,'ordinary-state',{view:after});p.timer=setTimeout(()=>advance(p),80/p.speed);return;}
+  const targets=after.units.filter(u=>support?u.side===unit.side:u.side!==unit.side);
+  const affected=targets.find(u=>events.some(e=>e.id===u.id))||targets.find(u=>u.hp!==before.units.find(x=>x.id===u.id)?.hp)||targets[0];
+  p.pending=p.seq;timeout();
+  post(p,'ordinary-action',{sequence:p.seq,before,view:after,action:{actor,skill:id,name:sk.n||id,target:f.target||affected?.id,friend:f.friend||(sk.tg==='self'?actor:affected?.id||actor),support,all:!!sk.all||sk.tg==='team',range:sk.range||(['m','h'].includes(sk.t)||unit.atkType==='m'&&sk.t==='auto'?'ranged':'melee'),events}});
+ }
+ function sync(){
+  const mode=S.screen,r=modes[mode]?.room(),key=r&&mode+':'+r.id;
+  if(!r?.battle||closed.has(key)||failed.has(key)){remove();return;}
+  if(playing?.key!==key){
+   remove();
+   const frame=document.createElement('iframe'),skip=document.createElement('button');
+   frame.title=modes[mode].title;frame.allow='autoplay';frame.id='activity-battle-stage';frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=activity-v1';
+   Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:2147483000,background:'#101b25'});
+   skip.className='btn sm';skip.textContent='ข้ามรีเพลย์';skip.hidden=true;
+   Object.assign(skip.style,{position:'fixed',right:'12px',top:'8px',zIndex:2147483001});
+   playing={mode,key,room:r,frame,skip,channel:crypto.randomUUID(),battle:r.battle,seq:0,speed:BattleSpeed.value||1,index:0,ready:false,visible:false};
+   skip.onclick=()=>{const p=playing;if(p?.key===key&&p.frames){p.skipRequested=true;advance(p);}};
+   frame.addEventListener('error',fail);document.body.append(frame,skip);timeout();
+  }
+  const p=playing;p.room=r;
+  if(!p.frames&&r.replay?.initial&&r.replay.frames?.length&&r.status!=='active'){
+   p.frames=r.replay.frames;p.battle=structuredClone(r.replay.initial);p.skip.hidden=false;
+   updateState(p);advance(p);
+  }else if(!p.frames){
+   const stamp=JSON.stringify([r.rev,r.status,r.battle.turns,r.battle.cur,r.battle.damageTotal,r.battle.log?.at(-1)]);
+   if(p.stamp!==stamp){p.stamp=stamp;p.battle=r.battle;p.ended=r.status==='finished';p.seq++;updateState(p);}
+  }
+ }
+ addEventListener('message',event=>{
+  const p=playing,m=event.data;
+  if(!p||event.origin!==location.origin||event.source!==p.frame.contentWindow)return;
+  if(m?.type==='ordinary-ready'){p.ready=true;updateState(p);return;}
+  if(m?.type==='ordinary-render-error'&&(!m.channel||m.channel===p.channel)){fail();return;}
+  if(m?.channel!==p.channel||m.battle!==p.key)return;
+  if(m.type==='ordinary-field-ready'){p.visible=true;clearTimeout(p.timer);advance(p);}
+  else if(m.type==='ordinary-presented'&&p.pending===m.sequence){clearTimeout(p.timer);p.pending=null;advance(p);}
+  else if(m.type==='ordinary-command'&&m.command==='speed'&&[1,2].includes(m.speed)){p.speed=m.speed;if(!p.pending)updateState(p);}
+  else if(m.type==='ordinary-command'&&m.command==='done'&&p.ended){closed.add(p.key);remove();modes[p.mode].done();}
+ });
+ // The original receipt handlers own rewards and saves. Only replace their replay loop.
+ const owns=(mode,r)=>S.screen===mode&&r?.battle&&!failed.has(mode+':'+r.id);
+ const oldCamp=playCampReplay;playCampReplay=function(r){if(!owns('camp',r))return oldCamp(r);sync();return true;};
+ const oldReplay=localReplay;localReplay=function(mode,r){if(mode!=='world'||!owns(mode,r))return oldReplay(mode,r);sync();};
+ const oldCountry=countryReplay;countryReplay=function(r){if(!owns('countrywar',r))return oldCountry(r);COUNTRY_WAR.replaySerial++;COUNTRY_WAR.room=r;COUNTRY_WAR.battleOpen=true;render();};
+ const oldGuild=guildPlayWar;guildPlayWar=function(r){if(!owns('guildwar',r))return oldGuild(r);GUILD_UI.replaySerial++;GUILD_UI.warRoom=r;GUILD_UI.warFinal=r;render();};
+ const draw=render;render=function(...args){const result=draw.apply(this,args);sync();return result;};
+ sync();
+})();
+
 
 }
 
