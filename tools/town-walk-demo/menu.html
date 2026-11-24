@@ -3209,7 +3209,7 @@ function pvpError(message){return ({
  'pvp swap pending':'มีคำขอสลับทีมอยู่แล้ว',
  'pvp teams changed':'ทีมเปลี่ยนแล้ว กรุณาตรวจรายชื่อและยืนยันใหม่',
  'pvp team full':'ทีมนี้ครบ 2 คนแล้ว',save_conflict:'เซฟออนไลน์มีการเปลี่ยนแปลง กรุณาลองบันทึกเกมในหน้าตั้งค่าอีกครั้งก่อนเข้าห้อง','camp pets selection':'เลือกอสูรที่พกติดตัวตามจำนวนที่อาชีพใช้ได้','bad action':'ต้องอัปเดต ระบบต่อสู้ แล้ว Deploy เวอร์ชันใหม่ก่อนใช้ PVP',pin:'PIN ของเซฟไม่ตรงกับ เซิร์ฟเวอร์ออนไลน์',notfound:'ไม่พบเซฟบน ระบบออนไลน์ โปรดบันทึกเซฟก่อน','room not found':'ไม่พบห้องนี้','room expired':'ห้องหมดอายุ','room full':'ห้องมีผู้เล่นครบแล้ว','same player':'ใช้ตัวละครเดียวกันสู้กันไม่ได้','already in room':'ตัวละครนี้อยู่ในห้องอื่น กดเชื่อมต่อห้องเดิม','no active room':'ไม่มีห้องที่ยังเปิดอยู่',unauthorized:'สิทธิ์ห้องหมดอายุหรือเปิดจากอีกเครื่อง กดเชื่อมต่อห้องเดิม','bad points':'แต้มสถานะในเซฟเกินเกณฑ์ PVP','bad class':'อาชีพไม่ตรงกับระดับเลเวล','bad equipment':'อุปกรณ์ในเซฟไม่ตรงกับระดับหรือช่อง','bad weapon':'อาวุธไม่ตรงกับอาชีพ','not your turn':'ยังไม่ถึงเทิร์นของคุณ','stale turn':'เทิร์นเปลี่ยนแล้ว กำลังตรวจข้อมูลใหม่','items not allowed':'PVP ห้ามใช้ยาและไอเท็มรักษา','illegal skill':'สกิลนี้ใช้ไม่ได้','not enough mp':'MP ไม่พอ','not enough gold':'เหรียญเฉพาะแมตช์ไม่พอ','not lobby':'ห้องเริ่มหรือปิดไปแล้ว กดรีเฟรช','not active':'การประลองจบแล้ว','stake changed':'เดิมพันมีการเปลี่ยน โปรดตรวจของอีกฝ่ายแล้วกดยืนยันใหม่','stake unavailable':'ของเดิมพันไม่พอหรือไม่อยู่ในเซฟออนไลน์','stake pet must rest':'อสูรต้องพักค่ายและไม่เฝ้าค่าย จึงใช้เดิมพันได้','stake history full':'เปลี่ยนเดิมพันครบจำนวนที่รองรับแล้ว'})[message]||'เชื่อมต่อ PVP ไม่สำเร็จ: '+String(message||'โปรดลองอีกครั้ง')}
-const PVP_FAST_MODE=(()=>{try{return JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')?.environment==='test'}catch{return false}})();
+const PVP_FAST_MODE=(()=>{try{return ['test','live'].includes(JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')?.environment)}catch{return false}})();
 // Realtime remains immediate; fallback reads should not repeatedly run the full engine.
 function pvpPollDelay({room,me,now=Date.now(),clock=0,realtime=false,wake=false,failures=0,presentationBusy=false}){
  if(!room||!['waiting','lobby','active'].includes(room.status))return null;
@@ -3227,7 +3227,7 @@ function pvpPollDelay({room,me,now=Date.now(),clock=0,realtime=false,wake=false,
 let pvpRoomReaderPromise=null;
 async function pvpTryRoomRead(packet){
  if(!PVP_FAST_MODE||PVP.room?.status!=='active')return null;
- pvpRoomReaderPromise??=import(new URL('../../client/pvp-room-read.mjs?v=pvp-performance-v2',location.href).href)
+ pvpRoomReaderPromise??=import(new URL('../../client/pvp-room-read.mjs?v=live-field-20261124-1',location.href).href)
   .then(m=>m.connectPvpRoomReader(walkStorage,JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')))).catch(()=>null);
  const reader=await pvpRoomReaderPromise;return reader?reader.poll(packet,PVP.room,PVP.balanceVersion):null;
 }
@@ -9231,7 +9231,7 @@ function ordinaryBattleContext(battle,floor){
 
 (()=>{
  const rolloutContext=(()=>{try{return JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')}catch{return null}})();
- if(rolloutContext?.environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')==='off')return;
+ if(!rolloutContext?.code||!(rolloutContext.environment==='live'||(rolloutContext.environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off')))return;
 
  const clone=v=>JSON.parse(JSON.stringify(v)),channel=crypto.randomUUID();
  let frame=null,battle=null,battleId='',revision=0,sequence=0,presenting=0,ready=false,fieldReady=false,closing=false,depth=0,forcedAuto=false,saveError='';
@@ -9285,7 +9285,7 @@ function ordinaryBattleContext(battle,floor){
    items:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]&&!CON[id].seal&&!CON[id].petExp&&(CON[id].hp||CON[id].mp||CON[id].rev||CON[id].cure)).map(([id,n])=>({id,name:CON[id].n,count:n,rev:!!CON[id].rev})),
    seals:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]?.seal).map(([id,n])=>({id,name:CON[id].n,count:n})),
    captureTargets:b.enemies.filter(sealable).map(x=>x.id),summons:carriedPets().filter(p=>p.hp>0&&!b.allies.some(x=>x.uid===p.uid)).map(p=>({uid:p.uid,name:petName(p),lv:p.lv})),canEscape:!!b.towerRun||['wild','bandit','traveler'].includes(b.kind),
-   vitals:{hp:S.P.hp,mp:S.P.mp,gold:S.P.gold,exp:S.P.exp,lv:S.P.lv},saveMode:WALK_ONLINE?'test-account':'local-test-draft'});
+   vitals:{hp:S.P.hp,mp:S.P.mp,gold:S.P.gold,exp:S.P.exp,lv:S.P.lv},saveMode:'test-account'});
  }
  function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin);}
  const defeatHandoffs=new WeakSet();
@@ -9391,8 +9391,10 @@ function ordinaryBattleContext(battle,floor){
   try{
    const fallen=b.over.res==='lose'&&!b.dungeonDuo&&!(typeof dungeonFloor!=='undefined'&&dungeonFloor)
     ? Promise.resolve(window.SoulbeastFallenVoiceReady).then(wait=>wait?.(b)) : null;
+   const activeContext=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');
+   if(activeContext?.environment!==rolloutContext.environment||activeContext?.code!==rolloutContext.code)throw Error('battle_account_changed');
    save();
-   if(WALK_ONLINE){const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');if(context?.environment!=='test')throw Error('test_account_required');await (await getWalkAccountConnection()).flush(true);}
+   await (await getWalkAccountConnection()).flush(true);
    if(fallen)await fallen;
    if(B()!==b)return;const button=document.querySelector('main [data-a="bt"][data-v="done"]');if(button)button.click();else battleAction('done');mount();
   }catch(error){closing=false;saveError='ยังบันทึกไม่สำเร็จ กรุณาลองบันทึกอีกครั้ง';post('ordinary-notice',{message:saveError});publish();}
@@ -9452,11 +9454,11 @@ function ordinaryBattleContext(battle,floor){
   if(m.type==='ordinary-command')void command(m).catch(error=>{post('ordinary-notice',{message:'ดำเนินการไม่สำเร็จ กรุณาลองอีกครั้ง'});publish();console.error(error);});
  });
  // Only read-only diagnostics are exposed; commands still require the owned frame and nonce.
- window.ordinaryBattleDiagnostics=()=>({battle:battleId,revision,presenting,ready:ready&&fieldReady,transportReady:ready,fieldReady,active:!!frame,recoveryReason,recovery:recovery.inspect(),saveMode:WALK_ONLINE?'test-account':'local-test-draft'});
+ window.ordinaryBattleDiagnostics=()=>({battle:battleId,revision,presenting,ready:ready&&fieldReady,transportReady:ready,fieldReady,active:!!frame,recoveryReason,recovery:recovery.inspect(),saveMode:rolloutContext.environment+'-account'});
  mount();
 })();
 
-// pvp-connected-host · test opt-in only
+// pvp-connected-host
 // Room reads are optional. If the scoped RPC has not been installed, retain the native transport.
 const pvpOriginalSchedule=pvpSchedule;
 pvpSchedule=function(){
@@ -9531,10 +9533,10 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
  steps.push({after:structuredClone(room)});return steps;
 }
 
-/* Install after the native PVP handlers. Test-world presentation only. */
+/* Install after the native PVP handlers. Online battle presentation. */
 (()=>{
  let context;try{context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null')}catch{}
- if(context?.environment!=='test'||sessionStorage.getItem('soulbeast-new-pvp-test')!=='on')return;
+ if(!context?.code||!(context.environment==='live'||(context.environment==='test'&&sessionStorage.getItem('soulbeast-new-pvp-test')==='on')))return;
  const nativeRender=render,nativeReceive=pvpReceive,channel=crypto.randomUUID(),failed=new Set(),requests=new Set();
  let frame=null,ready=false,fieldReady=false,revision=0,sequence=0,presenting=0,receiving=false,roomId='',latest=null,playback=[],playbackRoom=null;
  const replayed=new Set();
@@ -9553,7 +9555,7 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
   if(!eligible()){if(frame)unmount();return;}
   if(roomId!==PVP.room.id){unmount();roomId=PVP.room.id;sequence=0;requests.clear();}
   if(!frame){
-   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP ใหม่ · โลกทดสอบ';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=pvp-performance-v3';
+   frame=document.createElement('iframe');frame.id='pvp-battle-stage';frame.title='สนาม PVP';frame.allow='autoplay';frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=pvp-performance-v3';
    Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});document.body.append(frame);
    frame.addEventListener('error',fallback);recovery.start('pvp:'+roomId);Music.stop();ExtraAudio.stop();Sound.stopAmb();
   }
@@ -9632,7 +9634,7 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
 // Present authoritative automatic battles. Settlement stays with each activity's receipt handler.
 (()=>{
  let account;try{account=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1'));}catch{return;}
- if(account?.environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')==='off')return;
+ if(!account?.code||!(account.environment==='live'||(account.environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off')))return;
  const modes={
   camp:{room:()=>CAMP.room,title:'จู่โจมค่าย',stage:()=>'raid-camp',done:()=>handlers.campClear()},
   world:{room:()=>WORLD.room,title:'บอสโลก',stage:()=>'castle-throne',done:()=>handlers.wbClear()},

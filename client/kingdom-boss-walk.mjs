@@ -178,7 +178,7 @@ function mount(scene,context){
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title='ต่อสู้กิจกรรมบอสอาณาจักร';
   const opened=frame;
   const legacy=()=>{if(opened!==frame)return;field?.stop();field=null;ready=visible=false;clearTimeout(polling);waitTurn=null;frame.src=new URL('../tools/town-walk-demo/menu.html?v=projectile-2&partyBattle=1&kingdomBoss=1&city='+scene.country+'-capital',import.meta.url);};
-  if(context.environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off'){
+  if((context.environment==='live'||(context.environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off'))){
    import('./kingdom-battle-field.mjs?v=activity-1').then(({kingdomBattleField})=>{
     if(opened!==frame)return;
     field=kingdomBattleField(frame,context.code,scene.country==='blue'?'moon-1':scene.country==='red'?'dragon-1':'training-1',()=>{

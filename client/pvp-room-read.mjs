@@ -3,7 +3,7 @@ import {connectAccounts} from './account-client.mjs?v=gacha-recovery-1';
 export function createPvpRoomReader({read,environment,code}){
  let available=true;const pending=new Map();
  async function poll(packet,current,balanceVersion=4){
-  if(!available||environment!=='test'||!current||current.status!=='active'||packet.room!==current.id||current.replaying)return null;
+  if(!available||!['live','test'].includes(environment)||!current||current.status!=='active'||packet.room!==current.id||current.replaying)return null;
   const actor=[...current.battle.allies,...current.battle.enemies].find(u=>u.id===current.battle.cur);
   // The acting owner must advance auto immediately, through the authoritative engine.
   if(actor?.owner===current.me&&current.players?.[actor.owner]?.auto)return null;

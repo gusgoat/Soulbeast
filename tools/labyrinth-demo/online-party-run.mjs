@@ -149,7 +149,7 @@ function warmBattleFrame(force=false){
  recovery.hidden=true;
  const failed=reason=>{console.warn('Dungeon field not ready:',reason);recovery.hidden=false;};
  const legacy=()=>{recovery.hidden=true;field?.stop();field=null;battleFrameReady=false;delete battleFrame.dataset.loadingOwner;battleFrame.src=`../town-walk-demo/menu.html?screen=hero&v=beasts-3d-six-20261121&partyBattle=party-controls-20261107&dungeon=${encodeURIComponent(warmFloor)}`;};
- if(connection?.environment==='test'&&(new URLSearchParams(location.search).get('battleUi')==='new'||sessionStorage.getItem('soulbeast-new-battle-test')!=='off')){
+ if(connection?.environment==='live'||(connection?.environment==='test'&&(new URLSearchParams(location.search).get('battleUi')==='new'||sessionStorage.getItem('soulbeast-new-battle-test')!=='off'))){
   $('retryPartyField').onclick=()=>warmBattleFrame(true);
   $('oldPartyField').onclick=legacy;
   import('./online-party-field.mjs?v=dungeon-entry-1').then(({partyField})=>{

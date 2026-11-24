@@ -102,7 +102,7 @@
 },base="https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/";
  let current=0;
  function warm(floor,environment){
-  if(environment!=='test'||sessionStorage.getItem('soulbeast-new-battle-test')==='off'||!paths[floor]||current===floor)return;
+  if(!(environment==='live'||(environment==='test'&&sessionStorage.getItem('soulbeast-new-battle-test')!=='off'))||!paths[floor]||current===floor)return;
   current=floor;
   const start=async()=>{
    if(navigator.connection?.saveData||/2g/.test(navigator.connection?.effectiveType||''))return;

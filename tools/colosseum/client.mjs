@@ -83,6 +83,7 @@ try{
  if(accountContext&&selectedCharacter?.code!==accountContext.code)selectedCharacter=null;
 }catch{}
 const testArena=accountContext?.environment==='test' && !!selectedCharacter;
+const onlineField=!!selectedCharacter&&['test','live'].includes(accountContext?.environment);
 const arenaWorld=testArena?'โลกทดสอบ':'โลกจริง';
 if(accountContext && selectedCharacter){
  $('arena-environment').textContent=arenaWorld;
@@ -352,7 +353,7 @@ function applyState(next){
   }
  }
  opening=false;state=next;offset=next.now+oneWay-arrival;
- if(state.phase==='lobby'||state.phase==='match'){if(testArena||state.spectating)field.warm();}
+ if(state.phase==='lobby'||state.phase==='match'){if(onlineField||state.spectating)field.warm();}
  else field.reset();
  presentation.setMusicScene(state.phase==='match'?'arena':state.phase==='finished'?'results':'lobby');
  const player=own();
@@ -705,7 +706,7 @@ function renderBattle(){
  if(!battle||(!viewingBattle()&&panel.hidden))return;
  const spectating=state?.phase==='match'&&watch?.phase==='battle';
  if(spectating && !battle.teams.some(team=>team.includes(watch.id))){panel.hidden=true;field.close();return;}
- if(spectating||testArena&&inCombat&&!watch){
+ if(spectating||onlineField&&inCombat&&!watch){
   if(field.show(battle,watch||me,state.mode,()=>performance.now()+offset,!!spectating)){panel.hidden=true;return;}
   if(spectating){
    if(!panel.querySelector('.retry-spectator-field')){
