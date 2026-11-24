@@ -1,3 +1,4 @@
+import {roomBackExit} from '../../client/room-back-exit.mjs?v=1';
 import {personalParty} from './online-party-personal.mjs?v=instant-party-3';
 import {partyAudio} from './online-party-audio.mjs?v=trap-sfx-20261121';
 import {partyMenu} from './online-party-menu.mjs?v=instant-party-3';
@@ -60,7 +61,9 @@ const showShadowLesson=WalkTutorial.watchShadowSight({
  stop:clearMovement,
 });
 function freeze(){ready=false;clearMovement();$('action').disabled=true;}
+let exitGuard;
 function offerReturn(city,automatic=false){
+ exitGuard?.close();
  $('leaveParty').hidden=true;$('retry').hidden=true;
  const button=$('returnHome');button.hidden=false;button.textContent=city?'ไปโรงพยาบาลเมืองหลวง':'กลับหน้าดันเจี้ยน';
  button.onclick=async()=>{
@@ -69,7 +72,7 @@ function offerReturn(city,automatic=false){
    const player=await connection.restoreWalk();
    const destination=/^(blue|green|red)-capital$/.test(city||'')?city:
     (['blue','green','red'].includes(player.country)?player.country:'blue')+'-capital';
-   location.assign(new URL(city?'../town-walk-demo/index.html?city='+destination+'&screen=hospital':'../hemant-walk-demo/index.html?country=red&arrival=dungeon',import.meta.url));
+   location.replace(new URL(city?'../town-walk-demo/index.html?city='+destination+'&screen=hospital':'../hemant-walk-demo/index.html?country=red&arrival=dungeon',import.meta.url));
   }catch{notice('โหลดเซฟล่าสุดไม่สำเร็จ · กดกลับไปฉากเดินอีกครั้ง');button.disabled=false;}
  };
  if(automatic)void button.onclick();
@@ -324,14 +327,18 @@ try{
   ready=!!position&&personal.grant?.floor===state.floor;if(ready)window.WalkLoading.ready();$('retry').hidden=true;$('action').disabled=!ready;
 
  }});
- $('leaveParty').onclick=async()=>{
-  if(!window.confirm(window.SoulbeastLocale?.text('ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับหน้าปากถ้ำหรือไม่?')??'ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับหน้าปากถ้ำหรือไม่?'))return;
+ exitGuard=roomBackExit({room:roomId,prompt:()=>'ออกจากดันเจี้ยนและปาร์ตี้เพื่อกลับหน้าปากถ้ำหรือไม่?',stopMoving:clearMovement,leave:async()=>{
   const button=$('leaveParty');button.disabled=true;
   try{
    while(controller.busy)await new Promise(resolve=>setTimeout(resolve,50));
    if(!button.hidden)await partyCommand('leave');
   }finally{button.disabled=false;}
- };
+ }});
+ $('leaveParty').onclick=exitGuard.ask;
+ if(location.hash==='#confirm-party-exit'){
+  history.replaceState(history.state,'',location.pathname+location.search);
+  exitGuard.ask();
+ }
  $('retry').onclick=()=>void controller.refresh();
  $('action').onclick=()=>{
   if(DungeonFeedback.isOpen||menus.open||!ready||!position)return;

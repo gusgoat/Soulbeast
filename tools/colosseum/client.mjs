@@ -1,3 +1,4 @@
+import {roomBackExit} from '../../client/room-back-exit.mjs?v=1';
 import {companionPortrait} from './companion-portraits.mjs';
 import {paintActionControl} from './control-art.mjs?v=ornate-controls-20261124';
 const assets = new URL('../../assets/',import.meta.url).pathname;
@@ -215,7 +216,7 @@ async function connect(payload){
   if(event.code===4001){reset('เปิดห้องเดิมในอีกแท็บแล้ว');return;}
   if(event.code===1000&&event.reason==='left'){reset('',true);return;}
   if(event.code===1000&&event.reason==='room closed'){reset('ห้องเดิมปิดแล้ว',true);return;}
-  if(leaving){reset('ออกจากหน้าห้องแล้ว เซิร์ฟเวอร์จะคืนที่นั่งหลังหมดเวลารอเชื่อมต่อ',true);return;}
+  if(leaving){leaving=false;clearTimeout(leaveTimer);$('leave').disabled=false;}
   const p=saved();
   if(p&&state?.phase!=='finished'){
    $('signal').textContent='กำลังเชื่อมต่อกลับเข้าสนาม…';$('signal').hidden=false;
@@ -258,7 +259,21 @@ function hideBattle(){
  $('battle').hidden=true;
  presentation.setActive(false);
 }
+let backGuard;
+function enableRoomBack(){
+ backGuard??=roomBackExit({room:'colosseum',stopMoving:release,prompt:()=>queued?'ยกเลิกการค้นหาแมตช์หรือไม่?':state?.ranked&&state.phase==='match'?'ออกก่อนจบจะเสีย 2 แต้มและถูกระงับการเล่นจัดอันดับ ต้องการออกจากแมตช์หรือไม่?':'ออกจากห้องโคลอสเซียมหรือไม่?',leave:requestRoomExit});
+}
+function requestRoomExit(){
+ if(leaving)return;
+ const type=queued?'cancelRank':state?.practice?'leavePractice':state?.ranked&&state.phase!=='lobby'?'rankLeave':'leave';
+ const feedback=state?.phase==='match'?$('signal'):$('notice');
+ if(!send({type})){feedback.textContent='ยังติดต่อห้องไม่ได้ กรุณาลองออกอีกครั้ง';feedback.hidden=false;return;}
+ leaving=true;$('leave').disabled=true;
+ feedback.textContent='กำลังออกจากห้อง…';feedback.hidden=false;
+ leaveTimer=setTimeout(()=>{leaving=false;$('leave').disabled=false;feedback.textContent='ยังไม่ได้รับการยืนยันจากห้อง กรุณาลองอีกครั้ง';feedback.hidden=false;},8000);
+}
 function reset(message='',clearInvite=false){
+ backGuard?.close();backGuard=null;
  field?.reset();
  battleUpdates.length=0;
  spectatorPan.x=spectatorPan.y=0;spectatorDrag=null;
@@ -290,6 +305,7 @@ function reset(message='',clearInvite=false){
  if(teamScoresDialog.open)teamScoresDialog.close();
 }
 function showRankQueue(message){
+ enableRoomBack();
  const first=!queued;
  opening=false;
  queued=true;
@@ -352,7 +368,7 @@ function applyState(next){
    presentation.setActive(false);hideBattle();
   }
  }
- opening=false;state=next;offset=next.now+oneWay-arrival;
+ enableRoomBack();opening=false;state=next;offset=next.now+oneWay-arrival;
  if(state.phase==='lobby'||state.phase==='match'){if(onlineField||state.spectating)field.warm();}
  else field.reset();
  presentation.setMusicScene(state.phase==='match'?'arena':state.phase==='finished'?'results':'lobby');
@@ -917,13 +933,7 @@ $('ready').onclick=()=>{if(!leaving)send({type:'ready',ready:!own()?.ready});};
 $('start').onclick=()=>{
  if(!leaving)send({type:state?.premade?(state.rankSearching?'rankTeamCancel':'rankTeamStart'):'start'});
 };
-$('leave').onclick=()=>{
- if(leaving||state?.phase!=='lobby')return;
- if(!send({type:'leave'})){reset('ออกจากหน้าห้องแล้ว เซิร์ฟเวอร์จะคืนที่นั่งหลังหมดเวลารอเชื่อมต่อ',true);return;}
- leaving=true;$('leave').disabled=true;
- $('notice').textContent='กำลังออกจากห้อง…';
- leaveTimer=setTimeout(()=>reset('ออกจากหน้าห้องแล้ว เซิร์ฟเวอร์จะคืนที่นั่งหลังหมดเวลารอเชื่อมต่อ',true),5000);
-};
+$('leave').onclick=()=>backGuard?.ask();
 function leavePractice(){
  if(!send({type:'leavePractice'}))reset();
 }

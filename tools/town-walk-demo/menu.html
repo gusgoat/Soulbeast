@@ -8290,6 +8290,31 @@ const allowed=['shop','guild','countrywar','leader','pvp','world','camp','hospit
  },true);
 }
 const params=new URLSearchParams(location.search),screen=params.get('screen'),previewZone=Number(params.get('zone'));S.screen=screen==='chat'?'friends':screen==='replay'?'story':allowed.includes(screen)?screen:'shop';render();
+// Browser Back and the walking footer must settle an active multiplayer room first.
+void import(new URL('../../client/room-back-exit.mjs?v=1',location.href).href).then(({roomBackExit})=>{
+ let guard=null,tracked='';
+ function roomInfo(){
+  if(['lobby','starting','active'].includes(WORLD.room?.status))return {key:'world:'+WORLD.room.id,prompt:'ออกจากปาร์ตี้บอสโลกหรือไม่?',leave:()=>wbCall('wb_leave')};
+  if(['waiting','lobby','active'].includes(PVP.room?.status))return {key:'pvp:'+PVP.room.id,prompt:'ออกจากห้อง? ถ้าเริ่มประลองแล้วถือว่ายอมแพ้ แต่ไม่หักข้อมูลเกมหลัก',leave:()=>pvpRequest({action:'pvp_leave'})};
+  if(CAMP.room?.status==='active')return {key:'camp:'+CAMP.room.id,prompt:'ยอมแพ้และเสียเงินปัจจุบัน 20% ให้เจ้าของค่าย?',leave:()=>campCall('camp_leave')};
+ }
+ function sync(){
+  const info=roomInfo(),key=info?.key||'';
+  if(key===tracked)return;
+  guard?.close();tracked=key;
+  guard=info?roomBackExit({room:key,prompt:()=>info.prompt,leave:async()=>{
+   if(roomInfo()?.key!==key)return;
+   await info.leave();sync();
+   if(roomInfo()?.key===key)toast('ยังออกจากห้องไม่สำเร็จ กรุณาลองอีกครั้ง');
+  }}):null;
+ }
+ const draw=render;render=function(...args){const result=draw.apply(this,args);sync();return result;};
+ window.addEventListener('click',event=>{
+  if(!guard||!event.target.closest?.('[data-a="go"][data-v="town"]'))return;
+  event.preventDefault();event.stopImmediatePropagation();guard.ask();
+ },true);
+ sync();
+});
 const walkLegacyBar=document.createElement('div');walkLegacyBar.style='position:sticky;top:0;z-index:99999;background:#153d34;color:#ecdfb6;padding:12px;font:12px Tahoma';const back=document.createElement('button');back.textContent='← กลับฉากเดิน';back.style='padding:9px;background:#305747;border:1px solid #baa46d;color:#fff0c4;border-radius:8px';back.onclick=()=>parent.postMessage({type:'town-return'},location.origin);walkLegacyBar.append(back);/* Detached legacy return control: the footer owns navigation. */
 document.addEventListener('click',e=>{if(e.target.closest('[data-a="go"][data-v="town"]')){e.preventDefault();e.stopImmediatePropagation();if(screen==='wild'&&ZN.some(z=>z.id===previewZone)){handlers.go('town');return}if(params.get('localDuel')==='1'&&PVP.room&&['waiting','lobby','active'].includes(PVP.room.status)){toast('ออกจากห้องประลองก่อนกลับฉากเดิน');return}if(S.zone){toast('ออกจากป่าไม่ได้จนกว่าจะชนะบอสหรือพ่ายแพ้');return}save();parent.postMessage({type:'town-return'},location.origin)}},true);/* Inserted into the isolated game's lexical scope. Purchases use its normal gold/item flow. */
 CON.beastRepellent={n:'เครื่องหอมไล่อสูร',d:'ป้องกันเงาอสูรวิ่งเข้าหาผู้ผนึกบนแผนที่ประเทศ 10 นาที หากเข้าไปชนเองยังเกิดการต่อสู้ · ใช้เฉพาะแผนที่ประเทศ · ไม่ป้องกันโจรป่า อสูรในป่าและดันเจี้ยน',price:150,lv:1};

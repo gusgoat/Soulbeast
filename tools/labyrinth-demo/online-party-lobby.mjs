@@ -1,3 +1,4 @@
+import {roomBackExit} from '../../client/room-back-exit.mjs?v=1';
 import {partyClassFamily,partyClassNames,partyDuplicateFamilies} from '../../client/party-class-families.mjs?v=instant-party-3';
 import {connectOnlineWalk} from '../../client/online-walk.mjs?v=revision-retry-1';
 import {connectDungeonParty,partySessionKey} from '../../client/dungeon-party.mjs?v=party-field-1';
@@ -14,7 +15,12 @@ const lobbyAnchor=$('joinPanel');
 function setEntryDisabled(disabled){
  for(const id of ['create','join','createPublic','joinPublic'])$(id).disabled=disabled;
 }
+let lobbyGuard=null,guardedRoom=null;
 function render(){
+ if(guardedRoom!==room?.id){
+  lobbyGuard?.close();guardedRoom=room?.id;
+  lobbyGuard=room?roomBackExit({room:'lobby:'+room.id,prompt:()=>room?.state==='active'?'ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?':'ออกจากห้องปาร์ตี้หรือไม่?',leave:()=>update('leave')}):null;
+ }
  $('joinPanel').hidden=!!room||!checked;setEntryDisabled(busy);$('roomPanel').hidden=!room;
  if(room&&feedback.parentElement!==$('roomPanel'))$('requirements').after(feedback);
  if(!room&&feedback.parentElement!==lobbyAnchor.parentElement)lobbyAnchor.before(feedback);
@@ -35,7 +41,13 @@ function render(){
  $('requirements').textContent+=' · สมาชิกต้องไม่ซ้ำสายอาชีพหลักทั้ง 9 สาย';
  if(partyDuplicateFamilies(room.members)&&room.state==='waiting')$('requirements').textContent='มีสมาชิกสายอาชีพหลักซ้ำกัน · กรุณาจัดทีมใหม่ก่อนเริ่ม';
 }
-function resume(){stopped=true;clearInterval(timer);location.assign('index.html?room='+encodeURIComponent(room.id));}
+// Some mobile browsers skip scripted history entries on a Back gesture.
+let returningRoom=history.state?.departedForParty;
+function resume(askBeforeLeaving=false){
+ stopped=true;clearInterval(timer);
+ history.replaceState({...history.state,departedForParty:room.id},'');
+ location.assign('index.html?room='+encodeURIComponent(room.id)+(askBeforeLeaving===true?'#confirm-party-exit':''));
+}
 async function update(action='status',extra={}){
  if(busy||stopped)return;actionVersion++;busy=true;$('retryLobby').hidden=true;render();
  let saving=false;
@@ -66,6 +78,7 @@ async function update(action='status',extra={}){
   if(result.left){room=null;sessionStorage.removeItem(partySessionKey);}
   else {room={...result,isPublic:result.isPublic??(room?.id===result.id&&room?.isPublic)};sessionStorage.setItem(partySessionKey,JSON.stringify({id:room.id,code:connection.code}));}
   if(action!=='status'||!room||room.state==='active'||!$('status').textContent||!wasChecked)$('status').textContent=room?.state==='active'?'พบปาร์ตี้เดิม · กลับเข้าดันเจี้ยนหรือออกจากห้องได้':action==='leave'?(refreshFailed?'ออกจากห้องแล้ว · โหลดเซฟล่าสุดไม่สำเร็จ กรุณาเข้าเกมใหม่':'ออกจากห้องแล้ว'):'';
+  if(action==='status'&&room?.state==='active'&&returningRoom===room.id){returningRoom=null;resume(true);return;}
   if(room?.state==='active'&&wasWaiting)resume();
  }catch(error){
   if(action==='status'&&['party_unavailable','party_not_member'].includes(error.message)){
@@ -100,7 +113,7 @@ $('joinPublic').onclick=()=>update('joinPublic');$('retryLobby').onclick=()=>upd
  if(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)){void update('join',{room:id});return;}
  $('status').textContent='กรุณาใส่รหัสห้อง 8 ตัวตามที่หัวหน้าห้องส่งให้';};
 $('ready').onclick=()=>update('ready',{ready:!room.members.find(m=>m.code===connection.code)?.ready});
-$('start').onclick=()=>update('start');$('leave').onclick=()=>{if(room?.state!=='active'||window.confirm(window.SoulbeastLocale?.text('ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?')??'ออกจากปาร์ตี้และดันเจี้ยนเดิมหรือไม่?'))void update('leave');};$('resume').onclick=resume;
+$('start').onclick=()=>update('start');$('leave').onclick=()=>lobbyGuard?.ask();$('resume').onclick=resume;
 $('copy').onclick=async()=>{if(!room?.joinCode)return;try{await navigator.clipboard.writeText(room.joinCode);$('status').textContent='คัดลอกรหัสห้องแล้ว';}catch{$('status').textContent='เลือกและคัดลอกรหัสห้องด้านบนได้เลย';}};
 const requestedWorld=new URL(location.href).searchParams.get('world');
 const worldLabel=world=>world==='test'?'โลกทดสอบ':'โลกจริง';

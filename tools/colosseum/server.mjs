@@ -354,7 +354,23 @@ function createArena({loadCharacter=null,ranking=null,siteOrigin=null,lobbyRecon
       if(room.rankSearch!=null&&m.type!=='leave')throw Error('ยกเลิกค้นหาก่อนแก้ไขทีม');
      }
      if(m.type==='leave'){
-      if(phase!=='lobby')throw Error('การแข่งขันเริ่มแล้ว');
+      if(phase!=='lobby'){
+       if(room.ranked)throw Error('กรุณาออกผ่านกติกาจัดอันดับ');
+       const player=peer.player;
+       player.retired=true;player.connected=false;player.token=null;
+       if(phase==='match'&&player.phase!=='dead'){
+        const battle=room.battles.get(player.battle),hero=room.battleHero(player);
+        if(hero)hero.hp=0;
+        room.fall(player,now,'ออกจากห้อง');
+        if(battle)settleCombat(battle,now);
+        room.checkScore(now);
+       }
+       peer.pendingChest=null;peer.player=null;peer.room=null;
+       send(peer,{type:'left'});ws.close(1000,'left');
+       if(!room.players.some(p=>!p.bot&&!p.retired))closeRoom(room);
+       else for(const q of peers)if(q.room===room)push(q,now);
+       return;
+      }
       if(room.premade)room.rankSearch=null;
       room.command(peer.player,m,now);
       peer.player=null;peer.room=null;
