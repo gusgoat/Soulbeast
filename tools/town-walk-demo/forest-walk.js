@@ -19,7 +19,7 @@ const ForestWalk = (() => {
 
   function active(zone, walk) {
     return S.zone === zone && zone.walk === walk && S.screen === "zone" && !S.battle
-      && !S.ui.trapNotice && !document.querySelector("#tutorialCoach.tutorial-modal");
+      && !S.ui.confirm && !S.ui.trapNotice && !document.querySelector("#tutorialCoach.tutorial-modal");
   }
 
   function nativeEvent(zone) {
@@ -360,7 +360,8 @@ const ForestWalk = (() => {
       + '<div class="forest-walk-actions" role="group" aria-label="การกระทำกับสถานที่">'
       + '<button type="button" class="btn forest-walk-quest-guide" aria-label="สลับจุดเควสที่ติดตาม" title="กดเพื่อดูจุดเควสถัดไป" hidden></button>'
       + '<button type="button" class="btn forest-walk-chest" hidden>เปิดหีบ</button>'
-      + '<button type="button" class="btn forest-walk-fallback" hidden>กลับไปสำรวจแบบเดิม</button></div>';
+      + '<button type="button" class="btn forest-walk-fallback" hidden>กลับไปสำรวจแบบเดิม</button></div>'
+      + '<button type="button" class="btn danger forest-walk-surrender" aria-label="ยอมแพ้และออกจากป่า">ยอมแพ้ / ออกจากป่า</button>';
     const state = {node, zone, walk, scene: null, water: null};
     const stick = node.querySelector(".forest-walk-stick"), knob = stick.firstElementChild;
     const note = node.querySelector(".forest-walk-note");
@@ -415,6 +416,11 @@ const ForestWalk = (() => {
       save();
     };
     node.querySelector(".forest-walk-fallback").onclick = abandonCanvas;
+    node.querySelector(".forest-walk-surrender").onclick = () => {
+      if (!active(zone, walk)) return;
+      state.release();
+      handlers.surrender();
+    };
     const canvas = node.querySelector(".forest-walk-canvas");
     state.report = (x, z, flags, area, running, situation) => {
       if (!active(zone, walk)) return;

@@ -33,3 +33,6 @@
 @media(max-width:700px){
  .forest-walk-story{padding:12px}
 }
+
+.forest-walk-scene > .forest-walk-surrender{position:absolute;right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));z-index:4;min-height:44px;max-width:calc(100% - 180px);padding:8px 12px;border-color:#b66f64;background:linear-gradient(#58302d,#331e22);color:#ffe3ca;font-weight:700;font-size:13px;touch-action:manipulation}
+.forest-walk-surrender:focus-visible{outline:3px solid #f4d58d;outline-offset:3px}
