@@ -220,7 +220,7 @@ async function connect(payload){
   const p=saved();
   if(p&&state?.phase!=='finished'){
    $('signal').textContent='กำลังเชื่อมต่อกลับเข้าสนาม…';$('signal').hidden=false;
-   retry=setTimeout(()=>connect(p),900);
+   if(gameWeb&&accountContext)window.dispatchEvent(new Event('sb-room-reconnect'));else retry=setTimeout(()=>connect(p),900);
   }else if(packet&&state?.phase!=='finished')reset('เชื่อมต่อสนามไม่ได้ ลองอีกครั้ง');
  };
  socket.onerror=()=>{};
@@ -1334,6 +1334,14 @@ function syncWalkSound(){
 }
 $('walk-sound').onclick=()=>{presentation.toggle();if(!presentation.enabled)announcerVoice.clear();syncWalkSound();};
 syncWalkSound();
+window.addEventListener('sb-arena-room-closed',()=>{
+ if(!opening&&ws?.readyState!==WebSocket.OPEN&&(state||queued||saved()))reset('ห้องเดิมสิ้นสุดแล้ว',true);
+});
 const previousRoom=saved();
-if(onlineEnabled&&previousRoom&&(!fromLink||previousRoom.code===fromLink.toUpperCase()))connect(previousRoom);
+if(onlineEnabled&&previousRoom&&(!fromLink||previousRoom.code===fromLink.toUpperCase())){
+ if(!gameWeb||!accountContext)connect(previousRoom);
+ else if(sessionStorage.getItem('sb-arena-return')===accountContext.code){
+  sessionStorage.removeItem('sb-arena-return');connect(previousRoom);
+ }else setTimeout(()=>window.dispatchEvent(new Event('sb-room-reconnect')),0);
+}
 requestAnimationFrame(frame);

@@ -4803,6 +4803,14 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
   if(!remoteOnly){const {offerUnsavedWalkRecovery}=await import('./client/walk-draft-recovery.mjs?v=admin-session-20261107');const recovered=await offerUnsavedWalkRecovery({snapshot:JSON.parse(r.data),owner:state.user.id,code,environment:SB_ENV,revision:remoteRevision});if(recovered)data=recovered;}
   if(r.account?.name)data.P.name=r.account.name;if(r.account?.renameAt)data.P.renameAt=r.account.renameAt;
   state.saveConflict=false;state.pendingSave=null;
+  // An active dungeon owns the save. Route to room recovery before the entry autosave.
+  const rooms=await state.client.request('/rest/v1/rpc/sb_walk_recover_rooms',
+   {p_env:SB_ENV,p_code:code},await state.client.sessions.token()).catch(()=>[]);
+  if(rooms.some(room=>room.kind==='dungeon'&&room.state==='active')){
+   const {enterOnlineWalk}=await import('./client/online-walk.mjs?v=room-recovery-1');
+   const baseline=JSON.parse(r.data);baseline.P.gsAt=remoteRevision;
+   enterOnlineWalk(Number(data.P.gsAt)===remoteRevision?data:baseline,SB_ENV,state.user.id,baseline);return;
+  }
   delete data.P.cpin;state.mode='playing';IMG={};GS.lastJson='';GS.lastAt=0;sbMarkReady(code);state.boot({S:data});save();
  }
  function deleteDialog(){const c=state.characters.find(c=>c.code===state.deleteCode);if(!c)return '';return '<div class="account-delete-overlay"><section class="account-delete-dialog card stack" role="dialog" aria-modal="true" aria-labelledby="delete-character-title"><h3 id="delete-character-title">'+ct('ยืนยันลบตัวละคร','Confirm character deletion','确认删除角色')+'</h3><p><span data-user-content>'+esc(c.name)+'</span></p><p>'+ct('ตัวละครนี้จะออกจากรายชื่อและเล่นต่อไม่ได้ ตรวจสอบชื่อให้ถูกต้องก่อนยืนยัน','This character will leave your list and can no longer be played. Check the name before confirming.','此角色将从列表移除，且无法继续游玩。请核对名称后再确认。')+'</p><div class="row wrap"><button class="btn" data-account="delete-cancel">'+ct('ยกเลิก','Cancel','取消')+'</button><button class="btn danger" data-account="delete-confirm">'+ct('ยืนยันลบ','Confirm delete','确认删除')+'</button></div></section></div>';}

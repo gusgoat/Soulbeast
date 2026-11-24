@@ -14,7 +14,7 @@ function saveComparable(player) {
  return JSON.stringify(canonical(data));
 }
 
-export function enterOnlineWalk(state, environment, owner) {
+export function enterOnlineWalk(state, environment, owner, serverBaseline=null) {
  const player = structuredClone(state.P);
  let sessionId;
  try{sessionId=gameSessionId(JSON.parse(localStorage.getItem('soulbeast_shop_test_auth_v1')||'null')?.access_token);}catch{}
@@ -23,11 +23,11 @@ export function enterOnlineWalk(state, environment, owner) {
  const country = ['blue','green','red'].includes(player.country) ? player.country : 'blue';
  sessionStorage.setItem(playerKey, JSON.stringify(player));
  sessionStorage.setItem(contextKey, JSON.stringify({
-  code: player.code, environment, owner, sessionId, navigationCountry: country, revision: player.gsAt, snapshot: {...state, P: player}
+  code: player.code, environment, owner, sessionId, navigationCountry: country, revision: serverBaseline?.P.gsAt??player.gsAt, snapshot: serverBaseline??{...state, P: player}
  }));
  const inviteKey = 'soulbeast-colosseum-test-invite';
  const pendingInvite = sessionStorage.getItem(inviteKey);
- if (pendingInvite) {
+ if (pendingInvite && !serverBaseline) {
   sessionStorage.removeItem(inviteKey);
   let invite;
   try { invite = JSON.parse(pendingInvite); } catch {}

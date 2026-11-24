@@ -226,7 +226,22 @@ function mount(scene,context){
  });
  document.addEventListener('visibilitychange',()=>{if(document.hidden)clearTimeout(polling);else if(waitTurn!=null)schedule(1500);else schedule();});
 
+ const returnKey='sb-multiplayer-return:'+[context.environment,context.owner,context.code].join(':');
+ let returning=JSON.parse(sessionStorage.getItem(returnKey)||'null'),retryReturnAt=0;
  async function move(){
+  if(returning?.kind==='kingdom'&&returning.country===scene.country){
+   if(requesting||frame||document.hidden||!scene.canMove()||Date.now()<retryReturnAt)return;
+   requesting=true;
+   try{
+    const data=await send('poll',{round:returning.round,fight:returning.id,turn:-1});
+    update(data);
+    if(data.fight?.id===returning.id&&data.fight.status==='active')show(data);
+    else report('การต่อสู้นี้สิ้นสุดแล้ว');
+    returning=null;sessionStorage.removeItem(returnKey);
+   }catch{retryReturnAt=Date.now()+4000;report('กำลังเชื่อมต่อห้องบอสอาณาจักรอีกครั้ง');}
+   finally{requesting=false;}
+   return;
+  }
   if(requesting||frame||!active()||!sameMap()||document.hidden||!scene.canMove())return;
   const position=playerPosition;
   const boss=bossPosition();if(!boss)return;

@@ -408,6 +408,13 @@ function createArena({loadCharacter=null,ranking=null,siteOrigin=null,lobbyRecon
       if(existing){assign(peer,room,existing);return;}
      }
     }
+    if(m.type==='recoverQueue'){
+     const entry=[...rankedQueue.values()].find(e=>e.character.code===character?.code&&e.enteredAt===m.enteredAt);
+     if(!entry)throw Error('คิวเดิมสิ้นสุดแล้ว');
+     if(entry.peer&&entry.peer!==peer){entry.peer.waiting=null;entry.peer.ws.close(4001,'queue resumed');}
+     entry.peer=peer;peer.waiting=entry;queueStatus(entry,now);
+     return;
+    }
     if(m.type==='ranked'){
      peer.joining=true;
      try{await joinRankQueue(peer,character,m.mode);}finally{peer.joining=false;}
@@ -456,7 +463,7 @@ function createArena({loadCharacter=null,ranking=null,siteOrigin=null,lobbyRecon
    try{return Response.json({rows:await ranking.top()},{headers});}
    catch{return Response.json({error:'โหลดกระดานคะแนนไม่สำเร็จ'},{status:503,headers});}
   }
-  if(url.pathname==='/ticket'&&loadCharacter){
+  if(['/ticket','/room-status'].includes(url.pathname)&&loadCharacter){
    if(!allowed(req))return new Response(null,{status:403});
    const headers={'Access-Control-Allow-Origin':req.headers.get('origin'),'Access-Control-Allow-Methods':'POST, OPTIONS',
     'Access-Control-Allow-Headers':'Authorization, Content-Type','Cache-Control':'no-store',Vary:'Origin'};
@@ -467,6 +474,20 @@ function createArena({loadCharacter=null,ranking=null,siteOrigin=null,lobbyRecon
    if(tickets.size>=MAX_CONNECTIONS*2)return Response.json({error:'สนามเต็มชั่วคราว'},{status:503,headers});
    try{
     const {code}=await req.json(),character=await loadCharacter(token,code);
+    if(url.pathname==='/room-status'){
+     const found=[];
+     for(const room of rooms.values()){
+      const seat=room.players.find(p=>!p.bot&&!p.retired&&p.character?.code===character.code);
+      if(!seat||room.phase==='finished'||room.practice)continue;
+      found.push({kind:'arena',id:room.code,state:room.phase,ranked:!!room.ranked,
+       resume:{type:'resume',code:room.code,token:seat.token}});
+     }
+     for(const entry of rankedQueue.values()){
+      if(entry.character.code===character.code)found.push({kind:'queue',id:String(entry.enteredAt),state:'waiting',
+       resume:{type:'recoverQueue',enteredAt:entry.enteredAt}});
+     }
+     return Response.json({rooms:found},{headers});
+    }
     if(ranking?.enabled){
      try{character.colosseumRating=await ranking.rating(code);}
      catch(error){console.error('Colosseum rating load failed:',error.message);}
