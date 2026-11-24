@@ -95,13 +95,14 @@ const SHADOW_FORMATIONS = [
   [[-2.6, -1], [2.6, -.5], [-5, 2.9], [5, 3.3]]
 ];
 
-function spawnShadows(training) {
+function spawnPursuers(training, pack) {
   const roll = Math.random();
-  const size = training ? (roll < .65 ? 1 : roll < .95 ? 2 : 3)
-    : (roll < 33 / 55 ? 2 : roll < 47 / 55 ? 3 : 4);
+  const size = pack?.length || (training ? (roll < .65 ? 1 : roll < .95 ? 2 : 3)
+    : (roll < 33 / 55 ? 2 : roll < 47 / 55 ? 3 : 4));
   const formation = SHADOW_FORMATIONS[size - 1];
   return formation.map(([flank, depth], index) => ({
     x: GLADE_CENTER[0] + flank, z: GLADE_CENTER[1] + depth,
+    ...pack?.[index],
     flank, wait: 1.25 + index * .09, phase: index * 1.25, facing: 1
   }));
 }
@@ -296,7 +297,7 @@ function makeGround(images, props, paths, openAreas, footprints, moonlight = fal
   return ground;
 }
 
-export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, soundMix, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, questSites = [], zoneTheme, moonlightScene, placeMap, castleStep=1,castleRoom,bindingDepth=0} = {}) {
+export async function openForest(canvas, progress, report, {minimap, entrance = false, landmark, onLandmark, playerAvatar, encounterAvatar, footprintPack, beastRenderer, resume = {}, onContact, onBanditLoot, traveler, onMeetTraveler, onExit, onTownExit, onPray, onSearch, onVisitVillage, onVisitHealer, onStep, mist = false, ruins = false, training = true, well, onUseWell, wellEffects, wellAudio, soundMix, trainingScene, storyActorURL, trapIndex = -1, onTrap, onQuest, questSites = [], zoneTheme, moonlightScene, placeMap, castleStep=1,castleRoom,bindingDepth=0} = {}) {
   const moonlight = zoneTheme === 'moonlight';
   const heaven = zoneTheme === 'heaven', demon=zoneTheme==='demon',binding=zoneTheme==='binding';
   const desert = zoneTheme === 'desert',dragon=zoneTheme==='dragon',layeredBiome=moonlight||desert||dragon||heaven||demon||binding;
@@ -322,7 +323,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     if (!encounterAvatar) files.bandit = "forest-bandit-walk.webp";
     files["bandit-camp"] = "forest-bandit-camp.webp";
   } else if (traveler && !encounterAvatar) files.traveler = "forest-traveler-" + traveler.sprite + ".webp";
-  else if (onContact && !traveler) files.shadow = "shadow-walk.webp";
+  else if (onContact && !traveler && !footprintPack && !resume.completed) files.shadow = "shadow-walk.webp";
   if (well) files.well = well.image;
   if (onPray) files.shrine = "forest-shrine.webp";
   if (village) files.village = "forest-village.webp";
@@ -332,6 +333,16 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   if (storyActorURL) files["story-actor"] = storyActorURL;
   const total = Object.keys(files).length;
   let loaded = 0;
+  function spawnPack() {
+    const actors = spawnPursuers(training, footprintPack);
+    if (footprintPack) for (const [i, actor] of actors.entries()) {
+      actor.position = {x:actor.x, y:-actor.z};
+      window.LivingBeasts.ensure(actor, {seed:i+1});
+    }
+    return actors;
+  }
+  const firstPack = onContact && !humanPursuit && !resume.completed ? spawnPack() : [];
+  const packReady = footprintPack ? beastRenderer.preload(firstPack) : null;
   const images = Object.fromEntries(await Promise.all(Object.entries(files).map(([id, file]) =>
     new Promise((resolve, reject) => {
       const image = new Image();
@@ -474,6 +485,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   let ctx = surface, shadowCasts = 0;
   canvas.dataset.groundShadows = 'country-upper-right';
   const mini = minimap, map = mini.getContext("2d");
+  if (packReady && (await packReady).includes(false)) throw Error("Forest beast walk art unavailable");
   const start = resume.retreat ? FORK
     : Array.isArray(resume.position) && resume.position.length === 2 && resume.position.every(Number.isFinite) ? resume.position : SPAWN;
   const player = { x: start[0], z: start[1], direction: 4, phase: 0, moving: false, running: false, depth: 0, rim: 0 };
@@ -481,7 +493,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   let mistStrength = 1;
   const camera = { x: player.x, z: player.z };
   let pursuers = resume.completed ? [] : banditCamp ? [{x: BANDIT_CAMP.x, z: BANDIT_CAMP.z - 1.5, flank: 0, wait: 0, phase: 0, facing: 1}]
-    : onContact ? (travelerActor ? [travelerActor] : spawnShadows(training)) : [];
+    : onContact ? (travelerActor ? [travelerActor] : firstPack) : [];
   let battle = false, wellUsed = Boolean(resume.completed), paused = false;
   let searchOutcome = resume.chest ? "chest" : resume.completed ? "clear" : "";
   let landmarkReached = Boolean(resume.completed);
@@ -636,8 +648,14 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
       const speed = humanPursuit ? 8.3 * 1.7 : SHADOW_CHASE_SPEED;
       const stride = speed * dt / length;
       const nextX = pursuer.x + approachX * stride, nextZ = pursuer.z + dz * stride / FLATTEN;
+      const oldX = pursuer.x, oldZ = pursuer.z;
       if (walkable(nextX, pursuer.z)) pursuer.x = nextX;
       if (walkable(pursuer.x, nextZ)) pursuer.z = nextZ;
+      if (pursuer.beastModelId) {
+        const movedX = pursuer.x - oldX, movedY = (oldZ - pursuer.z) * FLATTEN;
+        pursuer.beastMoving = Math.hypot(movedX, movedY) > 0.0001;
+        if (pursuer.beastMoving) pursuer.beastHeading = (Math.atan2(-movedX, movedY) / (Math.PI / 4) + 8) % 8;
+      }
       pursuer.phase += dt * 16;
       pursuer.heading = (-Math.atan2(approachX, -dz) / (Math.PI / 4) + 8) % 8;
       if (Math.abs(approachX) > .2) pursuer.facing = approachX < 0 ? -1 : 1;
@@ -780,6 +798,14 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
   function paintEncounterActor(actor, walking = true) {
     const {x, z, facing, phase} = actor;
     const size = humanPursuit ? COUNTRY_BANDIT_SIZE : COUNTRY_SHADOW_SIZE;
+    if (actor.beastModelId) {
+      actor.position.x = x;
+      actor.position.y = -z;
+      beastRenderer.draw(shadowSprite(screenX(x),screenY(z)), actor, screenX(x), screenY(z), size, prior/1000, {
+        flatten: FLATTEN, heading: actor.beastHeading ?? 0, moving: !!actor.beastMoving
+      });
+      return;
+    }
     if (encounterAvatar) {
       encounterAvatar.draw(shadowSprite(screenX(x),screenY(z)), screenX(x), screenY(z), size, actor.heading ?? 0, phase, walking, walking);
       return;
@@ -909,7 +935,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
 
   const reset = () => {
     if (battle) return;
-    if (onContact && !humanPursuit && !resume.completed) pursuers = spawnShadows(training);
+    if (onContact && !humanPursuit && !resume.completed) pursuers = spawnPack();
     returnToEntrance();
   };
   const returnToEntrance = (position = SPAWN) => {

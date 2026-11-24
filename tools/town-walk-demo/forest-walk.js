@@ -6,7 +6,7 @@ const ForestWalk = (() => {
     exit: "exit", bush: "bush", mist: "mist", ruins: "ruins"};
   const searches = ["bush", "mist", "ruins"];
   const services = ["village", "hospital"];
-  let modules, current;
+  let modules, current, footprintRenderer;
   const sceneCatalog = zone => zone?.id === 8 ? BindingForestScenes : zone?.id === 6 ? DemonForestScenes : zone?.id === 5 ? HeavenForestScenes : zone?.id === 4 ? DragonForestScenes : zone?.id === 3 ? DesertForestScenes : zone?.id === 1 ? MoonlightForestScenes : TrainingForestScenes;
   let trainingFocusInstalled = false;
   const soundMix=()=>({enabled:Sound.enabled,context:Sound.ctx,destination:typeof audioBus==="function"?audioBus("effects"):Sound.master});
@@ -206,6 +206,7 @@ const ForestWalk = (() => {
         selected.disposition = Math.random();
       }
       prepareHuman(zone, selected);
+      prepareFootprints(zone, selected);
       zone.fork = null;
       zone.walk = selected;
     }
@@ -217,6 +218,15 @@ const ForestWalk = (() => {
     const template = document.createElement("template");
     template.innerHTML = html.replace(/<br\s*\/?\s*>/gi, " · ");
     return template.content.textContent;
+  }
+
+  function prepareFootprints(zone, walk) {
+    if (walk.map !== "footprints" || walk.phase !== "pending" || walk.footprintPack?.length) return false;
+    const dwelling = ZN[zone.id - 1];
+    const weights = dwelling.train ? {1:65, 2:30, 3:5} : {2:33, 3:14, 4:8};
+    // chooseFork advances the depth on contact. Use that same floor's pool when preparing the map.
+    walk.footprintPack = wildGroup(dwelling, weights, zone.depth + 1).map(({sp, lv, evo}) => ({sp, lv, evo}));
+    return true;
   }
 
   function prepareHuman(zone, walk) {
@@ -433,15 +443,18 @@ const ForestWalk = (() => {
   async function loadScene(state) {
     const {node, zone, walk, canvas, report} = state;
     prepareHuman(zone, walk);
+    if (prepareFootprints(zone, walk)) save();
     if (walk.enemies) {
       state.encounterAvatar = window.sealerSprites?.create();
       state.encounterAvatar?.sync(walk.enemies[0]);
     }
-    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js", "footstep-audio.js"].map(file => import(new URL(file + "?v=binding-release-1", assets).href)));
+    modules ||= Promise.all(["forest-25d.js", "wells.js", "well-effects.js", "footstep-audio.js"].map(file => import(new URL(file + (file === "forest-25d.js" ? "?v=footprint-pack-1" : "?v=binding-release-1"), assets).href)));
     try {
       const [{openForest}, {WELLS}, {createWellEffects, startWellAudio}, {createFootstepAudio}] = await modules;
       if (current !== state) return;
       const map = walk.map;
+      const pack = map === "footprints" && walk.phase === "pending" ? walk.footprintPack : null;
+      if (pack) footprintRenderer ||= window.LivingBeasts.create({preloadFallback:true});
       const well = WELLS[map];
       state.avatar = window.sealerSprites?.create({preloadDirections:true});
       state.avatar?.sync(S.P);
@@ -464,6 +477,8 @@ const ForestWalk = (() => {
         minimap: node.querySelector(".forest-walk-map"),
         playerAvatar: state.avatar,
         encounterAvatar: state.encounterAvatar,
+        footprintPack: pack,
+        beastRenderer: pack ? footprintRenderer : null,
         entrance: map === "entrance" && zone.depth === 0,
         landmark: walk.scene?.landmark || (map === "boss" ? "gate" : map === "landmark" ? landmarkArt(walk.fork[walk.side]) : null),
         trainingScene: zone.id === 7 ? walk.scene : null,
