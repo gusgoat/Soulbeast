@@ -1,6 +1,6 @@
 export {mountSaveNotice} from './walk-save-notice.mjs?v=save-safe-20261106';
 import {mergeWalkPlayer,backupWalkDraft,backupActiveWalk} from './walk-save-merge.mjs?v=lesson-progress-1';
-import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=test-world-entry-20261122-1';
+import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=guild-war-test-20261124';
 
 const contextKey = 'soulbeast-online-walk-v1';
 const playerKey = 'soulbeast-walk-preview-player-v1';
