@@ -1527,7 +1527,21 @@ campAI_=function(r){
  replayCampAI_(r);
  delete r._replayUnits;
 };
-const replayCampView_=campView_;campView_=function(r){if(r.status==='active'){campAI_(r);pvpWrite_(r,findRow_(sheet_(PVP_ROOM,PVP_HEAD),r.id));}const res=replayCampView_(r);res.room.replay=r.replay;return res;};
+function restoreCampReplayGenders_(room){
+ for(const [seat,side] of [[0,'allies'],[1,'enemies']]){
+  const heroes=[room.battle,room.replay?.initial].map(b=>b?.[side]?.find(u=>u.kind==='player'&&u.owner===seat)).filter(Boolean);
+  const missing=heroes.filter(u=>!['male','female'].includes(u.gender));
+  if(!missing.length)continue;
+  let gender=heroes.find(u=>['male','female'].includes(u.gender))?.gender;
+  if(!gender){
+   const code=room.players[seat]?.code;
+   if(!code)continue;
+   try{gender=campRaw_(code)?.P?.gender;}catch{continue;}
+  }
+  if(['male','female'].includes(gender))for(const u of missing)u.gender=gender;
+ }
+}
+const replayCampView_=campView_;campView_=function(r){restoreCampReplayGenders_(r);if(r.status==='active'){campAI_(r);pvpWrite_(r,findRow_(sheet_(PVP_ROOM,PVP_HEAD),r.id));}const res=replayCampView_(r);res.room.replay=r.replay;return res;};
 wbAdvance_=function(r){if(r.status==='starting'){wbStart_(r);return;}if(r.status==='active'){replayInit_(r);for(let i=0;i<1500&&r.status==='active';i++){S={P:{gold:0},battle:r.battle};const u=uById(r.battle.cur);if(!u)break;S.P.gold=r.players[u.owner].gold;const move=wbAuto_(u);wbMove_(r,move.id,move.friend,false);replayFrame_(r);}delete r._replayUnits;}if(r.status==='finished')wbSettle_(r);};
 const replayWbStart_=wbStart_;wbStart_=function(r){replayWbStart_(r);if(r.status==='active')wbAdvance_(r);};
 const replayWbView_=wbView_;wbView_=function(r,code){const res=replayWbView_(r,code);res.room.replay=r.replay;res.room.autoOnly=true;return res;};
@@ -1741,7 +1755,12 @@ function campDefenseIds_(raw,c){carryNormalize_(raw);return [...new Set(Array.is
 function activityPetIds_(raw,ids,cap,allowEmpty=false){carryNormalize_(raw);if(!Array.isArray(ids)||(!allowEmpty&&!ids.length)||ids.length>cap||new Set(ids).size!==ids.length||ids.some(id=>!Number.isSafeInteger(id)||!raw.carried.includes(id)||!raw.pets.some(p=>p.uid===id)))pvpFail_('camp pets selection');return ids.slice();}
 function activityPvpTeam_(raw,seat,ids){if(ids===undefined)return pvpTeam_(raw,seat);const p=JSON.parse(JSON.stringify(raw));p.party=activityPetIds_(p,ids,Math.min(3,clsSum(p.cls)),true);return pvpTeam_(p,seat);}
 function guildCombatTeam_(raw,seat,ids){if(ids!==undefined){const p=JSON.parse(JSON.stringify(raw));p.party=activityPetIds_(p,ids,raidPetLimit_(p));return pvpTeam_(p,seat,'guildwar');}const p=JSON.parse(JSON.stringify(raw));carryNormalize_(p);p.party=[...new Set([...p.party,...p.carried])].slice(0,raidPetLimit_(p));return pvpTeam_(p,seat,'guildwar');}
-campTeam_=function(raw,input,seat){const p=JSON.parse(JSON.stringify(raw)),ids=campInputPets_(p,input);p.party=ids;p.carried=ids;return pvpTeam_(p,seat,'raid');};
+campTeam_=function(raw,input,seat){const p=JSON.parse(JSON.stringify(raw)),ids=campInputPets_(p,input);p.party=ids;p.carried=ids;
+ const team=pvpTeam_(p,seat,'raid');
+ const hero=team.team.find(u=>u.kind==='player'&&u.owner===seat);
+ if(hero&&['male','female'].includes(raw.gender))hero.gender=raw.gender;
+ return team;
+};
 
 // One carried-beast defense registration protects both camp and guild war.
 function requireDefense_(raw,code){const ids=campDefenseIds_(raw,campState_(code));if(!ids.length)pvpFail_('defense required');return ids;}
