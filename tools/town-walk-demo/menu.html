@@ -7686,7 +7686,7 @@ const MotionTimeline={
   if(p.hp>0)html=html.replace('down ','');return html.replace(/<span class="fx [^"]*">[\s\S]*?<\/span>/g,'');
  },
  revealRemaining(){const defeated=[...this.held].filter(([id,p])=>p.hp>0&&BattleEffects.actor(id)?.hp<=0).map(([id])=>BattleEffects.actor(id));this.held.clear();render();defeated.forEach(u=>this.death(u));},
- death(u){if(!u||u.hp>0||this.dead.has(String(u.id)))return;this.dead.add(String(u.id));Sound.playDeath(u);},
+ death(u){if(!u||u.captured||u.hp>0||this.dead.has(String(u.id)))return;this.dead.add(String(u.id));Sound.playDeath(u);},
  arrive(id){const p=this.held.get(String(id)),u=BattleEffects.actor(id);this.held.delete(String(id));if(p&&u?.st){render();if(p.hp>0&&u.hp<=0)this.death(u);const a=BattleEffects.anchor(id),delta=u.hp-p.hp;if(a&&delta){const n=document.createElement('span');n.className='motion-damage-number';n.textContent=(delta>0?'+':'')+fmt(delta);n.style.cssText='left:'+a.x+'px;top:'+a.y+'px;color:'+(delta>0?'#9ff0b2':'#ffb0a0');document.getElementById('vfx')?.appendChild(n);CharacterMotion.schedule(()=>n.remove(),1200);}}},
  sound(skill,actor,critical=false){this.sounding=true;try{if(skill.startsWith('item:'))ExtraAudio.play(CON[skill.slice(5)]?.cure?'heal':'drink');else if(skill.startsWith('seal:'))ExtraAudio.play('seal');else if(critical)timelineExtraSkill.call(ExtraAudio,skill,actor,true);else timelineSkill.call(Sound,skill,actor);}finally{this.sounding=false;}},
  flush(){
@@ -9280,8 +9280,9 @@ function ordinaryBattleContext(battle,floor){
  function view(){
   const b=B(),u=b&&uById(b.cur);if(!b)return null;
   const skills=u?[...new Set([...u.skills,'rest'])].filter(id=>SK[id]).map(id=>{const s=SK[id];return {id,...s,cost:costOf(u,s),coinCost:s.gc?s.gc*u.lv:s.pctGold?Math.floor(S.P.gold*s.pctGold):0,cooldown:cooldownOf(u,id),available:!cooldownOf(u,id)&&costOf(u,s)<=u.mp&&(!s.gc||S.P.gold>=s.gc*u.lv)&&(!s.pctGold||Math.floor(S.P.gold*s.pctGold)>=1)&&(!s.summon||battleHasRoom(u)),element:effectiveElement(u,s),range:s.range||(['m','h'].includes(s.t)||s.t==='auto'&&u.atkType==='m'?'ranged':'melee')};}):[];
+  const capturedIds=new Set(b.enemies.filter(x=>x.captured).map(x=>x.id));
   return clone({battle:battleId,revision,current:b.cur,round:b.round,turn:b.round||1,clockKey:[b.cur,b.round,sequence].join(':'),kind:b.kind,zone:S.zone?.id||b.meta||1,auto:!!S.ui.autoTeam||forcedAuto,autoPet:!!S.ui.autoPet,autoAllowed:teamAutoAllowed()&&S.P.lv>=10||forcedAuto,speed:BattleSpeed.value||1,waiting:b.menu==='wait'||u?.side==='enemy',over:b.over||null,saving:closing||!!(b.towerRun&&TOWER_UI.busy),saveError:saveError||(b.towerRun?TOWER_UI.error:''),
-   context:ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor),units:[...b.allies,...b.enemies].map(x=>({...x,maxHp:x.st.hp,maxMp:x.st.mp})),queue:b.queue,skills,log:b.log.slice(-12),
+   context:ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor),units:[...b.allies,...b.enemies].filter(x=>!x.captured).map(x=>({...x,maxHp:x.st.hp,maxMp:x.st.mp})),queue:b.queue.filter(id=>!capturedIds.has(id.replace(/\*$/,""))),skills,log:b.log.slice(-12),
    items:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]&&!CON[id].seal&&!CON[id].petExp&&(CON[id].hp||CON[id].mp||CON[id].rev||CON[id].cure)).map(([id,n])=>({id,name:CON[id].n,count:n,rev:!!CON[id].rev})),
    seals:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]?.seal).map(([id,n])=>({id,name:CON[id].n,count:n})),
    captureTargets:b.enemies.filter(sealable).map(x=>x.id),summons:carriedPets().filter(p=>p.hp>0&&!b.allies.some(x=>x.uid===p.uid)).map(p=>({uid:p.uid,name:petName(p),lv:p.lv})),canEscape:!!b.towerRun||['wild','bandit','traveler'].includes(b.kind),

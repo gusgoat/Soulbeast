@@ -280,6 +280,7 @@ body[data-battle-mode="ordinary-connected"] #menu:has(>.tower-result-actions)>.p
  .arena-head:has(>.world-replay-skip:not([hidden])){padding-top:calc(5px + env(safe-area-inset-top,0px));row-gap:2px}
 }
 </style>
+<style>body[data-battle-mode="ordinary-connected"]:not(:has(.stage-actor.enemy:not([hidden]))) #select-enemy{visibility:hidden;pointer-events:none}</style>
 </head><body>
 <main class="game" id="game">
 <section class="arena" id="arena" aria-label="สนามต่อสู้">
