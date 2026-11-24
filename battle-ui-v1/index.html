@@ -195,6 +195,25 @@ body[data-battle-mode="ordinary-connected"] #menu:has(>.pvp-result)>button{
  background:radial-gradient(ellipse at 0 0,#bd8c3644,transparent 75%),linear-gradient(125deg,#26394a,#152432);
 }
 body[data-battle-mode="ordinary-connected"] #menu:has(>.pvp-result)>.pvp-message{flex:none}
+
+/* Keep the primary result action in the top right, including on narrow phones. */
+body[data-battle-mode="ordinary-connected"] #menu:has(>.pvp-result):has(>[data-connected="done"]){
+ --result-action:clamp(92px,30%,152px);
+ display:grid;grid-template-columns:minmax(0,1fr) var(--result-action);grid-template-rows:auto;
+ align-items:start;align-content:start;gap:0;
+}
+body[data-battle-mode="ordinary-connected"] #menu:has(>[data-connected="done"])>.pvp-result{
+ grid-area:1/1/2/3;align-self:stretch;min-height:88px;
+ padding-inline-end:calc(var(--result-action) + 9px);
+}
+body[data-battle-mode="ordinary-connected"] #menu:has(>.pvp-result)>button[data-connected="done"]{
+ grid-area:1/2;position:sticky;top:8px;z-index:1;align-self:start;justify-self:end;
+ width:calc(100% - 10px);min-width:0;height:auto;min-height:54px;
+ margin:9px 9px 9px 0;padding:8px;display:flex;justify-content:center;align-items:center;text-align:center;
+}
+#menu:has(>.pvp-result)>[data-connected="done"] .command-picture,
+#menu:has(>.pvp-result)>[data-connected="done"] small{display:none}
+#menu:has(>.pvp-result)>[data-connected="done"] b{white-space:normal;overflow-wrap:anywhere;line-height:1.35}
 </style><link rel="stylesheet" href="card-status.css?v=1"><script src="status-labels.js?v=1"></script><script src="effect-layers.js?v=1"></script><script src="card-status.js?v=1"></script></head><body>
 <main class="game" id="game">
 <section class="arena" id="arena" aria-label="สนามต่อสู้">

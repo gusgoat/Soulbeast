@@ -3619,7 +3619,7 @@ function turnStartBase(u){const s=u.status;
  else if(s.confuse&&Math.random()<.35){const d=Math.max(1,Math.round(u.st.hp*.06));skip=`${u.name} มึนงง ทำร้ายตัวเอง ${d} HP`;hurt(u,d)}
  for(const k of ['burn','poison','chill','static','love','confuse','charm','para'])if(s[k]){if(persistentBattleUnit(u)&&PERSISTENT_AILMENTS.includes(k))continue;s[k]--;if(s[k]<=0){delete s[k];blog(`${u.name} หายจากอาการ${STS[k].n}`)}}
  if(skip){blog(skip);return true}return false}
-function advance(){const b=B();if(!b||b.over)return;if(window.BattleReady&&!BattleReady.ready(b)){render();BattleReady.wait(b).then(()=>{if(B()===b&&!b.over)advance()});return;}if(S.ui.trapNotice){battleLater(advance,150);return}b.fx=[];if(checkEnd()){render();return}
+function advance(){const b=B();if(!b||b.over)return;if(towerDeferTurn?.(b))return;if(!towerFieldOwns?.(b)&&window.BattleReady&&!BattleReady.ready(b)){render();BattleReady.wait(b).then(()=>{if(B()===b&&!b.over)advance()});return;}if(S.ui.trapNotice){battleLater(advance,150);return}b.fx=[];if(checkEnd()){render();return}
  while(b.queue.length){const q=b.queue.shift(),extra=q.endsWith('*'),u=uById(q.replace('*',''));if(!u||u.hp<=0)continue;
   if(!extra&&turnStart(u)){if(checkEnd()){render();return}continue}
   if(extra&&(u.status.freeze||u.status.sleep))continue;
@@ -5607,12 +5607,25 @@ showEvolutionNotice=function(){try{return progressionEvolutionNotice();}catch(er
 
 TOWN_ART.arena='assets/ui/martial-tower-v1.webp';
 const TOWER_FLOORS=NPC.map((n,i)=>({n,i})).sort((a,b)=>a.n.lv-b.n.lv||a.i-b.i);
+var towerFieldOwns,towerDeferTurn;
 const TOWER_UI={busy:false,error:'',today:'',ready:false,saving:null};
 const towerActive=()=>!!S.P?.towerRun?.active;
 function towerError(error){return {'tower daily limit':'เข้าหอคอยได้วันละครั้ง วันนี้ใช้สิทธิ์แล้ว','tower heal first':'รักษาตัวและเตรียมทีมก่อนเข้าหอคอย','tower wrong run':'ข้อมูลรอบหอคอยไม่ตรง กรุณาตรวจสถานะอีกครั้ง','tower wrong floor':'ชั้นหอคอยไม่ตรง กรุณาตรวจสถานะอีกครั้ง','tower locked':'ต้องจบหอคอยหรือแพ้ก่อนออกไปทำกิจกรรมอื่น'}[error]||({'login_required':'กรุณาเข้าสู่ระบบออนไลน์ใหม่','character_not_owned':'กรุณาเลือกตัวละครจากหน้าบัญชีออนไลน์','save_conflict':'กรุณาโหลดเซฟออนไลน์ล่าสุดก่อนเริ่มหอคอย','finish other battle':'กรุณาจบการต่อสู้เดิมก่อนเข้าหอคอย'})[error]||sheetError({error})+(/^[a-z0-9_ -]{1,80}$/i.test(error||'')?' ('+error+')':'');}
 function towerApply(run,coupons,recovery){const old=S.P.towerRun;S.P.towerBest=run.best||0;S.P.towerRun={...run,checkpoint:old?.id===run.id?old?.checkpoint??null:null};if(Number.isFinite(coupons))GACHA.coupons=coupons;if(recovery&&S.P.towerRecoveryApplied!==recovery.id){if(recovery.cleanse||recovery.id.endsWith(':entry')||recovery.id.endsWith(':exit')){S.P.ailments={};S.P.pets.forEach(p=>p.ailments={});}S.P.hp=recovery.hp;S.P.mp=recovery.mp;for(const v of recovery.pets){const p=petBy(v.uid);if(p){p.hp=v.hp;p.mp=v.mp;}}S.P.towerRecoveryApplied=recovery.id;}if(recovery?.reward&&S.P.towerTreasureApplied!==recovery.reward.id){const w=recovery.reward;S.P.owned.push(w.gear);S.P.gold+=w.gold;S.P.towerTreasureApplied=w.id;toast('หีบสมบัติ: '+EQ[w.gear].n+' · '+fmt(w.gold)+' เหรียญ');}}
 function towerCheckpoint(){const run=S.P?.towerRun,b=S.battle;if(run&&b?.towerRun===run.id){run.checkpoint=JSON.parse(JSON.stringify(b));}}
 async function towerSaveNow(){if(TOWER_UI.saving)await TOWER_UI.saving;towerCheckpoint();save();if(WALK_ONLINE){TOWER_UI.saving=(await getWalkAccountConnection()).flush(true);try{return await TOWER_UI.saving;}finally{TOWER_UI.saving=null;}}const data=gsData();TOWER_UI.saving=(async()=>{const r=await lbPost({action:'save',data});if(!r.ok)throw Error(r.error||'save failed');S.P.gsAt=r.at;GS.lastJson=data;GS.lastAt=Date.now();return r;})();try{return await TOWER_UI.saving;}finally{TOWER_UI.saving=null;}}
+async function confirmTowerFloor(b){
+ const run=S.P.towerRun;
+ if(b.towerResultSaved&&run?.id===b.towerRun&&(!run.active||run.cleared>=b.towerFloor))return;
+ await towerSaveNow();
+ const result=await lbPost({action:'tower_result',run:b.towerRun,floor:b.towerFloor,outcome:b.over.res==='win'?'win':'lose'});
+ if(!result.ok)throw Error(result.error);
+ towerApply(result.run,result.coupons,result.recovery);
+ b.towerResultSaved=true;
+ if(result.run.lastCouponFloor===b.towerFloor&&result.run.lastCouponReward===2&&!b.towerCouponNotice){
+  b.towerCouponNotice=true;b.over.lines.push('คูปองผ่านชั้นครั้งแรก +2 ใบ');
+ }
+}
 async function towerStatus(){if(TOWER_UI.busy)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{const r=await lbPost({action:'tower_status'});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);TOWER_UI.today=r.today;TOWER_UI.ready=true;if(towerActive())towerResume();else if(r.run&&S.battle?.towerRun===r.run.id){S.battle=null;S.P.towerRun.checkpoint=null;S.screen=r.run.outcome==='lose'?'hospital':'arena';}}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;save();render();}}
 function towerStartFloor(){const run=S.P.towerRun,entry=TOWER_FLOORS[run.floor-1];if(!run.active||!entry)return;S.battle=null;S.P.party=S.P.party.filter(uid=>run.carried.includes(uid)&&S.P.carried.includes(uid));const n=entry.n,es=[humanUnit(n.n,n.cls,n.lv,0)];n.pets.forEach(([sp,lv],i)=>{const u=wildUnit(sp,lv,i+1);u.name+='ของ'+n.n.split(' ')[0];u.kind='npcpet';es.push(u);});
  // startBattle advances immediately; set the run marker before its first render/timer.
@@ -5629,9 +5642,9 @@ handlers.towerRefresh=towerStatus;
 handlers.towerSurrender=function(){if(!towerActive()||TOWER_UI.busy)return;S.ui.confirm={msg:'ยอมแพ้และจบการท้าทายหอคอย? ไม่เสีย EXP หรือเงิน ฟื้น HP/MP และล้างสถานะทั้งหมดฟรี ใช้สิทธิ์ของวันนี้แล้ว',act:'towerSurrenderConfirm'};render();};
 handlers.towerSurrenderConfirm=async function(){if(!towerActive()||TOWER_UI.busy)return;S.ui.confirm=null;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await towerSaveNow();const r=await lbPost({action:'tower_surrender',run:S.P.towerRun.id});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);CharacterMotion.reset();BattleEffects.clear();S.battle=null;S.P.towerRun.checkpoint=null;S.screen='town';await towerSaveNow();}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;render();}};
 handlers.arena=()=>toast('เข้าหอคอยจากชั้น 1 ด้วยปุ่มยืนยันเท่านั้น');
-handlers.towerNext=async function(){const b=S.battle,run=S.P.towerRun;if(TOWER_UI.busy||!b?.over||b.towerRun!==run?.id)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await towerSaveNow();const r=await lbPost({action:'tower_result',run:run.id,floor:b.towerFloor,outcome:b.over.res==='win'?'win':'lose'});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);if(r.run.active){towerResume();await towerSaveNow();}else{S.battle=null;S.screen=r.run.outcome==='lose'?'hospital':'town';S.P.towerRun.checkpoint=null;await towerSaveNow();lbSubmit(true);}}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;save();render();}};
+handlers.towerNext=async function(){const b=S.battle,run=S.P.towerRun;if(TOWER_UI.busy||!b?.over||b.towerRun!==run?.id)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await confirmTowerFloor(b);const updated=S.P.towerRun;if(updated.active){towerResume();await towerSaveNow();}else{S.battle=null;S.screen=updated.outcome==='lose'?'hospital':'town';S.P.towerRun.checkpoint=null;await towerSaveNow();lbSubmit(true);}}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;save();render();}};
 const towerEndBattle=endBattle;
-async function towerRecordResult(b){if(TOWER_UI.busy||S.battle!==b||!b.over||b.towerResultSaved)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await towerSaveNow();const r=await lbPost({action:'tower_result',run:b.towerRun,floor:b.towerFloor,outcome:b.over.res==='win'?'win':'lose'});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);b.towerResultSaved=true;if(r.run.lastCouponFloor===b.towerFloor&&r.run.lastCouponReward===2&&!b.towerCouponNotice){b.towerCouponNotice=true;b.over.lines.push('คูปองผ่านชั้นครั้งแรก +2 ใบ');}await towerSaveNow();if(!S.P.lbOff)lbSubmit(true);}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;render();}}
+async function towerRecordResult(b){if(TOWER_UI.busy||S.battle!==b||!b.over||b.towerResultSaved)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await confirmTowerFloor(b);await towerSaveNow();if(!S.P.lbOff)lbSubmit(true);}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;render();}}
 endBattle=function(res){const b=S.battle,wasOver=b?.over;let out;if(b?.towerRun&&!wasOver){syncBack();const lines=[];if(res==='win'){const n=NPC[b.meta],first=!S.P.arena[b.meta],base=first?n.gold:Math.round(n.gold*.3),lucky=b.allies[0].pas.filter(k=>k==='lucky').length,gold=Math.round(base*(1+.25*lucky));S.P.gold+=gold;S.P.arena[b.meta]=(S.P.arena[b.meta]||0)+1;lines.push('เงินรางวัล '+fmt(gold)+' เหรียญ'+(first?' (ผ่านครั้งแรก)':''),'หอคอยไม่แจก EXP หรือไอเท็ม');b.over={res,title:'ชัยชนะ',lines};Sound.fx('win');}else{b.over={res,title:'จบการท้าทาย',lines:['พ่ายแพ้ที่ชั้น '+b.towerFloor,'ไม่เสีย EXP และเงิน · ฟื้น HP/MP และรักษาสถานะทั้งหมดฟรีเมื่อจบการท้าทาย']};Sound.fx('lose');}b.menu='end';}else out=towerEndBattle(res);if(b?.towerRun&&!wasOver&&b.over){towerCheckpoint();save();setTimeout(()=>towerRecordResult(b),0);}return out;};
 const towerBattleAction=battleAction;
 battleAction=function(value){if(S.battle?.towerRun){const k=String(value).split(':')[0];if(k==='done')return handlers.towerNext();if(k==='swap'&&!S.P.towerRun.carried.includes(Number(value.split(':')[1])))return toast('เรียกได้เฉพาะอสูรที่พกเข้าหอคอย');if(k==='item'||k==='seal'||k==='flee'||value==='menu:item'||value==='menu:seal')return toast('หอคอยห้ามใช้ไอเท็ม ผนึก และหนี ใช้สกิลฮีลหรือพักฟื้นได้');}return towerBattleAction(value);};
@@ -9200,6 +9213,24 @@ function ordinaryBattleContext(battle,floor){
  const ordinary=b=>b&&!b.dungeonParty&&!b.partyRunId&&['wild','bandit','traveler','npc','boss','secret','warpBoss','riddleMirror','taleTrial'].includes(b.kind);
  // One presentation layer owns battle audio; the walking game's settings are preserved.
  const stageAudio=()=>!!frame&&useStage(B());
+ towerFieldOwns=b=>!!b?.towerRun&&S.screen==='battle'&&useStage(b);
+ const awaitingOpening=new WeakSet();
+ towerDeferTurn=b=>{
+  if(!towerFieldOwns(b)||(battle===b&&fieldReady&&!TOWER_UI.busy))return false;
+  if(awaitingOpening.has(b))return true;
+  awaitingOpening.add(b);render();
+  const resume=()=>{
+   if(B()!==b||b.over){awaitingOpening.delete(b);return;}
+   if((useStage(b)&&!fieldReady)||TOWER_UI.busy){setTimeout(resume,50);return;}
+   awaitingOpening.delete(b);advance();
+  };
+  setTimeout(resume,0);return true;
+ };
+ const oldTowerView=vBattle;
+ vBattle=function(...args){return towerFieldOwns(B())?'':oldTowerView.apply(this,args);};
+ const oldFlush=flushVfx;
+ flushVfx=function(...args){if(towerFieldOwns(B())){VQ.length=0;return;}return oldFlush.apply(this,args);};
+
  for(const [owner,key]of [[Sound,'fx'],[Sound,'skill'],[ExtraAudio,'play']]){const original=owner[key];owner[key]=function(...args){if(stageAudio())return;return original.apply(this,args);};}
  const nativeMusicSync=Music.sync;Music.sync=function(...args){if(stageAudio()){this.stop();ExtraAudio.stop();Sound.stopAmb();return;}return nativeMusicSync.apply(this,args);};
  function view(){
@@ -9215,7 +9246,16 @@ function ordinaryBattleContext(battle,floor){
  function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin);}
  const defeatHandoffs=new WeakSet();
  function autoHospital(){queueMicrotask(()=>{const b=B();if(!useStage(b)||!fieldReady||presenting||closing||b.towerRun||b.over?.res!=='lose'||defeatHandoffs.has(b))return;defeatHandoffs.add(b);void finishBattle(b);});}
- function publish(){revision++;if(ready&&!presenting)post('ordinary-state',{view:view()});autoHospital();}
+ let lastTowerState='';
+ function publish(){
+  if(towerFieldOwns(B())&&ready){
+   if(presenting||depth)return;
+   const current=view(),signature=JSON.stringify({...current,revision:0});
+   if(signature===lastTowerState)return;
+   lastTowerState=signature;current.revision=++revision;post('ordinary-state',{view:current});
+  }else{revision++;if(ready&&!presenting)post('ordinary-state',{view:view()});}
+  autoHospital();
+ }
  function removeStage(){frame?.remove();frame=null;ready=false;fieldReady=false;presenting=0;recovery.stop();}
  function useLegacy(reason='manual'){
   const b=B();if(!b||!frame||closing)return;failedBattles.add(b);recoveryReason=reason;
@@ -9223,24 +9263,50 @@ function ordinaryBattleContext(battle,floor){
  }
  setInterval(()=>{recovery.pause(document.hidden);recovery.tick();},500);
  document.addEventListener('visibilitychange',()=>recovery.pause(document.hidden));
+ let towerWarm=null,warmReady=false;
+ function discardWarm(){towerWarm?.remove();towerWarm=null;warmReady=false;}
+ function createFrame(entry){
+  const el=document.createElement('iframe');el.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';el.allow='autoplay';
+  Object.assign(el.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25',visibility:'hidden'});
+  el.inert=true;el.setAttribute('aria-hidden','true');
+  el.addEventListener('error',()=>{if(el===frame)useLegacy('frame-error');else if(el===towerWarm)discardWarm();});
+  el.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=dungeon-solo-context-20261123-1'+'&entry='+entry;document.body.append(el);return el;
+ }
  function mount(){
-  const b=B();if(!useStage(b)||S.screen!=='battle'){if(frame)removeStage();battle=null;return;}
+  const b=B();if(!useStage(b)||S.screen!=='battle'){
+   if(frame)removeStage();battle=null;
+   if(S.screen==='arena'){if(!towerWarm)towerWarm=createFrame('dungeon');}else discardWarm();
+   return;
+  }
   if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';fieldReady=false;requests.clear();recovery.start(battleId);}
-  if(!frame){frame=document.createElement('iframe');frame.id='ordinary-battle-stage';frame.title='สนามต่อสู้ใหม่ · เว็บทดสอบ';frame.allow='autoplay';Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:'2147483000',background:'#101b25'});frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=dungeon-solo-context-20261123-1'+(b.towerRun?'&entry=country':ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor)?'&entry=dungeon':'&entry=country');document.body.append(frame);
-   frame.addEventListener('error',()=>useLegacy('frame-error'));
+  if(!frame){
+   if(b.towerRun&&towerWarm){frame=towerWarm;ready=warmReady;towerWarm=null;warmReady=false;}
+   else{discardWarm();frame=createFrame(b.towerRun||ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor)?'dungeon':'country');}
+   frame.id='ordinary-battle-stage';frame.inert=false;frame.removeAttribute('aria-hidden');
    Music.stop();ExtraAudio.stop();Sound.stopAmb();}
   frame.style.visibility=b.towerRun&&S.ui.confirm?.act==='towerSurrenderConfirm'?'hidden':'';publish();
  }
  render=function(...args){const r=nativeRender.apply(this,args);mount();return r;};
  teamAutoUnit=function(u){return forcedAuto&&u?.side==='ally'||nativeTeamAuto(u);};
  // Keep the original engine's next turn behind the renderer's presentation barrier.
- battleLater=function(fn,ms){const b=B();return nativeLater(()=>{const resume=()=>{if(B()!==b)return;if(useStage(b)&&(!ready||!fieldReady||presenting)){setTimeout(resume,50);return;}fn();};resume();},ms);};
+ battleLater=function(fn,ms){const b=B();
+  if(towerFieldOwns(b)){
+   const serial=(b.towerTimerSerial||0)+1;b.towerTimerSerial=serial;
+   b.towerContinuation=fn===aiAct?'ai':fn===advance?'advance':'charge';
+   const resume=()=>{
+    if(B()!==b||b.over||b.towerTimerSerial!==serial)return;
+    if(useStage(b)&&(!fieldReady||presenting)||TOWER_UI.busy||S.ui.confirm?.act==='towerSurrenderConfirm'){setTimeout(resume,50);return;}
+    b.towerContinuation=null;fn();
+   };
+   return towerBattleLater(resume,Math.min(ms,100));
+  }
+  return nativeLater(()=>{const resume=()=>{if(B()!==b)return;if(useStage(b)&&(!ready||!fieldReady||presenting)){setTimeout(resume,50);return;}fn();};resume();},ms);};
  act=function(u,id,target,friend,free){
-  const capture=useStage(B())&&depth===0,before=capture?view():null;depth++;
+  const capture=useStage(B())&&depth===0,before=capture?view():null,towerEvents=capture&&towerFieldOwns(B())?VQ.length:null;depth++;
   let ok;try{ok=nativeAct(u,id,target,friend,free);}finally{depth--;}
   if(capture&&ok&&useStage(B())){
    const sk=SK[id]||{},seq=++sequence;presenting=seq;recovery.action(battleId,seq);
-   const action={actor:u.id,skill:id,name:sk.n||id,target:target?.id,friend:sk.tg==='self'||['rest','form','revert','summon'].includes(sk.t)?u.id:friend?.id,support:['heal','buff','rest','form','revert','summon'].includes(sk.t),all:!!sk.all||sk.tg==='team',charging:!!u.charging&&u.charging.id===id,range:sk.range||(['m','h'].includes(sk.t)||sk.t==='auto'&&u.atkType==='m'?'ranged':'melee'),events:clone(B().effects||[])};
+   const action={actor:u.id,skill:id,name:sk.n||id,target:target?.id,friend:sk.tg==='self'||['rest','form','revert','summon'].includes(sk.t)?u.id:friend?.id,support:['heal','buff','rest','form','revert','summon'].includes(sk.t),all:!!sk.all||sk.tg==='team',charging:!!u.charging&&u.charging.id===id,range:sk.range||(['m','h'].includes(sk.t)||sk.t==='auto'&&u.atkType==='m'?'ranged':'melee'),events:clone(towerEvents===null?B().effects||[]:BattleEffects.enrich(VQ.slice(towerEvents),u.id,id))};
    queueMicrotask(()=>{if(B()!==battle)return;revision++;post('ordinary-action',{sequence:seq,before,action,view:view()});});
   }
   return ok;
@@ -9285,7 +9351,13 @@ function ordinaryBattleContext(battle,floor){
   if(!presenting)publish();
  }
  addEventListener('message',e=>{
-  if(e.origin!==location.origin||e.source!==frame?.contentWindow)return;const m=e.data;
+  if(e.origin!==location.origin)return;
+  if(towerWarm&&e.source===towerWarm.contentWindow){
+   if(e.data?.type==='ordinary-ready')warmReady=true;
+   if(e.data?.type==='ordinary-render-error')discardWarm();
+   return;
+  }
+  if(!frame||e.source!==frame.contentWindow)return;const m=e.data;
   if(m?.type==='ordinary-ready'){ready=true;post('ordinary-state',{view:view()});return;}
   if(m?.type==='ordinary-render-error'&&(!ready||m.channel===channel)){useLegacy('renderer-error');return;}
   if(m?.channel!==channel)return;
