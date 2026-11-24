@@ -537,6 +537,7 @@ html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-heig
 .tutorial-tip h3{font-size:18px!important;margin:4px 0 8px!important;line-height:1.4}.tutorial-tip p{margin:8px 0!important;line-height:1.5}.tutorial-tip>small{display:block;font-size:12px;line-height:1.4;color:#cdd8df}
 .tutorial-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.tutorial-actions .btn{min-height:36px;padding:6px 12px;font-size:13px}
 .tutorial-pointer{position:absolute;font:40px/1 sans-serif;color:#ffcf57;filter:drop-shadow(0 2px 4px #000);animation:tutorialArrow .8s ease-in-out infinite alternate}
+body:has(#ordinary-battle-stage) > #tutorialCoach.tutorial-modal{z-index:2147483001}
 .tutorial-modal{background:#06101b99;pointer-events:auto}.tutorial-modal .tutorial-tip{max-height:78vh}
 .tutorial-example{height:65px;overflow:hidden;position:relative;border:1px dashed #edc267;border-radius:9px;padding:8px;margin:5px 0;background:#091b2b;pointer-events:none}.tutorial-example:after{content:'↖';position:absolute;right:8px;bottom:1px;font:36px sans-serif;color:#ffcf57;filter:drop-shadow(0 1px 2px #000)}
 .tutorial-example-copy{animation:none!important;outline:none!important;box-shadow:none!important;max-height:65px;max-width:calc(100% - 25px);margin:0!important;min-height:36px!important;pointer-events:none!important;opacity:1!important;color:inherit!important}.tutorial-example-copy input{pointer-events:none}
@@ -3619,7 +3620,7 @@ function turnStartBase(u){const s=u.status;
  else if(s.confuse&&Math.random()<.35){const d=Math.max(1,Math.round(u.st.hp*.06));skip=`${u.name} มึนงง ทำร้ายตัวเอง ${d} HP`;hurt(u,d)}
  for(const k of ['burn','poison','chill','static','love','confuse','charm','para'])if(s[k]){if(persistentBattleUnit(u)&&PERSISTENT_AILMENTS.includes(k))continue;s[k]--;if(s[k]<=0){delete s[k];blog(`${u.name} หายจากอาการ${STS[k].n}`)}}
  if(skip){blog(skip);return true}return false}
-function advance(){const b=B();if(!b||b.over)return;if(towerDeferTurn?.(b))return;if(!towerFieldOwns?.(b)&&window.BattleReady&&!BattleReady.ready(b)){render();BattleReady.wait(b).then(()=>{if(B()===b&&!b.over)advance()});return;}if(S.ui.trapNotice){battleLater(advance,150);return}b.fx=[];if(checkEnd()){render();return}
+function advance(){const b=B();if(!b||b.over)return;if(towerDeferTurn?.(b)||deferForestOpening?.(b))return;if(!towerFieldOwns?.(b)&&!forestFieldOwns?.(b)&&window.BattleReady&&!BattleReady.ready(b)){render();BattleReady.wait(b).then(()=>{if(B()===b&&!b.over)advance()});return;}if(S.ui.trapNotice){battleLater(advance,150);return}b.fx=[];if(checkEnd()){render();return}
  while(b.queue.length){const q=b.queue.shift(),extra=q.endsWith('*'),u=uById(q.replace('*',''));if(!u||u.hp<=0)continue;
   if(!extra&&turnStart(u)){if(checkEnd()){render();return}continue}
   if(extra&&(u.status.freeze||u.status.sleep))continue;
@@ -5608,7 +5609,7 @@ showEvolutionNotice=function(){try{return progressionEvolutionNotice();}catch(er
 
 TOWN_ART.arena='assets/ui/martial-tower-v1.webp';
 const TOWER_FLOORS=NPC.map((n,i)=>({n,i})).sort((a,b)=>a.n.lv-b.n.lv||a.i-b.i);
-var towerFieldOwns,towerDeferTurn;
+var towerFieldOwns,towerDeferTurn,forestFieldOwns,deferForestOpening;
 const TOWER_UI={busy:false,error:'',today:'',ready:false,saving:null};
 const towerActive=()=>!!S.P?.towerRun?.active;
 function towerError(error){return {'tower daily limit':'เข้าหอคอยได้วันละครั้ง วันนี้ใช้สิทธิ์แล้ว','tower heal first':'รักษาตัวและเตรียมทีมก่อนเข้าหอคอย','tower wrong run':'ข้อมูลรอบหอคอยไม่ตรง กรุณาตรวจสถานะอีกครั้ง','tower wrong floor':'ชั้นหอคอยไม่ตรง กรุณาตรวจสถานะอีกครั้ง','tower locked':'ต้องจบหอคอยหรือแพ้ก่อนออกไปทำกิจกรรมอื่น'}[error]||({'login_required':'กรุณาเข้าสู่ระบบออนไลน์ใหม่','character_not_owned':'กรุณาเลือกตัวละครจากหน้าบัญชีออนไลน์','save_conflict':'กรุณาโหลดเซฟออนไลน์ล่าสุดก่อนเริ่มหอคอย','finish other battle':'กรุณาจบการต่อสู้เดิมก่อนเข้าหอคอย'})[error]||sheetError({error})+(/^[a-z0-9_ -]{1,80}$/i.test(error||'')?' ('+error+')':'');}
@@ -9243,6 +9244,20 @@ function ordinaryBattleContext(battle,floor){
  // One presentation layer owns battle audio; the walking game's settings are preserved.
  const stageAudio=()=>!!frame&&useStage(B());
  towerFieldOwns=b=>!!b?.towerRun&&S.screen==='battle'&&useStage(b);
+ // Forest encounters wait for the visible field and its skill effects.
+ // The legacy BattleReady loader waits on artwork belonging to the covered menu.
+ let pendingForestOpening=null;
+ forestFieldOwns=b=>!!S.zone&&S.screen==='battle'&&!b?.towerRun&&useStage(b)&&!ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor);
+ deferForestOpening=b=>{
+  if(!forestFieldOwns(b)||(battle===b&&fieldReady))return false;
+  if(pendingForestOpening!==b){pendingForestOpening=b;render();}
+  return true;
+ };
+ function resumeForestOpening(b){
+  if(!b||pendingForestOpening!==b)return;
+  pendingForestOpening=null;
+  if(B()===b&&!b.over&&!b.cur)advance();
+ }
  const awaitingOpening=new WeakSet();
  towerDeferTurn=b=>{
   if(!towerFieldOwns(b)||(battle===b&&fieldReady&&!TOWER_UI.busy))return false;
@@ -9317,7 +9332,7 @@ function ordinaryBattleContext(battle,floor){
  function removeStage(){towerControl?.stop();towerControl=null;frame?.remove();frame=null;ready=false;fieldReady=false;presenting=0;recovery.stop();}
  function useLegacy(reason='manual'){
   const b=B();if(!b||!frame||closing)return;failedBattles.add(b);recoveryReason=reason;
-  removeStage();nativeRender();Music.sync();nativeToast('เปลี่ยนกลับสนามเดิมแล้ว · ต่อสู้ต่อจากตาเดิมได้');
+  removeStage();nativeRender();resumeForestOpening(b);Music.sync();nativeToast('เปลี่ยนกลับสนามเดิมแล้ว · ต่อสู้ต่อจากตาเดิมได้');
  }
  setInterval(()=>{recovery.pause(document.hidden);recovery.tick();},500);
  document.addEventListener('visibilitychange',()=>recovery.pause(document.hidden));
@@ -9332,7 +9347,7 @@ function ordinaryBattleContext(battle,floor){
  }
  function mount(){
   const b=B();if(!useStage(b)||S.screen!=='battle'){
-   if(frame)removeStage();battle=null;
+   if(frame)removeStage();pendingForestOpening=null;battle=null;
    if(S.screen==='arena'&&!TOWER_UI.exitRun){if(!towerWarm)towerWarm=createFrame('dungeon');}else discardWarm();
    return;
   }
@@ -9342,7 +9357,7 @@ function ordinaryBattleContext(battle,floor){
    else{discardWarm();frame=createFrame(b.towerRun||ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor)?'dungeon':'country');}
    frame.id='ordinary-battle-stage';frame.inert=false;frame.removeAttribute('aria-hidden');
    Music.stop();ExtraAudio.stop();Sound.stopAmb();}
-  frame.style.visibility=b.towerRun&&S.ui.confirm?.act==='towerSurrenderConfirm'?'hidden':'';syncTowerControl();publish();
+  frame.style.visibility=(b.towerRun&&S.ui.confirm?.act==='towerSurrenderConfirm'||forestFieldOwns(b)&&S.ui.trapNotice)?'hidden':'';syncTowerControl();publish();
  }
  render=function(...args){const r=nativeRender.apply(this,args);mount();return r;};
  teamAutoUnit=function(u){return forcedAuto&&u?.side==='ally'||nativeTeamAuto(u);};
@@ -9422,7 +9437,16 @@ function ordinaryBattleContext(battle,floor){
   if(m?.type==='ordinary-ready'){ready=true;syncTowerControl();post('ordinary-state',{view:view()});return;}
   if(m?.type==='ordinary-render-error'&&(!ready||m.channel===channel)){useLegacy('renderer-error');return;}
   if(m?.channel!==channel)return;
-  if(m.type==='ordinary-field-ready'&&m.battle===battleId){fieldReady=true;recovery.ready(battleId);autoHospital();return;}
+  if(m.type==='ordinary-field-ready'&&m.battle===battleId){
+   if(fieldReady)return;
+   fieldReady=true;recovery.ready(battleId);
+   if(forestFieldOwns(battle)){
+    window.WalkLoading?.ready();
+    if(parent!==window)parent.postMessage({type:'walk-battle-present',href:location.href,token:battleId},location.origin);
+    resumeForestOpening(battle);
+   }
+   autoHospital();return;
+  }
   if(m.type==='ordinary-heartbeat'&&m.battle===battleId){recovery.pulse(battleId);return;}
   if(m.type==='ordinary-presented'&&m.battle===battleId&&m.sequence===presenting){if(!recovery.acknowledge(battleId,m.sequence))return;presenting=0;post('ordinary-state',{view:view()});autoHospital();}
   if(m.type==='ordinary-command')void command(m).catch(error=>{post('ordinary-notice',{message:'ดำเนินการไม่สำเร็จ กรุณาลองอีกครั้ง'});publish();console.error(error);});
