@@ -4803,10 +4803,10 @@ handlers.guildAttack=id=>{const pets=ActivityPets.ids('guildAttack').slice();if(
   if(!remoteOnly){const {offerUnsavedWalkRecovery}=await import('./client/walk-draft-recovery.mjs?v=admin-session-20261107');const recovered=await offerUnsavedWalkRecovery({snapshot:JSON.parse(r.data),owner:state.user.id,code,environment:SB_ENV,revision:remoteRevision});if(recovered)data=recovered;}
   if(r.account?.name)data.P.name=r.account.name;if(r.account?.renameAt)data.P.renameAt=r.account.renameAt;
   state.saveConflict=false;state.pendingSave=null;
-  // An active dungeon owns the save. Route to room recovery before the entry autosave.
+  // Check room membership before the entry autosave can be blocked by the room.
   const rooms=await state.client.request('/rest/v1/rpc/sb_walk_recover_rooms',
    {p_env:SB_ENV,p_code:code},await state.client.sessions.token()).catch(()=>[]);
-  if(rooms.some(room=>room.kind==='dungeon'&&room.state==='active')){
+  if(rooms.length){
    const {enterOnlineWalk}=await import('./client/online-walk.mjs?v=room-recovery-1');
    const baseline=JSON.parse(r.data);baseline.P.gsAt=remoteRevision;
    enterOnlineWalk(Number(data.P.gsAt)===remoteRevision?data:baseline,SB_ENV,state.user.id,baseline);return;
