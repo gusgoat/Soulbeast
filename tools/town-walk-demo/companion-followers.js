@@ -1,6 +1,7 @@
 (() => {
  'use strict';
  const catalog=window.WalkCompanionCatalog||{};
+ const spiritOnly=document.currentScript?.dataset.appearance==='spirit';
  const assets=new Map();
  const followDistance=90;
  const followResponse=16;
@@ -31,7 +32,7 @@
   if(asset&&--asset.refs===0){assets.delete(key);asset.image.onload=asset.image.onerror=null;asset.image.src='';}
  }
  function create(){
-  const model=window.sealerSprites?.createModel?.({beast:true});
+  const model=spiritOnly?null:window.sealerSprites?.createModel?.({beast:true});
   let key=null,asset=null,body=null,trail=[],clock=0;
   function sync(value){
    const v=normalize(value),next=v?v.sp+':'+v.form:null;
