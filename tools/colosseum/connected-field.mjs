@@ -75,7 +75,7 @@ export function createConnectedField(submit, toggleAuto) {
       return;
     }
     if(!latest || m?.channel!==channel || m.battle!==latest.battle)return;
-    if(m.type==='ordinary-field-ready'){
+    if(m.type==='ordinary-field-opening'||m.type==='ordinary-field-ready'){
       clearTimeout(timer);
       frame.style.visibility='visible';frame.inert=false;
       return;
