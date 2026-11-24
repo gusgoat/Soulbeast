@@ -9690,10 +9690,11 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
    frame.title=modes[mode].title;frame.allow='autoplay';frame.id='activity-battle-stage';frame.src='/Soulbeast/battle-ui-v1/test-effects.html?connected=ordinary&ui=activity-v1';
    Object.assign(frame.style,{position:'fixed',inset:'0',width:'100%',height:'100%',border:'0',zIndex:2147483000,background:'#101b25'});
    skip.className='btn sm';skip.textContent='ข้ามรีเพลย์';skip.hidden=true;
-   Object.assign(skip.style,{position:'fixed',right:'12px',top:'8px',zIndex:2147483001});
+   if(mode==='world')skip.className='world-replay-skip';
+   else Object.assign(skip.style,{position:'fixed',right:'12px',top:'8px',zIndex:2147483001});
    playing={mode,key,room:r,frame,skip,channel:crypto.randomUUID(),battle:r.battle,seq:0,speed:BattleSpeed.value||1,index:0,ready:false,visible:false};
    skip.onclick=()=>{const p=playing;if(p?.key===key&&p.frames){p.skipRequested=true;advance(p);}};
-   frame.addEventListener('error',fail);document.body.append(frame,skip);timeout();
+   frame.addEventListener('error',fail);document.body.append(frame);if(mode!=='world')document.body.append(skip);timeout();
   }
   const p=playing;p.room=r;
   if(!p.frames&&r.replay?.initial&&r.replay.frames?.length&&r.status!=='active'){
@@ -9707,7 +9708,10 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
  addEventListener('message',event=>{
   const p=playing,m=event.data;
   if(!p||event.origin!==location.origin||event.source!==p.frame.contentWindow)return;
-  if(m?.type==='ordinary-ready'){p.ready=true;updateState(p);return;}
+  if(m?.type==='ordinary-ready'){
+   if(p.mode==='world')p.frame.contentDocument.querySelector('.arena-head').append(p.skip);
+   p.ready=true;updateState(p);return;
+  }
   if(m?.type==='ordinary-render-error'&&(!m.channel||m.channel===p.channel)){fail();return;}
   if(m?.channel!==p.channel||m.battle!==p.key)return;
   if(m.type==='ordinary-field-ready'){p.visible=true;clearTimeout(p.timer);advance(p);}
