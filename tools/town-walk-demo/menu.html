@@ -9308,7 +9308,7 @@ function ordinaryBattleContext(battle,floor){
    context:ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor),units:[...b.allies,...b.enemies].filter(x=>!x.captured).map(x=>({...x,maxHp:x.st.hp,maxMp:x.st.mp})),queue:b.queue.filter(id=>!capturedIds.has(id.replace(/\*$/,""))),skills,log:b.log.slice(-12),
    items:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]&&!CON[id].seal&&!CON[id].petExp&&(CON[id].hp||CON[id].mp||CON[id].rev||CON[id].cure)).map(([id,n])=>({id,name:CON[id].n,count:n,rev:!!CON[id].rev})),
    seals:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]?.seal).map(([id,n])=>({id,name:CON[id].n,count:n})),
-   captureTargets:b.enemies.filter(sealable).map(x=>x.id),summons:carriedPets().filter(p=>p.hp>0&&!b.allies.some(x=>x.uid===p.uid)).map(p=>({uid:p.uid,name:petName(p),lv:p.lv})),canEscape:!!b.towerRun||['wild','bandit','traveler'].includes(b.kind),
+   captureTargets:b.enemies.filter(sealable).map(x=>x.id),summons:carriedPets().filter(p=>p.hp>0&&!b.allies.some(x=>x.uid===p.uid)).map(p=>({uid:p.uid,sp:p.sp,form:p.form||0,name:petName(p),lv:p.lv})),canEscape:!!b.towerRun||['wild','bandit','traveler'].includes(b.kind),
    vitals:{hp:S.P.hp,mp:S.P.mp,gold:S.P.gold,exp:S.P.exp,lv:S.P.lv},saveMode:'test-account'});
  }
  function post(type,extra={}){if(ready&&frame?.contentWindow)frame.contentWindow.postMessage({type,channel,...extra},location.origin);}
