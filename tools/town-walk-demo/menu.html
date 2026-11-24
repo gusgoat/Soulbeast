@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E">
 <!-- ===== ตั้งค่ากระดานคะแนน: วาง Web app URL ของ Google ระบบออนไลน์ ระหว่างเครื่องหมายคำพูด ===== -->
 <script>if(location.hostname==='gusgoat.github.io'&&/^\/Soulbeast\/(?:index\.html)?$/.test(location.pathname))location.replace('./accounts.html'+location.search+location.hash);window.WALK_LEADER_URL="https://zycmmtvubzyxduxqpuzl.supabase.co/functions/v1/soulbeast-api";window.SHEET_URL="";</script>
-<link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/quest-events.css?v=quest-touch-1"><script src="/Soulbeast/tools/town-walk-demo/walk-tutorial.js?v=30"></script><link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/forest-walk.css?v=surrender-20261125"><script src="/Soulbeast/tools/town-walk-demo/sealer-sprite-catalog.js"></script><script src="/Soulbeast/tools/town-walk-demo/sealer-sprites.js?v=beasts-3d-six-20261121"></script><script src="/Soulbeast/tools/town-walk-demo/training-forest-scenes.js?v=boss-room-1"></script><script src="/Soulbeast/tools/town-walk-demo/moonlight-forest-scenes.js?v=boss-room-1"></script><script src="/Soulbeast/tools/town-walk-demo/desert-forest-scenes.js?v=desert-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/dragon-forest-scenes.js?v=dragon-city-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/forest-quest-sites.js?v=dragon-city-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/heaven-forest-scenes.js?v=heaven-waterfall-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/demon-room-plan.js?v=demon-castle-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/demon-forest-scenes.js?v=demon-castle-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/binding-forest-scenes.js?v=binding-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/forest-walk.js?v=surrender-20261125"></script><link rel="stylesheet" href="client/game-menu-art.css?v=5"></head>
+<link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/quest-events.css?v=quest-touch-1"><script src="/Soulbeast/tools/town-walk-demo/walk-tutorial.js?v=scene-guide-1"></script><link rel="stylesheet" href="/Soulbeast/tools/town-walk-demo/forest-walk.css?v=surrender-20261125"><script src="/Soulbeast/tools/town-walk-demo/sealer-sprite-catalog.js"></script><script src="/Soulbeast/tools/town-walk-demo/sealer-sprites.js?v=beasts-3d-six-20261121"></script><script src="/Soulbeast/tools/town-walk-demo/training-forest-scenes.js?v=boss-room-1"></script><script src="/Soulbeast/tools/town-walk-demo/moonlight-forest-scenes.js?v=boss-room-1"></script><script src="/Soulbeast/tools/town-walk-demo/desert-forest-scenes.js?v=desert-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/dragon-forest-scenes.js?v=dragon-city-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/forest-quest-sites.js?v=dragon-city-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/heaven-forest-scenes.js?v=heaven-waterfall-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/demon-room-plan.js?v=demon-castle-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/demon-forest-scenes.js?v=demon-castle-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/binding-forest-scenes.js?v=binding-release-1"></script><script src="/Soulbeast/tools/town-walk-demo/forest-walk.js?v=scene-guide-1"></script><link rel="stylesheet" href="client/game-menu-art.css?v=5"></head>
 <body style="margin:0;height:100%">
 <title>ตำนานผนึกอสูร</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5617,7 +5617,7 @@ showEvolutionNotice=function(){try{return progressionEvolutionNotice();}catch(er
 
 TOWN_ART.arena='assets/ui/martial-tower-v1.webp';
 const TOWER_FLOORS=NPC.map((n,i)=>({n,i})).sort((a,b)=>a.n.lv-b.n.lv||a.i-b.i);
-var towerFieldOwns,towerDeferTurn,forestFieldOwns,deferForestOpening;
+var towerFieldOwns,towerDeferTurn,forestFieldOwns,deferForestOpening,usesFieldTutorial;
 const TOWER_UI={busy:false,error:'',today:'',ready:false,saving:null};
 const towerActive=()=>!!S.P?.towerRun?.active;
 function towerError(error){return {'tower daily limit':'เข้าหอคอยได้วันละครั้ง วันนี้ใช้สิทธิ์แล้ว','tower heal first':'รักษาตัวและเตรียมทีมก่อนเข้าหอคอย','tower wrong run':'ข้อมูลรอบหอคอยไม่ตรง กรุณาตรวจสถานะอีกครั้ง','tower wrong floor':'ชั้นหอคอยไม่ตรง กรุณาตรวจสถานะอีกครั้ง','tower locked':'ต้องจบหอคอยหรือแพ้ก่อนออกไปทำกิจกรรมอื่น'}[error]||({'login_required':'กรุณาเข้าสู่ระบบออนไลน์ใหม่','character_not_owned':'กรุณาเลือกตัวละครจากหน้าบัญชีออนไลน์','save_conflict':'กรุณาโหลดเซฟออนไลน์ล่าสุดก่อนเริ่มหอคอย','finish other battle':'กรุณาจบการต่อสู้เดิมก่อนเข้าหอคอย'})[error]||sheetError({error})+(/^[a-z0-9_ -]{1,80}$/i.test(error||'')?' ('+error+')':'');}
@@ -6792,12 +6792,16 @@ const Tutorial={
  finish(key,next=null){const t=this.state();if(!t)return;t.done[key]=true;t.active=next;if(t.reviewBasic&&['stats','forest','training','fork'].includes(key)&&!['stats','forest','training','fork'].includes(next))delete t.reviewBasic;this.store();},
  online(){return PVP.room?.status==='active'||WORLD.room?.status==='active'||CAMP.room?.status==='active'||GUILD_UI.warRoom?.replaying;},
  forestBattle(){return !!S.zone&&!!S.battle&&!S.battle.over&&!S.battle.towerRun&&!this.online()&&['wild','boss','bandit','traveler','secret','taleTrial'].includes(S.battle.kind);},
- hold(){return this.enabled()&&this.forestBattle()&&['battleIntro','elements','captureIntro'].includes(this.state().active);},
+ hold(){return !usesFieldTutorial?.(S.battle)&&this.enabled()&&this.forestBattle()&&['battleIntro','elements','captureIntro'].includes(this.state().active);},
  release(){const p=this.pending;this.pending=null;if(p&&p.battle===S.battle&&!S.battle.over){battleLater(p.fn,100);return;}const b=S.battle;if(!b||b.over||!this.forestBattle())return;if(!b.cur)battleLater(advance,100);},
  free(){return (S.P.free||0)+S.P.pets.reduce((n,p)=>n+(p.free||0),0);},
  ready(){return this.enabled()&&!window.WalkTutorial.active()&&!S.ui.trapNotice&&!S.ui.cinema&&!S.ui.confirm&&!this.online()&&!S.zone?.secretSession&&!S.zone?.riddleSession&&!S.zone?.specialSession&&!WorldTales.session();},
  update(){
   if(!this.enabled())return;const t=this.state(),b=S.battle;
+  if(usesFieldTutorial?.(b)){
+   if(['battleIntro','elements','skills','captureIntro','capture'].includes(t.active))t.active=null;
+   return;
+  }
   if(parent!==window){
    if(!t.active&&S.screen==='battle'&&this.forestBattle()&&this.ready()&&this.captureBattle!==b){
     const opened=window.WalkTutorial.onForestCaptureOpportunity(S.P,b.enemies,sealable);
@@ -6934,7 +6938,7 @@ const tutorialBattleLater=battleLater;battleLater=function(fn,ms){if(Tutorial.ho
 const tutorialEndBattle=endBattle;endBattle=function(res){const b=S.battle,t=Tutorial.state(),first=b&&!b.over&&res==='win'&&b.kind==='boss';const out=tutorialEndBattle(res);if(t&&first){t.firstBoss=true;save();}return out;};
 const tutorialCamp=vCamp;vCamp=function(){const a=Tutorial.state()?.active;return Tutorial.enabled()&&['raidDefense','raidPractice','raidResult'].includes(a)?activityBackdrop('camp','ค่ายครูฝึก · บทสอนจู่โจม')+(a==='raidDefense'?Tutorial.defenseView():Tutorial.practiceView()):tutorialCamp();};
 const tutorialCampHandler=handlers.camp;handlers.camp=function(...a){return Tutorial.openRaid()?undefined:tutorialCampHandler(...a);};
-const tutorialSettings=vSettings;vSettings=function(){const t=Tutorial.state();return tutorialSettings()+'<section class="card stack"><h3>บทสอนเล่นด้วยภาพ</h3><p>จำแยกแต่ละบทตามตัวละคร</p><button class="btn" data-a="tutorialToggle">'+(t?.enabled?'พักบทสอน':'เปิดบทสอน')+'</button><button class="btn" data-a="tutorialReview">เปิดคู่มือผู้ผนึก · 23 บท</button></section>';};
+const tutorialSettings=vSettings;vSettings=function(){const t=Tutorial.state();return tutorialSettings()+'<section class="card stack"><h3>บทสอนเล่นด้วยภาพ</h3><p>จำแยกแต่ละบทตามตัวละคร</p><button class="btn" data-a="tutorialToggle">'+(t?.enabled?'พักบทสอน':'เปิดบทสอน')+'</button><button class="btn" data-a="tutorialReview">เปิดคู่มือผู้ผนึก</button></section>';};
 Object.assign(handlers,{
  tutorialNext:()=>Tutorial.next(),tutorialSkip:()=>Tutorial.skip(),
  tutorialToggle:()=>{const t=Tutorial.state();if(!t)Tutorial.init();else t.enabled=!t.enabled;Tutorial.release();save();render();},
@@ -8676,7 +8680,6 @@ if(screen==='wild'&&ZN.some(z=>z.id===previewZone)){
  const forestDone=handlers.bt;handlers.bt=function(v){const terminal=v==='done'&&walkForestOutcome();const r=forestDone(v);if(terminal)walkLeaveForest(terminal);return r};
  const forestNav=handlers.go;handlers.go=function(v){if(v==='town')return walkLeaveForest();return forestNav(v)};
  handlers.dozone(previewZone);ForestWalk.mount(S.zone);render();
- if(S.zone?.id===previewZone&&S.screen==='zone'&&!S.battle)window.WalkTutorial.onTrainingForestEnter(S.P,S.zone.id);
 }
 
 /* Local characters can read the live board, but never publish test scores. */
@@ -8806,7 +8809,7 @@ function maybeShowEquipmentLesson(){
  window.WalkTutorial.onEquipmentAvailable(S.P,EQ);
 }
 function maybeShowAutoBattleLesson(){
- if(S.screen!=='battle'||!S.battle||S.battle.over||S.battle.partyRunId||S.ui.cinema||S.ui.trapNotice||S.ui.confirm||WEB_INTRO.active||document.querySelector('dialog[open],#tutorialCoach'))return;
+ if(usesFieldTutorial?.(S.battle)||S.screen!=='battle'||!S.battle||S.battle.over||S.battle.partyRunId||S.ui.cinema||S.ui.trapNotice||S.ui.confirm||WEB_INTRO.active||document.querySelector('dialog[open],#tutorialCoach'))return;
  if(document.querySelector('main .battle-command-controls [data-a="teamAuto"]'))window.WalkTutorial.onAutoBattleEnter(S.P);
 }
 const walkLessonRender=render;
@@ -9325,6 +9328,17 @@ function ordinaryBattleContext(battle,floor){
  const nativeToast=toast;toast=function(message){if(frame)post('ordinary-notice',{message:String(message)});return nativeToast(message);};
  const ordinary=b=>b&&!b.dungeonParty&&!b.partyRunId&&['wild','bandit','traveler','npc','boss','secret','warpBoss','riddleMirror','taleTrial'].includes(b.kind);
  // One presentation layer owns battle audio; the walking game's settings are preserved.
+ usesFieldTutorial=useStage;
+
+ function showFieldLesson(){
+  const b=B(),unit=b&&uById(b.cur);
+  if(!fieldReady||b!==battle||!useStage(b)||b.over||presenting||depth||b.menu==='wait'||
+     unit?.side!=='ally'||S.ui.cinema||S.ui.trapNotice||S.ui.confirm||
+     document.querySelector('dialog[open],#tutorialCoach'))return;
+  const captureAvailable=unit.kind==='player'&&b.enemies.some(e=>sealable(e)&&e.hp>0&&e.hp<e.st.hp*.4)&&
+   !b.towerRun&&Object.keys(S.P.items).some(id=>CON[id]?.seal&&S.P.items[id]>0);
+  window.WalkTutorial.onFieldTurn(S.P,{captureAvailable,autoAvailable:teamAutoAllowed()});
+ }
  const stageAudio=()=>!!frame&&useStage(B());
  towerFieldOwns=b=>!!b?.towerRun&&S.screen==='battle'&&useStage(b);
  // Forest encounters wait for the visible field and its skill effects.
@@ -9364,7 +9378,7 @@ function ordinaryBattleContext(battle,floor){
   const b=B(),u=b&&uById(b.cur);if(!b)return null;
   const skills=u?[...new Set([...u.skills,'rest'])].filter(id=>SK[id]).map(id=>{const s=SK[id];return {id,...s,cost:costOf(u,s),coinCost:s.gc?s.gc*u.lv:s.pctGold?Math.floor(S.P.gold*s.pctGold):0,cooldown:cooldownOf(u,id),available:!cooldownOf(u,id)&&costOf(u,s)<=u.mp&&(!s.gc||S.P.gold>=s.gc*u.lv)&&(!s.pctGold||Math.floor(S.P.gold*s.pctGold)>=1)&&(!s.summon||battleHasRoom(u)),element:effectiveElement(u,s),range:s.range||(['m','h'].includes(s.t)||s.t==='auto'&&u.atkType==='m'?'ranged':'melee')};}):[];
   const capturedIds=new Set(b.enemies.filter(x=>x.captured).map(x=>x.id));
-  return clone({battle:battleId,revision,current:b.cur,round:b.round,turn:b.round||1,clockKey:[b.cur,b.round,sequence].join(':'),kind:b.kind,zone:S.zone?.id||b.meta||1,auto:!!S.ui.autoTeam||forcedAuto,autoPet:!!S.ui.autoPet,autoAllowed:teamAutoAllowed()&&S.P.lv>=10||forcedAuto,speed:BattleSpeed.value||1,waiting:b.menu==='wait'||u?.side==='enemy',over:b.over||null,saving:closing||!!(b.towerRun&&TOWER_UI.busy),saveError:saveError||(b.towerRun?TOWER_UI.error:''),
+  return clone({battle:battleId,revision,current:b.cur,round:b.round,turn:b.round||1,clockKey:[b.cur,b.round,sequence].join(':'),kind:b.kind,zone:S.zone?.id||b.meta||1,auto:!!S.ui.autoTeam||forcedAuto,autoPet:!!S.ui.autoPet,autoAllowed:teamAutoAllowed()&&S.P.lv>=10||forcedAuto,speed:BattleSpeed.value||1,waiting:b.menu==='wait'||u?.side==='enemy'||window.WalkTutorial.battleLessonActive(),over:b.over||null,saving:closing||!!(b.towerRun&&TOWER_UI.busy),saveError:saveError||(b.towerRun?TOWER_UI.error:''),
    context:ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor),units:[...b.allies,...b.enemies].filter(x=>!x.captured).map(x=>({...x,maxHp:x.st.hp,maxMp:x.st.mp})),queue:b.queue.filter(id=>!capturedIds.has(id.replace(/\*$/,""))),skills,log:b.log.slice(-12),
    items:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]&&!CON[id].seal&&!CON[id].petExp&&(CON[id].hp||CON[id].mp||CON[id].rev||CON[id].cure)).map(([id,n])=>({id,name:CON[id].n,count:n,rev:!!CON[id].rev})),
    seals:b.towerRun?[]:Object.entries(S.P.items||{}).filter(([id,n])=>n>0&&CON[id]?.seal).map(([id,n])=>({id,name:CON[id].n,count:n})),
@@ -9376,6 +9390,7 @@ function ordinaryBattleContext(battle,floor){
  function autoHospital(){queueMicrotask(()=>{const b=B();if(!useStage(b)||!fieldReady||presenting||closing||b.towerRun||b.over?.res!=='lose'||defeatHandoffs.has(b))return;defeatHandoffs.add(b);void finishBattle(b);});}
  let lastTowerState='';
  function publish(){
+  showFieldLesson();
   if(towerFieldOwns(B())&&ready){
    if(presenting||depth)return;
    const current=view(),signature=JSON.stringify({...current,revision:0});
@@ -9487,7 +9502,7 @@ function ordinaryBattleContext(battle,floor){
   const b=B();if(!useStage(b)||m.battle!==battleId||closing)return;
   if(requests.has(m.request))return;requests.add(m.request);if(requests.size>128)requests.delete(requests.values().next().value);
   if(m.revision!==revision||presenting){post('ordinary-state',{view:view()});return;}
-  if(!fieldReady)return;
+  if(!fieldReady||window.WalkTutorial.battleLessonActive())return;
   if(m.command==='done'){
    await finishBattle(b);
    return;
@@ -9531,10 +9546,11 @@ function ordinaryBattleContext(battle,floor){
     if(parent!==window)parent.postMessage({type:'walk-battle-present',href:location.href,token:battleId},location.origin);
     resumeForestOpening(battle);
    }
-   autoHospital();return;
+   if(Tutorial.pending?.battle===battle)Tutorial.release();
+   publish();return;
   }
   if(m.type==='ordinary-heartbeat'&&m.battle===battleId){recovery.pulse(battleId);return;}
-  if(m.type==='ordinary-presented'&&m.battle===battleId&&m.sequence===presenting){if(!recovery.acknowledge(battleId,m.sequence))return;presenting=0;post('ordinary-state',{view:view()});autoHospital();}
+  if(m.type==='ordinary-presented'&&m.battle===battleId&&m.sequence===presenting){if(!recovery.acknowledge(battleId,m.sequence))return;presenting=0;showFieldLesson();post('ordinary-state',{view:view()});autoHospital();}
   if(m.type==='ordinary-command')void command(m).catch(error=>{post('ordinary-notice',{message:'ดำเนินการไม่สำเร็จ กรุณาลองอีกครั้ง'});publish();console.error(error);});
  });
  // Only read-only diagnostics are exposed; commands still require the owned frame and nonce.

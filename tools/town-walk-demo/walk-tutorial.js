@@ -5,7 +5,7 @@
   ['stats','อัปเลเวลและลงแต้มตัวละครกับอสูร','ui/walk-tutorial/03-character-menu.webp','เมื่อเลเวลเพิ่มและมีแต้มสถานะเหลือ ให้แตะ “ตัวละคร” ที่แถบด้านล่าง แล้วเปิด “ค่าสถานะ”'],
   ['shop','ซื้ออุปกรณ์ ยา ผนึก และใบเทเลพอร์ต','town-walk-preview/shop-building-v1.png.webp','มองหาร้านค้าในเมือง แล้วเข้าไปคุยกับพ่อค้าเพื่อเลือกซื้อของ'],
   ['enterForest','การเข้าป่า','ui/walk-tutorial/05-forest-entrance.webp','เมื่อออกจากเมืองหลวง ให้เดินไปที่ทางเข้าป่าบนแผนที่ประเทศ เช่น ป่าฝึกหัด แล้วกดสำรวจทางเข้า'],
-  ['walkForest','การเดินในป่า','ui/walk-tutorial/06-forest-path.webp','เลือกทางซ้ายหรือขวาเพื่อเดินต่อ แถบ “เส้นทางสู่บอส” บอกว่าเดินมาลึกแค่ไหนและเหลืออีกกี่ก้าวถึงบอส เช่น 1/10 คือเดินมาแล้ว 1 ก้าว เหลืออีก 9 ก้าว'],
+  ['forestTrail','การเดินในป่า','ui/walk-tutorial/trail-controls.webp','ลากจอยมุมซ้ายล่างเพื่อเดิน ลากไกลขึ้นเพื่อวิ่ง แล้วปล่อยจอยเพื่อหยุด'],
   ['hospital','รักษาตัวที่โรงพยาบาล','ui/walk-tutorial/07-hospital-entrance.webp','หลังออกจากป่า หากทีมบาดเจ็บ ให้ไปที่โรงพยาบาลในเมืองหลวง แล้วกดคุยกับหมอ หากตัวละครเสียชีวิต เกมจะพาคุณมาที่โรงพยาบาล'],
   ['night','ราตรีมาเยือน','ui/walk-tutorial/08-night-scene.webp','เมื่อเข้าสู่เวลากลางคืน อสูรเงาในดันเจี้ยนจะแข็งแกร่งขึ้น พลังโจมตีและป้องกันเพิ่ม 15% และอสูรบางชนิดจะปรากฏให้พบเฉพาะเวลากลางคืน'],
   ['capture','ผนึกอสูรเป็นคู่หู','ui/walk-tutorial/09-beast-hp.webp','ยิ่ง HP ของอสูรที่ผนึกได้เหลือน้อย โอกาสผนึกสำเร็จก็ยิ่งสูง ระวังอย่าโจมตีจน HP เหลือ 0 เพราะจะผนึกอสูรที่ล้มแล้วไม่ได้'],
@@ -205,37 +205,25 @@
  ];
  const forestWalk=lessons[5];
  forestWalk.pages=[
-  {
-   art:forestWalk.art,
-   body:forestWalk.body,
-   en:'Choose the left or right path to move deeper. The Route to the Boss shows your current depth and the steps left. For example, 1/10 means you’ve taken one step and have nine to go.',
-   zh:'选择左边或右边的道路继续前进。「通往首领的路线」会显示当前深度和剩余步数，例如 1/10 表示已走 1 步，还剩 9 步。',
-   highlight:{size:[551,512],boxes:[
-    {box:[59,57,64,97],shape:'circle'},
-    {box:[429,50,99,107],shape:'circle',color:'#ed2b86'},
-    {box:[20,297,254,211],color:'#ff790e'},
-    {box:[276,297,245,211],color:'#ff790e'},
-   ]},
-  },
-  {
-   art:'ui/walk-tutorial/06-forest-menu.webp',
-   body:'ระหว่างเดินป่า ใช้เมนูด้านล่างได้ เปิด “ตัวละคร” เพื่อลงแต้มค่าสถานะ “อสูร” เพื่อปรับอสูรออกรบ และ “กระเป๋า” เพื่อใช้ยา กด “ป่า” เพื่อกลับมาเลือกทางต่อ',
-   en:'Use the bottom menu while exploring. Open Character to spend stat points, Beasts to change your active team, or Bag to use items. Tap Forest to return to the path choices.',
-   zh:'探索时可使用底栏菜单。打开「角色」分配属性点，在「异兽」调整出战队伍，在「背包」使用道具。点击「森林」返回路线选择。',
-  },
-  {
-   art:'ui/walk-tutorial/06-use-potion.webp',
-   body:'ใน “กระเป๋า” เลือกตัวละครหรืออสูรที่ต้องการฟื้นพลัง แล้วกดยาที่มีอยู่ เช่น น้ำมนต์เวทในวงสีส้มใช้ฟื้น MP',
-   en:'In Bag, choose the character or beast that needs recovery, then tap an available potion. The Magic Water circled in orange restores MP.',
-   zh:'在「背包」中选择需要恢复的角色或异兽，再点击已有的药剂。橙圈中的魔力药水可恢复 MP。',
-   highlight:{size:[548,471],box:[17,367,252,84],shape:'circle',color:'#ff790e'},
-  },
-  {
-   art:'ui/walk-tutorial/06-surrender.webp',
-   body:'กดออกจากป่าผ่านเมนูปกติไม่ได้ การเดินป่าจบได้เมื่อชนะบอส ตัวละครเสียชีวิต หรือกด “ยอมแพ้ [ยอมตาย]” ซึ่งจะกลับเมืองพร้อมรับบทลงโทษ หากเจอเหตุการณ์ “แสงปลายทาง” จะมีทางออกให้เลือกในเหตุการณ์นั้น',
-   en:'The regular menu cannot take you out of the forest. A run can end by defeating the boss, dying, or choosing Surrender to return to town with a penalty. If you find the Light at the End event, it also offers an exit.',
-   zh:'无法通过普通菜单离开森林。击败首领、角色死亡，或选择「认输」并承担惩罚返回城镇，都可结束探索。如果遇到「尽头的光」事件，也可选择离开。',
-  },
+  {art:forestWalk.art,body:forestWalk.body,
+   en:'Drag the lower-left stick to walk. Drag farther to run and release it to stop.',
+   zh:'拖动左下角摇杆行走，拉远可奔跑，松开即停。',highlight:{size:[239,185],box:[18,36,140,140],shape:'circle'}},
+  {art:'ui/walk-tutorial/trail-junction.webp',
+   body:'ดูทางแยกบนแผนที่ย่อมุมขวาบน แล้วเดินไปจนสุดทางซ้ายหรือขวา ข้อความใต้ชื่อป่าบอกจำนวนก้าวที่เหลือ เมื่อถึงประตูบอสให้เดินเข้าไปหา',
+   en:'Use the minimap in the upper right and walk to the end of either branch. The counter below the forest name shows the steps left. Approach the boss gate when you reach it.',
+   zh:'查看右上角小地图，沿任一岔路走到尽头。森林名称下方会显示剩余步数，到达首领之门后走近它。'},
+  {art:'ui/walk-tutorial/trail-encounter.webp',
+   body:'เมื่อพบอสูรบนทางเดิน ถ้าอยากสู้ให้เดินเข้าใกล้ อสูรบางตัวจะวิ่งไล่และเริ่มการต่อสู้เมื่อถึงตัวคุณ',
+   en:'Approach a roaming beast to fight it. Some beasts chase you and start a battle on contact.',
+   zh:'想战斗时可走近路上的异兽。有些异兽会追赶你，接触后进入战斗。'},
+  {art:'ui/walk-tutorial/trail-pack.webp',
+   body:'ระหว่างสำรวจ เปิด “กระเป๋า” เลือกผู้ผนึกหรืออสูรที่จะรับยา แล้วกดยาฟื้น HP หรือ MP เมื่อพร้อมแล้วกด “ป่า” เพื่อกลับไปเดินต่อ',
+   en:'While exploring, open Bag, select the Sealer or beast to treat, and use an HP or MP potion. Tap Forest to resume walking.',
+   zh:'探索途中可打开「背包」，选中封印师或异兽并使用生命或魔力药剂。点「森林」即可继续行走。'},
+  {art:'ui/walk-tutorial/trail-exit.webp',
+   body:'ถ้าต้องการออกก่อนถึงบอส ปุ่ม “ยอมแพ้ / ออกจากป่า” อยู่มุมขวาล่าง เมื่อยืนยันจะเสียค่าปรับและกลับไปโรงพยาบาล',
+   en:'To leave before the boss, tap Surrender / Leave Forest in the lower right. Confirming applies the penalty and returns you to the hospital.',
+   zh:'若要在到达首领前离开，请点右下角的「认输／离开森林」。确认后将承担惩罚并返回医院。',highlight:{size:[390,70],box:[240,13,142,48]}},
  ];
  const hospital=lessons[6];
  hospital.pages=[
@@ -695,13 +683,53 @@
    zh:'从第 1 层矿脉矿洞开始。点按右上角的小地图查看迷宫。击败本层首领后，查看通往下一层的门并继续前进。',
   },
  ];
+ // The native fallback still uses its own capture and auto controls.
+ const fieldBattle={id:'fieldBattle',title:'การต่อสู้ในสนาม',pages:[
+  {art:'ui/walk-tutorial/field-commands.webp',
+   body:'แถวรูประหว่างสนามกับปุ่มคำสั่งบอกลำดับตา เมื่อถึงตาของคุณ กด “โจมตีปกติ” หรือกด “สกิล” แล้วเลือกท่าที่มี MP พอ',
+   en:'The portraits above the commands show turn order. On your turn, tap Normal Attack, or open Skills and pick a move you have enough MP to use.',
+   zh:'指令上方的头像显示行动顺序。轮到你时点「普通攻击」，或打开「技能」选择魔力足够的招式。'},
+  {art:'ui/walk-tutorial/field-target.webp',highlight:{size:[390,310],box:[27,19,149,184]},
+   body:'หลังเลือกท่าเดี่ยว ให้แตะตัวที่เรืองแสงในสนาม ท่าโจมตีชี้ศัตรู ท่ารักษาชี้พวกเดียวกัน ส่วนท่าที่ใช้กับตัวเองหรือทั้งทีมจะออกทันที',
+   en:'For a single-target move, tap a highlighted fighter on the field. Attacks target enemies and heals target allies. Self and team moves take effect immediately.',
+   zh:'选择单体招式后，点场上发光的目标。攻击选择敌方，治疗选择友方。自身或全队招式会立即施放。'},
+  {art:'ui/walk-tutorial/field-vitals.webp',
+   body:'ดูธาตุและ HP บนการ์ดอสูรก่อนเลือกสกิล เช่น ใช้ท่าไฟกับอสูรธาตุพืชเพื่อเพิ่มความเสียหาย ถ้า MP ไม่พอ ยังใช้โจมตีปกติได้',
+   en:'Check the beast’s element and HP on its card before choosing a skill. For example, fire deals extra damage to grass. Use Normal Attack if you are low on MP.',
+   zh:'选技能前先看异兽卡上的属性和生命值。例如火属性克制草属性。魔力不足时仍可用普通攻击。'},
+ ]};
+ const fieldCapture={id:'fieldCapture',title:capture.title,pages:[
+  {art:'ui/walk-tutorial/field-commands.webp',
+   body:'ลด HP อสูรที่ผนึกได้ให้เหลือน้อยและยังมีชีวิต เมื่อถึงตาผู้ผนึก กด “ผนึก” แล้วเลือกชนิดผนึกที่พกมา',
+   en:'Weaken a sealable beast and keep it alive. On the Sealer’s turn, tap Seal and choose a seal from your inventory.',
+   zh:'降低可封印异兽的生命值并让它存活。轮到封印师时，点「封印」并选择携带的封印道具。',highlight:{size:[371,290],box:[190,151,173,69]}},
+  {art:'ui/walk-tutorial/field-target.webp',highlight:{size:[390,310],box:[27,19,149,184]},
+   body:'แตะอสูรเป้าหมายที่เรืองแสงในสนามเพื่อใช้ผนึก ยิ่ง HP เหลือน้อย โอกาสสำเร็จยิ่งสูง',
+   en:'Tap a highlighted beast on the field to use the seal. Lower HP improves your chance of success.',
+   zh:'点场上发光的异兽使用封印道具。目标剩余生命值越低，成功率越高。'},
+ ]};
+ const fieldAuto={id:'fieldAuto',title:autoBattle.title,level:autoBattle.level,pages:[
+  {art:'ui/walk-tutorial/field-auto.webp',
+   body:'กด “ออโต้ทีม” ให้ทั้งทีมเลือกคำสั่งเอง หรือเปิดเฉพาะ “อสูรออโต้” เพื่อสั่งผู้ผนึกเอง กดปุ่มเดิมอีกครั้งเพื่อปิด',
+   en:'Tap Team Auto to automate the whole team, or turn on only Beast Auto to keep controlling the Sealer. Tap the same button again to turn it off.',
+   zh:'点「全队自动」让整队自动行动，或仅开「异兽自动」来手动控制封印师。再次点击同一按钮即可关闭。'},
+ ]};
+ lessons[lessons.indexOf(capture)]=fieldCapture;
+ lessons[lessons.indexOf(autoBattle)]=fieldAuto;
+ lessons.splice(lessons.indexOf(forestWalk)+1,0,fieldBattle);
+ lessons.forEach((l,i)=>{l.number=i+1});
+ capture.number=fieldCapture.number;autoBattle.number=fieldAuto.number;
+ const progressLessons=[...lessons,capture,autoBattle];
  const translations={
   board:['Accepting quests','Go to the quest board in the capital and tap Inspect to see available quests.','领取任务','走到首都的任务公告板前，点击「调查」查看可领取的任务。'],
   trackMenu:['Quest menu and tracking','Tap the Quests icon in the bottom bar.','任务菜单与追踪','点击底栏中的「任务」图标。'],
   stats:['Leveling up and allocating character and beast points','Open Character and select Stats to allocate points.','角色和异兽升级与加点','打开「角色」，选择「属性」来分配点数。'],
   shop:['Buying equipment, potions, seals, and teleport scrolls','Talk to the merchant in town to browse their goods.','购买装备、药剂、封印道具和传送卷轴','与城镇商人交谈以查看商品。'],
   enterForest:['Entering a forest','Inspect the entrance to see what is inside.','进入森林','调查入口可查看森林详情。'],
-  walkForest:['Exploring a forest','Choose a path to move deeper.','探索森林','选择一条路继续深入。'],
+  fieldBattle:['Fighting on the battlefield','','战场指令',''],
+  fieldCapture:['Seal a beast','','封印异兽',''],
+  fieldAuto:['Auto Battle','','自动战斗',''],
+  forestTrail:['Exploring a forest','Choose a path to move deeper.','探索森林','选择一条路继续深入。'],
   hospital:['Getting treatment at the hospital','Visit the healer to recover.','在医院接受治疗','前往医院找治疗师恢复。'],
   capture:['Seal a beast','Lower a sealable beast’s HP without defeating it. On the Sealer’s turn, choose Seal and select a seal from your bag.','封印异兽','先降低可封印异兽的生命值，别把它击倒。在封印师回合选择「封印」，再选择背包中的封印道具。'],
   forge:['Forging equipment','Take your materials to the town forge after defeating the Training Forest boss.','锻造装备','击败训练森林首领后，带着材料前往城镇的锻造坊。'],
@@ -739,15 +767,15 @@
   const key=characterKey(p);if(!key)return {};
   const old=[...new Set([p.walkId,p.characterId])].filter(id=>id&&id!=='island-preview-v1'&&prefix+id!==key).map(id=>localSeen(prefix+id));
   const seen=Object.assign({},...old,localSeen(key));
-  for(const {id} of lessons)if(p.walkTutorialSeen?.[id]===true||old.some(record=>record[id]===true))seen[id]=true;
-  if(lessons.some(({id})=>seen[id]===true&&p.walkTutorialSeen?.[id]!==true))store(p,seen);
+  for(const {id} of progressLessons)if(p.walkTutorialSeen?.[id]===true||old.some(record=>record[id]===true))seen[id]=true;
+  if(progressLessons.some(({id})=>seen[id]===true&&p.walkTutorialSeen?.[id]!==true))store(p,seen);
   return seen;
  }
  function store(p,seen){
   const key=characterKey(p);if(!key)return;
   memory.set(key,seen);
   try{progressStorage().setItem(key,JSON.stringify(seen))}catch{}
-  const completed=Object.fromEntries(lessons.filter(({id})=>seen[id]===true).map(({id})=>[id,true]));
+  const completed=Object.fromEntries(progressLessons.filter(({id})=>seen[id]===true).map(({id})=>[id,true]));
   if(!Object.keys(completed).length)return;
   p.walkTutorialSeen={...p.walkTutorialSeen,...completed};
   try{
@@ -775,7 +803,7 @@
    stats:(starter&&hasQuest)||(!starter&&(p.free>0||p.pets?.some(beast=>beast.free>0))),
    shop:seen.stats&&(starter||p.lv<=8),
   };
-  return lessons.find(l=>l!==autoBattle&&!seen[l.id]&&(l.level?p.lv>=l.level:allow[l.id]))||null;
+  return lessons.find(l=>l!==fieldAuto&&!seen[l.id]&&(l.level?p.lv>=l.level:allow[l.id]))||null;
  }
  function node(tag,cls,content){
   const el=g.document.createElement(tag);if(cls)el.className=cls;if(content)el.textContent=content;return el;
@@ -801,10 +829,11 @@
   close.type=previous.type=next.type='button';
   let index=lesson.number-1,pageIndex=0,acknowledged=false;
   // A lesson may supply pages with their own artwork and localized text.
+  const currentLesson=()=>review?lessons[index]:lesson;
   const pagesFor=l=>l.pages?.length?l.pages:[l];
   const focusControls=()=> (next.hidden||next.disabled?close:next).focus({preventScroll:true});
   close.onclick=()=>{
-   acknowledged=!review&&pageIndex===pagesFor(lessons[index]).length-1;
+   acknowledged=!review&&pageIndex===pagesFor(currentLesson()).length-1;
    dialog.close();
   };
   previous.onclick=()=>{
@@ -817,7 +846,7 @@
    if(previous.hidden||previous.disabled)focusControls();
   };
   next.onclick=()=>{
-   if(pageIndex+1<pagesFor(lessons[index]).length)pageIndex++;
+   if(pageIndex+1<pagesFor(currentLesson()).length)pageIndex++;
    else if(review&&index+1<lessons.length){
     index++;
     pageIndex=0;
@@ -828,7 +857,7 @@
   controls.append(previous,next,close);
   header.append(step,title,pageLabel);card.append(header,illustration,caption,controls);dialog.append(card);
   function render(){
-   const l=lessons[index],pages=pagesFor(l),page=pages[pageIndex];
+   const l=currentLesson(),pages=pagesFor(l),page=pages[pageIndex];
    const first=pageIndex===0,last=pageIndex===pages.length-1;
    step.textContent=tr('คู่มือผู้ผนึก','Sealer’s Guide','封印师指南')+' · '+l.number+'/'+lessons.length+(l.level?' · Lv '+l.level:'');
    pageLabel.hidden=pages.length===1;
@@ -883,7 +912,7 @@
    if(seen.startLevel==null){
     seen={...seen,startLevel:Number(p.lv)||1};
     // Lessons below the current level stay in the guide for existing characters.
-    for(const l of lessons)if(l!==autoBattle&&l.level&&l.level<seen.startLevel)seen[l.id]=true;
+    for(const l of lessons)if(l!==fieldAuto&&l.level&&l.level<seen.startLevel)seen[l.id]=true;
     store(p,seen);
    }
    if(observesNight&&!seen.nightPending&&!seen.night&&g.SoulBeastClock?.at(now).phase==='night'){
@@ -930,7 +959,12 @@
  }
  const api={
   lessons,choose,mount,
+  onForestWalk:player=>showOnce(player,forestWalk),
   onTrainingForestEnter:(player,zoneId)=>zoneId===7?showOnce(player,forestWalk):undefined,
+  onFieldTurn:(player,{captureAvailable,autoAvailable})=>{
+   return showOnce(player,fieldBattle)||(captureAvailable&&showOnce(player,fieldCapture))||
+    (autoAvailable&&Number(player?.lv)>=fieldAuto.level&&showOnce(player,fieldAuto));
+  },
   onHospitalArrival:player=>showOnce(player,hospital),
   onEquipmentAvailable,
   onBanditSight:player=>showOnce(player,bandit),
@@ -941,7 +975,7 @@
   },
   onTowerDefeat:player=>towerDefeated(player)?showOnce(player,gacha):undefined,
   onAutoBattleEnter:player=>Number(player?.lv)>=autoBattle.level?showOnce(player,autoBattle):undefined,
-  battleLessonActive:()=>!!g.document.querySelector('.walk-lesson[data-lesson="capture"][open],.walk-lesson[data-lesson="auto"][open]'),
+  battleLessonActive:()=>['capture','auto','fieldBattle','fieldCapture','fieldAuto'].includes(g.document.querySelector('.walk-lesson[open]')?.dataset.lesson),
   active:()=>!!g.document.querySelector('.walk-lesson[open]'),
   review:()=>show(lessons[0],{review:true}),
  };

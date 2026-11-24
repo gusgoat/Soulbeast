@@ -19,7 +19,7 @@ const ForestWalk = (() => {
 
   function active(zone, walk) {
     return S.zone === zone && zone.walk === walk && S.screen === "zone" && !S.battle
-      && !S.ui.confirm && !S.ui.trapNotice && !document.querySelector("#tutorialCoach.tutorial-modal");
+      && !S.ui.confirm && !S.ui.trapNotice && !window.WalkTutorial.active() && !document.querySelector("#tutorialCoach.tutorial-modal");
   }
 
   function nativeEvent(zone) {
@@ -586,6 +586,10 @@ const ForestWalk = (() => {
       : remaining === 0 ? ct("ทางออกถัดไปคือประตูบอส", "Next exit leads to the boss gate", "下个出口通往首领之门")
       : ct(`อีก ${remaining} ก้าวถึงบอส`, `${remaining} ${remaining === 1 ? "step" : "steps"} to the boss`, `距首领还剩 ${remaining} 步`);
     if (current.distance.textContent !== distance) current.distance.textContent = distance;
+    if (current.scene && walk.map === "entrance" && !walk.showStory && !walk.showSearch && active(zone, walk) &&
+        !S.ui.cinema && !document.querySelector("dialog[open]")) {
+      window.WalkTutorial.onForestWalk(S.P);
+    }
     current.avatar?.sync(S.P);
     current.water?.setMuted(!Sound.enabled);
     if (!active(zone, walk)) current.release();
