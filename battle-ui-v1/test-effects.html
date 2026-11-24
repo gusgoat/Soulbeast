@@ -234,7 +234,37 @@ body[data-battle-mode="ordinary-connected"] #menu:has(>.tower-result-actions)>.p
 #menu>.tower-result-actions{grid-area:1/2;position:sticky;top:8px;align-self:start;display:grid;gap:7px;min-width:0;margin:9px 9px 9px 0;z-index:1}
 #menu>.tower-result-actions>button{box-sizing:border-box;width:100%;height:auto;min-height:44px;margin:0;padding:8px 5px;display:flex;justify-content:center;text-align:center;white-space:normal}
 #menu>.tower-result-actions>button small,#menu>.tower-result-actions>button img{display:none}
-</style><link rel="stylesheet" href="card-status.css?v=1"><script src="status-labels.js?v=1"></script><script src="effect-layers.js?v=1"></script><script src="card-status.js?v=1"></script></head><body>
+</style><link rel="stylesheet" href="card-status.css?v=1"><script src="status-labels.js?v=1"></script><script src="effect-layers.js?v=1"></script><script src="card-status.js?v=1"></script>
+<style id="world-boss-score-position">
+.world-boss-mode[data-battle-mode="ordinary-connected"] .arena{
+ --boss-score-width:min(53%,320px);
+ --boss-score-right:max(7px,env(safe-area-inset-right,0px));
+}
+.world-boss-mode[data-battle-mode="ordinary-connected"] #world-boss-hud{
+ box-sizing:border-box;left:auto;right:var(--boss-score-right);
+ top:calc(5px + env(safe-area-inset-top,0px));width:var(--boss-score-width);
+ padding:5px 8px;font-size:10px;line-height:1.2;font-variant-numeric:tabular-nums;
+}
+.world-boss-mode[data-battle-mode="ordinary-connected"] .arena-head{
+ right:calc(var(--boss-score-width) + var(--boss-score-right) + 4px);
+ padding-right:0;
+}
+.world-boss-mode[data-battle-mode="ordinary-connected"] .world-stats{
+ gap:4px;flex-wrap:wrap;line-height:1.25;
+}
+.world-boss-mode[data-battle-mode="ordinary-connected"] .world-title>b{white-space:nowrap}
+@media(max-width:420px){
+ .world-boss-mode[data-battle-mode="ordinary-connected"] .arena-head{padding-left:max(8px,env(safe-area-inset-left,0px))}
+ .world-boss-mode[data-battle-mode="ordinary-connected"] .location{flex-direction:column;align-items:flex-start;gap:0}
+ .world-boss-mode[data-battle-mode="ordinary-connected"] .location :is(small,strong){max-width:100%;overflow:hidden}
+ .world-boss-mode[data-battle-mode="ordinary-connected"] .location small::after{content:none}
+ .world-boss-mode[data-battle-mode="ordinary-connected"] #world-boss-hud{padding:3px 6px}
+ .world-boss-mode[data-battle-mode="ordinary-connected"] .world-title{font-size:10px;line-height:12px}
+ .world-boss-mode[data-battle-mode="ordinary-connected"] .world-stats{display:grid;grid-template-columns:auto auto;font-size:10px;line-height:12px}
+ .world-boss-mode[data-battle-mode="ordinary-connected"] .world-stats b{font-size:12px}
+}
+</style>
+</head><body>
 <main class="game" id="game">
 <section class="arena" id="arena" aria-label="สนามต่อสู้">
 <div class="atmosphere"></div><canvas class="world" id="world" aria-label="พื้นสนามรบมุมกล้อง 45 องศา"></canvas><div id="ground-skill-effects" class="ground-skill-effects" aria-hidden="true"></div><img id="header-scenery" class="header-scenery" alt=""><canvas id="scenery-motion" class="header-scenery scenery-motion" aria-hidden="true" hidden></canvas><canvas id="ground-shadows" class="battle-ground-shadows" aria-hidden="true"></canvas><div id="actor-sprites" class="actor-sprites" aria-hidden="true"></div><div class="actor-health-bars" id="actor-health-bars" aria-label="HP ของตัวละครแต่ละตัว"></div><div class="effects" id="effects"></div>
