@@ -9373,8 +9373,11 @@ function ordinaryBattleContext(battle,floor){
   if(b.towerRun){if(TOWER_UI.busy)return;await handlers.towerNext();mount();return;}
   closing=true;saveError='';publish();
   try{
+   const fallen=b.over.res==='lose'&&!b.dungeonDuo&&!(typeof dungeonFloor!=='undefined'&&dungeonFloor)
+    ? Promise.resolve(window.SoulbeastFallenVoiceReady).then(wait=>wait?.(b)) : null;
    save();
    if(WALK_ONLINE){const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');if(context?.environment!=='test')throw Error('test_account_required');await (await getWalkAccountConnection()).flush(true);}
+   if(fallen)await fallen;
    if(B()!==b)return;const button=document.querySelector('main [data-a="bt"][data-v="done"]');if(button)button.click();else battleAction('done');mount();
   }catch(error){closing=false;saveError='ยังบันทึกไม่สำเร็จ กรุณาลองบันทึกอีกครั้ง';post('ordinary-notice',{message:saveError});publish();}
  }
@@ -9732,5 +9735,5 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
 
 }
 
-</script><script type="module" src="/Soulbeast/client/event-announcements.mjs?v=boss-portrait-1"></script><script src="/Soulbeast/client/game-voice-hooks.js?v=1"></script><link rel="stylesheet" href="/Soulbeast/client/gacha-presentation.generated.css?v=live-gacha-20261123"><script src="/Soulbeast/client/gacha-reveal-canvas.generated.js?v=live-gacha-20261123"></script><script src="/Soulbeast/client/gacha-presentation.js?v=live-gacha-20261123"></script></body>
+</script><script type="module" src="/Soulbeast/client/event-announcements.mjs?v=boss-portrait-1"></script><script src="/Soulbeast/client/game-voice-hooks.js?v=fallen-end-1"></script><link rel="stylesheet" href="/Soulbeast/client/gacha-presentation.generated.css?v=live-gacha-20261123"><script src="/Soulbeast/client/gacha-reveal-canvas.generated.js?v=live-gacha-20261123"></script><script src="/Soulbeast/client/gacha-presentation.js?v=live-gacha-20261123"></script></body>
 </html>

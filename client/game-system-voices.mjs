@@ -1,4 +1,4 @@
-import './voice-player.js?v=1';
+import './voice-player.js?v=fallen-end-1';
 
 const root=new URL('../assets/audio/',import.meta.url);
 const prefsKey='sealbeast_audio_v1';
@@ -17,4 +17,5 @@ const voice=window.SoulbeastGameVoice??window.SoulbeastVoicePlayer({
 window.SoulbeastGameVoice=voice;
 window.addEventListener('storage',event=>{if(event.key===prefsKey&&settings().enabled!==true)voice.clear();});
 export function systemVoice(clip,valid){voice.play('game-voice/'+clip,valid);}
+export function fallenVoice(valid,onTime){return voice.playUntilEnded('game-voice/fallen',valid,onTime);}
 export function bossVoice(clip,valid){voice.play('boss-voice/'+clip,valid);}

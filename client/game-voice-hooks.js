@@ -1,8 +1,18 @@
 (function(){
  const script=document.currentScript;
- const url=new URL('./game-system-voices.mjs?v=1',script.src);
- import(url.href).then(({systemVoice,bossVoice})=>{
+ const url=new URL('./game-system-voices.mjs?v=fallen-end-1',script.src);
+ const sceneUrl=new URL('./fallen-scenes.mjs?v=1',script.src);
+ window.SoulbeastFallenVoiceReady=Promise.all([import(url.href),import(sceneUrl.href)]).then(([{systemVoice,bossVoice,fallenVoice},{prepareFallenScenes,fallenSequence}])=>{
   const battleCues=new WeakMap();
+  const fallenByBattle=new WeakMap();
+  function waitForFallen(battle){
+   if(battle?.over?.res!=='lose'||!battle.over.lines?.some(line=>line.includes('ชาวบ้านช่วยพากลับมาที่โรงพยาบาล')))return;
+   if(!fallenByBattle.has(battle)){
+    const scene=fallenSequence();
+    fallenByBattle.set(battle,fallenVoice(()=>S.screen==='battle'&&B()===battle,scene.update).finally(scene.close));
+   }
+   return fallenByBattle.get(battle);
+  }
   let worldRoomId,worldCues=new Set(),gachaReceipt,timerId,timerWarning=false,timerExpired=false;
   let liftedWorldStatus=false,lastZoneMax=S.P?.zoneMax,lastTowerBest=S.P?.towerBest??0;
   window.SoulbeastGameVoiceMix={
@@ -32,7 +42,9 @@
      systemVoice('boss-defeated',valid);
     });
    }
-   if(battle.over?.res==='lose'&&battle.over.lines?.some(line=>line.includes('ชาวบ้านช่วยพากลับมาที่โรงพยาบาล'))){
+   if(document.getElementById('ordinary-battle-stage')&&!battle.towerRun&&!battle.dungeonDuo&&!(typeof dungeonFloor!=='undefined'&&dungeonFloor)){
+    prepareFallenScenes();
+   }else if(battle.over?.res==='lose'&&battle.over.lines?.some(line=>line.includes('ชาวบ้านช่วยพากลับมาที่โรงพยาบาล'))){
     once(key,'fallen',()=>systemVoice('fallen',valid));
    }
    if(lastZoneMax!=null&&S.P?.zoneMax>lastZoneMax&&!lord&&battle.over?.res==='win'){
@@ -142,5 +154,6 @@
   };
   const priorMute=Sound.mute;
   Sound.mute=function(...args){window.SoulbeastGameVoice?.clear();return priorMute.apply(this,args);};
+  return waitForFallen;
  }).catch(error=>console.warn('Game voices could not start',error));
 })();
