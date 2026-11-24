@@ -354,7 +354,7 @@ const ForestWalk = (() => {
     const node = document.createElement("div");
     node.className = "forest-walk-scene";
     node.innerHTML = '<canvas class="forest-walk-canvas" tabindex="0" aria-label="แผนที่เดินป่า"></canvas>'
-      + '<div class="forest-walk-note"><b></b><p role="status"></p><p class="forest-walk-destination" aria-live="polite" hidden></p></div>'
+      + '<div class="forest-walk-note"><b></b><p role="status"></p><p class="forest-walk-distance" translate="no"></p><p class="forest-walk-destination" aria-live="polite" hidden></p></div>'
       + '<canvas class="forest-walk-map" width="160" height="160" aria-label="แผนที่ทางแยกตัว Y"></canvas>'
       + '<button type="button" class="forest-walk-stick" aria-label="จอยเดินทาง ลากน้อยเดิน ลากไกลวิ่ง ปล่อยหยุด"><span></span></button>'
       + '<div class="forest-walk-actions" role="group" aria-label="การกระทำกับสถานที่">'
@@ -364,7 +364,8 @@ const ForestWalk = (() => {
     const state = {node, zone, walk, scene: null, water: null};
     const stick = node.querySelector(".forest-walk-stick"), knob = stick.firstElementChild;
     const note = node.querySelector(".forest-walk-note");
-    const status = note.querySelector("p");
+    const status = note.querySelector("[role=status]");
+    state.distance = note.querySelector(".forest-walk-distance");
     const destination = note.querySelector(".forest-walk-destination");
     const chest = node.querySelector(".forest-walk-chest");
     const questGuide=node.querySelector('.forest-walk-quest-guide');
@@ -574,6 +575,11 @@ const ForestWalk = (() => {
       loadScene(current);
     }
     if (current.node.parentNode !== host) host.appendChild(current.node);
+    const remaining = ZDEPTH - Math.max(0, Math.min(ZDEPTH, Number(zone.depth) || 0));
+    const distance = walk.map === "boss" ? ct("ถึงประตูบอสแล้ว", "Boss gate reached", "已到达首领之门")
+      : remaining === 0 ? ct("ทางออกถัดไปคือประตูบอส", "Next exit leads to the boss gate", "下个出口通往首领之门")
+      : ct(`อีก ${remaining} ก้าวถึงบอส`, `${remaining} ${remaining === 1 ? "step" : "steps"} to the boss`, `距首领还剩 ${remaining} 步`);
+    if (current.distance.textContent !== distance) current.distance.textContent = distance;
     current.avatar?.sync(S.P);
     current.water?.setMuted(!Sound.enabled);
     if (!active(zone, walk)) current.release();
