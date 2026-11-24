@@ -1,12 +1,12 @@
 // Present the current encounter. The Colosseum match owns turns, targeting and results.
-export function encounterView(b, me, mode, now, pending) {
+export function encounterView(b, me, mode, now, pending, spectator=false) {
   const ownSide = b.teams[1].includes(me.id) ? 1 : 0;
   const units = [b.allies, b.enemies].flatMap((team, side) => team.map(u => ({
     ...u, side: side === ownSide ? 'ally' : 'enemy',
     status: Object.fromEntries((u.statuses || []).map(name => [name, 1])),
   })));
   const current = units.find(u => u.id === b.cur);
-  const skills = b.commands.map(s => {
+  const skills = (spectator?[]:b.commands).map(s => {
     const friendly = units.some(u => u.side === 'ally' && s.targets.includes(u.id));
     return {id:s.id, n:s.name, t:s.t || (friendly?'heal':'p'), tg:s.tg,
       rev:s.rev, all:s.all, element:s.el || current?.types?.[0] || 'normal',
@@ -16,14 +16,15 @@ export function encounterView(b, me, mode, now, pending) {
     turn:b.round, clockKey:b.id+':'+b.turn, seconds:Math.max(0,Math.ceil((b.deadline-now)/1000)),
     units, skills, queue:[], context:{mode:'colosseum',online:true,stage:'colosseum-1',
       modeLabel:mode==='survival'?'โคลอสเซียมเดี่ยว':'โคลอสเซียมทีม',autoHospital:false},
-    auto:b.auto, autoAllowed:!b.finished, autoPet:false, petAutoAllowed:false,
-    waiting:!skills.length || pending || now<b.openAt || now>=b.deadline || b.finished,
+    auto:b.auto, autoAllowed:!spectator&&!b.finished, autoPet:false, petAutoAllowed:false,
+    waiting:spectator || !skills.length || pending || now<b.openAt || now>=b.deadline || b.finished,
     speed:1, items:[], seals:[], summons:[], captureTargets:[], canEscape:false, log:b.log};
 }
 
 export function createConnectedField(submit, toggleAuto) {
   let frame, timer, ready=false, channel, latest, previous, key, failed, speed=1;
   let latestBattle, latestTime, pendingTurn, lastRequest=0;
+  let viewerId=null,readOnly=false;
   let awaitingSequence=null, releaseTimer, releaseRequested=false, warmFailed=false;
   const post=(type,body)=>frame?.contentWindow?.postMessage({type,channel,...body},location.origin);
   function deactivate() {
@@ -31,7 +32,7 @@ export function createConnectedField(submit, toggleAuto) {
     if(frame){frame.style.visibility='hidden';frame.inert=true;}
     
     awaitingSequence=null; releaseRequested=false; latestBattle=null;
-    previous=null; latest=null; key=null; pendingTurn=null; lastRequest=0;
+    viewerId=null;readOnly=false;previous=null; latest=null; key=null; pendingTurn=null; lastRequest=0;
   }
   function dispose() {
     deactivate();frame?.remove();frame=null;ready=false;
@@ -87,6 +88,7 @@ export function createConnectedField(submit, toggleAuto) {
     if(m.type!=='ordinary-command' || m.revision!==latest.revision || !Number.isSafeInteger(m.request) || m.request<=lastRequest)return;
     lastRequest=m.request;
     if(m.command==='speed'){speed=m.speed===2?2:1;publish();return;}
+    if(readOnly)return;
     if(m.command==='auto'){toggleAuto(!latest.auto);return;}
     if(m.command!=='skill'||latest.waiting || pendingTurn===latest.revision)return;
     const skill=latestBattle.commands.find(s=>s.id===m.id);
@@ -98,20 +100,23 @@ export function createConnectedField(submit, toggleAuto) {
     }
   });
   return {close,warm(){if(!warmFailed)prepare();},reset(){dispose();failed=null;warmFailed=false;},rejected(){pendingTurn=null;key=null;},
-    show(b,me,mode,time){
+    show(b,me,mode,time,spectator=false){
       if(!b || b.id===failed){close();return false;}
-      if(latest && latest.battle!=='colosseum:'+b.id)dispose();
+      if(latest && (latest.battle!=='colosseum:'+b.id||viewerId!==me.id||readOnly!==spectator))dispose();
       if(b.finished && !latest)return true;
       const now=time();
       prepare();
       if(!latest){
+        viewerId=me.id;readOnly=spectator;
+        frame.title=spectator?'ชมการต่อสู้ของ '+me.name:'สนามต่อสู้โคลอสเซียม';
+        frame.style.height=spectator?'calc(100% - 60px - env(safe-area-inset-bottom, 0px))':'100%';
         timer=setTimeout(()=>{if(!latestBattle?.finished)exitField();},30000);
       }
       latestTime=time;latestBattle=b;
       const stamp=[b.id,b.turn,b.cur,b.last?.n,b.finished,b.auto,now>=b.openAt,now>=b.deadline,pendingTurn,b.commands.length,
         JSON.stringify([...b.allies,...b.enemies].map(u=>[u.hp,u.mp,u.statuses,u.badges]))].join('|');
       if(key===stamp)return true;
-      key=stamp;previous=latest;latest=encounterView(b,me,mode,now,pendingTurn===b.turn);
+      key=stamp;previous=latest;latest=encounterView(b,me,mode,now,pendingTurn===b.turn,spectator);
       const a=b.last;
       if(ready && previous && a && previous.lastNumber!==a.n){
         const support=['heal','buff'].includes(a.kind);

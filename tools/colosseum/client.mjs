@@ -1,3 +1,4 @@
+import {companionPortrait} from './companion-portraits.mjs';
 import {paintActionControl} from './control-art.mjs?v=ornate-controls-20261124';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, personalCombatBonus, siegeProfile} from './arena.mjs?v=team-bot-tactics-1';
@@ -89,9 +90,9 @@ if(accountContext && selectedCharacter){
 }
 const channel=testArena?'soulbeast-colosseum-test-session':'soulbeast-colosseum-session';
 const endpoint=(path,base)=>new URL((testArena?'/test':'')+path,base);
-const field=testArena?(await import('./connected-field.mjs?v=vfx-charge-test-20261123-1-country-entry')).createConnectedField(
+const field=(await import('./connected-field.mjs?v=spectator-field-1')).createConnectedField(
  (turn,skill,target)=>send({type:'combat',turn,skill,target}),
- enabled=>send({type:'combatAuto',enabled})):null;
+ enabled=>send({type:'combatAuto',enabled}));
 const practiceType=type=>type==='practice'||type==='survivalPractice';
 const onlineEnabled=!gameWeb||/^https:\/\//i.test(serverURL);
 function practiceSocket(){
@@ -344,14 +345,15 @@ function applyState(next){
  const entering=opening||!state;
  if(next.spectating!==state?.spectating){
   spectatorPan.x=spectatorPan.y=0;spectatorDrag=null;scene.camera=null;
-  if(next.spectating){
+  if(next.spectating||state?.spectating){
+   field.reset();
    battleUpdates.length=0;battle=null;battleKey='';
    presentation.setActive(false);hideBattle();
   }
  }
  opening=false;state=next;offset=next.now+oneWay-arrival;
- if(state.phase==='lobby'||state.phase==='match')field?.warm();
- else field?.reset();
+ if(state.phase==='lobby'||state.phase==='match'){if(testArena||state.spectating)field.warm();}
+ else field.reset();
  presentation.setMusicScene(state.phase==='match'?'arena':state.phase==='finished'?'results':'lobby');
  const player=own();
  const fieldAudio=state.mode!=='survival'&&(state.phase==='match'&&player?.phase==='walk'||
@@ -701,7 +703,19 @@ function skillButton(skill,enabled,onClick){
 function renderBattle(){
  const panel=$('battle'),inCombat=me?.phase==='battle'&&state?.phase==='match',watch=watchedPlayer();
  if(!battle||(!viewingBattle()&&panel.hidden))return;
- if(field && inCombat && !watch && field.show(battle,me,state.mode,()=>performance.now()+offset)){panel.hidden=true;return;}
+ const spectating=state?.phase==='match'&&watch?.phase==='battle';
+ if(spectating && !battle.teams.some(team=>team.includes(watch.id))){panel.hidden=true;field.close();return;}
+ if(spectating||testArena&&inCombat&&!watch){
+  if(field.show(battle,watch||me,state.mode,()=>performance.now()+offset,!!spectating)){panel.hidden=true;return;}
+  if(spectating){
+   if(!panel.querySelector('.retry-spectator-field')){
+    const retry=node('button','ลองเปิดสนามที่กำลังชมอีกครั้ง','retry-spectator-field');
+    retry.onclick=()=>{field.reset();renderBattle()};
+    panel.replaceChildren(retry);
+   }
+   panel.hidden=false;return;
+  }
+ }
  field?.close();
  const b=battle,effectKey=`${b.id}:${b.last?.n??0}`,playEffect=panel.dataset.last!==effectKey&&!!b.last;
  const can=inCombat&&!playEffect&&!presentation.busy&&!battleUpdates.length&&b.commands.length>0&&now>=b.openAt&&now<b.deadline&&pendingTurn!==b.turn;
@@ -1055,8 +1069,8 @@ function renderTeamHp(){
 function characterVitals(unit,subtitle){
  const card=node('article',null,'character-vitals');
  const art=node('img',null,'character-portrait');
- const source=unit.sp?battleAsset(beastPortraits[unit.sp]?.[unit.evo||0]):null;
- const fallback=portrait(unit);
+ const source=unit.sp?companionPortrait(unit):null;
+ const fallback=unit.sp?battleAsset(combatPose(unit)?.idle):portrait(unit);
  art.alt='';
  if(source||fallback)art.src=source||fallback;
  art.onerror=()=>{
