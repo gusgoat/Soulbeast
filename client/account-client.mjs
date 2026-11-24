@@ -96,7 +96,10 @@ export class AccountClient{
  async game(action,extra={},env='test'){
   const gacha=action==='gacha_draw'||action==='gacha_status';
   const signal=gacha?AbortSignal.timeout(action==='gacha_draw'?25000:15000):null;
-  const post=token=>this.fetcher(BASE+'/functions/v1/soulbeast-accounts',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+token,'Content-Type':'application/json','x-soulbeast-environment':env},body:JSON.stringify({action,...extra}),signal:signal??AbortSignal.timeout(60000)});
+  const guildTest = env==='test' && ['guild_sync','guild_war_attack'].includes(action) &&
+   Date.now()>=Date.UTC(2026,10,23,17) && Date.now()<Date.UTC(2026,10,24,17);
+  const endpoint = guildTest ? 'soulbeast-guildwar-test' : 'soulbeast-accounts';
+  const post=token=>this.fetcher(BASE+'/functions/v1/'+endpoint,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+token,'Content-Type':'application/json','x-soulbeast-environment':env},body:JSON.stringify({action,...extra}),signal:signal??AbortSignal.timeout(60000)});
   let r=await post(await (action==='save'&&env==='live'?this.verifySession():this.sessions.token()));if(r.status===401)r=await post(await this.verifySession());
   let v;
   try{v=await r.json();}catch(error){
