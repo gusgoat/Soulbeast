@@ -1,4 +1,4 @@
-export {mountSaveNotice} from './walk-save-notice.mjs?v=save-safe-20261106';
+export {mountSaveNotice} from './walk-save-notice.mjs?v=save-retry-20261125';
 import {mergeWalkPlayer,backupWalkDraft,backupActiveWalk} from './walk-save-merge.mjs?v=lesson-progress-1';
 import {connectAccounts,accountRealtimeConfig,gameSessionId} from './account-client.mjs?v=guild-war-test-20261124';
 
@@ -126,7 +126,8 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
   if(!strict&&Date.now()<nextRetryAt)return Promise.resolve();
   if (stoppedAt !== null) {
    try { syncRevision(); } catch (error) { return strict ? Promise.reject(error) : Promise.resolve(); }
-   if (saveVersion() === stoppedAt) return strict ? Promise.reject(Error('save_conflict')) : Promise.resolve();
+   // A manual retry must reach the authenticated save path, even at the same revision.
+   if (!strict && saveVersion() === stoppedAt) return Promise.resolve();
    stoppedAt = null;
   }
   pending ??= lock(saveWalk).finally(() => { pending = null; });
