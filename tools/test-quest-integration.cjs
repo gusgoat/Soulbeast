@@ -30,14 +30,16 @@ console.log('PASS town/country/dungeon messages: visual receipt, saved-player re
 // Validate actual HTML dependencies rather than only quest-preview load order.
 const entries=['tools/town-walk-demo/index.html','tools/hemant-walk-demo/index.html','tools/labyrinth-demo/index.html','tools/town-walk-demo/menu.html'];
 const scripts=new Set();let refs=0,inline=0;
+const publishedMedia=JSON.parse(read('tools/media-storage.json')).paths;
 for(const entry of entries){
  const html=read(entry),documentURL=new URL(entry,'http://local/Soulbeast/');
  const base=new URL(html.match(/<base\b[^>]*href=["']([^"']+)/)?.[1]||documentURL.href,documentURL);
  const markup=html.replace(/(<script\b[^>]*>)[\s\S]*?<\/script>/g,'$1</script>');
+ const basePosition=markup.search(/<base\b/i);
  for(const m of markup.matchAll(/<(script|link)\b[^>]*(?:src|href)=["']([^"']+)["'][^>]*>/g)){
-  const url=new URL(m[2],base);if(url.origin!=='http://local')continue;
+  const url=new URL(m[2],m.index<basePosition?documentURL:base);if(url.origin!=='http://local')continue;
   assert(url.pathname.startsWith('/Soulbeast/'));const rel=decodeURIComponent(url.pathname.slice('/Soulbeast/'.length));
-  assert(fs.existsSync(path.join(root,rel)),entry+' missing '+rel);refs++;
+  assert(fs.existsSync(path.join(root,rel))||Object.hasOwn(publishedMedia,rel),entry+' missing '+rel);refs++;
   if(m[1]==='script'&&!/type=["']module/.test(m[0]))scripts.add(rel);
  }
  for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){
@@ -47,7 +49,7 @@ for(const entry of entries){
 }
 for(const script of scripts)new vm.Script(read(script),{filename:script});
 for(const launcher of ['tools/town-walk-demo/town.js','tools/hemant-walk-demo/world.js']){
- const src=read(launcher);assert(src.includes('menu.html?v=mobile-onboarding-1'));
+ const src=read(launcher);assert.match(src,/menu\.html\?v=[\w-]+&(?:walkScene=country&)?screen=/);
  assert(!src.includes('menu.html?v=teleport-open-20261106'));
 }
 console.log(`PASS four production entry points: ${refs} local references, ${scripts.size} external scripts + ${inline} inline blocks; fresh menu URLs`);

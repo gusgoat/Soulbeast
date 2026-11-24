@@ -1,0 +1,1116 @@
+
+/* Layout: one-screen phone game — status bar on top, scrolling stage, fixed bottom nav; night-ink world with gold seal accents */
+:root{
+  --bg:#10121b; --panel:#1a1d2b; --panel2:#232739; --line:#323650; --fg:#ece6d6; --muted:#9a97ab;
+  --gold:#d9b35b; --gold-ink:#1d1606; --seal:#6dcfc1; --bad:#e46a5c; --good:#7fd08a; --mp:#6f9cf0;
+  --f-display:'Chonburi','Anuphan',Georgia,serif; --f-body:'Anuphan',system-ui,sans-serif; --f-num:'Chakra Petch','Anuphan',ui-monospace,monospace;
+  color-scheme:dark;
+}
+html{height:100%;box-sizing:border-box}
+*,*::before,*::after{box-sizing:border-box}
+body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5}
+button{font:inherit;color:inherit}
+#app{max-width:560px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:radial-gradient(120% 60% at 50% -10%,#1e2236 0%,var(--bg) 60%)}
+.top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 85%,transparent)}
+.top .who{flex:1;min-width:0;display:flex;flex-direction:column}
+.top .who b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .who small{color:var(--muted);font-size:12px}
+.coin{font-family:var(--f-num);color:var(--gold);font-weight:600;white-space:nowrap}
+main{flex:1;overflow-y:auto;padding-block:14px 20px;padding-inline:16px}
+nav.bottom{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:var(--panel)}
+nav.bottom button{background:none;border:0;padding:9px 2px 10px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+nav.bottom button .g{font-family:var(--f-display);font-size:17px;line-height:1}
+nav.bottom button.on{color:var(--gold)}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font-family:var(--f-display);font-weight:400;font-size:28px;line-height:1.25;color:var(--gold)}
+h2{font-family:var(--f-display);font-weight:400;font-size:20px;line-height:1.3}
+h3{font-size:15px;font-weight:600}
+.sub{color:var(--muted);font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:500;min-height:40px;text-align:center}
+.btn:hover{border-color:var(--gold)}
+.btn:focus-visible,nav.bottom button:focus-visible,.ucard:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+.btn.pri{background:var(--gold);color:var(--gold-ink);border-color:var(--gold);font-weight:700}
+.btn.seal{border-color:var(--seal);color:var(--seal)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.sm{min-height:32px;padding:5px 10px;font-size:13px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.full{width:100%}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.pt{--s:52px;width:var(--s);height:var(--s);flex:none;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--ec) 55%,#fff 8%),color-mix(in srgb,var(--ec) 25%,#0b0c14) 70%);
+  box-shadow:0 0 0 2px var(--ec),0 0 14px color-mix(in srgb,var(--ec) 40%,transparent);overflow:hidden;font-size:calc(var(--s)*.5);line-height:1}
+.pt::after{content:"";position:absolute;inset:4px;border-radius:50%;border:1px dashed color-mix(in srgb,#fff 35%,transparent);pointer-events:none}
+.pt img{width:100%;height:100%;object-fit:cover}
+.pt.unk{filter:grayscale(1) brightness(.5)}
+/* battle */
+.field{display:flex;flex-direction:column;gap:10px}
+@keyframes pop{0%{transform:translateY(6px);opacity:0}20%{transform:none;opacity:1}100%{transform:translateY(-16px);opacity:0}}
+@keyframes pop2{0%{opacity:0;transform:translate(-50%,8px)}10%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+input[type=text],input[type=password]{width:100%;background:#0b0c14;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--fg);font:inherit}
+nav.bottom button.lock{opacity:.35}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#vfx{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+#worldTales p,.secret-location p,.forest-special p,.forest-riddle p{white-space:pre-line;line-height:1.85;overflow-wrap:anywhere}#worldTales p[role=status]{margin-block:8px 16px}@keyframes battle-emblem{0%{opacity:0;transform:translate(-50%,-50%) scale(.35)}30%{opacity:.8;transform:translate(-50%,-65%) scale(1)}100%{opacity:0;transform:translate(-50%,-90%) scale(1.2)}}
+@keyframes vburst{0%{transform:translate(-50%,-50%) scale(.2);opacity:1}100%{transform:translate(-50%,-50%) scale(1.7);opacity:0}}
+@keyframes vring{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(-50%,-50%) scale(1.8);opacity:0}}
+@keyframes vslash{0%{transform:translate(-50%,-50%) rotate(var(--r)) scaleX(0);opacity:1}65%{opacity:1}100%{transform:translate(-50%,-50%) rotate(var(--r)) scaleX(1.25);opacity:0}}
+@keyframes vp{0%{transform:translate(-50%,-50%) rotate(0);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot));opacity:0}}
+@keyframes vcast{0%{transform:translate(-50%,-50%) scaleX(.6);opacity:0}15%{transform:translate(-50%,-50%) scaleX(1);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-80%);opacity:0}}
+@keyframes vaura{0%{transform:translate(-50%,-30%) scale(.6);opacity:0}30%{opacity:1}100%{transform:translate(-50%,-90%) scale(1.15);opacity:0}}
+@keyframes vcharge{0%{transform:translate(-50%,-50%) scale(1.6) rotate(0);opacity:0}40%{opacity:1}100%{transform:translate(-50%,-50%) scale(.3) rotate(220deg);opacity:0}}
+@keyframes vflash{0%{opacity:.25}100%{opacity:0}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-6px,3px)}40%{transform:translate(5px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}
+@media (prefers-reduced-motion:reduce){#vfx .vx-p,#vfx .vx-slash,#vfx .vx-flash{display:none}}
+textarea{background:#0b0c14;border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--fg);font:inherit;resize:vertical;box-sizing:border-box}
+
+/* Built-in illustrated art; independent of player save data. */
+.pt .atlas-face{display:block;width:100%;height:100%;object-fit:cover;position:relative;z-index:0}
+
+/* Distinct skill effects: visual layer only. */
+.vx-sigil{width:86px;height:86px;border:2px solid var(--c);border-radius:50%;box-shadow:0 0 20px var(--c),inset 0 0 18px var(--c);display:grid;place-items:center;color:var(--c);font-size:38px;animation:skill-sigil .85s ease-out forwards}
+@keyframes skill-sigil{0%{transform:translate(-50%,-50%) scale(.35) rotate(-60deg);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-50%) scale(1.35) rotate(45deg);opacity:0}}
+@keyframes skill-blade{0%{transform:translate(-50%,-50%) rotate(var(--angle)) scale(.2);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-50%) rotate(calc(var(--angle) + 35deg)) scale(1.25);opacity:0}}
+@keyframes skill-glyph{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}20%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot)) scale(1.2);opacity:0}}
+@keyframes skill-lance{0%{transform:rotate(var(--angle)) scaleX(.05);opacity:0}35%{opacity:1}100%{transform:rotate(var(--angle)) scaleX(1);opacity:0}}
+@keyframes skill-vortex{0%{transform:translate(-50%,-50%) rotate(0) scale(.3);opacity:0}20%{opacity:1}100%{transform:translate(-50%,-50%) rotate(300deg) scale(1.4);opacity:0}}
+@media(prefers-reduced-motion:reduce){.vx:not(.vx-cast){display:none!important}}
+
+/* Path illustrations and item portraits use individual embedded images. */
+.door{padding:0 0 14px;overflow:hidden;gap:7px;min-height:240px}
+#travelFx{position:fixed;inset:0;z-index:24;pointer-events:none;overflow:hidden}
+@keyframes walk-bob{0%,100%{transform:translateY(0)}25%{transform:translateY(3px)}50%{transform:translateY(-2px)}75%{transform:translateY(2px)}}
+@keyframes walk-side{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}55%{transform:translateX(3px)}80%{transform:translateX(-1px)}}
+@keyframes trail-leaf{from{transform:translateX(0) rotate(0);opacity:0}25%{opacity:.8}to{transform:translate(var(--dx),75px) rotate(170deg);opacity:0}}
+@keyframes trail-fog{0%{transform:translateX(-10%);opacity:0}35%{opacity:.65}100%{transform:translateX(15%);opacity:0}}
+@keyframes trail-spark{from{transform:translateY(10px) scale(.4);opacity:0}25%{opacity:1}to{transform:translateY(-65px) scale(1.2);opacity:0}}
+@keyframes trail-water{from{transform:translate(-50%,-50%) scale(.2);opacity:.8}to{transform:translate(-50%,-50%) scale(4);opacity:0}}
+@media(prefers-reduced-motion:reduce){#travelFx{display:none}}
+/* Gilded moon sanctuary: vector ornament, no extra media requests. */
+:root{--bg:#080f19;--panel:#111f2b;--panel2:#1c3040;--line:#43505b;--gold:#f0cd86;--gold-ink:#30200d;--fg:#f3ede0;--muted:#b4bdc7;--seal:#83d9c4;--good:#96dca5;--bad:#f58b7a;--mp:#8eb9ff;--orn:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32'%3E%3Cg fill='none' stroke='%23d6b46d' stroke-width='1'%3E%3Cpath d='M0 16h28l10-8 12 8-12 8-10-8M100 16H72L62 8l-12 8 12 8 10-8M40 16l10-12 10 12-10 12z'/%3E%3C/g%3E%3Cpath d='m50 11 5 5-5 5-5-5z' fill='%23eac982'/%3E%3C/svg%3E");--corner:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Cg stroke='%23d3ad64' fill='none'%3E%3Cpath d='M3 45V3h42M8 34V8h26M3 24l6-6 8 8-8 8M24 3l-6 6 8 8 8-8'/%3E%3C/g%3E%3Cpath d='m8 8 7 2-5 5z' fill='%23e3c78a'/%3E%3C/svg%3E")}
+body{background:radial-gradient(ellipse at 12% 10%,#224b4b55,transparent 42%),radial-gradient(ellipse at 90% 70%,#3c335755,transparent 48%),#070d15}
+#app{max-width:1000px;height:100%;height:100dvh;min-height:0;background:radial-gradient(ellipse at 90% 0,#24435355,transparent 55%),linear-gradient(165deg,#111d2b,#0a121c 70%);border-inline:1px solid #9a7c3e55;box-shadow:0 0 90px #000a;isolation:isolate}
+.top{background:linear-gradient(110deg,#111e2cf5,#203540f5,#111c2af5);padding:14px 22px;border-bottom:1px solid #d5b46d88;box-shadow:0 5px 20px #0005;z-index:2}
+.top .who b{color:#f8dfaa}.top .pt{box-shadow:0 0 0 2px #d0a95b,0 0 0 5px #15242c,0 0 0 6px #7f735355}
+main{padding:22px clamp(14px,3vw,32px) 30px;scrollbar-color:#88734a #101c28;scrollbar-width:thin;min-height:0}
+main>.stack>h2,main>.stack>.row>h2{font-size:clamp(22px,3vw,30px);color:#f0cf91;text-shadow:0 2px 12px #ae843544;letter-spacing:.015em}
+h3{color:#ead5a9;letter-spacing:.02em}
+.card:not(.row)>h3:first-child,.panel>h3:first-child{padding:1px 0 8px;border-bottom:1px solid #c7a46733}
+.card.stack:not(.mini)::after,.panel::after{content:"";position:absolute;left:50%;top:-9px;transform:translateX(-50%);width:70px;height:20px;background:var(--orn) center/contain no-repeat;pointer-events:none;opacity:.95}.sub{color:var(--muted)}
+.btn{position:relative;border-radius:9px;min-height:44px;padding:10px 16px;border-color:#a68d5788;background:linear-gradient(180deg,#2b4050,#182a38);box-shadow:inset 0 1px #f1deaa22,inset 0 -3px #0003,0 3px 7px #0003;transition:border-color .18s,box-shadow .18s,background .18s;line-height:1.45;overflow-wrap:anywhere}
+.btn::before,.btn::after{content:"";position:absolute;width:5px;height:5px;pointer-events:none;border:1px solid #dac28788;transform:rotate(45deg);top:calc(50% - 2px)}.btn::before{left:4px}.btn::after{right:4px}
+.btn:hover:not(:disabled){border-color:#ffe1a3;box-shadow:inset 0 1px #ffe9b655,0 0 15px #d6b05f22}
+.btn.pri{color:#2d210f;border-color:#f6db9b;background:linear-gradient(180deg,#ffe1a2,#d2a95d 65%,#bc8e45);text-shadow:0 1px #ffe8ba66}
+.btn.seal{background:linear-gradient(180deg,#234b4c,#163236);border-color:#77c5b7;color:#b2f1dc}
+.btn.danger{background:linear-gradient(180deg,#50302e,#2c2027);color:#ffc4b8;border-color:#ba7866}
+.btn.sm{min-height:36px;padding:7px 13px}.btn:disabled{opacity:.43;box-shadow:none}.btn:focus-visible,.pick:focus-visible,.tabs button:focus-visible{outline:2px solid #a1ecdf;outline-offset:3px}
+nav.bottom{padding-bottom:env(safe-area-inset-bottom);background:linear-gradient(180deg,#1b2b38,#0c1723);border-top:1px solid #b89c60aa;box-shadow:0 -6px 22px #0005;z-index:2}
+nav.bottom button{min-height:64px;position:relative;gap:7px;padding:12px 4px;color:#a8b6c2}
+nav.bottom button.on{color:#ffe0a0;background:radial-gradient(ellipse at 50% 0,#cfb36b26,transparent 85%)}
+nav.bottom button.on::before{content:"";position:absolute;top:0;left:20%;right:20%;height:2px;background:#e5c47d;box-shadow:0 0 12px #e5c47d77}.pt{box-shadow:0 0 0 2px #bd9f62,0 0 15px #a5924c25}
+input[type=text],input[type=password],select{min-height:44px;border:1px solid #aa915c77;background:#0b1825;color:var(--fg);padding:11px 14px;border-radius:8px;font:inherit;max-width:100%}select{width:100%}
+@media(min-width:760px){.top{padding-inline:30px}.top .who b{font-size:17px}}
+@media(max-width:540px){.top{padding:10px 14px;gap:8px}.top .coin{font-size:12px}.top .who small{font-size:10px}main{padding:18px 12px 22px}.btn.sm{padding-inline:11px}nav.bottom button{min-height:60px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.btn,.bar>i{transition:none}}@media(max-width:540px){}
+/* Advanced spell choreography: all layers ignore pointer input and leave layout untouched. */
+.sp-circle,.sp-orbit,.sp-ring,.sp-halo,.sp-accretion,.sp-horizon,.sp-nova,.sp-fireball,.sp-crater,.sp-skyseal{width:var(--size,180px);height:var(--size,180px);border-radius:50%}
+@keyframes sp-turn{0%{transform:translate(-50%,-50%) scale(.2) rotate(-70deg);opacity:0}22%{opacity:.9}72%{opacity:.7}100%{transform:translate(-50%,-50%) scale(1.2) rotate(50deg);opacity:0}}
+@keyframes sp-emblem{0%{transform:translate(-50%,-50%) scale(.25);opacity:0}30%{opacity:1}100%{transform:translate(-50%,-65%) scale(1.15);opacity:0}}
+@keyframes sp-orbit{0%{transform:translate(-50%,-50%) rotateX(60deg) rotate(0) scale(.2);opacity:0}20%{opacity:.7}100%{transform:translate(-50%,-50%) rotateX(60deg) rotate(230deg) scale(1.3);opacity:0}}
+@keyframes sp-bloom{0%{transform:translate(-50%,-50%) scale(.05);opacity:0}18%{opacity:.75}60%{opacity:.5}100%{transform:translate(-50%,-50%) scale(1.4);opacity:0}}
+@keyframes sp-ring{0%{transform:translate(-50%,-50%) scale(.15);opacity:0}22%{opacity:.9}100%{transform:translate(-50%,-50%) scale(1.5);opacity:0}}
+@keyframes sp-cut{0%{transform:translate(-50%,-50%) rotate(var(--angle)) scaleX(0);opacity:0}28%{opacity:1}100%{transform:translate(-50%,-50%) rotate(var(--angle)) scaleX(1.4);opacity:0}}
+@keyframes sp-star{0%{transform:translate(-50%,-50%) scale(.1) rotate(-25deg);opacity:0}25%{opacity:.9}100%{transform:translate(-50%,-50%) scale(1.3) rotate(25deg);opacity:0}}
+@keyframes sp-meteor{0%{transform:translate(-170%,-180%) rotate(var(--angle)) scaleY(1.5);opacity:0}20%{opacity:1}78%{opacity:.95}100%{transform:translate(-50%,-25%) rotate(var(--angle)) scaleY(.15);opacity:0}}
+@keyframes sp-plume{0%{transform:translate(-50%,-20%) scale(.2);opacity:0}25%{opacity:.85}100%{transform:translate(-50%,-90%) scale(1.4);opacity:0}}
+@keyframes sp-lightning{0%{transform:translate(-50%,-90%) rotate(var(--angle)) scaleY(0);opacity:0}18%{transform:translate(-50%,-65%) rotate(var(--angle)) scaleY(1);opacity:1}55%{opacity:.85}100%{transform:translate(-50%,-65%) rotate(var(--angle)) scaleY(1.1);opacity:0}}
+@keyframes sp-rise{0%{transform:translate(-50%,-5%) rotate(var(--angle)) scaleY(0);opacity:0}25%{transform:translate(-50%,-80%) rotate(var(--angle)) scaleY(1);opacity:1}70%{opacity:.85}100%{transform:translate(-50%,-85%) rotate(var(--angle)) scaleY(1.07);opacity:0}}
+@keyframes sp-wave{0%{transform:translate(-50%,-20%) rotate(var(--angle,0deg)) scale(.2);opacity:0}25%{opacity:.85}100%{transform:translate(-50%,-100%) rotate(calc(var(--angle,0deg) + 150deg)) scale(1.5);opacity:0}}
+@keyframes sp-column{0%{transform:translate(-50%,-35%) scale(.2,.1);opacity:0}25%{opacity:.65}100%{transform:translate(-50%,-70%) scale(1,1.3);opacity:0}}
+@keyframes sp-hole{0%{transform:translate(-50%,-50%) scale(0);opacity:0}25%{transform:translate(-50%,-50%) scale(1);opacity:1}75%{opacity:.9}100%{transform:translate(-50%,-50%) scale(.2);opacity:0}}
+@keyframes sp-accretion{0%{transform:translate(-50%,-50%) rotate(-25deg) scale(.2);opacity:0}25%{opacity:.9}100%{transform:translate(-50%,-50%) rotate(160deg) scale(1.3);opacity:0}}
+@keyframes sp-ray{0%{transform:translate(-50%,-50%) scaleX(0);opacity:0}30%{opacity:.9}100%{transform:translate(-50%,-50%) scaleX(1.3);opacity:0}}
+@keyframes sp-particle{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}15%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--angle)) scale(.1);opacity:0}}
+@keyframes sp-gather{0%{transform:translate(-50%,-50%) scale(1);opacity:0}25%{opacity:.9}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.1);opacity:0}}
+@keyframes sp-scene{0%{opacity:0}20%{opacity:.65}75%{opacity:.4}100%{opacity:0}}
+@keyframes sp-skyseal{0%{transform:translate(-50%,-50%) rotateX(58deg) rotate(-45deg) scale(.2);opacity:0}25%{opacity:.38}100%{transform:translate(-50%,-50%) rotateX(58deg) rotate(55deg) scale(1.1);opacity:0}}
+@media(max-width:620px){}
+@media(prefers-reduced-motion:reduce){#vfx .vx:not(.vx-cast){display:none!important}}
+@keyframes sp-struck{0%{filter:brightness(1)}20%{filter:brightness(1.65);transform:translateX(-3px)}45%{filter:brightness(1.3);transform:translateX(3px)}100%{filter:brightness(1);transform:none}}
+@media(prefers-reduced-motion:reduce){}
+
+/* Illustrated activity cards and readable career guidance. */
+.town-home{gap:16px}
+.town-tile:hover:not(:disabled),.town-tile:focus-visible{border-color:#ffe2a4;box-shadow:0 0 0 2px #e1c58a55,0 10px 24px #0005;outline:0}.town-tile:hover:not(:disabled)>img{transform:scale(1.045)}.town-tile:active:not(:disabled){box-shadow:inset 0 0 30px #ffe6ab33}
+.town-nav-art{display:block;width:29px;height:29px;object-fit:cover;border-radius:8px;border:1px solid #b7a27555;margin:0 auto 3px}.bottom .nav-wild .town-nav-art{border-color:#d8c17c;box-shadow:0 0 9px #86c49455}.bottom .nav-wild{color:#e9d49e}
+@media(max-width:540px){}
+@media(max-width:360px){}
+@media(prefers-reduced-motion:reduce){.town-tile:hover:not(:disabled)>img{transform:none}}
+
+
+nav.bottom{grid-template-columns:1fr 1fr 1.15fr 1fr 1fr;align-items:end}.bottom .nav-wild{position:relative;transform:translateY(-5px);border:1px solid #d8c17c88;border-radius:18px 18px 6px 6px;background:linear-gradient(#34574a,#172d31);padding-top:9px;box-shadow:0 -4px 18px #83d8a02b}.bottom .nav-wild .town-nav-art{width:36px;height:36px}@keyframes phaseBloom{from{opacity:0;transform:translate(-50%,-50%) scale(.2)}25%{opacity:.6}to{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}@keyframes phaseCross{from{opacity:.8;transform:translate(-50%,-50%) rotate(-30deg) scale(.3)}to{opacity:0;transform:translate(-50%,-50%) rotate(40deg) scale(1.5)}}@media(prefers-reduced-motion:reduce){}@keyframes clockPulse{to{box-shadow:0 0 16px #ffcc85aa;transform:scale(1.06)}}@media(prefers-reduced-motion:reduce){}.btn .element-icon{width:25px;height:25px;vertical-align:middle;position:static}.btn .skill-name{vertical-align:middle;white-space:normal;overflow-wrap:anywhere}@keyframes storyReveal{from{opacity:.3;transform:scale(1.03)}to{opacity:1;transform:scale(1)}}@media(max-width:540px){.settings-button{padding-inline:9px}}@media(prefers-reduced-motion:reduce){}
+
+/* Story art is shown whole above its caption, including on narrow screens. */
+.forest-gallery .forest-portrait{display:flex;flex-direction:column;min-height:0;padding:0}@media(max-width:540px){}.atlas-face{object-position:center top}
+/* Painted skill cards keep labels and cost legible on narrow mobile screens. */
+.skill-painted{display:inline-block;position:relative;width:54px;height:54px;flex:0 0 54px;overflow:hidden;border-radius:13px;border:1px solid color-mix(in srgb,var(--skill-color) 65%,#766443);background:#101426;box-shadow:0 2px 7px #0008,inset 0 0 0 2px #ffffff12;margin:0 9px 0 0;vertical-align:middle;isolation:isolate}
+.acts .btn:has(.skill-painted){position:relative;display:grid;grid-template-columns:54px minmax(0,1fr);column-gap:10px;row-gap:3px;align-content:center;align-items:center;min-height:99px;padding:11px;text-align:left;border-radius:15px;background:linear-gradient(135deg,#24263b,#151724 80%);border:1px solid #7c6a464d;box-shadow:inset 0 1px #fff1,0 3px 8px #0003;overflow:hidden}
+.acts .btn:has(.skill-painted)>.skill-picture{grid-column:1;grid-row:1/4;margin:0;float:none}
+.acts .btn:has(.skill-painted)>.element-icon{grid-column:2;justify-self:start;width:18px;height:18px;margin:0}
+.acts .btn:has(.skill-painted)>.skill-name{grid-column:2;line-height:1.4;font-weight:700;font-size:13px;overflow-wrap:anywhere}
+.acts .btn:has(.skill-painted)>small{grid-column:2;margin:0;font-size:10px;line-height:1.5;color:#b9bdcf;overflow-wrap:anywhere}
+.acts .btn:has(.skill-painted):enabled:hover{border-color:#c9a65a;background:linear-gradient(135deg,#353049,#1a1b2a)}
+.acts .btn:has(.skill-painted):enabled:hover .skill-paint{transform:scale(1.06)}
+.acts .btn:has(.skill-painted):enabled:active{transform:translateY(1px)}
+.acts .btn:has(.skill-painted):focus-visible{outline:2px solid #f4d78c;outline-offset:2px}
+.acts .btn:has(.skill-painted):disabled .skill-paint{filter:grayscale(.7) brightness(.65)}
+@media(max-width:380px){.acts .btn:has(.skill-painted){grid-template-columns:44px minmax(0,1fr);padding:9px;column-gap:7px}.acts .btn:has(.skill-painted)>.skill-name{font-size:12px}}
+@media(prefers-reduced-motion:reduce){}
+html[lang="zh-CN"]{--f-body:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif;--f-display:"Microsoft YaHei","PingFang SC",serif}
+html[lang="en"] .acts .btn:has(.skill-painted){grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;min-height:154px;row-gap:4px}
+html[lang="en"] .acts .btn:has(.skill-painted)>.skill-picture{grid-column:1;grid-row:1;margin:0 auto}
+html[lang="en"] .acts .btn:has(.skill-painted)>.element-icon{grid-column:1;grid-row:2;justify-self:center}
+html[lang="en"] .acts .btn:has(.skill-painted)>.skill-name{grid-column:1;grid-row:3;width:100%;font-size:12px;line-height:1.35;overflow-wrap:normal;word-break:normal}
+html[lang="en"] .acts .btn:has(.skill-painted)>small{grid-column:1;grid-row:4;font-size:10px;line-height:1.4}
+html[lang="en"] .tabs .btn,html[lang="en"] .tabs button{white-space:normal;line-height:1.4}
+html[lang="en"] nav.bottom button{font-size:10px}
+html[lang="en"] .rarity-filters .btn{font-size:11px;padding-inline:8px;line-height:1.4}
+@media(prefers-reduced-motion:reduce){}@media(max-width:480px){}.top{flex-wrap:wrap;gap:6px}.top .who{min-width:90px;flex:1}.friend-top{white-space:nowrap;min-height:36px}.friend-top small{color:#90d5b1}@keyframes gachaPulse{to{filter:brightness(1.3) drop-shadow(0 0 10px #b89259);transform:scale(1.015)}}@keyframes rewardAppear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@media(max-width:520px){.top .coin{font-size:13px}.friend-top{padding:6px 8px!important}}@media(prefers-reduced-motion:reduce){}
+@media(max-width:520px){.top .who{flex-basis:calc(100% - 48px);min-width:0}.top .coin{margin-right:auto}.top{row-gap:5px}}
+
+.top{position:relative;border-bottom:0!important;box-shadow:none;padding-bottom:18px}.top::after,.bottom::before{content:"";position:absolute;left:0;right:0;height:26px;background:url('assets/ui/soulbeast-trim.svg') center/100% 100% no-repeat;pointer-events:none;z-index:3}.top::after{bottom:-13px}.bottom{position:relative;border-top:0!important}.bottom::before{top:-13px;transform:scaleY(-1)}.brand-seam{height:30px;position:relative;flex:none;z-index:4;pointer-events:none}.brand-seam img{position:absolute;left:50%;top:-25px;transform:translateX(-50%);width:184px;height:62px;object-fit:contain;filter:drop-shadow(0 3px 5px #02070d)}main{padding-top:20px}@keyframes summonFloat{50%{transform:translateY(-9px);filter:drop-shadow(0 0 25px #87caffaa)}}@keyframes summonOrbit{to{transform:rotate(360deg)}}@keyframes summonSpark{to{opacity:.2;transform:scale(.6) translateY(-15px)}}@keyframes summonScan{from{transform:translateX(-80%)}to{transform:translateX(270%)}}@media(max-width:520px){.brand-seam{height:27px}.brand-seam img{width:154px;height:53px;top:-22px}.top{padding-bottom:16px}}@media(prefers-reduced-motion:reduce){}
+.bottom{padding-top:24px}.bottom::after{content:"";position:absolute;z-index:4;pointer-events:none;left:50%;top:-24px;transform:translateX(-50%);width:144px;height:48px;background:url('assets/ui/soulbeast-logo-v2.webp') center/contain no-repeat,radial-gradient(ellipse at center,#122130 55%,transparent 73%)}.bottom .nav-wild{transform:none;padding:12px 4px;border:0;border-radius:0;background:radial-gradient(ellipse at 50% 0,#83bd9330,transparent 85%);box-shadow:none}.bottom .nav-wild .town-nav-art{width:29px;height:29px}@keyframes onlineFloat{50%{transform:translateY(-7px);filter:drop-shadow(0 0 14px #7ed6f7aa)}}@media(max-width:720px){.top{display:grid;grid-template-columns:34px minmax(0,1fr) auto auto auto;column-gap:5px;row-gap:0;padding:9px 12px 13px}.top>.pt{grid-column:1;grid-row:1/3}.top>.who{grid-column:2;grid-row:1;min-width:0;flex-basis:auto}.top>.who b{font-size:12px;white-space:normal;overflow-wrap:anywhere}.top>.who small{font-size:10px}.top>.coin{grid-column:2;grid-row:2;margin:0;font-size:12px}.top>.friend-top{grid-column:3;grid-row:1/3;font-size:10px;padding:6px!important;align-self:start}.top>.settings-button{grid-column:4;grid-row:1/3;align-self:start}.top>button:last-child{grid-column:5;grid-row:1/3;align-self:start}.top>button{min-height:33px;padding:6px!important}.brand-seam{height:24px}.brand-seam img{width:146px;height:49px;top:-21px}}@media(prefers-reduced-motion:reduce){}@keyframes evoSpin{to{transform:rotate(90deg)}}@keyframes evoReveal{0%{filter:brightness(4);transform:scale(.3)}40%{filter:brightness(2);transform:scale(1.12)}100%{filter:none;transform:scale(1)}}@media(prefers-reduced-motion:reduce){}@keyframes heroLevel{0%,100%{opacity:0;transform:scale(.85)}20%,80%{opacity:1;transform:scale(1)}}@media(max-width:600px){}@media(max-height:650px){}@media(prefers-reduced-motion:reduce){}@media(max-height:650px){}
+/* Explicit forest banner dimensions avoid Safari flex/aspect-ratio min-size expansion. */
+.forest-detail{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+
+#app.online-combat-mode nav.bottom{display:none}@media(max-width:430px){}@media(max-height:650px){}
+
+.battle-effect-icon:has(.battle-effect-image){border:0;box-shadow:none;background:transparent;border-radius:3px;overflow:hidden}
+
+.tower-rest-grid>.tower-rest-choice:last-child:nth-child(odd){grid-column:1/-1}
+@keyframes sig-crest{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{opacity:.82}65%{opacity:.65}100%{transform:translate(-50%,-65%) scale(1.1);opacity:0}}@keyframes sig-ring{0%{transform:translate(-50%,-50%) rotate(var(--theta)) scale(.25);opacity:0}20%{opacity:.85}100%{transform:translate(-50%,-50%) rotate(calc(var(--theta) + 45deg)) scale(1.2);opacity:0}}@keyframes sig-spin{0%{transform:translate(-50%,-50%) rotate(var(--theta)) scale(.5);opacity:0}20%{opacity:.8}100%{transform:translate(-50%,-50%) rotate(calc(var(--theta) + 210deg)) scale(1.1);opacity:0}}@keyframes sig-cut{0%{transform:translate(-65%,-50%) rotate(var(--theta)) scaleX(.1);opacity:0}25%{opacity:1}100%{transform:translate(-35%,-50%) rotate(calc(var(--theta) + 25deg)) scaleX(1.25);opacity:0}}@keyframes sig-projectile{0%{transform:translate(calc(-50% + var(--sx)),calc(-50% + var(--sy))) rotate(var(--theta));opacity:0}15%{opacity:1}75%{transform:translate(-50%,-50%) rotate(var(--theta));opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(.1)}}@keyframes sig-strike{0%{transform:translate(-50%,-110%) scaleY(.05);opacity:0}20%,40%{opacity:1}55%{opacity:.3}70%{opacity:1}100%{transform:translate(-50%,-55%) scaleY(1);opacity:0}}@keyframes sig-fall{0%{transform:translate(-130%,-200%) rotate(-30deg) scale(.2);opacity:0}20%{opacity:1}80%{transform:translate(-50%,-50%) rotate(-30deg) scale(1);opacity:.8}100%{transform:translate(-50%,-50%) scale(1.2);opacity:0}}@keyframes sig-wing{0%{transform:translate(-50%,-50%) scaleX(var(--side)) scale(.1);opacity:0}25%{opacity:.8}100%{transform:translate(-50%,-70%) scaleX(var(--side)) scale(1.25);opacity:0}}@keyframes sig-heal{0%{transform:translate(-50%,-25%) scale(.4);opacity:0}30%{opacity:.8}100%{transform:translate(-50%,-85%) scale(1.15);opacity:0}}@keyframes sig-drift{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}25%{opacity:.95}100%{transform:translate(calc(-50% + var(--dx)),calc(-90% + var(--dy))) rotate(var(--theta)) scale(.6);opacity:0}}@keyframes sig-return{0%{transform:translate(-50%,-50%) scale(1);opacity:0}20%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.2);opacity:0}}@keyframes sig-bite{0%{transform:translate(-50%,-110%) scale(.1);opacity:0}30%{opacity:.9}100%{transform:translate(-50%,-40%) scale(.9);opacity:0}}@keyframes sig-eye{0%{transform:translate(-50%,-50%) scaleY(.1);opacity:0}30%{opacity:.9}100%{transform:translate(-50%,-50%) scale(1.2);opacity:0}}@keyframes sig-grow{0%{transform:translate(-50%,0) rotate(var(--theta)) scaleY(.1);opacity:0}30%{opacity:.9}100%{transform:translate(-50%,-80%) rotate(var(--theta)) scaleY(1.2);opacity:0}}@keyframes sig-eclipse{0%{transform:translate(-50%,-50%) scale(.1);opacity:0}35%{opacity:.8}100%{transform:translate(-50%,-50%) scale(1.15);opacity:0}}@media(prefers-reduced-motion:reduce){}
+
+/* Secret story cards keep images inside mobile Safari flex/grid bounds. */
+.secret-scene{position:relative;margin:0;min-width:0;width:100%;height:210px;overflow:hidden;border:1px solid var(--secret-color,#cdb47e);border-radius:16px;background:#102331;isolation:isolate}
+@media(max-width:420px){}
+
+/* Secret visual story panels: one 3x3 atlas per location, equal independent cells. */
+.secret-panel{margin:0;position:relative;aspect-ratio:3/2;width:100%;min-width:0;overflow:hidden;border:1px solid #cdb47e88;border-radius:12px;background-color:#102331;background-image:var(--story-atlas);background-size:300% 300%;background-position:var(--sx) var(--sy)}
+@keyframes secret-reveal{0%{transform:scale(1.35);filter:brightness(.2) blur(10px)}55%{filter:brightness(1.4) blur(0)}100%{transform:scale(1);filter:brightness(1)}}@keyframes secret-ring{0%{transform:scale(.15) rotate(-100deg);opacity:0}35%{opacity:1}100%{transform:scale(1.7) rotate(80deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){}@media(max-width:360px){}
+
+/* Keep the secret discovery label small and inside the forest button footer. */
+.forest-gallery .forest-portrait .forest-name{padding-bottom:36px;min-height:84px}@media(max-width:340px){}
+
+/* New class skill illustrations; presentation only. */
+.class-ability-image{display:inline-block;flex:none;object-fit:contain;border-radius:8px;vertical-align:middle}.chip.pas:has(.class-ability-image){display:inline-flex;align-items:center;gap:5px}
+
+/* Illustrated one-answer forest events. */
+.forest-riddle{scroll-margin-top:12px}@keyframes riddle-blessing{0%{filter:brightness(3);transform:scale(.96)}100%{filter:brightness(1);transform:scale(1)}}@media(max-width:420px){}
+
+@media(prefers-reduced-motion:reduce){}
+
+/* Illustrated roadside quests: scene and action tiles share a 3 x 6 atlas. */
+.tale-panel{margin:0;display:block;width:100%;aspect-ratio:var(--tale-ratio,1);background-image:var(--tale-art);background-size:300% 600%;background-position:var(--tx) var(--ty);background-repeat:no-repeat;border-radius:12px;overflow:hidden;border:1px solid #a7925f66}
+#worldTales>.tale-panel{max-width:360px;justify-self:center;margin-inline:auto}
+/* Atlas panels use reviewed pixel bounds, including nonuniform rows. Keep the
+   source ratio in route buttons, choice cards and full scenes alike. */
+.tale-panel,.secret-panel,.secret-choice .secret-panel,.special-panel,.special-choice .special-panel,.special-route .special-panel,.riddle-panel,.riddle-choice .riddle-panel{aspect-ratio:var(--crop-ratio);background-size:var(--crop-size);background-position:var(--crop-position);background-repeat:no-repeat}
+#worldTales>.tale-panel{max-width:min(100%,var(--crop-width,360px))}
+@media(max-width:380px){}
+#worldTales>.tale-extra{max-width:360px;margin-inline:auto}
+
+/* The real control remains clickable; tutorial illustrations never contain live controls. */
+.tutorial-target{outline:3px solid #ff665b!important;outline-offset:3px;box-shadow:0 0 0 6px #ff665b22,0 0 22px #ffcd5eaa!important;animation:tutorialGlow 1.4s ease-in-out infinite;scroll-margin-block:100px}
+@keyframes tutorialGlow{50%{outline-color:#ffd465;box-shadow:0 0 0 6px #ffd46533,0 0 28px #ffd465cc}}
+@keyframes tutorialArrow{to{filter:drop-shadow(0 0 7px #ffbb54);opacity:.65}}
+@media(prefers-reduced-motion:reduce){}
+
+/* Trap event illustrations: pause offline combat until acknowledged. */
+.trap-notice{z-index:10050}
+
+/* Character creation: gender changes portraits only. */
+.creation-identity{display:flex;align-items:center;gap:18px;min-width:0}
+
+/* Battlefield scenery stays inside the targetable combat overview. */
+.battle-scenery{--scene-ink:#b5d7af;--scene-shadow:#193a2c;--scene-ornament:url('assets/ui/battle-frames/forest.svg');position:relative;isolation:isolate;border:1px solid var(--scene-ink);padding:8px 12px 13px;gap:12px;background:linear-gradient(180deg,#06101c88,#08121a77 48%,#07121bdd),var(--battle-art) center/cover no-repeat,#0b172b;box-shadow:inset 0 0 0 3px #050b1499,inset 0 0 0 4px #e9d8a324,0 5px 18px #0005;border-radius:14px}
+@media(max-width:380px),(max-height:650px){}
+@media(max-width:430px){}
+/* Identity ornaments live in reserved top/bottom edge channels, outside all card content. */
+.unit-frame{position:relative;isolation:isolate;border-color:var(--unit-tint);box-shadow:inset 0 0 0 2px #030a143d,0 3px 9px #0004}
+@media(max-width:380px){}
+/* Hand-painted foliage breaks the rectangle while the content keeps its reserved inset. */
+.battle-scenery[data-battle-scene="training"]{--scene-ink:#b9d18d;--scene-ornament:url('assets/ui/battle-frames/training.svg');background:linear-gradient(180deg,#18231544,#11221955 48%,#0b1c1bb3),var(--battle-art) center/cover no-repeat,#183326}
+.unit-frame:is([data-unit-frame="grove"],[data-unit-frame="grass"])>.unit-frame-sprig{display:block}
+/* First-visit website video; preserve the entire frame on portrait phones. */
+.web-intro{position:fixed;inset:0;z-index:11000;display:grid;place-items:center;background:#000;color:#f4e9d2;padding:0;isolation:isolate}
+
+/* Individual illustrated skill assets; elemental badges also show active sword infusions. */
+.skill-individual{background-image:var(--skill-image);background-size:cover;background-position:center}
+.acts .btn:has(.skill-painted)>.skill-elements{grid-column:2;justify-self:start}
+
+html[lang="en"] .acts .btn:has(.skill-painted)>.skill-elements{grid-column:1;grid-row:2;justify-self:center}
+
+/* Painted icons use individually measured crops. Contain preserves the entire source art. */
+.skill-painted>.skill-raster{inset:1px;background-image:var(--skill-image);background-size:contain;background-position:center;background-repeat:no-repeat;border-radius:11px}
+.skill-painted:has(>.skill-raster)>.skill-rank{display:none}
+.acts .btn:has(.skill-painted):enabled:hover .skill-raster{transform:none}
+
+/* Complete generated illustrations: preserve all artwork inside the existing icon space. */
+.eclipse-equipment-art{display:inline-flex;position:relative;flex-shrink:0;align-items:center;justify-content:center;border-radius:10px;overflow:hidden;background:#0a1320}
+
+/* Ruby metal, beveled edges and raised corner settings identify Eclipse equipment. */
+.item-art.eclipse-frame{--item-color:#ff8196;--weapon-rarity:#e73c59;--weapon-glow:#d71d444d;box-sizing:border-box;width:var(--item-size,44px);height:var(--item-size,44px);flex:0 0 var(--item-size,44px);isolation:isolate;overflow:visible;margin:4px;padding:3px;border:2px solid #a51a36;border-radius:10px;background:linear-gradient(140deg,#36101b,#080e19 45%,#200914);box-shadow:0 3px 4px #000b,0 0 0 1px #390717,0 0 9px #ec254132,inset 1px 1px 1px #ffb6bb,inset -1px -2px 2px #390313}
+.weapon-book-grid>.card:has(.eclipse-frame),.gacha-result:has(.eclipse-frame){border-color:#b63550!important;background:radial-gradient(ellipse at top left,#5c1a2a55,transparent 65%),linear-gradient(145deg,#231421,#111c2b);box-shadow:inset 0 1px 0 #ffb2bc66,inset 0 -2px 0 #400a1c,0 3px 8px #0006}
+
+/* Solar beasts retain their type ornaments and add a raised ruby rarity setting. */
+.pt.frame-solar{overflow:visible;isolation:isolate;margin:4px;box-shadow:0 0 0 2px #ac2142,0 0 0 4px #400d21,0 3px 7px #000b,0 0 12px #e72d4840;background:#100d1c}
+.pt.frame-solar>img{width:94%;height:94%;border-radius:50%;object-fit:contain}
+.pt.frame-solar::before{content:"";position:absolute;z-index:2;inset:-12%;background:url('assets/ui/solar-beast-frame.svg') center/100% 100% no-repeat;filter:drop-shadow(0 2px 1px #080410);pointer-events:none}
+.pt.frame-solar::after{border:0;inset:0;pointer-events:none}
+.rarity-solar,.unit-frame[data-unit-tier="solar"],.gacha-result:has(.frame-solar){border-color:#c63855!important;box-shadow:inset 0 1px 0 #f6a3ae55,inset 0 -2px 2px #490a21,0 3px 8px #0006}
+.rarity-solar,.gacha-result:has(.frame-solar){background:radial-gradient(ellipse at top,#661d3844,transparent 65%),linear-gradient(140deg,#251424,#101d2c)}
+
+/* Eclipse legendary skills: authored silhouettes and source-to-target trails. */
+[class*="sig-eclipse-"]{animation-name:eclipse-crest;opacity:.82;filter:drop-shadow(0 0 8px var(--c)) drop-shadow(0 0 2px var(--a))}
+.eclipse-flight:not(.battle-skill-beam){width:36px;height:34px;border-radius:0;background:linear-gradient(90deg,var(--c),var(--a),#fff);box-shadow:none;filter:drop-shadow(0 0 9px var(--c))}@keyframes painted-current{from{opacity:.84}to{opacity:1}}@media(prefers-reduced-motion:reduce){}
+@keyframes eclipse-crest{0%{transform:translate(-50%,-50%) scale(.18) rotate(-18deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1.05) rotate(0);opacity:.9}65%{opacity:.7}100%{transform:translate(-50%,-55%) scale(1.3) rotate(8deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.eclipse-flight,[class*="sig-eclipse-"]{display:none!important}}
+
+/* Luminous engraved motifs: transparent interiors preserve the character portrait. */
+.sig-eclipse-dragon,.eclipse-flight.eclipse-motif-dragon{clip-path:none;background:transparent url("./assets/ui/eclipse-fx/dragon.svg") center/contain no-repeat}
+
+/* Shared production checkout dialog, including narrow Android screens. */
+dialog.production-shop{width:min(94vw,640px);max-height:86dvh;overflow:auto;padding:20px;border:1px solid #cfaf6c;border-radius:18px;background:linear-gradient(145deg,#18303f,#0b1826);color:#eaf0f4;box-shadow:0 20px 70px #000b}dialog.production-shop::backdrop{background:#020a12bb;backdrop-filter:blur(4px)}
+
+/* Coupon shop entry artwork: shared by web and packaged Android. */
+.coupon-shop-entry{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:0;max-width:100%;padding:10px;border:1px solid #b99b5a77;border-radius:16px;background:linear-gradient(145deg,#213644,#0c1928);color:#f8dfaa;cursor:pointer;font:inherit;box-shadow:0 5px 16px #0004}
+.coupon-shop-entry img{display:block;width:100%;height:auto;object-fit:contain;pointer-events:none}
+.coupon-shop-entry span{font-weight:600;line-height:1.4;text-align:center}
+.coupon-shop-entry:hover{border-color:#f2d58c;filter:brightness(1.08)}
+.coupon-shop-entry:focus-visible{outline:3px solid #8de1ff;outline-offset:3px}
+.top>.coupon-shop-entry-top{width:44px;min-width:44px;height:44px;min-height:44px;aspect-ratio:1;padding:0!important;border:1px solid #c7a86799;border-radius:10px;background:#102334;box-shadow:0 2px 8px #0005;overflow:hidden;align-self:center}
+.top>.coupon-shop-entry-top img{width:100%;height:100%;aspect-ratio:1;object-fit:cover}
+@media(max-width:380px){.top{column-gap:4px;padding-inline:8px}.top>.coupon-shop-entry-top{width:44px;min-width:44px}}
+
+/* Compact turn queue: team border colors remain visible during current-turn highlight. */
+.portrait-turn-order{display:flex;flex-wrap:nowrap;gap:7px;align-items:center;min-width:0;padding-block:5px}
+
+/* Sculpted, rounded battle frames. All ornaments stay in their reserved edge space. */
+.battle-scenery{border-radius:28px;border-width:2px;border-color:var(--scene-ink);border-top-color:color-mix(in srgb,var(--scene-ink) 72%,#fff);border-bottom-color:color-mix(in srgb,var(--scene-ink) 42%,#08121e);box-shadow:inset 0 2px 2px #fff5,inset 0 -4px 6px #000b,inset 0 0 0 4px #07121ba6,inset 0 0 0 6px #e4d5a32e,0 5px 0 #030a12,0 9px 18px #0008;padding:12px 14px 17px;gap:13px}
+@media(max-width:380px),(max-height:650px){}
+
+/* Painted card system: rarity scenery + transparent image frame + live DOM data. */
+.unit-frame{--painted-card-bg:url('assets/ui/painted-cards/background-common.png.webp');--painted-card-frame:url('assets/ui/painted-cards/frame-beast.png.webp');--painted-frame-filter:saturate(.45);--painted-ring:#a9c6ab}
+@media(max-width:360px){}
+
+/* Larger framed element medallions on character portraits, separate from skill icons. */
+.battle-portrait-elements{--portrait-element-size:clamp(13px,3.5vw,20px);top:-6px;left:-4px;right:-4px;gap:3px;row-gap:3px}
+@media(min-width:760px){}
+@media(max-width:360px){}
+
+/* Rarity stays on the frame; elemental scene layers blend across a common horizon. */
+.unit-frame[data-card-scene]{--painted-card-bg:none}
+
+/* Painted unit frames on profile, roster and bag cards, with flexible nine-slice rails. */
+.unit-menu-frame{display:none;pointer-events:none;user-select:none}
+.card.unit-frame>:not(.unit-card-backdrop):not(.unit-menu-frame):not(.unit-frame-corner):not(.unit-frame-sprig){position:relative;z-index:3}
+/* Context-aware quiet information art, inherited from the current menu. */
+:root{--menu-panel-art:url('assets/ui/menu-theme/panel-stats.webp')}
+#app[data-screen="hero"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-stats.webp')}
+#app[data-screen="team"] main,#app[data-screen="bestiary"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-retinue.webp')}
+#app[data-screen="bag"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-inventory.webp')}
+#app[data-screen="settings"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-settings.webp')}
+#app[data-screen="shop"] main,#app[data-screen="gacha"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-market.webp')}
+#app[data-screen="forge"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-workshop.webp')}
+#app[data-screen="story"] main,#app[data-screen="guide"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-journal.webp')}
+#app[data-screen="hospital"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-supplies.webp')}
+#app[data-screen="classes"] main{--menu-panel-art:url('assets/ui/menu-theme/panel-skills.webp')}
+[data-panel-art="equipment"]{--menu-panel-art:url('assets/ui/menu-theme/panel-equipment.webp')}
+[data-panel-art="retinue"]{--menu-panel-art:url('assets/ui/menu-theme/panel-retinue.webp')}
+[data-panel-art="inventory"]{--menu-panel-art:url('assets/ui/menu-theme/panel-inventory.webp')}
+[data-panel-art="supplies"]{--menu-panel-art:url('assets/ui/menu-theme/panel-supplies.webp')}
+[data-panel-art="skills"]{--menu-panel-art:url('assets/ui/menu-theme/panel-skills.webp')}
+.card:not(.unit-frame):not(.btn),.panel{position:relative;isolation:isolate;background:linear-gradient(90deg,#08132166,#08132199 58%,#08132166),var(--menu-panel-art) right bottom/100% auto no-repeat,#102131;border-radius:17px;border-color:#ac945c66;box-shadow:inset 0 1px 1px #e3d4a629,0 4px 12px #0005}
+.card:not(.unit-frame):not(.btn)::before,.panel::before{content:"";position:absolute;inset:-2px;border:12px solid transparent;border-image-source:url('assets/ui/menu-theme/frame-panel.png.webp');border-image-slice:160;border-image-width:12px;border-image-repeat:stretch;pointer-events:none;z-index:1}
+.card:not(.unit-frame):not(.btn)::after,.panel::after{display:none}
+/* Keep native buttons, focus rings and all hit targets; only the frame art changes. */
+.btn,.tabs button,.release-art-button,.coupon-shop-entry{position:relative;isolation:isolate}
+.btn::before,.tabs button::before,.release-art-button::before,.coupon-shop-entry::before{content:"";position:absolute;inset:-2px;width:auto;height:auto;transform:none;border:9px solid transparent;border-image-source:url('assets/ui/menu-theme/frame-button.png.webp');border-image-slice:190 350 220 350;border-image-width:9px;border-image-repeat:stretch;pointer-events:none;z-index:1}
+.btn::after{display:none}
+.btn.sm::before,.top .btn::before,.battle-command-controls .btn::before{border-image-width:6px}
+.btn.danger::before{filter:sepia(.6) saturate(2) hue-rotate(315deg)}
+.btn.seal::before{filter:hue-rotate(85deg)}
+.btn:disabled::before{opacity:.45}
+.top .coupon-shop-entry::before{border-image-width:5px}
+@media(max-width:380px){.card:not(.unit-frame):not(.btn)::before,.panel::before{border-image-width:10px}}
+
+/* Phone portrait is the primary game canvas, including on wide monitors. */
+#app{width:100%;max-width:480px}
+#app .pet-management,#app .bag-vitals{grid-template-columns:minmax(0,1fr)}
+#app .roster-banner{grid-template-columns:minmax(0,1fr);gap:14px}
+#app .pack-slots{grid-template-columns:repeat(6,minmax(0,1fr))}
+#app .pack-slots.eight{grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
+#app .pack-slot .pt{--s:30px!important}
+#app .pack-slots.eight .pt{--s:24px!important}
+#app .dex{grid-template-columns:minmax(0,1fr)}
+/* Keep information-panel corner art at phone width without enlarging or cropping it. */
+.card:not(.unit-frame):not(.btn),.panel{background-size:auto,100% auto;background-position:center,right bottom;background-repeat:no-repeat}
+#app .card.roster-banner{background-position:center,right bottom}
+@media(min-width:541px){
+ #app main{padding:18px 12px 22px}
+ #app .card:not(.unit-frame),#app .panel{padding:16px}
+ #app .grid2{gap:10px}
+ #app .grid3{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #app .acts{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ #app .acts .btn{padding:10px 7px;font-size:13px;min-height:62px}
+ #app .top{display:grid;grid-template-columns:34px minmax(0,1fr) auto auto auto;gap:0 5px;padding:9px 12px 13px}
+ #app .top>.pt{grid-column:1;grid-row:1/3}
+ #app .top>.who{grid-column:2;grid-row:1;min-width:0}
+ #app .top .who b{font-size:12px;white-space:normal;overflow-wrap:anywhere}
+ #app .top .who small{font-size:10px}
+ #app .top>.coin{grid-column:2;grid-row:2;margin:0;font-size:12px}
+ #app .top>.friend-top{grid-column:3;grid-row:1/3;font-size:10px;align-self:start}
+ #app .top>.settings-button{grid-column:4;grid-row:1/3;align-self:start}
+ #app .top>button:last-child{grid-column:5;grid-row:1/3;align-self:start}
+ #app .top>button{min-height:33px;padding:6px!important}
+ #app .brand-seam{height:24px}
+ #app .brand-seam img{width:146px;height:49px;top:-21px}
+ #app .roster-title{font-size:22px}
+ #app nav.bottom button{min-height:60px;font-size:11px}
+}
+
+/* Portrait information art fills every panel, including expanded and very tall cards. */
+:root{--menu-panel-art:url('assets/ui/menu-portrait/panel-stats.webp')}
+#app[data-screen="hero"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-stats.webp')}
+#app[data-screen="team"] main,#app[data-screen="bestiary"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-retinue.webp')}
+#app[data-screen="bag"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-inventory.webp')}
+#app[data-screen="settings"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-settings.webp')}
+#app[data-screen="shop"] main,#app[data-screen="gacha"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-market.webp')}
+#app[data-screen="forge"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-workshop.webp')}
+#app[data-screen="story"] main,#app[data-screen="guide"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-journal.webp')}
+#app[data-screen="hospital"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-supplies.webp')}
+#app[data-screen="classes"] main{--menu-panel-art:url('assets/ui/menu-portrait/panel-promotion.webp')}
+[data-panel-art="equipment"]{--menu-panel-art:url('assets/ui/menu-portrait/panel-equipment.webp')}
+[data-panel-art="retinue"]{--menu-panel-art:url('assets/ui/menu-portrait/panel-retinue.webp')}
+[data-panel-art="inventory"]{--menu-panel-art:url('assets/ui/menu-portrait/panel-inventory.webp')}
+[data-panel-art="supplies"]{--menu-panel-art:url('assets/ui/menu-portrait/panel-supplies.webp')}
+[data-panel-art="skills"]{--menu-panel-art:url('assets/ui/menu-portrait/panel-skills.webp')}
+[data-panel-art="promotion"],.career-current{--menu-panel-art:url('assets/ui/menu-portrait/panel-promotion.webp')}
+.card:not(.unit-frame):not(.btn),.panel{background-size:100% 100%,cover;background-position:center,right bottom}
+/* Common-beast identity follows total evolution forms, independent of element and current form. */
+.unit-frame{--common-card-frame:url('assets/ui/menu-portrait/frame-common-white.png.webp');--common-card-ring:#f1f6ff}
+[data-beast-frame="one"]{--common-card-frame:url('assets/ui/menu-portrait/frame-common-white.png.webp');--common-card-ring:#f1f6ff}
+[data-beast-frame="two"]{--common-card-frame:url('assets/ui/menu-portrait/frame-common-green.png.webp');--common-card-ring:#71e6a3}
+[data-beast-frame="three"]{--common-card-frame:url('assets/ui/menu-portrait/frame-common-blue.png.webp');--common-card-ring:#7cccff}
+.card.rarity-normal[data-beast-frame]:not([data-beast-frame="boss"])::before{border-image-source:var(--common-card-frame);border-image-slice:180;border-image-width:15px}
+
+/* PVP and world boss: readable card rows, fixed ornaments and independent commands. */
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-arena{overflow:hidden;grid-template-rows:auto minmax(0,1fr) auto}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-board{display:flex;flex-direction:column;align-items:stretch;gap:6px;overflow:hidden;padding:9px 8px 14px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-scroll{display:flex;flex-direction:column;flex:1;min-height:0;gap:14px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#b89a61 #101c28;padding:6px 7px 10px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-scroll:focus-visible{outline:2px solid var(--seal);outline-offset:-2px;border-radius:8px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-board>.battle-scenery-title{flex:none}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-side{flex:none;min-height:auto;gap:7px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-unit-grid{flex:none;grid-auto-rows:minmax(118px,auto);gap:12px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .battle-vital{height:auto;min-height:118px;overflow:visible;align-content:center;grid-template-rows:auto auto;padding:13px 8px;row-gap:5px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .battle-face{height:auto;max-height:64px;align-self:center}
+#app:is([data-screen="pvp"],[data-screen="world"]) .battle-effect-strip{min-width:0;padding-bottom:2px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-footer{position:relative;isolation:isolate;z-index:2;background:#102131}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-command-body{max-height:min(24dvh,200px)}
+@media(max-width:360px){#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-board{padding-inline:10px}#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-footer .battle-command-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-footer .battle-command-controls>.btn{min-width:0;min-height:40px}}
+
+#app[data-screen="world"] .online-unit-grid{overflow:visible}
+#app[data-screen="world"] .online-unit-grid[style*="--unit-cols:4"]{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(146px,auto)}
+#app[data-screen="world"] .online-unit-grid[style*="--unit-cols:4"] .battle-vital{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;min-height:146px;padding:12px 7px;row-gap:4px}
+#app[data-screen="world"] .online-unit-grid[style*="--unit-cols:4"] .battle-face{width:36px;height:36px;max-width:36px;max-height:36px;justify-self:center}
+#app[data-screen="world"] .online-unit-grid[style*="--unit-cols:4"] .battle-meter small{font-size:9px;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:360px){#app[data-screen="world"] .online-unit-grid[style*="--unit-cols:4"]{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Forest route choices: consistent rounded artwork and painted frame. */
+#app[data-screen="zone"] .door[data-a="fork"]{isolation:isolate;border-radius:22px;padding:14px 12px 18px;gap:7px;min-width:0;border:1px solid #bba57288;background:linear-gradient(145deg,#1d3543,#101d2b);box-shadow:inset 0 1px 4px #e7d69a33,0 6px 14px #0005;overflow:hidden}
+#app[data-screen="zone"] .door[data-a="fork"]::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border:18px solid transparent;border-image:url("assets/ui/forest-route-frame-v1.png.webp") 180 / 18px / 0 stretch}
+#app[data-screen="zone"] .door[data-a="fork"]>.route-picture{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:14px;clip-path:inset(0 round 14px);box-shadow:0 1px 5px #0008}
+#app[data-screen="zone"] .door[data-a="fork"]>small{padding-inline:4px;line-height:1.5}
+#app[data-screen="zone"] .door[data-a="fork"]:focus-visible{outline:2px solid #ffe7a0;outline-offset:3px}
+
+/* No battlefield title or corner ornaments: cards start near the upper edge. */
+.battle-vitals.battle-scenery{padding-top:5px}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-combat-board{padding-top:5px}
+
+/* Compact battle cards: portrait and meters at the top, status icons in a lower rail. */
+#app .battle-scenery .battle-vital.unit-frame{min-height:0;height:auto;padding:5px 10px 4px;grid-template-rows:auto 18px;row-gap:4px;align-content:start;align-items:start}
+#app .battle-scenery .battle-vital>.battle-face{grid-column:1;grid-row:1;align-self:start;margin-top:4px}
+#app .battle-scenery .battle-vital>.battle-meter{grid-column:2;grid-row:1;align-self:start}
+#app .battle-scenery .battle-vital>.battle-effect-strip{grid-column:1/-1;grid-row:2;align-self:end;justify-content:flex-start;min-width:0;width:100%;height:18px;min-height:18px;max-height:18px;margin:0;padding:0;gap:3px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+#app .battle-scenery .battle-effect-strip::-webkit-scrollbar{display:none}
+#app .battle-scenery .battle-effect-strip>.battle-effect-icon{width:18px;height:18px;flex:0 0 18px}
+#app .online-unit-grid{align-items:start}
+#app:is([data-screen="pvp"],[data-screen="world"]) .online-unit-grid{grid-auto-rows:auto}
+#app .online-unit-grid[style*="--unit-cols:4"] .battle-vital.unit-frame{min-height:0;height:auto;padding:5px 7px 4px;grid-template-rows:auto auto 18px;row-gap:4px;align-content:start}
+#app .online-unit-grid[style*="--unit-cols:4"] .battle-vital>.battle-face{grid-column:1;grid-row:1}
+#app .online-unit-grid[style*="--unit-cols:4"] .battle-vital>.battle-meter{grid-column:1;grid-row:2}
+#app .online-unit-grid[style*="--unit-cols:4"] .battle-vital>.battle-effect-strip{grid-row:3}
+
+/* Each four-unit side uses two cards per row in the phone-shaped battlefield. */
+.battle-vitals .battle-side-units{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+/* A gold seal line separates the enemy and allied formations. */
+.battle-scenery .battle-side-summary+.battle-side-summary::before,.battle-scenery .online-combat-side+.online-combat-side::before{content:"";position:absolute;left:4px;right:4px;top:-5px;height:2px;background:linear-gradient(90deg,transparent,#a68447 12%,#f6dda1 43%,transparent 47% 53%,#f6dda1 57%,#a68447 88%,transparent);box-shadow:0 1px 2px #0009;pointer-events:none}
+
+/* The accepted two-by-two formation also applies to the online battle modes. */
+#app .standard-arena .online-combat-board{display:flex;flex-direction:column;gap:14px;overflow:auto;padding:7px 12px 12px}
+#app .standard-arena .online-combat-side{flex:none;min-height:auto;gap:4px}
+#app .standard-arena .online-unit-grid{flex:none;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:auto;gap:8px}
+#app .standard-arena .battle-vital.unit-frame{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);column-gap:8px}
+#app .standard-arena .battle-meter>b{font-size:10px}
+#app .standard-arena .battle-meter small{font-size:8px}
+#app .standard-arena .online-combat-scroll{padding:6px 5px 9px;gap:14px}
+
+/* World raid: one third for the boss, two thirds for four rows of player cards. */
+#app[data-screen="world"] .world-arena .online-combat-board{display:flex;flex-direction:column;gap:0;padding:8px 10px 10px;overflow:hidden}
+#app[data-screen="world"] .world-arena .online-combat-scroll{display:grid;grid-template-rows:minmax(0,1fr) minmax(0,2fr);gap:14px;flex:1;min-height:0;padding:2px 3px;overflow:hidden}
+#app[data-screen="world"] .world-arena .online-combat-side{min-height:0;flex:1;gap:4px}
+#app[data-screen="world"] .world-arena .online-combat-side>small{font-size:10px;line-height:13px;flex:none;min-height:13px;margin:0}
+#app[data-screen="world"] .world-arena .our-side .online-unit-grid{flex:1;min-height:0;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(var(--team-rows,4),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:6px;align-items:center;overflow:visible}
+#app[data-screen="world"] .world-arena .our-side .world-player-card{height:100%;max-height:52px;min-height:0;min-width:0;padding:3px;display:grid;grid-template-columns:20px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 3px 3px 9px;gap:1px 3px;border-width:1px;border-radius:9px;align-content:stretch;align-self:center}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{width:18px;height:18px;max-width:18px;max-height:18px;grid-row:1;grid-column:1;margin-top:3px;align-self:start;justify-self:center}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-face .pt{width:100%!important;height:100%!important;border-width:1px;box-shadow:0 0 0 1px #06101b,0 0 0 2px var(--painted-ring)}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-meter{display:contents}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>b{grid-column:2;grid-row:1;display:block;min-width:0;align-self:center;font-size:8px;line-height:10px}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .online-unit-name{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter .battle-level{display:block;font-size:7px!important;line-height:8px;margin:0}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>.bar{grid-column:1/-1;grid-row:2;width:100%;height:3px;margin:0;border-width:0;align-self:center}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>.bar.mp{grid-row:3}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>small,#app[data-screen="world"] .world-arena .our-side .world-player-card .online-unit-status{display:none}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-effect-strip{grid-column:1/-1;grid-row:4;height:9px;min-height:9px;max-height:9px;gap:1px;margin:0;padding:0;align-self:end}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-effect-icon{width:9px;height:9px;flex:0 0 9px;border-radius:2px}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-portrait-elements{--portrait-element-size:8px;top:-2px;left:-2px;right:-2px;gap:1px}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-portrait-elements .element-icon{width:8px;height:8px;padding:0}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.unit-frame-corner,#app[data-screen="world"] .world-arena .our-side .world-player-card>.unit-frame-sprig{display:none}
+#app[data-screen="world"] .world-arena .our-side .world-player-card::after{inset:-1px;border-radius:9px}
+#app[data-screen="world"] .world-arena .our-side .world-player-card[data-card-rarity="common"]::after{border-width:6px;border-image-width:6px}
+#app[data-screen="world"] .world-arena .world-empty-position{height:100%;max-height:52px;min-height:0;display:grid;place-content:center;color:#c4ad6544;border:1px dashed #c4ad6533;border-radius:8px;background:#08111b55;font-size:15px}
+
+/* Boss helpers share the upper third alongside the larger main boss card. */
+#app[data-screen="world"] .world-arena .opponent-side .online-unit-grid{flex:1;min-height:0;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);grid-auto-rows:minmax(0,1fr);gap:6px;align-items:center}
+#app[data-screen="world"] .world-arena .opponent-side .online-unit-grid:has(.world-helper-card){grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:repeat(var(--helper-rows,2),minmax(0,1fr))}
+#app[data-screen="world"] .world-arena .world-boss-card{grid-column:1;grid-row:1/-1;height:100%;max-height:132px;min-height:0;padding:7px 10px;grid-template-columns:minmax(0,.7fr) minmax(0,1.5fr);grid-template-rows:minmax(0,1fr) 18px;gap:3px 8px;align-items:center;align-content:center}
+#app[data-screen="world"] .world-arena .world-boss-card>.battle-face{width:100%;height:auto;max-width:64px;max-height:64px;margin-top:4px;align-self:center}
+#app[data-screen="world"] .world-arena .world-boss-card>.battle-meter{align-self:center}
+#app[data-screen="world"] .world-arena .world-boss-card .battle-meter>b{font-size:12px}
+#app[data-screen="world"] .world-arena .world-boss-card .battle-meter small{font-size:9px;line-height:12px}
+#app[data-screen="world"] .world-arena .world-helper-card{grid-column:2;height:100%;max-height:64px;min-height:0;padding:3px 5px;grid-template-columns:22px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 9px;gap:1px 4px;border-radius:10px}
+#app[data-screen="world"] .world-arena .world-helper-card>.battle-face{width:20px;height:20px;max-width:20px;max-height:20px;margin-top:3px;align-self:start}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-meter>b{font-size:8px;line-height:10px}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-meter small{display:none}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-meter .bar{height:3px;margin:2px 0}
+#app[data-screen="world"] .world-arena .world-helper-card>.battle-effect-strip{height:9px;min-height:9px;max-height:9px;grid-row:2;gap:1px}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-effect-icon{width:9px;height:9px;flex:0 0 9px}
+#app[data-screen="world"] .world-arena .world-helper-card .battle-portrait-elements{--portrait-element-size:9px;top:-2px;gap:1px}
+@media(max-height:680px){
+ #app[data-screen="world"] .world-arena .online-combat-board{padding:5px 8px 7px}
+ #app[data-screen="world"] .world-arena .online-combat-scroll{gap:12px;padding-block:1px}
+ #app[data-screen="world"] .world-arena .our-side .online-unit-grid{gap:4px}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card{padding:2px;grid-template-columns:17px minmax(0,1fr)}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{width:14px;height:14px;max-width:14px;max-height:14px;margin-top:0}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>b{font-size:7px;line-height:8px}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter .battle-level{font-size:6px!important;line-height:7px}
+ #app[data-screen="world"] .world-arena .world-boss-card{padding:4px 7px}
+ #app[data-screen="world"] .world-arena .world-boss-card>.battle-face{max-width:38px;max-height:38px}
+ #app[data-screen="world"] .world-arena .world-boss-card .battle-meter>b{font-size:10px}
+ #app[data-screen="world"] .world-arena .world-boss-card .battle-meter small{font-size:8px;line-height:10px}
+ #app[data-screen="world"] .world-arena .world-helper-card{padding:2px 3px;grid-template-columns:17px minmax(0,1fr)}
+ #app[data-screen="world"] .world-arena .world-helper-card>.battle-face{width:16px;height:16px;max-width:16px;max-height:16px}
+}
+
+/* Keep the scrolling content close to the branded menu dividers. */
+#app>.brand-seam+main{padding-top:0}
+#app>nav.bottom{padding-top:4px}
+#app>nav.bottom::after{top:-26px;height:42px}
+
+/* World battle: reserve one third for portraits and two thirds for meters. */
+#app[data-screen="world"] .world-arena .our-side .world-player-card{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+#app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{grid-column:1;grid-row:1/4;width:100%;height:auto;aspect-ratio:1;max-width:36px;max-height:36px;margin-top:0;align-self:center}
+#app[data-screen="world"] .world-arena .our-side .world-player-card .battle-meter>.bar{grid-column:2}
+#app[data-screen="world"] .world-arena .world-helper-card{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+#app[data-screen="world"] .world-arena .world-helper-card>.battle-face{width:100%;height:auto;aspect-ratio:1;max-width:42px;max-height:42px;margin-top:0;align-self:center}
+#app[data-screen="world"] .world-arena .world-boss-card{grid-template-columns:minmax(0,1.2fr) minmax(0,1.4fr)}
+#app[data-screen="world"] .world-arena .world-boss-card>.battle-face{width:100%;height:auto;aspect-ratio:1;max-width:112px;max-height:112px;margin-top:0;align-self:center}
+@media(max-height:680px){
+ #app[data-screen="world"] .world-arena .world-boss-card>.battle-face{max-width:48px;max-height:48px}
+ #app[data-screen="world"] .world-arena .world-boss-card .battle-meter>small{display:none}
+ #app[data-screen="world"] .world-arena .world-helper-card>.battle-face{max-width:28px;max-height:28px}
+ #app[data-screen="world"] .world-arena .our-side .world-player-card>.battle-face{max-width:30px;max-height:30px}
+}
+/* Readable gallery art without expanding navigation icons or combat cards. */
+.gallery-motion{position:relative;isolation:isolate;overflow:hidden!important;background:var(--um-scene) center/cover;flex-shrink:0}
+#app .dex-form{flex:1 1 120px;max-width:150px}
+#app .pet-open{flex-wrap:wrap;justify-content:center}
+#app .pet-open>.grow{flex-basis:100%;text-align:center}
+#app[data-screen="hero"] main>.stack>.card.row.unit-frame{flex-wrap:wrap;justify-content:center}
+#app[data-screen="hero"] main>.stack>.card.row.unit-frame>.grow{min-width:150px}
+@media(prefers-reduced-motion:reduce){}
+@keyframes motion-damage-rise{0%{transform:translate(-50%,-30%);opacity:0}10%{opacity:1}100%{transform:translate(-50%,-150%);opacity:0}}
+
+/* Immersive route selection: the scene remains visible around compact controls. */
+#app.forest-fork main>.stack>.scene,#app.forest-fork main>.stack>.story-card,#app.forest-fork main>.stack>button[data-a="story"],#app.forest-fork main>.stack>div:has(>h2){display:none}
+#app.forest-fork main{padding-top:0}
+#app.forest-walking .journey-ui{opacity:0;transform:translateY(12px);pointer-events:none}
+#app.forest-walking main{overflow:hidden}#app.forest-walking nav.bottom{pointer-events:none}
+#app.forest-walking main button{pointer-events:none}
+@media(prefers-reduced-motion:reduce){}
+
+#app.forest-walking main button{visibility:hidden}
+/* Recovery buttons reserve their icon column even when gallery art is enlarged. */
+.bag-cure-actions{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));width:100%;gap:8px!important}
+
+/* Keep battle speed alongside the three command controls on mobile. */
+.battle-command-controls.has-battle-speed{display:flex!important;flex-wrap:nowrap;gap:4px}
+
+/* Keep status art and counters inside their own visible box. */
+#app .battle-scenery .battle-vital>.battle-effect-strip{height:24px;min-height:24px;max-height:24px;padding:2px 0;box-sizing:border-box}
+#app .battle-scenery .battle-effect-strip>.battle-effect-icon{box-sizing:border-box;flex-shrink:0}
+
+/* Beast origins and original stories */
+.beast-story{max-width:680px;margin:0 auto;min-width:0}
+/* Forest clips preserve the entire portrait frame and keep controls above safe areas. */
+.forest-story-video{position:fixed;inset:0;z-index:11000;background:#000;color:#fff;isolation:isolate;display:grid;place-items:center}
+
+/* Character menu summary: free-standing animated art, scoped to this one portrait. */
+.card.unit-frame[data-hero-summary]>.pt{border:0;border-radius:0;box-shadow:none;background:transparent}
+
+/* Center the character above its name and summary in the hero menu. */
+.card.unit-frame[data-hero-summary]{flex-direction:column;align-items:center;gap:12px;text-align:center}
+
+/* Feather only light/particles; keep the character silhouette sharp and intact. */
+.card.unit-frame[data-hero-summary]>.pt{overflow:visible!important}
+
+/* Ten milestones plus the entrance (depth zero), read directly from forest depth. */
+.forest-journey .forest-trail-panel{width:96%;gap:0!important}
+@media(prefers-reduced-motion:reduce){}
+
+/* The milestone strip stays above the fading route controls while walking. */
+.forest-journey>.forest-trail-panel{position:relative;z-index:2;margin:0 auto 12px}
+@keyframes forest-marker-step{0%,100%{transform:translateY(0) rotate(-2deg)}25%{transform:translateY(-4px) rotate(3deg)}50%{transform:translateY(0) rotate(2deg)}75%{transform:translateY(-4px) rotate(-3deg)}}
+@media(prefers-reduced-motion:reduce){}
+[data-motion-phase=hit] .um-art,[data-motion-phase=windup] .um-art,[data-motion-phase=power] .um-art{opacity:0}
+[data-motion-phase=hit] .um-art[data-pose=hit],[data-motion-phase=windup] .um-art[data-pose=windup],[data-motion-phase=power] .um-art[data-pose=windup]{opacity:1}
+[data-motion-phase=power] .um-power{animation:um-power var(--um-power-duration,.75s) linear both}
+[data-motion-phase=hit] .um-body{animation:um-hit 1.5s ease-out both}
+[data-motion-phase=windup] .um-body{animation:um-windup var(--um-windup-duration,1s) ease-in-out both}
+[data-motion-phase=power] .um-body{animation:um-release var(--um-power-duration,.75s) ease-in-out both}
+[data-idle-mode=float][data-motion-phase=idle] .um-body{animation:um-float 3.6s ease-in-out infinite}
+[data-idle-mode=sway][data-motion-phase=idle] .um-body{animation:um-sway 4.4s ease-in-out infinite}
+[data-motion-paused] :is(.um-body,.um-power,.um-aura){animation-play-state:paused!important}
+[data-no-aura] .um-aura{display:none}
+@keyframes um-breathe{0%,100%{transform:scale(1)}50%{transform:translateY(-1%) scale(1.016,1.025)}}
+@keyframes um-float{0%,100%{transform:translateY(1%)}50%{transform:translateY(-4%) rotate(1deg)}}
+@keyframes um-sway{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg) scaleY(1.02)}}
+@keyframes um-aura{0%,100%{opacity:.15;scale:.94}50%{opacity:.35;scale:1.08}}
+@keyframes um-hit{0%,100%{transform:translateX(0)}14%{transform:translateX(-5%) rotate(-4deg)}28%{transform:translateX(2%) rotate(2deg)}45%,75%{transform:translateX(-1%) rotate(-1deg)}}
+@keyframes um-windup{0%{transform:scale(1)}45%{transform:translate(-2%,2%) scale(.98)}100%{transform:translate(-1%,1%) scale(1.03)}}
+@keyframes um-release{0%{transform:translate(-1%,1%) scale(1.03)}100%{transform:translateX(0)}30%{transform:translateX(-2%) rotate(-1deg)}60%{transform:translateX(1%)}}
+@keyframes um-power{0%{opacity:1;transform:scale(.1,.85)}80%{opacity:1}100%{opacity:0;transform:scale(1,1.05)}}
+@media(prefers-reduced-motion:reduce){.motion-unit:not([data-motion-opt-in]) :is(.um-body,.um-power,.um-aura){animation-play-state:paused!important}}
+/* Match the caster's camera-facing palm instead of reusing a side-on jet. */
+.motion-unit[data-power-projection="camera"] .um-power{left:calc(var(--um-x) - var(--um-w) * var(--um-power-origin-x,.5));transform-origin:calc(var(--um-power-origin-x,.5) * 100%) calc(var(--um-power-origin-y,.5) * 100%)}
+@keyframes um-power-camera{0%{opacity:1;transform:scale(.06)}80%{opacity:1}100%{opacity:0;transform:scale(1.4)}}
+@keyframes um-ember{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}85%{opacity:.5}100%{transform:translate(8px,-95%);opacity:0}}
+[data-no-aura] .um-embers{display:none}
+[data-motion-paused] .um-embers i{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.motion-unit:not([data-motion-opt-in]) .um-embers i{animation-play-state:paused}}
+/* Optional elite poses: only actors with generated art expose these actions. */
+.um-art[data-pose=threat],.um-art[data-pose=melee]{opacity:0}
+[data-motion-phase=threat] .um-art,[data-motion-phase=melee] .um-art{opacity:0}
+[data-motion-phase=threat] .um-art[data-pose=threat],[data-motion-phase=melee] .um-art[data-pose=melee]{opacity:1}
+[data-motion-phase=threat] .um-body{animation:um-threat 1.8s ease-in-out both}
+[data-motion-phase=threat] .um-aura{opacity:.5;animation:um-threat-aura 1.8s ease-in-out both}
+[data-motion-phase=melee] .um-body{animation:um-melee .9s linear both}
+[data-motion-phase=melee] .um-melee-effect{animation:um-melee-trail .9s linear both}
+@keyframes um-threat{0%,100%{transform:scale(1)}25%{transform:translateY(-2%) scale(1.055)}40%{transform:translate(-1%,-2%) scale(1.06)}55%{transform:translate(1%,-2%) scale(1.06)}75%{transform:translateY(-1%) scale(1.04)}}
+@keyframes um-threat-aura{0%,100%{opacity:.24;scale:1}35%,65%{opacity:.65;scale:1.25}}
+@keyframes um-melee{0%,100%{transform:translate(0,0)}25%{transform:translate(-4%,-3%) rotate(-5deg)}50%{transform:translate(5%,3%) rotate(5deg)}75%{transform:translate(2%,1%) rotate(2deg)}}
+@keyframes um-melee-trail{0%{opacity:0;transform:scale(.2)}20%{opacity:0}30%,65%{opacity:1}100%{opacity:0;transform:scale(1.2)}}
+[data-motion-paused] .um-melee-effect{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.motion-unit:not([data-motion-opt-in]) .um-melee-effect{animation-play-state:paused!important}}
+[data-melee-mode=ram][data-motion-phase=melee] .um-body{animation-name:um-melee-ram}
+[data-melee-mode=headbutt][data-motion-phase=melee] .um-body,[data-melee-mode=thrust][data-motion-phase=melee] .um-body{animation-name:um-melee-headbutt}
+@keyframes um-melee-ram{0%,100%{transform:translateX(0) scale(1)}25%{transform:translateX(-6%) scale(.96)}50%{transform:translateX(10%) scale(1.04)}75%{transform:translateX(4%) scale(1.02)}}
+@keyframes um-melee-headbutt{0%,100%{transform:scale(1)}25%{transform:translateY(2%) scale(.94)}50%{transform:translateY(-1%) scale(1.1)}75%{transform:scale(1.04)}}
+/* Contact demo uses the same art/controller without mutating battle state. */
+@keyframes um-target-recoil{0%,100%{transform:translate(0,0)}20%{transform:translate(var(--um-hit-dx),var(--um-hit-dy))}40%{transform:translate(calc(var(--um-hit-dx) * .3),calc(var(--um-hit-dy) * .3))}65%{transform:translate(calc(var(--um-hit-dx) * .1),calc(var(--um-hit-dy) * .1))}}
+/* Flight supplies the lunge; keep its portrait circle stable at edge contact. */
+/* Keep the full-roster preview compact on phones. */
+.battle-motion{isolation:isolate;overflow:hidden!important}
+@media(prefers-reduced-motion:reduce){}
+
+/* Equipment stays still: animate only the light and the Eclipse motes. */
+.item-art.equipment-motion{isolation:isolate;--gear-light:#f4cc6b;--gear-light-soft:#f4cc6b55}
+@keyframes equipment-aura-light{0%,100%{opacity:.42}50%{opacity:.95}}
+@keyframes equipment-mote-rise{0%{opacity:0;transform:translate(0,0)}15%{opacity:.95}75%{opacity:.7}100%{opacity:0;transform:translate(-3px,calc(var(--item-size,44px) * -.7))}}
+@media(prefers-reduced-motion:reduce){}
+
+/* Shared 5:3 battle cards, using existing artwork and source anchor coordinate space. */
+#app .battle-vital[data-battle-card=full]{display:block!important;position:relative!important;isolation:isolate;aspect-ratio:5/3!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;padding:0!important;overflow:hidden!important;border:0!important;border-radius:4px!important;container-type:inline-size;background:linear-gradient(90deg,#02091300 25%,#020913b0 53%,#020913f2 100%),var(--painted-card-bg) center/cover no-repeat,#07101b!important}
+#app .battle-vital[data-battle-card=full]::after{content:""!important;display:block!important;inset:0!important;border:0!important;border-image:none!important;border-radius:0!important;background:var(--battle-frame-v3,url('assets/ui/battle-frames-v3/frame-white-5x3.png.webp')) center/100% 100% no-repeat!important;filter:none!important;pointer-events:none;z-index:2!important}
+#app .battle-vital[data-battle-card=full]::before,#app .battle-vital[data-battle-card=full]>.unit-frame-corner,#app .battle-vital[data-battle-card=full]>.unit-frame-sprig,#app .battle-vital[data-battle-card=full]>.unit-menu-frame{display:none!important}
+#app .battle-vital[data-battle-card=full]>.battle-face{position:absolute!important;left:var(--card-fit-left,2%)!important;top:var(--card-fit-top,9%)!important;width:var(--card-fit-width,51%)!important;height:auto!important;aspect-ratio:1;max-width:none!important;max-height:none!important;bottom:auto!important;transform:none!important;margin:0!important;z-index:3;overflow:visible!important}
+#app .battle-vital[data-battle-card=full] .pt,.motion-flight[data-battle-card=full] .pt{width:100%!important;height:100%!important;display:block!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important;overflow:visible!important}
+#app .battle-vital[data-battle-card=full] .pt::before,#app .battle-vital[data-battle-card=full] .pt::after{display:none!important}
+#app .battle-vital[data-battle-card=full] :is(.um-window,.um-embers),.motion-flight[data-battle-card=full] :is(.um-window,.um-embers){border-radius:0!important;overflow:visible!important}
+#app .battle-vital[data-battle-card=full] .um-art,.motion-flight[data-battle-card=full] .um-art{inset:0!important;width:100%!important;height:100%!important;border-radius:0!important;object-fit:contain!important}
+#app .battle-vital[data-battle-card=full]>.battle-meter{position:absolute!important;left:52%!important;right:6%!important;top:12%!important;bottom:12%!important;width:auto!important;height:76%!important;min-width:0;display:flex!important;flex-direction:column!important;justify-content:space-between;gap:0!important;margin:0!important;z-index:6;text-shadow:0 1px 3px #000,0 0 5px #000}
+#app .battle-vital[data-battle-card=full] .battle-meter>b{display:flex!important;flex-direction:row!important;align-items:baseline!important;gap:1.8cqw!important;min-width:0;min-height:0!important;height:auto!important;margin:0!important;font-size:clamp(8px,5.4cqw,22px)!important;line-height:1.1!important}
+#app .battle-vital[data-battle-card=full] :is(.battle-unit-name,.online-unit-name){display:block!important;flex:1 1 0!important;min-width:0;min-height:0!important;overflow:hidden!important;text-overflow:ellipsis;white-space:nowrap!important}
+#app .battle-vital[data-battle-card=full] .battle-level{display:block!important;flex:0 0 auto!important;white-space:nowrap;font-size:clamp(7px,4.7cqw,19px)!important;line-height:1.1!important;margin:0!important}
+#app .battle-vital[data-battle-card=full] .battle-meter>small{display:block!important;font-size:clamp(6px,3.85cqw,16px)!important;line-height:1!important;margin:0!important;text-align:right;white-space:nowrap}
+#app .battle-vital[data-battle-card=full] .battle-meter>.bar{display:block!important;width:100%!important;height:2.4cqw!important;margin:0!important;flex-shrink:0}
+#app .battle-vital[data-battle-card=full] .battle-portrait-elements{position:static!important;display:flex!important;flex-wrap:nowrap;justify-content:flex-start;gap:1cqw;margin:0!important}
+#app .battle-vital[data-battle-card=full] .battle-portrait-elements .element-icon{width:9.3cqw!important;height:9.3cqw!important;flex:0 0 9.3cqw!important}
+#app .battle-vital[data-battle-card=full] .battle-meter>.battle-effect-strip{position:static!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));width:100%!important;height:7.1cqw!important;min-height:7.1cqw!important;max-height:7.1cqw!important;gap:.6cqw;margin:0!important;padding:0!important;overflow:visible!important;z-index:7}
+#app .battle-vital[data-battle-card=full] .battle-effect-strip>.battle-effect-icon{width:100%!important;height:7.1cqw!important;min-width:0!important;flex:none!important;box-sizing:border-box;overflow:visible!important}
+#app .battle-vital[data-battle-card=full] .battle-effect-strip img{width:100%;height:100%;object-fit:contain}
+#app .battle-vital[data-battle-card=full] .battle-effect-strip>:nth-child(n+6),#app .battle-vital[data-battle-card=full] .online-unit-status{display:none!important}
+#app .battle-vital[data-battle-card=full] .battle-effect-strip:empty{display:grid!important;height:7.1cqw!important}
+#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .battle-meter>small,#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .battle-portrait-elements{display:none!important}
+#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .battle-meter>b{font-size:clamp(5px,6cqw,10px)!important;gap:1cqw!important}
+#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .battle-level{font-size:clamp(4px,5cqw,9px)!important}
+#app[data-screen=world] .our-side .battle-vital[data-battle-card=full] .bar{height:clamp(2px,4.5cqw,6px)!important}
+
+/* Measured original poses */
+#app .battle-vital[data-battle-card=full][data-motion-actor="kappa"]{--card-fit-width:54.1226%;--card-fit-left:-0.1913%;--card-fit-top:4.2812%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wisp"]{--card-fit-width:51.0978%;--card-fit-left:0.5509%;--card-fit-top:7.3353%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mandrake"]{--card-fit-width:50.996%;--card-fit-left:0.504%;--card-fit-top:7.5033%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="summoner-male"]{--card-fit-width:50.2404%;--card-fit-left:0.7196%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jackalope"]{--card-fit-width:50.7937%;--card-fit-left:0.0575%;--card-fit-top:8.0027%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tanuki"]{--card-fit-width:52.2449%;--card-fit-left:0.7857%;--card-fit-top:7.1428%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="raiju"]{--card-fit-width:52.6749%;--card-fit-left:1.3971%;--card-fit-top:6.4472%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="pixie"]{--card-fit-width:50.5929%;--card-fit-left:0.7095%;--card-fit-top:8.1687%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kodama"]{--card-fit-width:50.2947%;--card-fit-left:0.7544%;--card-fit-top:8.1697%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="redcap"]{--card-fit-width:52.2449%;--card-fit-left:-1.3469%;--card-fit-top:6.9728%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kitsune"]{--card-fit-width:52.0325%;--card-fit-left:0.9919%;--card-fit-top:6.9783%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tengu"]{--card-fit-width:50.5929%;--card-fit-left:0.9071%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="griffin"]{--card-fit-width:50.5929%;--card-fit-left:1.3024%;--card-fit-top:7.8393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nilmangkorn"]{--card-fit-width:50.7937%;--card-fit-left:1.3016%;--card-fit-top:8.168%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jorogumo"]{--card-fit-width:50.5929%;--card-fit-left:1.1047%;--card-fit-top:7.8393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="baku"]{--card-fit-width:64.6517%;--card-fit-left:-0.1415%;--card-fit-top:-5.6653%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="harpy"]{--card-fit-width:50.7937%;--card-fit-left:1.2024%;--card-fit-top:7.5067%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kelpie"]{--card-fit-width:52.3517%;--card-fit-left:0.682%;--card-fit-top:6.4588%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nue"]{--card-fit-width:53.5565%;--card-fit-left:0.2448%;--card-fit-top:5.1953%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sphinx"]{--card-fit-width:51.0978%;--card-fit-left:1.3004%;--card-fit-top:8.0007%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="basilisk"]{--card-fit-width:50.7937%;--card-fit-left:0.8056%;--card-fit-top:7.3413%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cerberus"]{--card-fit-width:53.4447%;--card-fit-left:0.7693%;--card-fit-top:5.8977%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="manticore"]{--card-fit-width:52.8926%;--card-fit-left:1.1901%;--card-fit-top:6.095%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="yeti"]{--card-fit-width:50.5929%;--card-fit-left:0.3083%;--card-fit-top:8.004%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="golem"]{--card-fit-width:51.4056%;--card-fit-left:1.1988%;--card-fit-top:7.3293%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="minotaur"]{--card-fit-width:50.5929%;--card-fit-left:0.6107%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mummy"]{--card-fit-width:51.927%;--card-fit-left:-1.6369%;--card-fit-top:6.812%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="scarab"]{--card-fit-width:50.5929%;--card-fit-left:1.3024%;--card-fit-top:7.8393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dragon-young"]{--card-fit-width:52.6749%;--card-fit-left:0.8827%;--card-fit-top:6.2757%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="naga"]{--card-fit-width:51.0978%;--card-fit-left:0.8014%;--card-fit-top:8.167%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="hydra"]{--card-fit-width:50.5929%;--card-fit-left:1.0059%;--card-fit-top:7.8393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thunderbird"]{--card-fit-width:50.8946%;--card-fit-left:1.003%;--card-fit-top:8.002%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gargoyle"]{--card-fit-width:50.3937%;--card-fit-left:1.4016%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jiangshi"]{--card-fit-width:50.2947%;--card-fit-left:1.1071%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="banshee"]{--card-fit-width:51.3026%;--card-fit-left:-0.002%;--card-fit-top:6.9973%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="behemoth"]{--card-fit-width:50.7937%;--card-fit-left:0.3056%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ifrit"]{--card-fit-width:50.8946%;--card-fit-left:-1.2366%;--card-fit-top:7.6707%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nidhogg"]{--card-fit-width:51.6129%;--card-fit-left:0.8952%;--card-fit-top:6.1492%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jormungandr"]{--card-fit-width:52.2449%;--card-fit-left:0.5816%;--card-fit-top:6.2925%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="chimera"]{--card-fit-width:51.7172%;--card-fit-left:0.8939%;--card-fit-top:6.9865%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ammit"]{--card-fit-width:62.3654%;--card-fit-left:1.1346%;--card-fit-top:-3.3923%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="qilin"]{--card-fit-width:52.1385%;--card-fit-left:0.5835%;--card-fit-top:7.1453%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="unicorn"]{--card-fit-width:53.3333%;--card-fit-left:0.777%;--card-fit-top:6.7708%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="pegasus"]{--card-fit-width:50.7937%;--card-fit-left:1.004%;--card-fit-top:8.0027%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="erawan"]{--card-fit-width:51.8219%;--card-fit-left:0.8927%;--card-fit-top:7.1525%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="baihu"]{--card-fit-width:54.4681%;--card-fit-left:0.5426%;--card-fit-top:3.9007%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="lamassu"]{--card-fit-width:52.459%;--card-fit-left:0.5779%;--card-fit-top:6.9672%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="fenrir"]{--card-fit-width:55.6522%;--card-fit-left:1.2826%;--card-fit-top:2.8985%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kraken"]{--card-fit-width:53.2225%;--card-fit-left:0.7723%;--card-fit-top:4.8683%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="phoenix"]{--card-fit-width:50.996%;--card-fit-left:0.8028%;--card-fit-top:7.6693%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="garuda"]{--card-fit-width:50.996%;--card-fit-left:0.4044%;--card-fit-top:7.3373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nekomata"]{--card-fit-width:52.1385%;--card-fit-left:0.7872%;--card-fit-top:6.127%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="amabie"]{--card-fit-width:51.0978%;--card-fit-left:-0.1976%;--card-fit-top:7.169%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kinnaree"]{--card-fit-width:50.0%;--card-fit-left:1.0117%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="salamander"]{--card-fit-width:61.6867%;--card-fit-left:0.7771%;--card-fit-top:-3.1125%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cyclops"]{--card-fit-width:51.6129%;--card-fit-left:-0.2601%;--card-fit-top:6.8212%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wendigo"]{--card-fit-width:50.4931%;--card-fit-left:0.359%;--card-fit-top:7.8402%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bunyip"]{--card-fit-width:50.7937%;--card-fit-left:1.004%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wyvern"]{--card-fit-width:53.2225%;--card-fit-left:0.9802%;--card-fit-top:7.1205%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="roc"]{--card-fit-width:53.112%;--card-fit-left:1.0851%;--card-fit-top:7.8147%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="rajasi"]{--card-fit-width:52.0325%;--card-fit-left:0.3821%;--card-fit-top:7.317%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="moon-tortoise"]{--card-fit-width:57.1429%;--card-fit-left:1.3884%;--card-fit-top:1.4508%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="iron-armadillo"]{--card-fit-width:50.4931%;--card-fit-left:-0.2327%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="moss-treant"]{--card-fit-width:50.6931%;--card-fit-left:0.703%;--card-fit-top:7.8383%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="coral-crab"]{--card-fit-width:53.5565%;--card-fit-left:0.454%;--card-fit-top:5.1953%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="obsidian-rhino"]{--card-fit-width:53.8947%;--card-fit-left:0.9737%;--card-fit-top:5.3508%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="glacier-bear"]{--card-fit-width:50.7937%;--card-fit-left:-0.8849%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thunder-gorilla"]{--card-fit-width:52.0325%;--card-fit-left:-0.0244%;--card-fit-top:6.9783%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bastion-golem"]{--card-fit-width:50.7937%;--card-fit-left:0.5536%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jade-bull"]{--card-fit-width:50.996%;--card-fit-left:-0.0458%;--card-fit-top:7.5033%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="abyss-turtle"]{--card-fit-width:56.1404%;--card-fit-left:0.8421%;--card-fit-top:3.0337%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="lunar-stag"]{--card-fit-width:53.112%;--card-fit-left:0.5664%;--card-fit-top:6.6045%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thorn-queen"]{--card-fit-width:50.4931%;--card-fit-left:0.5069%;--card-fit-top:8.0047%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mist-serpent"]{--card-fit-width:50.996%;--card-fit-left:-0.992%;--card-fit-top:7.3373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="crow-emperor"]{--card-fit-width:50.7937%;--card-fit-left:0.8056%;--card-fit-top:7.8373%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sand-colossus"]{--card-fit-width:52.1385%;--card-fit-left:-0.7312%;--card-fit-top:7.315%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="scorpion-pharaoh"]{--card-fit-width:53.7815%;--card-fit-left:-1.416%;--card-fit-top:5.007%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="storm-wyvern"]{--card-fit-width:55.6522%;--card-fit-left:0.7391%;--card-fit-top:3.442%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="frost-lich"]{--card-fit-width:53.112%;--card-fit-left:-1.4378%;--card-fit-top:5.9128%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="fallen-seraph"]{--card-fit-width:52.1385%;--card-fit-left:-0.1293%;--card-fit-top:7.315%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sun-devourer"]{--card-fit-width:53.0021%;--card-fit-left:-0.881%;--card-fit-top:5.4003%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="vampire-queen"]{--card-fit-width:50.1961%;--card-fit-left:0.4608%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="abyss-emperor"]{--card-fit-width:52.5667%;--card-fit-left:-0.5914%;--card-fit-top:6.28%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="goblin"]{--card-fit-width:55.4113%;--card-fit-left:0.526%;--card-fit-top:4.7258%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="silver-fox"]{--card-fit-width:57.2707%;--card-fit-left:-0.9609%;--card-fit-top:1.622%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="moon-cat"]{--card-fit-width:55.0538%;--card-fit-left:-0.4355%;--card-fit-top:3.853%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="eagle"]{--card-fit-width:53.8947%;--card-fit-left:-0.6053%;--card-fit-top:6.0527%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mermaid"]{--card-fit-width:53.6688%;--card-fit-left:-1.3061%;--card-fit-top:4.3152%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="crocodile"]{--card-fit-width:54.7009%;--card-fit-left:0.4316%;--card-fit-top:3.5257%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="night-horse"]{--card-fit-width:52.459%;--card-fit-left:-1.2541%;--card-fit-top:6.9672%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="desert-witch"]{--card-fit-width:55.0538%;--card-fit-left:-1.7258%;--card-fit-top:4.5698%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mummy-king"]{--card-fit-width:51.7172%;--card-fit-left:0.1919%;--card-fit-top:7.4915%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ice-wolf"]{--card-fit-width:55.0538%;--card-fit-left:0.9624%;--card-fit-top:3.6738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="fire-imp"]{--card-fit-width:52.8926%;--card-fit-left:-1.686%;--card-fit-top:5.5785%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="stone-lion"]{--card-fit-width:53.4447%;--card-fit-left:-2.4969%;--card-fit-top:6.0717%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="celestial-deer"]{--card-fit-width:52.8926%;--card-fit-left:-1.3926%;--card-fit-top:6.4393%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="storm-drake"]{--card-fit-width:51.8219%;--card-fit-left:0.083%;--card-fit-top:6.1403%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demon-knight"]{--card-fit-width:53.0021%;--card-fit-left:-1.2774%;--card-fit-top:6.608%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="zombie"]{--card-fit-width:52.2449%;--card-fit-left:-2.1122%;--card-fit-top:7.313%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="void-mantis"]{--card-fit-width:51.6129%;--card-fit-left:-0.1089%;--card-fit-top:6.4852%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jade-moon-hare"]{--card-fit-width:51.6129%;--card-fit-left:-1.3185%;--card-fit-top:7.1573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tempest-lynx"]{--card-fit-width:51.6129%;--card-fit-left:0.6935%;--card-fit-top:6.8212%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bloom-jade-mare"]{--card-fit-width:52.2449%;--card-fit-left:0.2755%;--card-fit-top:6.6327%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="obsidian-scarab"]{--card-fit-width:51.3026%;--card-fit-left:0.6984%;--card-fit-top:7.3313%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="aurora-whale"]{--card-fit-width:53.0021%;--card-fit-left:0.1542%;--card-fit-top:5.2277%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ember-jackal"]{--card-fit-width:52.7835%;--card-fit-left:-0.2526%;--card-fit-top:5.5842%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="prism-owl"]{--card-fit-width:55.0538%;--card-fit-left:-0.1129%;--card-fit-top:3.4947%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dusk-panther"]{--card-fit-width:54.7009%;--card-fit-left:0.4316%;--card-fit-top:2.9915%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="primordial-ouroboros"]{--card-fit-width:51.5091%;--card-fit-left:0.8964%;--card-fit-top:7.8303%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dawn-valkyrie"]{--card-fit-width:51.6129%;--card-fit-left:0.1895%;--card-fit-top:7.1573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="astral-dragon"]{--card-fit-width:56.0175%;--card-fit-left:-0.36%;--card-fit-top:2.4982%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cosmic-tortoise"]{--card-fit-width:55.2916%;--card-fit-left:0.8521%;--card-fit-top:3.6537%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-sovereign"]{--card-fit-width:53.8947%;--card-fit-left:0.0263%;--card-fit-top:5.1755%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="infinite-sea-serpent"]{--card-fit-width:52.459%;--card-fit-left:-0.6516%;--card-fit-top:6.455%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="void-phoenix"]{--card-fit-width:51.927%;--card-fit-left:-0.5213%;--card-fit-top:6.305%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="eclipse-wolf"]{--card-fit-width:52.3517%;--card-fit-left:0.1708%;--card-fit-top:5.9475%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="aegis-dragon"]{--card-fit-width:55.7734%;--card-fit-left:0.4107%;--card-fit-top:2.7052%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tricephalos"]{--card-fit-width:59.2593%;--card-fit-left:-0.1204%;--card-fit-top:-0.1543%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="aurorion"]{--card-fit-width:55.7734%;--card-fit-left:-2.9662%;--card-fit-top:1.979%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="abyssarch"]{--card-fit-width:53.4447%;--card-fit-left:-0.4833%;--card-fit-top:4.8538%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="selestia"]{--card-fit-width:51.6129%;--card-fit-left:-0.4113%;--card-fit-top:7.6613%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="aerelion"]{--card-fit-width:51.0978%;--card-fit-left:0.1018%;--card-fit-top:7.5017%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="myriapod"]{--card-fit-width:52.5667%;--card-fit-left:-1.2074%;--card-fit-top:6.6222%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="yggwarden"]{--card-fit-width:53.3333%;--card-fit-left:-1.2396%;--card-fit-top:6.0763%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-pentadrake"]{--card-fit-width:65.3169%;--card-fit-left:-0.5412%;--card-fit-top:-4.9623%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-mortivar"]{--card-fit-width:54.2373%;--card-fit-left:-1.2542%;--card-fit-top:5.1553%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-aureolith"]{--card-fit-width:54.2373%;--card-fit-left:0.7585%;--card-fit-top:5.685%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-heliotheon"]{--card-fit-width:52.3517%;--card-fit-left:-0.3405%;--card-fit-top:6.7997%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-ferroth"]{--card-fit-width:54.818%;--card-fit-left:-0.9625%;--card-fit-top:4.4075%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-cryostag"]{--card-fit-width:53.7815%;--card-fit-left:-2.2038%;--card-fit-top:5.7073%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-raijaku"]{--card-fit-width:54.0084%;--card-fit-left:-0.2932%;--card-fit-top:4.4655%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="solar-thalassyr"]{--card-fit-width:51.7172%;--card-fit-left:-0.8687%;--card-fit-top:6.4815%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kappa-warrior"]{--card-fit-width:56.5121%;--card-fit-left:-1.149%;--card-fit-top:2.2627%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kappa-king"]{--card-fit-width:51.7172%;--card-fit-left:-0.2121%;--card-fit-top:7.1548%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wisp-ghostfire"]{--card-fit-width:58.4475%;--card-fit-left:-0.8973%;--card-fit-top:1.484%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wisp-death-lantern"]{--card-fit-width:51.8219%;--card-fit-left:-0.417%;--card-fit-top:6.1403%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mandrake-screamer"]{--card-fit-width:51.3026%;--card-fit-left:-1.3547%;--card-fit-top:6.9973%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mandrake-queen"]{--card-fit-width:51.4056%;--card-fit-left:-0.4056%;--card-fit-top:7.162%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tanuki-shifter"]{--card-fit-width:61.244%;--card-fit-left:-3.7632%;--card-fit-top:-0.0398%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tanuki-thousand"]{--card-fit-width:52.6749%;--card-fit-left:-0.4918%;--card-fit-top:7.3045%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="raiju-thunder"]{--card-fit-width:56.5121%;--card-fit-left:-0.3764%;--card-fit-top:2.2627%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="raiju-deity"]{--card-fit-width:51.3026%;--card-fit-left:-0.3026%;--card-fit-top:7.3313%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="pixie-flower"]{--card-fit-width:52.6749%;--card-fit-left:-1.7778%;--card-fit-top:5.7613%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="pixie-titania"]{--card-fit-width:52.6749%;--card-fit-left:-1.9835%;--card-fit-top:6.1043%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kodama-ancient"]{--card-fit-width:51.4056%;--card-fit-left:-0.2048%;--card-fit-top:7.3293%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kodama-sacred"]{--card-fit-width:51.6129%;--card-fit-left:-0.2097%;--card-fit-top:6.9892%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="redcap-coldblood"]{--card-fit-width:54.4681%;--card-fit-left:-3.6277%;--card-fit-top:4.2553%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="redcap-king"]{--card-fit-width:52.6749%;--card-fit-left:-0.9033%;--card-fit-top:6.1043%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kitsune-six"]{--card-fit-width:53.7815%;--card-fit-left:-1.2059%;--card-fit-top:5.7073%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tengu-karasu"]{--card-fit-width:52.5667%;--card-fit-left:-0.4887%;--card-fit-top:5.4243%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tengu-dai"]{--card-fit-width:52.0325%;--card-fit-left:-0.126%;--card-fit-top:6.6395%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="griffin-war"]{--card-fit-width:60.6635%;--card-fit-left:-1.2251%;--card-fit-top:-1.1453%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="griffin-king"]{--card-fit-width:61.5385%;--card-fit-left:-2.4663%;--card-fit-top:-2.0833%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nilmangkorn-war"]{--card-fit-width:52.8926%;--card-fit-left:-1.2727%;--card-fit-top:6.2672%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nilmangkorn-royal"]{--card-fit-width:52.1385%;--card-fit-left:-0.1711%;--card-fit-top:6.6362%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kitsune-nine"]{--card-fit-width:53.112%;--card-fit-left:0.2552%;--card-fit-top:5.9128%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jorogumo-maiden"]{--card-fit-width:52.0325%;--card-fit-left:0.8902%;--card-fit-top:7.6558%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jorogumo-queen"]{--card-fit-width:50.8946%;--card-fit-left:0.6054%;--card-fit-top:7.6707%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kelpie-haunt"]{--card-fit-width:53.112%;--card-fit-left:-1.749%;--card-fit-top:6.2587%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kelpie-spirit"]{--card-fit-width:52.459%;--card-fit-left:-1.4078%;--card-fit-top:6.2842%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nue-dark"]{--card-fit-width:56.5121%;--card-fit-left:-1.9216%;--card-fit-top:2.2627%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nue-king"]{--card-fit-width:57.9186%;--card-fit-left:-1.3281%;--card-fit-top:2.1117%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="basilisk-stone"]{--card-fit-width:52.0325%;--card-fit-left:-1.439%;--card-fit-top:6.809%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="basilisk-king"]{--card-fit-width:53.4447%;--card-fit-left:-1.214%;--card-fit-top:5.7237%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cerberus-orthros"]{--card-fit-width:56.5121%;--card-fit-left:-0.7075%;--card-fit-top:2.0787%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cerberus-final"]{--card-fit-width:55.4113%;--card-fit-left:-0.9892%;--card-fit-top:3.2828%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="yeti-mountain"]{--card-fit-width:54.7009%;--card-fit-left:-2.7393%;--card-fit-top:3.5257%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="yeti-king"]{--card-fit-width:51.7172%;--card-fit-left:-0.3131%;--card-fit-top:7.66%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="golem-steel"]{--card-fit-width:54.1226%;--card-fit-left:-1.3256%;--card-fit-top:4.4573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="golem-adamant"]{--card-fit-width:51.6129%;--card-fit-left:-1.0665%;--card-fit-top:7.1573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="scarab-gold"]{--card-fit-width:53.4447%;--card-fit-left:0.4562%;--card-fit-top:4.158%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="scarab-khepri"]{--card-fit-width:51.927%;--card-fit-left:0.283%;--card-fit-top:6.474%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dragon-young-evolved"]{--card-fit-width:56.1404%;--card-fit-left:-0.0351%;--card-fit-top:3.0337%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="naga-king"]{--card-fit-width:54.3524%;--card-fit-left:-1.8132%;--card-fit-top:5.1487%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="naga-great"]{--card-fit-width:53.112%;--card-fit-left:-0.8859%;--card-fit-top:5.74%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thunderbird-storm"]{--card-fit-width:53.7815%;--card-fit-left:-0.1807%;--card-fit-top:5.3572%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thunderbird-lord"]{--card-fit-width:51.6129%;--card-fit-left:0.6935%;--card-fit-top:6.9892%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gargoyle-stone"]{--card-fit-width:51.927%;--card-fit-left:0.5872%;--card-fit-top:6.643%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gargoyle-demon"]{--card-fit-width:51.0978%;--card-fit-left:1.1008%;--card-fit-top:7.3353%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jiangshi-century"]{--card-fit-width:53.7815%;--card-fit-left:-2.2038%;--card-fit-top:5.3572%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="jiangshi-king"]{--card-fit-width:53.3333%;--card-fit-left:-1.6042%;--card-fit-top:6.4237%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="nekomata-evolved"]{--card-fit-width:59.9532%;--card-fit-left:-6.4941%;--card-fit-top:-0.8392%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="amabie-seer"]{--card-fit-width:52.459%;--card-fit-left:-1.459%;--card-fit-top:7.138%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kinnaree-queen"]{--card-fit-width:52.0325%;--card-fit-left:-0.0163%;--card-fit-top:7.1477%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="salamander-lord"]{--card-fit-width:63.2099%;--card-fit-left:-0.8457%;--card-fit-top:-2.9835%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cyclops-smith"]{--card-fit-width:53.0021%;--card-fit-left:-2.0021%;--card-fit-top:6.263%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wendigo-hungry"]{--card-fit-width:51.3026%;--card-fit-left:-0.4028%;--card-fit-top:7.1643%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bunyip-death"]{--card-fit-width:57.9186%;--card-fit-left:0.1425%;--card-fit-top:1.169%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wyvern-storm"]{--card-fit-width:54.9356%;--card-fit-left:-0.8605%;--card-fit-top:3.8627%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="roc-king"]{--card-fit-width:52.3517%;--card-fit-left:0.3753%;--card-fit-top:6.7997%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="rajasi-gold"]{--card-fit-width:55.0538%;--card-fit-left:-1.7258%;--card-fit-top:4.2115%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="swordsman-male"]{--card-fit-width:53.9504%;--card-fit-left:-1.1074%;--card-fit-top:5.5682%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="swordsman-female"]{--card-fit-width:53.1813%;--card-fit-left:-0.9735%;--card-fit-top:5.5957%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="samurai-male"]{--card-fit-width:54.0621%;--card-fit-left:-2.087%;--card-fit-top:5.7402%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="samurai-female"]{--card-fit-width:52.1198%;--card-fit-left:-0.2635%;--card-fit-top:15.485%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kensei-male"]{--card-fit-width:52.5392%;--card-fit-left:-0.4235%;--card-fit-top:6.6448%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="kensei-female"]{--card-fit-width:52.4337%;--card-fit-left:-0.9458%;--card-fit-top:6.6467%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="shogun-male"]{--card-fit-width:54.4%;--card-fit-left:-0.5938%;--card-fit-top:5.7292%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="shogun-female"]{--card-fit-width:52.224%;--card-fit-left:-0.826%;--card-fit-top:15.3133%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="spellblade-male"]{--card-fit-width:54.4%;--card-fit-left:-0.4875%;--card-fit-top:3.9583%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="spellblade-female"]{--card-fit-width:54.7421%;--card-fit-left:-2.2075%;--card-fit-top:4.1143%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sbsummon-male"]{--card-fit-width:53.0732%;--card-fit-left:-0.6585%;--card-fit-top:6.1178%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sbsummon-female"]{--card-fit-width:51.6047%;--card-fit-left:-0.004%;--card-fit-top:15.8293%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sbwar-male"]{--card-fit-width:54.1743%;--card-fit-left:-0.6929%;--card-fit-top:4.8548%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sbwar-female"]{--card-fit-width:53.5082%;--card-fit-left:-0.3586%;--card-fit-top:5.4098%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gladiator-male"]{--card-fit-width:55.5574%;--card-fit-left:-2.7011%;--card-fit-top:3.1595%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gladiator-female"]{--card-fit-width:53.0732%;--card-fit-left:-0.8476%;--card-fit-top:5.7723%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="paladin-male"]{--card-fit-width:52.8583%;--card-fit-left:-0.997%;--card-fit-top:5.9515%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="paladin-female"]{--card-fit-width:52.1198%;--card-fit-left:0.1946%;--card-fit-top:15.485%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="templar-male"]{--card-fit-width:52.6452%;--card-fit-left:-0.4395%;--card-fit-top:6.3003%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="templar-female"]{--card-fit-width:52.224%;--card-fit-left:-0.53%;--card-fit-top:6.82%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="eternal-male"]{--card-fit-width:53.7284%;--card-fit-left:-0.5741%;--card-fit-top:5.5762%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="eternal-female"]{--card-fit-width:53.5082%;--card-fit-left:-0.9109%;--card-fit-top:5.2357%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="berserker-male"]{--card-fit-width:52.3287%;--card-fit-left:-0.1132%;--card-fit-top:6.8187%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="berserker-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.5139%;--card-fit-top:15.8263%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="warlord-male"]{--card-fit-width:56.8889%;--card-fit-left:0.2222%;--card-fit-top:1.3888%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="warlord-female"]{--card-fit-width:55.0886%;--card-fit-left:-0.2911%;--card-fit-top:3.7342%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bloodwar-male"]{--card-fit-width:56.8889%;--card-fit-left:-0.5556%;--card-fit-top:2.1297%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bloodwar-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.6175%;--card-fit-top:15.656%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archer-male"]{--card-fit-width:53.6181%;--card-fit-left:-1.3039%;--card-fit-top:6.4528%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archer-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.8688%;--card-fit-top:15.6573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ranger-male"]{--card-fit-width:52.5392%;--card-fit-left:-1.9115%;--card-fit-top:7.158%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ranger-female"]{--card-fit-width:52.4337%;--card-fit-left:-1.2922%;--card-fit-top:6.8173%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sniper-male"]{--card-fit-width:52.6452%;--card-fit-left:-1.6079%;--card-fit-top:6.4718%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sniper-female"]{--card-fit-width:53.0732%;--card-fit-left:-1.0549%;--card-fit-top:6.4633%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wildlord-male"]{--card-fit-width:53.8392%;--card-fit-left:-1.7608%;--card-fit-top:5.9227%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wildlord-female"]{--card-fit-width:52.0159%;--card-fit-left:-1.9382%;--card-fit-top:15.8253%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bard-male"]{--card-fit-width:52.7515%;--card-fit-left:-1.2515%;--card-fit-top:5.9545%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bard-female"]{--card-fit-width:53.6181%;--card-fit-left:-2.1181%;--card-fit-top:6.2782%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="maestro-male"]{--card-fit-width:53.0732%;--card-fit-left:-1.1585%;--card-fit-top:5.9452%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="maestro-female"]{--card-fit-width:52.8583%;--card-fit-left:-0.8583%;--card-fit-top:14.4407%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dirge-male"]{--card-fit-width:57.0131%;--card-fit-left:-2.786%;--card-fit-top:3.9738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dirge-female"]{--card-fit-width:53.9504%;--card-fit-left:-2.2397%;--card-fit-top:5.7438%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mage-male"]{--card-fit-width:52.4337%;--card-fit-left:-0.4217%;--card-fit-top:6.8173%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mage-female"]{--card-fit-width:60.5847%;--card-fit-left:-3.6148%;--card-fit-top:-1.572%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sage-male"]{--card-fit-width:52.1198%;--card-fit-left:-0.4162%;--card-fit-top:15.485%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sage-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.2112%;--card-fit-top:15.8253%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archmage-male"]{--card-fit-width:52.6452%;--card-fit-left:-0.6825%;--card-fit-top:6.129%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archmage-female"]{--card-fit-width:51.8095%;--card-fit-left:0.1458%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="elementalist-male"]{--card-fit-width:52.6452%;--card-fit-left:-1.248%;--card-fit-top:6.3003%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="elementalist-female"]{--card-fit-width:53.1813%;--card-fit-left:-0.9022%;--card-fit-top:6.115%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="warlock-male"]{--card-fit-width:53.2898%;--card-fit-left:-0.8531%;--card-fit-top:5.0715%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="warlock-female"]{--card-fit-width:52.224%;--card-fit-left:-0.775%;--card-fit-top:6.99%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="necro-male"]{--card-fit-width:52.224%;--card-fit-left:-0.224%;--card-fit-top:15.3133%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="necro-female"]{--card-fit-width:52.5392%;--card-fit-left:-0.6801%;--card-fit-top:6.4738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="enchanter-male"]{--card-fit-width:53.1813%;--card-fit-left:-1.4216%;--card-fit-top:5.942%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="enchanter-female"]{--card-fit-width:52.4337%;--card-fit-left:0.2831%;--card-fit-top:6.988%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="merchant-male"]{--card-fit-width:53.0732%;--card-fit-left:-0.6921%;--card-fit-top:6.2907%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="merchant-female"]{--card-fit-width:51.8095%;--card-fit-left:-0.3095%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="blacksmith-male"]{--card-fit-width:52.224%;--card-fit-left:-0.979%;--card-fit-top:6.82%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="blacksmith-female"]{--card-fit-width:52.6452%;--card-fit-left:-0.9395%;--card-fit-top:6.129%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mastersmith-male"]{--card-fit-width:52.5392%;--card-fit-left:-0.7445%;--card-fit-top:6.4738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mastersmith-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.7167%;--card-fit-top:15.6573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mechanic-male"]{--card-fit-width:54.5136%;--card-fit-left:-1.2359%;--card-fit-top:4.3058%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="mechanic-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.4125%;--card-fit-top:15.6573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="alchemist-male"]{--card-fit-width:53.9504%;--card-fit-left:-1.2128%;--card-fit-top:5.0413%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="alchemist-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.262%;--card-fit-top:15.3173%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="biochem-male"]{--card-fit-width:52.224%;--card-fit-left:-0.265%;--card-fit-top:15.3133%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="biochem-female"]{--card-fit-width:53.0732%;--card-fit-left:-0.5549%;--card-fit-top:5.7723%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="goldalch-male"]{--card-fit-width:51.8095%;--card-fit-left:-0.2589%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="goldalch-female"]{--card-fit-width:51.7069%;--card-fit-left:0.3941%;--card-fit-top:15.8283%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gunner-male"]{--card-fit-width:53.3988%;--card-fit-left:-1.638%;--card-fit-top:5.588%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gunner-female"]{--card-fit-width:53.1813%;--card-fit-left:-1.1619%;--card-fit-top:5.942%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="marksman-male"]{--card-fit-width:51.9125%;--card-fit-left:-0.1083%;--card-fit-top:15.8263%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="marksman-female"]{--card-fit-width:52.0159%;--card-fit-left:-1.2271%;--card-fit-top:15.4867%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gunsaint-male"]{--card-fit-width:52.1198%;--card-fit-left:-0.3144%;--card-fit-top:15.485%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gunsaint-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.666%;--card-fit-top:15.6573%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bounty-male"]{--card-fit-width:52.224%;--card-fit-left:-0.775%;--card-fit-top:15.4833%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bounty-female"]{--card-fit-width:52.1198%;--card-fit-left:-0.518%;--card-fit-top:6.991%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="artillery-male"]{--card-fit-width:52.3287%;--card-fit-left:-0.8287%;--card-fit-top:15.3113%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="artillery-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.6175%;--card-fit-top:15.4867%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cannoneer-male"]{--card-fit-width:52.4337%;--card-fit-left:-0.1265%;--card-fit-top:6.4758%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="cannoneer-female"]{--card-fit-width:52.4337%;--card-fit-left:-0.5753%;--card-fit-top:6.6467%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demolisher-male"]{--card-fit-width:51.8095%;--card-fit-left:-0.8155%;--card-fit-top:15.6587%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demolisher-female"]{--card-fit-width:51.9125%;--card-fit-left:-0.8688%;--card-fit-top:15.8263%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="druid-male"]{--card-fit-width:52.8583%;--card-fit-left:-1.3067%;--card-fit-top:5.7793%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="druid-female"]{--card-fit-width:52.5392%;--card-fit-left:-0.7827%;--card-fit-top:6.4738%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="feral-male"]{--card-fit-width:53.1813%;--card-fit-left:-0.6426%;--card-fit-top:6.4613%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="feral-female"]{--card-fit-width:52.1198%;--card-fit-left:-0.5689%;--card-fit-top:15.1457%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wildgod-male"]{--card-fit-width:52.6452%;--card-fit-left:-0.631%;--card-fit-top:6.3003%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wildgod-female"]{--card-fit-width:51.9125%;--card-fit-left:-1.3757%;--card-fit-top:15.9953%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="packlord-male"]{--card-fit-width:53.6181%;--card-fit-left:-2.1181%;--card-fit-top:5.9292%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="packlord-female"]{--card-fit-width:52.224%;--card-fit-left:-0.52%;--card-fit-top:6.82%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="grove-male"]{--card-fit-width:51.8095%;--card-fit-left:-0.2143%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="grove-female"]{--card-fit-width:52.8583%;--card-fit-left:-0.7551%;--card-fit-top:5.9515%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archdruid-male"]{--card-fit-width:52.224%;--card-fit-left:-0.673%;--card-fit-top:15.4833%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="archdruid-female"]{--card-fit-width:52.0159%;--card-fit-left:0.1873%;--card-fit-top:15.4867%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="stormcaller-male"]{--card-fit-width:52.224%;--card-fit-left:-0.469%;--card-fit-top:15.3133%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="stormcaller-female"]{--card-fit-width:52.3287%;--card-fit-left:-0.2265%;--card-fit-top:15.3113%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thief-male"]{--card-fit-width:52.7515%;--card-fit-left:-0.9939%;--card-fit-top:6.298%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="thief-female"]{--card-fit-width:52.4337%;--card-fit-left:-2.1627%;--card-fit-top:6.4758%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="rogue-male"]{--card-fit-width:52.7515%;--card-fit-left:-1.7152%;--card-fit-top:6.4697%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="rogue-female"]{--card-fit-width:52.224%;--card-fit-left:-1.54%;--card-fit-top:15.1433%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="masterthief-male"]{--card-fit-width:52.224%;--card-fit-left:-2.05%;--card-fit-top:15.4833%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="masterthief-female"]{--card-fit-width:52.0159%;--card-fit-left:-1.2779%;--card-fit-top:15.656%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="trickster-male"]{--card-fit-width:52.5392%;--card-fit-left:-1.0392%;--card-fit-top:6.8158%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="trickster-female"]{--card-fit-width:51.8095%;--card-fit-left:-1.0179%;--card-fit-top:15.8273%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="assassin-male"]{--card-fit-width:52.3287%;--card-fit-left:-2.4128%;--card-fit-top:15.3113%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="assassin-female"]{--card-fit-width:52.7515%;--card-fit-left:-1.1636%;--card-fit-top:6.9848%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ninja-male"]{--card-fit-width:53.2898%;--card-fit-left:-1.6857%;--card-fit-top:6.2857%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ninja-female"]{--card-fit-width:51.7069%;--card-fit-left:-0.6109%;--card-fit-top:15.8283%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ronin-male"]{--card-fit-width:53.6181%;--card-fit-left:-1.961%;--card-fit-top:5.7547%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="ronin-female"]{--card-fit-width:52.1198%;--card-fit-left:-1.485%;--card-fit-top:15.3153%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="summoner-female"]{--card-fit-width:53.6181%;--card-fit-left:-0.9897%;--card-fit-top:5.7547%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tamer-male"]{--card-fit-width:52.4337%;--card-fit-left:-0.4337%;--card-fit-top:6.8173%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="tamer-female"]{--card-fit-width:53.5082%;--card-fit-left:-0.5676%;--card-fit-top:5.0615%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="beastking-male"]{--card-fit-width:54.8571%;--card-fit-left:0.4643%;--card-fit-top:5.0%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="beastking-female"]{--card-fit-width:52.7515%;--card-fit-left:-1.097%;--card-fit-top:14.6162%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sealmaster-male"]{--card-fit-width:54.2869%;--card-fit-left:-0.5904%;--card-fit-top:4.8493%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="sealmaster-female"]{--card-fit-width:52.0159%;--card-fit-left:-0.0159%;--card-fit-top:15.656%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="soullink-male"]{--card-fit-width:53.8392%;--card-fit-left:-0.1567%;--card-fit-top:5.3968%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="soullink-female"]{--card-fit-width:53.0732%;--card-fit-left:-0.0366%;--card-fit-top:5.7723%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="soulsage-male"]{--card-fit-width:52.3287%;--card-fit-left:-0.6353%;--card-fit-top:6.8187%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="soulsage-female"]{--card-fit-width:52.1198%;--card-fit-left:-0.2216%;--card-fit-top:15.6547%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="spiritlord-male"]{--card-fit-width:57.7699%;--card-fit-left:-0.1283%;--card-fit-top:0.7302%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="spiritlord-female"]{--card-fit-width:52.9655%;--card-fit-left:-0.0345%;--card-fit-top:6.2932%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="wolf"]{--card-fit-width:57.9186%;--card-fit-left:0.4819%;--card-fit-top:1.7345%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="bear"]{--card-fit-width:56.0175%;--card-fit-left:-2.9934%;--card-fit-top:3.2275%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="hawk"]{--card-fit-width:55.1724%;--card-fit-left:-1.4095%;--card-fit-top:4.5618%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="treant"]{--card-fit-width:54.0084%;--card-fit-left:-1.5316%;--card-fit-top:4.8172%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="saber"]{--card-fit-width:57.5281%;--card-fit-left:-0.6348%;--card-fit-top:2.1535%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="gdragon"]{--card-fit-width:52.8926%;--card-fit-left:-0.6694%;--card-fit-top:6.956%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="moon"]{--card-fit-width:51.927%;--card-fit-left:-1.8398%;--card-fit-top:6.305%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demonlord"]{--card-fit-width:50.0%;--card-fit-left:1.5%;--card-fit-top:8.3333%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="dragon"]{--card-fit-width:51.5201%;--card-fit-left:-0.5612%;--card-fit-top:7.0323%}
+#app .battle-vital[data-battle-card=full][data-motion-actor="demonlord-story"]{--card-fit-width:50.4831%;--card-fit-left:0.9364%;--card-fit-top:8.3333%}
+/* End measured original poses */
+/* Authored thin summoning frames. */
+#app .battle-vital[data-battle-card=full]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-white-5x3.png.webp');border:0!important;border-radius:4px!important}
+#app .battle-vital[data-battle-card=full][data-card-rarity="common"][data-beast-frame="one"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-white-5x3.png.webp')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="common"][data-beast-frame="two"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-green-5x3.png.webp')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="common"][data-beast-frame="three"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-blue-5x3.png.webp')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="rare"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-purple-5x3.png.webp')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="legendary"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-gold-5x3.png.webp')}
+#app .battle-vital[data-battle-card=full][data-card-rarity="solar"]{--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-red-5x3.png.webp')}
+#app .battle-vital[data-battle-card=full]:is([data-card-rarity="soulkeeper"],[data-card-rarity="boss"]){--battle-frame-v3:url('assets/ui/battle-frames-v3/frame-black-5x3.png.webp')}
+#app .battle-vital[data-battle-card=full]::after{content:""!important;display:block!important;inset:0!important;border:0!important;border-image:none!important;border-radius:0!important;background:var(--battle-frame-v3) center/100% 100% no-repeat!important;filter:none!important;pointer-events:none;z-index:2!important}
+#app .battle-vital[data-battle-card=full]::before,body[data-card-demo] #app .battle-vital>.unit-frame-corner,body[data-card-demo] #app .battle-vital>.unit-frame-sprig,body[data-card-demo] #app .battle-vital>.unit-menu-frame{display:none!important}
+
+/* Black mist and soot attach to the portrait, below combat information. */
+[data-motion-actor^=demonlord] .demon-black-aura{position:absolute;inset:-3% -7%;z-index:1;pointer-events:none;border-radius:48%;background:radial-gradient(ellipse at 45% 63%,#000 10%,#020105e6 36%,#15131cc2 52%,#71707c38 62%,transparent 73%);filter:blur(2px);animation:demon-black-mist 3.6s ease-in-out infinite alternate}
+[data-motion-actor^=demonlord] .um-aura{display:none!important}
+[data-motion-actor^=demonlord] .demon-black-motes{position:absolute;inset:0;z-index:4;pointer-events:none}
+@keyframes demon-black-mist{from{transform:scale(.92) translateY(2%);opacity:.65}to{transform:scale(1.08) translateY(-2%);opacity:.95}}
+@keyframes demon-soot-rise{0%{opacity:0;transform:translate(0,0) scale(.6)}20%{opacity:.95}75%{opacity:.8}100%{opacity:0;transform:translate(calc((var(--mote) - 5) * 1px),-65px) scale(.25)}}
+[data-motion-actor^=demonlord] .demon-black-aura{inset:-8% -12%;background:radial-gradient(ellipse at 45% 59%,#000 12%,#010103f2 39%,#08070be6 51%,#69636d80 60%,#09070ca6 66%,transparent 75%);filter:blur(3px)}
+
+/* Formations scale the same composition instead of changing card proportions. */
+#app .battle-side-units:has(>.battle-vital[data-battle-card=full]:only-child),#app .standard-arena .online-unit-grid:has(>.battle-vital[data-battle-card=full]:only-child){grid-template-columns:minmax(0,1fr)!important}
+#app .battle-vital[data-battle-card=full]:is(.selected,:focus-visible){outline:2px solid #e9ce86;outline-offset:0}
+#app .battle-vital[data-battle-card=full].acting{box-shadow:0 0 7px #efd58b88}
+#app[data-screen=world] .world-arena .online-combat-board{overflow:auto!important;min-height:0}
+#app[data-screen=world] .world-arena .online-combat-scroll{display:flex!important;flex-direction:column;flex:none!important;min-height:min-content;gap:14px;overflow:visible!important}
+#app[data-screen=world] .world-arena .online-combat-side{flex:none!important;min-height:auto!important}
+#app[data-screen=world] .world-arena .online-unit-grid{flex:none!important;grid-auto-rows:auto!important;grid-template-rows:none!important;gap:calc(8px / 3)!important;align-items:start!important}
+#app[data-screen=world] .world-arena .opponent-side .online-unit-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+#app[data-screen=world] .world-arena .our-side .online-unit-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#app[data-screen=world] .world-arena .battle-vital[data-battle-card=full]{grid-column:auto!important;grid-row:auto!important;align-self:start!important}
+#app[data-screen=world] .world-arena .world-empty-position{height:auto!important;max-height:none!important;aspect-ratio:5/3}
+@media(prefers-reduced-motion:reduce){}
+/* Let tall formations scroll in normal flow rather than sit beneath the command dock. */
+#app .battle-vitals:has([data-battle-card=full]){position:relative!important;top:auto!important}
+#app .battle-enhanced:has([data-battle-card=full]) .battle-command-dock{position:relative!important;bottom:auto!important}
+
+/* A little more breathing room between opposing teams; keep card sizes unchanged. */
+#app .battle-vitals:has([data-battle-card=full])>.battle-side-summary+.battle-side-summary,
+#app .battle-scenery .online-combat-side+.online-combat-side{margin-top:8px}
+#app .battle-vital[data-skill-target="valid"]{outline:2px solid #ffe394!important;outline-offset:2px;cursor:pointer}
+#app .battle-vital[data-skill-target="invalid"]{opacity:.4;cursor:default}
+
+/* Keep the turn row and commands close to the arena; auto controls live only in the dock. */
+#app .battle-enhanced:has([data-battle-card=full]){gap:4px!important}
+#app .battle-enhanced .portrait-turn-order{margin:0;padding:2px 0;gap:6px}
+#app .battle-enhanced .turn-order-list{padding-block:2px 4px}
+#app .battle-round{flex:none;white-space:nowrap;margin-left:auto;color:#efd48f;font-size:clamp(11px,3vw,15px)}
+.gacha-motes i:nth-child(2){left:15%;top:80%}
+.gacha-motes i:nth-child(3){left:65%;top:5%}
+.rarity-red .gacha-motes i:nth-child(2){color:#09030a;text-shadow:0 0 3px #ff3344}
+@keyframes gacha-card-flip{from{transform:rotateY(0)}
+to{transform:rotateY(180deg)}
+}
+@keyframes gacha-aura{to{box-shadow:0 0 7px var(--glow),0 0 22px var(--glow)}
+}
+@keyframes gacha-dust{0%,100%{opacity:.2;transform:translateY(4px)}
+50%{opacity:1;transform:translateY(-6px)}
+}
+@media(prefers-reduced-motion:reduce){
+}
+
+/* Keep reward art visible even when the Thai reward name is long. Full names follow the scene. */
+.gacha-front .gacha-result>b{flex:0 0 auto;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+
+/* Breaking the high rarity seals: expanding magic circle, light rays and flying sparks. */
+.gacha-flip.just-open.rarity-gold,.gacha-flip.just-open.rarity-red{z-index:4}
+.rarity-red .gacha-unseal i:nth-child(even){color:#180511;text-shadow:0 0 4px #ff3344,0 0 10px #ff3344}
+@keyframes gacha-unseal-fade{0%{opacity:0}20%,55%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes gacha-unseal-ring{0%{transform:scale(.3);opacity:0}25%{opacity:1}100%{transform:scale(1.5);opacity:0}}
+@keyframes gacha-unseal-rays{0%{transform:scale(.2) rotate(-12deg);opacity:0}25%{opacity:.8}100%{transform:scale(1.5) rotate(12deg);opacity:0}}
+@keyframes gacha-unseal-star{0%,10%{transform:scale(.1);opacity:0}35%{transform:scale(1);opacity:1}100%{transform:scale(1.7);opacity:0}}
+@keyframes gacha-unseal-spark{0%{transform:rotate(var(--angle)) translateX(0) rotate(calc(-1*var(--angle)));opacity:0}25%{opacity:1}100%{transform:rotate(var(--angle)) translateX(clamp(38px,13vw,85px)) rotate(calc(-1*var(--angle)));opacity:0}}
+@media(prefers-reduced-motion:reduce){}
+/* The reward face is a 4:3 full-art card, with no portrait medallion. */
+.gacha-reveal-stage .gacha-flip{aspect-ratio:4/3;height:auto!important}
+@media(prefers-reduced-motion:reduce){}
+/* Receipt presentation: summon first, then materialize each back in its slot. */
+.is-dealing .gacha-flip{animation:gacha-card-arrive .45s cubic-bezier(.16,.8,.3,1) both;animation-delay:calc(850ms + var(--slot)*90ms - var(--deal-elapsed));pointer-events:none}
+@keyframes gacha-portal{0%{opacity:0;transform:scale(.2)}25%{opacity:1;transform:scale(.8)}65%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes gacha-card-arrive{0%{opacity:0;transform:translateY(22px) scale(.4);filter:brightness(4) blur(4px)}50%{opacity:1;filter:brightness(2) blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}}
+@media(prefers-reduced-motion:reduce){}
+
+
+/* Slot-free scene with centered 2-3-3-2 rows. */
+.gacha-reveal-stage.ten{background:#080f1d}
+.ten .gacha-card-grid>.gacha-flip:nth-child(1),.ten .gacha-card-grid>.gacha-flip:nth-child(9){grid-column:2/span 2}
+.ten .gacha-card-grid>.gacha-flip:nth-child(2),.ten .gacha-card-grid>.gacha-flip:nth-child(10){grid-column:4/span 2}
+.ten .gacha-card-grid>.gacha-flip:nth-child(3),.ten .gacha-card-grid>.gacha-flip:nth-child(6){grid-column:1/span 2}
+
+/* Keep the shortcut inside the summoning artwork, above the card grid. */
+.gacha-reveal-stage>.gacha-open-all{position:absolute;top:12px;right:12px;z-index:8;min-height:36px;padding:7px 12px;font-size:clamp(11px,3.2vw,15px);box-shadow:0 2px 12px #0009}
+
+/* Crystal icons use a sprite sheet, so contain their square box just like item images. */
+.gacha-face-art>.growth-crystal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:94%!important;width:auto!important;aspect-ratio:1;max-width:94%;max-height:100%;box-sizing:border-box;border:0;border-radius:0;box-shadow:none}
+#app .cw-arena .battle-vital[data-battle-card=full]::after{position:absolute!important}#app .cw-arena .online-unit-grid{gap:8px;grid-auto-rows:auto;flex:none}#app .cw-arena .online-combat-side{flex:none;gap:5px}#app[data-screen=countrywar] main>.stack>.row>h2{font-size:22px}@media(max-width:350px){}
+
+.top .player-country-top{display:inline-block;width:18px;height:12px;line-height:0;margin-left:6px;vertical-align:-2px}.top .player-country-top .cw-flag{position:static;display:block;width:18px;height:12px;transform:none;object-fit:contain;border-radius:2px;box-shadow:0 1px 3px #0008}
+
+/* Current location is distinct from the base selected for inspection. */
+.cw-node.cw-here circle{fill:#f4c55b;stroke:#fff5ca;stroke-width:5;filter:drop-shadow(0 0 13px #ffd65a)}@keyframes cw-location-glow{50%{opacity:.5}}@media(prefers-reduced-motion:reduce){}
+
+html,body{margin:0!important;background:transparent!important;overflow:hidden!important}#app{width:100%;max-width:none;background:transparent;min-height:0;height:auto;border:0;box-shadow:none}.top{position:fixed!important;inset:0 0 auto!important;max-width:none!important;width:100%;margin:0!important;min-height:56px;padding:8px!important}.bottom{position:fixed!important;inset:auto 0 0!important;max-width:none!important;margin:0!important;width:100%;padding-bottom:env(safe-area-inset-bottom)}.walk-nav-icon{display:block;font-size:25px;color:#d4c291;line-height:30px}.bottom button{min-height:62px}.top .who{min-width:0}.top .who b{white-space:nowrap;font-size:11px}.top .coin{font-size:13px}.top .friend-top{font-size:10px}.top .settings-button{min-width:30px}body[data-edge=top] nav,body[data-edge=bottom] header{display:none!important}
+/* Keep the original trim and logo fully inside the iframe's visible area. */
+.top{height:64px;min-height:64px}.brand-seam{position:absolute!important;inset:64px 0 auto!important;height:36px!important}.brand-seam img{width:146px!important;height:49px!important;top:-14px!important}.bottom{padding-top:24px!important}.top::after,.bottom::before{display:block!important;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjMwIiB2aWV3Qm94PSIwIDAgMTAwMCAzMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIj48c3RvcCBzdG9wLWNvbG9yPSIjNjFiZGVkIi8+PHN0b3Agb2Zmc2V0PSIuMjUiIHN0b3AtY29sb3I9IiNjOWE2NTUiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjZmZlMGEwIi8+PHN0b3Agb2Zmc2V0PSIuNzUiIHN0b3AtY29sb3I9IiNkNmFiNTkiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNlZDgyNTQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMCAxNCBRMzUgNSA2OCAxMyBUMTQwIDE0IFExNzIgNiAyMDIgMTMgTDM1MCAxMyBRMzkwIDggNDIwIDEzIEw0NTggMTMgTDQ3OCAyMiBMNTAwIDI4IEw1MjIgMjIgTDU0MiAxMyBMNTgwIDEzIFE2MTAgOCA2NTAgMTMgTDc5OCAxMyBRODI4IDYgODYwIDE0IFQ5MzIgMTMgUTk2NSA1IDEwMDAgMTQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzA4MGYxOCIgc3Ryb2tlLXdpZHRoPSI3Ii8+PHBhdGggZD0iTTAgMTQgUTM1IDUgNjggMTMgVDE0MCAxNCBRMTcyIDYgMjAyIDEzIEwzNTAgMTMgUTM5MCA4IDQyMCAxMyBMNDU4IDEzIEw0NzggMjIgTDUwMCAyOCBMNTIyIDIyIEw1NDIgMTMgTDU4MCAxMyBRNjEwIDggNjUwIDEzIEw3OTggMTMgUTgyOCA2IDg2MCAxNCBUOTMyIDEzIFE5NjUgNSAxMDAwIDE0IiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjZykiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0xMiAxMSBRNDUgMjQgODAgMTIgTTkyMCAxMiBROTU1IDI0IDk4OCAxMSBNMjEwIDEzIEwyMjYgOCBMMjQyIDEzIEwyMjYgMTggWiBNNzU4IDEzIEw3NzQgOCBMNzkwIDEzIEw3NzQgMTggWiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2cpIiBzdHJva2Utd2lkdGg9IjEuMyIvPjwvc3ZnPg==')!important}.bottom::after{display:block!important;top:-24px!important;width:144px!important;height:48px!important}body[data-edge=bottom] .brand-seam{display:none!important}body[data-edge=top]{background:linear-gradient(110deg,#111e2c,#203540,#111c2a)!important}
+.brand-seam{height:20px!important}.brand-seam img{width:128px!important;height:43px!important;top:-24px!important}.bottom{height:calc(82px + env(safe-area-inset-bottom));padding-top:20px!important}.bottom button{height:62px!important;min-height:62px!important;padding:5px 2px!important;line-height:16px!important;gap:2px!important;font-size:11px}.bottom .town-nav-art{width:29px;height:29px}.walk-nav-icon{height:29px;line-height:29px}.bottom::before{top:-7px!important}.bottom::after{display:none!important;content:none!important}.walk-bottom-brand{position:absolute;left:50%;top:-14px;width:120px;height:40px;transform:translateX(-50%);z-index:5;pointer-events:none}.walk-bottom-brand img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px #07111b);background:radial-gradient(ellipse,#152634 50%,transparent 73%)}
+.walk-country-flag{position:absolute;left:50%;top:22px;transform:translateX(-50%);width:25px;height:18px;z-index:6;display:grid;place-items:center;pointer-events:none;border:1px solid #c6a66b88;border-radius:3px;background:#152a36;color:#b5a779;font-size:13px;line-height:1}.walk-country-flag img{display:block;width:100%;height:100%;object-fit:contain;border-radius:2px}.top .who{max-width:max(75px,calc(50vw - 63px))}.top .who b,.top .who small{white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}body[data-edge=bottom] .walk-country-flag{display:none}
+body[data-edge=bottom] .bottom{height:calc(70px + env(safe-area-inset-bottom));padding-top:12px!important}body[data-edge=bottom] .bottom button{height:58px!important;min-height:58px!important}body[data-edge=bottom] #app{background:transparent!important}html:has(body[data-edge=bottom]){color-scheme:normal!important;background:transparent!important}.walk-hero-vitals{position:absolute;left:50%;top:7px;transform:translateX(-50%);width:36px;display:grid;gap:3px;z-index:7;pointer-events:none}.mini-vital{display:block;width:100%;height:4px;border-radius:4px;overflow:hidden;background:#061522e8;box-shadow:0 0 0 1px #c4b58066}.mini-vital i{display:block;height:100%;width:0;transition:width .18s ease}#walkHeroHp{background:linear-gradient(90deg,#39ab65,#94ef9f)}#walkHeroMp{background:linear-gradient(90deg,#348fe0,#83d7ff)}body[data-edge=bottom] .walk-hero-vitals{display:none}
+.walk-hero-vitals[hidden]{display:none}

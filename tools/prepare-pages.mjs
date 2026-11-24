@@ -14,6 +14,13 @@ const git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8'});
 const tracked=new Set(git('ls-files','--cached','-z').split('\0').filter(Boolean));
 const files=new Set([...tracked,...Object.keys(media.paths)]);
 
+// Archived client builds are retained in Git for regression tests and rollback.
+const archivedClients=new Set([
+ 'game-app.87fd16861796bebd.js',
+ 'game-app.95c532bf5f401ce2.js',
+ 'game-app.b2e88f985255c7e9.js',
+ 'game-app.cd48b244025afef6.js',
+]);
 // Editing inputs. The game loads the processed tiles, props and sprites.
 const sourceArt=new Set([
  'assets/dungeon-mine-v1/floor-source.png.webp',
@@ -105,8 +112,10 @@ const publishedCatalog=readFileSync(resolve(root,catalog),'utf8').replace(
 
 let bytes=0, count=0, omittedBytes=0, streamedBytes=0, movementBytes=0, musicBytes=0, signatureBytes=0;
 const staged=[];
+const accountEntry=readFileSync(resolve(root,'accounts.html'),'utf8');
 for(const file of files){
  if(file.startsWith('.github/')||['tools/prepare-pages.mjs','tools/media-storage.mjs','tools/media-storage.json'].includes(file))continue;
+ if(archivedClients.has(file)&&!accountEntry.includes(file))continue;
  const source=resolve(root,file);
  const stored=!!media.paths[file]&&!tracked.has(file);
  const size=stored?mediaSize(file):statSync(source).size;

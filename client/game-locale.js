@@ -13,6 +13,7 @@
  const textNodes=new WeakMap(),elements=new WeakMap();
  let lang=get(),lookup,pattern,loading,contentLoading,content={},contentKeys=[],ready=false;
  const contentPatterns=new WeakMap();
+ let pageTranslated=false;
 
  function get(){
   try{
@@ -166,20 +167,26 @@
  function refresh(){
   if(!ready)return;
   document.documentElement.lang=lang;
+  if(lang==='th'){
+   if(pageTranslated)scan(document.documentElement);
+   pageTranslated=false;
+   return;
+  }
+  pageTranslated=true;
+  if(!lookup)compile(extend({en:{},'zh-CN':{}}));
   scan(document.documentElement);
-  if(lang==='th'||loading)return;
+  if(loading)return;
   loading=(async()=>{
    if(typeof SoulbeastContent==='undefined')await loadScript('game-data-registry.5350fd57c39d09dd.js');
    if(!SoulbeastContent.GAME_TRANSLATIONS)await loadScript('game-data-localization.4e97f22b85950411.js');
    compile(extend(SoulbeastContent.GAME_TRANSLATIONS()));
    cache.clear();
-   scan(document.documentElement);
+   if(lang!=='th')scan(document.documentElement);
   })().catch(()=>{loading=null;});
  }
  function mount(){
   if(ready)return;
   ready=true;
-  compile(extend({en:{},'zh-CN':{}}));
   const observer=new MutationObserver(changes=>{
    if(lang==='th')return;
    for(const change of changes){

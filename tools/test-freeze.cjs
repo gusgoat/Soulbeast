@@ -13,6 +13,7 @@ for(const file of [...engines,'game-data-elements.cbf3d313854fe0f5.js']){
  assert.match(vm.runInContext('STS.freeze.info',c),/50%/);
  if(!engines.includes(file))continue;
  Object.assign(c,{S:{battle:{kind:'normal'}},hasPas:()=>false,isWorldBattle:()=>false,isBalancedPvp:()=>false,blog(){},fxAdd(){},heal(){},hurt(){},PERSISTENT_AILMENTS:['poison','burn','freeze'],persistentBattleUnit:u=>u.side==='ally'&&['player','pet'].includes(u.kind),IMM:{freeze:['ice']},PAS:{},ExtraAudio:{play(){}},Math:Object.create(Math)});
+ c.B=()=>c.S.battle;
  c.Math.random=()=>0;
  vm.runInContext(fn(src,'turnStartBase')+'\n'+fn(src,'applyStatus'),c);
  for(const kind of ['player','pet','enemy'])for(const mode of ['normal','pvp','world','camp','guildwar','dungeonParty'])for(const duration of [3,4,5]){
