@@ -428,7 +428,7 @@ const ForestWalk = (() => {
       const site=state.questSites?.[guideIndex%state.questSites.length];
       questGuide.hidden=!site;
       if(site){const dx=site.position[0]-x,dz=site.position[1]-z;const horizontal=Math.abs(dx)>3?(dx<0?'ซ้าย':'ขวา'):'';const vertical=Math.abs(dz)>3?(dz>0?'ขึ้น':'ลง'):'';questGuide.textContent='ภารกิจ '+(guideIndex%state.questSites.length+1)+'/'+state.questSites.length+' · '+site.label+' · '+(vertical+horizontal||'อยู่ใกล้แล้ว')+' '+Math.round(Math.hypot(dx,dz))+' ม.';}
-      const message = cue || walk.message || instruction || "ลากจอยเพื่อเดินหรือวิ่ง แล้วเลือกทางแยก";
+      const message = cue || walk.message || instruction || "";
       if (status.textContent !== message) status.textContent = message;
       const side = ["Fernstone Trail", "Fernstone Clearing"].includes(area) ? "left"
         : ["Sunbloom Trail", "Sunbloom Clearing"].includes(area) ? "right" : null;
