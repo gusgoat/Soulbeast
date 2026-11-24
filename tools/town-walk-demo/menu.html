@@ -8777,6 +8777,16 @@ if(S.screen==='bag'&&dungeonBagFriend())render();
 
 /* Manual save uses the same guarded, idempotent online save as autosave. */
 let manualSaveBusy=false,manualSaveResult='',manualSaveTime=0;
+function walkManualSaveFailure(error){
+ const reason=String(error?.code||error?.message||'');
+ const known={
+  save_conflict:'ข้อมูลเซฟบนเซิร์ฟเวอร์เปลี่ยน',session_replaced:'เซสชันถูกแทนที่',session_expired:'เซสชันหมดอายุ',login_required:'ต้องยืนยันการเข้าสู่ระบบ',character_not_owned:'ยืนยันสิทธิ์ตัวละครไม่ได้',busy:'เซิร์ฟเวอร์กำลังประมวลผล',QuotaExceededError:'พื้นที่จัดเก็บของเบราว์เซอร์ไม่พอ',TimeoutError:'รอเซิร์ฟเวอร์เกินเวลา',AbortError:'คำขอถูกยกเลิก',TypeError:'ส่งคำขอหรืออ่านผลไม่สำเร็จ'
+ };
+ const label=known[reason]||known[error?.name]||'เซิร์ฟเวอร์หรือเบราว์เซอร์แจ้งข้อผิดพลาด';
+ const code=/^[a-z][a-z0-9_ -]{0,47}$/i.test(reason)?reason:String(error?.name||'Error');
+ const status=Number(error?.status);
+ return 'ยังบันทึกไม่สำเร็จ · '+label+' ('+code+(status>=100&&status<=599?' · HTTP '+status:'')+') · เก็บไฟล์สำรองไว้ก่อน';
+}
 function manualSavePanel(){
  if(!WALK_ONLINE)return '';
  const context=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');
@@ -8799,12 +8809,8 @@ handlers.walkManualSave=async()=>{
   manualSaveTime=Number(context?.revision)||0;
   manualSaveResult='บันทึกบนเซิร์ฟเวอร์สำเร็จ'+(manualSaveTime?' · '+new Date(manualSaveTime).toLocaleString('th-TH',{timeZone:'Asia/Bangkok'}):'');
  }catch(error){
-  const reason=error.code||error.message;
   window.WalkSaveSafety?.backupActiveWalk(walkStorage,sessionStorage,'manual-save-error');
-  manualSaveResult=['session_replaced','login_required','character_not_owned'].includes(reason)||error.status===401
-   ?'ยังบันทึกไม่สำเร็จ · เซสชันเข้าสู่ระบบใช้ไม่ได้ กรุณาเก็บไฟล์สำรองจากแถบแจ้งเตือนก่อนเข้าสู่ระบบใหม่'
-   :reason==='save_conflict'?'ยังบันทึกไม่สำเร็จ · เซฟบนเซิร์ฟเวอร์เปลี่ยน กรุณาลองบันทึกอีกครั้ง อย่าโหลดเซฟเก่าทับ'
-   :'ยังบันทึกไม่สำเร็จ · ตรวจการเชื่อมต่อแล้วกดบันทึกอีกครั้ง อย่ารีเฟรชหรือปิดเกมระหว่างนี้';
+  manualSaveResult=walkManualSaveFailure(error);
  }finally{manualSaveBusy=false;render();}
 };
 
