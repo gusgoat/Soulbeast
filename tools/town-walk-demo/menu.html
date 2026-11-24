@@ -5626,25 +5626,51 @@ async function confirmTowerFloor(b){
   b.towerCouponNotice=true;b.over.lines.push('คูปองผ่านชั้นครั้งแรก +2 ใบ');
  }
 }
-async function towerStatus(){if(TOWER_UI.busy)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{const r=await lbPost({action:'tower_status'});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);TOWER_UI.today=r.today;TOWER_UI.ready=true;if(towerActive())towerResume();else if(r.run&&S.battle?.towerRun===r.run.id){S.battle=null;S.P.towerRun.checkpoint=null;S.screen=r.run.outcome==='lose'?'hospital':'arena';}}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;save();render();}}
+async function towerStatus(){if(TOWER_UI.exitRun||TOWER_UI.busy)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{const r=await lbPost({action:'tower_status'});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);TOWER_UI.today=r.today;TOWER_UI.ready=true;if(towerActive())towerResume();else if(r.run&&S.battle?.towerRun===r.run.id){S.battle=null;S.P.towerRun.checkpoint=null;S.screen=r.run.outcome==='lose'?'hospital':'arena';}}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;save();render();}}
 function towerStartFloor(){const run=S.P.towerRun,entry=TOWER_FLOORS[run.floor-1];if(!run.active||!entry)return;S.battle=null;S.P.party=S.P.party.filter(uid=>run.carried.includes(uid)&&S.P.carried.includes(uid));const n=entry.n,es=[humanUnit(n.n,n.cls,n.lv,0)];n.pets.forEach(([sp,lv],i)=>{const u=wildUnit(sp,lv,i+1);u.name+='ของ'+n.n.split(' ')[0];u.kind='npcpet';es.push(u);});
  // startBattle advances immediately; set the run marker before its first render/timer.
  TOWER_UI.starting={id:run.id,floor:run.floor};try{startBattle(es,'npc',entry.i);}finally{TOWER_UI.starting=null;}towerCheckpoint();save();render();}
 const towerStartBattle=startBattle;
 startBattle=function(...args){if(TOWER_UI.starting){const prior=newRound;newRound=function(){Object.assign(S.battle,{towerRun:TOWER_UI.starting.id,towerFloor:TOWER_UI.starting.floor});return prior();};try{return towerStartBattle(...args);}finally{newRound=prior;}}return towerStartBattle(...args);};
-function towerResumePending(){const b=S.battle;if(!b?.towerRun||b.over||b.menu!=='wait')return;const next=b.towerContinuation;const fn=next==='ai'?aiAct:next==='charge'?()=>releaseCharge(uById(b.cur)):advance;battleLater(fn,200);}
-function towerResume(){const run=S.P.towerRun;if(!run?.active)return;S.zone=null;if(run.restPending){S.battle=null;S.screen='arena';return;}const cp=run.checkpoint;if(cp?.towerRun===run.id&&cp.towerFloor===run.floor){if(S.battle?.towerRun!==run.id||S.battle.towerFloor!==run.floor){S.battle=JSON.parse(JSON.stringify(cp));S.screen='battle';towerResumePending();}else S.screen='battle';}else towerStartFloor();}
+function towerResumePending(){if(TOWER_UI.exitRun)return;const b=S.battle;if(!b?.towerRun||b.over||b.menu!=='wait')return;const next=b.towerContinuation;const fn=next==='ai'?aiAct:next==='charge'?()=>releaseCharge(uById(b.cur)):advance;battleLater(fn,200);}
+function towerResume(){if(TOWER_UI.exitRun)return;const run=S.P.towerRun;if(!run?.active)return;S.zone=null;if(run.restPending){S.battle=null;S.screen='arena';return;}const cp=run.checkpoint;if(cp?.towerRun===run.id&&cp.towerFloor===run.floor){if(S.battle?.towerRun!==run.id||S.battle.towerFloor!==run.floor){S.battle=JSON.parse(JSON.stringify(cp));S.screen='battle';towerResumePending();}else S.screen='battle';}else towerStartFloor();}
 const towerBattleLater=battleLater;
-battleLater=function(fn,ms){const b=S.battle;if(!b?.towerRun)return towerBattleLater(fn,ms);const serial=(b.towerTimerSerial||0)+1;b.towerTimerSerial=serial;b.towerContinuation=fn===aiAct?'ai':fn===advance?'advance':'charge';return towerBattleLater(()=>{if(b.towerTimerSerial!==serial||b.over)return;b.towerContinuation=null;fn();},ms);};
+battleLater=function(fn,ms){const b=S.battle;if(!b?.towerRun)return towerBattleLater(fn,ms);const serial=(b.towerTimerSerial||0)+1;b.towerTimerSerial=serial;b.towerContinuation=fn===aiAct?'ai':fn===advance?'advance':'charge';return towerBattleLater(()=>{if(b.towerTimerSerial!==serial||b.over||TOWER_UI.exitRun)return;b.towerContinuation=null;fn();},ms);};
 handlers.towerConfirm=function(){if(TOWER_UI.busy||towerActive()||!TOWER_UI.ready)return;S.ui.confirm={msg:'เข้าหอคอยประลองยุทธ? ต้องเริ่มชั้น 1 และสู้ต่อเนื่องจนจบ ยอมแพ้ หรือพ่ายแพ้ ออกไปใช้ยา รักษาตัว หรือเปลี่ยนอสูรจากค่ายไม่ได้ ใช้สกิลฮีลและพักฟื้นได้ มีจุดพักทุก 5 ชั้น ฟื้น HP/MP ทั้งหมดฟรีก่อนเข้าและเมื่อจบ แพ้ไม่เสีย EXP หรือเงิน · วันละครั้ง (รีเซ็ตเที่ยงคืนเวลาไทย)',act:'towerEnter'};render();};
 handlers.towerEnter=async function(){if(TOWER_UI.busy)return;S.ui.confirm=null;TOWER_UI.busy=true;TOWER_UI.error='';render();try{if(S.zone||(S.battle&&!S.battle.over))throw Error('finish other battle');await towerSaveNow();const r=await lbPost({action:'tower_enter'});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);TOWER_UI.today=r.today||r.run.day;towerStartFloor();await towerSaveNow();}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;render();}};
 handlers.towerRefresh=towerStatus;
 handlers.towerSurrender=function(){if(!towerActive()||TOWER_UI.busy)return;S.ui.confirm={msg:'ยอมแพ้และจบการท้าทายหอคอย? ไม่เสีย EXP หรือเงิน ฟื้น HP/MP และล้างสถานะทั้งหมดฟรี ใช้สิทธิ์ของวันนี้แล้ว',act:'towerSurrenderConfirm'};render();};
-handlers.towerSurrenderConfirm=async function(){if(!towerActive()||TOWER_UI.busy)return;S.ui.confirm=null;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await towerSaveNow();const r=await lbPost({action:'tower_surrender',run:S.P.towerRun.id});if(!r.ok)throw Error(r.error);towerApply(r.run,r.coupons,r.recovery);CharacterMotion.reset();BattleEffects.clear();S.battle=null;S.P.towerRun.checkpoint=null;S.screen='town';await towerSaveNow();}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;render();}};
+function returnFromTowerToWalk(){
+ if(window.parent!==window){parent.postMessage({type:'town-return'},location.origin);return;}
+ const url=new URL('index.html',location.href),city=params.get('city')||(S.P.country||'green')+'-capital';
+ url.searchParams.set('city',city);
+ if(WALK_ONLINE){const ctx=JSON.parse(sessionStorage.getItem('soulbeast-online-walk-v1')||'null');if(ctx?.environment==='test')url.searchParams.set('world','test');}
+ location.replace(url.href);
+}
+handlers.towerSurrenderConfirm=async function(){
+ const run=S.P.towerRun;
+ if(TOWER_UI.busy||!run||(!run.active&&TOWER_UI.exitRun!==run.id))return;
+ S.ui.confirm=null;TOWER_UI.busy=true;TOWER_UI.exitRun=run.id;TOWER_UI.error='';
+ S.screen='arena';render();
+ try{
+  if(run.active){
+   const battle=S.battle;
+   if(battle?.towerRun===run.id&&battle.over?.res==='win')await confirmTowerFloor(battle);
+   await towerSaveNow();
+   const r=await lbPost({action:'tower_surrender',run:run.id});
+   if(!r.ok)throw Error(r.error);
+   towerApply(r.run,r.coupons,r.recovery);
+  }
+  CharacterMotion.reset();BattleEffects.clear();S.battle=null;S.P.towerRun.checkpoint=null;
+  await towerSaveNow();
+  TOWER_UI.exitRun=null;returnFromTowerToWalk();
+ }catch(error){TOWER_UI.error=towerError(error.message);}
+ finally{TOWER_UI.busy=false;render();}
+};
 handlers.arena=()=>toast('เข้าหอคอยจากชั้น 1 ด้วยปุ่มยืนยันเท่านั้น');
 handlers.towerNext=async function(){const b=S.battle,run=S.P.towerRun;if(TOWER_UI.busy||!b?.over||b.towerRun!==run?.id)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await confirmTowerFloor(b);const updated=S.P.towerRun;if(updated.active){towerResume();await towerSaveNow();}else{S.battle=null;S.screen=updated.outcome==='lose'?'hospital':'town';S.P.towerRun.checkpoint=null;await towerSaveNow();lbSubmit(true);}}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;save();render();}};
 const towerEndBattle=endBattle;
-async function towerRecordResult(b){if(TOWER_UI.busy||S.battle!==b||!b.over||b.towerResultSaved)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await confirmTowerFloor(b);await towerSaveNow();if(!S.P.lbOff)lbSubmit(true);}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;render();}}
+async function towerRecordResult(b){if(TOWER_UI.exitRun||TOWER_UI.busy||S.battle!==b||!b.over||b.towerResultSaved)return;TOWER_UI.busy=true;TOWER_UI.error='';render();try{await confirmTowerFloor(b);await towerSaveNow();if(!S.P.lbOff)lbSubmit(true);}catch(e){TOWER_UI.error=towerError(e.message);}finally{TOWER_UI.busy=false;render();}}
 endBattle=function(res){const b=S.battle,wasOver=b?.over;let out;if(b?.towerRun&&!wasOver){syncBack();const lines=[];if(res==='win'){const n=NPC[b.meta],first=!S.P.arena[b.meta],base=first?n.gold:Math.round(n.gold*.3),lucky=b.allies[0].pas.filter(k=>k==='lucky').length,gold=Math.round(base*(1+.25*lucky));S.P.gold+=gold;S.P.arena[b.meta]=(S.P.arena[b.meta]||0)+1;lines.push('เงินรางวัล '+fmt(gold)+' เหรียญ'+(first?' (ผ่านครั้งแรก)':''),'หอคอยไม่แจก EXP หรือไอเท็ม');b.over={res,title:'ชัยชนะ',lines};Sound.fx('win');}else{b.over={res,title:'จบการท้าทาย',lines:['พ่ายแพ้ที่ชั้น '+b.towerFloor,'ไม่เสีย EXP และเงิน · ฟื้น HP/MP และรักษาสถานะทั้งหมดฟรีเมื่อจบการท้าทาย']};Sound.fx('lose');}b.menu='end';}else out=towerEndBattle(res);if(b?.towerRun&&!wasOver&&b.over){towerCheckpoint();save();setTimeout(()=>towerRecordResult(b),0);}return out;};
 const towerBattleAction=battleAction;
 battleAction=function(value){if(S.battle?.towerRun){const k=String(value).split(':')[0];if(k==='done')return handlers.towerNext();if(k==='swap'&&!S.P.towerRun.carried.includes(Number(value.split(':')[1])))return toast('เรียกได้เฉพาะอสูรที่พกเข้าหอคอย');if(k==='item'||k==='seal'||k==='flee'||value==='menu:item'||value==='menu:seal')return toast('หอคอยห้ามใช้ไอเท็ม ผนึก และหนี ใช้สกิลฮีลหรือพักฟื้นได้');}return towerBattleAction(value);};
@@ -5654,12 +5680,14 @@ for(const action of ['heal','use','baguse','useitem','petCarry','petStore','dopr
 const towerPackLocked=packLocked;packLocked=function(){return towerActive()||towerPackLocked();};
 const towerCommunityBusy=communityBattleBusy;communityBattleBusy=function(){return towerActive()||towerCommunityBusy();};
 const towerSave=save;save=function(){towerCheckpoint();return towerSave();};
-vArenaBase=function(){const run=S.P.towerRun,used=run?.day===TOWER_UI.today;if(towerActive()&&run.restPending)return towerRestView();return '<div class="stack"><div class="row"><h2 class="grow">หอคอยประลองยุทธ</h2><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div><div class="card stack"><h3>'+TOWER_FLOORS.length+' ชั้น · สถิติสูงสุด '+fmt(S.P.towerBest||0)+' ชั้น</h3><p>สู้ต่อเนื่องจากชั้น 1 ขึ้นไป ใช้เฉพาะอสูรในกระเป๋า ห้ามใช้ยาและออกไปรักษา จนกว่าจะเคลียร์หอคอยหรือตาย ใช้สกิลฮีลและพักฟื้นได้</p><p>จุดพักทุก 5 ชั้น · ผ่านชั้นครั้งแรกได้คูปอง 2 ใบ · แพ้ไม่เสีย EXP หรือเงิน · ก่อนเข้าและเมื่อจบฟื้น HP/MP ทุกตัวฟรี</p><p>วันละครั้ง · รีเซ็ต 00:00 เวลาไทย · รางวัลเป็นเงินเท่านั้น และคูปอง 2 ใบเมื่อผ่านแต่ละชั้นครั้งแรก · ไม่มี EXP หรือไอเท็ม</p><button class="btn pri full" data-a="towerConfirm" '+(TOWER_UI.busy||!TOWER_UI.ready||used?'disabled':'')+'>'+(TOWER_UI.busy?'กำลังตรวจสิทธิ์…':used?'วันนี้ใช้สิทธิ์แล้ว':'ยืนยันเข้าหอคอย · เริ่มชั้น 1')+'</button><button class="btn sm" data-a="towerRefresh">ตรวจสิทธิ์อีกครั้ง</button>'+(TOWER_UI.error?'<p role="alert">'+esc(TOWER_UI.error)+'</p>':'')+'</div><details class="card"><summary>ดูคู่ต่อสู้ทุกชั้น</summary>'+TOWER_FLOORS.map(({n,i},floor)=>'<div class="item">'+portrait('npc:'+n.cls,38)+'<div><b>ชั้น '+(floor+1)+' · '+esc(n.n)+'</b><small>Lv '+n.lv+' · '+esc(CLS[n.cls].n)+' · '+fmt(S.P.arena[i]?Math.round(n.gold*.3):n.gold)+' เหรียญ</small></div></div>').join('')+'</details></div>';};
+vArenaBase=function(){
+ if(TOWER_UI.exitRun)return '<section class="card stack" role="status"><h3>ออกจากหอคอย</h3>'+(TOWER_UI.error?'<p>'+esc(TOWER_UI.error)+'</p><button class="btn full" data-a="towerSurrenderConfirm">ลองอีกครั้ง · กลับฉากเดิน</button>':'<p>กำลังบันทึกและกลับฉากเดิน…</p>')+'</section>';
+ const run=S.P.towerRun,used=run?.day===TOWER_UI.today;if(towerActive()&&run.restPending)return towerRestView();return '<div class="stack"><div class="row"><h2 class="grow">หอคอยประลองยุทธ</h2><button class="btn sm" data-a="go" data-v="town">กลับเมือง</button></div><div class="card stack"><h3>'+TOWER_FLOORS.length+' ชั้น · สถิติสูงสุด '+fmt(S.P.towerBest||0)+' ชั้น</h3><p>สู้ต่อเนื่องจากชั้น 1 ขึ้นไป ใช้เฉพาะอสูรในกระเป๋า ห้ามใช้ยาและออกไปรักษา จนกว่าจะเคลียร์หอคอยหรือตาย ใช้สกิลฮีลและพักฟื้นได้</p><p>จุดพักทุก 5 ชั้น · ผ่านชั้นครั้งแรกได้คูปอง 2 ใบ · แพ้ไม่เสีย EXP หรือเงิน · ก่อนเข้าและเมื่อจบฟื้น HP/MP ทุกตัวฟรี</p><p>วันละครั้ง · รีเซ็ต 00:00 เวลาไทย · รางวัลเป็นเงินเท่านั้น และคูปอง 2 ใบเมื่อผ่านแต่ละชั้นครั้งแรก · ไม่มี EXP หรือไอเท็ม</p><button class="btn pri full" data-a="towerConfirm" '+(TOWER_UI.busy||!TOWER_UI.ready||used?'disabled':'')+'>'+(TOWER_UI.busy?'กำลังตรวจสิทธิ์…':used?'วันนี้ใช้สิทธิ์แล้ว':'ยืนยันเข้าหอคอย · เริ่มชั้น 1')+'</button><button class="btn sm" data-a="towerRefresh">ตรวจสิทธิ์อีกครั้ง</button>'+(TOWER_UI.error?'<p role="alert">'+esc(TOWER_UI.error)+'</p>':'')+'</div><details class="card"><summary>ดูคู่ต่อสู้ทุกชั้น</summary>'+TOWER_FLOORS.map(({n,i},floor)=>'<div class="item">'+portrait('npc:'+n.cls,38)+'<div><b>ชั้น '+(floor+1)+' · '+esc(n.n)+'</b><small>Lv '+n.lv+' · '+esc(CLS[n.cls].n)+' · '+fmt(S.P.arena[i]?Math.round(n.gold*.3):n.gold)+' เหรียญ</small></div></div>').join('')+'</details></div>';};
 LBTAB.tower={n:'หอคอยประลองยุทธ',v:r=>fmt(r.towerBest||0)+' ชั้น',k:r=>r.towerBest||0};
 const towerBattleView=vBattle;
 vBattle=function(){let html=towerBattleView(),b=S.battle;if(!b?.towerRun)return html;html='<div class="tower-floor">หอคอยประลองยุทธ · ชั้น '+b.towerFloor+'/'+TOWER_FLOORS.length+'</div>'+html;html=html.replace(/<button\b[^>]*data-v="menu:(?:item|seal)"[^>]*>[\s\S]*?<\/button>/g,'');if(b.over)html=html.replace('data-v="done">ไปต่อ','data-v="done" '+(TOWER_UI.busy?'disabled':'')+'>'+(TOWER_UI.busy?'กำลังบันทึก…':b.over.res==='lose'?'จบการท้าทาย':b.towerFloor===TOWER_FLOORS.length?'เคลียร์หอคอย · กลับเมือง':b.towerFloor%5===0?'ไปจุดพัก':'ขึ้นชั้นถัดไป'));let actions='';if(!b.over)actions+='<button class="btn danger full" data-a="towerSurrender" '+(TOWER_UI.busy?'disabled':'')+'>ยอมแพ้ · ออกจากหอคอย</button>';if(TOWER_UI.error)actions+='<div class="card" role="alert">'+esc(TOWER_UI.error)+' · กดไปต่อเพื่อลองบันทึกอีกครั้ง</div>';return actions?html.slice(0,-12)+actions+html.slice(-12):html;};
 const towerRender=render;
-render=function(){if(towerActive()&&S.screen!=='settings'&&(S.screen!=='battle'||!S.battle?.towerRun)&&!TOWER_UI.starting)towerResume();towerRender();if(S.battle?.towerRun)save();if(towerActive()&&!TOWER_UI.ready&&!TOWER_UI.bootChecked){TOWER_UI.bootChecked=true;setTimeout(towerStatus,0);}};
+render=function(){if(!TOWER_UI.exitRun&&towerActive()&&S.screen!=='settings'&&(S.screen!=='battle'||!S.battle?.towerRun)&&!TOWER_UI.starting)towerResume();towerRender();if(S.battle?.towerRun)save();if(towerActive()&&!TOWER_UI.ready&&!TOWER_UI.bootChecked){TOWER_UI.bootChecked=true;setTimeout(towerStatus,0);}};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&towerActive())towerResumePending();});
 
 function towerRestView(){const choice=(type,title,description)=>'<button class="door tower-rest-choice" data-a="towerRest" data-v="'+type+'" '+(TOWER_UI.busy?'disabled':'')+'>'+routePicture(type,false)+'<b>'+title+'</b><small>'+description+'</small><span class="chip">เลือก'+title+'</span></button>';return '<div class="stack"><h2>จุดพัก · หลังชั้น '+S.P.towerRun.restPending+'</h2><p>เลือกได้หนึ่งอย่าง ก่อนขึ้นชั้น '+S.P.towerRun.floor+'</p>'+towerRestVitals()+'<button class="btn danger full" data-a="towerSurrender" '+(TOWER_UI.busy?'disabled':'')+'>ยอมแพ้ · ออกจากหอคอย</button>'+'<div class="grid2 tower-rest-grid">'+choice('revival','บ่อชุบชีวิต','อสูรที่พกและหมดสติฟื้น HP เต็มและ MP ครึ่งหนึ่ง หากไม่มีผู้หมดสติ ฟื้น HP 50% ให้ผู้ที่มีสัดส่วน HP ต่ำที่สุดหนึ่งตัว')+choice('spring','ลำธารใส','ฟื้น HP และ MP 35% ให้ผู้เล่นและอสูรที่พกซึ่งยังมีสติ')+choice('cleanse','บ่อชำระล้าง','ล้างสถานะผิดปกติทั้งหมดให้ผู้ผนึกและอสูรทุกตัว รวมในค่าย ฟรี พร้อมฟื้น HP/MP 10% ให้ผู้ที่ยังมีสติ')+choice('treasure','หีบสมบัติ','อุปกรณ์ที่ไม่ใช่ตำนาน 1 ชิ้น และเงิน '+fmt(150+S.P.towerRun.restPending*30)+' เหรียญ · ไม่ฟื้นพลังหรือล้างสถานะ')+'</div>'+(TOWER_UI.error?'<p role="alert">'+esc(TOWER_UI.error)+'</p>':'')+'</div>';}
@@ -9220,7 +9248,7 @@ function ordinaryBattleContext(battle,floor){
   if(awaitingOpening.has(b))return true;
   awaitingOpening.add(b);render();
   const resume=()=>{
-   if(B()!==b||b.over){awaitingOpening.delete(b);return;}
+   if(B()!==b||b.over||TOWER_UI.exitRun){awaitingOpening.delete(b);return;}
    if((useStage(b)&&!fieldReady)||TOWER_UI.busy){setTimeout(resume,50);return;}
    awaitingOpening.delete(b);advance();
   };
@@ -9256,7 +9284,36 @@ function ordinaryBattleContext(battle,floor){
   }else{revision++;if(ready&&!presenting)post('ordinary-state',{view:view()});}
   autoHospital();
  }
- function removeStage(){frame?.remove();frame=null;ready=false;fieldReady=false;presenting=0;recovery.stop();}
+ let towerControl=null;
+ function canLeaveFloor(b){
+  return !!b?.towerRun&&S.P.towerRun?.id===b.towerRun&&towerActive()&&
+   (!b.over||(b.over.res==='win'&&b.towerFloor<TOWER_FLOORS.length));
+ }
+ function syncTowerControl(){
+  if(!ready||!frame||!B()?.towerRun)return;
+  const doc=frame.contentDocument,menu=doc?.getElementById('menu');
+  if(!menu)return;
+  if(!towerControl){
+   const button=doc.createElement('button');button.type='button';button.className='tower-surrender';button.textContent='ยอมแพ้';
+   menu.parentElement.dataset.towerControls='';
+   button.onclick=()=>{if(canLeaveFloor(B())&&!TOWER_UI.busy&&!S.ui.confirm)handlers.towerSurrender();};
+   const update=()=>{
+    const allowed=canLeaveFloor(B());
+    button.hidden=!allowed;button.disabled=!allowed||TOWER_UI.busy||!!S.ui.confirm;
+    if(!allowed){button.remove();return;}
+    const done=menu.querySelector('[data-connected="done"]');
+    if(done){
+     let panel=done.closest('.tower-result-actions');
+     if(!panel){panel=doc.createElement('div');panel.className='tower-result-actions';done.replaceWith(panel);panel.append(done);}
+     if(button.parentNode!==panel)panel.append(button);
+    }else if(button.previousElementSibling!==menu){menu.after(button);}
+   };
+   const observer=new MutationObserver(update);observer.observe(menu,{childList:true});
+   towerControl={update,stop(){observer.disconnect();button.remove();delete menu.parentElement.dataset.towerControls;}};
+  }
+  towerControl.update();
+ }
+ function removeStage(){towerControl?.stop();towerControl=null;frame?.remove();frame=null;ready=false;fieldReady=false;presenting=0;recovery.stop();}
  function useLegacy(reason='manual'){
   const b=B();if(!b||!frame||closing)return;failedBattles.add(b);recoveryReason=reason;
   removeStage();nativeRender();Music.sync();nativeToast('เปลี่ยนกลับสนามเดิมแล้ว · ต่อสู้ต่อจากตาเดิมได้');
@@ -9275,16 +9332,16 @@ function ordinaryBattleContext(battle,floor){
  function mount(){
   const b=B();if(!useStage(b)||S.screen!=='battle'){
    if(frame)removeStage();battle=null;
-   if(S.screen==='arena'){if(!towerWarm)towerWarm=createFrame('dungeon');}else discardWarm();
+   if(S.screen==='arena'&&!TOWER_UI.exitRun){if(!towerWarm)towerWarm=createFrame('dungeon');}else discardWarm();
    return;
   }
-  if(battle!==b){battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';fieldReady=false;requests.clear();recovery.start(battleId);}
+  if(battle!==b){towerControl?.stop();towerControl=null;battle=b;battleId=crypto.randomUUID();sequence=0;presenting=0;closing=false;forcedAuto=false;saveError='';recoveryReason='';fieldReady=false;requests.clear();recovery.start(battleId);}
   if(!frame){
    if(b.towerRun&&towerWarm){frame=towerWarm;ready=warmReady;towerWarm=null;warmReady=false;}
    else{discardWarm();frame=createFrame(b.towerRun||ordinaryBattleContext(b,typeof dungeonFloor==='undefined'?null:dungeonFloor)?'dungeon':'country');}
    frame.id='ordinary-battle-stage';frame.inert=false;frame.removeAttribute('aria-hidden');
    Music.stop();ExtraAudio.stop();Sound.stopAmb();}
-  frame.style.visibility=b.towerRun&&S.ui.confirm?.act==='towerSurrenderConfirm'?'hidden':'';publish();
+  frame.style.visibility=b.towerRun&&S.ui.confirm?.act==='towerSurrenderConfirm'?'hidden':'';syncTowerControl();publish();
  }
  render=function(...args){const r=nativeRender.apply(this,args);mount();return r;};
  teamAutoUnit=function(u){return forcedAuto&&u?.side==='ally'||nativeTeamAuto(u);};
@@ -9294,7 +9351,7 @@ function ordinaryBattleContext(battle,floor){
    const serial=(b.towerTimerSerial||0)+1;b.towerTimerSerial=serial;
    b.towerContinuation=fn===aiAct?'ai':fn===advance?'advance':'charge';
    const resume=()=>{
-    if(B()!==b||b.over||b.towerTimerSerial!==serial)return;
+    if(B()!==b||b.over||TOWER_UI.exitRun||b.towerTimerSerial!==serial)return;
     if(useStage(b)&&(!fieldReady||presenting)||TOWER_UI.busy||S.ui.confirm?.act==='towerSurrenderConfirm'){setTimeout(resume,50);return;}
     b.towerContinuation=null;fn();
    };
@@ -9358,7 +9415,7 @@ function ordinaryBattleContext(battle,floor){
    return;
   }
   if(!frame||e.source!==frame.contentWindow)return;const m=e.data;
-  if(m?.type==='ordinary-ready'){ready=true;post('ordinary-state',{view:view()});return;}
+  if(m?.type==='ordinary-ready'){ready=true;syncTowerControl();post('ordinary-state',{view:view()});return;}
   if(m?.type==='ordinary-render-error'&&(!ready||m.channel===channel)){useLegacy('renderer-error');return;}
   if(m?.channel!==channel)return;
   if(m.type==='ordinary-field-ready'&&m.battle===battleId){fieldReady=true;recovery.ready(battleId);autoHospital();return;}

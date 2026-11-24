@@ -219,6 +219,21 @@ body[data-battle-mode="ordinary-connected"] #menu:has(>.pvp-result)>button[data-
 #menu:has(>.pvp-result)>[data-connected="done"] .command-picture,
 #menu:has(>.pvp-result)>[data-connected="done"] small{display:none}
 #menu:has(>.pvp-result)>[data-connected="done"] b{white-space:normal;overflow-wrap:anywhere;line-height:1.35}
+
+.commands[data-tower-controls] [data-connected="flee"]{display:none}
+.commands .tower-surrender{display:block;flex:none;min-height:44px;width:100%;margin:5px 0 0;padding:7px 10px;border:1px solid #b88e50;border-radius:8px;background:linear-gradient(#48342e,#291d20);color:#ffe6c0;font:inherit;font-weight:bold;cursor:pointer}
+.commands .tower-surrender:focus-visible{outline:2px solid #ffe09a;outline-offset:-3px}
+.commands .tower-surrender:disabled{opacity:.56;cursor:default}
+.commands .tower-surrender[hidden],.menu-collapsed .commands>.tower-surrender{display:none}
+body[data-battle-mode="ordinary-connected"] #menu:has(>.tower-result-actions){
+ display:grid;grid-template-columns:minmax(0,1fr) clamp(92px,30%,152px);grid-template-rows:auto;align-items:start;align-content:start;gap:0;
+}
+body[data-battle-mode="ordinary-connected"] #menu:has(>.tower-result-actions)>.pvp-result{
+ grid-area:1/1/2/3;align-self:stretch;padding-inline-end:calc(clamp(92px,30%,152px) + 9px);
+}
+#menu>.tower-result-actions{grid-area:1/2;position:sticky;top:8px;align-self:start;display:grid;gap:7px;min-width:0;margin:9px 9px 9px 0;z-index:1}
+#menu>.tower-result-actions>button{box-sizing:border-box;width:100%;height:auto;min-height:44px;margin:0;padding:8px 5px;display:flex;justify-content:center;text-align:center;white-space:normal}
+#menu>.tower-result-actions>button small,#menu>.tower-result-actions>button img{display:none}
 </style><link rel="stylesheet" href="card-status.css?v=1"><script src="status-labels.js?v=1"></script><script src="effect-layers.js?v=1"></script><script src="card-status.js?v=1"></script></head><body>
 <main class="game" id="game">
 <section class="arena" id="arena" aria-label="สนามต่อสู้">
