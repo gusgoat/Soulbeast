@@ -81,18 +81,34 @@ function create(data,nav,terrain){
   for(const pool of pools)drawDecal(ctx,pool,poolImage(pool,images),pool.radius*2.15);
  }
 
- let haze;
- function shimmer(ctx,x,y,scale,time,seed,width,height){
+ // A vent stays in the same world position while the camera moves. Reuse its
+ // small background sample while continuing to animate every ripple on screen.
+ const ventSamples=new WeakMap();
+ let heatGlow;
+ function glowImage(){
+  if(heatGlow)return heatGlow;
+  heatGlow=g.document.createElement('canvas');heatGlow.width=heatGlow.height=64;
+  const brush=heatGlow.getContext('2d'),gradient=brush.createRadialGradient(32,32,0,32,32,32);
+  gradient.addColorStop(0,'#ffcf9b66');gradient.addColorStop(1,'#fcb88400');
+  brush.fillStyle=gradient;brush.fillRect(0,0,64,64);return heatGlow;
+ }
+ function shimmer(ctx,x,y,scale,time,seed,width,height,source,vent){
   const left=x-scale*.63,top=y-scale*1.62,w=scale*1.26,h=scale*1.66;
   if(scale<12||left<0||top<0||left+w>width||top+h>height||!g.document)return;
-  if(!haze){
-   haze=g.document.createElement('canvas');
-   haze.width=64;haze.height=80;
+  let samples=source&&ventSamples.get(source);
+  if(!samples){samples=[];if(source)ventSamples.set(source,samples);}
+  let sample=samples[vent];
+  if(!sample){
+   const image=g.document.createElement('canvas');image.width=64;image.height=80;
+   sample=samples[vent]={image,buffer:image.getContext('2d'),next:-Infinity};
   }
-  const buffer=haze.getContext('2d');
-  const {a,d}=ctx.getTransform();
-  buffer.clearRect(0,0,haze.width,haze.height);
-  buffer.drawImage(ctx.canvas,left*a,top*d,w*a,h*d,0,0,haze.width,haze.height);
+  const haze=sample.image;
+  if(time>=sample.next||sample.scale!==scale||sample.width!==width||sample.height!==height){
+   const {a,d}=ctx.getTransform(),buffer=sample.buffer;
+   buffer.clearRect(0,0,haze.width,haze.height);
+   buffer.drawImage(ctx.canvas,left*a,top*d,w*a,h*d,0,0,haze.width,haze.height);
+   sample.next=time+.15+(seed%1)*.045;sample.scale=scale;sample.width=width;sample.height=height;
+  }
   ctx.save();
   for(let i=0;i<10;i++){
    const v=(i+.5)/10,fade=Math.sin(v*Math.PI);
@@ -104,9 +120,9 @@ function create(data,nav,terrain){
   }
   ctx.restore();
  }
- function heat(ctx,x,y,scale,time,seed,compact,width,height){
+ function heat(ctx,x,y,scale,time,seed,compact,width,height,source,vent){
   if(x< -100||x>width+100||y< -40||y>height+145)return;
-  if(!compact)shimmer(ctx,x,y,scale,time,seed,width,height);
+  if(!compact)shimmer(ctx,x,y,scale,time,seed,width,height,source,vent);
   ctx.save();
   const count=compact?2:4;
   for(let i=0;i<count;i++){
@@ -114,10 +130,8 @@ function create(data,nav,terrain){
    const px=x+Math.sin(time*1.6+i+seed)*scale*(.08+cycle*.28);
    const py=y-cycle*scale*1.58;
    const radius=scale*(.18+.38*cycle);
-   const glow=ctx.createRadialGradient(px,py,0,px,py,radius);
-   glow.addColorStop(0,'#ffcf9b66');glow.addColorStop(1,'#fcb88400');
    ctx.globalAlpha=Math.sin(cycle*Math.PI)*.64;
-   ctx.fillStyle=glow;ctx.fillRect(px-radius,py-radius,radius*2,radius*2);
+   ctx.drawImage(glowImage(),px-radius,py-radius,radius*2,radius*2);
    if(i%2===0){
     ctx.globalAlpha=(1-cycle)*.7;
     ctx.fillStyle='#ffc271';ctx.beginPath();ctx.arc(px,py,Math.max(.75,scale*.022),0,TAU);ctx.fill();
@@ -134,17 +148,17 @@ function create(data,nav,terrain){
    const points=vents[pool.variant];
    for(let i=0;i<(compact?1:points.length);i++){
     const [x,y]=points[i];
-    heat(ctx,sx(pool.x)+x*w*(pool.flip?-1:1),sy(pool.y)+y*h,w*.27,time,pool.seed+i,compact,width,height);
+    heat(ctx,sx(pool.x)+x*w*(pool.flip?-1:1),sy(pool.y)+y*h,w*.27,time,pool.seed+i,compact,width,height,pool,i);
    }
   }
   for(const crack of cracks){
-   heat(ctx,sx(crack.x),sy(crack.y),crack.length*zoom*.22,time,crack.seed,compact,width,height);
+   heat(ctx,sx(crack.x),sy(crack.y),crack.length*zoom*.22,time,crack.seed,compact,width,height,crack,0);
   }
  }
- function drawVolcanoHeat(ctx,x,y,width,height,time,compact,viewWidth,viewHeight){
+ function drawVolcanoHeat(ctx,x,y,width,height,time,compact,viewWidth,viewHeight,source){
   for(let i=0;i<(compact?2:volcanoVents.length);i++){
    const [u,v,size]=volcanoVents[i];
-   heat(ctx,x+(u-.5)*width,y+(v-.94)*height,width*size,time,u*4,compact,viewWidth,viewHeight);
+   heat(ctx,x+(u-.5)*width,y+(v-.94)*height,width*size,time,u*4,compact,viewWidth,viewHeight,source,i);
   }
  }
  // Use the same pool art, projection and vent positions as the heat layer.

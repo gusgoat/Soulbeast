@@ -3,7 +3,7 @@
  // Sunlight from the lower left. Ground depth uses the same flattening as the map.
  const REACH=.56, DEPTH=.52, LAMP_RANGE=180, COLOR='#17233a';
 
- function create(){
+ function create(maskResolution=1){
   const layer=document.createElement('canvas'), actors=document.createElement('canvas');
   const mask=layer.getContext('2d'), foreground=actors.getContext('2d');
   let scaleX=1,scaleY=1,dprX=1,dprY=1,flatten=1,night=0,range=0;
@@ -11,7 +11,7 @@
 
   function resize(width,height,w,h){
    actors.width=width;actors.height=height;
-   layer.width=Math.max(1,Math.ceil(w));layer.height=Math.max(1,Math.ceil(h));
+   layer.width=Math.max(1,Math.ceil(w*maskResolution));layer.height=Math.max(1,Math.ceil(h*maskResolution));
    scaleX=layer.width/Math.max(1,w);scaleY=layer.height/Math.max(1,h);
    dprX=width/Math.max(1,w);dprY=height/Math.max(1,h);
    foreground.setTransform(dprX,0,0,dprY,0,0);
@@ -21,7 +21,7 @@
    lights.length=0;
    if(night>.15)for(const pole of poles){
     const x=sx(pole.x),y=sy(pole.y);
-    if(x>=-range&&x<=layer.width+range&&y>=-range&&y<=layer.height+range)lights.push({x,y});
+    if(x>=-range&&x<=layer.width/scaleX+range&&y>=-range&&y<=layer.height/scaleY+range)lights.push({x,y});
    }
    mask.resetTransform();
    mask.clearRect(0,0,layer.width,layer.height);
