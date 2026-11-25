@@ -4,7 +4,7 @@
 <nav><select id="pick" aria-label="เลือกอสูร"></select><button id="previous">ก่อนหน้า</button><button id="next">ถัดไป</button><button id="drake">เดรคเมฆา</button><button id="wisps">วิปส์ 3 ร่าง</button></nav>
 <canvas id="preview" width="1000" height="570"></canvas><p id="status" role="status"></p><p class="hint">แอนิเมชันวน 3 วินาที · แสดงหน้าตาจริงครบ 8 ทิศ · โหลดเฉพาะตัวที่เลือก</p>
 <a href="../hemant-walk-demo/index.html?country=green&layout=regions-v5&region=N&arrival=beasts&packlord3d=1&roster=1&v=living-177-2">ลองเดินในฉากประเทศ</a>
-<script src="../../assets/living-beasts/catalog.js?v=living-177-2"></script><script src="../town-walk-demo/beast-habitats.js?v=living-177-2"></script><script src="../town-walk-demo/living-beasts.js?v=beasts-3d-six-20261121"></script>
+<script src="../../assets/living-beasts/catalog.js?v=field-size-1"></script><script src="../town-walk-demo/beast-habitats.js?v=living-177-2"></script><script src="../town-walk-demo/living-beasts.js?v=field-size-1"></script>
 <script>
 const canvas=document.getElementById('preview'),ctx=canvas.getContext('2d'),pick=document.getElementById('pick'),models=LivingBeastCatalog.models,renderer=LivingBeasts.create({cell:192,cacheSize:3});let actors=[],started=performance.now();
 for(const m of models){const option=document.createElement('option');option.value=m.id;option.textContent=m.name;pick.append(option);}

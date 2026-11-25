@@ -801,7 +801,7 @@ export async function openForest(canvas, progress, report, {minimap, entrance = 
     if (actor.beastModelId) {
       actor.position.x = x;
       actor.position.y = -z;
-      beastRenderer.draw(shadowSprite(screenX(x),screenY(z)), actor, screenX(x), screenY(z), size, prior/1000, {
+      beastRenderer.draw(shadowSprite(screenX(x),screenY(z)), actor, screenX(x), screenY(z), COUNTRY_PLAYER_SIZE, prior/1000, {
         flatten: FLATTEN, heading: actor.beastHeading ?? 0, moving: !!actor.beastMoving
       });
       return;

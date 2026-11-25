@@ -80,12 +80,12 @@
     body.direction=xWeight>yWeight?(dx<0?2:3):(dy<0?1:0);
    }
   }
-  function draw(ctx,sx,sy,scale,shadows){
+  function draw(ctx,sx,sy,scale,shadows,sealerSize=156*scale){
    if(!key||!body)return;
-   const x=sx(body.x),y=sy(body.y),size=128*scale;
+   const x=sx(body.x),y=sy(body.y),size=sealerSize*(catalog[key].walkSpriteScale??1),modelSize=sealerSize*(catalog[key].walkModelScale??1),margin=Math.max(size,modelSize);
    const canvasWidth=ctx.canvas.clientWidth||ctx.canvas.width,canvasHeight=ctx.canvas.clientHeight||ctx.canvas.height;
-   if(x+size<0||x-size>canvasWidth||y+size<0||y-size>canvasHeight)return;
-   if(model?.draw(shadows?.sprite(ctx,x,y)??ctx,x,y,size,body.heading??0,body.moving,false))return;
+   if(x+margin<0||x-margin>canvasWidth||y+margin<0||y-margin>canvasHeight)return;
+   if(model?.draw(shadows?.sprite(ctx,x,y)??ctx,x,y,modelSize,body.heading??0,body.moving,false))return;
    asset??=acquire(key);
    if(asset.failed&&performance.now()>=asset.retryAt){asset.failed=false;asset.image.src='/Soulbeast/assets/companions/'+catalog[key].file;}
    if(!asset.ready)return;

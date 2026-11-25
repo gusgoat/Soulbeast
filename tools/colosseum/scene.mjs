@@ -1,6 +1,6 @@
-import '../../assets/living-beasts/catalog.js?v=living-177-2';
+import '../../assets/living-beasts/catalog.js?v=field-size-1';
 import '../town-walk-demo/beast-habitats.js?v=living-177-2';
-import '../town-walk-demo/living-beasts.js?v=living-flight-idle-1';
+import '../town-walk-demo/living-beasts.js?v=field-size-1';
 import '../town-walk-demo/sealer-sprite-catalog.js?v=world-walk16-20261117';
 import '../town-walk-demo/sealer-sprites.js?v=live-siege-20261124';
 import {shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
@@ -940,20 +940,21 @@ export class Scene{
     aura.addColorStop(1,'#7242d500');
     c.fillStyle=aura;c.fillRect(-42,-42,84,84);c.restore();
    }
+   const fieldSize=145*(p.boss?1.25:1);
    const spec=rareArt[p.sp];
-   const current=globalThis.LivingBeasts.model(p.sp,p.evo??p.form??globalThis.LivingBeasts.formFor(p.sp,p.lv));if(current){if(prev.livingActor?.beastModelId!==current.id)prev.livingActor={sp:p.sp,lv:p.lv,evo:p.evo??p.form};Object.assign(prev.livingActor,{x:p.x,y:p.y,moving});}const rendered=current?(this.beastSprites.draw(c,prev.livingActor,x,y,p.boss?180:130,now/1000,{heading,flatten:FLAT}),true):prev.model?.draw(c,x,y,p.boss?142:89,heading,moving,false);
+   const current=globalThis.LivingBeasts.model(p.sp,p.evo??p.form??globalThis.LivingBeasts.formFor(p.sp,p.lv));if(current){if(prev.livingActor?.beastModelId!==current.id)prev.livingActor={sp:p.sp,lv:p.lv,evo:p.evo??p.form};Object.assign(prev.livingActor,{x:p.x,y:p.y,moving});}const rendered=current?(this.beastSprites.draw(c,prev.livingActor,x,y,fieldSize,now/1000,{heading,flatten:FLAT}),true):prev.model?.draw(c,x,y,fieldSize,heading,moving,false);
    if(!rendered&&spec&&prev.model?.supported===false){
     if(!rareAtlases.has(p.sp))rareAtlases.set(p.sp,img(assets+'rare-beast-walk-20261103/'+p.sp+'-walk-v1.webp'));
-    const a=rareAtlases.get(p.sp),size=p.boss?142:89;
+    const a=rareAtlases.get(p.sp),size=fieldSize;
     const col=moving?Math.floor(now/1000/spec.cycle*spec.frames)%spec.frames:0;
     const [ax,ay]=spec.anchors?.[prev.dir]??spec.anchor??[.5,.9];
     if(ready(a))c.drawImage(a,col*spec.cell,prev.dir*spec.cell,spec.cell,spec.cell,x-size*ax,y-size*ay,size,size);
    }else if(!rendered){
     if(!beastArt.has(p.sp))beastArt.set(p.sp,img(portrait(p)));
-    const a=beastArt.get(p.sp),size=61, lift=Math.sin(now/135+prev.phase)*3;
+    const a=beastArt.get(p.sp),size=fieldSize, lift=Math.sin(now/135+prev.phase)*3;
     if(ready(a))c.drawImage(a,x-size/2,y-size+lift,size,size);
    }
-   this.label(`${p.boss?'♛ ':''}${p.label} · Lv ${p.lv}`,x,y-(p.boss?127:65),color);
+   this.label(`${p.boss?'♛ ':''}${p.label} · Lv ${p.lv}`,x,y-fieldSize,color);
    if(p.boss){
     c.fillStyle='#231525';c.fillRect(x-44,y-119,88,9);
     c.fillStyle='#e07e4e';c.fillRect(x-43,y-118,86*Math.max(0,p.hp/p.maxHp),7);

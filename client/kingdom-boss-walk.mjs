@@ -294,7 +294,7 @@ function mount(scene,context){
   const px=x(local.x),py=y(local.y,local.x);c.save();
   const running=!!impact?.to||event.motion==='chase'||event.motion==='return';
   if(overview){drawBossMarker(c,px,py,10);}
-  else if(!art?.draw(shadows?.sprite(c,px,py)??c,px,py,210*zoom,boss.dir||0,running?time*1.7:time,!!event.motion)){c.beginPath();c.arc(px,py,20*zoom,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.strokeStyle='#ffe283';c.stroke();}
+  else if(!art?.draw(shadows?.sprite(c,px,py)??c,px,py,154*zoom*1.25,boss.dir||0,running?time*1.7:time,!!event.motion,true)){c.beginPath();c.arc(px,py,20*zoom,0,Math.PI*2);c.fillStyle='#ae272d';c.fill();c.strokeStyle='#ffe283';c.stroke();}
   c.font='bold '+(overview?'13px':'14px')+' Tahoma';c.textAlign='center';c.lineWidth=4;c.strokeStyle='#081924';c.fillStyle='#ffe694';
   const name='♛ '+event.name+' · Lv '+event.level,labelY=py-(overview?16:188*zoom);c.strokeText(name,px,labelY);c.fillText(name,px,labelY);
   if(!overview){

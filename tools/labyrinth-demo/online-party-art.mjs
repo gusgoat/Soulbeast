@@ -1,6 +1,6 @@
-import '../../assets/living-beasts/catalog.js?v=living-177-2';
+import '../../assets/living-beasts/catalog.js?v=field-size-1';
 import '../town-walk-demo/beast-habitats.js?v=living-177-2';
-import '../town-walk-demo/living-beasts.js?v=living-flight-idle-1';
+import '../town-walk-demo/living-beasts.js?v=field-size-1';
 import '../hemant-walk-demo/beast-groups.js';
 import './encounter-rules.js';
 import {drawWalkRank} from '../town-walk-demo/walk-rank-badge.mjs?v=1';
@@ -90,8 +90,8 @@ for(let i=props.length-1;i>=0;i--){const o=props[i];if(c.theme==='castle'&&['lib
  const moving=world.doorOpen&&world.boss==='guarding'&&(guard?.moving??world.bossMoving);
  if(world.boss!=='defeated'&&visible(bp))draws.push({y:bp.y,run:()=>{
   const q=screen(bp);
-  if(boss.current)boss.draw(ctx,q.x,q.y,Math.min(cfg.bossSize||260,330)*s,dir,time,!!moving);
-  else sprite('boss',bp,125*boss.visualScale);
+  if(boss.current)boss.draw(ctx,q.x,q.y,145*s,dir,time,!!moving);
+  else sprite('boss',bp,145*boss.bossScale);
   label(bp,cfg.bossName);
  }});
  const gate=map.rooms.find(r=>r.id==='boss').gate;

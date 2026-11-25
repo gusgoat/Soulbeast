@@ -262,19 +262,19 @@ function draw(){
    CountryGrassClumps.draw(ctx,landscapeArt[o.key],o,x,y,zoom,p,grassDisplacement,clock,F,shadowLayer,width,height);
    continue;
   }
-  if(o.art==='companion'){companion.draw(ctx,sx,sy,zoom,shadowLayer);continue;}
+  if(o.art==='companion'){companion.draw(ctx,sx,sy,zoom,shadowLayer,134);continue;}
   if(o.art==='player'){
    const sprite=shadowLayer.sprite(ctx,x,y);
    if(!fusion.draw(sprite,x,y,1,p.dir,clock,moving,p.spriteDir??p.dir))avatar.draw(sprite,x,y,134,p.spriteDir??p.dir,phase,moving,running);
    continue;
   }
   if(o.art==='boss'){
-   const size=country==='red'?242:216;
-   const drawn=bossSprite?.draw(ctx,x,y,size,o.dir,clock,o.moving)||stamp(asset.boss,x,y,164);
+   const size=134*1.25;
+   const drawn=bossSprite?.draw(ctx,x,y,size,o.dir,clock,o.moving,true)||stamp(asset.boss,x,y,size);
    if(drawn)label((o.mode==='chase'?'! ':'')+'♛ '+cfg.bossName+' · Lv 60',x,y-145);
    continue;
   }
-  if(o.art==='shadow'){livingBeasts.draw(ctx,o,x,y,150,performance.now()/1000);if(I.distance(p,o)<240)label((o.mode==='chase'?'! ':'')+o.beastName+' · Lv '+o.lv,x,y-130);continue;}if(o.art==='bandit'){
+  if(o.art==='shadow'){livingBeasts.draw(ctx,o,x,y,134,performance.now()/1000);if(I.distance(p,o)<240)label((o.mode==='chase'?'! ':'')+o.beastName+' · Lv '+o.lv,x,y-130);continue;}if(o.art==='bandit'){
    const im=asset[o.art],frame=o.moving?Math.floor(o.phase)%8:0,cell=im.naturalWidth/4;
    if(cell){
     ctx.fillStyle='#32384b50';ctx.beginPath();ctx.ellipse(x,y-3,25,7,0,0,Math.PI*2);ctx.fill();
