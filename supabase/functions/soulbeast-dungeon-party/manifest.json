@@ -34,7 +34,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-store.mjs",
-      "sha256": "e765f6d313e16b71b23099156e653a6fb9a0b691d62a0094eb1d1dc4e5f5eda9"
+      "sha256": "d351fe57065befbe57204212b3156d82ebe0bb6f823fd81ef784229246d0d872"
     },
     {
       "file": "source/server/accounts/dungeon-party-http.mjs",
@@ -42,7 +42,7 @@
     },
     {
       "file": "source/server/accounts/dungeon-party-saves.mjs",
-      "sha256": "18bbebd39a824930ac5c17448eb583210cd86818ccddf52fa37e202331b36aae"
+      "sha256": "c9bc7f14c4573acc0e7f29d814a357e0af9d5f60f5ecfb63c9879f2874e53c59"
     },
     {
       "file": "source/tools/labyrinth-demo/progression.js",

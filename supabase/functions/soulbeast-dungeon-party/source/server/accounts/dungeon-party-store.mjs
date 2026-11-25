@@ -44,10 +44,11 @@ export function dungeonPartyStore({pool,initialize,buildCombat,persist,uuid,publ
    // even after the service ejects them from room.members.
    const participants=[...room.members];
    const member=participants.find(m=>m.code===code);
-   let result,expiryUpdate=null;
+   let result,expiryUpdate=null,writeAccounts;
+   const stageAccountWrite=write=>{writeAccounts=write;};
    if(background&&!recoveringExpiry){
     if(member?.pendingSaveDigest){
-     await persist(tx,{environment,roomId,serverNow,flushCode:code,background},room,[member]);
+     await persist(tx,{environment,roomId,serverNow,flushCode:code,background,stageAccountWrite},room,[member]);
      room.revision=(room.revision||0)+1;
     }
     result={snapshot:partySnapshot(room,code,serverNow)};
@@ -61,7 +62,7 @@ export function dungeonPartyStore({pool,initialize,buildCombat,persist,uuid,publ
     const defer=(action==='personalFinish'&&!!result.personalAck&&data.deferAccountSave===true&&room.state==='active'&&room.members.includes(member)&&member.hp>0)||action==='soloFinish'&&data.deferAccountSave===true&&battle?.id===data.battle&&battle?.settled&&
      room.state==='active'&&room.members.includes(member)&&member.hp>0;
     const pendingChanged=await persist?.(tx,{environment,roomId,serverNow,deferCode:defer?code:null,
-     flushCode:passiveActions.has(effective)||defer?null:code,flushAll:action==='nextFloor'||action==='bossContact',background},room,participants);
+     flushCode:passiveActions.has(effective)||defer?null:code,flushAll:action==='nextFloor'||action==='bossContact',background,stageAccountWrite},room,participants);
     if(pendingChanged){
      if((room.revision||0)===previousRevision)room.revision=previousRevision+1;
      if(result.snapshot)result.snapshot=partySnapshot(room,code,serverNow,action==='claim'||!!result.snapshot.soloStart,!!result.snapshot.personal);
@@ -77,11 +78,17 @@ export function dungeonPartyStore({pool,initialize,buildCombat,persist,uuid,publ
    }else if(!hasPending&&room.accountSaveExpiry){
     expiryUpdate=room.accountSaveExpiry;delete room.accountSaveExpiry;
    }
-   if(!record.rows.length||JSON.stringify(room)!==before){
+   const roomChanged=!record.rows.length||JSON.stringify(room)!==before;
+   if(roomChanged){
     if(room.members.some(m=>!codes.includes(m.code)))throw Error('party_roster_expanded');
     if(publish)await publish(tx,{environment,serverNow,action,actor:code},room,participants);
     await tx.query(`insert into public.sb_dungeon_party_runs(room_id,revision,state) values($1,$2,$3::jsonb)
      on conflict(room_id) do update set revision=excluded.revision,state=excluded.state,updated_at=now()`,[roomId,room.revision,JSON.stringify(room)]);
+   }
+   // Stage the room and its broadcast first. Account guards still see the
+   // original roster; all three changes become visible at the same commit.
+   if(writeAccounts)await writeAccounts();
+   if(roomChanged){
     const remaining=room.members.map(m=>m.code);
     if(remaining.length!==codes.length)
      await tx.query('delete from public.sb_dungeon_party_members where room_id=$1 and not(code=any($2::text[]))',[roomId,remaining]);
