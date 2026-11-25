@@ -4008,7 +4008,7 @@ const WALK_ONLINE=!!sessionStorage.getItem('soulbeast-online-walk-v1');
 const SHEET_URL=String(window.SHEET_URL||'').trim();
 let walkAccountConnection;
 async function getWalkAccountConnection(){
- return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=guild-war-test-20261124',location.href).href)).connectOnlineWalk(walkStorage);
+ return walkAccountConnection ??= (await import(new URL('../../client/online-walk.mjs?v=walk-db-load-1',location.href).href)).connectOnlineWalk(walkStorage);
 }
 async function walkAccountPost(packet){
  const {action,pin,cpin,...extra}=packet;
@@ -8738,12 +8738,17 @@ const localSocialPost=lbPost;lbPost=function(packet){if(sessionStorage.getItem('
 }return ['social_sync','friend_add','friend_remove','pvp_create','pvp_join','pvp_resume','pvp_poll','pvp_ready','pvp_move','pvp_auto','pvp_leave','camp_list','camp_register','camp_begin','camp_poll','camp_move','camp_leave'].includes(packet.action)?window.walkSocialEngine.dispatch(S.P,packet).then(result=>{if(result.ok&&result.walkCampAccount){const a=result.walkCampAccount,previous=S.P.walkCamp||{};S.P.gold+=(Number(a.delta)||0)-(Number(previous.delta)||0);S.P.score=(S.P.score||0)+(Number(a.scoreDelta)||0)-(Number(previous.scoreDelta)||0);S.P.walkCamp={delta:Number(a.delta)||0,scoreDelta:Number(a.scoreDelta)||0};save()}return result}):localSocialPost(packet)};
 // Friend invitations and accepted matches use the same authenticated online PVP client.
 let friendSyncAt=0,friendWaitingUntil=0;
-communityCall=async function(action='social_sync',extra={}){
+communityCall=async function(action='social_sync',extra={},passive=false){
  if(COMMUNITY.busy||!S.P)return;
  COMMUNITY.busy=true;COMMUNITY.error='';friendSyncAt=Date.now();
  try{
   const online=WALK_ONLINE;
-  const r=online?await (await getWalkAccountConnection()).social(action,extra):await window.walkSocialEngine.dispatch(S.P,{action,...extra});
+  const connection=online?await getWalkAccountConnection():null;
+  const r=online?(passive?await connection.pollWalkChallenge():await connection.social(action,extra)):await window.walkSocialEngine.dispatch(S.P,{action,...extra});
+  if(r===null){
+   if(COMMUNITY.incoming){COMMUNITY.incoming=null;render();}
+   return;
+  }
   if(!r.ok)throw Error(r.error);
   const priorInvite=COMMUNITY.incoming?.id;
   Object.assign(COMMUNITY,{friends:r.friends||[],friendRequests:r.friendRequests||{incoming:[],outgoing:[]},online:r.online||[],incoming:r.incoming||null,serverTime:r.serverTime,ready:true,code:ensureCode()});
@@ -8763,7 +8768,7 @@ handlers.friendChallenge=id=>{if(communityBattleBusy())return toast(communityErr
 setInterval(()=>{
  if(!WALK_ONLINE||document.hidden||COMMUNITY.busy||GACHA.busy||communityBattleBusy())return;
  const interval=S.screen==='friends'||friendWaitingUntil>Date.now()?4000:10000;
- if(Date.now()-friendSyncAt>=interval)communityCall();
+ if(Date.now()-friendSyncAt>=interval)communityCall('social_sync',{},S.screen!=='friends'&&friendWaitingUntil<=Date.now());
 },1000);
 if(S.screen==='friends'||WALK_ONLINE&&S.screen==='pvp')communityCall();
 if(params.get('localDuel')==='1'&&!WALK_ONLINE){

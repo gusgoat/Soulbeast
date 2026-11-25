@@ -6,7 +6,7 @@ async function register(){if(onlineMode||syncing||!me())return;syncing=true;try{
 const onlineMode=!!sessionStorage.getItem('soulbeast-online-walk-v1');
 let connection,onlineEpoch=0,onlineAction=false;
 async function onlineConnection(){
- return connection ||= (await import('../../client/online-walk.mjs?v=test-world-entry-20261122-1')).connectOnlineWalk();
+ return connection ||= (await import('../../client/online-walk.mjs?v=walk-db-load-1')).connectOnlineWalk();
 }
 async function social(action,extra={}){
  if(!onlineMode)return walkSocialEngine.dispatch(me(),{action,...extra});
@@ -65,7 +65,8 @@ async function pollOnline(){
  if(onlinePolling||onlineAction||document.hidden||!can())return;
  const epoch=onlineEpoch;onlinePolling=true;onlinePollAt=Date.now();
  try{
-  const result=await social('social_sync');
+  const result=await (await onlineConnection()).pollWalkChallenge();
+  if(result===null){if(epoch===onlineEpoch&&!onlineAction)onlineInvite='';return;}
   if(!result.ok||!can()||epoch!==onlineEpoch||onlineAction)return;
   if(result.match){close();binding.duel(true);return;}
   const incoming=result.incoming;

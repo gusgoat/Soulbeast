@@ -286,6 +286,24 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
    return result;
   });
  };
+ let nextDirectoryRefresh=0, hintUnavailableUntil=0;
+ async function pollWalkChallenge(){
+  // Refresh occasionally even without invitations so legacy directory maintenance still runs.
+  if(Date.now()<nextDirectoryRefresh&&Date.now()>=hintUnavailableUntil){
+   try{
+    const active=await client.request('/rest/v1/rpc/sb_walk_has_challenge',{
+     p_env:context.environment,p_code:context.code
+    },await client.sessions.token());
+    if(active===false)return null;
+   }catch(error){
+    if(error.code!=='PGRST202'&&error.status!==404)throw error;
+    hintUnavailableUntil=Date.now()+60000;
+   }
+  }
+  const view=await social('social_sync');
+  if(view?.ok)nextDirectoryRefresh=Date.now()+120000;
+  return view;
+ }
  const socialTarget = async peer => client.request('/rest/v1/rpc/sb_walk_social_target', {
   p_env: context.environment, p_code: context.code, p_peer: peer
  }, await client.sessions.token());
@@ -297,7 +315,7 @@ export function connectOnlineWalk(accountStorage,{client:providedClient}={}) {
    identity:async()=>client.request('/rest/v1/rpc/'+(context.environment==='live'?'sb_walk_live_identity':'sb_walk_test_identity'),{p_code:context.code},await client.sessions.token())
   });
  };
- return {flush, reloadWalk, heartbeat, walkRanks, invitations, island, social, socialTarget, walkRealtimeTest, openWalkRealtime, colosseumRankMail, dismissedMail};
+ return {flush, reloadWalk, heartbeat, walkRanks, invitations, island, social, socialTarget, pollWalkChallenge, walkRealtimeTest, openWalkRealtime, colosseumRankMail, dismissedMail};
 }
 
 export function mountDungeonInvitations(connection, peers) {
