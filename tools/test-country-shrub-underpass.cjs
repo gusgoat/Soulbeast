@@ -25,6 +25,22 @@ for(const[country,c]of Object.entries(M))for(const[region,d]of Object.entries(c.
    for(let along=b.length/2+20;along>=-b.length/2-24;along-=4){assert(n.playerMove(p,at(sign*along,0)),'Dry end approach stays usable');if(Math.abs(along)<b.length/2){assert.equal(p.bridgeDeck,b.id);assert.equal(I.state(d,t.water,p),null);}}
    assert.equal(p.bridgeDeck,null,'Leaving onto land resets the layer');
   }
+  // Approach diagonally from either shoulder, crossing the old end line outside
+  // the rail before turning onto the planks while the bank is still dry.
+  for(const end of [-1,1])for(const shoulder of [-1,1]){
+   const p={...at(end*(b.length/2+8),shoulder*52),bridgeDeck:null};
+   function move(along,across){
+    const next=at(end*along,shoulder*across);
+    assert(n.playerMove(p,{x:next.x,y:p.y}));
+    assert(n.playerMove(p,{x:p.x,y:next.y}));
+    assert(!I.state(d,t.water,p),country+region+' dropped off the deck at '+along+','+across);
+   }
+   for(let along=b.length/2+4;along>=b.length/2-4;along-=4)move(along,52);
+   for(let across=50;across>=30;across-=4)move(b.length/2-4-(52-across)/5,across);
+   assert.equal(p.bridgeDeck,b.id);
+   for(let along=b.length/2-20;along>=-b.length/2-12;along-=4)move(along,30);
+   assert.equal(p.bridgeDeck,null);
+  }
   const deck={...at(0,0),bridgeDeck:b.id};assert(!n.playerClear(deck,at(0,120)),'Cannot leave deck sideways');
   const wet={...at(0,120),bridgeDeck:null};assert(n.playerMove(wet,at(0,0)));assert.equal(wet.bridgeDeck,null,'Side approach never mounts deck');
  }

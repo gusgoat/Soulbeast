@@ -42,7 +42,7 @@ function create(data,nav){
   if(!result)result=seaSampleAt(x,y);
   if(result){const d=result.depth;result.depth=d*d*(3-2*d);}return result;
  }
- // A bridge has two independent walk layers. Only its dry end approaches mount the deck.
+ // Dry approaches lead onto the deck. A player already wading stays below it.
  function bridgeCoordinates(b,p){const dx=(b.b.x-b.a.x)/b.length,dy=(b.b.y-b.a.y)*F/b.length,x=p.x-b.x,y=(p.y-b.y)*F;return {along:x*dx+y*dy,across:-x*dy+y*dx};}
  function underBridge(p){if(p.bridgeDeck||!sampleAt(p.x,p.y,true))return null;return bridges.find(b=>{const q=bridgeCoordinates(b,p);return Math.abs(q.along)<=b.length/2+12&&Math.abs(q.across)<=b.width/2+30;})||null;}
  function playerStep(from,to){
@@ -53,9 +53,15 @@ function create(data,nav){
    if(Math.abs(q.along)<=deck.length/2)return {allowed:true,bridgeDeck:deck.id};
    return {allowed:!sampleAt(to.x,to.y,true),bridgeDeck:null};
   }
-  if(!sampleAt(from.x,from.y,true))for(const b of bridges){
-   const a=bridgeCoordinates(b,from),q=bridgeCoordinates(b,to),half=b.length/2,lane=b.width/2-28;
-   if(Math.abs(a.across)<=lane&&Math.abs(q.across)<=lane&&Math.abs(a.along)>=half&&Math.abs(q.along)<half&&Math.sign(a.along)===Math.sign(q.along))return {allowed:true,bridgeDeck:b.id};
+  for(const b of bridges){
+   const q=bridgeCoordinates(b,to),half=b.length/2,lane=b.width/2-28;
+   if(Math.abs(q.along)>half||Math.abs(q.across)>lane)continue;
+   const a=bridgeCoordinates(b,from);
+   const insideApproach=Math.abs(a.across)<=lane&&Math.abs(a.along)-Math.abs(q.along)>.001;
+   if(Math.abs(q.along)<half-24&&!insideApproach)continue;
+   // The dry part of the ramp is an area; a diagonal approach or a resumed
+   // walk can already be inside the end line before reaching the river.
+   if(!sampleAt(from.x,from.y,true))return {allowed:true,bridgeDeck:b.id};
   }
   return {allowed:true,bridgeDeck:null};
  }

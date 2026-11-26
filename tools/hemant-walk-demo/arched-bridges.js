@@ -4,6 +4,32 @@
  const FRAME_WIDTH=520,FRAME_HEIGHT=460,DECK_RISE=42;
  const deckHeight=u=>DECK_RISE*Math.max(0,1-u*u)**1.1;
 
+ // Projected corners of the end planks in the shipped 520 x 460 regional renders,
+ // mapped to the same 320 x 146 deck used by navigation, roads and the fallback art.
+ const regionalProjection={
+  'blue-N':[0.73971,-0.03227,-0.09463,1.23202],
+  'blue-W':[0.97052,0.07452,0.12278,1.02924],
+  'blue-E':[0.84585,0.09617,0.18781,1.14162],
+  'blue-S':[0.98615,0.05998,0.08550,1.01324],
+  'green-N':[0.75003,0.01475,0.03168,1.21338],
+  'green-W':[0.75028,0.01516,0.03269,1.21320],
+  'green-E':[0.80113,0.04666,0.13214,1.14336],
+  'green-S':[0.75003,0.01475,0.03168,1.21338],
+  'red-W':[0.96692,-0.03303,-0.03421,1.03078],
+  'red-N':[0.73873,0.03412,0.03386,1.22538],
+  'red-E':[0.96682,-0.03336,-0.03509,1.03092],
+  'red-S':[0.96692,-0.03303,-0.03421,1.03078]
+ };
+ function alignArt(image,matrix){
+  if(!matrix)return image;
+  const layer=document.createElement('canvas');
+  layer.width=FRAME_WIDTH;layer.height=FRAME_HEIGHT;
+  const ctx=layer.getContext('2d');
+  ctx.setTransform(...matrix,FRAME_WIDTH/2,FRAME_HEIGHT/2);
+  ctx.drawImage(image,-FRAME_WIDTH/2,-FRAME_HEIGHT/2);
+  return layer;
+ }
+
  function shadowFaces(dx,dy,length,width,flatten){
   const faces=[],raise=Math.sqrt(1-flatten*flatten);
   function plank(from,to,near,far,bottom,top){
@@ -38,10 +64,15 @@
    const {id,a,b,length,width}=crossing;
    const dx=(b.x-a.x)/length,dy=(b.y-a.y)*flatten/length;
    const deck=new Image(),rail=new Image();
-   const ready=Promise.all([load(deck,'deck'),load(rail,'rail')]);
+   const projection=crossing.regionArt&&regionalProjection[country+'-'+crossing.regionArt.slice('region-'.length)];
+   const art={};
+   const ready=Promise.all([load(deck,'deck'),load(rail,'rail')]).then(()=>{
+    if(!deck.naturalWidth||!rail.naturalWidth)return;
+    art.deck=alignArt(deck,projection);art.rail=alignArt(rail,projection);
+   });
    // The near rail must cover actors along the whole bridge, including steep crossings.
    const nearY=Math.max(a.y,b.y)+Math.abs(dx)*width/2/flatten;
-   return {crossing,dx,dy,deck,rail,ready,nearY,shadow:shadowFaces(dx,dy,length,width,flatten)};
+   return {crossing,dx,dy,art,riseScale:projection?.[3]||1,ready,nearY,shadow:shadowFaces(dx,dy,length,width,flatten)};
 
    function load(image,part){
     return new Promise(resolve=>{
@@ -51,7 +82,7 @@
    }
   });
   const ready=Promise.all(bridges.map(bridge=>bridge.ready));
-  const hasArt=bridge=>Boolean(bridge.deck.naturalWidth&&bridge.rail.naturalWidth);
+  const hasArt=bridge=>Boolean(bridge.art.rail);
   const modeled=new Map(bridges.map(bridge=>[bridge.crossing,bridge]));
   const hasModel=crossing=>hasArt(modeled.get(crossing));
 
@@ -64,7 +95,7 @@
     const across=-offsetX*dy+offsetY*dx;
     if(Math.abs(across)<=crossing.width/2&&Math.abs(along)<crossing.length/2){
      const u=along/(crossing.length/2);
-     return deckHeight(u)*Math.sqrt(1-flatten*flatten);
+     return deckHeight(u)*Math.sqrt(1-flatten*flatten)*bridge.riseScale;
     }
    }
    return 0;
@@ -85,7 +116,7 @@
    const rails=[];
    for(const bridge of bridges){
     if(!hasArt(bridge))continue;
-    const {crossing,deck,rail,nearY}=bridge;
+    const {crossing,art:{deck,rail},nearY}=bridge;
     const left=sx(crossing.x)-FRAME_WIDTH*zoom/2,top=sy(crossing.y)-FRAME_HEIGHT*zoom/2;
     const w=FRAME_WIDTH*zoom,h=FRAME_HEIGHT*zoom;
     if(left+w<0||left>width||top+h<0||top>height)continue;
