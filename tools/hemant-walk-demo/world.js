@@ -25,24 +25,28 @@ const groundShadows=WalkGroundShadows.create(.75),spriteContext=(x,y)=>overview?
 const avatar=window.sealerSprites.create({preloadDirections:true,allow3d:!packlordPreview});const syncAvatar=()=>avatar.sync(packlordPreview?.avatar).catch(e=>console.error('Player animation:',e));
 if(packlordPreview)addEventListener('walk-preview-avatar',syncAvatar);
 const touchDisplay=matchMedia('(pointer: coarse)').matches;
-let graphics,shouldPaint,grassDisplacement=null;
+let graphics,shouldPaint,grassDisplacement=null,resizePending=false;
 function resize(){
  W=innerWidth;H=innerHeight;
  const pixelLimit=touchDisplay?Math.max(1,Math.sqrt(graphics.pixels/Math.max(1,W*H))):2;
  const dpr=Math.min(devicePixelRatio||1,graphics.scale,pixelLimit);
- canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+ const width=Math.round(W*dpr),height=Math.round(H*dpr);
+ if(canvas.width!==width)canvas.width=width;
+ if(canvas.height!==height)canvas.height=height;
  surface.setTransform(canvas.width/Math.max(1,W),0,0,canvas.height/Math.max(1,H),0,0);
  groundShadows.resize(canvas.width,canvas.height,W,H);
 }
 function applyGraphics(){
+ const firstSetup=!graphics;
  const level=WalkGraphics.read();
  graphics=WalkGraphics.levels[level-1];
  const fps=graphics.fps||(graphics.frameMs===32?30:touchDisplay?60:0);
  shouldPaint=CountryRenderBudget.paintCadence(fps?1000/fps:0);
  canvas.dataset.graphicsLevel=String(level);
- resize();
+ if(firstSetup)resize();else resizePending=true;
 }
-addEventListener('resize',resize);
+// Resizing clears the backing store. Apply it only in a frame that will repaint.
+addEventListener('resize',()=>{resizePending=true});
 addEventListener('storage',event=>{if(event.key===WalkGraphics.KEY||event.key===null)applyGraphics();});
 addEventListener(WalkGraphics.CHANGE,applyGraphics);
 applyGraphics();
@@ -395,7 +399,21 @@ function showPlaces(){dialog(data.regionLayout?data.country+' · '+data.regionNa
 function questNearbyPlace(position=p){if(position.questPlace)return position.questPlace;let site=null,best=800;for(const candidate of nearbyPlaces){const d=nav.distance(position,candidate);if(d<best){site=candidate;best=d}}return site?.id||null}
 function interact(){if(packlordPreview)return;if(window.walkSocial.talkNear(p))return;if(!near||menu)return;if(near.type==='questNpc'){const n=near,target=n.place.split(':').pop();window.townQuests.emit('talk',{place:n.place,target,country:data.countryId});window.townQuests.show(false,target,n.place);return}if(near.kind==='chest'){const chest=near,status=treasures.state(chest);if(status==='guarded'){dialog('หีบสมบัติโจรป่า','โจรป่ากำลังเฝ้าหีบใบนี้อยู่ · เอาชนะโจรผู้เฝ้าเพื่อเปิดหีบ');return}if(status==='opened'){dialog('หีบสมบัติว่างเปล่า','คุณรับสมบัติจากหีบใบนี้ไปแล้ว');return}dialog('หีบสมบัติโจรป่า','ไอเทมทั่วไป + เงิน 50% · อุปกรณ์ทั่วไป + เงิน 40% · อุปกรณ์คราฟ 10%');button('เปิดหีบและรับสมบัติ',()=>{const result=treasures.claim(chest,p);if(result.ok)window.townQuests.emit('chest',{country:data.countryId,place:chest.owner.questChestPlace||chest.owner.questPlace||questNearbyPlace()});dialog(result.ok?'ได้รับสมบัติแล้ว':'ยังเปิดหีบไม่ได้',result.ok?(result.gold?'เหรียญ +'+result.gold+'\n':'')+result.name+' ×'+result.qty+'\nเก็บของรางวัลลงกระเป๋าแล้ว':'หีบนี้รับสมบัติแล้ว หรือคุณอยู่ห่างเกินไป');if(result.ok&&window.WalkQuestEvents){window.WalkQuestEvents.present($('dialogChoices'),[window.WalkQuestEvents.loot(result)]);window.WalkQuestEvents.flush($('dialogChoices'))}for(const id of ['hudTop','hudBottom'])$(id)?.contentWindow.postMessage({type:'walk-hud-refresh'},location.origin)});return}showPlace(near)}$('interact').onclick=interact;$('places').onclick=showPlaces;$('closeDialog').onclick=()=>$('townDialog').close();$('townDialog').addEventListener('close',()=>{if(!$('townDialog').open)$('islandFerryPreview')?.remove();reset();});$('closeOverview').onclick=()=>{overview=false;reset();cam.x=p.x;cam.y=p.y};$('mapToggle').onclick=()=>overview=!overview;$('cancelTravel').onclick=stopTravel;
 function joyMove(e){if(e.pointerId!==joy.id)return;const r=$('joystick').getBoundingClientRect(),max=r.width*.33;let x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,len=Math.hypot(x,y);if(len>max){x=x/len*max;y=y/len*max}joy.x=x/max;joy.y=y/max;$('stick').style.transform=`translate(${x}px,${y}px)`;e.preventDefault()}
-const stick=$('joystick');stick.onpointerdown=e=>{joy.id=e.pointerId;stick.setPointerCapture(e.pointerId);joyMove(e)};stick.onpointermove=joyMove;for(const ev of ['pointerup','pointercancel','lostpointercapture'])stick.addEventListener(ev,()=>{joy.x=joy.y=0;joy.id=null;$('stick').style.transform='translate(0,0)'});
+const stick=$('joystick');
+stick.onpointerdown=e=>{
+ if(joy.id!==null||e.button!==0)return;
+ joy.id=e.pointerId;
+ stick.setPointerCapture(e.pointerId);
+ joyMove(e);
+};
+stick.onpointermove=joyMove;
+for(const ev of ['pointerup','pointercancel','lostpointercapture']){
+ stick.addEventListener(ev,e=>{
+  if(e.pointerId!==joy.id)return;
+  joy.x=joy.y=0;joy.id=null;
+  $('stick').style.transform='translate(0,0)';
+ });
+}
 
 addEventListener('keydown',e=>{if(WalkTutorial.active()||$('townDialog').open||menu||window.walkAtlas.isOpen())return;if(e.key==='Escape'&&overview){$('closeOverview').click();return}keys.add(e.key.toLowerCase());if(e.key==='e'&&!e.repeat)interact();if(e.key==='m'&&!e.repeat)overview=!overview;if(e.key.startsWith('Arrow'))e.preventDefault()});addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));addEventListener('blur',reset);addEventListener('soulbeast-announcement-visibility',e=>{if(e.detail?.open){reset();stopTravel();}});document.addEventListener('visibilitychange',()=>{if(document.hidden)reset()});
 canvas.onclick=e=>{if(!overview)return;const s=[...nav.places.filter(s=>s.type!=='junction'),...questNpcs].map(s=>({s,d:Math.hypot(e.clientX-sx(s.x),e.clientY-sy(s.y)+18)})).sort((a,b)=>a.d-b.d)[0];if(s?.d<34)showPlace(s.s)};
@@ -418,7 +436,9 @@ addEventListener('pagehide',e=>{if(!e.persisted){groundTiles?.release();groundSh
 function frame(now){const dt=Math.min((now-last)/1000||0,.04);last=now;t+=dt;const previousX=p.x,previousY=p.y;update(dt);
  const stepX=p.x-previousX,stepY=(p.y-previousY)*F,stepLength=Math.hypot(stepX,stepY);
  grassDisplacement=stepLength>.02?{x:stepX/stepLength,y:stepY/stepLength}:null;
- window.walkKingdomBoss?.tick(p,running);window.walkPresence.tick('country:'+data.countryId+(data.regionLayout?':'+data.regionId:''),p,moving,running);sceneAudio.tick(dt,{position:p,moving,running,beastsBlocked:menu||overview||$('townDialog').open||window.walkAtlas.isOpen()||!!activeEncounter||!!window.WalkControls?.editing,blocked:menu,waterPreview:ForestEntrance.waterAudible($('townDialog')),surface:WaterInteraction.state(data,terrain.water,p)?'water':terrain.water.onBridge(p.x,p.y)?'hall':canvas.dataset.surface==='road'?'stone':data.countryId==='green'?'leaves':'forest'});if($('regionMenu')||!shouldPaint(now)){requestAnimationFrame(frame);return;}const light=CountryDaylight.at(Date.now());trackedGate=WalkQuestEngine.trackedBorder(window.townQuests.destination(),data.countryId,borderGates,p,nav.distance);canvas.dataset.questBorder=trackedGate?.id||'';draw(light);
+ window.walkKingdomBoss?.tick(p,running);window.walkPresence.tick('country:'+data.countryId+(data.regionLayout?':'+data.regionId:''),p,moving,running);sceneAudio.tick(dt,{position:p,moving,running,beastsBlocked:menu||overview||$('townDialog').open||window.walkAtlas.isOpen()||!!activeEncounter||!!window.WalkControls?.editing,blocked:menu,waterPreview:ForestEntrance.waterAudible($('townDialog')),surface:WaterInteraction.state(data,terrain.water,p)?'water':terrain.water.onBridge(p.x,p.y)?'hall':canvas.dataset.surface==='road'?'stone':data.countryId==='green'?'leaves':'forest'});if($('regionMenu')||!shouldPaint(now)){requestAnimationFrame(frame);return;}
+ if(resizePending){resizePending=false;resize()}
+ const light=CountryDaylight.at(Date.now());trackedGate=WalkQuestEngine.trackedBorder(window.townQuests.destination(),data.countryId,borderGates,p,nav.distance);canvas.dataset.questBorder=trackedGate?.id||'';draw(light);
  if(!overview){
   const q=zoom(),effects=graphics.effects;
   const showNight=effects>0&&light.night>.005;

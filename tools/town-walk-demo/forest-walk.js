@@ -405,7 +405,9 @@ const ForestWalk = (() => {
       move(event);
     });
     stick.addEventListener("pointermove", move);
-    for (const event of ["pointerup", "pointercancel", "lostpointercapture"]) stick.addEventListener(event, state.release);
+    for (const event of ["pointerup", "pointercancel", "lostpointercapture"]) stick.addEventListener(event, e => {
+      if (e.pointerId === pointer) state.release();
+    });
     chest.onclick = () => {
       if (!active(zone, walk) || zone.ev?.type !== "chest" || zone.ev.opened) return;
       handlers.openchest();

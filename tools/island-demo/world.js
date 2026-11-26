@@ -577,9 +577,13 @@ function steer(e){
  const max=box.width*.33,scale=Math.max(max,Math.hypot(dx,dy));
  joy.x=dx/scale;joy.y=dy/scale;$('stick').style.transform='translate('+joy.x*max+'px,'+joy.y*max+'px)';
 }
-stick.onpointerdown=e=>{joy.id=e.pointerId;stick.setPointerCapture(e.pointerId);steer(e);};
+stick.onpointerdown=e=>{
+ if(joy.id!==null||e.button!==0)return;
+ joy.id=e.pointerId;stick.setPointerCapture(e.pointerId);steer(e);};
 stick.onpointermove=steer;
-for(const type of ['pointerup','pointercancel','lostpointercapture'])stick.addEventListener(type,()=>{joy.x=joy.y=0;joy.id=null;$('stick').style.transform='';});
+for(const type of ['pointerup','pointercancel','lostpointercapture'])stick.addEventListener(type,e=>{
+ if(e.pointerId!==joy.id)return;
+ joy.x=joy.y=0;joy.id=null;$('stick').style.transform='';});
 addEventListener('pagehide',event=>{
  if(!frame&&!saveContinuation){syncPlayer();if(visit())persist();}
  if(!event.persisted)companion.release();
