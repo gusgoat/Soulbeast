@@ -531,13 +531,13 @@ function tick(now){
   update(dt);
   const dx=p.x-x,dy=(p.y-y)*F,length=Math.hypot(dx,dy);
   grassDisplacement=length>.02?{x:dx/length,y:dy/length}:null;
-  if(visit()){
+  if(visit()&&!frame){
    companion.sync(CompanionFollowers.first(player));companion.update(dt,p);
    if(companion.key)canvas.dataset.companion=companion.key;else delete canvas.dataset.companion;
    if(shouldPaint(now))draw();
   }
   if(needsSave)void saveProgress();
-  if(clock>=miniAt&&visit()){
+  if(!frame&&clock>=miniAt&&visit()){
    miniAt=clock+.15;drawMap(mini);
   }
   music.tick(dt,{position:p,moving,running,blocked:!!frame||$('townDialog').open||fusion.isOpen});

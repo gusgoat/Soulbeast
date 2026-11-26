@@ -108,6 +108,7 @@ export function createConnectedField(submit, toggleAuto) {
     }
   });
   return {close,
+    get showsBattle(){return !!frame && !frame.inert;},
     get coversArena(){return !!frame && !frame.inert && !readOnly;},
     warm(){if(!warmFailed)prepare();},reset(){dispose();failed=null;warmFailed=false;},rejected(){pendingTurn=null;key=null;},
     show(b,me,mode,time,spectator=false){

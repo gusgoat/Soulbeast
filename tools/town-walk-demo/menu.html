@@ -9372,10 +9372,14 @@ function ordinaryBattleContext(battle,floor){
   };
   setTimeout(resume,0);return true;
  };
+ function fieldOwnsBattleArt(){
+  const b=B();
+  return towerFieldOwns(b)||!!(frame&&fieldReady&&b===battle&&useStage(b)&&S.screen==='battle'&&!S.ui.confirm&&!S.ui.trapNotice);
+ }
  const oldTowerView=vBattle;
- vBattle=function(...args){return towerFieldOwns(B())?'':oldTowerView.apply(this,args);};
+ vBattle=function(...args){return fieldOwnsBattleArt()?'':oldTowerView.apply(this,args);};
  const oldFlush=flushVfx;
- flushVfx=function(...args){if(towerFieldOwns(B())){VQ.length=0;return;}return oldFlush.apply(this,args);};
+ flushVfx=function(...args){if(fieldOwnsBattleArt()){VQ.length=0;return;}return oldFlush.apply(this,args);};
 
  for(const [owner,key]of [[Sound,'fx'],[Sound,'skill'],[ExtraAudio,'play']]){const original=owner[key];owner[key]=function(...args){if(stageAudio())return;return original.apply(this,args);};}
  const nativeMusicSync=Music.sync;Music.sync=function(...args){if(stageAudio()){this.stop();ExtraAudio.stop();Sound.stopAmb();return;}return nativeMusicSync.apply(this,args);};

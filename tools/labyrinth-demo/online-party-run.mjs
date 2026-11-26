@@ -416,7 +416,11 @@ try{
    camera.x+=(position.x-camera.x)*follow;
    camera.y+=(position.y-camera.y)*follow;
   }
-  scene.frame();sceneAudio.tick(dt,{position,moving:selfMoving,running:selfRunning,ready,world,nav,traps,blocked:menus.open||!$('mapPanel').hidden||!$('battle').hidden||!!window.WalkControls?.editing});render();renderMinimap();frameId=requestAnimationFrame(frame);
+  const showMap=$('battle').hidden;
+  if(showMap)scene.frame();
+  sceneAudio.tick(dt,{position,moving:selfMoving,running:selfRunning,ready,world,nav,traps,blocked:menus.open||!$('mapPanel').hidden||!$('battle').hidden||!!window.WalkControls?.editing});
+  if(showMap){render();renderMinimap();}
+  frameId=requestAnimationFrame(frame);
  }
  frameId=requestAnimationFrame(frame);
 }catch(error){failure(error);}

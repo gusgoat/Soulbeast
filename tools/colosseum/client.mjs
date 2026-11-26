@@ -92,7 +92,7 @@ if(accountContext && selectedCharacter){
 }
 const channel=testArena?'soulbeast-colosseum-test-session':'soulbeast-colosseum-session';
 const endpoint=(path,base)=>new URL((testArena?'/test':'')+path,base);
-const field=(await import('./connected-field.mjs?v=walk-pacing-1')).createConnectedField(
+const field=(await import('./connected-field.mjs?v=covered-field-paint-1')).createConnectedField(
  (turn,skill,target)=>send({type:'combat',turn,skill,target}),
  enabled=>send({type:'combatAuto',enabled}));
 const practiceType=type=>type==='practice'||type==='survivalPractice';
@@ -1240,7 +1240,7 @@ function frame(t){
   }
   const all=[...actors.values(),...(local.phase==='dead'||!solo&&local.phase==='battle'?[]:[local])];
   const watch=watchedPlayer(),focus=watch?(actors.get(watch.id)||watch):local;
-  if(!field.coversArena)scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null,state.baseEffects,state.warpArrivals);
+  if(!field.showsBattle)scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null,state.baseEffects,state.warpArrivals);
   const walking=state.phase==='match'&&me.phase==='walk';
   presentation.walk(walking,stepped?(scene.arena.bushAt(local)!==null?'leaves':'stone'):null);
   // Input and camera updates run every frame. Timers and map labels use a separate cadence.
@@ -1308,7 +1308,7 @@ function frame(t){
    const target=walking&&!recall&&objective();
    $('raid').hidden=!target;
    if(target){const button=$('raid');paintActionControl(button,target.label,{image:target.type==='selectWarp'?'select-warp':null});button.dataset.action=target.type;button.disabled=Boolean(target.disabled);}
-   if(!field.coversArena&&(walking||watch)&&t-lastMap>=80){
+   if(!field.showsBattle&&(walking||watch)&&t-lastMap>=80){
     drawMap($('mini'),state,all,focus);
     if(mapDialog.open)drawMap($('full-map'),state,all,focus,2);
     lastMap=t;
