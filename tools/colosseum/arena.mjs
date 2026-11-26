@@ -102,22 +102,8 @@ export function warpArrival(p,base){
  const [dx,dy]=smallBaseOffsets[p.spawnSlot];
  return {x:base.x+(p.side?-dx:dx),y:base.y+dy};
 }
-const propSites=maze.flatMap((row,y)=>row.slice(2,14).flatMap((open,i)=>{
- const x=i+2;
- const center=cellCenter(x,y);
- const courtyard=x<=4&&Math.abs(y-21)<3||x<=3&&y>=23&&y<=24;
- // Keep cleared stretches of road open and preserve the deterministic prop layout.
- if(!open||courtyard||findBush(center,hedgeFootprints)!==null||BASES.some(base=>distance(center,base)<120))return [];
- return [{x,y,original:(x*11+y*7)%4===0,order:Math.imul(cellKey(x,y),0x9e3779b1)>>>0}];
-}));
-const originalPropCount=propSites.filter(p=>p.original).length;
-// Offset props from both centerlines so the same route works for players, bots and bosses.
-export const OBSTACLES=propSites.sort((a,b)=>Number(b.original)-Number(a.original)||a.order-b.order)
- .slice(0,originalPropCount*3).flatMap(({x,y})=>[0,1].map(side=>{
-  const center=cellCenter(side?COLS-1-x:x,y);
-  return {x:center.x+(side?-1:1)*(y%2?-56:56),y:center.y+(x%2?-64:64),
-   side,kind:['tree','rock','column','ruins'][(x+y*3+(x>>2))%4],radius:16};
- }));
+// The walkable corridors are clear. Wall decorations are painted by the scene.
+export const OBSTACLES=[];
 export function createArena(grid,bushes,obstacles){
  const rows=grid.length,cols=grid[0].length;
  const cellKey=(x,y)=>y*cols+x;
@@ -130,6 +116,7 @@ export function createArena(grid,bushes,obstacles){
  };
  const obstaclesByCell=new Map(obstacles.map(prop=>[indexAt(prop),prop]));
  function hitsProp(x,y,r){
+ if(!obstaclesByCell.size)return false;
  const cellX=Math.floor(x/CELL),cellY=Math.floor(y/CELL);
  for(let row=cellY-1;row<=cellY+1;row++)for(let col=cellX-1;col<=cellX+1;col++){
   const prop=obstaclesByCell.get(cellKey(col,row));

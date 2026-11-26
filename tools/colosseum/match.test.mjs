@@ -97,7 +97,7 @@ Deno.test('mirror, connected arena, all spawn and base cells accessible',()=>{
   eq(bushAt(cellCenter(col,y)),null);
  }
  eq(BASES.map(base=>base.maxHp),[100,80,80,60,60,60,60,60,80,100,80,80,60,60,60,60,60,80]);
- ok(OBSTACLES.every(prop=>!fits(prop.x,prop.y)));
+ eq(OBSTACLES.length,0);
  for(const b of BUSHES)for(let i=0;i<b.w;i++)ok(maze[b.y][b.x+i]);
 });
 Deno.test('each central medium base unlocks after destroying any one of its three linked small bases',()=>{

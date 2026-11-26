@@ -57,7 +57,7 @@ function buildSurvivalMaze(){
  }
  return grid;
 }
-const grid=buildSurvivalMaze(),bushes=[],props=[],spawns=[],decorationSites=[];
+const grid=buildSurvivalMaze(),bushes=[],spawns=[],bushSites=[];
 for(let y=1;y<EDGE;y++)for(let x=1;x<EDGE;x++){
  if(!grid[y][x])continue;
  if(edgeSpawn(x,y)){
@@ -67,17 +67,12 @@ for(let y=1;y<EDGE;y++)for(let x=1;x<EDGE;x++){
  }
  const group=orbit(x,y),canonical=group.reduce((min,p)=>p[1]*SIZE+p[0]<min[1]*SIZE+min[0]?p:min);
  if(x!==canonical[0]||y!==canonical[1]||group.length!==8||y===1)continue;
- decorationSites.push({x,y,group,roll:hash(x,y)});
+ bushSites.push({group,roll:hash(x,y)});
 }
-decorationSites.sort((a,b)=>a.roll-b.roll).forEach(({x,y,group,roll},i)=>{
- if(i<5){
-  for(const [i,j] of group)bushes.push({x:i,y:j,w:1,id:`fog-${i}-${j}`});
- }else if(roll%10<4){
-  const center=cellCenter(x,y),kind=['tree','rock','column','ruins'][Math.floor(roll/13)%4];
-  for(const [a,b] of orbit(center.x+64,center.y-64,SPAN))props.push({x:a,y:b,kind,side:Math.floor(roll/31)%2,radius:16});
- }
-});
-export const SURVIVAL_ARENA=createArena(grid,bushes,props);
+for(const {group} of bushSites.sort((a,b)=>a.roll-b.roll).slice(0,5)){
+ for(const [x,y] of group)bushes.push({x,y,w:1,id:`fog-${x}-${y}`});
+}
+export const SURVIVAL_ARENA=createArena(grid,bushes,[]);
 export const SURVIVAL_SPAWNS=spawns;
 export const SURVIVAL_SITES=grid.flatMap((row,y)=>row.flatMap((open,x)=>{
  const p=cellCenter(x,y);

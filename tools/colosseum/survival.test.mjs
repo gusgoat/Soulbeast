@@ -77,7 +77,7 @@ Deno.test('four-axis symmetry and ten single-exit spawns; every safe ring remain
   if(arena.bushAt(cellCenter(x,y))!==null)bushes++;
  }
  eq(bushes,40);
- ok(arena.obstacles.length>100&&arena.obstacles.every(p=>!arena.fits(p.x,p.y)));
+ eq(arena.obstacles.length,0);
  for(const spawn of SURVIVAL_SPAWNS){
   const x=Math.floor(spawn.x/CELL),y=Math.floor(spawn.y/CELL);
   ok(x===1||y===1||x===n-1||y===n-1);
