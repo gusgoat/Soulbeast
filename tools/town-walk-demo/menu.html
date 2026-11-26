@@ -8529,6 +8529,7 @@ if(cityProfile&&(!cityProfile.capital||cityProfile.country)){
  vForge=()=>cityForge().replaceAll('โรงหลอมเทพอสูร',cityProfile.forge);
  const cityRender=render;render=function(...args){const out=cityRender(...args);const where=document.querySelector('.who small');if(where)where.textContent='Lv '+S.P.lv+' · '+cityProfile.name;return out};
 }
+const walkBattleReturns=new WeakMap();
 let encounterSent=false;
 function finishPreviewEncounter(alreadySaved=false){const result=B()?.over?.res;if(!result||encounterSent)return;if(alreadySaved!==true)save();encounterSent=true;parent.postMessage({type:'country-encounter-result',result},location.origin)}
 function applyDungeonBossAura(unit){if(unit.dungeonBoss)return unit;unit.dungeonBoss=true;unit.boss=true;unit.bossAura=true;unit.bossAuraVersion='dungeon-v1';for(const k of ['patk','matk'])unit.st[k]=Math.round(unit.st[k]*1.8);for(const k of ['hp','pdef','mdef'])unit.st[k]=Math.round(unit.st[k]*2.2);unit.st.spd=Math.round(unit.st.spd*1.25);unit.hp=unit.st.hp;unit.mp=unit.st.mp;return unit}
@@ -8584,6 +8585,7 @@ if(['shadow','bandit'].includes(previewEncounter)||mineBoss){
  document.documentElement.dataset.encounterUnits=JSON.stringify(plan.units);
  document.documentElement.dataset.playerLevel=S.P.lv;
  const baseEnd=endBattle;endBattle=function(...args){const out=baseEnd(...args);if(B()?.over){save();back.disabled=false;back.textContent=B().over.res==='lose'?'ไปโรงพยาบาลในเมืองหลวง':(dungeonFloor?'กลับ'+dungeonFloor.name:'กลับแผนที่ประเทศ')}return out};
+ walkBattleReturns.set(B(),()=>finishPreviewEncounter(true));
  back.disabled=true;back.textContent='กำลังต่อสู้';back.onclick=finishPreviewEncounter;
  document.addEventListener('click',e=>{if(e.target.closest('[data-a="bt"][data-v="done"]')&&B()?.over){e.preventDefault();e.stopImmediatePropagation();finishPreviewEncounter()}},true);
 }else{
@@ -9261,7 +9263,7 @@ if(params.get('walkScene')==='island'&&params.get('island')&&params.get('islandE
     if(reward?.gold)battle.over.lines.unshift('เงินรางวัล 10,000 เหรียญ · ผนึกนิรันดร์ ×1');
     persist();
     back.disabled=false;back.textContent=result==='lose'?'กลับเมืองหลวง':'กลับไปเดินบนเกาะ';
-    if(result==='lose')setTimeout(resultOnce,1800);
+    if(result==='lose'&&!usesFieldTutorial?.(battle))setTimeout(resultOnce,1800);
    };
    document.addEventListener('click',e=>{
     if(!e.target.closest('[data-a="bt"][data-v="done"]')||!B()?.over)return;
@@ -9278,6 +9280,7 @@ if(params.get('walkScene')==='island'&&params.get('island')&&params.get('islandE
    };
    S.zone=null;startBattle(enemies,kind==='bandit'?'bandit':kind==='portal'?'warpBoss':'wild',I.islands[country].gate);
    if(['boss','portal'].includes(kind))B().noFlee=true;
+   walkBattleReturns.set(B(),resultOnce);
    back.disabled=true;back.textContent='กำลังต่อสู้';back.onclick=resultOnce;
    document.documentElement.dataset.islandEncounter=kind;
    document.documentElement.dataset.islandUnits=JSON.stringify(plan);
@@ -9505,9 +9508,9 @@ function ordinaryBattleContext(battle,floor){
    await (await getWalkAccountConnection()).flush(true);
    if(fallen)await fallen;
    if(B()!==b)return;
-   // The walk encounter owns the exit even when the new field hides the old controls.
-   if(document.documentElement.dataset.encounterKind){finishPreviewEncounter(true);return;}
-   const button=document.querySelector('main [data-a="bt"][data-v="done"]');if(button)button.click();else battleAction('done');mount();
+   const returnToMap=walkBattleReturns.get(b);
+   if(returnToMap){returnToMap();return;}
+   handlers.bt('done');mount();
   }catch(error){closing=false;saveError='ยังบันทึกไม่สำเร็จ กรุณาลองบันทึกอีกครั้ง';post('ordinary-notice',{message:saveError});publish();}
  }
  async function command(m){
@@ -9751,7 +9754,7 @@ function createPvpReplaySteps(room, applyFrame=()=>{}) {
   camp:{room:()=>CAMP.room,title:'จู่โจมค่าย',stage:()=>'raid-camp',done:()=>handlers.campClear()},
   world:{room:()=>WORLD.room,title:'บอสโลก',stage:()=>'castle-throne',done:()=>handlers.wbClear()},
   countrywar:{room:()=>COUNTRY_WAR.battleOpen&&COUNTRY_WAR.room,title:'สงครามอาณาจักร',stage:r=>String(r.target).includes('village')?'war-village':'war-capital',done:()=>handlers.cwCloseBattle()},
-  guildwar:{room:()=>GUILD_UI.warRoom,title:'สงครามกิล',stage:()=>'war-capital',done:()=>{GUILD_UI.warRoom=null;render();}}
+  guildwar:{room:()=>GUILD_UI.warRoom,title:'สงครามกิล',stage:()=>'war-capital',done:()=>handlers.guildBattleClose()}
  };
  let playing=null;
  const closed=new Set(),failed=new Set();

@@ -408,7 +408,7 @@ function openFrame(id,screen='bag',quickItem){
  const mount=()=>{
   if($('townDialog').open)close();
   frame=document.createElement('iframe');frame.id='regionMenu';frame.title=id?'เหตุการณ์บนเกาะ':'กระเป๋าผู้ผนึก';
-  const query=new URLSearchParams({city:country+'-capital',v:'beasts-3d-six-20261121',walkScene:'island',screen:id?'town':screen});
+  const query=new URLSearchParams({city:country+'-capital',v:'island-battle-return-1',walkScene:'island',screen:id?'town':screen});
   if(quickItem)query.set('quickItem',quickItem);
   if(id){query.set('island',country);query.set('islandEncounter',id);const actor=patrols.actors.find(a=>a.id===id&&a.kind==='shadow');if(actor)query.set('beastPlan',LivingBeasts.remember(actor,{scene:'island',country}));}
   frame.src=screen==='coupon'?'../town-walk-demo/coupon.html':'../town-walk-demo/menu.html?'+query;
