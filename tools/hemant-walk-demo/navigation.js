@@ -26,8 +26,70 @@ function create(data){
  const roadRoute=route;
  function safeRoute(start,id){const path=roadRoute(start,id);if(!path.length)return [];const approach=connect(start,path[0]);return approach.length?[...approach,...path.slice(1)]:[]}
  function spawnAt(place,gate='south'){const preferred=gate==='west'?{x:place.x-285,y:place.y+210}:gate==='east'?{x:place.x+295,y:place.y+190}:{x:place.x,y:place.y+265};const candidates=[preferred,{x:place.x,y:place.y+265},{x:place.x+200,y:place.y+150},{x:place.x-200,y:place.y+150},{x:place.x,y:place.y+120},{x:place.x,y:place.y}];return candidates.find(p=>walkable(p.x,p.y)&&clear(p,place))||{x:place.x,y:place.y}}
+ // Carry the walking layer between waypoints, as the actual player does.
+ function guideRoute(start,id,radius){
+  const goal=byId.get(id);if(!goal)return [];
+  const road=roadRoute(start,id);
+  while(road.length&&distance(road.at(-1),goal)<=radius)road.pop();
+  const last=road.at(-1)||start,d=distance(last,goal);
+  road.push(d<=radius?start:{x:goal.x+(last.x-goal.x)*radius/d,y:goal.y+(last.y-goal.y)*radius/d});
+  let pos=start;
+  if(road.every(p=>Boolean(pos=playerTrace(pos,p))))return road;
+
+  // A road segment can run into scenery or approach the wrong side of a rail.
+  // Search reachable positions, preferring roads and counting wading as slower.
+  const step=40,open=[],best=new Map(),costs=new Map();
+  function push(n){
+   let i=open.length;open.push(n);
+   while(i){const parent=(i-1)>>1;if(open[parent].f<=n.f)break;open[i]=open[parent];i=parent;}
+   open[i]=n;
+  }
+  function pop(){
+   const first=open[0],tail=open.pop();
+   if(open.length){
+    let i=0;while(2*i+1<open.length){
+     let child=2*i+1;if(child+1<open.length&&open[child+1].f<open[child].f)child++;
+     if(open[child].f>=tail.f)break;open[i]=open[child];i=child;
+    }
+    open[i]=tail;
+   }
+   return first;
+  }
+  function key(ix,iy,deck){return ix+','+iy+':'+(deck||'');}
+  function pathTo(n,tail){
+   const path=tail?[tail]:[];
+   for(;n.prev;n=n.prev)path.push(n.point);
+   return path.reverse();
+  }
+  const firstKey=key(0,0,start.bridgeDeck);
+  push({ix:0,iy:0,point:start,g:0,f:distance(start,goal),key:firstKey});best.set(firstKey,0);
+  while(open.length){
+   const n=pop();if(n.g!==best.get(n.key))continue;
+   const remaining=distance(n.point,goal);
+   if(remaining<=radius)return pathTo(n);
+   if(remaining<radius+step*2){
+    const end={x:goal.x+(n.point.x-goal.x)*radius/remaining,y:goal.y+(n.point.y-goal.y)*radius/remaining};
+    if(playerTrace(n.point,end))return pathTo(n,end);
+   }
+   for(const [dx,dy] of [[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]]){
+    const ix=n.ix+dx,iy=n.iy+dy,x=start.x+ix*step,y=start.y+iy*step/F;
+    const point=playerTrace(n.point,{x,y});if(!point)continue;
+    const k=key(ix,iy,point.bridgeDeck);
+    let multiplier=costs.get(k);
+    if(multiplier===undefined){
+     multiplier=!point.bridgeDeck&&terrain?.water.sampleAt(x,y,true)?3:nearest(point)?.distance>100?1.55:1;
+     costs.set(k,multiplier);
+    }
+    const g=n.g+step*Math.hypot(dx,dy)*multiplier;
+    if(g>=(best.get(k)??Infinity))continue;
+    best.set(k,g);push({ix,iy,point,prev:n,key:k,g,f:g+distance(point,goal)});
+   }
+  }
+  return [];
+ }
+
  function playerRoute(start,id){const path=roadRoute(start,id);if(!path.length)return [];const result=[];let previous=start;for(const point of path){if(!playerWalkable(point.x,point.y)){if(point===path.at(-1))return [];continue;}const section=connect(previous,point,playerWalkable);if(!section.length)return [];result.push(...section);previous=point;}return result;}
- return {playerMove,playerWalkable,playerClear,playerRoute,spawnAt,places,byId,nodes,edges,nearest,walkable,route:safeRoute,pathBetween:connect,distance,clear,setTerrain:value=>{terrain=value}};
+ return {guideRoute,playerMove,playerWalkable,playerClear,playerRoute,spawnAt,places,byId,nodes,edges,nearest,walkable,route:safeRoute,pathBetween:connect,distance,clear,setTerrain:value=>{terrain=value}};
 }
 const api={create,distance,projection};scope.hemantNavigation=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

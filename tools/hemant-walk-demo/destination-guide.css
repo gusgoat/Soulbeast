@@ -1,0 +1,42 @@
+#townDialog.destination-guide[open] {
+  box-sizing: border-box;
+  width: min(1100px, 96vw) !important;
+  max-width: 96vw !important;
+  height: min(760px, 90dvh);
+  max-height: 94dvh !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+}
+#townDialog.destination-guide #dialogChoices,
+.guide-columns,
+.guide-column,
+.guide-list { min-height: 0; min-width: 0; }
+#townDialog.destination-guide #dialogChoices {
+  display: flex; flex: 1; flex-direction: column; overflow: hidden; max-height: none;
+}
+.guide-columns { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; flex: 1; }
+.guide-column { display: flex; flex-direction: column; border-top: 1px solid #9a8051; }
+.guide-column h3 { font-size: 16px; color: #ffe7ae; margin: 10px 0; }
+.guide-list { flex: 1; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+#townDialog.destination-guide .guide-place {
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  width: 100%; min-height: 52px; margin: 0 0 4px; line-height: 1.35; text-align: left;
+  overflow-wrap: anywhere;
+}
+.guide-place small { font-size: 11px; font-weight: normal; }
+.guide-tabs { display: none; }
+@media (max-width: 760px) {
+  #townDialog.destination-guide[open] { width: 96vw !important; }
+  .guide-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 3px; }
+  #townDialog.destination-guide .guide-tab {
+    min-width: 0; padding: 8px 4px !important; min-height: 44px; font-size: 12px; line-height: 1.4; text-align: center;
+  }
+  .guide-tab[aria-pressed="true"] { box-shadow: inset 0 -3px #ffd27a; }
+  .guide-columns { display: flex; }
+  .guide-column { flex: 1; display: none; padding-top: 6px; }
+  .guide-column h3 { display: none; }
+  [data-column="0"] .guide-column:nth-child(1),
+  [data-column="1"] .guide-column:nth-child(2),
+  [data-column="2"] .guide-column:nth-child(3) { display: flex; }
+}
