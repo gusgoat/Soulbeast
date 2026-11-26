@@ -4,7 +4,7 @@ import {paintActionControl} from './control-art.mjs?v=ornate-controls-20261124';
 const assets = new URL('../../assets/',import.meta.url).pathname;
 import {BASE_RECALL_MS, BASE_REPAIR_MS, BASE_REPAIR_RANGE, CHEST_COUNT, CLASSES, COLORS, FLAT, HEAL_TARGET, RAID_TARGET, REPAIR_TARGET, TEAM_ARENA, TEAMS, WIDTH, HEIGHT, WARP_ACCESS, WARP_TARGET, canRaidBase, distance, personalCombatBonus, siegeProfile} from './arena.mjs?v=team-bot-tactics-1';
 import {SURVIVAL_ARENA, insideFogSafe, walkInArena} from './survival-arena.mjs';
-import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=field-size-1';
+import {Scene, drawMap, portrait, sealerGender} from './scene.mjs?v=walk-pacing-1';
 import {teamResults} from './ranking.mjs?v=team-balance-2';
 import {SHIELDS,shieldFor,shieldUrl} from './ranking.mjs?v=shields-2';
 import {premadeRankTotal} from './matchmaking.mjs?v=rank-team-1';
@@ -92,7 +92,7 @@ if(accountContext && selectedCharacter){
 }
 const channel=testArena?'soulbeast-colosseum-test-session':'soulbeast-colosseum-session';
 const endpoint=(path,base)=>new URL((testArena?'/test':'')+path,base);
-const field=(await import('./connected-field.mjs?v=opening-cast-1')).createConnectedField(
+const field=(await import('./connected-field.mjs?v=walk-pacing-1')).createConnectedField(
  (turn,skill,target)=>send({type:'combat',turn,skill,target}),
  enabled=>send({type:'combatAuto',enabled}));
 const practiceType=type=>type==='practice'||type==='survivalPractice';
@@ -1202,6 +1202,15 @@ function sendMove(x,y){
 }
 setInterval(()=>{if(state?.phase==='match')sendMove(...direction());},55);
 setInterval(()=>{if(state?.phase==='match')send({type:'ping',echo:performance.now()});},5000);
+const hudText=new WeakMap();
+function setHudText(node,value){
+ const text=String(value??'');
+ if(hudText.get(node)!==text){
+  hudText.set(node,text);
+  node.textContent=text;
+ }
+}
+let nextHudPaint=0,lastHudState,lastHudWatch;
 function frame(t){
  const dt=Math.min(.05,(t-previous)/1000);previous=t;
  if(state&&local&&state.phase!=='lobby'){
@@ -1231,98 +1240,106 @@ function frame(t){
   }
   const all=[...actors.values(),...(local.phase==='dead'||!solo&&local.phase==='battle'?[]:[local])];
   const watch=watchedPlayer(),focus=watch?(actors.get(watch.id)||watch):local;
-  scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null,state.baseEffects,state.warpArrivals);
-  $('blue').textContent=solo?state.survivors:state.score[0];
-  $('red').textContent=solo?`${Math.round(zone.remaining*100)}%`:state.score[1];
-  $('clock').textContent=solo?(zone.nextAt?clock(zone.nextAt-(state.finishedAt??now)):'☠'):clock(state.ends-(state.finishedAt??now));
-  let activity;
-  for(let i=state.events.length-1;i>=0;i--)if(state.events[i].type!=='boss'){activity=state.events[i];break;}
-  const event=activity&&now-activity.at<4800?activity:null;
-  const callouts=(state.announcements??[]).filter(e=>e.name&&killCallouts[e.clip]&&now-e.at<3800);
-  const callout=callouts.at(-1);
-  const calloutText=callout?`${callout.name} · ${callouts.filter(e=>e.name===callout.name&&e.at===callout.at).map(e=>killCallouts[e.clip]).join(' · ')}`:'';
-  if($('kill-announcement').textContent!==calloutText)$('kill-announcement').textContent=calloutText;
-  const bossEvent=state.bossEvent;$('boss-announcement').textContent=bossEvent&&now-bossEvent.at<8500?bossEvent.text:'';
-  const heal=state.baseHeal;
-  const healing=heal&&now-heal.at<3300&&(!event||heal.at>=event.at);
-  $('event').textContent=healing?[heal.source,heal.hp?`HP +${heal.hp}`:'',heal.mp?`MP +${heal.mp}`:'',
-   heal.petsRecovered?`ฟื้นพลังอสูร ${heal.petsRecovered} ตัว`:'',heal.petsRevived?`ชุบอสูร ${heal.petsRevived} ตัว`:'',
-   heal.cleansed?'ล้างสถานะผิดปกติ':''].filter(Boolean).join(' · '):event?.text??'';
+  if(!field.coversArena)scene.render(focus,all,t,state.chests,state.bases,state.traps,now,zone,watch?spectatorPan:null,state.baseEffects,state.warpArrivals);
   const walking=state.phase==='match'&&me.phase==='walk';
-  const recall=walking&&me.recallEndsAt;
-  $('stick').hidden=!walking||Boolean(recall);$('map').hidden=!walking&&!watch;
-  $('base-recall').hidden=!walking||solo;
-  const recallButton=$('base-recall-button');
-  const recallLabel=recall?'ยกเลิกวาร์ป':'วาร์ปกลับฐานใหญ่';
-  paintActionControl(recallButton,recallLabel,{image:'recall-base',channeling:Boolean(recall)});
-  $('base-recall-progress').hidden=!recall;
-  if(recall)$('base-recall-progress').value=Math.max(0,Math.min(1,1-(recall-now)/BASE_RECALL_MS));
-  $('arena').toggleAttribute('data-spectating',Boolean(watch));
-  $('spectator').hidden=!watch;
-  $('spectator-leave').hidden=!solo;
-  if(watch){
-   const label=`${state.placement?'อันดับ '+state.placement+' · ':''}ชม ${watch.name}`;
-   if($('spectator-name').textContent!==label)$('spectator-name').textContent=label;
-   const timer=$('spectator-respawn');
-   timer.hidden=solo;
-   const timeLabel=solo?'':`เกิดใหม่ใน ${clock(state.respawnAt-now)}`;
-   if(timer.textContent!==timeLabel)timer.textContent=timeLabel;
-   const canSwitch=spectatablePlayers().length>1;
-   $('spectator-prev').disabled=$('spectator-next').disabled=!canSwitch;
-  }
-  $('walk-tools').hidden=!walking;
-  $('stick-settings-button').hidden=!walking||Boolean(recall);
   presentation.walk(walking,stepped?(scene.arena.bushAt(local)!==null?'leaves':'stone'):null);
-  $('objectives').hidden=!walking;
-  const repair=walking&&state.baseRepair;
-  const repairBase=repair&&state.bases.find(b=>b.id===repair.id&&distance(local,b)<=BASE_REPAIR_RANGE);
-  $('base-repair').hidden=!repairBase;
-  if(repairBase){
-   const label=`กำลังซ่อม${repairBase.label} · ${repairBase.hp}/${repairBase.maxHp}`;
-   const text=$('base-repair-label');if(text.textContent!==label)text.textContent=label;
-   const elapsed=BASE_REPAIR_MS-Math.max(0,repair.nextAt-now);
-   $('base-repair-progress').value=Math.max(0,Math.min(BASE_REPAIR_MS,elapsed))/BASE_REPAIR_MS;
-  }
-  $('leave-practice').hidden=!state.practice;
-  $('rank-leave').hidden=!state.ranked||!walking;
-  const treasure=`หีบเหลือ ${state.chestsLeft}/${state.chestsTotal??CHEST_COUNT}`;
-  $('chest-count').textContent=treasure;$('map-chests').textContent=treasure;
-  $('boss-clock').textContent=solo?(!insideFogSafe(zone,focus.x,focus.y)?'อยู่ในหมอกพิษ · เสีย HP 2%/วิ':zone.nextAt?`หมอกเข้ามาอีก ${clock(zone.nextAt-now)}`:'หมอกปกคลุมทั้งสนาม'):
-   state.nextBossAt?`บอสเกิดอีก ${clock(state.nextBossAt-now)}`:'ไม่มีบอสเกิดเพิ่ม';
-  const target=walking&&!recall&&objective();
-  $('raid').hidden=!target;
-  if(target){const button=$('raid');paintActionControl(button,target.label,{image:target.type==='selectWarp'?'select-warp':null});button.dataset.action=target.type;button.disabled=Boolean(target.disabled);}
-  if((walking||watch)&&t-lastMap>80){
-   drawMap($('mini'),state,all,focus);
-   if(mapDialog.open)drawMap($('full-map'),state,all,focus,2);
-   lastMap=t;
-  }
-  const ended=state.phase==='finished',dead=me.phase==='dead';
-  $('dead-team-scores').hidden=ended||solo||!dead;
-  const showingCollapse=ended&&state.reason==='base-captured'&&state.baseEffects?.some(
-   effect=>effect.kind==='collapse'&&effect.until>now);
-  $('rank-leave-respawn').hidden=ended||solo||!dead||!state.ranked;
-  $('overlay').hidden=(!$('battle').hidden)||Boolean(watch)||showingCollapse||!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
-  if(ended||dead){
-   if(solo){
-    $('overlay-title').textContent=ended?(state.winner===me.id?'คุณรอดเป็นคนสุดท้าย!':state.winnerName?'จบการประลอง':'เสมอ'):'คุณตกรอบ';
-    const result=ended?(state.winnerName?`${state.winnerName} เป็นผู้รอดคนสุดท้าย`:state.reason==='error'?'สนามยุติการเล่น':'ผู้เล่นคนสุดท้ายล้มพร้อมกัน'):
-     `เหลือผู้รอด ${state.survivors} คน`;
-    $('overlay-text').textContent=[state.placement?'อันดับ '+state.placement:'',state.eliminationCause,result,Number.isFinite(me.points)?`คะแนนคุณ ${me.points}`:''].filter(Boolean).join(' · ');
-   }else{
-    $('overlay-title').textContent=ended?(state.winner===-1?'เสมอ':state.winner===me.side?'ทีมคุณชนะ!':'ทีมคุณแพ้'):'ผู้ผนึกล้มลง';
-    $('overlay-text').textContent=ended?`${state.reason==='base-captured'?`${TEAMS[state.winner]} ทำลายฐานใหญ่ · `:state.reason==='error'?'สนามยุติการเล่น · ':''}${TEAMS[0]} ${state.score[0]} : ${state.score[1]} ${TEAMS[1]}`:`เกิดใหม่ที่ฐานใหญ่ใน ${clock(state.respawnAt-now)}`;
-   }
-  }
-  if(walking&&scene.arena.bushAt(local)!==null&&!event&&!healing)$('event').textContent='อยู่ในพุ่มไม้ · ความเร็วครึ่งหนึ่ง';
+  // Input and camera updates run every frame. Timers and map labels use a separate cadence.
   renderBattle();
-  if(state.nextEliminationAt){
-   const cut=`คัดคะแนนต่ำสุดใน ${clock(state.nextEliminationAt-now)}`;
-   $('elimination-clock').textContent=cut;
-   const battleCut=$('battle-elimination-clock');
-   if(battleCut)battleCut.textContent=`คะแนนคุณ ${me.points} · ${cut}`;
+  if(field.coversArena)lastHudState=null;
+  else if(t>=nextHudPaint || lastHudState!==state || lastHudWatch!==watch?.id){
+  nextHudPaint=t+80;lastHudState=state;lastHudWatch=watch?.id;
+   setHudText($('blue'),solo?state.survivors:state.score[0]);
+   setHudText($('red'),solo?`${Math.round(zone.remaining*100)}%`:state.score[1]);
+   setHudText($('clock'),solo?(zone.nextAt?clock(zone.nextAt-(state.finishedAt??now)):'☠'):clock(state.ends-(state.finishedAt??now)));
+   let activity;
+   for(let i=state.events.length-1;i>=0;i--)if(state.events[i].type!=='boss'){activity=state.events[i];break;}
+   const event=activity&&now-activity.at<4800?activity:null;
+   const callouts=(state.announcements??[]).filter(e=>e.name&&killCallouts[e.clip]&&now-e.at<3800);
+   const callout=callouts.at(-1);
+   const calloutText=callout?`${callout.name} · ${callouts.filter(e=>e.name===callout.name&&e.at===callout.at).map(e=>killCallouts[e.clip]).join(' · ')}`:'';
+   if($('kill-announcement').textContent!==calloutText)setHudText($('kill-announcement'),calloutText);
+   const bossEvent=state.bossEvent;setHudText($('boss-announcement'),bossEvent&&now-bossEvent.at<8500?bossEvent.text:'');
+   const heal=state.baseHeal;
+   const healing=heal&&now-heal.at<3300&&(!event||heal.at>=event.at);
+   setHudText($('event'),healing?[heal.source,heal.hp?`HP +${heal.hp}`:'',heal.mp?`MP +${heal.mp}`:'',
+    heal.petsRecovered?`ฟื้นพลังอสูร ${heal.petsRecovered} ตัว`:'',heal.petsRevived?`ชุบอสูร ${heal.petsRevived} ตัว`:'',
+    heal.cleansed?'ล้างสถานะผิดปกติ':''].filter(Boolean).join(' · '):event?.text??(walking&&scene.arena.bushAt(local)!==null?'อยู่ในพุ่มไม้ · ความเร็วครึ่งหนึ่ง':''));
+
+   const recall=walking&&me.recallEndsAt;
+   $('stick').hidden=!walking||Boolean(recall);$('map').hidden=!walking&&!watch;
+   $('base-recall').hidden=!walking||solo;
+   const recallButton=$('base-recall-button');
+   const recallLabel=recall?'ยกเลิกวาร์ป':'วาร์ปกลับฐานใหญ่';
+   paintActionControl(recallButton,recallLabel,{image:'recall-base',channeling:Boolean(recall)});
+   $('base-recall-progress').hidden=!recall;
+   if(recall)$('base-recall-progress').value=Math.max(0,Math.min(1,1-(recall-now)/BASE_RECALL_MS));
+   $('arena').toggleAttribute('data-spectating',Boolean(watch));
+   $('spectator').hidden=!watch;
+   $('spectator-leave').hidden=!solo;
+   if(watch){
+    const label=`${state.placement?'อันดับ '+state.placement+' · ':''}ชม ${watch.name}`;
+    if($('spectator-name').textContent!==label)setHudText($('spectator-name'),label);
+    const timer=$('spectator-respawn');
+    timer.hidden=solo;
+    const timeLabel=solo?'':`เกิดใหม่ใน ${clock(state.respawnAt-now)}`;
+    if(timer.textContent!==timeLabel)timer.textContent=timeLabel;
+    const canSwitch=spectatablePlayers().length>1;
+    $('spectator-prev').disabled=$('spectator-next').disabled=!canSwitch;
+   }
+   $('walk-tools').hidden=!walking;
+   $('stick-settings-button').hidden=!walking||Boolean(recall);
+
+   $('objectives').hidden=!walking;
+   const repair=walking&&state.baseRepair;
+   const repairBase=repair&&state.bases.find(b=>b.id===repair.id&&distance(local,b)<=BASE_REPAIR_RANGE);
+   $('base-repair').hidden=!repairBase;
+   if(repairBase){
+    const label=`กำลังซ่อม${repairBase.label} · ${repairBase.hp}/${repairBase.maxHp}`;
+    const text=$('base-repair-label');if(text.textContent!==label)text.textContent=label;
+    const elapsed=BASE_REPAIR_MS-Math.max(0,repair.nextAt-now);
+    $('base-repair-progress').value=Math.max(0,Math.min(BASE_REPAIR_MS,elapsed))/BASE_REPAIR_MS;
+   }
+   $('leave-practice').hidden=!state.practice;
+   $('rank-leave').hidden=!state.ranked||!walking;
+   const treasure=`หีบเหลือ ${state.chestsLeft}/${state.chestsTotal??CHEST_COUNT}`;
+   setHudText($('chest-count'),treasure);setHudText($('map-chests'),treasure);
+   setHudText($('boss-clock'),solo?(!insideFogSafe(zone,focus.x,focus.y)?'อยู่ในหมอกพิษ · เสีย HP 2%/วิ':zone.nextAt?`หมอกเข้ามาอีก ${clock(zone.nextAt-now)}`:'หมอกปกคลุมทั้งสนาม'):
+    state.nextBossAt?`บอสเกิดอีก ${clock(state.nextBossAt-now)}`:'ไม่มีบอสเกิดเพิ่ม');
+   const target=walking&&!recall&&objective();
+   $('raid').hidden=!target;
+   if(target){const button=$('raid');paintActionControl(button,target.label,{image:target.type==='selectWarp'?'select-warp':null});button.dataset.action=target.type;button.disabled=Boolean(target.disabled);}
+   if(!field.coversArena&&(walking||watch)&&t-lastMap>=80){
+    drawMap($('mini'),state,all,focus);
+    if(mapDialog.open)drawMap($('full-map'),state,all,focus,2);
+    lastMap=t;
+   }
+   const ended=state.phase==='finished',dead=me.phase==='dead';
+   $('dead-team-scores').hidden=ended||solo||!dead;
+   const showingCollapse=ended&&state.reason==='base-captured'&&state.baseEffects?.some(
+    effect=>effect.kind==='collapse'&&effect.until>now);
+   $('rank-leave-respawn').hidden=ended||solo||!dead||!state.ranked;
+   $('overlay').hidden=(!$('battle').hidden)||Boolean(watch)||showingCollapse||!ended&&!dead;$('back').hidden=!ended&&!(solo&&dead);
+   if(ended||dead){
+    if(solo){
+     setHudText($('overlay-title'),ended?(state.winner===me.id?'คุณรอดเป็นคนสุดท้าย!':state.winnerName?'จบการประลอง':'เสมอ'):'คุณตกรอบ');
+     const result=ended?(state.winnerName?`${state.winnerName} เป็นผู้รอดคนสุดท้าย`:state.reason==='error'?'สนามยุติการเล่น':'ผู้เล่นคนสุดท้ายล้มพร้อมกัน'):
+      `เหลือผู้รอด ${state.survivors} คน`;
+     setHudText($('overlay-text'),[state.placement?'อันดับ '+state.placement:'',state.eliminationCause,result,Number.isFinite(me.points)?`คะแนนคุณ ${me.points}`:''].filter(Boolean).join(' · '));
+    }else{
+     setHudText($('overlay-title'),ended?(state.winner===-1?'เสมอ':state.winner===me.side?'ทีมคุณชนะ!':'ทีมคุณแพ้'):'ผู้ผนึกล้มลง');
+     setHudText($('overlay-text'),ended?`${state.reason==='base-captured'?`${TEAMS[state.winner]} ทำลายฐานใหญ่ · `:state.reason==='error'?'สนามยุติการเล่น · ':''}${TEAMS[0]} ${state.score[0]} : ${state.score[1]} ${TEAMS[1]}`:`เกิดใหม่ที่ฐานใหญ่ใน ${clock(state.respawnAt-now)}`);
+    }
+   }
+
+
+   if(state.nextEliminationAt){
+    const cut=`คัดคะแนนต่ำสุดใน ${clock(state.nextEliminationAt-now)}`;
+    setHudText($('elimination-clock'),cut);
+    const battleCut=$('battle-elimination-clock');
+    if(battleCut)battleCut.textContent=`คะแนนคุณ ${me.points} · ${cut}`;
+   }
+   const turn=$('turn-timer');if(turn&&battle)turn.textContent=clock(battle.deadline-now);
   }
-  const turn=$('turn-timer');if(turn&&battle)turn.textContent=clock(battle.deadline-now);
  }
  requestAnimationFrame(frame);
 }

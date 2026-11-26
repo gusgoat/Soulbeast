@@ -22,6 +22,14 @@ export function encounterView(b, me, mode, now, pending, spectator=false) {
 }
 
 export function createConnectedField(submit, toggleAuto) {
+  const unitStamps=new WeakMap();
+  function unitStamp(battle){
+    if(!unitStamps.has(battle)){
+      const units=[...battle.allies,...battle.enemies];
+      unitStamps.set(battle,JSON.stringify(units.map(unit=>[unit.hp,unit.mp,unit.statuses,unit.badges])));
+    }
+    return unitStamps.get(battle);
+  }
   let frame, timer, ready=false, channel, latest, previous, key, failed, speed=1;
   let latestBattle, latestTime, pendingTurn, lastRequest=0;
   let viewerId=null,readOnly=false;
@@ -99,7 +107,9 @@ export function createConnectedField(submit, toggleAuto) {
       pendingTurn=latest.revision;latest.waiting=true;publish();
     }
   });
-  return {close,warm(){if(!warmFailed)prepare();},reset(){dispose();failed=null;warmFailed=false;},rejected(){pendingTurn=null;key=null;},
+  return {close,
+    get coversArena(){return !!frame && !frame.inert && !readOnly;},
+    warm(){if(!warmFailed)prepare();},reset(){dispose();failed=null;warmFailed=false;},rejected(){pendingTurn=null;key=null;},
     show(b,me,mode,time,spectator=false){
       if(!b || b.id===failed){close();return false;}
       if(latest && (latest.battle!=='colosseum:'+b.id||viewerId!==me.id||readOnly!==spectator))dispose();
@@ -114,7 +124,7 @@ export function createConnectedField(submit, toggleAuto) {
       }
       latestTime=time;latestBattle=b;
       const stamp=[b.id,b.turn,b.cur,b.last?.n,b.finished,b.auto,now>=b.openAt,now>=b.deadline,pendingTurn,b.commands.length,
-        JSON.stringify([...b.allies,...b.enemies].map(u=>[u.hp,u.mp,u.statuses,u.badges]))].join('|');
+        unitStamp(b)].join('|');
       if(key===stamp)return true;
       key=stamp;previous=latest;latest=encounterView(b,me,mode,now,pendingTurn===b.turn,spectator);
       const a=b.last;

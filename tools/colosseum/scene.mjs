@@ -460,6 +460,7 @@ export class Scene{
   const left=cam.x-w/2/zoom, top=cam.y-h/2/zoom, right=left+w/zoom, bottom=top+h/zoom;
   c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#241f26';c.fillRect(0,0,w,h);
   c.setTransform(dpr*zoom,0,0,dpr*zoom,-left*dpr*zoom,-top*dpr*zoom);
+  this.canCacheWall=true;
   const walls=this.drawTerrain(left,top,right,bottom);
   const castles=bases.filter(b=>b.hp!==0&&inSight(me,b)&&b.x>left-125&&b.x<right+125&&b.y*FLAT>top-60&&b.y*FLAT<bottom+240);
   for(const pad of WARP_PADS){
@@ -627,8 +628,29 @@ export class Scene{
   }
   if(bushAt({x:px+1,y:y*CELL+1})!==null)this.bush(px,py,x,y);
  }
- wall(x,y,{curve,ledges,front}){
-  const c=this.c,px=x*CELL,py=y*TILE;
+ wall(x,y,shape){
+  const px=x*CELL,py=y*TILE;
+  this.wallTiles??=new Map();
+  const textured=!!ready(wallArt);
+  let tile=this.wallTiles.get(shape);
+  if(this.canCacheWall && (!tile||tile.textured!==textured)){
+   // Rasterize at most one new tile per frame while moving into a new area.
+   this.canCacheWall=false;
+   const image=document.createElement('canvas'),scale=Math.min(2,devicePixelRatio||1);
+   image.width=Math.ceil((CELL+4)*scale);
+   image.height=Math.ceil((TILE+WALL_HEIGHT+4)*scale);
+   const brush=image.getContext('2d');
+   brush.setTransform(scale,0,0,scale,(2-px)*scale,(2+WALL_HEIGHT-py)*scale);
+   this.paintWall(brush,px,py,shape);
+   tile={image,scale,textured};
+   if(this.wallTiles.size>=32&&!this.wallTiles.has(shape))this.wallTiles.delete(this.wallTiles.keys().next().value);
+   this.wallTiles.set(shape,tile);
+  }
+  if(tile&&tile.textured===textured)this.c.drawImage(tile.image,px-2,py-WALL_HEIGHT-2,tile.image.width/tile.scale,tile.image.height/tile.scale);
+  else this.paintWall(this.c,px,py,shape);
+  this.decorateWall(x,y,px,py-WALL_HEIGHT);
+ }
+ paintWall(c,px,py,{curve,ledges,front}){
   c.save();c.translate(px,py);
   c.save();c.clip(front);
   const faceTop=TILE-WALL_HEIGHT-18,faceHeight=WALL_HEIGHT+20;
@@ -652,7 +674,6 @@ export class Scene{
   c.strokeStyle='#ba9970';c.lineWidth=10;c.stroke(ledges);
   c.strokeStyle='#dbc398';c.lineWidth=3;c.stroke(ledges);
   c.restore();
-  this.decorateWall(x,y,px,py-WALL_HEIGHT);
  }
  decorateWall(x,y,px,py){
   const roll=hash(x+43,y+29);
