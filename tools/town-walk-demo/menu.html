@@ -8530,7 +8530,7 @@ if(cityProfile&&(!cityProfile.capital||cityProfile.country)){
  const cityRender=render;render=function(...args){const out=cityRender(...args);const where=document.querySelector('.who small');if(where)where.textContent='Lv '+S.P.lv+' · '+cityProfile.name;return out};
 }
 let encounterSent=false;
-function finishPreviewEncounter(){const result=B()?.over?.res;if(!result||encounterSent)return;encounterSent=true;save();parent.postMessage({type:'country-encounter-result',result},location.origin)}
+function finishPreviewEncounter(alreadySaved=false){const result=B()?.over?.res;if(!result||encounterSent)return;if(alreadySaved!==true)save();encounterSent=true;parent.postMessage({type:'country-encounter-result',result},location.origin)}
 function applyDungeonBossAura(unit){if(unit.dungeonBoss)return unit;unit.dungeonBoss=true;unit.boss=true;unit.bossAura=true;unit.bossAuraVersion='dungeon-v1';for(const k of ['patk','matk'])unit.st[k]=Math.round(unit.st[k]*1.8);for(const k of ['hp','pdef','mdef'])unit.st[k]=Math.round(unit.st[k]*2.2);unit.st.spd=Math.round(unit.st.spd*1.25);unit.hp=unit.st.hp;unit.mp=unit.st.mp;return unit}
 // Runs in the original game's lexical scope, before the opening initiative roll.
 function applyDungeonShadowAura(u){if(u.dungeonShadow)return u;u.dungeonShadow=true;for(const k of ['patk','matk'])u.st[k]=Math.round(u.st[k]*1.25);for(const k of ['hp','pdef','mdef'])u.st[k]=Math.round(u.st[k]*1.5);u.hp=u.st.hp;return u}
@@ -9504,7 +9504,10 @@ function ordinaryBattleContext(battle,floor){
    save();
    await (await getWalkAccountConnection()).flush(true);
    if(fallen)await fallen;
-   if(B()!==b)return;const button=document.querySelector('main [data-a="bt"][data-v="done"]');if(button)button.click();else battleAction('done');mount();
+   if(B()!==b)return;
+   // The walk encounter owns the exit even when the new field hides the old controls.
+   if(document.documentElement.dataset.encounterKind){finishPreviewEncounter(true);return;}
+   const button=document.querySelector('main [data-a="bt"][data-v="done"]');if(button)button.click();else battleAction('done');mount();
   }catch(error){closing=false;saveError='ยังบันทึกไม่สำเร็จ กรุณาลองบันทึกอีกครั้ง';post('ordinary-notice',{message:saveError});publish();}
  }
  async function command(m){
