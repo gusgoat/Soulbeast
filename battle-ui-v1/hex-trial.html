@@ -3,12 +3,18 @@
 <style>
 :root{color-scheme:dark;font-family:Tahoma,"Leelawadee UI",sans-serif;color:#f9efdc;background:#0c1419}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#263c3c,transparent 75%),#0c1419}main{max-width:930px;margin:auto;padding:clamp(10px,2.4vw,26px)}header,.controls,.actor,.head,.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}header{justify-content:space-between;margin-bottom:12px}h1{font:700 clamp(20px,3.4vw,33px) Georgia,serif;margin:0;color:#ffe2a0}h2{font-size:18px;margin:0}button,select,summary{font:inherit;cursor:pointer}button,select{color:inherit;border:1px solid #5d6d6a;background:#1e3036;border-radius:7px;padding:9px 13px;font-weight:600}button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #ffcf73;outline-offset:2px}button[aria-pressed=true]{background:#285457;border-color:#85e5cf;color:#e0fff5}button:disabled{opacity:.48;cursor:default}.field{position:relative;background-size:cover;background-position:center;border:1px solid #937b4d;border-radius:14px 14px 0 0;overflow:hidden}.head{justify-content:space-between;padding:9px 14px;background:#101c23e6;color:#f0d6a0;font-size:13px}.head strong{color:white}.board{display:block;width:100%;max-height:54vh;min-height:195px;touch-action:manipulation}.tile{cursor:pointer;stroke:#eedaa887;stroke-width:1.3;fill:#131a2370}.tile.walk{fill:#189c8c6b;stroke:#bfefde}.tile.ally{fill:#2a648394;stroke:#97d9ff}.tile.foe{fill:#8b4b438f;stroke:#ffb7a5}.tile.active{stroke:#ffd36b;stroke-width:2.8}.tile.target{fill:#c86d30a6;stroke:#ffe3a3;stroke-width:3}.tile.heal{fill:#448342ba;stroke:#b6ffac}.tile.preview,.tile:focus-visible{stroke:white;stroke-width:3.4;outline:none}.sprite{pointer-events:none;transition:transform .2s ease-out}.sprite image{filter:drop-shadow(2px 4px 2px #0008)}.sprite text{font-weight:bold;paint-order:stroke;stroke:#0c1419;stroke-width:3;fill:white;text-anchor:middle;font-size:11px}.hit{animation:hit .34s ease-out}@keyframes hit{50%{opacity:.45}}.panel{border:1px solid #485555;border-top:0;background:linear-gradient(135deg,#203037,#142129);border-radius:0 0 14px 14px;padding:13px 16px}.actor{justify-content:space-between}.stats,.hint,.small{font-size:13px;color:#bad1ce}.hint{min-height:21px;margin:9px 0;color:#ffe2ac}.controls{gap:6px}.controls button small{display:block;font-weight:normal;font-size:11px;color:#dbdac8}.skills{display:contents}.tools{justify-content:space-between;margin:12px 0}.tools button,select{font-size:13px}.queue{display:flex;align-items:center;gap:5px}.queue img{background:#20303f;border:1px solid #778281;object-fit:contain;height:29px;width:29px;border-radius:5px}.queue img:first-child{border-color:#f5ca7c}.log{min-height:20px;color:#d3decf;margin:7px 0;font-size:13px}details{padding:10px 0;border-top:1px solid #465354;color:#cbdad3;font-size:13px}summary{color:#eddaa9}.guide{line-height:1.75;margin:8px 0 0}.legend{font-size:12px;color:#bad1ce}.legend b{color:#a3efd4}.legend i{color:#ffd58d;font-style:normal}
 @media(max-width:560px){main{padding:8px}.panel{padding:9px}.head{padding:6px 9px}.controls button{padding:7px 9px;min-height:42px;font-size:13px}.actor{gap:4px}.tools{margin:7px 0}.queue img{width:22px;height:22px}.legend{font-size:11px}}@media(prefers-reduced-motion:reduce){.sprite{transition:none}.hit{animation:none}}
+/* Cast range is a floor tint; outlined units can actually receive the chosen skill. */
+.tile.cast-range{fill:#398de494;stroke:#a7d9ff}
+.tile.target{stroke:#ffe49a;stroke-width:3.5}
+.tile.target.heal{stroke:#bbffae;stroke-width:3.5}
+.gap-badge{pointer-events:none}.gap-badge rect{fill:#13232e;stroke:#e4d4ad;stroke-width:1.3}.gap-badge text{fill:#fff3d3;font-size:14px;font-weight:700}
+.legend .range-key{color:#a7d9ff}
 </style></head><body><main>
 <header><h1>สนามทดลองหกเหลี่ยม</h1><label>สนาม <select id="mode"><option value="normal">ปะทะ 3 ต่อ 3</option><option value="boss">ท้าบอสจอมมาร</option></select></label></header>
-<section class="field"><div class="head"><strong id="turn"></strong><span class="queue" id="queue" aria-label="ลำดับตา"></span></div><svg class="board" id="board" viewBox="0 0 610 319" role="group" aria-label="สนามรบหกเหลี่ยม"><g id="tiles"></g><g id="sprites" aria-hidden="true"></g></svg></section>
+<section class="field"><div class="head"><strong id="turn"></strong><span class="queue" id="queue" aria-label="ลำดับตา"></span></div><svg class="board" id="board" viewBox="0 0 610 319" role="group" aria-label="สนามรบหกเหลี่ยม"><g id="tiles"></g><g id="sprites" aria-hidden="true"></g><g id="gaps" aria-hidden="true" pointer-events="none"></g></svg></section>
 <section class="panel"><div class="actor"><h2 id="actor"></h2><span class="stats" id="stats"></span></div><p class="hint" id="hint" aria-live="polite"></p>
 <div class="controls"><button id="walk">เดิน</button><span class="skills" id="skills"></span><button id="pass">จบตา</button></div></section>
-<div class="tools"><span class="legend"><b>▧</b> เดินได้　<i>◇</i> เป้าหมายที่เลือกได้</span><span><button id="auto" aria-pressed="false">ออโต้ทีม</button> <button id="reset">เริ่มใหม่</button></span></div>
+<div class="tools"><span class="legend" id="walkLegend"><b>▧</b> เดินได้</span><span class="legend" id="rangeLegend" hidden><b class="range-key">▧</b> ระยะสกิล　<i>◇</i> ใช้ได้ทันที　+เลข = ต้องเดินอีกกี่ช่อง</span><span><button id="auto" aria-pressed="false">ออโต้ทีม</button> <button id="reset">เริ่มใหม่</button></span></div>
 <p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ความเร็วต่ำกว่า 20 เดินได้ 1 ช่อง · 20–39 เดินได้ 2 ช่อง · 40–59 เดินได้ 3 ช่อง · 60 ขึ้นไปเดินได้ 4 ช่อง<br>เดินได้หลายจังหวะภายในจำนวนช่องที่เหลือ หรือยืนใช้สกิลได้ทันที เมื่อออกท่าหนึ่งครั้งจะจบตา<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่และบอสยืน 3 ช่องติดกันเป็นรูปสามเหลี่ยม ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
 </main><script>const HexBattle = (() => {
   const cols = 8, rows = 5;
@@ -48,8 +54,10 @@
     const rear=u.team===0?-1:1;
     return [p,{q:p.q+rear,r:p.r},{q:p.q+(rear===1?1:0),r:p.r-1}];
   }
+  const distanceToCell = (origin,p) => Math.min(...origin.map(q=>distance(q,p)));
   function separation(a,b,at=a.pos) {
-    return Math.min(...footprint(a,at).flatMap(p=>footprint(b).map(q=>distance(p,q))));
+    const origin=footprint(a,at);
+    return Math.min(...footprint(b).map(p=>distanceToCell(origin,p)));
   }
   const allowance = speed => speed<20?1:speed<40?2:speed<60?3:4;
   function create(mode='normal') {
@@ -58,8 +66,8 @@
     return {units,order:[...units].sort((a,b)=>b.speed-a.speed).map(u=>u.id),cursor:0,round:1,spent:0,winner:null};
   }
   const current = s => s.units.find(u=>u.id===s.order[s.cursor]);
-  function routes(s) {
-    const u=current(s),budget=allowance(u.speed)-s.spent;
+  function routes(s,budget=allowance(current(s).speed)-s.spent) {
+    const u=current(s);
     const occupied=new Set(s.units.filter(v=>v!==u&&v.hp>0).flatMap(v=>footprint(v).map(key)));
     const queue=[{pos:u.pos,path:[]}],seen=new Map([[key(u.pos),[]]]);
     for(let i=0;i<queue.length;i++){
@@ -77,10 +85,25 @@
     const path=routes(s).get(key(p));if(!path?.length)return null;
     current(s).pos=path.at(-1);s.spent+=path.length;return path;
   }
+  const eligible = (u,v,sk) => v.hp>0&&(sk.heal?v.team===u.team&&v.hp<v.max:v.team!==u.team);
   function targets(s,id,at=current(s).pos) {
     const u=current(s),sk=skills[id];
     if(s.winner!==null||!u.kit.includes(id)||!sk)return [];
-    return s.units.filter(v=>v.hp>0&&(sk.heal?v.team===u.team&&v.hp<v.max:v.team!==u.team)&&separation(u,v,at)<=ranges[sk.range]);
+    return s.units.filter(v=>eligible(u,v,sk)&&separation(u,v,at)<=ranges[sk.range]);
+  }
+  function rangePreview(s,id) {
+    const u=current(s),sk=skills[id],radius=ranges[sk.range],origin=footprint(u);
+    const area=new Set(cells.filter(p=>distanceToCell(origin,p)<=radius).map(key));
+    const steps=new Map(),paths=routes(s,Infinity);
+    for(const v of s.units.filter(v=>eligible(u,v,sk))){
+      let minimum=Infinity;
+      for(const path of paths.values()){
+        // The breadth-first walk visits possible casting positions in increasing cost.
+        if(separation(u,v,path.at(-1)||u.pos)<=radius){minimum=path.length;break;}
+      }
+      steps.set(v,minimum);
+    }
+    return {area,steps};
   }
   function next(s) {
     if(s.winner!==null)return;
@@ -118,7 +141,7 @@
     }
     return best;
   }
-  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,create,current,routes,move,targets,act,next,plan};
+  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,create,current,routes,move,targets,rangePreview,act,next,plan};
 })();
 if(typeof module!=='undefined')module.exports=HexBattle;
 </script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp"};</script><script>(() => {
@@ -133,7 +156,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  const same=(a,b)=>H.key(a)===H.key(b);
  const where=p=>String.fromCharCode(65+H.column(p))+(p.r+1);
  const tiles=new Map(),sprites=new Map();
- let s,mode='walk',auto=false,busy=false,epoch=0,timer,paths=new Map(),valid=[],positions;
+ let s,mode='walk',auto=false,busy=false,epoch=0,timer,paths=new Map(),valid=[],positions,range;
  const sleep=ms=>new Promise(done=>setTimeout(done,ms));
  const spriteArt=id=>art[id]||'';
  function occupants(){const occ=new Map();for(const u of s.units)if(u.hp>0)for(const p of H.footprint(u))occ.set(H.key(p),u);return occ}
@@ -177,12 +200,25 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  function render(){
    const u=H.current(s),ended=s.winner!==null,manual=!ended&&!busy&&!auto&&u.team===0;
    paths=mode==='walk'&&manual?H.routes(s):new Map();valid=mode!=='walk'&&manual?H.targets(s,mode):[];positions=occupants();
+   range=manual&&mode!=='walk'?H.rangePreview(s,mode):null;
    for(const p of H.cells){
      const k=H.key(p),tile=tiles.get(k),v=positions.get(k),reachable=paths.get(k)?.length;
-     tile.setAttribute('class',['tile',reachable?'walk':'',v?(v.team?'foe':'ally'):'',v===u&&!ended?'active':'',valid.includes(v)?(H.skills[mode].heal?'target heal':'target'):''].join(' '));
-     tile.setAttribute('aria-label',where(p)+(v?' '+v.name+' HP '+v.hp+'/'+v.max:'')+(reachable?' เดิน '+reachable+' ช่อง':'')+(valid.includes(v)?' เลือกเป็นเป้าหมาย':''));
+     const covered=range?.area.has(k),steps=range?.steps.get(v);
+     tile.setAttribute('class',['tile',reachable?'walk':'',v?(v.team?'foe':'ally'):'',covered?'cast-range':'',v===u&&!ended?'active':'',valid.includes(v)?(H.skills[mode].heal?'target heal':'target'):''].join(' '));
+     tile.setAttribute('aria-label',where(p)+(v?' '+v.name+' HP '+v.hp+'/'+v.max:'')+(reachable?' เดิน '+reachable+' ช่อง':'')+(covered?' อยู่ในระยะสกิล':'')+(valid.includes(v)?' เลือกเป็นเป้าหมาย':steps>0?' '+stepLabel(steps):''));
    }
    drawActors();
+   $('gaps').replaceChildren();
+   if(range)for(const [v,steps] of range.steps){
+     if(!steps)continue;
+     const parts=H.footprint(v).map(mid);
+     const x=parts.reduce((sum,p)=>sum+p.x,0)/parts.length,y=parts.reduce((sum,p)=>sum+p.y,0)/parts.length+25;
+     const badge=svg('g',{class:'gap-badge',transform:'translate('+x+','+y+')'});
+     const text=svg('text',{'text-anchor':'middle',y:4});
+     text.textContent=Number.isFinite(steps)?'+'+steps:'×';
+     badge.append(svg('rect',{x:-14,y:-10,width:28,height:19,rx:6}),text);$('gaps').append(badge);
+   }
+   $('walkLegend').hidden=!!range;$('rangeLegend').hidden=!range;
    $('turn').textContent='รอบ '+s.round+' · '+(ended?'จบการต่อสู้':u.team?'ตาศัตรู':'ตาฝ่ายเรา');
    $('actor').textContent=ended?(s.winner===0?'ฝ่ายเราชนะ':'ฝ่ายศัตรูชนะ'):u.name;
    $('stats').textContent=ended?'':('HP '+u.hp+'/'+u.max+' · ความเร็ว '+u.speed+' · ขนาด '+u.size+' ช่อง');
@@ -200,6 +236,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
      const im=document.createElement('img');im.src=spriteArt(v.id);im.alt=im.title=v.name;$('queue').append(im);
    }
  }
+ function stepLabel(steps){return Number.isFinite(steps)?'ต้องเดินอีก '+steps+' ช่อง':'ยังไม่มีทางเดินเข้าระยะ'}
  function ready(){busy=false;mode='walk';render();schedule()}
  async function walk(at,version){
    const actor=H.current(s),path=H.routes(s).get(H.key(at));if(!path?.length)return;
@@ -222,6 +259,12 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  async function select(p){
    if(busy||auto||H.current(s).team||s.winner!==null)return;
    const id=mode,v=positions.get(H.key(p)),version=epoch;
+   const steps=range?.steps.get(v);
+   if(steps>0){
+     const u=H.current(s),left=H.allowance(u.speed)-s.spent;
+     $('hint').textContent=v.name+' · '+stepLabel(steps)+(Number.isFinite(steps)?' · ตานี้เดินได้อีก '+left+' ช่อง':'');
+     return;
+   }
    if(id==='walk'?!paths.get(H.key(p))?.length:!valid.includes(v))return;
    busy=true;render();
    if(id==='walk')await walk(p,version);else await cast(id,v,version);
