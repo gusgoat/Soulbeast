@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>สนามทดลองหกเหลี่ยม · Soulbeast</title>
+<style>
+:root{color-scheme:dark;font-family:Tahoma,"Leelawadee UI",sans-serif;color:#f9efdc;background:#0c1419}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#263c3c,transparent 75%),#0c1419}main{max-width:930px;margin:auto;padding:clamp(10px,2.4vw,26px)}header,.controls,.actor,.head,.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}header{justify-content:space-between;margin-bottom:12px}h1{font:700 clamp(20px,3.4vw,33px) Georgia,serif;margin:0;color:#ffe2a0}h2{font-size:18px;margin:0}button,select,summary{font:inherit;cursor:pointer}button,select{color:inherit;border:1px solid #5d6d6a;background:#1e3036;border-radius:7px;padding:9px 13px;font-weight:600}button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #ffcf73;outline-offset:2px}button[aria-pressed=true]{background:#285457;border-color:#85e5cf;color:#e0fff5}button:disabled{opacity:.48;cursor:default}.field{position:relative;background-size:cover;background-position:center;border:1px solid #937b4d;border-radius:14px 14px 0 0;overflow:hidden}.head{justify-content:space-between;padding:9px 14px;background:#101c23e6;color:#f0d6a0;font-size:13px}.head strong{color:white}.board{display:block;width:100%;max-height:54vh;min-height:195px;touch-action:manipulation}.tile{cursor:pointer;stroke:#eedaa887;stroke-width:1.3;fill:#131a2370}.tile.walk{fill:#189c8c6b;stroke:#bfefde}.tile.ally{fill:#2a648394;stroke:#97d9ff}.tile.foe{fill:#8b4b438f;stroke:#ffb7a5}.tile.active{stroke:#ffd36b;stroke-width:2.8}.tile.target{fill:#c86d30a6;stroke:#ffe3a3;stroke-width:3}.tile.heal{fill:#448342ba;stroke:#b6ffac}.tile.preview,.tile:focus-visible{stroke:white;stroke-width:3.4;outline:none}.sprite{pointer-events:none;transition:transform .2s ease-out}.sprite image{filter:drop-shadow(2px 4px 2px #0008)}.sprite text{font-weight:bold;paint-order:stroke;stroke:#0c1419;stroke-width:3;fill:white;text-anchor:middle;font-size:11px}.hit{animation:hit .34s ease-out}@keyframes hit{50%{opacity:.45}}.panel{border:1px solid #485555;border-top:0;background:linear-gradient(135deg,#203037,#142129);border-radius:0 0 14px 14px;padding:13px 16px}.actor{justify-content:space-between}.stats,.hint,.small{font-size:13px;color:#bad1ce}.hint{min-height:21px;margin:9px 0;color:#ffe2ac}.controls{gap:6px}.controls button small{display:block;font-weight:normal;font-size:11px;color:#dbdac8}.skills{display:contents}.tools{justify-content:space-between;margin:12px 0}.tools button,select{font-size:13px}.queue{display:flex;align-items:center;gap:5px}.queue img{background:#20303f;border:1px solid #778281;object-fit:contain;height:29px;width:29px;border-radius:5px}.queue img:first-child{border-color:#f5ca7c}.log{min-height:20px;color:#d3decf;margin:7px 0;font-size:13px}details{padding:10px 0;border-top:1px solid #465354;color:#cbdad3;font-size:13px}summary{color:#eddaa9}.guide{line-height:1.75;margin:8px 0 0}.legend{font-size:12px;color:#bad1ce}.legend b{color:#a3efd4}.legend i{color:#ffd58d;font-style:normal}
+@media(max-width:560px){main{padding:8px}.panel{padding:9px}.head{padding:6px 9px}.controls button{padding:7px 9px;min-height:42px;font-size:13px}.actor{gap:4px}.tools{margin:7px 0}.queue img{width:22px;height:22px}.legend{font-size:11px}}@media(prefers-reduced-motion:reduce){.sprite{transition:none}.hit{animation:none}}
+</style></head><body><main>
+<header><h1>สนามทดลองหกเหลี่ยม</h1><label>สนาม <select id="mode"><option value="normal">ปะทะ 3 ต่อ 3</option><option value="boss">ท้าบอสจอมมาร</option></select></label></header>
+<section class="field"><div class="head"><strong id="turn"></strong><span class="queue" id="queue" aria-label="ลำดับตา"></span></div><svg class="board" id="board" viewBox="0 0 610 358" role="group" aria-label="สนามรบหกเหลี่ยม"><g id="tiles"></g><g id="sprites" aria-hidden="true"></g></svg></section>
+<section class="panel"><div class="actor"><h2 id="actor"></h2><span class="stats" id="stats"></span></div><p class="hint" id="hint" aria-live="polite"></p>
+<div class="controls"><button id="walk">เดิน</button><span class="skills" id="skills"></span><button id="pass">จบตา</button></div></section>
+<div class="tools"><span class="legend"><b>▧</b> เดินได้　<i>◇</i> เป้าหมายที่เลือกได้</span><span><button id="auto" aria-pressed="false">ออโต้ทีม</button> <button id="reset">เริ่มใหม่</button></span></div>
+<p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ความเร็วต่ำกว่า 20 เดินได้ 1 ช่อง · 20–39 เดินได้ 2 ช่อง · 40–59 เดินได้ 3 ช่อง · 60 ขึ้นไปเดินได้ 4 ช่อง<br>เดินได้หลายจังหวะภายในจำนวนช่องที่เหลือ หรือยืนใช้สกิลได้ทันที เมื่อออกท่าหนึ่งครั้งจะจบตา<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่ยืน 3 ช่องเป็นสามเหลี่ยม บอสยืน 7 ช่อง คือช่องกลางและรอบตัวอีก 6 ช่อง ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
+</main><script>const HexBattle = (() => {
+  const cols = 8, rows = 5;
+  const dirs = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+  const ranges = {near:1, medium:3, far:5, extreme:7};
+  const rangeNames = {near:'ใกล้', medium:'กลาง', far:'ไกล', extreme:'ไกลมาก'};
+  const skills = {
+    slash:{name:'โจมตีปกติ', range:'near', power:37},
+    fang:{name:'เขี้ยวอัสนี', range:'near', power:40},
+    spark:{name:'ประจุไฟฟ้า', range:'medium', power:32},
+    bolt:{name:'สายฟ้าฟาด', range:'far', power:25},
+    gust:{name:'ลมภูต', range:'medium', power:31},
+    heal:{name:'ร่ายรำเยียวยา', range:'medium', power:27, heal:true, area:true},
+    moon:{name:'พลังจันทรา', range:'extreme', power:20},
+    blade:{name:'ใบมีดพฤกษา', range:'near', power:39},
+    seed:{name:'เมล็ดดูดพลัง', range:'medium', power:30},
+    claw:{name:'กรงเล็บเพลิง', range:'near', power:38},
+    flame:{name:'ลมหายใจเพลิง', range:'far', power:26},
+    solar:{name:'ลำแสงสุริยะ', range:'extreme', power:19}
+  };
+  const roster = [
+    ['swordsman-female','นักดาบ',0,1,32,135,1,1,['slash']],
+    ['raiju-deity','เทพอสูรสายฟ้า',0,3,72,120,2,3,['fang','spark','bolt']],
+    ['pixie','พิกซี่',0,1,43,95,0,2,['gust','moon','heal']],
+    ['redcap','เรดแคป',1,1,48,130,6,1,['slash']],
+    ['kodama','โคดามะ',1,1,18,102,7,2,['blade','seed','solar']],
+    ['phoenix','ฟีนิกซ์',1,3,60,128,5,3,['claw','flame']]
+  ];
+  const cell = (col,row) => ({q:col-Math.floor(row/2),r:row});
+  const column = p => p.q+Math.floor(p.r/2);
+  const key = p => p.q+','+p.r;
+  const cells = Array.from({length:cols*rows},(_,i)=>cell(i%cols,Math.floor(i/cols)));
+  const inside = p => p.r>=0&&p.r<rows&&column(p)>=0&&column(p)<cols;
+  const distance = (a,b) => (Math.abs(a.q-b.q)+Math.abs(a.r-b.r)+Math.abs(a.q+a.r-b.q-b.r))/2;
+  function footprint(u,p=u.pos) {
+    if(u.size===1)return [p];
+    if(u.size===7)return [p,...dirs.map(([dq,dr])=>({q:p.q+dq,r:p.r+dr}))];
+    const rear=u.team===0?-1:1;
+    return [p,{q:p.q+rear,r:p.r},{q:p.q+(rear===1?1:0),r:p.r-1}];
+  }
+  function separation(a,b,at=a.pos) {
+    return Math.min(...footprint(a,at).flatMap(p=>footprint(b).map(q=>distance(p,q))));
+  }
+  const allowance = speed => speed<20?1:speed<40?2:speed<60?3:4;
+  function create(mode='normal') {
+    const lineup=mode==='boss'?[...roster.filter(row=>row[2]===0),['demonlord','จอมมาร',1,7,40,360,6,2,['claw','flame','solar']]]:roster;
+    const units=lineup.map(([id,name,team,size,speed,max,col,row,kit])=>({id,name,team,size,speed,max,hp:max,pos:cell(col,row),kit}));
+    return {units,order:[...units].sort((a,b)=>b.speed-a.speed).map(u=>u.id),cursor:0,round:1,spent:0,winner:null};
+  }
+  const current = s => s.units.find(u=>u.id===s.order[s.cursor]);
+  function routes(s) {
+    const u=current(s),budget=allowance(u.speed)-s.spent;
+    const occupied=new Set(s.units.filter(v=>v!==u&&v.hp>0).flatMap(v=>footprint(v).map(key)));
+    const queue=[{pos:u.pos,path:[]}],seen=new Map([[key(u.pos),[]]]);
+    for(let i=0;i<queue.length;i++){
+      const step=queue[i];if(step.path.length>=budget)continue;
+      for(const [dq,dr] of dirs){
+        const pos={q:step.pos.q+dq,r:step.pos.r+dr},k=key(pos);
+        if(seen.has(k)||!footprint(u,pos).every(p=>inside(p)&&!occupied.has(key(p))))continue;
+        const path=[...step.path,pos];seen.set(k,path);queue.push({pos,path});
+      }
+    }
+    return seen;
+  }
+  function move(s,p) {
+    if(s.winner!==null)return null;
+    const path=routes(s).get(key(p));if(!path?.length)return null;
+    current(s).pos=path.at(-1);s.spent+=path.length;return path;
+  }
+  function targets(s,id,at=current(s).pos) {
+    const u=current(s),sk=skills[id];
+    if(s.winner!==null||!u.kit.includes(id)||!sk)return [];
+    return s.units.filter(v=>v.hp>0&&(sk.heal?v.team===u.team&&v.hp<v.max:v.team!==u.team)&&separation(u,v,at)<=ranges[sk.range]);
+  }
+  function next(s) {
+    if(s.winner!==null)return;
+    const team=current(s).team;
+    if(!s.units.some(u=>u.team!==team&&u.hp>0)){s.winner=team;return;}
+    do {
+      s.cursor=(s.cursor+1)%s.order.length;
+      if(s.cursor===0)s.round++;
+    }while(current(s).hp<=0);
+    s.spent=0;
+  }
+  function act(s,id,v) {
+    const valid=targets(s,id);
+    if(!valid.includes(v))return false;
+    const sk=skills[id];
+    for(const t of sk.area?valid:[v])t.hp=sk.heal?Math.min(t.max,t.hp+sk.power):Math.max(0,t.hp-sk.power);
+    next(s);return true;
+  }
+  function plan(s) {
+    const actor=current(s),enemies=s.units.filter(v=>v.team!==actor.team&&v.hp>0);
+    let best=null;
+    for(const path of routes(s).values()){
+      const at=path.at(-1)||actor.pos;
+      const near=Math.min(...enemies.map(v=>separation(actor,v,at)));
+      let pick={at,score:-100-near-path.length*.03};
+      for(const id of actor.kit){
+        const sk=skills[id],valid=targets(s,id,at);
+        for(const v of valid){
+          const value=sk.heal?valid.reduce((sum,t)=>sum+Math.min(t.max-t.hp,sk.power),0)*.8:sk.power+(v.hp<=sk.power?45:0)+(1-v.hp/v.max)*6;
+          const score=value-path.length*.1-near*.01;
+          if(score>pick.score)pick={at,id,v,score};
+        }
+      }
+      if(!best||pick.score>best.score)best=pick;
+    }
+    return best;
+  }
+  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,create,current,routes,move,targets,act,next,plan};
+})();
+if(typeof module!=='undefined')module.exports=HexBattle;
+</script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp"};</script><script>(() => {
+ const H=HexBattle,$=id=>document.getElementById(id);
+ const svg=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);return el};
+ const mid=p=>({x:43+(H.column(p)+(p.r%2)/2)*69.28,y:72+p.r*60});
+ const same=(a,b)=>H.key(a)===H.key(b);
+ const where=p=>String.fromCharCode(65+H.column(p))+(p.r+1);
+ const tiles=new Map(),sprites=new Map();
+ let s,mode='walk',auto=false,busy=false,epoch=0,timer,paths=new Map(),valid=[],positions;
+ const sleep=ms=>new Promise(done=>setTimeout(done,ms));
+ const spriteArt=id=>art[id]||'';
+ function occupants(){const occ=new Map();for(const u of s.units)if(u.hp>0)for(const p of H.footprint(u))occ.set(H.key(p),u);return occ}
+ function preview(p){
+   const actor=H.current(s);
+   for(const el of tiles.values())el.classList.remove('preview');
+   if(busy||mode!=='walk'||actor.team!==0||!paths.has(H.key(p)))return;
+   for(const part of H.footprint(actor,p))tiles.get(H.key(part))?.classList.add('preview');
+ }
+ for(const p of H.cells){
+   const center=mid(p),points=Array.from({length:6},(_,i)=>{const theta=(60*i-90)*Math.PI/180;return [center.x+40*Math.cos(theta),center.y+40*Math.sin(theta)].join(',')}).join(' ');
+   const tile=svg('polygon',{points,class:'tile',role:'button',tabindex:0});
+   tile.onclick=()=>select(p);tile.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(p)}};
+   tile.onpointerenter=()=>preview(p);tile.onfocus=()=>preview(p);
+   tile.onpointerleave=tile.onblur=()=>{for(const el of tiles.values())el.classList.remove('preview')};
+   tiles.set(H.key(p),tile);$('tiles').append(tile);
+ }
+ document.querySelector('.field').style.backgroundImage='linear-gradient(0deg,#14202960,#13202755),url("'+art.stage+'")';
+ function drawActors(){
+   const units=[...s.units].filter(u=>u.hp>0).sort((a,b)=>a.pos.r-b.pos.r);
+   for(const u of s.units)if(!u.hp)sprites.get(u.id)?.remove();
+   for(const u of units){
+     let g=sprites.get(u.id);
+     const width=u.size===7?147:u.size===3?105:61;
+     if(!g){
+       g=svg('g',{class:'sprite'});const im=svg('image',{href:spriteArt(u.id),x:-width/2,y:-width*.89,width,height:width,preserveAspectRatio:'xMidYMax meet'});
+       const bg=svg('rect',{x:-23,y:7,width:46,height:5,rx:2,fill:'#101921'});
+       const hp=svg('rect',{x:-22,y:8,height:3,rx:1,fill:u.team?'#fa897b':'#6cdcc2'});
+       g.append(im,bg,hp);sprites.set(u.id,g);
+     }
+     const parts=H.footprint(u).map(mid);
+     const x=parts.reduce((v,t)=>v+t.x,0)/u.size,y=parts.reduce((v,t)=>v+t.y,0)/u.size;
+     g.style.transform='translate('+x+'px,'+(y+4)+'px)';g.lastChild.setAttribute('width',44*u.hp/u.max);
+     $('sprites').append(g);
+   }
+ }
+ function render(){
+   const u=H.current(s),ended=s.winner!==null,manual=!ended&&!busy&&!auto&&u.team===0;
+   paths=mode==='walk'&&manual?H.routes(s):new Map();valid=mode!=='walk'&&manual?H.targets(s,mode):[];positions=occupants();
+   for(const p of H.cells){
+     const k=H.key(p),tile=tiles.get(k),v=positions.get(k),reachable=paths.get(k)?.length;
+     tile.setAttribute('class',['tile',reachable?'walk':'',v?(v.team?'foe':'ally'):'',v===u&&!ended?'active':'',valid.includes(v)?(H.skills[mode].heal?'target heal':'target'):''].join(' '));
+     tile.setAttribute('aria-label',where(p)+(v?' '+v.name+' HP '+v.hp+'/'+v.max:'')+(reachable?' เดิน '+reachable+' ช่อง':'')+(valid.includes(v)?' เลือกเป็นเป้าหมาย':''));
+   }
+   drawActors();
+   $('turn').textContent='รอบ '+s.round+' · '+(ended?'จบการต่อสู้':u.team?'ตาศัตรู':'ตาฝ่ายเรา');
+   $('actor').textContent=ended?(s.winner===0?'ฝ่ายเราชนะ':'ฝ่ายศัตรูชนะ'):u.name;
+   $('stats').textContent=ended?'':('HP '+u.hp+'/'+u.max+' · ความเร็ว '+u.speed+' · ขนาด '+u.size+' ช่อง');
+   $('hint').textContent=ended?'กดเริ่มใหม่เพื่อเล่นอีกครั้ง':busy?'กำลังออกคำสั่ง…':!manual?'กำลังเลือกคำสั่ง':mode==='walk'?(H.allowance(u.speed)>s.spent?'แตะช่องเพื่อเดิน หรือเลือกสกิลด้านล่าง':'เดินครบแล้ว เลือกสกิลหรือจบตา'):valid.length?'แตะช่องของเป้าหมายที่สว่างเพื่อใช้ '+H.skills[mode].name:'ยังไม่มีเป้าหมายที่ใช้ท่านี้ได้ ลองเดินหรือเลือกท่าอื่น';
+   $('walk').textContent='เดิน '+(H.allowance(u.speed)-s.spent)+'/'+H.allowance(u.speed);
+   $('walk').disabled=!manual;$('pass').disabled=!manual;$('walk').setAttribute('aria-pressed',String(mode==='walk'));
+   $('skills').replaceChildren();if(!ended)for(const id of u.kit){
+     const sk=H.skills[id],b=document.createElement('button');b.append(sk.name);
+     const sub=document.createElement('small');sub.textContent=H.rangeNames[sk.range]+' · '+H.ranges[sk.range]+' ช่อง'+(sk.area?' · หมู่':'');b.append(sub);
+     b.dataset.skill=id;b.setAttribute('aria-pressed',String(mode===id));b.disabled=!manual;b.onclick=()=>{mode=id;render()};$('skills').append(b);
+   }
+   $('auto').setAttribute('aria-pressed',String(auto));$('auto').disabled=ended;
+   $('queue').replaceChildren();if(!ended)for(let i=0;i<s.order.length;i++){
+     const v=s.units.find(v=>v.id===s.order[(s.cursor+i)%s.order.length]);if(!v.hp)continue;
+     const im=document.createElement('img');im.src=spriteArt(v.id);im.alt=im.title=v.name;$('queue').append(im);
+   }
+ }
+ function ready(){busy=false;mode='walk';render();schedule()}
+ async function walk(at,version){
+   const actor=H.current(s),path=H.routes(s).get(H.key(at));if(!path?.length)return;
+   for(const step of path){
+     if(version!==epoch)return;
+     if(!H.move(s,step))throw Error('ก้าวเดินไม่ถูกต้อง');
+     drawActors();await sleep(matchMedia('(prefers-reduced-motion: reduce)').matches?0:155);
+   }
+   if(version===epoch)$('log').textContent=actor.name+' เดิน '+path.length+' ช่อง ไป '+where(at);
+ }
+ async function cast(id,target,version){
+   const actor=H.current(s),sk=H.skills[id],affected=sk.area?H.targets(s,id):[target];
+   if(!H.targets(s,id).includes(target))return;
+   for(const v of affected)sprites.get(v.id)?.querySelector('image').classList.add('hit');
+   $('log').textContent=actor.name+' ใช้ '+sk.name+' → '+affected.map(v=>v.name).join('、')+' ('+(sk.heal?'+':'−')+sk.power+' HP)';
+   await sleep(360);if(version!==epoch)return;
+   for(const v of affected)sprites.get(v.id)?.querySelector('image').classList.remove('hit');
+   H.act(s,id,target);
+ }
+ async function select(p){
+   if(busy||auto||H.current(s).team||s.winner!==null)return;
+   const id=mode,v=positions.get(H.key(p)),version=epoch;
+   if(id==='walk'?!paths.get(H.key(p))?.length:!valid.includes(v))return;
+   busy=true;render();
+   if(id==='walk')await walk(p,version);else await cast(id,v,version);
+   if(version===epoch)ready();
+ }
+ function schedule(){
+   clearTimeout(timer);if(s.winner!==null||busy||(!auto&&!H.current(s).team))return;
+   const version=epoch;
+   timer=setTimeout(async()=>{
+     const actor=H.current(s),choice=H.plan(s);busy=true;render();
+     if(!same(actor.pos,choice.at))await walk(choice.at,version);
+     if(version!==epoch)return;
+     if(choice.id)await cast(choice.id,choice.v,version);else H.next(s);
+     if(version===epoch)ready();
+   },550);
+ }
+ function reset(){epoch++;clearTimeout(timer);busy=false;auto=false;s=H.create($('mode').value);mode='walk';sprites.clear();$('sprites').replaceChildren();$('log').textContent='';render();schedule()}
+ $('walk').onclick=()=>{mode='walk';render()};
+ $('pass').onclick=()=>{if(!busy&&!auto&&!H.current(s).team&&s.winner===null){$('log').textContent=H.current(s).name+' จบตา';H.next(s);ready()}};
+ $('auto').onclick=()=>{auto=!auto;render();schedule()};
+ $('reset').onclick=reset;$('mode').onchange=reset;reset();
+})();
+</script></body></html>
