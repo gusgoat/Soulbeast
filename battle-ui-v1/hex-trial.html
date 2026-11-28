@@ -305,7 +305,1010 @@
   return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,bonusAllowance,effectiveSpeed,movementBudget,create,placeObstacles,canDeploy,loadFormation,current,routes,move,targets,aimCells,areaPreview,rangePreview,act,next,plan};
 })();
 if(typeof module!=='undefined')module.exports=HexBattle;
-</script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "fxSlam": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/7adfbe1cbcfdbedffe2950a42c31f944bd583bb83d99da661f1b1319096177e4/assets/vfx/projectiles/v3/slam.png.webp", "fxBlade": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/34841f526d939cac8315d8dbf1641d65ad70861f482fb2f6f6da9a9f0a646ab3/assets/vfx/projectiles/v3/crescent.png.webp", "fxWind": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/87a9302bdd3dd4be4c3213327e84d23d6ea2cea5d85e68fd997451618c5b0764/assets/skill-grand-png-v1/wind-impact.png", "fxFire": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/151334b02506edbe87ee537d3c553e55c13fa362893d69a402c9678aaadd3c17/assets/skill-grand-png-v1/fireball-impact.png", "fxBomb": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0cd350d6ce7682c47904758ef4d4e6817207bc95fb4d4a662f2407771d6e0b88/assets/signature-motifs-v1/bomb.webp", "fxArrow": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/076645c5c7d7e05904f37d691a6808dd35ec8c341c13c93a76f65652651b22a8/assets/skill-vfx-v1/arrow.webp", "fxHit": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/089cbf45a4ace02fbf429da00d4f0f95eb3ddae03eed249843e0cdcb6b039bc8/assets/skill-grand-png-v1/bullet-impact.png", "fxBanner": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/06931be46d97c401d8a86e2e88e638781e813169df860cc70b1ad5a3d5312f70/assets/signature-motifs-v1/banner.webp", "fxShield": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/94fc7dd398fb14b27bb9ba8d1e6e9805b2d84b8d453878ce5410b7a2923f48bc/assets/skill-grand-png-v1/shield.png", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp", "throneStage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a5db897b3cdf3870d136013821d6cd0d730ea5a7964cb030efb73e89adeadda0.webp", "terrainAtlas": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/hex-trial--painted-obstacles--300f58f3123ec771.webp"};</script><script>(() => {
+</script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "fxSlam": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/7adfbe1cbcfdbedffe2950a42c31f944bd583bb83d99da661f1b1319096177e4/assets/vfx/projectiles/v3/slam.png.webp", "fxBlade": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/34841f526d939cac8315d8dbf1641d65ad70861f482fb2f6f6da9a9f0a646ab3/assets/vfx/projectiles/v3/crescent.png.webp", "fxWind": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/87a9302bdd3dd4be4c3213327e84d23d6ea2cea5d85e68fd997451618c5b0764/assets/skill-grand-png-v1/wind-impact.png", "fxFire": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/151334b02506edbe87ee537d3c553e55c13fa362893d69a402c9678aaadd3c17/assets/skill-grand-png-v1/fireball-impact.png", "fxBomb": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0cd350d6ce7682c47904758ef4d4e6817207bc95fb4d4a662f2407771d6e0b88/assets/signature-motifs-v1/bomb.webp", "fxArrow": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/076645c5c7d7e05904f37d691a6808dd35ec8c341c13c93a76f65652651b22a8/assets/skill-vfx-v1/arrow.webp", "fxHit": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/089cbf45a4ace02fbf429da00d4f0f95eb3ddae03eed249843e0cdcb6b039bc8/assets/skill-grand-png-v1/bullet-impact.png", "fxBanner": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/06931be46d97c401d8a86e2e88e638781e813169df860cc70b1ad5a3d5312f70/assets/signature-motifs-v1/banner.webp", "fxShield": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/94fc7dd398fb14b27bb9ba8d1e6e9805b2d84b8d453878ce5410b7a2923f48bc/assets/skill-grand-png-v1/shield.png", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp", "throneStage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a5db897b3cdf3870d136013821d6cd0d730ea5a7964cb030efb73e89adeadda0.webp", "terrainAtlas": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/hex-trial--painted-obstacles--300f58f3123ec771.webp", "assets/roster/kodama-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9525a37ce2e19e171c6c4195ecd17135ca35d4d696f798ef83ae1e0514801038/assets/roster/kodama-melee.webp", "assets/roster/demonlord-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/524dd196c9b43429c8ec0c4db066f1b43b319a9c46d0eed37d1fbd6a7b3dca7f/assets/roster/demonlord-ranged.webp", "assets/roster/pixie-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/94b94813aa6c251b1fe2c97935266a41f59b8b91317a5ac3870d681edf734bb9/assets/roster/pixie-ranged.webp", "assets/signature-portraits-v9/at_grenade-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/e51988c2acf70cf29aa5e26c5bd5d5597d93cbfd2e55f7562f6a4b5f3e3cf487/assets/signature-portraits-v9/at_grenade-female.png", "assets/signature-portraits-v9/at_grenade-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/89c0fc43ef5024d8ab1870013b6a61197aec6d5803ffebe8dca6bf997d76e3fb/assets/signature-portraits-v9/at_grenade-male.png", "assets/roster/pixie-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ef3dda830aef76081b20ee704c0e11ea982c72ff2fb7c7d5944f0f4976269fd1/assets/roster/pixie-melee.webp", "assets/roster/demonlord-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a0ac314473c6581b0c59df9cb80fe1f6ebbc5e88372d2753d81155dfbcbd0022/assets/roster/demonlord-windup.webp", "assets/melee-contact-png-v1/phoenix-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/1e99f8d86a98c79f0f626392bab6ac701194eb6313e2edff17d043827af21de2/assets/melee-contact-png-v1/phoenix-meleeEffect.png", "assets/roster/phoenix-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/cb861ac4915ad42f2dcc40561e1479a6b8a9cc92f127c5f1a359790bf58399da/assets/roster/phoenix-melee.webp", "assets/melee-contact-png-v1/swordsman-female-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/901990d3a96e8bc1b7d6ead0b10196542797e0fa32af4efb45cbca906c1171f9/assets/melee-contact-png-v1/swordsman-female-meleeEffect.png", "assets/roster/kodama-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c65e8509b544273e51030619e79325f063a88f7bbae1b319a142f97ca072108b/assets/roster/kodama-ranged.webp", "assets/signature-portraits-v9/sh_army-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/6a140e487dcb382ffaee75be26deff9726fea3b8875afb025647c54eb4a57ba5/assets/signature-portraits-v9/sh_army-male.png", "assets/roster/phoenix-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/28f17e72bdb21e4e4cc4b987946c21f3d2d77e9d608176e134447ddd54eebd71/assets/roster/phoenix-ranged.webp", "assets/signature-portraits-v9/sw_whirl-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/44e20453c9acb4303d757ab439cf1c45a56253eba06f0f3043905f6d0e779e70/assets/signature-portraits-v9/sw_whirl-female.png", "assets/skill-grand-png-v1/flamethrower-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/02d4ae31045db9c4eef0f9fa4d41fdd42b85fc485ce5f1ff29ee1d5ae52305cd/assets/skill-grand-png-v1/flamethrower-impact.png", "assets/skill-grand-png-v1/bullet-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/089cbf45a4ace02fbf429da00d4f0f95eb3ddae03eed249843e0cdcb6b039bc8/assets/skill-grand-png-v1/bullet-impact.png", "assets/roster/redcap-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c4421a3fb8993a08b70a4ce91532afb221f57d920ad454d2cb9a89ce3cb27be5/assets/roster/redcap-ranged.webp", "assets/signature-motifs-v1/bomb.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0cd350d6ce7682c47904758ef4d4e6817207bc95fb4d4a662f2407771d6e0b88/assets/signature-motifs-v1/bomb.webp", "assets/roster/raiju-deity-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0f6b397db30a761e35cfc4e94b3625ca32958ea36026f4b57fa2a4be780ead5f/assets/roster/raiju-deity-melee.webp", "assets/roster/kodama-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9d22e41454031fda116e4719272b7eab74294731f4c9d8ddcf79d866d3f8aebb/assets/roster/kodama-windup.webp", "assets/skill-grand-png-v1/arcane-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ded2c274eb61364a7942964eadf34dfc8a01314cf210541fd9a15e46bc53a7ad/assets/skill-grand-png-v1/arcane-impact.png", "assets/signature-motifs-v1/banner.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/06931be46d97c401d8a86e2e88e638781e813169df860cc70b1ad5a3d5312f70/assets/signature-motifs-v1/banner.webp", "assets/melee-contact-png-v1/pixie-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/de35d9a7ae537c60d8bbd8898a7f286896313c76ef6acbf5ee243adb61c0fae1/assets/melee-contact-png-v1/pixie-meleeEffect.png", "assets/roster/raiju-deity-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/7fe539225747f9e603452aac5e5982b5d3aabece7cdfe09fa0ffc23d89538d83/assets/roster/raiju-deity-ranged.webp", "assets/vfx/projectiles/v3/melee.png.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/2679ccb4e7ca9fb07c7a3b7b8814d078f86cd43a2dfa4780535e314a75801d69/assets/vfx/projectiles/v3/melee.png.webp", "assets/skill-grand-png-v1/earth-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/358bd61f5b125fef2795c90bef2bc4fc08852f4ed5917801e771989b261c5cfb/assets/skill-grand-png-v1/earth-impact.png", "assets/roster/raiju-deity-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4517b96c191cd6666c00cd5b0fc3f7564b20e95079789e9fca1ce2a8c1b6e738/assets/roster/raiju-deity-windup.webp", "assets/skill-grand-png-v1/fireball-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/151334b02506edbe87ee537d3c553e55c13fa362893d69a402c9678aaadd3c17/assets/skill-grand-png-v1/fireball-impact.png", "assets/vfx/projectiles/v4/fire-high.png.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/6d4763991625ea3fa9933ca82ec541c89ab42f1b5f9f9e821361f6b1b43c37f8/assets/vfx/projectiles/v4/fire-high.png.webp", "assets/signature-portraits-v9/sw_whirl-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/277de83003698a306bf83b0221d9eb5c0c374644fd25da36ff4363899599c000/assets/signature-portraits-v9/sw_whirl-male.png", "assets/skill-vfx-v1/arrow.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/076645c5c7d7e05904f37d691a6808dd35ec8c341c13c93a76f65652651b22a8/assets/skill-vfx-v1/arrow.webp", "assets/tier-eight-v1/legendary-wave.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4a2bc651e1a3774728184e75a36d452ef691c30238b765f4008c8b08824efa2c/assets/tier-eight-v1/legendary-wave.png", "assets/melee-contact-png-v1/raiju-deity-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/fddb409ef323d27e14f62688748ce04e53cfd32a6ee1380a4ccfe7055ca85454/assets/melee-contact-png-v1/raiju-deity-meleeEffect.png", "assets/roster/pixie-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/991fe9f575febe8c59e6c14e96b1e632fa72226f16977a956e6d396fffabd4d3/assets/roster/pixie-windup.webp", "assets/roster/swordsman-female-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c7db28c8d5b9ffd9c9462d0af42ad4fa965c9902beaac4c3b2d1a38050c965a/assets/roster/swordsman-female-melee.webp", "assets/roster/redcap-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/65870d2beb0d62f6147770a9c92ac3a599d676b607835efc0ff884ade8794928/assets/roster/redcap-windup.webp", "assets/melee-contact-png-v1/kodama-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/1f4b515893248b32ef228755b83a7f876499007e357eb101a12239c255d493ad/assets/melee-contact-png-v1/kodama-meleeEffect.png", "assets/skill-grand-png-v1/wind-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/87a9302bdd3dd4be4c3213327e84d23d6ea2cea5d85e68fd997451618c5b0764/assets/skill-grand-png-v1/wind-impact.png", "assets/roster/swordsman-female-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4a1de937f5dc2f1201b1f1c50055258d8193475f582ca047e6e40fbbceba2986/assets/roster/swordsman-female-windup.webp", "assets/roster/swordsman-female-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4019a9d590b8d4f25f8263ec8d808466a14c9a1ce6275bb905c3c6e0e4db1f37/assets/roster/swordsman-female-ranged.webp", "assets/roster/phoenix-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/49fb51169bd7204d88109e7c9a006a9a1a9236072a4b98a7d0ca133634c5640c/assets/roster/phoenix-windup.webp", "assets/roster/demonlord-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ba0c0cafb230eeb63a628c3281b8b8016b88105098f5940465d9b82d7951e636/assets/roster/demonlord-melee.webp", "assets/roster/redcap-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/2abdbc104561c22a43cb8315cb738cbcdeae9825225c76c7dc674ae42cb76eee/assets/roster/redcap-melee.webp", "assets/signature-portraits-v9/sh_army-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/08a0a0484b5b975b56c2c3afc6354d77088e1b164a1cb5c93d219cc658901d79/assets/signature-portraits-v9/sh_army-female.png", "assets/tier-eight-v1/storm.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/faa6924f7834cdb6d0380b0fe693941f6c9be9ed155918eff2648ea6302828e8/assets/tier-eight-v1/storm.png", "assets/melee-contact-png-v1/demonlord-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/63fb78927bcaa5e76a3c57efac7b6e7024454b32810f15096d18a64d0cf90dd1/assets/melee-contact-png-v1/demonlord-meleeEffect.png", "assets/melee-contact-png-v1/redcap-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0f914bcc6dd04785dcbb2512e2d473b00379d30e301274be735227969f0c136e/assets/melee-contact-png-v1/redcap-meleeEffect.png"};</script><script>const HexOriginal=(()=>{
+const m0=(()=>{function edgeGradient(direction,start,end,unit='%'){
+ const outer=1;
+ return `linear-gradient(${direction},transparent 0${unit},transparent ${outer}${unit},black ${start}${unit},black calc(100% - ${end}${unit}),transparent calc(100% - ${outer}${unit}),transparent 100%)`;
+}
+const boundsCache=new Map(),maskCache=new Map();
+function paintedBounds(image){
+ const key=image.currentSrc||image.src;if(boundsCache.has(key)){image.dataset.edgeAlphaRead='clean';return boundsCache.get(key);}
+ let bounds=[0,0,1,1];
+ try{const canvas=document.createElement('canvas');canvas.width=96;canvas.height=96;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0,96,96);const data=ctx.getImageData(0,0,96,96).data;let l=96,t=96,r=0,b=0;for(let y=0;y<96;y++)for(let x=0;x<96;x++)if(data[(y*96+x)*4+3]>8){l=Math.min(l,x);t=Math.min(t,y);r=Math.max(r,x+1);b=Math.max(b,y+1)}if(r>l&&b>t)bounds=[l/96,t/96,r/96,b/96];image.dataset.edgeAlphaRead='clean';}catch{image.dataset.edgeAlphaRead='unavailable';return bounds;}
+ if(boundsCache.size>=128)boundsCache.delete(boundsCache.keys().next().value);boundsCache.set(key,bounds);return bounds;
+}
+function intrinsicMask(image,options){
+ const {horizontal,top,bottom,shape,contentBounds}=options,bounds=contentBounds?paintedBounds(image):[0,0,1,1],key=[image.naturalWidth,image.naturalHeight,horizontal,top,bottom,shape,...bounds].join(':');
+ if(maskCache.has(key))return maskCache.get(key);
+ const stops=(start,end)=>`<stop stop-color="white" offset="0" stop-opacity="0"/><stop stop-color="white" offset="1%" stop-opacity="0"/><stop stop-color="white" offset="${start}%"/><stop stop-color="white" offset="${100-end}%"/><stop stop-color="white" offset="99%" stop-opacity="0"/><stop stop-color="white" offset="100%" stop-opacity="0"/>`;
+ const [l,t,r,b]=bounds,box=`x="${l*100}" y="${t*100}" width="${(r-l)*100}" height="${(b-t)*100}"`;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${image.naturalWidth}" height="${image.naturalHeight}" viewBox="0 0 100 100" preserveAspectRatio="none"><defs><linearGradient id="x" stop-color="white">${stops(horizontal,horizontal)}</linearGradient><linearGradient id="y" x2="0" y2="1" stop-color="white">${stops(top,bottom)}</linearGradient><radialGradient id="halo" stop-color="white"><stop stop-color="white" offset="0"/><stop stop-color="white" offset="62%"/><stop stop-color="white" offset="98%" stop-opacity="0"/></radialGradient><mask id="vertical" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect ${box} fill="url(#y)"/></mask></defs><rect ${box} fill="url(#${shape==='energy'?'halo':'x'})"${shape==='energy'?'':' mask="url(#vertical)"'}/></svg>`;
+ const url=`url("data:image/svg+xml,${encodeURIComponent(svg)}")`;if(maskCache.size>=256)maskCache.delete(maskCache.keys().next().value);maskCache.set(key,url);return url;
+}
+function softenVfxEdges(node,{horizontal=7,top=7,bottom=10,shape='rect',contentBounds=true}={}){
+ Object.assign(node.style,{maskImage:edgeGradient('to right',horizontal,horizontal)+','+edgeGradient('to bottom',top,bottom),maskComposite:'intersect',maskRepeat:'no-repeat',maskSize:'100% 100%'});
+ node.dataset.edgeBlend='image';
+ if(node.tagName==='IMG'){
+  const source=new URL(node.currentSrc||node.src,document.baseURI);if(/^https?:$/.test(source.protocol)&&source.origin!==location.origin)node.crossOrigin='anonymous';
+  // An intrinsic-ratio mask follows object-fit and later resizes without stale pixel dimensions.
+  const fit=()=>{if(!node.isConnected||!node.naturalWidth)return;Object.assign(node.style,{maskImage:intrinsicMask(node,{horizontal,top,bottom,shape,contentBounds}),maskSize:getComputedStyle(node).objectFit==='contain'?'contain':'100% 100%',maskPosition:'center',maskMode:'alpha'});node.dataset.edgeShape=shape;node.dataset.edgeBounds=contentBounds?'painted':'image';};
+  node.addEventListener('load',fit);if(node.complete)queueMicrotask(fit);
+ }
+}
+function softenAreaEdges(node,bounds){
+ // Keep the footprint of the shared burst centred on the team and let its halo dissipate beyond the outer targets.
+ node.style.maskImage=`radial-gradient(ellipse ${bounds.width*.85}px ${bounds.height*.85}px at ${bounds.x}px ${bounds.y}px, black 58%, transparent 100%)`;
+ node.dataset.edgeBlend='area';
+}
+
+return {softenVfxEdges,softenAreaEdges};})();
+const m1=(()=>{// Flow and silhouette are authored from the named skill and its reviewed icon recipe.
+// These are short-lived ribbons of light, never outlined symbols or inventory props.
+function strokeEnergy(ctx,spread,haloColor){
+ const width=ctx.lineWidth,alpha=ctx.globalAlpha,color=ctx.strokeStyle;
+ ctx.strokeStyle=haloColor;ctx.lineWidth=width+spread;ctx.globalAlpha=alpha*.13;ctx.stroke();
+ ctx.strokeStyle=color;ctx.lineWidth=width;ctx.globalAlpha=alpha;ctx.stroke();
+}
+function drawSkillIdentity(ctx,v,t,size,cx,cy,power,phase){
+ const identity=v.identity;if(!identity)return;
+ const s=v.spectacle||{intensity:.3,pulses:1},strength=Math.min(1,s.intensity),impact=phase==='impact',cast=phase==='cast',flow=identity.flow,form=identity.form,rot=identity.rotation,spread=identity.spread;
+ const primary=v.palette[0],bright=v.palette[1],alpha=Math.min(.42,power*(.1+strength*.16)),r=size*(cast?.32:.46)*spread;
+ const ribbon=(points,width=1,opacity=1,color=primary)=>{ctx.save();ctx.globalAlpha=Math.min(.62,alpha*opacity);ctx.strokeStyle=color;ctx.lineWidth=Math.min(form==='blade'||form==='claw'?4:2.4,width);ctx.lineCap='round';ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));strokeEnergy(ctx,3+strength*4,color);ctx.restore()};
+ const spark=(x,y,radius,color=bright)=>{radius=Math.min(3.5,radius);ctx.save();ctx.globalAlpha=alpha*.9;ctx.fillStyle=color;ctx.globalAlpha=alpha*.12;ctx.beginPath();ctx.ellipse(x,y,radius*.55+2,radius+2,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=alpha*.9;ctx.beginPath();ctx.ellipse(x,y,radius*.55,radius,0,0,Math.PI*2);ctx.fill();ctx.restore()};
+ ctx.save();ctx.globalCompositeOperation='lighter';
+ const lanes=cast?2:s.halo?4:strength>.5?3:2;
+ for(let i=0;i<lanes;i++){
+  const offset=i/lanes,q=(t*identity.tempo+offset)%1,theta=rot+i*Math.PI*2/lanes,points=[];
+  for(let j=0;j<14;j++){
+   const u=j/13,trail=q-u*.2;if(trail<0)continue;let x,y;
+   if(['orbit','spiral','spin'].includes(flow)){const a=theta+trail*Math.PI*(flow==='spiral'?4:2),rad=r*(cast?1-trail*.65:.3+trail*.55);x=Math.cos(a)*rad;y=Math.sin(a)*rad*.65;}
+   else if(['rain','barrage'].includes(flow)){x=(i-(lanes-1)/2)*r*.48+Math.sin(theta)*r*.18;y=-r+trail*r*2;}
+   else if(['cross','sweep'].includes(flow)){x=-r+trail*r*2;y=(i-(lanes-1)/2)*r*.23-Math.sin(trail*Math.PI)*r*.35;const a=rot*.3,px=x;x=px*Math.cos(a)-y*Math.sin(a);y=px*Math.sin(a)+y*Math.cos(a);}
+   else if(['converge','drain'].includes(flow)){const rad=r*(1-trail*.9);x=Math.cos(theta+trail)*rad;y=Math.sin(theta+trail)*rad;}
+   else if(['thrust','jet'].includes(flow)){x=-r+trail*r*2;y=Math.sin(theta+trail*5)*r*.15;}
+   else if(['rise','bloom'].includes(flow)||cast){x=Math.sin(theta+trail*3)*r*.5;y=r*.5-trail*r*1.7;}
+   else {x=Math.cos(theta)*r*trail;y=Math.sin(theta)*r*trail-trail*trail*r*.15;}
+   points.push([cx+x,cy+y]);
+  }
+  if(points.length>1)ribbon(points,size*(.009+strength*.008),1-i*.1,i%2?primary:bright);
+ }
+ // A recognisable energy silhouette supplements the elemental particles.
+ if(impact||cast&&s.halo){
+  if(form==='wing')for(const side of [-1,1])for(let k=0;k<(s.halo?5:3);k++){
+   const points=[];for(let j=0;j<16;j++){const u=j/15,a=u*1.8+.2;points.push([cx+side*r*Math.sin(a)*(.55+k*.1),cy-r*(.15+u*.65)+Math.sin(u*4+t*4)*r*.09+k*r*.06])}ribbon(points,size*.016,.8-k*.08);
+  }
+  else if(['fang','claw','paw','blade','horn','antler'].includes(form))for(let i=0;i<(form==='fang'?2:form==='blade'?s.pulses:3);i++){
+   const q=Math.max(0,Math.min(1,(t-i*.055)*2.3)),points=[];for(let j=0;j<16;j++){const u=j/15;points.push([cx-r*.75+u*r*1.5+i*r*.12,cy+r*.65-u*r*1.4-Math.sin(u*Math.PI)*r*.27+(1-q)*r*.5])}ribbon(points,size*(.02+strength*.014),Math.sin(q*Math.PI)*1.8,bright);
+  }
+  else if(['root','tentacle','web','thread'].includes(form))for(let i=0;i<lanes+1;i++){
+   const points=[],a=rot+i*6.28/(lanes+1);for(let j=0;j<18;j++){const u=j/17,rad=r*(1-u*.85),theta=a+Math.sin(u*4+t*5)*.4;points.push([cx+Math.cos(theta)*rad,cy+Math.sin(theta)*rad])}ribbon(points,size*.012,.7);
+  }
+  else if(['flower','heart','crown','sun','moon','clock','harp','coin','eye','skull'].includes(form))for(let i=0;i<lanes*3;i++){
+   const a=rot+i*6.28/(lanes*3)+t*.4,rad=r*(form==='moon'?.65:.4+t*.3);spark(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad*(form==='crown'?.38:.75),size*.015,i%3?primary:bright);
+  }
+ }
+ if(impact&&(s.pulses>1||s.halo))for(let i=0;i<s.pulses;i++){
+  const q=(t-i*.16)/(.85-i*.12);if(q<=0||q>=1)continue;
+  ctx.save();ctx.translate(cx,cy+size*.21);ctx.scale(1,.32);ctx.globalAlpha=power*(1-q)*(.1+strength*.1);ctx.strokeStyle=i%2?bright:primary;ctx.lineWidth=size*(.018+strength*.012);ctx.beginPath();ctx.arc(0,0,size*(.12+q*.51),.1,Math.PI*2-.15);strokeEnergy(ctx,8,primary);ctx.restore();
+ }
+ ctx.restore();
+}
+
+return {drawSkillIdentity};})();
+const m2=(()=>{const {softenVfxEdges}=m0;
+// One shared frame loop. Procedural particles sit around the painted energy body.
+// All positions are deterministic; this renderer never consumes combat randomness.
+const {drawSkillIdentity}=m1;
+const jobs=new Set();let frame=0;
+const clamp=n=>Math.max(0,Math.min(1,n));
+const noise=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const mix=(a,b,t)=>a+(b-a)*t;
+function particleFamily(v){
+ if(/ควัน|smoke/.test(v.id+' '+v.name))return 'smoke';
+ if(v.role==='support')return ['heal','revive','rest'].includes(v.archetype)?'healing':v.archetype==='omni'?'omni':'aura';
+ if(v.archetype==='foxFire')return 'spiritFire';
+ if(v.archetype==='whirl')return 'wind';
+ if(['meteor','explosion','bombard','cannon','coinBomb'].includes(v.archetype))return 'fire';
+ if(v.archetype==='sonic')return 'sound';
+ return ({fire:'fire',electric:'electric',ice:'ice',water:'water',poison:'poison',ground:'dust',rock:'dust',grass:'leaves',flying:'wind',ghost:'spirit',dark:'shadow',psychic:'arcane',fairy:'aura',dragon:'arcane'}[v.element])||(['slash','doubleSlash','crescent','flameSlash','drawSlash','claw','cleave','bladeRain'].includes(v.archetype)?'slash':'sparks');
+}
+function tick(now){
+ frame=0;
+ for(const job of jobs){
+  job.elapsed+=Math.max(0,now-job.last)*Math.max(.1,job.rate());job.last=now;
+  if(job.elapsed>=job.duration){job.dispose();continue}
+  if(now<(job.nextPaint??0)-.5)continue;
+  const interval=1000/30;
+  const due=job.nextPaint??now;
+  job.nextPaint=due+Math.max(1,Math.floor((now-due)/interval)+1)*interval;job.draw(job.elapsed/job.duration);
+ }
+ if(jobs.size)frame=requestAnimationFrame(tick);
+}
+const flameStamps=new Map();
+function paintFlameParticle(ctx,r,hot,edge,alpha){
+ let stamp=flameStamps.get(edge);
+ if(!stamp){
+  stamp=document.createElement('canvas');stamp.width=64;stamp.height=96;
+  const brush=stamp.getContext('2d');
+  brush.setTransform(24,0,0,24,32,60);
+  const gradient=brush.createLinearGradient(0,1,0,-2.4);
+  gradient.addColorStop(0,hot);gradient.addColorStop(.45,edge);gradient.addColorStop(1,edge+'00');
+  brush.fillStyle=gradient;brush.beginPath();brush.moveTo(0,-2.4);
+  brush.bezierCurveTo(.2,-.5,1.1,.4,0,1.2);
+  brush.bezierCurveTo(-.9,.4,-.3,-.8,0,-2.4);brush.fill();
+  flameStamps.set(edge,stamp);
+ }
+ ctx.globalAlpha=alpha;ctx.drawImage(stamp,-32*r/24,-60*r/24,64*r/24,96*r/24);
+}
+const particleGlowStamps=new Map();
+function glow(ctx,x,y,r,color,alpha){
+ if(r<=0||alpha<=0)return;
+ let stamp=particleGlowStamps.get(color);
+ if(!stamp){
+  stamp=document.createElement('canvas');stamp.width=stamp.height=64;
+  const brush=stamp.getContext('2d'),g=brush.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,color);g.addColorStop(.22,color+'c0');g.addColorStop(1,color+'00');
+  brush.fillStyle=g;brush.fillRect(0,0,64,64);
+  if(particleGlowStamps.size>=64)particleGlowStamps.delete(particleGlowStamps.keys().next().value);
+  particleGlowStamps.set(color,stamp);
+ }
+ ctx.globalAlpha=alpha;ctx.drawImage(stamp,x-r,y-r,r*2,r*2);
+}
+function puff(ctx,x,y,r,color,alpha){ctx.globalCompositeOperation='source-over';glow(ctx,x,y,r,color,alpha);}
+function addSkillParticles(owner,v,phase,duration,rate,{delay=0,beam=false,angle=0,distance=0,size=60}={}){
+ if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return null;
+ const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');if(!ctx)return null;
+ const family=particleFamily(v),mobile=globalThis.innerWidth<620,dpr=Math.min(mobile?1:1.5,globalThis.devicePixelRatio||1),width=beam?Math.max(size,distance):size*1.65,height=size*1.65;
+ canvas.className='battle-skill-particles';canvas.dataset.particleFamily=family;canvas.dataset.phase=phase;canvas.dataset.visualKind=beam?'beam':'bolt';canvas.setAttribute('aria-hidden','true');canvas.width=Math.ceil(width*dpr);canvas.height=Math.ceil(height*dpr);
+ Object.assign(canvas.style,{position:'absolute',pointerEvents:'none',left:'50%',top:'50%',width:width+'px',height:height+'px',transform:beam?`translate(0,-50%) rotate(${angle}deg) scaleY(${Math.cos(angle*Math.PI/180)<-1e-6?-1:1})`:'translate(-50%,-50%)',transformOrigin:beam?'0 50%':'50% 50%'});
+ softenVfxEdges(canvas,{horizontal:6,top:6,bottom:8});owner.root.append(canvas);let disposed=false;
+ const strength=v.spectacle?.intensity??.3,seed=v.identity?.seed??[...v.id].reduce((a,c)=>a+c.charCodeAt(0),0),count=Math.min(mobile?24:32,Math.round((v.spectacle?.particles||22)*(mobile?.5:.7))),primary=v.palette[0],bright=v.palette[1],cast=phase==='cast',travel=phase==='travel';
+ Object.assign(canvas.dataset,{identity:v.identity?.key||v.id,rank:String(v.spectacle?.rank||1),flow:v.identity?.flow||'burst',form:v.identity?.form||'plume'});
+ const job={last:performance.now(),elapsed:-delay,duration,rate,dispose(){if(disposed)return;disposed=true;jobs.delete(job);canvas.remove();if(!jobs.size&&frame){cancelAnimationFrame(frame);frame=0}},draw(t){
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);if(t<0)return;canvas.dataset.frame=String(Math.round(t*100));
+  // Beams reveal energy from the muzzle, in step with their primary image.
+  ctx.save();if(beam){ctx.beginPath();ctx.rect(0,0,width*clamp(t/.56),height);ctx.clip()}
+  const cx=width*.5,cy=height*.5,unit=size,fade=clamp(t/.12)*clamp((1-t)/.3),power=(cast?.45:travel?.65:1)*fade*(.7+strength*.5);
+  ctx.globalCompositeOperation='lighter';
+  if(!['smoke','dust','slash','sparks'].includes(family))glow(ctx,cx,cy,unit*(beam?.36:.43),primary,power*.12);
+  const heading=angle*Math.PI/180,wakeX=travel&&!beam?-Math.cos(heading)*unit*.55:0,wakeY=travel&&!beam?-Math.sin(heading)*unit*.55:0;
+  const point=(i,progress)=>{const a=noise(seed+i*11)*Math.PI*2,r=unit*(cast?.14:travel?.16:.08+progress*.48);return [cx+Math.cos(a)*r+wakeX*progress,cy+Math.sin(a)*r+wakeY*progress]};
+  if(['fire','spiritFire','smoke','dust','poison','ice'].includes(family)){
+   // Smoke and cold mist disperse behind the luminous particles.
+   const smokeOnly=family==='smoke',cold=family==='ice',dust=family==='dust',color=cold?'#b9d9e7':family==='poison'?'#718b4f':dust?'#9b8975':'#777582';
+   for(let i=0;i<(smokeOnly?(mobile?7:9):mobile?4:6);i++){const q=clamp((t-i*.035)/(1-i*.035)),a=noise(seed+i*7)*6.28,x=(beam?width*(.25+noise(i)*.7):cx)+Math.cos(a)*unit*q*.48,y=cy-unit*q*(cold?.18:.5)+Math.sin(a)*unit*.13;
+    puff(ctx,x,y,unit*(smokeOnly?.16+q*.35:.1+q*.22),color,power*(smokeOnly?.65:cold?.13:.14)*Math.sin(q*Math.PI));}
+  }
+  ctx.globalCompositeOperation='lighter';
+  if(family==='electric'){
+   const step=Math.floor(t*(20+strength*10)),bolts=cast?2:Math.min(mobile?5:8,Math.round(2+strength*6));
+   for(let i=0;i<bolts;i++){const theta=noise(seed+i*17+step*2)*6.28,rad=unit*(travel?.34:.5),sx=beam?width*noise(i+step*.1):cx,sy=cy,points=[[sx,sy]];
+    for(let j=1;j<6;j++){const q=j/5,w=(noise(seed+i*23+j*7+step)-.5)*unit*.24;points.push([beam?sx+q*unit*.5:sx+Math.cos(theta)*rad*q+w,sy+Math.sin(theta)*rad*q+w]);}
+    for(const [line,alpha]of [[3,.12],[1,.8]]){ctx.beginPath();points.forEach(([x,y],j)=>j?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.strokeStyle=line===1?bright:primary;ctx.lineWidth=line;ctx.globalAlpha=power*alpha;ctx.stroke();}
+    const [bx,by]=points[3];ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+unit*.13,by-unit*.1);ctx.lineTo(bx+unit*.09,by-unit*.25);ctx.strokeStyle=primary;ctx.lineWidth=.7;ctx.globalAlpha=power*.65;ctx.stroke();
+   }
+  }else if(['fire','spiritFire'].includes(family)){
+   const cool=family==='spiritFire',hot=cool?'#c6f2ff':'#fff0af',edge=cool?'#5aa9ff':'#ff6925';
+   for(let i=0;i<count;i++){const life=(t*1.7+noise(seed+i*3))%1,base=beam?width*(.1+noise(i)*.86):cx+(noise(i+seed)-.5)*unit*.55,x=base+Math.sin(life*5+i)*unit*.07+wakeX*life,y=cy+unit*.18-life*unit*(travel?.23:.62)+wakeY*life,r=unit*(.065*(1-life)+.012),alpha=power*Math.sin(life*Math.PI);
+    glow(ctx,x,y,r*1.8,edge,alpha*.35);
+    ctx.save();ctx.translate(x,y);ctx.rotate(Math.sin(life*6+i)*.22);paintFlameParticle(ctx,r,hot,edge,alpha*.8);ctx.restore();
+    glow(ctx,x,y+r*.3,r*.5,hot,alpha*.55);
+   }
+  }else if(family!=='smoke')for(let i=0;i<count;i++){
+   const life=travel||cast?(t+noise(seed+i))%1:clamp((t-noise(i+seed)*.12)/.88),a=noise(seed+i*11)*6.28,[px,py]=point(i,life),x=beam?width*(.1+noise(i)*.85):px,y=py+(family==='ice'?unit*life*life*.2:family==='healing'?-unit*life*.35:0),alpha=power*Math.sin(life*Math.PI),r=unit*(.012+noise(i*7)*.018);
+   ctx.globalAlpha=alpha;ctx.fillStyle=i%3?primary:bright;
+   if(family==='ice'){
+    ctx.save();ctx.translate(x,y);ctx.rotate(a+life*2);ctx.beginPath();ctx.moveTo(0,-r*2.5);ctx.lineTo(r*.7,0);ctx.lineTo(0,r*1.6);ctx.lineTo(-r*.7,0);ctx.closePath();ctx.fill();ctx.strokeStyle='#efffff';ctx.lineWidth=.5;ctx.stroke();ctx.restore();
+   }else if(family==='water'){
+    ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.beginPath();ctx.ellipse(0,0,r*.65,r*1.6,0,0,6.28);ctx.fill();ctx.restore();
+   }else if(family==='leaves'){
+    ctx.save();ctx.translate(x,y);ctx.rotate(a+life*3);ctx.beginPath();ctx.ellipse(0,0,r*.6,r*1.8,0,0,6.28);ctx.fill();ctx.restore();
+   }else if(['sparks','dust','slash'].includes(family)){
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-Math.cos(a)*r*3,y-Math.sin(a)*r*3);ctx.strokeStyle=i%3?primary:bright;ctx.lineWidth=.8;ctx.stroke();
+   }else{glow(ctx,x,y,r*2.5,family==='omni'?['#ff9b5a','#7ad9ff','#a8ec91','#e9d18c'][i%4]:primary,alpha*.5);}
+  }
+  if(['water','wind','sound','slash'].includes(family)){
+   // Broad, soft energy sweeps instead of outlined symbols or wire rings.
+   for(let i=0;i<(family==='slash'?2:3);i++){ctx.save();ctx.translate(cx,cy);ctx.rotate(family==='slash'?-.65+i*.3:t*.4+i*.45);ctx.scale(1,family==='water'?.38:family==='sound'?.65:.52);ctx.beginPath();const r=unit*(.16+t*.3+i*.06);ctx.arc(0,0,r,family==='slash'?3.2:.15,family==='slash'?5.8:2.8);ctx.strokeStyle=i%2?bright:primary;ctx.lineWidth=family==='slash'?unit*.035:unit*.018;ctx.globalAlpha=power*.3;ctx.shadowColor=primary;ctx.shadowBlur=5;ctx.stroke();ctx.restore();}
+  }
+  drawSkillIdentity(ctx,v,t,unit,cx,cy,power,phase);
+  ctx.restore();ctx.globalAlpha=1;
+ }};
+ const prior=owner.onClear;owner.onClear=()=>{prior?.();job.dispose()};jobs.add(job);job.draw(0);if(!frame)frame=requestAnimationFrame(tick);return canvas;
+}
+function particleRendererStats(){return {active:jobs.size,scheduled:!!frame};}
+function registerOwnedCanvas(owner,canvas,duration,rate,draw){
+ softenVfxEdges(canvas,{horizontal:6,top:6,bottom:8});
+ let disposed=false;const job={last:performance.now(),elapsed:0,duration,rate,draw,dispose(){if(disposed)return;disposed=true;jobs.delete(job);canvas.remove();if(!jobs.size&&frame){cancelAnimationFrame(frame);frame=0}}};
+ const prior=owner.onClear;owner.onClear=()=>{prior?.();job.dispose()};jobs.add(job);draw(0);if(!frame)frame=requestAnimationFrame(tick);return job;
+}
+
+return {particleFamily,addSkillParticles,particleRendererStats,registerOwnedCanvas};})();
+const m3=(()=>{const {registerOwnedCanvas}=m2;
+function combatOutcomeKind(event,visual){
+ if(!visual||visual.role==='support'||event.blocked||event.immune||event.motionLanded===false)return null;
+ if(event.k==='miss'||event.miss)return 'dodge';
+ return event.k==='hit'&&event.crit&&visual.role==='damage'?'critical':null;
+}
+function sourceMirrored(source,target){
+ let sign=1;
+ for(let n=source;n;n=n.parentElement){const css=getComputedStyle(n),m=new DOMMatrix(css.transform==='none'?undefined:css.transform),scale=css.scale==='none'?[1,1]:css.scale.split(' ').map(Number);sign*=m.a*m.d-m.b*m.c;sign*=scale[0]*(scale[1]??scale[0]);if(n===target)break;}
+ return sign<0;
+}
+function addCombatOutcome(owner,kind,at,visual,rate){
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,size=parseFloat(owner.root.style.width),duration=kind==='critical'?620:680,dpr=Math.min(1.5,devicePixelRatio||1),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');if(!ctx)return;
+ canvas.className='battle-combat-outcome';canvas.dataset.outcome=kind;if(kind==='critical'){canvas.dataset.palette='red';canvas.dataset.bloodCount='7';}canvas.width=Math.ceil(size*dpr);canvas.height=Math.ceil(size*1.35*dpr);canvas.setAttribute('aria-hidden','true');Object.assign(canvas.style,{position:'absolute',left:'50%',top:'50%',width:size+'px',height:size*1.35+'px',transform:'translate(-50%,-50%)',pointerEvents:'none'});owner.root.append(canvas);owner.root.dataset.outcome=kind;owner.root.style.zIndex='9';
+ const direction=visual.caster?.facing==='left'?-1:1,source=at.node?.querySelector?.('.battle-animation-canvas')||at.node?.querySelector?.('.card-picture'),seed=visual.identity?.seed||1;
+ const mirror=kind==='dodge'&&source?sourceMirrored(source,at.node):false;canvas.dataset.sourceMirrored=String(mirror);
+ const box=kind==='dodge'?source?.getBoundingClientRect():null,nativeWidth=source?.naturalWidth||source?.width||1,nativeHeight=source?.naturalHeight||source?.height||1,fit=box?Math.min(box.width/nativeWidth,box.height/nativeHeight,size*.88/nativeWidth,size*1.2/nativeHeight):0,ghostWidth=nativeWidth*fit,ghostHeight=nativeHeight*fit;
+ const draw=t=>{
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,size,size*1.35);const x=size/2,y=size*.675,fade=Math.min(1,t/.08)*Math.max(0,1-t),ease=1-(1-t)**3;
+  if(kind==='critical'){
+   ctx.globalCompositeOperation='lighter';const r=size*(.12+.28*ease),glow=ctx.createRadialGradient(x,y,0,x,y,r);glow.addColorStop(0,'rgba(255,180,180,'+fade+')');glow.addColorStop(.25,'rgba(255,45,60,'+fade*.65+')');glow.addColorStop(1,'rgba(190,5,30,0)');ctx.fillStyle=glow;ctx.fillRect(x-r,y-r,r*2,r*2);
+   for(let i=0;i<14;i++){const a=i*Math.PI/7+(seed%17)*.02,inner=size*(.05+.12*ease),outer=size*(.2+.25*ease)*(i%2?.75:1);ctx.beginPath();ctx.moveTo(x+Math.cos(a)*inner,y+Math.sin(a)*inner);ctx.lineTo(x+Math.cos(a)*outer,y+Math.sin(a)*outer);ctx.strokeStyle=i%2?'#f52340':'#ff8c96';ctx.globalAlpha=fade;ctx.lineWidth=i%2?1.3:2.2;ctx.stroke()}
+   ctx.globalAlpha=fade*.75;ctx.strokeStyle='#ff3654';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(x,y,size*.38*ease,size*.24*ease,-.35,0,Math.PI*2);ctx.stroke();
+   // A few small, short-lived droplets follow the blow; no persistent blood decal.
+   ctx.globalCompositeOperation='source-over';
+   for(let i=0;i<7;i++){
+    const jitter=Math.sin(seed*1.7+i*12.31)*.5+.5,q=Math.max(0,Math.min(1,(t-i*.012)/.82)),speed=.13+jitter*.15,a=(i-3)*.36-.3;
+    const px=x+direction*Math.cos(a)*size*speed*q,py=y+Math.sin(a)*size*speed*q-size*.11*q+size*.16*q*q,r=Math.max(.9,size*(.007+jitter*.006))*(1-q*.4);
+    ctx.globalAlpha=Math.min(1,q*16)*Math.max(0,1-q)*.8;ctx.fillStyle=i%2?'#b4162d':'#7c1023';ctx.save();ctx.translate(px,py);ctx.rotate(direction*a+.35+q*.7);ctx.beginPath();ctx.ellipse(0,0,r*(1.25+q),r,0,0,Math.PI*2);ctx.fill();ctx.restore();
+   }
+
+  }else{
+   ctx.globalCompositeOperation='source-over';
+   if(source&&(source.tagName==='CANVAS'||source.complete&&source.naturalWidth))for(let i=1;i<=2;i++){const h=ghostHeight,w=ghostWidth;ctx.globalAlpha=fade*(.15-i*.035);ctx.save();ctx.translate(x-direction*size*.12*i,y-h*.52);ctx.scale(mirror?-1:1,1);try{ctx.drawImage(source,-w/2,0,w,h)}catch{}ctx.restore();}
+   ctx.globalCompositeOperation='lighter';for(let i=0;i<4;i++){const shift=direction*size*(.02+ease*.24),yy=y-size*.25+i*size*.16;ctx.globalAlpha=fade*(.65-i*.08);ctx.strokeStyle=i%2?'#d9f8ff':'#82d7f3';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x-direction*size*.32+shift,yy+8);ctx.quadraticCurveTo(x+shift,yy-12,x+direction*size*.28+shift,yy);ctx.stroke()}
+  }ctx.globalAlpha=1;
+ };
+ if(reduced)draw(.25);else registerOwnedCanvas(owner,canvas,duration,rate,draw);
+ return duration;
+}
+
+return {combatOutcomeKind,addCombatOutcome};})();
+const m4=(()=>{const skillVisualProfiles={"fighting_aoe": {"name": "\u0e40\u0e15\u0e30\u0e01\u0e27\u0e32\u0e14", "icon": "assets/pvp-skills/fighting_aoe.webp", "type": "p", "element": "fighting", "archetype": "slam", "role": "damage", "palette": ["#efb57c", "#fff1c2"], "iconColor": "#c29e5b", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e40\u0e15\u0e30\u0e01\u0e27\u0e32\u0e14", "paintedIconReviewed": true}, "identity": {"key": "fighting_aoe", "seed": 3673913873, "flow": "burst", "form": "plume", "motifs": ["flare"], "rotation": 1.9722220547535922, "spread": 0.98, "tempo": 1.0899999999999999, "accent": "#c29e5b"}, "progression": {"mp": 10, "unlockLevel": null, "levelSource": null, "signature": null, "owner": null, "classId": null, "species": null, "rarity": "normal"}, "spectacle": {"intensity": 0.5889, "rank": 3, "previousRank": 2, "reason": "mp-level-band", "pulses": 2, "particles": 28, "halo": false, "trail": 1.032815041375656}}, "sw_whirl": {"name": "\u0e14\u0e32\u0e1a\u0e27\u0e32\u0e22\u0e38\u0e2b\u0e21\u0e38\u0e19", "icon": "assets/pvp-skills/sw_whirl.webp", "type": "p", "element": "flying", "archetype": "whirl", "role": "damage", "palette": ["#9cdaff", "#eafdff"], "iconColor": "#244265", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e14\u0e32\u0e1a\u0e27\u0e32\u0e22\u0e38\u0e2b\u0e21\u0e38\u0e19", "paintedIconReviewed": true}, "identity": {"key": "sw_whirl", "seed": 3431672576, "flow": "orbit", "form": "blade", "motifs": ["blade", "gust", "blade"], "rotation": 5.1661745859032155, "spread": 0.86, "tempo": 0.98, "accent": "#244265"}, "progression": {"mp": 9, "unlockLevel": 22, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e19\u0e31\u0e01\u0e14\u0e32\u0e1a"}, "owner": "\u0e19\u0e31\u0e01\u0e14\u0e32\u0e1a", "classId": "swordsman", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4141, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.5691368424055543}}, "at_grenade": {"name": "\u0e23\u0e30\u0e40\u0e1a\u0e34\u0e14\u0e21\u0e37\u0e2d", "icon": "assets/pvp-skills/at_grenade.webp", "type": "p", "element": "fire", "archetype": "explosion", "role": "damage", "palette": ["#ff8238", "#fff0b4"], "iconColor": "#872c10", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e23\u0e30\u0e40\u0e1a\u0e34\u0e14\u0e21\u0e37\u0e2d", "paintedIconReviewed": true}, "identity": {"key": "at_grenade", "seed": 3498100991, "flow": "dive", "form": "plume", "motifs": ["bomb", "spark", "cloud"], "rotation": 1.239183768915974, "spread": 0.89, "tempo": 1.13, "accent": "#872c10"}, "progression": {"mp": 10, "unlockLevel": 25, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e1e\u0e25\u0e1b\u0e37\u0e19\u0e43\u0e2b\u0e0d\u0e48"}, "owner": "\u0e1e\u0e25\u0e1b\u0e37\u0e19\u0e43\u0e2b\u0e0d\u0e48", "classId": "artillery", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4155, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.570080666375656}}, "ar_rain": {"name": "\u0e1d\u0e19\u0e18\u0e19\u0e39", "icon": "assets/pvp-skills/ar_rain.webp", "type": "p", "element": "normal", "archetype": "arrowRain", "role": "damage", "palette": ["#d4d7e1", "#fff5d8"], "iconColor": "#b88e6c", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e1d\u0e19\u0e18\u0e19\u0e39", "paintedIconReviewed": true}, "identity": {"key": "ar_rain", "seed": 3663522914, "flow": "rain", "form": "plume", "motifs": ["spark"], "rotation": 3.385938748868999, "spread": 0.91, "tempo": 0.98, "accent": "#b88e6c"}, "progression": {"mp": 9, "unlockLevel": 12, "levelSource": "class / additional / milestone skill table", "signature": null, "owner": "\u0e19\u0e31\u0e01\u0e18\u0e19\u0e39", "classId": "archer", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 0.4714, "rank": 2, "previousRank": 2, "reason": "mp-level-band", "pulses": 2, "particles": 24, "halo": false, "trail": 0.9564305924055544}}, "sh_army": {"name": "\u0e1a\u0e31\u0e0d\u0e0a\u0e32\u0e17\u0e31\u0e1e\u0e0b\u0e32\u0e21\u0e39\u0e44\u0e23", "icon": "assets/pvp-skills/sh_army.webp", "type": "buff", "element": "normal", "archetype": "empower", "role": "support", "palette": ["#122452", "#fff0ca"], "iconColor": "#122452", "tier": 2, "area": false, "hits": 1, "evidence": {"name": "\u0e1a\u0e31\u0e0d\u0e0a\u0e32\u0e17\u0e31\u0e1e\u0e0b\u0e32\u0e21\u0e39\u0e44\u0e23", "paintedIconReviewed": true}, "identity": {"key": "sh_army", "seed": 2439085489, "flow": "rise", "form": "plume", "motifs": ["banner", "banner", "shield"], "rotation": 2.949606435870417, "spread": 0.77, "tempo": 0.98, "accent": "#122452"}, "progression": {"mp": 14, "unlockLevel": 40, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e42\u0e0a\u0e01\u0e38\u0e19"}, "owner": "\u0e42\u0e0a\u0e01\u0e38\u0e19", "classId": "shogun", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4217, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.5741215139787728}}};
+return {skillVisualProfiles};})();
+const m5=(()=>{// Contact art is a separate asset role from travel art. Never resolve an impact
+// to a projectile, bottle, arrow, bullet, weapon or signature inventory motif.
+const contactImages={
+ fireball:'assets/skill-impacts-v1/fireball-impact.webp',
+ flameSpread:'assets/skill-impacts-v1/flamethrower-impact.webp',
+ electric:'assets/skill-impacts-v1/lightning-impact.webp',
+ acid:'assets/skill-impacts-v1/acid-impact.webp',
+ bullet:'assets/skill-impacts-v1/bullet-impact.webp',
+ water:'assets/skill-impacts-v1/water-impact.webp',
+ arcane:'assets/skill-impacts-v1/arcane-impact.webp',
+ ice:'assets/skill-impacts-v1/ice-impact.webp',
+ wind:'assets/skill-impacts-v1/wind-impact.webp',
+ nature:'assets/skill-impacts-v1/nature-impact.webp',
+ music:'assets/skill-impacts-v1/music-impact.webp',
+ meteor:'assets/vfx/projectiles/v3/impact.png.webp',
+ earth:'assets/vfx/projectiles/v3/slam.png.webp',
+};
+const palettes={fire:['#ffe2a2','#ff682a'],electric:['#e6ffff','#67c9ff'],acid:['#e2ff9d','#72cd32'],water:['#d9fcff','#439fe8'],ice:['#eaffff','#6accf1'],wind:['#e1ffff','#90d9dc'],nature:['#e8ffbd','#85ca49'],music:['#fff1d2','#d7a1f1'],bullet:['#fff0ca','#ffb56d'],earth:['#dfceb7','#b49671'],arcane:['#ead8ff','#ad74ef']};
+function contactProfile(p,sk={},kind='hit'){
+ if(!['hit','debuff'].includes(kind))return null;
+ const name=p.id+' '+(sk.n||''),el=sk.el;let family='arcane',tint='none';
+ if(/acid|กรด/.test(name))family='acid';
+ else if(p.id==='mg_fire'||p.id==='fire_m1')family='fireball';
+ else if(/music|song|sound|note|melody|sonic|เพลง|ดนตรี|เสียง|โน้ต|normal_m1/.test(name)||p.theme==='music')family='music';
+ else if(/meteor|อุกกาบาต|เมเทออร์/.test(name)||p.painted?.kind==='meteor')family='meteor';
+ else if(/bomb|grenade|cannon|ระเบิด|ปืนใหญ่/.test(name)&&!['water','ice','psychic','poison','dark','ghost'].includes(el))family='fireball';
+ else if(el==='fire'||p.theme==='blast')family=p.painted?.kind==='beam'||/breath|ลมหายใจ|พ่น|ทะเลเพลิง/.test(name)?'flameSpread':'fireball';
+ else if(el==='electric'||p.theme==='thunder')family='electric';
+ else if(el==='water'||p.theme==='tide')family='water';
+ else if(el==='ice')family='ice';
+ else if(el==='grass'||p.theme==='vines')family='nature';
+ else if(el==='flying')family='wind';
+ else if(['ground','rock'].includes(el))family='earth';
+ else if(el==='poison'||p.theme==='venom')family='acid';
+ else if(['arrow','bullet','shuriken'].includes(p.projectile)||p.theme==='volley')family='bullet';
+ else if(p.mode==='melee')family='earth';
+ if(family==='arcane')tint=el==='ghost'?'hue-rotate(125deg)':el==='dark'?'saturate(1.25) brightness(.8)':el==='fairy'?'sepia(.55) saturate(.75) hue-rotate(320deg)':el==='dragon'?'hue-rotate(305deg) saturate(1.3)':el==='normal'?'saturate(.15)':el==='fighting'?'hue-rotate(295deg)':el==='bug'?'hue-rotate(90deg)':el==='steel'?'grayscale(.8)':'none';
+ const colorFamily=['fireball','flameSpread','meteor'].includes(family)?'fire':family;
+ const [color,glow]=palettes[colorFamily]||palettes.arcane;
+ return {family,path:contactImages[family],tint,color,glow,duration:family==='bullet'?380:family==='electric'?480:family==='flameSpread'?760:650,wide:family==='flameSpread'};
+}
+function renderContact(vfx,L,to,p,recipe,resolve){
+ if(!L||![to.x,to.y].every(Number.isFinite))return;
+ const reduced=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ const size=p.area?125:Math.min(132,Math.max(recipe.family==='bullet'?56:86,(to.size||44)*(recipe.family==='bullet'?1.4:2)));
+ const width=size*(recipe.wide?1.3:1),height=size*(recipe.wide?1.08:1);
+ const root=document.createElement('div');root.className='battle-fx-owned battle-contact-impact';root.dataset.skill=p.id;root.dataset.impactFamily=recipe.family;root.dataset.assetRole='impact';root.setAttribute('aria-hidden','true');
+ Object.assign(root.style,{position:'absolute',left:to.x+'px',top:to.y+'px',width:width+'px',height:height+'px',transform:'translate(-50%,-50%)',pointerEvents:'none',zIndex:6});
+ const image=document.createElement('img');image.className='battle-contact-image';image.dataset.assetRole='impact';image.dataset.impactFamily=recipe.family;image.src=resolve(recipe.path);image.alt='';image.draggable=false;
+ Object.assign(image.style,{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'contain',filter:recipe.tint+' drop-shadow(0 0 3px '+recipe.glow+')'});
+ // Even a failed contact image falls back to another contact bitmap, not a shot.
+ image.onerror=()=>{if(image.dataset.fallback)return;image.dataset.fallback='true';image.src=resolve(contactImages.arcane);};root.append(image);L.append(root);
+ const animations=[];let disposed=false;
+ const clear=()=>{if(disposed)return;disposed=true;animations.forEach(a=>a.cancel());root.remove();vfx.live.delete(clear)};vfx.live.add(clear);
+ const animate=(node,frames,duration,delay=0)=>{const a=node.animate?.(frames,{duration,delay,fill:'both',easing:'ease-out'});if(a){a.playbackRate=vfx.animationRate();animations.push(a)}return a};
+ if(!reduced){
+  const expanding=recipe.family==='flameSpread';
+  animate(image,[{transform:'scale(.28)',opacity:0},{transform:'scale('+(expanding?.88:1)+')',opacity:1,offset:recipe.family==='electric'?.12:.2},{transform:'scale('+(expanding?1.15:1.08)+')',opacity:.86,offset:.55},{transform:'scale('+(expanding?1.28:1.35)+')',opacity:0}],recipe.duration);
+  const count=window.innerWidth<620?8:12;
+  for(let i=0;i<count;i++){
+   const angle=(expanding?(-170+i*160/(count-1)):i*360/count+p.seed%31)*Math.PI/180,liquid=['water','acid'].includes(recipe.family),fire=['fireball','flameSpread','meteor'].includes(recipe.family),electric=recipe.family==='electric';
+   const particle=document.createElement('i');particle.className='battle-contact-particle';particle.dataset.kind=liquid?'droplet':fire?'ember':electric?'spark':'mote';
+   const start=expanding?size*.2:size*.12,dx=Math.cos(angle)*size*(.35+i%3*.08),dy=Math.sin(angle)*size*(.35+i%3*.08)-(expanding?size*.12:0);
+   Object.assign(particle.style,{position:'absolute',left:width/2+Math.cos(angle)*start+'px',top:height/2+Math.sin(angle)*start+'px',width:(liquid?4:electric?2:3)+'px',height:(fire?8:electric?9:liquid?6:3)+'px',borderRadius:fire?'85% 8% 65% 35%':liquid?'65% 45% 60% 60%':'50%',background:recipe.color,boxShadow:'0 0 3px '+recipe.glow,pointerEvents:'none'});
+   if(recipe.family==='ice')particle.style.clipPath='polygon(50% 0,100% 60%,50% 100%,0 50%)';root.append(particle);
+   animate(particle,[{transform:'translate(-50%,-50%) scale(.3)',opacity:0},{opacity:.9,offset:.15},{transform:'translate('+dx+'px,'+dy+'px) rotate('+(i*37)+'deg) scale(.25)',opacity:0}],recipe.duration*.85,i%3*18);
+  }
+ }
+ vfx.later(clear,recipe.duration+80);return root;
+}
+
+return {contactImages,contactProfile,renderContact};})();
+const m6=(()=>{const signatureMotifImages={"blade": art["assets/vfx/projectiles/v3/melee.png.webp"], "bomb": art["assets/signature-motifs-v1/bomb.webp"], "banner": art["assets/signature-motifs-v1/banner.webp"]};
+return {signatureMotifImages};})();
+const m7=(()=>{function skillPresentation(v,actorSize=44,mobile=false){
+ const strength=v.spectacle?.intensity??.3,signature=!!v.progression?.signature,small=['slash','doubleSlash','claw','bite','pierce','bullet','arrow','precision'].includes(v.archetype);
+ const rank=v.spectacle?.rank||1,extra=Math.max(0,rank-5);
+ return {castSize:Math.round(((signature?72:40)+strength*25)*1.4+extra*10),castDuration:[0,360,400,460,520,680,850,1050,1250][rank],shotSize:Math.round((38+strength*38)*1.35+extra*8),impactSize:Math.round(Math.min(mobile?(signature?228:196)+extra*24:(signature?278:228)+extra*44,(actorSize*(small?1.08:1.4)*(.75+strength*.65)+strength*35+(v.area?8:0))*(signature?1.65:1.55)+extra*14)),duration:[0,820,950,1100,1250,1450,1850,2350,3000][rank],pulses:v.spectacle?.pulses||1};
+}
+function previewSpectacle(rank,current={}){
+ rank=Math.max(1,Math.min(8,Number(rank)||1));return {...current,rank,intensity:[0,.34,.46,.58,.70,.96,1.16,1.4,1.68][rank],pulses:[0,1,2,2,3,3,4,4,5][rank],particles:[0,20,24,28,32,36,42,48,56][rank],halo:rank>=5,reason:'preview-only'};
+}
+
+return {skillPresentation,previewSpectacle};})();
+const m8=(()=>{const classWeapons={"swordsman":"sword","samurai":"sword","kensei":"sword","shogun":"sword","spellblade":"sword","sbsummon":"sword","sbwar":"sword","gladiator":"axe","paladin":"axe","templar":"axe","eternal":"axe","berserker":"axe","warlord":"axe","bloodwar":"axe","archer":"bow","ranger":"bow","sniper":"bow","wildlord":"bow","bard":"bow","maestro":"bow","dirge":"bow","mage":"staff","sage":"staff","archmage":"staff","elementalist":"staff","warlock":"staff","necro":"staff","enchanter":"staff","merchant":"mace","blacksmith":"mace","mastersmith":"mace","mechanic":"mace","alchemist":"mace","biochem":"mace","goldalch":"mace","gunner":"gun","marksman":"gun","gunsaint":"gun","bounty":"gun","artillery":"gun","cannoneer":"gun","demolisher":"gun","druid":"staff","feral":"staff","wildgod":"staff","packlord":"staff","grove":"staff","archdruid":"staff","stormcaller":"staff","thief":"dagger","rogue":"dagger","masterthief":"dagger","trickster":"dagger","assassin":"dagger","ninja":"dagger","ronin":"dagger","summoner":"whip","tamer":"whip","beastking":"whip","sealmaster":"whip","soullink":"whip","soulsage":"whip","spiritlord":"whip"};
+const equipmentWeapons={"wp_sword0":"sword","wp_sword1":"sword","wp_sword2":"sword","wp_sword3":"sword","wp_sword4":"sword","wp_sword5":"sword","wp_axe0":"axe","wp_axe1":"axe","wp_axe2":"axe","wp_axe3":"axe","wp_axe4":"axe","wp_axe5":"axe","wp_bow0":"bow","wp_bow1":"bow","wp_bow2":"bow","wp_bow3":"bow","wp_bow4":"bow","wp_bow5":"bow","wp_staff0":"staff","wp_staff1":"staff","wp_staff2":"staff","wp_staff3":"staff","wp_staff4":"staff","wp_staff5":"staff","wp_mace0":"mace","wp_mace1":"mace","wp_mace2":"mace","wp_mace3":"mace","wp_mace4":"mace","wp_mace5":"mace","wp_gun0":"gun","wp_gun1":"gun","wp_gun2":"gun","wp_gun3":"gun","wp_gun4":"gun","wp_gun5":"gun","wp_dagger0":"dagger","wp_dagger1":"dagger","wp_dagger2":"dagger","wp_dagger3":"dagger","wp_dagger4":"dagger","wp_dagger5":"dagger","wp_whip0":"whip","wp_whip1":"whip","wp_whip2":"whip","wp_whip3":"whip","wp_whip4":"whip","wp_whip5":"whip","lg1_weapon_sword":"sword","lg1_weapon_axe":"axe","lg1_weapon_bow":"bow","lg1_weapon_staff":"staff","lg1_weapon_mace":"mace","lg1_weapon_gun":"gun","lg1_weapon_dagger":"dagger","lg1_weapon_whip":"whip","lg2_weapon_sword":"sword","lg2_weapon_axe":"axe","lg2_weapon_bow":"bow","lg2_weapon_staff":"staff","lg2_weapon_mace":"mace","lg2_weapon_gun":"gun","lg2_weapon_dagger":"dagger","lg2_weapon_whip":"whip","lg3_weapon_sword":"sword","lg3_weapon_axe":"axe","lg3_weapon_bow":"bow","lg3_weapon_staff":"staff","lg3_weapon_mace":"mace","lg3_weapon_gun":"gun","lg3_weapon_dagger":"dagger","lg3_weapon_whip":"whip","lg4_weapon_sword":"sword","lg4_weapon_axe":"axe","lg4_weapon_bow":"bow","lg4_weapon_staff":"staff","lg4_weapon_mace":"mace","lg4_weapon_gun":"gun","lg4_weapon_dagger":"dagger","lg4_weapon_whip":"whip","lg5_weapon_sword":"sword","lg5_weapon_axe":"axe","lg5_weapon_bow":"bow","lg5_weapon_staff":"staff","lg5_weapon_mace":"mace","lg5_weapon_gun":"gun","lg5_weapon_dagger":"dagger","lg5_weapon_whip":"whip","lg6_weapon_sword":"sword","lg6_weapon_axe":"axe","lg6_weapon_bow":"bow","lg6_weapon_staff":"staff","lg6_weapon_mace":"mace","lg6_weapon_gun":"gun","lg6_weapon_dagger":"dagger","lg6_weapon_whip":"whip","cf_kappa_sword":"sword","cf_kappa_axe":"axe","cf_kappa_bow":"bow","cf_kappa_staff":"staff","cf_kappa_mace":"mace","cf_kappa_gun":"gun","cf_kappa_dagger":"dagger","cf_kappa_whip":"whip","cf_kitsune_sword":"sword","cf_kitsune_axe":"axe","cf_kitsune_bow":"bow","cf_kitsune_staff":"staff","cf_kitsune_mace":"mace","cf_kitsune_gun":"gun","cf_kitsune_dagger":"dagger","cf_kitsune_whip":"whip","cf_sphinx_sword":"sword","cf_sphinx_axe":"axe","cf_sphinx_bow":"bow","cf_sphinx_staff":"staff","cf_sphinx_mace":"mace","cf_sphinx_gun":"gun","cf_sphinx_dagger":"dagger","cf_sphinx_whip":"whip","cf_dragon_sword":"sword","cf_dragon_axe":"axe","cf_dragon_bow":"bow","cf_dragon_staff":"staff","cf_dragon_mace":"mace","cf_dragon_gun":"gun","cf_dragon_dagger":"dagger","cf_dragon_whip":"whip","cf_nidhogg_sword":"sword","cf_nidhogg_axe":"axe","cf_nidhogg_bow":"bow","cf_nidhogg_staff":"staff","cf_nidhogg_mace":"mace","cf_nidhogg_gun":"gun","cf_nidhogg_dagger":"dagger","cf_nidhogg_whip":"whip","cf_lamassu_sword":"sword","cf_lamassu_axe":"axe","cf_lamassu_bow":"bow","cf_lamassu_staff":"staff","cf_lamassu_mace":"mace","cf_lamassu_gun":"gun","cf_lamassu_dagger":"dagger","cf_lamassu_whip":"whip","cf_cyclops_sword":"sword","cf_cyclops_axe":"axe","cf_cyclops_bow":"bow","cf_cyclops_staff":"staff","cf_cyclops_mace":"mace","cf_cyclops_gun":"gun","cf_cyclops_dagger":"dagger","cf_cyclops_whip":"whip","wl_sword":"sword","wl_axe":"axe","wl_bow":"bow","wl_staff":"staff","wl_mace":"mace","wl_gun":"gun","wl_dagger":"dagger","wl_whip":"whip","cf_riddle7_weapon_sword":"sword","cf_riddle7_weapon_axe":"axe","cf_riddle7_weapon_bow":"bow","cf_riddle7_weapon_staff":"staff","cf_riddle7_weapon_mace":"mace","cf_riddle7_weapon_gun":"gun","cf_riddle7_weapon_dagger":"dagger","cf_riddle7_weapon_whip":"whip","cf_riddle6_weapon_sword":"sword","cf_riddle6_weapon_axe":"axe","cf_riddle6_weapon_bow":"bow","cf_riddle6_weapon_staff":"staff","cf_riddle6_weapon_mace":"mace","cf_riddle6_weapon_gun":"gun","cf_riddle6_weapon_dagger":"dagger","cf_riddle6_weapon_whip":"whip","dg_50_lg6_weapon_sword":"sword","dg_55_lg6_weapon_sword":"sword","dg_60_lg6_weapon_sword":"sword","dg_50_lg6_weapon_axe":"axe","dg_55_lg6_weapon_axe":"axe","dg_60_lg6_weapon_axe":"axe","dg_50_lg6_weapon_bow":"bow","dg_55_lg6_weapon_bow":"bow","dg_60_lg6_weapon_bow":"bow","dg_50_lg6_weapon_staff":"staff","dg_55_lg6_weapon_staff":"staff","dg_60_lg6_weapon_staff":"staff","dg_50_lg6_weapon_mace":"mace","dg_55_lg6_weapon_mace":"mace","dg_60_lg6_weapon_mace":"mace","dg_50_lg6_weapon_gun":"gun","dg_55_lg6_weapon_gun":"gun","dg_60_lg6_weapon_gun":"gun","dg_50_lg6_weapon_dagger":"dagger","dg_55_lg6_weapon_dagger":"dagger","dg_60_lg6_weapon_dagger":"dagger","dg_50_lg6_weapon_whip":"whip","dg_55_lg6_weapon_whip":"whip","dg_60_lg6_weapon_whip":"whip"};
+
+return {classWeapons,equipmentWeapons};})();
+const m9=(()=>{const {classWeapons,equipmentWeapons}=m8;
+const melee=new Set(['sword','axe','mace','dagger','whip','staff']),ranged=new Set(['bow','gun']);
+function normalAttackWeapon(actor={}){const unit=actor.worldUnit||actor;return unit.weaponType||equipmentWeapons[unit.eq?.weapon||unit.weaponId]||classWeapons[unit.cls||actor.cls];}
+function isStaffNormalAttack(id,actor={}){return id==='attack'&&!(actor.worldUnit||actor).form&&normalAttackWeapon(actor)==='staff';}
+// Weapon reach and damage type are separate: a magical whip still strikes up close.
+function normalAttackRange(actor={}){
+ const unit=actor.worldUnit||actor;
+ if(unit.form)return unit.atkType==='m'?'ranged':'melee';
+ const weapon=normalAttackWeapon(actor);
+ if(melee.has(weapon))return 'melee';if(ranged.has(weapon))return 'ranged';
+ return unit.atkType==='m'?'ranged':'melee';
+}
+
+return {normalAttackWeapon,isStaffNormalAttack,normalAttackRange};})();
+const m10=(()=>{const {normalAttackRange}=m9;
+const melee=new Set('slash doubleSlash drawSlash flameSlash whirl cleave claw bite tripleBite darkBite hammer slam pierce triplePierce charge dive'.split(' '));
+const overrides={sw_whirl:'melee',sa_iai:'melee',ke_thousand:'melee',as_sonic:'melee',gl_quake:'melee',ws_axe3:'melee',bw_drain:'melee',water_p1:'melee',water_p2:'melee',flying_p1:'melee',poison_p2:'melee',ghost_p1:'melee',fairy_p1:'melee',solar_thalassyr_s1:'melee',solar_ferroth_s4:'melee',flying_aoe:'ranged',psychic_p2:'ranged',bug_aoe:'ranged',rock_p2:'ranged',ws_sword5:'ranged',sw_charge:'ranged',wb_lance:'ranged',aurora_spear:'ranged',f_moonbeam:'ranged'};
+function skillRange(id,visual,actor={}){
+ if(id==='attack')return normalAttackRange(actor);
+ if(visual?.role==='support')return 'support';
+ if(overrides[id])return overrides[id];
+ if(!visual)return normalAttackRange(actor);
+ if(/^ws_(?:sword[1-4]|whip)|^lgs\d+_(?:sword|axe|mace|dagger|whip)$/.test(id))return 'melee';
+ if(/^ws_(?:staff|bow|gun)/.test(id))return 'ranged';
+ if(['m','status','debuff'].includes(visual.type))return 'ranged';
+ if(melee.has(visual.archetype))return 'melee';
+ if(visual.archetype==='quake'&&['p','h'].includes(visual.type))return 'melee';
+ return 'ranged';
+}
+
+return {skillRange};})();
+const m11=(()=>{const {softenVfxEdges}=m0;
+// All bodies and overlays here are transparent energy images, never shot artwork.
+const grandPngImages={
+ fireball:art["assets/skill-grand-png-v1/fireball-impact.png"],
+ flameSpread:art["assets/skill-grand-png-v1/flamethrower-impact.png"],
+ electric:'assets/skill-grand-png-v1/lightning-impact.png',
+ acid:'assets/skill-grand-png-v1/acid-impact.png',
+ bullet:art["assets/skill-grand-png-v1/bullet-impact.png"],
+ water:'assets/skill-grand-png-v1/water-impact.png',
+ arcane:art["assets/skill-grand-png-v1/arcane-impact.png"],
+ ice:'assets/skill-grand-png-v1/ice-impact.png',
+ wind:art["assets/skill-grand-png-v1/wind-impact.png"],
+ nature:'assets/skill-grand-png-v1/nature-impact.png',
+ music:'assets/skill-grand-png-v1/music-impact.png',
+ meteor:'assets/skill-grand-png-v1/meteor-impact.png',
+ earth:art["assets/skill-grand-png-v1/earth-impact.png"],
+ healing:'assets/skill-grand-png-v1/healing.png',
+ shield:'assets/skill-grand-png-v1/shield.png',
+};
+function pngContact(recipe){return {...recipe,path:grandPngImages[recipe.family==='smoke'?'wind':recipe.family]||recipe.path};}
+function hue(hex){const [r,g,b]=hex.slice(1).match(/../g).map(n=>parseInt(n,16)/255),max=Math.max(r,g,b),d=max-Math.min(r,g,b);return d?((max===r?(g-b)/d:max===g?(b-r)/d+2:(r-g)/d+4)*60+360)%360:0;}
+function addGrandImages(owner,v,phase,recipe,presentation,{duration=700,delay=0,beam=false,angle=0}={}){
+ if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+ const strength=v.spectacle?.intensity||.3,signature=!!v.progression?.signature;
+ const add=(key,role,style,frames,time=duration,wait=0)=>{
+  const n=document.createElement('img');n.alt='';n.draggable=false;n.src=grandPngImages[key]||grandPngImages.arcane;n.dataset.assetRole=role;n.className='battle-grand-png';
+  Object.assign(n.style,{position:'absolute',left:'50%',top:'50%',width:'100%',height:'100%',objectFit:'contain',pointerEvents:'none',transform:'translate(-50%,-50%)',...style});
+  const tint=key==='arcane'&&!n.style.filter.includes('hue-rotate')?`hue-rotate(${hue(v.palette[0])-270}deg)`:v.archetype==='foxFire'?'hue-rotate(180deg) saturate(.8)':'';
+  if(tint)n.style.filter=tint+' '+(n.style.filter==='none'?'':n.style.filter);softenVfxEdges(n,!['earth','shield'].includes(key)?{shape:'energy',contentBounds:true}:key==='shield'?{contentBounds:false}:undefined);owner.root.append(n);const adjusted=v.role==='support'&&phase==='impact'?frames.map(f=>({...f,opacity:(f.opacity??1)*.45})):frames;owner.animate(n,adjusted,time,delay+wait);return n;
+ };
+ const pose='translate(-50%,-50%)';
+ if(phase==='cast'){
+  const key=recipe.family==='smoke'?'wind':recipe.family;
+  add(key,'cast-energy',{zIndex:'-1',width:'125%',height:'125%',filter:`drop-shadow(0 0 5px ${v.palette[0]})`},[{transform:pose+' scale(.22)',opacity:0},{transform:pose+' scale(.72)',opacity:.5+strength*.2,offset:.5},{transform:pose+' scale(1.08)',opacity:0}],duration);
+  return;
+ }
+ if(phase==='travel'){
+  if(v.archetype==='fallingRock')return; // Solid airborne stone; earth bursts belong to landing only.
+  if(beam)return; // The beam's full painted body already fills its source-to-target path.
+  const key=recipe.family==='smoke'?'wind':['fireball','flameSpread','meteor'].includes(recipe.family)?'flameSpread':recipe.family;
+  const radius=parseFloat(owner.root.style.width)*.25,a=angle*Math.PI/180;
+  add(key,'projectile-energy',{left:`calc(50% - ${Math.cos(a)*radius}px)`,top:`calc(50% - ${Math.sin(a)*radius}px)`,zIndex:'-1',width:'145%',height:'120%',filter:`drop-shadow(0 0 3px ${v.palette[0]})`},[{transform:pose+' scale(.5)',opacity:0},{transform:pose+' scale(.95)',opacity:.42,offset:.18},{transform:pose+' scale(1.08)',opacity:.5,offset:.8},{transform:pose+' scale(1.18)',opacity:0}],duration);
+  return;
+ }
+ const family=recipe.family;
+ let ground=['fireball','flameSpread','meteor'].includes(family)?'flameSpread':['water','acid','ice','nature','wind','music'].includes(family)?family:family==='healing'?'nature':family==='earth'?'earth':'arcane';
+ if(family==='smoke')ground='wind';
+ const tint=family==='electric'?'hue-rotate(-75deg)':family==='bullet'?'grayscale(.8)':family==='shield'?'hue-rotate(-45deg)':family==='smoke'?'grayscale(1)':ground==='arcane'?`hue-rotate(${hue(v.palette[0])-270}deg)`:'none';
+ add(ground,'impact-ground',{top:'67%',width:'155%',height:'65%',zIndex:'-1',filter:tint},[{transform:pose+' scale(.3)',opacity:0},{transform:pose+' scale(.94)',opacity:family==='smoke'?.18:.48+strength*.12,offset:.23},{transform:pose+' scale(1.08)',opacity:.4,offset:.63},{transform:pose+' scale(1.2)',opacity:0}],duration);
+ if(signature||strength>.6){
+  const corona=['healing','shield'].includes(family)?family:family==='smoke'?'wind':family==='electric'?'electric':family==='earth'?'bullet':family==='meteor'?'fireball':family;
+  add(corona,'impact-corona',{width:'125%',height:'125%',zIndex:'-1',filter:family==='smoke'?'grayscale(1)':'none'},[{transform:pose+' scale(.35) rotate(-12deg)',opacity:0},{transform:pose+' scale(.83)',opacity:.48,offset:.25},{transform:pose+' scale(1.1) rotate(14deg)',opacity:.3,offset:.72},{transform:pose+' scale(1.28)',opacity:0}],duration*.9,60);
+ }
+}
+
+return {grandPngImages,pngContact,addGrandImages};})();
+const m12=(()=>{const signatureSkillPngCatalog={"sw_whirl": {"female": {"path": art["assets/signature-portraits-v9/sw_whirl-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/sw_whirl-male.png"], "frames": 4}}, "at_grenade": {"female": {"path": art["assets/signature-portraits-v9/at_grenade-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/at_grenade-male.png"], "frames": 4}}, "sh_army": {"female": {"path": art["assets/signature-portraits-v9/sh_army-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/sh_army-male.png"], "frames": 4}}};
+return {signatureSkillPngCatalog};})();
+const m13=(()=>{const {softenVfxEdges}=m0;
+const {signatureSkillPngCatalog}=m12;
+const ready=new Map();
+function signatureArtFor(v){const variants=signatureSkillPngCatalog[v?.id||v?.identity?.key];return variants?.[v.caster?.gender||'female']||variants?.default||variants?.female||variants?.male||null;}
+function prepareSignatureArt(v){const art=signatureArtFor(v);if(!art)return Promise.resolve(false);if(!ready.has(art.path)){const image=new Image();image.src=art.path;ready.set(art.path,image.decode().then(()=>true).catch(()=>false))}return ready.get(art.path);}
+function showSignatureArt(owner,v,duration){
+ const art=signatureArtFor(v);if(!art||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const reveal=document.createElement('div');reveal.className='battle-signature-png-reveal';reveal.dataset.signatureArt=v.id;reveal.dataset.signatureSource=art.path;reveal.dataset.signatureFrames=String(art.frames);reveal.setAttribute('aria-hidden','true');
+ const extra=Math.max(0,(v.spectacle?.rank||1)-5),width=art.frames===4?Math.min(innerWidth<620?244+extra*18:340+extra*30,parseFloat(owner.root.style.width)*2.45):Math.min(innerWidth<620?140+extra*16:180+extra*20,parseFloat(owner.root.style.width)*1.35);
+ Object.assign(reveal.style,{position:'absolute',left:'50%',top:'-4%',width:width+'px',height:(art.frames===4?width*.43:width)+'px',transform:'translate(-50%,-72%)',pointerEvents:'none',overflow:'hidden',zIndex:'2',filter:`drop-shadow(0 0 8px ${v.palette[0]}99)`});
+ const facing=v.caster?.facing||'right',left=facing==='left';
+ const image=document.createElement('div');image.dataset.signatureFacing=facing;Object.assign(image.style,{position:'absolute',inset:0,transform:left?'scaleX(-1)':'none',backgroundImage:`url("${art.path}")`,backgroundSize:art.frames===4?'400% 100%':'100% 100%',backgroundRepeat:'no-repeat',backgroundPosition:'0% 50%',maskImage:art.frames===4?'linear-gradient(90deg,transparent,black 5%,black 95%,transparent)':'radial-gradient(ellipse,black 30%,transparent 66%)'});if(art.frames===4)softenVfxEdges(image,{horizontal:5,top:5,bottom:16});reveal.append(image);owner.root.append(reveal);
+ owner.animate(reveal,[{transform:`translate(${left?-42:-58}%,-64%) scale(.76)`,opacity:0},{transform:'translate(-50%,-72%) scale(1)',opacity:1,offset:.16},{opacity:1,offset:.72},{transform:`translate(${left?-56:-44}%,-78%) scale(1.04)`,opacity:0}],duration);
+ if(art.frames===4)owner.animate(image,[{backgroundPosition:'0% 50%',offset:0,easing:'steps(1,end)'},{backgroundPosition:'33.333% 50%',offset:.22,easing:'steps(1,end)'},{backgroundPosition:'66.666% 50%',offset:.47,easing:'steps(1,end)'},{backgroundPosition:'100% 50%',offset:.7,easing:'steps(1,end)'},{backgroundPosition:'100% 50%',offset:1}],duration);
+}
+
+return {signatureArtFor,prepareSignatureArt,showSignatureArt};})();
+const m14=(()=>{// Reviewed against all 22 projectile paintings. Angles use screen coordinates.
+// The anchor is the leading energy core/tip, not the transparent image centre.
+const projectileOrientation={
+ storm:{mode:'upright',anchor:[.5,.5]},
+ boulder:{mode:'upright',anchor:[.5,.75]},
+ meteor:{nativeAngle:45,anchor:[.74,.74]},
+ fireball:{nativeAngle:0,anchor:[.75,.5]},
+ arrow:{nativeAngle:0,anchor:[.91,.5]},bullet:{nativeAngle:0,anchor:[.84,.5]},
+ crescent:{nativeAngle:0,anchor:[.76,.5]},
+ 'fire-high':{nativeAngle:0,anchor:[.82,.575]},
+ 'water-high':{nativeAngle:0,anchor:[.85,.575]},
+ 'electric-high':{nativeAngle:0,anchor:[.93,.47]},
+ 'ice-high':{nativeAngle:0,anchor:[.93,.5]},
+ nature:{nativeAngle:0,anchor:[.79,.5]},
+ 'poison-high':{nativeAngle:0,anchor:[.84,.5]},
+ 'psychic-high':{nativeAngle:0,anchor:[.9,.5]},
+ 'ghost-high':{nativeAngle:0,anchor:[.83,.51]},
+ 'dragon-high':{nativeAngle:0,anchor:[.84,.5]},
+ 'dark-high':{nativeAngle:0,anchor:[.84,.5]},
+ 'holy-high':{nativeAngle:0,anchor:[.85,.52]},
+ beam:{nativeAngle:0,anchor:[.92,.5]},
+ fire:{nativeAngle:0,anchor:[.8,.5]},
+ flask:{mode:'upright',anchor:[.5,.5]},music:{mode:'upright',anchor:[.5,.5]},
+ 'wind-high':{mode:'upright',anchor:[.5,.5]},'earth-high':{mode:'upright',anchor:[.5,.5]},
+ shuriken:{mode:'spin',anchor:[.5,.5]},
+};
+function flightGeometry(art,from,to){
+ const board=from.board||{left:0,top:0,width:Math.max(from.x,to.x)+80};
+ const side=to.x<from.x?-1:1;
+ const start=art.kind==='meteor'?{x:Math.max(board.left+24,Math.min(board.left+board.width-24,to.x-side*65)),y:board.top+24}:from;
+ const dx=to.x-start.x,dy=to.y-start.y;return {start,dx,dy,angle:Math.atan2(dy,dx)*180/Math.PI,distance:Math.hypot(dx,dy)};
+}
+function spriteOrientation(art,angle){
+ const source=projectileOrientation[art.asset]||{nativeAngle:0,anchor:[.5,.5]},beam=art.kind==='beam',left=Math.cos(angle*Math.PI/180)<-1e-6,mode=source.mode||'aim';
+ if(beam){const y=source.anchor[1]*100;return {mode:'beam',nativeAngle:0,rotation:angle,flip:left,anchor:[0,source.anchor[1]],pose:`translate(0,-${y}%) rotate(${angle}deg) scaleY(${left?-1:1})`,origin:`0 ${y}%`};}
+ const rotation=mode==='upright'||mode==='spin'?0:angle-(left?180-(source.nativeAngle||0):source.nativeAngle||0),flip=mode==='aim'&&left,[x,y]=source.anchor;
+ return {mode,nativeAngle:source.nativeAngle||0,rotation,flip,anchor:source.anchor,pose:`translate(-${x*100}%,-${y*100}%) rotate(${rotation}deg) scaleX(${flip?-1:1})`,origin:`${x*100}% ${y*100}%`};
+}
+
+return {projectileOrientation,flightGeometry,spriteOrientation};})();
+const m15=(()=>{const {classWeapons}=m8;
+const tierEightAssets={legendary:art["assets/tier-eight-v1/legendary-wave.png"],eclipse:'assets/tier-eight-v1/eclipse-corona.png',lightning:'assets/tier-eight-v1/sky-lightning.png',fracture:'assets/tier-eight-v2/ground-fracture-raised.png',storm:art["assets/tier-eight-v1/storm.png"],blade:'assets/tier-eight-v1/blade-slash.png',boulder:'assets/tier-eight-v1/ancient-stone.png'};
+const hasStormName=v=>/พายุ|วายุ/.test(v.name);
+const stormArt=v=>({asset:'storm',kind:'vortex',path:tierEightAssets.storm,style:'storm',tint:v.element==='fire'?'sepia(.7) saturate(2) hue-rotate(325deg)':v.element==='grass'?'hue-rotate(285deg)':v.element==='dark'?'hue-rotate(65deg)':v.element==='ice'?'brightness(1.2)':'none'});
+function specialProjectile(v,actor={}){
+ if(hasStormName(v))return stormArt(v);
+ if(v.archetype==='fallingRock')return {asset:'boulder',kind:v.id==='rock_p1'?'bolt':'meteor',path:tierEightAssets.boulder,style:'solid-stone',tint:'none'};
+ const family=v.id.match(/^(?:ws_|lgs\d+_)(sword|axe|mace|dagger|bow|gun|staff)/)?.[1],weapon=actor.weaponType||family||classWeapons[actor.cls||v.progression?.classId],weaponSkill=/ดาบ|ขวาน|ค้อน|มีด|ฟัน|เชือด/.test(v.name)||/^(ws_|lgs\d+_)/.test(v.id),bladeForms=['crescent','bladeRain','drawSlash','flameSlash','slash','doubleSlash','cleave','hammer','pierce'];
+ if(v.role==='damage'&&['sword','axe','mace','dagger'].includes(weapon)&&weaponSkill&&bladeForms.includes(v.archetype))return {asset:'crescent',kind:'bolt',path:tierEightAssets.blade,style:'blade-slash',tint:`drop-shadow(0 0 5px ${v.palette[0]})`};
+ if(!['arrowRain','bladeRain','barrage','scatter'].includes(v.archetype)&&/storm|blizzard/i.test(v.archetype))return stormArt(v);
+ return null;
+}
+
+return {tierEightAssets,hasStormName,specialProjectile};})();
+const m16=(()=>{const {tierEightAssets}=m15;
+const {softenVfxEdges}=m0;
+const {registerOwnedCanvas}=m2;
+const random=n=>{const f=Math.sin(n*91.73+47.1)*43758.5;return f-Math.floor(f)};
+function addGroundAttackEffects(owner,v,at,presentation,rate){
+ if(v.spectacle.rank<6||v.role!=='damage'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ owner.root.dataset.groundTier=String(v.spectacle.rank);owner.root.dataset.groundEffect=v.spectacle.rank===8?'fracture':v.spectacle.rank===7?'rocks':'dust';
+ const layer=at.node?.closest('.arena')?.querySelector('#ground-skill-effects');
+ const anchors=at.groundTargets||[{width:at.width||at.height||72,height:at.height||72}];
+ for(const anchor of anchors){
+  const available=anchor.bounds?Math.max(0,2*Math.min(anchor.x-anchor.bounds.left,anchor.bounds.right-anchor.x))/1.15:Infinity;
+  const size=Math.min(128,(anchor.width||72)*1.12,available);if(size<12)continue;
+  const root=document.createElement('div');root.className='battle-ground-emitter';Object.assign(root.dataset,{target:anchor.id||'',groundTier:String(v.spectacle.rank),placement:layer?'behind-actors':'local'});
+  let host;
+  if(layer&&anchor.board){host=document.createElement('div');host.className='battle-ground-target-layer';Object.assign(host.style,{position:'absolute',inset:'0',pointerEvents:'none',overflow:'hidden'});if(anchor.bounds)host.style.clipPath=`inset(${anchor.bounds.top}px ${Math.max(0,anchor.board.width-anchor.bounds.right)}px ${Math.max(0,anchor.board.height-anchor.bounds.bottom)}px ${anchor.bounds.left}px)`;layer.append(host);host.append(root);Object.assign(root.style,{position:'absolute',left:anchor.x+'px',top:anchor.y+'px',width:size+'px',height:'0',transform:'translateX(-50%)',pointerEvents:'none'});}
+  else{owner.root.append(root);Object.assign(root.style,{position:'absolute',left:'50%',top:`calc(50% + ${(at.height||72)*.45}px)`,width:size+'px',height:'0',transform:'translateX(-50%)',pointerEvents:'none'});}
+  const local={root,animate:owner.animate};renderGroundAttack(local,v,anchor,presentation,rate);
+  const prior=owner.onClear;owner.onClear=()=>{prior?.();local.onClear?.();(host||root).remove()};
+ }
+}
+function renderGroundAttack(owner,v,at,presentation,rate){
+ const rank=v.spectacle.rank;if(rank<6||v.role!=='damage'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const size=parseFloat(owner.root.style.width),offset=0,mobile=innerWidth<620,dpr=Math.min(mobile?1:1.5,devicePixelRatio||1),width=size*1.7,height=size*.9,seed=v.identity.seed;
+ owner.root.dataset.groundTier=String(rank);owner.root.dataset.groundEffect=rank===8?'fracture':rank===7?'rocks':'dust';
+ if(rank===8){const image=document.createElement('img');image.src=tierEightAssets.fracture;image.alt='';image.draggable=false;Object.assign(image.dataset,{fractureRenderer:'png',assetRole:'ground-fracture',relief:'raised-slabs'});image.className='battle-ground-fracture';Object.assign(image.style,{position:'absolute',left:'50%',top:`calc(50% + ${size*.08}px)`,width:size+'px',height:size*.5+'px',objectFit:'contain',transform:'translate(-50%,-50%)',transformOrigin:'50% 80%',pointerEvents:'none',zIndex:'1'});softenVfxEdges(image,{horizontal:4,top:4,bottom:9,contentBounds:false});owner.root.append(image);owner.animate(image,[{transform:'translate(-50%,-50%) scale(.62,.18)',opacity:0},{transform:'translate(-50%,-50%) scale(1,1)',opacity:.96,offset:.14},{transform:'translate(-50%,-50%) scale(1.02,1)',opacity:.9,offset:.78},{transform:'translate(-50%,-50%) scale(1.04,1.02)',opacity:0}],presentation.duration+90);}
+ const canvas=document.createElement('canvas');canvas.className='battle-ground-particles';canvas.dataset.groundTier=String(rank);canvas.width=Math.ceil(width*dpr);canvas.height=Math.ceil(height*dpr);canvas.setAttribute('aria-hidden','true');Object.assign(canvas.style,{position:'absolute',left:'50%',top:`calc(50% + ${offset}px)`,width:width+'px',height:height+'px',transform:'translate(-50%,-50%)',pointerEvents:'none',zIndex:'1'});const ctx=canvas.getContext('2d');if(!ctx)return;owner.root.append(canvas);
+ const dustCount=(mobile?12:18)+(rank-6)*4,rocks=rank>=7?(mobile?10:16)+(rank-7)*6:0;canvas.dataset.dustCount=String(dustCount);canvas.dataset.rockCount=String(rocks);
+ registerOwnedCanvas(owner,canvas,presentation.duration+90,rate,t=>{
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);const cx=width*.5,cy=height*.53;
+  for(let i=0;i<dustCount;i++){
+   const q=Math.max(0,Math.min(1,(t*(presentation.duration+90)/1000-i%5*.025)/(1.15+(rank-6)*.2))),a=random(seed+i*17)*6.28,exp=1-(1-q)**2,x=cx+Math.cos(a)*size*(.06+exp*.5),y=cy+Math.sin(a)*size*exp*.12-size*q*.11,r=size*(.025+q*.048),alpha=Math.sin(q*Math.PI)*.2;
+   const fill=ctx.createRadialGradient(x,y,0,x,y,r);fill.addColorStop(0,'rgba(155,140,120,'+alpha+')');fill.addColorStop(.42,'rgba(119,111,98,'+alpha*.7+')');fill.addColorStop(1,'rgba(95,88,78,0)');ctx.fillStyle=fill;ctx.fillRect(x-r,y-r,r*2,r*2);
+  }
+  for(let i=0;i<rocks;i++){
+   const q=Math.max(0,Math.min(1,(t*(presentation.duration+90)/1000-i%4*.012)/.95)),a=random(seed+i*31)*6.28,r=size*(.008+random(i+seed)*.009),x=cx+Math.cos(a)*size*q*(.32+random(i)*.2),floor=cy+Math.sin(a)*size*q*.1,y=floor-size*(.3+random(i+3)*.16)*q+size*.46*q*q,alpha=Math.min(1,q*15)*(1-Math.max(0,(q-.72)/.28));
+   ctx.globalAlpha=alpha*.3;ctx.fillStyle='#211f1b';ctx.beginPath();ctx.ellipse(x,floor,r*1.4,r*.3,0,0,6.28);ctx.fill();ctx.globalAlpha=alpha;ctx.save();ctx.translate(x,y);ctx.rotate(a+q*(i%2?-3:3));ctx.beginPath();for(let k=0;k<6;k++){const p=k*Math.PI/3,rad=r*(.7+random(seed+i*9+k)*.5);k?ctx.lineTo(Math.cos(p)*rad,Math.sin(p)*rad):ctx.moveTo(Math.cos(p)*rad,Math.sin(p)*rad)}ctx.closePath();ctx.fillStyle=i%3?'#716a60':'#95897a';ctx.fill();ctx.strokeStyle='#3c3934';ctx.lineWidth=.7;ctx.stroke();ctx.beginPath();ctx.moveTo(-r*.7,-r*.2);ctx.lineTo(0,-r*.8);ctx.lineTo(r*.6,-r*.3);ctx.lineTo(0,0);ctx.closePath();ctx.fillStyle='#c0ad94';ctx.fill();ctx.restore();
+  }ctx.globalAlpha=1;canvas.dataset.frame=String(Math.round(t*100));
+ });
+}
+
+return {addGroundAttackEffects};})();
+const m17=(()=>{const {registerOwnedCanvas}=m2;
+const recipientAuraColors={6:'#8edf9d',7:'#f6fff9',8:'#ffd16c'};
+function addRecipientAura(owner,v,at,presentation,rate){
+ const rank=v.spectacle.rank;if(rank<6||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const color=recipientAuraColors[rank],target=at.node,initial=target?.getBoundingClientRect?.(),bodyWidth=initial?.width||at.width||at.size||60,bodyHeight=initial?.height||at.height||(at.size||60)*1.8;
+ const width=Math.min(400,Math.max(80,bodyWidth*(rank===8?1.95:rank===7?1.7:1.45))),height=Math.min(420,Math.max(110,bodyHeight*1.45)),dpr=Math.min(innerWidth<620?1:1.5,devicePixelRatio||1),canvas=document.createElement('canvas');canvas.className='battle-recipient-aura';canvas.dataset.auraTier=String(rank);canvas.dataset.auraColor=color;canvas.dataset.recipient=target?.dataset?.actor||target?.id||'';canvas.setAttribute('aria-hidden','true');canvas.width=Math.ceil(width*dpr);canvas.height=Math.ceil(height*dpr);Object.assign(canvas.style,{position:'absolute',left:'50%',top:'50%',width:width+'px',height:height+'px',transform:'translate(-50%,-50%)',pointerEvents:'none',zIndex:'2'});const ctx=canvas.getContext('2d');if(!ctx)return;owner.root.append(canvas);owner.root.dataset.recipientAura=String(rank);
+ const count=rank===6?10:rank===7?18:28,duration=presentation.duration+100;
+ const glow=(x,y,r,opacity)=>{ctx.globalAlpha=opacity;const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color);g.addColorStop(.3,color+'99');g.addColorStop(1,color+'00');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2)};
+ registerOwnedCanvas(owner,canvas,duration,rate,t=>{
+  const current=target?.getBoundingClientRect?.(),root=owner.root.getBoundingClientRect();if(current?.width&&root.width){const sx=root.width/parseFloat(owner.root.style.width)||1,sy=root.height/parseFloat(owner.root.style.height)||1,dx=(current.left+current.width*.5-root.left-root.width*.5)/sx,dy=(current.top+current.height*.5-root.top-root.height*.5)/sy;canvas.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;canvas.dataset.followX=dx.toFixed(1);canvas.dataset.followY=dy.toFixed(1);}
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);ctx.globalCompositeOperation='lighter';const cx=width*.5,cy=height*.5,fade=Math.min(1,t/.12)*Math.min(1,(1-t)/.22),strength=rank===6?.12:rank===7?.22:.34,foot=cy+bodyHeight*.44;
+  ctx.save();ctx.translate(cx,cy);ctx.scale(width/height,1);glow(0,0,height*.48,fade*strength*.4);ctx.restore();
+  ctx.save();ctx.translate(cx,foot);ctx.scale(1,.24);glow(0,0,bodyWidth*.7,fade*strength);ctx.restore();
+  for(let i=0;i<count;i++){const q=(t*.9+i*.137)%1,a=i*2.399+t*(rank===8?3:1.5),x=cx+Math.cos(a)*bodyWidth*(.43+q*.12),y=foot-q*bodyHeight*1.06,r=rank===8?3.5:rank===7?2.7:2;glow(x,y,r*2.3,Math.sin(q*Math.PI)*fade*(rank===6?.35:.65));}
+  if(rank>=7)for(let side=0;side<(rank===8?3:2);side++){ctx.beginPath();for(let j=0;j<32;j++){const q=j/31,a=q*6.28+t*3+side*3.14,x=cx+Math.cos(a)*bodyWidth*.52,y=foot-q*bodyHeight*1.05;j?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.strokeStyle=color;ctx.lineWidth=rank===8?1.8:1.1;ctx.globalAlpha=fade*(rank===8?.3:.2);ctx.shadowColor=color;ctx.shadowBlur=5;ctx.stroke();ctx.shadowBlur=0;}
+  ctx.globalAlpha=1;canvas.dataset.frame=String(Math.round(t*100));
+ });
+}
+
+return {recipientAuraColors,addRecipientAura};})();
+const m18=(()=>{const {softenVfxEdges}=m0;
+const {tierEightAssets}=m15;
+const {addGroundAttackEffects}=m16;
+const {addRecipientAura}=m17;
+function addHighTierEffects(owner,v,at,presentation,phase='impact',eventKind='hit',rate=()=>1){
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const rank=v.spectacle.rank;if(rank<6&&!(phase==='impact'&&v.element==='electric'&&rank>=5))return;
+ if(phase==='impact'&&eventKind==='hit')addGroundAttackEffects(owner,v,at,presentation,rate);
+ if(phase==='impact'&&['heal','buff'].includes(eventKind)){addRecipientAura(owner,v,at,presentation,rate);return;}
+ const size=parseFloat(owner.root.style.width),pose='translate(-50%,-50%)';
+ const image=(src,role,style,frames,duration,delay=0)=>{const n=document.createElement('img');n.src=src;n.alt='';n.draggable=false;n.dataset.highTierRole=role;n.dataset.rank=String(rank);Object.assign(n.style,{position:'absolute',left:'50%',top:'50%',width:'130%',height:'100%',objectFit:'contain',pointerEvents:'none',transform:pose,zIndex:'-2',...style});softenVfxEdges(n,role==='sky-lightning'?undefined:{shape:'energy',contentBounds:true});owner.root.append(n);owner.animate(n,frames,duration,delay);return n};
+ if(rank>=6){
+  const layers=phase==='cast'?1:rank>=7?2:1;
+  for(let i=0;i<layers;i++)image(tierEightAssets.legendary,phase==='cast'?'awakening':'legendary-wave',{top:phase==='cast'?'65%':'68%',width:(130+i*20)+'%',height:(85+i*10)+'%',filter:v.element==='ice'?'hue-rotate(155deg)':v.element==='water'?'hue-rotate(150deg)':v.element==='poison'?'hue-rotate(55deg)':'none'},[{transform:pose+' scale(.3)',opacity:0},{transform:pose+' scale(.95)',opacity:phase==='cast'?(v.role==='support'?.2:.32):(.19-i*.05),offset:.25},{transform:pose+' scale(1.08)',opacity:.12,offset:.66},{transform:pose+' scale(1.3)',opacity:0}],phase==='cast'?presentation.castDuration:presentation.duration*.9,i*180);
+  if(rank===8&&phase==='impact'){
+   const eclipse=v.progression.rarity==='solar'||['dark','ghost','dragon','fire'].includes(v.element);
+   image(eclipse?tierEightAssets.eclipse:tierEightAssets.legendary,'ultimate-corona',{top:'47%',width:'150%',height:'135%',zIndex:'-3'},[{transform:pose+' scale(.35) rotate(-8deg)',opacity:0},{transform:pose+' scale(.94)',opacity:eclipse?.4:.2,offset:.26},{transform:pose+' scale(1.12) rotate(12deg)',opacity:.14,offset:.72},{transform:pose+' scale(1.3)',opacity:0}],presentation.duration);
+  }
+ }
+ if(phase==='impact'&&eventKind==='hit'&&v.role==='damage'&&v.element==='electric'&&rank>=5){
+  const height=Math.max(160,Math.min(640,at.y-(at.board?.top||0)+36)),bolts=Math.min(innerWidth<620?2:4,rank>=8?4:rank>=7?3:rank>=6?2:1);
+  for(let i=0;i<bolts;i++){
+   const offset=i===0?0:(i%2?1:-1)*size*(.13+i*.025);
+   image(tierEightAssets.lightning,'sky-lightning',{left:`calc(50% + ${offset}px)`,width:Math.min(size*(i===0?.55:.3),height*.65)+'px',height:height+'px',objectFit:'fill',transform:'translate(-50%,-93%)',zIndex:'3'},[{transform:'translate(-50%,-93%)',clipPath:'inset(0 0 100% 0)',opacity:0},{clipPath:'inset(0 0 0 0)',opacity:i===0?1:.65,offset:.18},{opacity:.75,offset:.35},{opacity:.12,offset:.58},{opacity:.4,offset:.7},{opacity:0}],700+i*80,i*190);
+  }
+ }
+}
+
+return {addHighTierEffects};})();
+const m19=(()=>{const meleePngImages={"swordsman-female": art["assets/melee-contact-png-v1/swordsman-female-meleeEffect.png"], "raiju-deity": art["assets/melee-contact-png-v1/raiju-deity-meleeEffect.png"], "pixie": art["assets/melee-contact-png-v1/pixie-meleeEffect.png"], "redcap": art["assets/melee-contact-png-v1/redcap-meleeEffect.png"], "kodama": art["assets/melee-contact-png-v1/kodama-meleeEffect.png"], "phoenix": art["assets/melee-contact-png-v1/phoenix-meleeEffect.png"], "demonlord": art["assets/melee-contact-png-v1/demonlord-meleeEffect.png"]};
+return {meleePngImages};})();
+const m20=(()=>{const {softenVfxEdges}=m0;
+const {meleePngImages}=m19;
+const {tierEightAssets}=m15;
+
+function meleeSlashPath(actor={},visual={}){
+ const cls=actor.cls||visual.progression?.classId;
+ const keys=[actor.characterId,cls?cls+'-'+(actor.gender||'female'):null,actor.sp?.replaceAll('_','-'),visual.progression?.species?.replaceAll('_','-')];
+ const key=keys.find(key=>meleePngImages[key]);
+ return meleePngImages[key]||tierEightAssets.blade;
+}
+const ready=new Map();
+function prepareMeleeArt(v){
+ const path=meleeSlashPath(v.caster,v);if(!ready.has(path)){const image=new Image();image.src=path;ready.set(path,image.decode().catch(()=>{}))}return ready.get(path);
+}
+function addMeleeContactImages(owner,p,v,eventKind,presentation){
+ if(p.range!=='melee'||v.role!=='damage'||eventKind!=='hit'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const rank=v.spectacle.rank,mirror=v.caster.facing==='left'?-1:1,multiple=['doubleSlash','tripleBite','triplePierce'].includes(v.archetype),count=rank>=7?3:rank>=4||multiple?2:1;
+ const size=Math.min(innerWidth<620?270:360,Math.max(120,presentation.impactSize*(rank>=6?1.05:1.32))),duration=420+rank*35;
+ owner.root.dataset.meleeContact='png';
+ for(let i=0;i<count;i++){
+  const n=document.createElement('img');n.src=meleeSlashPath(v.caster,v);n.alt='';n.draggable=false;n.className='battle-melee-png';n.dataset.assetRole='melee-contact';n.dataset.facing=mirror===1?'right':'left';n.dataset.stroke=String(i+1);
+  Object.assign(n.style,{position:'absolute',left:'50%',top:'48%',width:size+'px',height:size+'px',objectFit:'contain',pointerEvents:'none',zIndex:'3',filter:`drop-shadow(0 0 ${rank>=6?5:3}px ${v.palette[0]})`});softenVfxEdges(n);owner.root.append(n);
+  const angle=(i%2?-48:8)+(i===2?22:0),pose=`translate(-50%,-50%) scaleX(${mirror})`;
+  owner.animate(n,[{transform:pose+` rotate(${angle-15}deg) scale(.48)`,opacity:0},{transform:pose+` rotate(${angle}deg) scale(1)`,opacity:i===0?1:.82,offset:.17},{transform:pose+` rotate(${angle+7}deg) scale(1.08)`,opacity:.8,offset:.58},{transform:pose+` rotate(${angle+12}deg) scale(1.17)`,opacity:0}],duration,i*100);
+ }
+}
+
+return {meleeSlashPath,prepareMeleeArt,addMeleeContactImages};})();
+const m21=(()=>{const center=value=>{
+ if(Number.isFinite(value?.x))return value.x;
+ const r=value?.getBoundingClientRect?.();return r?.width?r.left+r.width/2:null;
+};
+function facingFromPositions(from,to,fallback='right'){
+ const a=center(from),b=center(to);return a!==null&&b!==null&&Math.abs(b-a)>1?(b<a?'left':'right'):fallback;
+}
+function casterFacing(actor={}){return actor.facing||(actor.side==='ally'?'left':'right');}
+function battleActorFacing(actor,opponents=[],target=null){
+ const fallback=actor.side==='ally'?'left':'right',living=opponents.filter(a=>a!==actor&&a.side!==actor.side&&a.hp>0&&!a.sprite?.hidden);
+ if(target&&living.includes(target))return facingFromPositions(actor.sprite,target.sprite,fallback);
+ const points=living.map(a=>center(a.sprite)).filter(x=>x!==null);
+ return facingFromPositions(actor.sprite,points.length?{x:points.reduce((a,b)=>a+b,0)/points.length}:null,fallback);
+}
+
+return {facingFromPositions,casterFacing,battleActorFacing};})();
+const m22=(()=>{const {combatOutcomeKind,addCombatOutcome}=m3;
+const {softenVfxEdges}=m0;
+const {skillVisualProfiles}=m4;
+const {contactImages}=m5;
+const {signatureMotifImages}=m6;
+const {addSkillParticles}=m2;
+const {skillPresentation}=m7;
+const {skillRange}=m10;
+const {pngContact,addGrandImages}=m11;
+const {showSignatureArt,prepareSignatureArt}=m13;
+const {flightGeometry,spriteOrientation}=m14;
+const {specialProjectile,hasStormName}=m15;
+const {addHighTierEffects}=m18;
+const {addMeleeContactImages,prepareMeleeArt}=m20;
+const {casterFacing}=m21;
+
+// Each action has one painted energy body and a restrained Canvas particle layer.
+// Visual time is expressed in battle milliseconds; the battle owns damage timing.
+const has=(list,a)=>list.split(' ').includes(a);
+const reduced=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+function hue(hex){const [r,g,b]=hex.slice(1).match(/../g).map(n=>parseInt(n,16)/255),max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;if(!d)return 0;return ((max===r?(g-b)/d:max===g?(b-r)/d+2:(r-g)/d+4)*60+360)%360;}
+function visualPattern(v){
+ if(v.impactPattern)return v.impactPattern;
+ const a=v.archetype;
+ if(has('heal revive rest',a))return 'heal';
+ if(a==='shield')return 'shield';
+ if(a==='omni')return 'omni';
+ if(has('summon transform empower haste',a))return a==='summon'?'portal':a==='haste'?'wind':'aura';
+ if(a==='web')return 'web';
+ if(has('roots bind bindWater',a))return a==='roots'?'vine':'bind';
+ if(has('curse illusion psychic petrify darkNova drain',a))return 'seal';
+ if(has('slash doubleSlash drawSlash flameSlash crescent cleave whirl bladeRain shuriken',a))return 'slash';
+ if(a==='claw')return 'claw';
+ if(has('bite darkBite tripleBite',a))return 'fang';
+ if(has('pierce triplePierce charge dive',a))return 'pierce';
+ if(has('arrow doubleArrow tripleArrow arrowRain bullet barrage scatter precision cannon',a))return a==='precision'?'reticle':'spark';
+ if(a==='sonic')return 'sound';
+ if(has('coin coinBomb',a))return 'gold';
+ if(has('slam hammer quake fallingRock',a))return 'crack';
+ if(has('lightning thunderstorm',a))return 'lightning';
+ if(has('ice blizzard',a))return 'ice';
+ if(has('water waterBeam waterBreath tidalWave',a))return 'water';
+ if(has('wind windstorm',a))return 'wind';
+ if(has('nature leafStorm',a))return 'vine';
+ if(has('fireball tripleFireball firestorm breath foxFire ghostFire dragonNova meteor explosion bombard',a))return 'flame';
+ return ({electric:'lightning',water:'water',ice:'ice',grass:'vine',flying:'wind',fire:'flame',ground:'crack',rock:'crack'}[v.element])||'seal';
+}
+function designedContact(v){
+ const a=v.archetype,el=v.element;let family;
+ if(/ควัน|smoke/.test((v.id||'')+' '+v.name))return {family:'smoke',path:contactImages.wind};
+ if(has('heal revive rest',a))return {family:'healing',path:'assets/skill-vfx-v1/healing.webp'};
+ if(a==='shield')return {family:'shield',path:'assets/skill-vfx-v1/shield.webp'};
+ if(a==='whirl')family='wind';
+ else if(has('petrify web illusion',a))family='arcane';
+ else if(a==='sonic')family='music';
+ else if(a==='flask')family='acid';
+ else if(a==='meteor')family='meteor';
+ else if(has('slam hammer quake fallingRock',a)&&has('normal fighting ground rock steel',el))family='earth';
+ else if(has('coin coinBomb explosion bombard cannon',a))family='fireball';
+ else family=({fire:has('breath firestorm flameSlash',a)?'flameSpread':'fireball',electric:'electric',water:'water',ice:'ice',grass:'nature',poison:'acid',flying:'wind',ground:'earth',rock:'earth'}[el])||(has('arrow doubleArrow tripleArrow arrowRain bullet barrage scatter precision shuriken slash doubleSlash drawSlash crescent claw bite pierce cleave',a)?'bullet':'arcane');
+ return {family,path:contactImages[family]};
+}
+function artFor(v,previous){
+ const special=specialProjectile(v,v.caster);if(special)return {...special,tier:v.tier,scale:1};
+ const a=v.archetype,el=v.element;
+ let asset=a==='petrify'?'psychic-high':a==='foxFire'?'ghost-high':has('arrow doubleArrow tripleArrow arrowRain',a)?'arrow':has('bullet barrage scatter precision',a)?'bullet':a==='flask'?'flask':a==='shuriken'?'shuriken':has('crescent flameSlash drawSlash',a)?'crescent':has('meteor fallingRock',a)?(a==='meteor'?'meteor':'earth-high'):a==='sonic'?'music':has('fireball tripleFireball',a)?'fireball':
+ ({fire:'fire-high',water:'water-high',electric:'electric-high',ice:'ice-high',grass:'nature',poison:'poison-high',ground:'earth-high',rock:'earth-high',ghost:'ghost-high',dark:'dark-high',psychic:'psychic-high',fairy:'holy-high',dragon:'dragon-high',flying:'wind-high'}[el])||'beam';
+ let kind=has('meteor fallingRock',a)?'meteor':has('breath waterBreath waterBeam beam drain lightning petrify',a)?'beam':has('firestorm blizzard thunderstorm windstorm leafStorm tidalWave poisonCloud dragonNova darkNova',a)?'vortex':'bolt';
+ const base=['arrow','bullet','flask','fireball'].includes(asset),folder=asset.endsWith('-high')?(['fire-high','electric-high','water-high','wind-high','earth-high'].includes(asset)?'v4':'v5'):['shuriken','crescent','meteor','music'].includes(asset)?'v3':'v2';
+ return {asset,kind,tier:v.tier,scale:1+v.tier*.1,tint:asset==='crescent'?`drop-shadow(0 0 4px ${v.palette[0]})`:previous?.asset===asset?previous.tint:'none',path:base?`assets/skill-vfx-v1/${asset}.webp`:`assets/vfx/projectiles/${folder}/${asset}.png.webp`};
+}
+function owned(vfx,L,x,y,size,phase,v){
+ const root=document.createElement('div');root.className='battle-fx-owned battle-designed-'+phase;root.dataset.skill=v.id;root.dataset.archetype=v.archetype;root.dataset.phase=phase;
+ Object.assign(root.style,{position:'absolute',left:x+'px',top:y+'px',width:size+'px',height:size+'px',transform:'translate(-50%,-50%)',pointerEvents:'none',zIndex:phase==='cast'?4:7});L.append(root);
+ const animations=[];let done=false,lifetime;const clear=()=>{if(done)return;done=true;animations.forEach(a=>a.cancel());root.remove();vfx.live.delete(clear);lifetime?.onClear?.()};vfx.live.add(clear);
+ const animate=(n,frames,duration,delay=0)=>{if(reduced())return;const a=n.animate?.(frames,{duration,delay,fill:'both',easing:'cubic-bezier(.16,.7,.25,1)'});if(a){a.playbackRate=vfx.animationRate();animations.push(a)}return a};
+ return lifetime={root,animate,clear,onClear:null};
+}
+function raster(root,path,resolve,opacity=1,edges){const n=document.createElement('img');n.alt='';n.draggable=false;n.src=resolve(path);n.dataset.assetRole='impact';Object.assign(n.style,{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'contain',opacity:String(opacity)});softenVfxEdges(n,edges);root.append(n);return n;}
+function installDesignedSkillEffects(vfx,resolve){
+ const activeContacts=new Map(),activeOutcomes=new Map();
+ const before=vfx.profile;
+ vfx.profile=function(id,actor){const p=before.call(this,id,actor),spec=skillVisualProfiles[id];if(!spec)return p;const v={...spec,id,caster:{characterId:actor?.characterId,gender:actor?.gender||'female',cls:actor?.cls,sp:actor?.sp,weaponType:actor?.weaponType,facing:casterFacing(actor)}};p.visual=v;p.color=v.palette[0];p.accent=v.palette[1];
+  p.range=skillRange(id,v,actor);
+  if(p.range==='support'){p.mode='support';p.painted=null;}
+  else if(p.range==='ranged'){
+   p.painted=id==='attack'&&p.painted?p.painted:artFor(v,p.painted);p.mode=p.painted.kind==='beam'?'beam':'projectile';
+  }else{p.mode='melee';p.shortProjectile=hasStormName(v);p.painted=p.shortProjectile?artFor(v,p.painted):null;}
+  p.hits=Math.min(3,Math.max(v.hits,has('doubleArrow doubleSlash',v.archetype)?2:has('tripleArrow tripleFireball tripleBite triplePierce',v.archetype)?3:1));return p;
+ };
+ vfx.outcome=function(L,event,at,p){
+  const kind=combatOutcomeKind(event,p.visual);if(!kind||!at||event.skipOutcome)return;
+  const key=p.id+':'+kind+':'+at.x.toFixed(1)+':'+at.y.toFixed(1);activeOutcomes.get(key)?.();
+  const size=Math.max(72,Math.min(kind==='critical'?142:168,(at.size||60)*(kind==='critical'?1.8:2.1))),o=owned(this,L,at.x,at.y,size,'outcome',p.visual);activeOutcomes.set(key,o.clear);o.onClear=()=>{if(activeOutcomes.get(key)===o.clear)activeOutcomes.delete(key)};
+  const duration=addCombatOutcome(o,kind,at,p.visual,()=>this.animationRate())||680;this.later(o.clear,duration+50);return o.root;
+ };
+ const oldCast=vfx.castVisual,oldImpact=vfx.impact,oldTravel=vfx.travel;
+ const oldBanner=vfx.showSignatureBanner;
+ vfx.showSignatureBanner=function(L,at,p,actor){const duration=oldBanner.call(this,L,at,p,actor),facing=p.visual?.caster.facing||casterFacing(actor),portrait=L.querySelector('[data-signature-banner="'+p.id+'"] [data-signature-portrait]');if(portrait){portrait.style.scale=facing==='left'?'-1 1':'1 1';portrait.dataset.signatureFacing=facing;softenVfxEdges(portrait,{horizontal:7,top:8,bottom:22});}return duration;};
+ vfx.castVisual=function(L,at,p){if(!p.visual)return oldCast.call(this,L,at,p);if(!at)return;const v=p.visual,presentation=skillPresentation(v),duration=presentation.castDuration,s=presentation.castSize,o=owned(this,L,at.x,at.y,s,'cast',v);
+  if(p.range==='melee')prepareMeleeArt(v);
+  addHighTierEffects(o,v,at,presentation,'cast');
+  prepareSignatureArt(v);showSignatureArt(o,v,duration);
+  addGrandImages(o,v,'cast',pngContact(designedContact(v)),skillPresentation(v),{duration});
+  const emblem=globalThis.SoulbeastSignatureMotion?.recipes.get(p.id)?.motifs[0],path=signatureMotifImages[emblem];
+  if(path){const image=raster(o.root,path,resolve,.65);image.dataset.assetRole='cast-emblem';const signature=!!v.progression?.signature;Object.assign(image.style,{inset:signature?'13%':'28%',width:signature?'74%':'44%',height:signature?'74%':'44%'});o.animate(image,[{transform:'scale(.5)',opacity:0},{transform:'scale(1)',opacity:.7,offset:.4},{transform:'scale(1.15)',opacity:0}],duration);}
+  addSkillParticles(o,v,'cast',duration,()=>this.animationRate(),{size:s});this.later(o.clear,duration+30);
+ };
+ vfx.travel=function(L,from,to,p,melee=false){if(!p.visual)return oldTravel.call(this,L,from,to,p,melee);if(melee||!p.painted||p.visual.role==='support')return 0;
+  const entry=this.prepareProjectile(p.painted);if(!entry?.ready)return 0;
+  const v=p.visual,kind=p.painted.kind,beam=kind==='beam',meteor=kind==='meteor',duration=p.shortProjectile?240:beam?750:meteor?850:560,arrival=beam?420:duration,count=beam||p.area?1:Math.min(3,p.hits),stagger=65;
+  for(let i=0;i<count;i++){
+   const delay=i*stagger,{start,dx,dy,angle,distance}=flightGeometry(p.painted,from,to),shot=skillPresentation(v).shotSize,s=beam?shot*.78:p.painted.asset==='boulder'?shot*1.25:kind==='vortex'?shot*1.15:has('arrow bullet',p.painted.asset)?shot*.83:shot;
+   const o=owned(this,L,start.x,start.y+(i-(count-1)/2)*9,s,'travel',v),n=entry.image.cloneNode(false);n.onload=null;n.alt='';n.draggable=false;n.dataset.assetRole='projectile';n.className='battle-designed-projectile';
+   Object.assign(o.root.dataset,{source:this.currentSource||'',target:this.currentTarget||'',asset:p.painted.asset});n.dataset.visualKind=kind;
+   const orientation=spriteOrientation(p.painted,angle),pose=orientation.pose,fit=Math.min(s*1.5/entry.image.naturalWidth,s/entry.image.naturalHeight);
+   Object.assign(n.dataset,{nativeAngle:String(orientation.nativeAngle),flightAngle:String(angle),rotation:String(orientation.rotation),orientationMode:orientation.mode,flipped:String(orientation.flip),anchorX:String(orientation.anchor[0]),anchorY:String(orientation.anchor[1])});
+   Object.assign(n.style,{position:'absolute',left:'50%',top:'50%',width:(beam?distance:entry.image.naturalWidth*fit)+'px',height:(beam?s:entry.image.naturalHeight*fit)+'px',objectFit:beam?'fill':'contain',transform:pose,transformOrigin:orientation.origin,filter:p.painted.tint||'none'});o.root.append(n);
+   if(!['arrow','bullet','flask','boulder','shuriken'].includes(p.painted.asset))softenVfxEdges(n,['psychic-high','dark-high','ghost-high','holy-high'].includes(p.painted.asset)?{horizontal:12,top:14,bottom:14,contentBounds:true}:undefined);
+   if(orientation.mode==='spin')o.animate(n,[{transform:pose},{transform:pose.replace('rotate(0deg)','rotate(360deg)')}],duration,delay);
+   addGrandImages(o,v,'travel',pngContact(designedContact(v)),skillPresentation(v),{duration,delay,beam,angle});
+   addSkillParticles(o,v,'travel',duration,()=>this.animationRate(),{delay,beam,angle,distance,size:s});
+   if(beam)o.animate(n,[{transform:pose,clipPath:'inset(0 100% 0 0)',opacity:.8},{clipPath:'inset(0 0% 0 0)',opacity:1,offset:arrival/duration},{opacity:.7,offset:.84},{opacity:0}],duration,delay);
+   else o.animate(o.root,[{transform:'translate(-50%,-50%)',opacity:0},{opacity:1,offset:.08},{opacity:1,offset:.88},{transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`,opacity:0}],duration,delay);
+   if(reduced())Object.assign(o.root.style,{left:start.x+'px',top:start.y+'px',opacity:'.55'});
+   this.later(o.clear,duration+delay+30);
+  }return arrival+(count-1)*stagger;
+ };
+ vfx.impact=function(L,e,to,p){if(!p.visual)return oldImpact.call(this,L,e,to,p);if(!to)return;if(e.miss||e.k==='miss'){this.outcome(L,e,to,p);return;}if(e.blocked||e.immune||e.motionLanded===false)return;this.outcome(L,e,to,p);
+  const key=p.id+':'+to.x.toFixed(1)+':'+to.y.toFixed(1);
+  // A secondary status event must not replay the whole explosion on top of a hit.
+  if(e.k==='debuff'&&p.visual.role==='damage'&&activeContacts.has(key))return;
+  const v=e.k==='heal'&&!has('heal revive rest',p.visual.archetype)?{...p.visual,archetype:'heal',role:'support'}:e.k==='buff'&&p.visual.role!=='support'?{...p.visual,archetype:'empower',role:'support'}:p.visual;
+  const recipe=pngContact(designedContact(v)),pattern=visualPattern(v),support=v.role==='support',small=has('spark pierce claw fang slash reticle',pattern),presentation=skillPresentation(v,to.size||44,window.innerWidth<620),size=presentation.impactSize,duration=presentation.duration;
+  activeContacts.get(key)?.();const o=owned(this,L,to.x,to.y,size,'impact',v);activeContacts.set(key,o.clear);o.onClear=()=>{if(activeContacts.get(key)===o.clear)activeContacts.delete(key)};
+  o.root.dataset.assetRole='impact';o.root.dataset.impactFamily=recipe.family;o.root.classList.add('battle-contact-impact');
+  Object.assign(o.root.dataset,{rank:String(v.spectacle?.rank||1),intensity:String(v.spectacle?.intensity||.3),identity:v.identity?.key||p.id,signature:v.progression?.signature?.kind||'',unlockLevel:String(v.progression?.unlockLevel??''),mp:String(v.progression?.mp||0)});
+  const body=raster(o.root,recipe.path,resolve,small?.68:.95,!['earth','shield'].includes(recipe.family)?{shape:'energy',contentBounds:true}:recipe.family==='shield'?{contentBounds:false}:undefined);body.className='battle-contact-image';body.dataset.impactFamily=recipe.family;
+  if(has('normal steel fighting',v.element)&&recipe.family==='bullet')body.style.filter='saturate(.3)';
+  if(recipe.family==='arcane')body.style.filter=`hue-rotate(${hue(v.palette[0])-270}deg) saturate(.8)`;
+  if(recipe.family==='smoke')body.style.filter='grayscale(1)';
+  if(v.archetype==='foxFire')body.style.filter='hue-rotate(180deg) saturate(.8)';
+  if(support&&!has('heal revive rest shield',v.archetype)){body.style.opacity='.38';o.root.style.width=size*.85+'px';o.root.style.height=size*.85+'px';}
+  addGrandImages(o,v,'impact',recipe,presentation,{duration});
+  addMeleeContactImages(o,p,v,e.k,presentation);
+  addHighTierEffects(o,v,to,presentation,'impact',e.k,()=>this.animationRate());
+  addSkillParticles(o,v,'impact',duration+100,()=>this.animationRate(),{size});
+  const peak=recipe.family==='smoke' ? .3 : support ? .52 : 1;
+  const frames=[{transform:'scale(.5)',opacity:0,offset:0}];for(let i=0;i<presentation.pulses;i++){const offset=.12+i*.53/Math.max(1,presentation.pulses-1);frames.push({transform:`scale(${.96+i*.055})`,opacity:peak,offset},{transform:`scale(${1+i*.055})`,opacity:peak*.92,offset:offset+.09})}frames.push({transform:'scale(1.13)',opacity:peak*.89,offset:.80},{transform:'scale(1.3)',opacity:0,offset:1});o.animate(body,frames,duration);
+  if(reduced())body.style.opacity='.8';this.later(o.clear,duration+130);return o.root;
+ };
+}
+
+return {visualPattern,designedContact,installDesignedSkillEffects};})();
+const m23=(()=>{const legacyAssets=art;const recipes=new Map(Object.entries({"sw_whirl": {"movement": "orbit", "palette": "steel", "motifs": ["blade", "gust", "blade"]}, "sh_army": {"movement": "rise", "palette": "gold", "motifs": ["banner", "banner", "shield"]}, "at_grenade": {"movement": "dive", "palette": "ember", "motifs": ["bomb", "spark", "cloud"]}}));const colors={
+  steel:['#ecf7ff','#70badc'],gold:['#fff8bd','#ffac45'],electric:['#e2ffff','#6ea6ff'],
+  violet:['#f2c7ff','#a77add'],void:['#f3a8ff','#7b5bde'],amber:['#fff0a5','#de8b46'],
+  blood:['#ffd1c2','#ff4c59'],stone:['#f1d7ae','#bc8861'],sky:['#d9faff','#47cbec'],
+  leaf:['#efffb1','#85b94d'],fire:['#fff3a0','#ff742c'],spirit:['#d2fffa','#46e4c3'],
+  green:['#d9ffcd','#75e19c'],poison:['#f0ff9c','#8cc948'],ember:['#ffd28a','#ff5b3d'],
+  sand:['#fff3ca','#e4ae70'],moon:['#eef6ff','#a89bff'],rose:['#fff0fd','#f283c9'],
+  water:['#cffbff','#459bff'],ice:['#efffff','#62d7ff'],prism:['#c8fbff','#f597ff'],
+ };function reveal(container,anchor,id,name,rate,duration,portraitStrip){
+  const recipe=recipes.get(id);
+  if(!recipe||!name)return;
+  const [highlight,accent]=colors[recipe.palette];
+  const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const portraitAsset=Object.keys(legacyAssets).find(path=>legacyAssets[path]===portraitStrip)||portraitStrip;
+  const expanded=portraitAsset?.endsWith('-expanded.png');
+  const cutout=expanded||portraitAsset?.includes('/signature-portraits-v9/');
+  const wide=cutout||portraitAsset?.includes('/signature-portraits-v7/');
+  const banner=document.createElement('div');
+  banner.dataset.signatureBanner=id;
+  banner.setAttribute('aria-hidden','true');
+  Object.assign(banner.style,{position:'absolute',zIndex:12,pointerEvents:'none',top:'42%',left:'50%',
+   width:wide?'min(90%, 590px, 96dvh)':'min(92%, 590px)',transform:'translate(-50%, -50%)',textAlign:'center',isolation:'isolate'});
+  const angle='rotate(-4deg)';
+  const lightningEdge='polygon(0 27%, 5% 10%, 18% 10%, 22% 0, 27% 10%, 54% 10%, 58% 2%, 61% 10%, 81% 10%, 87% 0, 91% 11%, 100% 11%, 96% 37%, 100% 47%, 95% 81%, 88% 88%, 74% 88%, 69% 100%, 65% 88%, 44% 88%, 39% 98%, 35% 88%, 17% 88%, 12% 100%, 8% 88%, 0 88%, 4% 54%)';
+  const portraitEdge=lightningEdge.replace('27% 10%, 54% 10%, 58% 2%, 61% 10%, 81% 10%', '25% 10%, 26% 0, 74% 0, 75% 10%, 81% 10%');
+  const raisedPortraitEdge=portraitEdge.replace('26% 0, 74% 0', '26% -8%, 74% -8%');
+  const strip=document.createElement('div');
+  const artwork=document.createElement('div');
+  Object.assign(strip.style,{position:'relative',height:'clamp(72px, 17vw, 108px)',overflow:'hidden',
+   transform:angle+' skewX(-10deg)',filter:'drop-shadow(0 0 8px '+accent+'bb) drop-shadow(0 5px 6px #000b)'});
+  if(wide)Object.assign(strip.style,{height:'auto',aspectRatio:'5 / 2'});
+  if(cutout)strip.style.overflow='visible';
+  const edge=document.createElement('div');
+  Object.assign(edge.style,{position:'absolute',inset:'0',clipPath:lightningEdge,
+   background:'linear-gradient(115deg,'+accent+' 4%, '+highlight+' 21%, #fff3ce 23%, '+accent+' 42%, '+highlight+' 71%, #fff3ce 74%, '+accent+' 95%)'});
+  const bevel=document.createElement('div');
+  Object.assign(bevel.style,{position:'absolute',inset:'1px 2px',clipPath:lightningEdge,
+   background:'linear-gradient(160deg,#101829 5%, '+accent+' 29%, '+highlight+' 51%, #101829 75%, '+accent+')'});
+  const shimmer=document.createElement('div');
+  Object.assign(shimmer.style,{position:'absolute',inset:'0',
+   background:'linear-gradient(108deg, transparent 35%, '+highlight+'77 43%, #fff8dc 49%, white 50%, '+highlight+'77 57%, transparent 65%)',
+   opacity:'0'});
+  const glints=document.createElement('div');
+  Object.assign(glints.style,{position:'absolute',inset:'0',opacity:'.65',
+   background:'radial-gradient(circle at 22% 1%, white, '+highlight+' 2%, transparent 8%), radial-gradient(circle at 87% 1%, #fff3ce, '+highlight+' 2%, transparent 8%), radial-gradient(circle at 12% 99%, white, '+highlight+' 2%, transparent 7%), radial-gradient(circle at 95% 81%, white, '+highlight+' 2%, transparent 7%)'});
+  edge.append(bevel,shimmer,glints);
+  if(!reducedMotion){
+   const sweep=shimmer.animate([
+    {transform:'translateX(-100%)',opacity:0},
+    {transform:'translateX(-65%)',opacity:.95,offset:.19},
+    {transform:'translateX(65%)',opacity:.95,offset:.82},
+    {transform:'translateX(100%)',opacity:0}
+   ],{duration,easing:'linear'});
+   const sparkle=glints.animate([{opacity:.4},{opacity:1,offset:.45},{opacity:.65}],{duration,easing:'ease-in-out'});
+   sweep.playbackRate=sparkle.playbackRate=rate;
+  }
+  Object.assign(artwork.style,{position:'absolute',inset:'3px 5px',clipPath:lightningEdge,overflow:'hidden',
+   background:'linear-gradient(100deg,#09101d 3%, '+accent+' 53%, #09101d 97%)'});
+  const portrait=anchor.art||anchor.node.querySelector('img');
+  const source=portrait?.dataset.idle||portrait?.currentSrc||portrait?.getAttribute('src');
+  const portraitLayer=wide?document.createElement('div'):artwork;
+  if(wide)Object.assign(portraitLayer.style,{position:'absolute',inset:'3px 5px',
+   clipPath:cutout?raisedPortraitEdge:portraitEdge});
+  if(portraitStrip){
+   const face=document.createElement('div');
+   face.dataset.signaturePortrait=portraitAsset;
+   Object.assign(face.style,{position:'absolute',left:'50%',top:'50%',height:'98%',aspectRatio:'240 / 112',
+    transform:'translate(-50%,-50%) skewX(10deg) rotate(4deg)',backgroundImage:'url("'+portraitStrip+'")',
+    backgroundSize:'400% 100%',backgroundPosition:'0% 50%',filter:'drop-shadow(0 0 8px #09101d)'});
+   if(wide)Object.assign(face.style,{inset:'0',width:'100%',height:'100%',aspectRatio:'auto',transform:'none',
+    backgroundRepeat:'no-repeat',filter:'none',
+    maskImage:'linear-gradient(90deg,transparent 0%,black 9%,black 91%,transparent 100%)'});
+   if(cutout)Object.assign(face.style,{maskImage:'none',transformOrigin:'center top',
+    transform:expanded?'translateY(-8%) scale(1.18, '+(id==='solar_raijaku_s6'?'1.33':'1.30')+')':
+     'translateY(-6%) scale(1.04)'});
+   portraitLayer.append(face);
+   if(!reducedMotion){
+    const animation=face.animate([{backgroundPosition:'0% 50%'},{backgroundPosition:'133.333333% 50%'}],
+     {duration,easing:'steps(4,end)',fill:'none'});
+    animation.playbackRate=rate;
+   }
+  }else if(source){
+   const face=document.createElement('img');
+   face.src=source;face.alt='';
+   Object.assign(face.style,{position:'absolute',left:'50%',top:'-7%',width:'min(54%, 290px)',
+    height:'265%',objectFit:'cover',objectPosition:'50% 10%',transform:'translateX(-50%) skewX(10deg) rotate(4deg)',
+    filter:'drop-shadow(0 0 13px #09101d)'});
+   artwork.append(face);
+  }
+  const rim=document.createElement('div');
+  Object.assign(rim.style,{position:'absolute',inset:'0',background:'linear-gradient(90deg,#060a15bd,transparent 34% 66%,#060a15bd)'});
+  artwork.append(rim);
+  strip.append(edge,artwork);
+  if(wide)strip.append(portraitLayer);
+  const title=document.createElement('span');
+  title.textContent=name;
+  Object.assign(title.style,{position:'absolute',top:'88%',left:'50%',width:'max-content',maxWidth:'94%',
+   transform:'translate(-50%, -50%) '+angle,color:'#fff0ce',overflowWrap:'anywhere',textWrap:'balance',
+   font:'700 clamp(18px, 5.1vw, 30px)/1.35 Georgia, "Leelawadee UI", "Noto Sans Thai", serif',
+   textShadow:'0 1px 1px #120a06, 0 2px 3px #000, 0 0 5px #000, 0 0 10px '+accent+'aa'});
+  banner.append(strip,title);
+  container.querySelector('[data-signature-banner]')?.remove();
+  container.append(banner);
+  if(!reducedMotion){
+   const animation=banner.animate([
+    {opacity:0,translate:'-20% 0'},{opacity:1,translate:'0 0',offset:.16},
+    {opacity:1,translate:'0 0',offset:.87},{opacity:0,translate:'16% 0'}
+   ],{duration,fill:'both',easing:'ease-out'});
+   animation.playbackRate=rate;
+  }
+  return banner;}
+return {recipes,reveal};})();
+const m24=(()=>{const {installDesignedSkillEffects}=m22;
+const {skillPresentation}=m7;
+const {signatureArtFor}=m13;
+const {recipes,reveal}=m23;
+
+// The trial owns geometry and gameplay. The existing battle renderer owns each visual phase.
+const resolve=path=>art[path]||path;
+const shots=new Map();
+const warmImages=new Map();
+const warmFamilies={
+  fighting_aoe:['earth-impact'],
+  sw_whirl:['wind-impact'],
+  at_grenade:['fireball-impact','flamethrower-impact'],
+  ar_rain:['bullet-impact','arcane-impact'],
+  sh_army:['arcane-impact']
+};
+function prepare(skill,actor){
+  if(!warmFamilies[skill])return;
+  const paths=warmFamilies[skill].map(name=>'assets/skill-grand-png-v1/'+name+'.png');
+  paths.push('assets/roster/'+actor.id+'-windup.webp','assets/roster/'+actor.id+'-'+releasePose(skill)+'.webp');
+  if(recipes.has(skill)){
+    paths.push(art["assets/tier-eight-v1/legendary-wave.png"]);
+    paths.push('assets/signature-portraits-v9/'+skill+'-'+(actor.id.endsWith('-male')?'male':'female')+'.png');
+  }
+  if(skill==='fighting_aoe'||skill==='sw_whirl')paths.push('assets/melee-contact-png-v1/'+actor.id+'-meleeEffect.png');
+  if(skill==='sw_whirl')paths.push(art["assets/tier-eight-v1/storm.png"]);
+  if(skill==='at_grenade')paths.push(art["assets/vfx/projectiles/v4/fire-high.png.webp"]);
+  return Promise.all(paths.map(path=>{
+    const url=resolve(path);
+    if(!warmImages.has(path)){
+      const image=new Image();image.crossOrigin='anonymous';image.src=url;
+      warmImages.set(path,image.decode().catch(()=>warmImages.delete(path)));
+    }
+    return warmImages.get(path);
+  }));
+}
+function releasePose(skill){return ['sw_whirl','fighting_aoe'].includes(skill)?'melee':skill==='sh_army'?'windup':'ranged';}
+function projectile(p){
+  if(!p)return null;
+  const url=resolve(p.path);
+  if(!shots.has(url)){
+    const image=new Image(), entry={image,ready:false};
+    image.src=url;
+    entry.promise=image.decode().then(()=>{entry.ready=true;},()=>{shots.delete(url);});
+    shots.set(url,entry);
+  }
+  return shots.get(url);
+}
+function create(layer,skill,actor,facing,speed){
+  const stage=document.createElement('div');
+  Object.assign(stage.style,{position:'absolute',inset:0});layer.append(stage);
+  layer=stage;
+  const timers=new Set(), live=new Set();
+  const later=(cb,ms)=>{const timer=setTimeout(()=>{timers.delete(timer);cb();},ms/speed);timers.add(timer);};
+  const caster={characterId:actor.id,gender:actor.id.endsWith('-male')?'male':'female',facing};
+  globalThis.SoulbeastSignatureMotion={recipes};
+  const vfx={live,later,animationRate:()=>speed,profile:id=>({id,area:true}),prepareProjectile:projectile};
+  installDesignedSkillEffects(vfx,resolve);
+  const profile=vfx.profile(skill,caster),spec=profile.visual;
+  const timing=skillPresentation(spec,52,innerWidth<620);
+  function anchor(p){return {...p,size:52,width:52,height:64,board:{left:0,top:0,width:610,height:319}};}
+  const image=signatureArtFor(spec);
+  function banner(){
+    if(!image)return;
+    const el=reveal(layer,{node:layer},skill,spec.name,speed,2000,image.path);
+    if(!el)return;
+    const portrait=el.querySelector('[data-signature-portrait]');
+    if(portrait)portrait.style.scale=facing==='left'?'-1 1':'1 1';
+    later(()=>el.remove(),2000);
+  }
+  const shot=projectile(profile.painted);
+  return {
+    timing,hasBanner:!!image,hasTravel:!!profile.painted,shotReady:shot?.promise,banner,
+    cast(at){vfx.castVisual(layer,anchor(at),profile);},
+    travel(from,to){return vfx.travel(layer,anchor(from),anchor(to),profile);},
+    impact(at,width,height,mask){
+      const host=document.createElement('div');
+      Object.assign(host.style,{position:'absolute',inset:0,pointerEvents:'none'});
+      if(mask)Object.assign(host.style,{maskImage:'url("'+mask+'")',maskSize:'100% 100%',maskRepeat:'no-repeat'});
+      const group=document.createElement('div');
+      Object.assign(group.style,{position:'absolute',left:at.x+'px',top:at.y+'px',transformOrigin:'0 0',
+        transform:'scale('+width/timing.impactSize+','+height/timing.impactSize+')'});
+      host.append(group);layer.append(host);
+      vfx.impact(group,{k:spec.role==='support'?'buff':'hit',motionLanded:true,skipOutcome:true},anchor({x:0,y:0}),profile);
+    },
+    clear(){for(const t of timers)clearTimeout(t);for(const cb of [...live])cb();stage.remove();}
+  };
+}
+
+return {prepare,releasePose,create};})();
+return m24;})();</script><script>(() => {
  const H=HexBattle,$=id=>document.getElementById(id);
  const svg=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);return el};
  const radius=40, tileWidth=Math.sqrt(3)*radius;
@@ -334,6 +1337,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  function chooseSkill(id){
    if(busy||planning||auto||s.afterSkill||s.winner!==null||H.current(s).team)return;
    mode=id;rotation=0;aim=null;
+   if(H.skills[id]?.shape)HexOriginal.prepare(id,H.current(s));
    if(['ring','field'].includes(H.skills[id]?.shape))aim=H.current(s).pos;
    render();
  }
@@ -359,6 +1363,9 @@ const areaEffects = (() => {
   const canvas = document.createElement('canvas');
   canvas.style.cssText='display:block;width:610px;height:319px;pointer-events:none';
   layer.append(canvas);
+  const original=document.createElement('div');
+  Object.assign(original.style,{position:'absolute',inset:0,pointerEvents:'none',isolation:'isolate'});
+  layer.append(original);
   $('board').insertBefore(layer,$('gaps'));
   const ctx = canvas.getContext('2d');
   const clamp = t=>Math.max(0,Math.min(t,1));
@@ -390,9 +1397,17 @@ const areaEffects = (() => {
     const recipients=impact.targets.map(spriteCenter);
     const facing=Math.sign(aimPoint.x-origin.x)||(actor.team===0?1:-1)*(rightView()?-1:1);
     const dir=Math.atan2((aimPoint.y-origin.y)/floorScale,aimPoint.x-origin.x);
-    const castTime={fighting_aoe:650,sw_whirl:800,at_grenade:950,ar_rain:1000,sh_army:1050}[id];
     const contact={fighting_aoe:.30,sw_whirl:.32,at_grenade:.43,ar_rain:.54,sh_army:.38}[id];
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const speed=1.4;
+    const fx=HexOriginal.create(original,id,actor,facing<0?'left':'right',speed);
+    const casterAt={x:origin.x,y:origin.y-22};
+    await Promise.race([Promise.all([fx.shotReady,HexOriginal.prepare(id,actor)]),sleep(1200)]);
+    if(version!==epoch){fx.clear();return;}
+    const intro=fx.hasBanner?2000:0;
+    const launch=intro+fx.timing.castDuration;
+    const hitAt=launch+(fx.hasTravel?(id==='sw_whirl'?240:560):100);
+    const end=hitAt+fx.timing.duration+130;
     const groundPath=new Path2D();
     for(const p of coords){
       const corners=tilePoints(p).split(' ').map(pair=>pair.split(',').map(Number));
@@ -409,6 +1424,33 @@ const areaEffects = (() => {
       ctx.drawImage(mask,0,0);ctx.restore();
     };
     const sweepOrder=[...points].sort((a,b)=>(a.y-b.y)*Math.cos(dir)/floorScale-(a.x-b.x)*Math.sin(dir));
+    // A diffuse silhouette of the selected cells allows the original plume and sparks
+    // to rise above the ground without drawing a square around the contact.
+    let contactMask;
+    if(id!=='sh_army'&&id!=='ar_rain'){
+      const surface=document.createElement('canvas');surface.width=610;surface.height=319;
+      const brush=surface.getContext('2d');
+      brush.filter='blur(6px)';brush.fillStyle=brush.strokeStyle='white';brush.lineWidth=12;
+      for(const dy of [0,-14,-28]){
+        brush.setTransform(1,0,0,1,0,dy);brush.fill(groundPath);brush.stroke(groundPath);
+      }
+      contactMask=surface.toDataURL();
+    }
+    function originalImpact(){
+      if(id==='sh_army'){for(const p of recipients)fx.impact({x:p.x,y:p.y-18},67,76);return;}
+      if(id==='ar_rain'){
+        for(const target of impact.targets){
+          const at=mid(H.footprint(target).find(p=>impact.area.has(H.key(p))));
+          fx.impact({x:at.x,y:at.y-12},69,63);
+        }
+        // Show the contact with the ground even when the entire volley misses all units.
+        if(!impact.targets.length)fx.impact({x:aimPoint.x,y:aimPoint.y-5},60,42);
+        return;
+      }
+      const xs=points.map(p=>p.x),ys=points.map(p=>p.y);
+      const l=Math.min(...xs),r=Math.max(...xs),top=Math.min(...ys),bottom=Math.max(...ys);
+      fx.impact({x:(l+r)/2,y:(top+bottom)/2-9},r-l+tileWidth,bottom-top+radius*1.65,contactMask);
+    }
     function paint(t){
       ctx.clearRect(0,0,610,319);
       if(id==='fighting_aoe'){
@@ -430,7 +1472,8 @@ const areaEffects = (() => {
       }else if(id==='at_grenade'){
         if(t<contact){
           const u=t/contact;
-          stamp('fxBomb',origin.x+(aimPoint.x-origin.x)*u,origin.y+(aimPoint.y-origin.y)*u-16*(1-u)-48*Math.sin(Math.PI*u),29,31,facing*u*2);
+          // Reveal the bomb at release; the original painted projectile carries the flight.
+          if(u<.33)stamp('fxBomb',casterAt.x,casterAt.y,31,33,-.22*facing,1-u/.33);
         }else{
           const u=(t-contact)/(1-contact);
           for(const [i,p] of points.entries()){
@@ -467,16 +1510,34 @@ const areaEffects = (() => {
       }
     }
     await new Promise(done=>{
-      let frame,hit=false;
-      finish=()=>{cancelAnimationFrame(frame);ctx.clearRect(0,0,610,319);delete canvas.dataset.skill;finish=null;done();};
+      let frame,cast=false,travel=false,hit=false;
+      const sprite=sprites.get(actor.id)?.firstChild;
+      const idle=sprite?.getAttribute('href');
+      const pose=name=>sprite?.setAttribute('href',art['assets/roster/'+actor.id+'-'+name+'.webp']);
+      let gesture=null;
+      finish=()=>{cancelAnimationFrame(frame);gesture?.cancel();if(idle)sprite.setAttribute('href',idle);fx.clear();ctx.clearRect(0,0,610,319);delete canvas.dataset.skill;finish=null;done();};
       const start=performance.now();
       canvas.dataset.skill=id;
+      if(fx.hasBanner&&!reduced)fx.banner();
       const draw=now=>{
         if(version!==epoch){finish();return;}
-        const t=clamp((now-start)/(reduced?220:castTime));
-        if(!hit&&(reduced||t>=contact)){hit=true;onImpact();}
-        if(t>=1){finish();return;}
-        paint(reduced ? .68 : t);frame=requestAnimationFrame(draw);
+        const elapsed=(now-start)*speed;
+        if(reduced){if(!hit){hit=true;onImpact();}paint(.68);if(now-start>=220){finish();return;}}
+        else {
+          if(!cast&&elapsed>=intro){
+            cast=true;pose('windup');fx.cast(casterAt);
+            gesture=sprite?.animate([{translate:'0px 0px'},{translate:(-3*facing)+'px -3px',offset:.35},
+              {translate:(5*facing)+'px -2px',offset:.75},{translate:'0px 0px'}],{duration:fx.timing.castDuration/speed});
+          }
+          if(!travel&&elapsed>=launch){travel=true;pose(HexOriginal.releasePose(id));if(fx.hasTravel)fx.travel(casterAt,{x:aimPoint.x,y:aimPoint.y-10});}
+          if(!hit&&elapsed>=hitAt){hit=true;onImpact();originalImpact();}
+          if(elapsed>=end){finish();return;}
+          if(travel){
+            const phase=elapsed<hitAt?contact*(elapsed-launch)/(hitAt-launch):contact+(1-contact)*(elapsed-hitAt)/(end-hitAt);
+            paint(clamp(phase));
+          }
+        }
+        frame=requestAnimationFrame(draw);
       };
       draw(start);
     });
