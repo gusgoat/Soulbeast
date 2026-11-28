@@ -12,12 +12,15 @@
 [hidden]{display:none!important}
 .tile.blocked{fill:#513c2d99;stroke:#deaf79;stroke-dasharray:6 3}.tile.zone{fill:#27615c88;stroke:#9cc4b6}.tile.drop{fill:#4b967586;stroke:#b0efd3}.tile.chosen{stroke:#ffd36b;stroke-width:3}
 #formation .controls{margin-top:10px}#roster{display:flex;gap:6px;flex-wrap:wrap}#roster button{display:flex;align-items:center;gap:4px;padding:5px 8px;touch-action:none}#roster img{height:31px;width:31px;object-fit:contain}#board.planning{touch-action:none}#start{background:#30584e;color:#fff1c9}.deploy-actions{justify-content:space-between}
+.tile.impact-zone{fill:#df9223ad;stroke:#ffd780;stroke-width:2}.tile.buff-zone{fill:#48ae8480;stroke:#b5f5c7}.tile.impact-unit{stroke:#fff2aa;stroke-width:3.3}.tile.aim-center{stroke:#fff;stroke-width:4}
+#aimPanel{background:#14282e;border:1px solid #a28d64;border-radius:8px;padding:8px 10px;margin-bottom:8px}#aimSummary{margin:0 0 6px;color:#ffe3af;font-size:13px}#confirmAim{background:#765320}#areaMenu{margin-top:8px;padding:8px 0 0}#areaSkills{margin-top:6px}
 </style></head><body><main>
 <header><h1>สนามทดลองหกเหลี่ยม</h1><label>สนาม <select id="mode"><option value="normal">ปะทะ 3 ต่อ 3</option><option value="boss">ท้าบอสจอมมาร</option></select></label></header>
 <section class="field"><div class="head"><strong id="turn"></strong><span class="queue" id="queue" aria-label="ลำดับตา"></span></div><svg class="board" id="board" viewBox="0 0 610 319" role="group" aria-label="สนามรบหกเหลี่ยม"><g id="tiles"></g><g id="sprites" aria-hidden="true"></g><g id="gaps" aria-hidden="true" pointer-events="none"></g></svg></section>
 <section id="formation" class="panel"><h2>จัดทัพก่อนสู้</h2><p class="hint" id="placement" role="status">เลือกตัวละครแล้วแตะช่อง หรือลากไปวางในสามคอลัมน์ริมขวา</p><div id="roster"></div><label class="controls"><input type="checkbox" id="fastTrial"> ทดลองเทพอสูรสายฟ้าที่ SPD 229 (เดิน 4 + 4 ช่อง)</label><div class="controls deploy-actions"><label>ฝั่งตอนสู้ <select id="side"><option value="left">ซ้าย</option><option value="right">ขวา</option></select></label><button id="start">เริ่มต่อสู้</button></div></section>
 <section id="combat" class="panel" hidden><div class="actor"><h2 id="actor"></h2><span class="stats" id="stats"></span></div><p class="hint" id="hint" aria-live="polite"></p>
-<div class="controls"><button id="walk">เดิน</button><span class="skills" id="skills"></span><button id="pass">จบตา</button></div></section>
+<div id="aimPanel" hidden><p id="aimSummary" role="status"></p><div class="controls"><button id="confirmAim">ยืนยันใช้สกิล</button><button id="rotateAim">หมุนพื้นที่</button><button id="cancelAim">ยกเลิก</button></div></div>
+<div class="controls"><button id="walk">เดิน</button><span class="skills" id="skills"></span><button id="pass">จบตา</button></div><details id="areaMenu"><summary>สกิลหมู่ทดลอง · 5 ท่า</summary><div class="controls" id="areaSkills"></div></details></section>
 <div class="tools"><span class="legend" id="walkLegend"><b>▧</b> เดินได้</span><span class="legend" id="rangeLegend" hidden><b class="range-key">▧</b> ระยะสกิล　<i>◇</i> ใช้ได้ทันที　+เลข = ต้องเดินอีกกี่ช่อง</span><span><button id="auto" aria-pressed="false">ออโต้ทีม</button> <button id="reset">เริ่มใหม่</button></span></div>
 <p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ก่อนใช้สกิล · SPD 0–15 เดิน 1 ช่อง · 16–40 เดิน 2 ช่อง · 41–70 เดิน 3 ช่อง · 71 ขึ้นไปเดิน 4 ช่อง<br>หลังใช้สกิล · SPD 0–100 จบตา · 101–130 เดินเพิ่ม 1 ช่อง · 131–190 เพิ่ม 2 ช่อง · 191–220 เพิ่ม 3 ช่อง · 221 ขึ้นไปเพิ่ม 4 ช่อง<br>ใช้สกิลได้หนึ่งครั้งต่อตา คิดระยะเดินต่อจาก SPD หลังสกิลออกผล เลือกจบตาเพื่ออยู่ที่เดิมได้<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>เมื่อเริ่มต่อสู้ สนามจะสุ่มสิ่งกีดขวางจากฉากต้นทาง 0–2 ชิ้น โดยเว้นจุดเกิดของทั้งสองทีม ชิ้นละ 1–3 ช่อง แตะวัตถุเพื่อดูพื้นที่ที่กิน สกิลยังใช้ข้ามสิ่งกีดขวางได้<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่และบอสยืน 3 ช่องติดกันเป็นรูปสามเหลี่ยม ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
 </main><script>const HexBattle = (() => {
@@ -26,6 +29,11 @@
   const ranges = {self:0, near:1, medium:3, far:5, extreme:7};
   const rangeNames = {self:'ตนเอง', near:'ใกล้', medium:'กลาง', far:'ไกล', extreme:'ไกลมาก'};
   const skills = {
+    fighting_aoe:{name:'เตะกวาด',range:'near',shape:'arc',label:'เลือกทิศ · 3 ช่อง',power:31,physical:true},
+    sw_whirl:{name:'ดาบวายุหมุน',range:'self',shape:'ring',label:'รอบตัว · 7 ช่อง',power:34,physical:true},
+    at_grenade:{name:'ระเบิดมือ',range:'medium',shape:'triangle',label:'ระยะ 3 · พื้นที่ 3 ช่อง',power:30,physical:true},
+    ar_rain:{name:'ฝนธนู',range:'far',shape:'burst',label:'ระยะ 5 · พื้นที่ 7 ช่อง',power:24,physical:true},
+    sh_army:{name:'บัญชาทัพซามูไร',range:'self',shape:'field',label:'ทั้งสนาม · ฝ่ายเรา',command:true,turns:3},
     slash:{name:'โจมตีปกติ', range:'near', power:37},
     haste:{name:'เร่งความเร็ว (ทดลอง)', range:'self', speedBonus:0.5, turns:3},
     fang:{name:'เขี้ยวอัสนี', range:'near', power:40},
@@ -79,7 +87,7 @@
       {name:'บัลลังก์หิน',art:'throneSeat',size:3,width:94}
     ]
   };
-  const effectiveSpeed = u => Math.round(u.speed*(1+(u.haste?.speedBonus||0)));
+  const effectiveSpeed = u => Math.round(u.speed*(1+(u.haste?.speedBonus||0)+(u.command ? 0.15 : 0)));
   function create(mode='normal',fastTrial=false) {
     const lineup=mode==='boss'?[...roster.filter(row=>row[2]===0),['demonlord','จอมมาร',1,3,40,360,6,2,['claw','flame','solar']]]:roster;
     const units=lineup.map(([id,name,team,size,speed,max,col,row,kit])=>({id,name,team,size,speed,max,hp:max,pos:cell(col,row),kit}));
@@ -164,9 +172,46 @@
     return path;
   }
   const eligible = (u,v,sk) => v.hp>0&&(sk.range==='self'?v===u:sk.heal?v.team===u.team&&v.hp<v.max:v.team!==u.team);
+  const neighbor=(p,i)=>({q:p.q+dirs[(i+6)%6][0],r:p.r+dirs[(i+6)%6][1]});
+  function aimCells(s,id,at=current(s).pos){
+    const actor=current(s),sk=skills[id],origin=footprint(actor,at);
+    if(!sk?.shape||actor.team!==0||s.afterSkill||s.winner!==null)return [];
+    if(sk.shape==='field')return [at];
+    if(sk.shape==='ring')return origin;
+    return cells.filter(p=>{
+      const d=distanceToCell(origin,p);
+      return sk.shape==='arc'?d===1:d<=ranges[sk.range];
+    });
+  }
+  function areaPreview(s,id,p,rotation=0,at=current(s).pos){
+    if(!p||!Number.isInteger(rotation)||rotation<0||rotation>5||!aimCells(s,id,at).some(c=>key(c)===key(p)))return null;
+    const actor=current(s),sk=skills[id],origin=footprint(actor,at);
+    let pattern;
+    if(sk.shape==='field')pattern=cells;
+    else if(sk.shape==='arc'){
+      // Sweep three consecutive exterior hexes, including around a wide caster's corners.
+      const rim=new Map();
+      for(const start of origin){
+        for(let j=0;j<6;j++){
+          const c=neighbor(start,j);
+          if(distanceToCell(origin,c)>0)rim.set(key(c),c);
+        }
+      }
+      const q=origin.reduce((n,c)=>n+c.q,0)/origin.length,r=origin.reduce((n,c)=>n+c.r,0)/origin.length;
+      const angle=c=>Math.atan2(Math.sqrt(3)*(c.r-r),2*(c.q-q)+c.r-r);
+      const ring=[...rim.values()].sort((a,b)=>angle(a)-angle(b));
+      const i=ring.findIndex(c=>key(c)===key(p));
+      pattern=[-1,0,1].map(offset=>ring[(i+offset+ring.length)%ring.length]);
+    }else if(sk.shape==='triangle')pattern=[p,neighbor(p,rotation),neighbor(p,rotation+1)];
+    else pattern=[p,...dirs.map((_,j)=>neighbor(p,j))];
+    const area=new Set(pattern.filter(inside).map(key));
+    const targets=s.units.filter(v=>v.hp>0&&(sk.command?v.team===actor.team:v.team!==actor.team)&&
+      footprint(v,v===actor?at:v.pos).some(c=>area.has(key(c))));
+    return {area,targets};
+  }
   function targets(s,id,at=current(s).pos) {
     const u=current(s),sk=skills[id];
-    if(s.winner!==null||s.afterSkill||!u.kit.includes(id)||!sk)return [];
+    if(s.winner!==null||s.afterSkill||!u.kit.includes(id)||!sk||sk.shape)return [];
     if(sk.range==='self')return [u];
     return s.units.filter(v=>eligible(u,v,sk)&&separation(u,v,at)<=ranges[sk.range]);
   }
@@ -189,6 +234,7 @@
     if(s.winner!==null)return;
     const actor=current(s),team=actor.team;
     if(actor.haste&&--actor.haste.turns===0)delete actor.haste;
+    if(actor.command&&--actor.command===0)delete actor.command;
     if(!s.units.some(u=>u.team!==team&&u.hp>0)){s.winner=team;return;}
     do {
       s.cursor=(s.cursor+1)%s.order.length;
@@ -196,12 +242,29 @@
     }while(current(s).hp<=0);
     s.spent=0;s.afterSkill=false;s.bonusSteps=0;
   }
-  function act(s,id,v) {
-    const valid=targets(s,id);
-    if(!valid.includes(v))return false;
+  function act(s,id,v,rotation=0) {
     const sk=skills[id],actor=current(s);
-    if(sk.speedBonus)v.haste={speedBonus:sk.speedBonus,turns:sk.turns};
-    else for(const t of sk.area?valid:[v])t.hp=sk.heal?Math.min(t.max,t.hp+sk.power):Math.max(0,t.hp-sk.power);
+    if(!sk)return false;
+    let affected;
+    if(sk.shape){
+      const preview=areaPreview(s,id,v,rotation);
+      if(!preview)return false;
+      affected=preview.targets;
+    }else{
+      const valid=targets(s,id);
+      if(!valid.includes(v))return false;
+      affected=sk.area?valid:[v];
+    }
+    for(const t of affected){
+      if(sk.command)t.command=sk.turns;
+      else if(sk.speedBonus)t.haste={speedBonus:sk.speedBonus,turns:sk.turns};
+      else if(sk.heal)t.hp=Math.min(t.max,t.hp+sk.power);
+      else{
+        const physical=sk.physical||['slash','fang','blade','claw'].includes(id);
+        const damage=physical?Math.round(sk.power*(actor.command?1.4:1)/(t.command?1.3:1)):sk.power;
+        t.hp=Math.max(0,t.hp-damage);
+      }
+    }
     s.bonusSteps=bonusAllowance(effectiveSpeed(actor));
     if(s.bonusSteps&&s.units.some(t=>t.team!==actor.team&&t.hp>0)){
       s.afterSkill=true;s.spent=0;
@@ -239,7 +302,7 @@
     }
     return best;
   }
-  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,bonusAllowance,effectiveSpeed,movementBudget,create,placeObstacles,canDeploy,loadFormation,current,routes,move,targets,rangePreview,act,next,plan};
+  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,bonusAllowance,effectiveSpeed,movementBudget,create,placeObstacles,canDeploy,loadFormation,current,routes,move,targets,aimCells,areaPreview,rangePreview,act,next,plan};
 })();
 if(typeof module!=='undefined')module.exports=HexBattle;
 </script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp", "throneStage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a5db897b3cdf3870d136013821d6cd0d730ea5a7964cb030efb73e89adeadda0.webp", "terrainAtlas": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/hex-trial--painted-obstacles--300f58f3123ec771.webp"};</script><script>(() => {
@@ -266,6 +329,14 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  const where=p=>String.fromCharCode(65+(rightView()?H.cols-1-H.column(p):H.column(p)))+(p.r+1);
  const tiles=new Map(),sprites=new Map();
  let s,mode='walk',auto=false,busy=false,epoch=0,timer,paths=new Map(),valid=[],positions,range;
+ let aim=null,rotation=0;
+ const trialSkills=Object.keys(H.skills).filter(id=>H.skills[id].shape);
+ function chooseSkill(id){
+   if(busy||planning||auto||s.afterSkill||s.winner!==null||H.current(s).team)return;
+   mode=id;rotation=0;aim=null;
+   if(['ring','field'].includes(H.skills[id]?.shape))aim=H.current(s).pos;
+   render();
+ }
  const sleep=ms=>new Promise(done=>setTimeout(done,ms));
  const spriteArt=id=>art[id]||'';
  const storageKey='soulbeast.hexTrial.formation.v1';
@@ -336,8 +407,11 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  }
  function render(){
    const u=H.current(s),ended=s.winner!==null,manual=!ended&&!busy&&!auto&&u.team===0;
-   paths=mode==='walk'&&manual?H.routes(s):new Map();valid=mode!=='walk'&&manual?H.targets(s,mode):[];positions=occupants();
-   range=manual&&mode!=='walk'?H.rangePreview(s,mode):null;
+   const sk=H.skills[mode],aiming=manual&&!!sk?.shape;
+   const centers=aiming?new Set(H.aimCells(s,mode).map(H.key)):null;
+   const impact=aiming?H.areaPreview(s,mode,aim,rotation):null;
+   paths=mode==='walk'&&manual?H.routes(s):new Map();valid=mode!=='walk'&&manual&&!aiming?H.targets(s,mode):[];positions=occupants();
+   range=manual&&mode!=='walk'&&!aiming?H.rangePreview(s,mode):null;
    for(const p of H.cells){
      const k=H.key(p),tile=tiles.get(k),v=positions.get(k),reachable=paths.get(k)?.length;
      const covered=range?.area.has(k),steps=range?.steps.get(v);
@@ -347,6 +421,15 @@ if(typeof module!=='undefined')module.exports=HexBattle;
      if(obstacle){
        tile.classList.add('blocked');
        tile.setAttribute('aria-label',where(p)+' '+obstacle.name+' · เดินผ่านไม่ได้');
+     }
+     if(aiming){
+       if(centers.has(k))tile.classList.add('cast-range');
+       if(impact?.area.has(k)){
+         tile.classList.add(sk.command?'buff-zone':'impact-zone');
+         tile.setAttribute('aria-label',tile.getAttribute('aria-label')+' · พื้นที่สกิล');
+       }
+       if(impact?.targets.includes(v))tile.classList.add('impact-unit');
+       if(aim&&same(aim,p)&&sk.shape!=='field')tile.classList.add('aim-center');
      }
    }
    drawActors();
@@ -360,19 +443,29 @@ if(typeof module!=='undefined')module.exports=HexBattle;
      text.textContent=Number.isFinite(steps)?'+'+steps:'×';
      badge.append(svg('rect',{x:-14,y:-10,width:28,height:19,rx:6}),text);$('gaps').append(badge);
    }
-   $('walkLegend').hidden=!!range;$('rangeLegend').hidden=!range;
+   $('walkLegend').hidden=!!range||aiming;$('rangeLegend').hidden=!range;
    $('turn').textContent='รอบ '+s.round+' · '+(ended?'จบการต่อสู้':u.team?'ตาศัตรู':'ตาฝ่ายเรา');
    $('actor').textContent=ended?(s.winner===0?'ฝ่ายเราชนะ':'ฝ่ายศัตรูชนะ'):u.name;
-   $('stats').textContent=ended?'':('HP '+u.hp+'/'+u.max+' · ความเร็ว '+H.effectiveSpeed(u)+(u.haste?' (บัฟเหลือ '+u.haste.turns+' ตา)':'')+' · ขนาด '+u.size+' ช่อง');
+   $('stats').textContent=ended?'':('HP '+u.hp+'/'+u.max+' · ความเร็ว '+H.effectiveSpeed(u)+(u.haste?' (บัฟเหลือ '+u.haste.turns+' ตา)':'')+(u.command?' · บัญชาทัพ '+u.command+' ตา':'')+' · ขนาด '+u.size+' ช่อง');
    $('hint').textContent=ended?'กดเริ่มใหม่เพื่อเล่นอีกครั้ง':busy?'กำลังออกคำสั่ง…':!manual?'กำลังเลือกคำสั่ง':s.afterSkill?'เดินหลังใช้สกิล หรือกดจบตาเพื่ออยู่ที่เดิม':mode==='walk'?(H.movementBudget(s)>s.spent?'แตะช่องเพื่อเดิน หรือเลือกสกิลด้านล่าง':'เดินครบแล้ว เลือกสกิลหรือจบตา'):valid.length?'แตะช่องของเป้าหมายที่สว่างเพื่อใช้ '+H.skills[mode].name:'ยังไม่มีเป้าหมายที่ใช้ท่านี้ได้ ลองเดินหรือเลือกท่าอื่น';
+   $('aimPanel').hidden=!aiming;
+   if(aiming){
+     const tip={arc:'แตะช่องประชิดสีฟ้าเพื่อเลือกทิศกวาด',ring:'วงรอบตัวผู้ใช้ · แตะช่องใต้ตัวละครเพื่อเลือกศูนย์กลาง',triangle:'แตะช่องสีฟ้าเพื่อเลือกจุดตก แล้วหมุนสามเหลี่ยมได้',burst:'แตะช่องสีฟ้าเพื่อเลือกจุดตกของฝนธนู',field:'บัฟทั้งฝ่าย · โจมตีกายภาพ +40% ป้องกันกายภาพ +30% และความเร็ว +15% นาน 3 ตา'};
+     $('hint').textContent=sk.name+' · '+tip[sk.shape];
+     $('aimSummary').textContent=impact?('พื้นที่ '+impact.area.size+' ช่อง · '+(impact.targets.map(t=>t.name).join('、')||'ไม่มีเป้าหมายในพื้นที่')):'เลือกพื้นที่ก่อนกดยืนยัน';
+     $('confirmAim').disabled=!impact;$('cancelAim').disabled=false;
+     $('rotateAim').hidden=sk.shape!=='triangle';$('rotateAim').disabled=!aim;
+   }
    const budget=H.movementBudget(s);
    $('walk').textContent=(s.afterSkill?'เดินหลังสกิล ':'เดิน ')+(budget-s.spent)+'/'+budget;
    $('walk').disabled=!manual;$('pass').disabled=!manual;$('walk').setAttribute('aria-pressed',String(mode==='walk'));
    $('skills').replaceChildren();if(!ended&&!s.afterSkill)for(const id of u.kit){
      const sk=H.skills[id],b=document.createElement('button');b.append(sk.name);
      const sub=document.createElement('small');sub.textContent=sk.speedBonus?'ตนเอง · SPD +'+(100*sk.speedBonus)+'% · '+sk.turns+' ตา':H.rangeNames[sk.range]+' · '+H.ranges[sk.range]+' ช่อง'+(sk.area?' · หมู่':'');b.append(sub);
-     b.dataset.skill=id;b.setAttribute('aria-pressed',String(mode===id));b.disabled=!manual;b.onclick=()=>{mode=id;render()};$('skills').append(b);
+     b.dataset.skill=id;b.setAttribute('aria-pressed',String(mode===id));b.disabled=!manual;b.onclick=()=>chooseSkill(id);$('skills').append(b);
    }
+   $('areaMenu').hidden=!manual||s.afterSkill;
+   for(const b of $('areaSkills').children)b.setAttribute('aria-pressed',String(mode===b.dataset.areaSkill));
    $('auto').setAttribute('aria-pressed',String(auto));$('auto').disabled=ended;
    $('queue').replaceChildren();if(!ended)for(let i=0;i<s.order.length;i++){
      const v=s.units.find(v=>v.id===s.order[(s.cursor+i)%s.order.length]);if(!v.hp)continue;
@@ -380,7 +473,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
    }
  }
  function stepLabel(steps){return Number.isFinite(steps)?'ต้องเดินอีก '+steps+' ช่อง':'ยังไม่มีทางเดินเข้าระยะ'}
- function ready(){busy=false;mode='walk';render();schedule()}
+ function ready(){busy=false;aim=null;mode='walk';render();schedule()}
  async function walk(at,version){
    const actor=H.current(s),path=H.routes(s).get(H.key(at));if(!path?.length)return;
    for(const step of path){
@@ -400,10 +493,12 @@ if(typeof module!=='undefined')module.exports=HexBattle;
      drawActors();
    }
    if(!sk.speedBonus)for(const v of affected)sprites.get(v.id)?.querySelector('image').classList.add('hit');
+   const oldHp=target.hp;
    $('log').textContent=actor.name+' ใช้ '+sk.name+' → '+affected.map(v=>v.name).join('、')+(sk.speedBonus?' (SPD +'+(100*sk.speedBonus)+'%)':' ('+(sk.heal?'+':'−')+sk.power+' HP)');
    await sleep(360);if(version!==epoch)return;
    for(const v of affected)sprites.get(v.id)?.querySelector('image').classList.remove('hit');
    H.act(s,id,target);
+   if(!sk.heal&&!sk.speedBonus)$('log').textContent=actor.name+' ใช้ '+sk.name+' → '+target.name+' (−'+(oldHp-target.hp)+' HP)';
  }
  async function select(p){
    if(planning){
@@ -412,6 +507,10 @@ if(typeof module!=='undefined')module.exports=HexBattle;
      deploy(p);return;
    }
    if(busy||auto||H.current(s).team||s.winner!==null)return;
+   if(H.skills[mode]?.shape){
+     if(H.aimCells(s,mode).some(c=>same(c,p))){aim=p;render()}
+     return;
+   }
    const obstacle=s.blocked.get(H.key(p));
    if(obstacle){$('hint').textContent=obstacle.name+' · กีดขวาง '+obstacle.parts.length+' ช่อง';return}
    const id=mode,v=positions.get(H.key(p)),version=epoch;
@@ -509,9 +608,33 @@ if(typeof module!=='undefined')module.exports=HexBattle;
    drag=null;
  });
  document.addEventListener('pointercancel',()=>{drag=null});
- $('walk').onclick=()=>{mode='walk';render()};
+ for(const id of trialSkills){
+   const b=document.createElement('button'),label=document.createElement('small');
+   b.dataset.areaSkill=id;b.append(H.skills[id].name);label.textContent=H.skills[id].label;b.append(label);
+   b.onclick=()=>chooseSkill(id);$('areaSkills').append(b);
+ }
+ $('rotateAim').onclick=()=>{rotation=(rotation+(rightView()?1:5))%6;render()};
+ $('cancelAim').onclick=() => chooseSkill('walk');
+ $('confirmAim').onclick=async()=>{
+   if(!aim||busy||auto||planning||!H.skills[mode]?.shape)return;
+   const id=mode,p=aim,angle=rotation,version=epoch,actor=H.current(s);
+   const impact=H.areaPreview(s,id,p,angle);
+   if(!impact)return;
+   busy=true;
+   // Keep the committed area visible through the cast, then advance the turn.
+   if(!['ring','field'].includes(H.skills[id].shape))faceToward(actor,spriteCenter(actor).x,mid(p).x);
+   drawActors();
+   $('confirmAim').disabled=true;$('rotateAim').disabled=true;$('cancelAim').disabled=true;
+   $('log').textContent=actor.name+' ใช้ '+H.skills[id].name+' · '+(impact.targets.map(t=>t.name).join('、')||'ไม่มีเป้าหมาย');
+   for(const v of impact.targets)sprites.get(v.id)?.firstChild.classList.add('hit');
+   await sleep(320);
+   if(version!==epoch)return;
+   for(const v of impact.targets)sprites.get(v.id)?.firstChild.classList.remove('hit');
+   H.act(s,id,p,angle);ready();
+ };
+ $('walk').onclick=()=>{if(!busy)chooseSkill('walk')};
  $('pass').onclick=()=>{if(!busy&&!auto&&!H.current(s).team&&s.winner===null){$('log').textContent=H.current(s).name+' จบตา';H.next(s);ready()}};
- $('auto').onclick=()=>{auto=!auto;render();schedule()};
+ $('auto').onclick=()=>{if(busy)return;mode='walk';aim=null;auto=!auto;render();schedule()};
  $('reset').onclick=reset;$('mode').onchange=reset;$('fastTrial').onchange=reset;reset();
 })();
 </script></body></html>
