@@ -153,6 +153,15 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  const project=(x,y)=>({x:43+x,y:108+y*floorScale});
  const ground=p=>({x:(H.column(p)+(p.r%2)/2)*tileWidth,y:p.r*radius*1.5});
  const mid=p=>{const point=ground(p);return project(point.x,point.y)};
+ function spriteCenter(unit){
+   const parts=H.footprint(unit).map(mid);
+   return {x:parts.reduce((sum,p)=>sum+p.x,0)/parts.length,y:parts.reduce((sum,p)=>sum+p.y,0)/parts.length};
+ }
+ function faceToward(unit,fromX,toX){
+   if(Math.abs(toX-fromX)>.01)unit.facing=Math.sign(toX-fromX);
+ }
+ // Asset facing in the original idle artwork; positive is screen right.
+ const nativeFacing={'swordsman-female':-1,'raiju-deity':1,pixie:1,redcap:1,kodama:1,phoenix:1,demonlord:1};
  const same=(a,b)=>H.key(a)===H.key(b);
  const where=p=>String.fromCharCode(65+H.column(p))+(p.r+1);
  const tiles=new Map(),sprites=new Map();
@@ -191,8 +200,8 @@ if(typeof module!=='undefined')module.exports=HexBattle;
        const hp=svg('rect',{x:-22,y:8,height:3,rx:1,fill:u.team?'#fa897b':'#6cdcc2'});
        g.append(im,bg,hp);sprites.set(u.id,g);
      }
-     const parts=H.footprint(u).map(mid);
-     const x=parts.reduce((v,t)=>v+t.x,0)/u.size,y=parts.reduce((v,t)=>v+t.y,0)/u.size;
+     const {x,y}=spriteCenter(u),facing=u.facing??(u.team===0?1:-1);
+     g.firstChild.setAttribute('transform','scale('+(facing*nativeFacing[u.id])+' 1)');
      g.style.transform='translate('+x+'px,'+(y+4)+'px)';g.lastChild.setAttribute('width',44*u.hp/u.max);
      $('sprites').append(g);
    }
@@ -242,14 +251,20 @@ if(typeof module!=='undefined')module.exports=HexBattle;
    const actor=H.current(s),path=H.routes(s).get(H.key(at));if(!path?.length)return;
    for(const step of path){
      if(version!==epoch)return;
+     const previousX=mid(actor.pos).x;
      if(!H.move(s,step))throw Error('ก้าวเดินไม่ถูกต้อง');
+     faceToward(actor,previousX,mid(step).x);
      drawActors();await sleep(matchMedia('(prefers-reduced-motion: reduce)').matches?0:155);
    }
    if(version===epoch)$('log').textContent=actor.name+' เดิน '+path.length+' ช่อง ไป '+where(at);
  }
- async function cast(id,target,version){
+ async function cast(id,target,version,aimCell){
    const actor=H.current(s),sk=H.skills[id],affected=sk.area?H.targets(s,id):[target];
    if(!H.targets(s,id).includes(target))return;
+   if(target!==actor){
+     faceToward(actor,spriteCenter(actor).x,aimCell?mid(aimCell).x:spriteCenter(target).x);
+     drawActors();
+   }
    for(const v of affected)sprites.get(v.id)?.querySelector('image').classList.add('hit');
    $('log').textContent=actor.name+' ใช้ '+sk.name+' → '+affected.map(v=>v.name).join('、')+' ('+(sk.heal?'+':'−')+sk.power+' HP)';
    await sleep(360);if(version!==epoch)return;
@@ -267,7 +282,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
    }
    if(id==='walk'?!paths.get(H.key(p))?.length:!valid.includes(v))return;
    busy=true;render();
-   if(id==='walk')await walk(p,version);else await cast(id,v,version);
+   if(id==='walk')await walk(p,version);else await cast(id,v,version,p);
    if(version===epoch)ready();
  }
  function schedule(){
