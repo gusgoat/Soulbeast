@@ -5,11 +5,11 @@
 @media(max-width:560px){main{padding:8px}.panel{padding:9px}.head{padding:6px 9px}.controls button{padding:7px 9px;min-height:42px;font-size:13px}.actor{gap:4px}.tools{margin:7px 0}.queue img{width:22px;height:22px}.legend{font-size:11px}}@media(prefers-reduced-motion:reduce){.sprite{transition:none}.hit{animation:none}}
 </style></head><body><main>
 <header><h1>สนามทดลองหกเหลี่ยม</h1><label>สนาม <select id="mode"><option value="normal">ปะทะ 3 ต่อ 3</option><option value="boss">ท้าบอสจอมมาร</option></select></label></header>
-<section class="field"><div class="head"><strong id="turn"></strong><span class="queue" id="queue" aria-label="ลำดับตา"></span></div><svg class="board" id="board" viewBox="0 0 610 358" role="group" aria-label="สนามรบหกเหลี่ยม"><g id="tiles"></g><g id="sprites" aria-hidden="true"></g></svg></section>
+<section class="field"><div class="head"><strong id="turn"></strong><span class="queue" id="queue" aria-label="ลำดับตา"></span></div><svg class="board" id="board" viewBox="0 0 610 319" role="group" aria-label="สนามรบหกเหลี่ยม"><g id="tiles"></g><g id="sprites" aria-hidden="true"></g></svg></section>
 <section class="panel"><div class="actor"><h2 id="actor"></h2><span class="stats" id="stats"></span></div><p class="hint" id="hint" aria-live="polite"></p>
 <div class="controls"><button id="walk">เดิน</button><span class="skills" id="skills"></span><button id="pass">จบตา</button></div></section>
 <div class="tools"><span class="legend"><b>▧</b> เดินได้　<i>◇</i> เป้าหมายที่เลือกได้</span><span><button id="auto" aria-pressed="false">ออโต้ทีม</button> <button id="reset">เริ่มใหม่</button></span></div>
-<p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ความเร็วต่ำกว่า 20 เดินได้ 1 ช่อง · 20–39 เดินได้ 2 ช่อง · 40–59 เดินได้ 3 ช่อง · 60 ขึ้นไปเดินได้ 4 ช่อง<br>เดินได้หลายจังหวะภายในจำนวนช่องที่เหลือ หรือยืนใช้สกิลได้ทันที เมื่อออกท่าหนึ่งครั้งจะจบตา<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่ยืน 3 ช่องเป็นสามเหลี่ยม บอสยืน 7 ช่อง คือช่องกลางและรอบตัวอีก 6 ช่อง ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
+<p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ความเร็วต่ำกว่า 20 เดินได้ 1 ช่อง · 20–39 เดินได้ 2 ช่อง · 40–59 เดินได้ 3 ช่อง · 60 ขึ้นไปเดินได้ 4 ช่อง<br>เดินได้หลายจังหวะภายในจำนวนช่องที่เหลือ หรือยืนใช้สกิลได้ทันที เมื่อออกท่าหนึ่งครั้งจะจบตา<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่และบอสยืน 3 ช่องติดกันเป็นรูปสามเหลี่ยม ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
 </main><script>const HexBattle = (() => {
   const cols = 8, rows = 5;
   const dirs = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
@@ -45,7 +45,6 @@
   const distance = (a,b) => (Math.abs(a.q-b.q)+Math.abs(a.r-b.r)+Math.abs(a.q+a.r-b.q-b.r))/2;
   function footprint(u,p=u.pos) {
     if(u.size===1)return [p];
-    if(u.size===7)return [p,...dirs.map(([dq,dr])=>({q:p.q+dq,r:p.r+dr}))];
     const rear=u.team===0?-1:1;
     return [p,{q:p.q+rear,r:p.r},{q:p.q+(rear===1?1:0),r:p.r-1}];
   }
@@ -54,7 +53,7 @@
   }
   const allowance = speed => speed<20?1:speed<40?2:speed<60?3:4;
   function create(mode='normal') {
-    const lineup=mode==='boss'?[...roster.filter(row=>row[2]===0),['demonlord','จอมมาร',1,7,40,360,6,2,['claw','flame','solar']]]:roster;
+    const lineup=mode==='boss'?[...roster.filter(row=>row[2]===0),['demonlord','จอมมาร',1,3,40,360,6,2,['claw','flame','solar']]]:roster;
     const units=lineup.map(([id,name,team,size,speed,max,col,row,kit])=>({id,name,team,size,speed,max,hp:max,pos:cell(col,row),kit}));
     return {units,order:[...units].sort((a,b)=>b.speed-a.speed).map(u=>u.id),cursor:0,round:1,spent:0,winner:null};
   }
@@ -125,7 +124,12 @@ if(typeof module!=='undefined')module.exports=HexBattle;
 </script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp"};</script><script>(() => {
  const H=HexBattle,$=id=>document.getElementById(id);
  const svg=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);return el};
- const mid=p=>({x:43+(H.column(p)+(p.r%2)/2)*69.28,y:72+p.r*60});
+ const radius=40, tileWidth=Math.sqrt(3)*radius;
+ // Project the floor onto the screen; sprites remain upright at their foot positions.
+ const floorScale=Math.cos(Math.PI/4);
+ const project=(x,y)=>({x:43+x,y:108+y*floorScale});
+ const ground=p=>({x:(H.column(p)+(p.r%2)/2)*tileWidth,y:p.r*radius*1.5});
+ const mid=p=>{const point=ground(p);return project(point.x,point.y)};
  const same=(a,b)=>H.key(a)===H.key(b);
  const where=p=>String.fromCharCode(65+H.column(p))+(p.r+1);
  const tiles=new Map(),sprites=new Map();
@@ -140,7 +144,11 @@ if(typeof module!=='undefined')module.exports=HexBattle;
    for(const part of H.footprint(actor,p))tiles.get(H.key(part))?.classList.add('preview');
  }
  for(const p of H.cells){
-   const center=mid(p),points=Array.from({length:6},(_,i)=>{const theta=(60*i-90)*Math.PI/180;return [center.x+40*Math.cos(theta),center.y+40*Math.sin(theta)].join(',')}).join(' ');
+   const center=ground(p),points=Array.from({length:6},(_,i)=>{
+     const theta=(60*i-90)*Math.PI/180;
+     const corner=project(center.x+radius*Math.cos(theta),center.y+radius*Math.sin(theta));
+     return corner.x+','+corner.y;
+   }).join(' ');
    const tile=svg('polygon',{points,class:'tile',role:'button',tabindex:0});
    tile.onclick=()=>select(p);tile.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(p)}};
    tile.onpointerenter=()=>preview(p);tile.onfocus=()=>preview(p);
@@ -153,7 +161,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
    for(const u of s.units)if(!u.hp)sprites.get(u.id)?.remove();
    for(const u of units){
      let g=sprites.get(u.id);
-     const width=u.size===7?147:u.size===3?105:61;
+     const width=u.size===3?105:61;
      if(!g){
        g=svg('g',{class:'sprite'});const im=svg('image',{href:spriteArt(u.id),x:-width/2,y:-width*.89,width,height:width,preserveAspectRatio:'xMidYMax meet'});
        const bg=svg('rect',{x:-23,y:7,width:46,height:5,rx:2,fill:'#101921'});
