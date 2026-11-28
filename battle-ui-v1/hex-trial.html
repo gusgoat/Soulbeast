@@ -14,33 +14,42 @@
 #formation .controls{margin-top:10px}#roster{display:flex;gap:6px;flex-wrap:wrap}#roster button{display:flex;align-items:center;gap:4px;padding:5px 8px;touch-action:none}#roster img{height:31px;width:31px;object-fit:contain}#board.planning{touch-action:none}#start{background:#30584e;color:#fff1c9}.deploy-actions{justify-content:space-between}
 .tile.impact-zone{fill:#df9223ad;stroke:#ffd780;stroke-width:2}.tile.buff-zone{fill:#48ae8480;stroke:#b5f5c7}.tile.impact-unit{stroke:#fff2aa;stroke-width:3.3}.tile.aim-center{stroke:#fff;stroke-width:4}
 #aimPanel{background:#14282e;border:1px solid #a28d64;border-radius:8px;padding:8px 10px;margin-bottom:8px}#aimSummary{margin:0 0 6px;color:#ffe3af;font-size:13px}#confirmAim{background:#765320}#areaMenu{margin-top:8px;padding:8px 0 0}#areaSkills{margin-top:6px}
-</style></head><body><main>
+.tile.screened{stroke:#ee9b83;stroke-dasharray:4 4}</style></head><body><main>
 <header><h1>สนามทดลองหกเหลี่ยม</h1><label>สนาม <select id="mode"><option value="normal">ปะทะ 3 ต่อ 3</option><option value="boss">ท้าบอสจอมมาร</option></select></label></header>
 <section class="field"><div class="head"><strong id="turn"></strong><span class="queue" id="queue" aria-label="ลำดับตา"></span></div><svg class="board" id="board" viewBox="0 0 610 319" role="group" aria-label="สนามรบหกเหลี่ยม"><g id="tiles"></g><g id="sprites" aria-hidden="true"></g><g id="gaps" aria-hidden="true" pointer-events="none"></g></svg></section>
 <section id="formation" class="panel"><h2>จัดทัพก่อนสู้</h2><p class="hint" id="placement" role="status">เลือกตัวละครแล้วแตะช่อง หรือลากไปวางในสามคอลัมน์ริมขวา</p><div id="roster"></div><label class="controls"><input type="checkbox" id="fastTrial"> ทดลองเทพอสูรสายฟ้าที่ SPD 229 (เดิน 4 + 4 ช่อง)</label><div class="controls deploy-actions"><label>ฝั่งตอนสู้ <select id="side"><option value="left">ซ้าย</option><option value="right">ขวา</option></select></label><button id="start">เริ่มต่อสู้</button></div></section>
 <section id="combat" class="panel" hidden><div class="actor"><h2 id="actor"></h2><span class="stats" id="stats"></span></div><p class="hint" id="hint" aria-live="polite"></p>
 <div id="aimPanel" hidden><p id="aimSummary" role="status"></p><div class="controls"><button id="confirmAim">ยืนยันใช้สกิล</button><button id="rotateAim">หมุนพื้นที่</button><button id="cancelAim">ยกเลิก</button></div></div>
-<div class="controls"><button id="walk">เดิน</button><span class="skills" id="skills"></span><button id="pass">จบตา</button></div><details id="areaMenu"><summary>สกิลหมู่ทดลอง · 5 ท่า</summary><div class="controls" id="areaSkills"></div></details></section>
+<div class="controls"><button id="walk">เดิน</button><span class="skills" id="skills"></span><button id="pass">จบตา</button></div><details id="areaMenu"><summary>สกิลหมู่ทดลอง</summary><div class="controls" id="areaSkills"></div></details></section>
 <div class="tools"><span class="legend" id="walkLegend"><b>▧</b> เดินได้</span><span class="legend" id="rangeLegend" hidden><b class="range-key">▧</b> ระยะสกิล　<i>◇</i> ใช้ได้ทันที　+เลข = ต้องเดินอีกกี่ช่อง</span><span><button id="auto" aria-pressed="false">ออโต้ทีม</button> <button id="reset">เริ่มใหม่</button></span></div>
-<p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ก่อนใช้สกิล · SPD 0–15 เดิน 1 ช่อง · 16–40 เดิน 2 ช่อง · 41–70 เดิน 3 ช่อง · 71 ขึ้นไปเดิน 4 ช่อง<br>หลังใช้สกิล · SPD 0–100 จบตา · 101–130 เดินเพิ่ม 1 ช่อง · 131–190 เพิ่ม 2 ช่อง · 191–220 เพิ่ม 3 ช่อง · 221 ขึ้นไปเพิ่ม 4 ช่อง<br>ใช้สกิลได้หนึ่งครั้งต่อตา คิดระยะเดินต่อจาก SPD หลังสกิลออกผล เลือกจบตาเพื่ออยู่ที่เดิมได้<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>เมื่อเริ่มต่อสู้ สนามจะสุ่มสิ่งกีดขวางจากฉากต้นทาง 0–2 ชิ้น โดยเว้นจุดเกิดของทั้งสองทีม ชิ้นละ 1–3 ช่อง แตะวัตถุเพื่อดูพื้นที่ที่กิน สกิลยังใช้ข้ามสิ่งกีดขวางได้<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่และบอสยืน 3 ช่องติดกันเป็นรูปสามเหลี่ยม ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
-</main><script>const HexBattle = (() => {
+<p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ก่อนใช้สกิล · SPD 0–15 เดิน 1 ช่อง · 16–40 เดิน 2 ช่อง · 41–70 เดิน 3 ช่อง · 71 ขึ้นไปเดิน 4 ช่อง<br>หลังใช้สกิล · SPD 0–100 จบตา · 101–130 เดินเพิ่ม 1 ช่อง · 131–190 เพิ่ม 2 ช่อง · 191–220 เพิ่ม 3 ช่อง · 221 ขึ้นไปเพิ่ม 4 ช่อง<br>ใช้สกิลได้หนึ่งครั้งต่อตา คิดระยะเดินต่อจาก SPD หลังสกิลออกผล เลือกจบตาเพื่ออยู่ที่เดิมได้<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>เมื่อเริ่มต่อสู้ สนามจะสุ่มสิ่งกีดขวางจากฉากต้นทาง 0–2 ชิ้น โดยเว้นจุดเกิดของทั้งสองทีม ชิ้นละ 1–3 ช่อง แตะวัตถุเพื่อดูพื้นที่ที่กิน ช่องขีดแดงคือแนวยิงถูกบัง โปรเจกไทล์ต้องมีแนวยิงโล่งถึงเป้าหมายหรือจุดตก เพื่อนร่วมทีมไม่บัง สกิลจากฟ้าเลือกจุดตกข้ามสิ่งกีดขวางได้<br>ที่ระดับพลังเดียวกัน เป้าเดียวใช้พลัง 100% ต่อเป้าหมาย · 3 ช่อง 75% · 7 ช่อง 55% · ทั้งสนาม 35% คิดจากขนาดเต็มของท่าก่อนตัดขอบสนาม<br>พลังอิงสกิลเดิม เลเวลปลดล็อก ท่าประจำตัว ขั้นอาชีพหรืออสูร MP และคูลดาวน์ รวบรวมพลังใช้หนึ่งตา เพิ่มพลังโจมตีครั้งถัดไป ×2<br>สายประชิดล้วนได้ HP +10% และพลังป้องกัน ×1.08 ยั่วยุใช้ 4 MP คุ้มกันเพื่อนที่ยืนติดกัน 3 ตา ผู้คุ้มกันที่ยังยืนอยู่รับความเสียหายแทน<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่และบอสยืน 3 ช่องติดกันเป็นรูปสามเหลี่ยม ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
+</main><script>const hexBalanceData={"skills": {"fang": {"base": 120, "mp": 3, "cooldown": 0, "level": 1, "signature": false, "rank": 1, "job": 0, "rarity": 0, "charge": 0, "physical": true}, "spark": {"base": 125, "mp": 4, "cooldown": 0, "level": 5, "signature": false, "rank": 1, "job": 0, "rarity": 0, "charge": 0, "physical": false}, "bolt": {"base": 180, "mp": 10, "cooldown": 0, "level": 1, "signature": false, "rank": 3, "job": 0, "rarity": 0, "charge": 0, "physical": false}, "gust": {"base": 125, "mp": 4, "cooldown": 0, "level": 1, "signature": false, "rank": 1, "job": 0, "rarity": 0, "charge": 0, "physical": false}, "heal": {"base": 22, "mp": 9, "cooldown": 0, "level": 11, "signature": false, "rank": 2, "job": 0, "rarity": 0, "charge": 0, "physical": false}, "moon": {"base": 180, "mp": 10, "cooldown": 0, "level": 18, "signature": false, "rank": 3, "job": 0, "rarity": 0, "charge": 0, "physical": false}, "blade": {"base": 120, "mp": 3, "cooldown": 0, "level": 1, "signature": false, "rank": 1, "job": 0, "rarity": 0, "charge": 0, "physical": true}, "seed": {"base": 125, "mp": 4, "cooldown": 0, "level": 1, "signature": false, "rank": 1, "job": 0, "rarity": 0, "charge": 0, "physical": false}, "claw": {"base": 175, "mp": 9, "cooldown": 0, "level": 1, "signature": false, "rank": 2, "job": 0, "rarity": 0, "charge": 0, "physical": true}, "flame": {"base": 180, "mp": 10, "cooldown": 0, "level": 1, "signature": false, "rank": 3, "job": 0, "rarity": 0, "charge": 0, "physical": false}, "solar": {"base": 180, "mp": 10, "cooldown": 0, "level": 18, "signature": false, "rank": 3, "job": 0, "rarity": 0, "charge": 0, "physical": false}, "fighting_aoe": {"base": 125, "mp": 10, "cooldown": 0, "level": 1, "signature": false, "rank": 3, "job": 0, "rarity": 0, "charge": 0, "physical": true}, "sw_whirl": {"base": 150, "mp": 9, "cooldown": 0, "level": 22, "signature": true, "rank": 7, "job": 1, "rarity": 0, "charge": 0, "physical": true}, "at_grenade": {"base": 150, "mp": 10, "cooldown": 0, "level": 25, "signature": true, "rank": 7, "job": 2, "rarity": 0, "charge": 0, "physical": true}, "ar_rain": {"base": 115, "mp": 9, "cooldown": 0, "level": 12, "signature": false, "rank": 2, "job": 1, "rarity": 0, "charge": 0, "physical": true}, "sh_army": {"base": 0, "mp": 14, "cooldown": 0, "level": 40, "signature": true, "rank": 7, "job": 3, "rarity": 0, "charge": 0, "physical": false}, "gl_taunt": {"base": 0, "mp": 4, "cooldown": 0, "level": 4, "signature": false, "rank": 1, "job": 1, "rarity": 0, "charge": 0, "physical": false}, "rock_aoe": {"base": 125, "mp": 10, "cooldown": 0, "level": 1, "signature": false, "rank": 3, "job": 0, "rarity": 0, "charge": 0, "physical": true}, "am_meteor": {"base": 200, "mp": 22, "cooldown": 0, "level": 40, "signature": true, "rank": 7, "job": 3, "rarity": 0, "charge": 0, "physical": false}, "focus_p": {"base": 0, "mp": 4, "cooldown": 0, "level": 1, "signature": false, "rank": 1, "job": 0, "rarity": 0, "charge": 2, "physical": false}, "s_redcap": {"base": 220, "mp": 12, "cooldown": 2, "level": 30, "signature": true, "rank": 5, "job": 0, "rarity": 0, "charge": 0, "physical": true}}, "grades": {"raiju-deity": 1.3, "pixie": 1.3, "redcap": 1.2, "kodama": 1.1, "phoenix": 5, "demonlord": 99}};const HexBattle = (() => {
   const cols = 8, rows = 5;
   const dirs = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
   const ranges = {self:0, near:1, medium:3, far:5, extreme:7};
   const rangeNames = {self:'ตนเอง', near:'ใกล้', medium:'กลาง', far:'ไกล', extreme:'ไกลมาก'};
+  const catalog=typeof require==='function'&&typeof module!=='undefined'?require('./balance-data.json'):hexBalanceData;
+  const coverageScale={single:1,arc:.75,triangle:.75,ring:.55,burst:.55,field:.35};
+  const projectileIds=new Set(['at_grenade','spark','gust','seed','solar','flame']);
+  const skyIds=new Set(['ar_rain','bolt','moon','rock_aoe','am_meteor']);
   const skills = {
     fighting_aoe:{name:'เตะกวาด',range:'near',shape:'arc',label:'เลือกทิศ · 3 ช่อง',power:31,physical:true},
     sw_whirl:{name:'ดาบวายุหมุน',range:'self',shape:'ring',label:'รอบตัว · 7 ช่อง',power:34,physical:true},
     at_grenade:{name:'ระเบิดมือ',range:'medium',shape:'triangle',label:'ระยะ 3 · พื้นที่ 3 ช่อง',power:30,physical:true},
     ar_rain:{name:'ฝนธนู',range:'far',shape:'burst',label:'ระยะ 5 · พื้นที่ 7 ช่อง',power:24,physical:true},
     sh_army:{name:'บัญชาทัพซามูไร',range:'self',shape:'field',label:'ทั้งสนาม · ฝ่ายเรา',command:true,turns:3},
+    rock_aoe:{name:'หินถล่ม',range:'far',shape:'burst',label:'จากฟ้า · 7 ช่อง'},
+    am_meteor:{name:'อุกกาบาตถล่ม',range:'far',shape:'burst',label:'จากฟ้า · 7 ช่อง'},
+    gl_taunt:{name:'ยั่วยุ',range:'self',guard:true,turns:3},
+    focus_p:{name:'รวบรวมพลัง',range:'self'},
+    s_redcap:{name:'หมวกโลหิต',range:'near',drain:.5},
     slash:{name:'โจมตีปกติ', range:'near', power:37},
     haste:{name:'เร่งความเร็ว (ทดลอง)', range:'self', speedBonus:0.5, turns:3},
     fang:{name:'เขี้ยวอัสนี', range:'near', power:40},
     spark:{name:'ประจุไฟฟ้า', range:'medium', power:32},
     bolt:{name:'สายฟ้าฟาด', range:'far', power:25},
     gust:{name:'ลมภูต', range:'medium', power:31},
-    heal:{name:'ร่ายรำเยียวยา', range:'medium', power:27, heal:true, area:true},
+    heal:{name:'ร่ายรำเยียวยา', range:'near', power:27, heal:true, area:true},
     moon:{name:'พลังจันทรา', range:'extreme', power:20},
     blade:{name:'ใบมีดพฤกษา', range:'near', power:39},
     seed:{name:'เมล็ดดูดพลัง', range:'medium', power:30},
@@ -48,11 +57,27 @@
     flame:{name:'ลมหายใจเพลิง', range:'far', power:26},
     solar:{name:'ลำแสงสุริยะ', range:'extreme', power:19}
   };
+  function progression(meta){
+    return (1+(meta.level-1)*.003)*(1+(meta.rank-1)*.015)*(meta.signature?1.12:1)*
+      (1+Math.max(0,meta.job-1)*.05+meta.rarity*.06)*(1+meta.mp*.005)*(1+meta.cooldown*.06);
+  }
+  for(const [id,sk] of Object.entries(skills)){
+    const meta=catalog.skills[id]||{base:0,mp:0,cooldown:0,rank:1,level:1,job:0,rarity:0};
+    sk.delivery=projectileIds.has(id)?'projectile':skyIds.has(id)?'sky':'direct';
+    const shape=sk.shape||(sk.area?'ring':'single');
+    const costScale={single:1,arc:1.05,triangle:1.05,ring:1.15,burst:1.15,field:1.3}[shape];
+    sk.mp=Math.round(meta.mp*costScale*(meta.signature?1.1:1));
+    sk.cooldown=Math.max(meta.cooldown,shape==='field'?3:sk.guard||meta.signature?2:shape==='burst'||shape==='ring'?1:0);
+    sk.scale=progression({...meta,mp:sk.mp,cooldown:sk.cooldown})*coverageScale[shape];
+    sk.charge=meta.charge||0;
+    sk.physical=meta.physical||id==='slash';
+    if(meta.base)sk.power=Math.round((sk.heal?meta.base:34*Math.sqrt(meta.base/125))*sk.scale);
+  }
   const roster = [
-    ['swordsman-female','นักดาบ',0,1,32,135,1,1,['slash']],
+    ['swordsman-female','นักดาบ',0,1,32,135,1,1,['slash','gl_taunt','focus_p']],
     ['raiju-deity','เทพอสูรสายฟ้า',0,3,72,120,2,3,['fang','spark','bolt','haste']],
     ['pixie','พิกซี่',0,1,43,95,0,2,['gust','moon','heal']],
-    ['redcap','เรดแคป',1,1,48,130,6,1,['slash']],
+    ['redcap','เรดแคป',1,1,48,130,6,1,['slash','s_redcap','gl_taunt']],
     ['kodama','โคดามะ',1,1,18,102,7,2,['blade','seed','solar']],
     ['phoenix','ฟีนิกซ์',1,3,60,128,5,3,['claw','flame']]
   ];
@@ -87,10 +112,18 @@
       {name:'บัลลังก์หิน',art:'throneSeat',size:3,width:94}
     ]
   };
-  const effectiveSpeed = u => Math.round(u.speed*(1+(u.haste?.speedBonus||0)+(u.command ? 0.15 : 0)));
+  const effectiveSpeed = u => Math.round(u.speed*(1+(u.haste?.speedBonus||0)+(u.command ? .15*u.commandScale : 0)));
   function create(mode='normal',fastTrial=false) {
     const lineup=mode==='boss'?[...roster.filter(row=>row[2]===0),['demonlord','จอมมาร',1,3,40,360,6,2,['claw','flame','solar']]]:roster;
-    const units=lineup.map(([id,name,team,size,speed,max,col,row,kit])=>({id,name,team,size,speed,max,hp:max,pos:cell(col,row),kit}));
+    const units=lineup.map(([id,name,team,size,speed,hp,col,row,kit])=>{
+      const melee=kit.filter(k=>skills[k].power).every(k=>skills[k].range==='near');
+      const max=Math.round(hp*(melee?1.10:1));
+      // Species grades come from the original bestiary. The final evolution of Raiju is used in this roster.
+      const grade=catalog.grades[id]||1;
+      const strength=1+.025*Math.log2(grade)+(id==='raiju-deity'?.05:0);
+      return {id,name,team,size,speed,max,hp:max,mp:90,melee,defense:melee?1.08:1,strength,pos:cell(col,row),
+        cooldowns:{},kit:[...new Set([...kit,'slash'])]};
+    });
     if(fastTrial)units.find(u=>u.id==='raiju-deity').speed=229;
     return {units,scene:mode==='boss'?'throne':'forest',props:[],terrainRolled:false,blocked:new Map(),order:[...units].sort((a,b)=>b.speed-a.speed).map(u=>u.id),cursor:0,round:1,spent:0,afterSkill:false,winner:null};
   }
@@ -172,15 +205,60 @@
     return path;
   }
   const eligible = (u,v,sk) => v.hp>0&&(sk.range==='self'?v===u:sk.heal?v.team===u.team&&v.hp<v.max:v.team!==u.team);
+  const cooldownLeft=(s,u,id)=>Math.max(0,(u.cooldowns[id]||0)-s.round);
+  const available=(s,u,id)=>u.mp>=skills[id].mp&&!cooldownLeft(s,u,id);
+  // Intersect the centre line with the three pairs of parallel sides of each hex.
+  // A shared edge counts as cover; touching only a corner does not.
+  const rays=new Map();
+  function between(a,b){
+    const pair=[key(a),key(b)].sort().join('|');
+    if(rays.has(pair))return rays.get(pair);
+    const axes=p=>[2*p.q+p.r,p.q+2*p.r,p.q-p.r];
+    const start=axes(a),end=axes(b);
+    const result=cells.filter(p=>{
+      if(key(p)===key(a)||key(p)===key(b))return false;
+      const center=axes(p);let lo=0,hi=1;
+      for(let i=0;i<3;i++){
+        const delta=end[i]-start[i],offset=center[i]-start[i];
+        if(!delta){if(Math.abs(offset)>1)return false;continue;}
+        const a=(offset-1)/delta,b=(offset+1)/delta;
+        lo=Math.max(lo,Math.min(a,b));hi=Math.min(hi,Math.max(a,b));
+      }
+      return hi-lo>1e-8;
+    }).map(key);
+    rays.set(pair,result);return result;
+  }
+  function shotMap(s,actor){
+    const blockers=new Map(s.blocked);
+    for(const v of s.units)if(v.hp>0&&v.team!==actor.team)
+      for(const p of footprint(v))blockers.set(key(p),v);
+    return blockers;
+  }
+  function canReachCell(sk,origin,p,blockers){
+    const destination=blockers?.get(key(p));
+    if(sk.delivery==='projectile'&&destination&&!destination.id)return false;
+    return origin.some(start=>distance(start,p)<=ranges[sk.range]&&(sk.delivery!=='projectile'||
+      between(start,p).every(k=>!blockers.has(k)||blockers.get(k)===destination)));
+  }
+  function protector(s,target){
+    if(target.guard)return target;
+    return s.units.find(v=>v!==target&&v.team===target.team&&v.hp>0&&v.guard&&separation(v,target)===1)||target;
+  }
+  function damage(sk,actor,target){
+    const defense=target.defense*(sk.physical&&target.command?1+.3*target.commandScale:1)*(sk.physical&&target.guard?1.3:1);
+    return Math.max(1,Math.round(sk.power*actor.strength*(actor.charged||1)*
+      (sk.physical&&actor.command?1+.4*actor.commandScale:1)/defense));
+  }
   const neighbor=(p,i)=>({q:p.q+dirs[(i+6)%6][0],r:p.r+dirs[(i+6)%6][1]});
   function aimCells(s,id,at=current(s).pos){
     const actor=current(s),sk=skills[id],origin=footprint(actor,at);
-    if(!sk?.shape||actor.team!==0||s.afterSkill||s.winner!==null)return [];
+    if(!sk?.shape||actor.team!==0||s.afterSkill||s.winner!==null||!available(s,actor,id))return [];
     if(sk.shape==='field')return [at];
     if(sk.shape==='ring')return origin;
+    const blockers=sk.delivery==='projectile'?shotMap(s,actor):null;
     return cells.filter(p=>{
       const d=distanceToCell(origin,p);
-      return sk.shape==='arc'?d===1:d<=ranges[sk.range];
+      return sk.shape==='arc'?d===1:canReachCell(sk,origin,p,blockers);
     });
   }
   function areaPreview(s,id,p,rotation=0,at=current(s).pos){
@@ -211,20 +289,23 @@
   }
   function targets(s,id,at=current(s).pos) {
     const u=current(s),sk=skills[id];
-    if(s.winner!==null||s.afterSkill||!u.kit.includes(id)||!sk||sk.shape)return [];
+    if(s.winner!==null||s.afterSkill||!u.kit.includes(id)||!sk||sk.shape||!available(s,u,id))return [];
     if(sk.range==='self')return [u];
-    return s.units.filter(v=>eligible(u,v,sk)&&separation(u,v,at)<=ranges[sk.range]);
+    const origin=footprint(u,at),blockers=sk.delivery==='projectile'?shotMap(s,u):null;
+    return s.units.filter(v=>eligible(u,v,sk)&&footprint(v).some(p=>canReachCell(sk,origin,p,blockers)));
   }
   function rangePreview(s,id) {
     const u=current(s),sk=skills[id],radius=ranges[sk.range],origin=footprint(u);
-    const area=new Set(cells.filter(p=>distanceToCell(origin,p)<=radius).map(key));
+    const blockers=sk.delivery==='projectile'?shotMap(s,u):null;
+    const area=new Set(cells.filter(p=>canReachCell(sk,origin,p,blockers)).map(key));
     if(sk.range==='self')return {area,steps:new Map([[u,0]])};
     const steps=new Map(),paths=routes(s,Infinity);
     for(const v of s.units.filter(v=>eligible(u,v,sk))){
       let minimum=Infinity;
       for(const path of paths.values()){
         // The breadth-first walk visits possible casting positions in increasing cost.
-        if(separation(u,v,path.at(-1)||u.pos)<=radius){minimum=path.length;break;}
+        const from=footprint(u,path.at(-1)||u.pos);
+        if(footprint(v).some(p=>canReachCell(sk,from,p,blockers))){minimum=path.length;break;}
       }
       steps.set(v,minimum);
     }
@@ -240,6 +321,7 @@
       s.cursor=(s.cursor+1)%s.order.length;
       if(s.cursor===0)s.round++;
     }while(current(s).hp<=0);
+    if(current(s).guard<=s.round)delete current(s).guard;
     s.spent=0;s.afterSkill=false;s.bonusSteps=0;
   }
   function act(s,id,v,rotation=0) {
@@ -255,15 +337,28 @@
       if(!valid.includes(v))return false;
       affected=sk.area?valid:[v];
     }
-    for(const t of affected){
-      if(sk.command)t.command=sk.turns;
-      else if(sk.speedBonus)t.haste={speedBonus:sk.speedBonus,turns:sk.turns};
-      else if(sk.heal)t.hp=Math.min(t.max,t.hp+sk.power);
-      else{
-        const physical=sk.physical||['slash','fang','blade','claw'].includes(id);
-        const damage=physical?Math.round(sk.power*(actor.command?1.4:1)/(t.command?1.3:1)):sk.power;
-        t.hp=Math.max(0,t.hp-damage);
+    actor.mp-=sk.mp;
+    if(sk.cooldown)actor.cooldowns[id]=s.round+sk.cooldown+1;
+    // Determine simultaneous interceptions before any HP is removed.
+    const offensive=!!sk.power&&!sk.heal;
+    s.lastHits=[];
+    if(offensive){
+      const totals=new Map();
+      for(const original of affected){
+        const recipient=protector(s,original),amount=damage(sk,actor,recipient);
+        s.lastHits.push({original,recipient,amount});
+        totals.set(recipient,(totals.get(recipient)||0)+amount);
       }
+      let lost=0;
+      for(const [recipient,amount] of totals){lost+=Math.min(recipient.hp,amount);recipient.hp=Math.max(0,recipient.hp-amount);}
+      if(sk.drain)actor.hp=Math.min(actor.max,actor.hp+Math.round(lost*sk.drain));
+      delete actor.charged;
+    }else for(const t of affected){
+      if(sk.command){t.command=sk.turns;t.commandScale=sk.scale*actor.strength;}
+      else if(sk.guard)t.guard=s.round+sk.turns;
+      else if(sk.charge)t.charged=Math.min(2.5,Math.max(1.5,sk.charge));
+      else if(sk.speedBonus)t.haste={speedBonus:sk.speedBonus,turns:sk.turns};
+      else if(sk.heal)t.hp=Math.min(t.max,t.hp+Math.round(sk.power*actor.strength));
     }
     s.bonusSteps=bonusAllowance(effectiveSpeed(actor));
     if(s.bonusSteps&&s.units.some(t=>t.team!==actor.team&&t.hp>0)){
@@ -287,13 +382,21 @@
       let pick={at,score:-100-near-path.length*.03};
       for(const id of actor.kit){
         const sk=skills[id],valid=targets(s,id,at);
+        if(!valid.length)continue;
+        if(sk.guard||sk.charge){
+          const beside=s.units.some(v=>v!==actor&&v.team===actor.team&&v.hp>0&&separation(actor,v,at)===1);
+          const score=sk.guard?(beside&&!actor.guard&&near<=2?38:-Infinity):(!actor.charged&&near>1?15:-Infinity);
+          if(score-path.length*.1>pick.score)pick={at,id,v:actor,score:score-path.length*.1};
+          continue;
+        }
         if(sk.speedBonus){
           const score=10-near-path.length*.1;
           if(!actor.haste&&score>pick.score)pick={at,id,v:actor,score};
           continue;
         }
         for(const v of valid){
-          const value=sk.heal?valid.reduce((sum,t)=>sum+Math.min(t.max-t.hp,sk.power),0)*.8:sk.power+(v.hp<=sk.power?45:0)+(1-v.hp/v.max)*6;
+          const recipient=protector(s,v),hit=damage(sk,actor,recipient);
+          const value=sk.heal?valid.reduce((sum,t)=>sum+Math.min(t.max-t.hp,sk.power),0)*.8:hit+(recipient.hp<=hit?45:0)+(1-recipient.hp/recipient.max)*6;
           const score=value-path.length*.1-near*.01;
           if(score>pick.score)pick={at,id,v,score};
         }
@@ -302,10 +405,10 @@
     }
     return best;
   }
-  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,bonusAllowance,effectiveSpeed,movementBudget,create,placeObstacles,canDeploy,loadFormation,current,routes,move,targets,aimCells,areaPreview,rangePreview,act,next,plan};
+  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,bonusAllowance,effectiveSpeed,movementBudget,create,placeObstacles,canDeploy,loadFormation,current,routes,move,targets,aimCells,areaPreview,rangePreview,act,next,plan,cooldownLeft,available,protector,damage,coverageScale,progression};
 })();
 if(typeof module!=='undefined')module.exports=HexBattle;
-</script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "fxSlam": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/7adfbe1cbcfdbedffe2950a42c31f944bd583bb83d99da661f1b1319096177e4/assets/vfx/projectiles/v3/slam.png.webp", "fxBlade": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/34841f526d939cac8315d8dbf1641d65ad70861f482fb2f6f6da9a9f0a646ab3/assets/vfx/projectiles/v3/crescent.png.webp", "fxWind": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/87a9302bdd3dd4be4c3213327e84d23d6ea2cea5d85e68fd997451618c5b0764/assets/skill-grand-png-v1/wind-impact.png", "fxFire": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/151334b02506edbe87ee537d3c553e55c13fa362893d69a402c9678aaadd3c17/assets/skill-grand-png-v1/fireball-impact.png", "fxBomb": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0cd350d6ce7682c47904758ef4d4e6817207bc95fb4d4a662f2407771d6e0b88/assets/signature-motifs-v1/bomb.webp", "fxArrow": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/076645c5c7d7e05904f37d691a6808dd35ec8c341c13c93a76f65652651b22a8/assets/skill-vfx-v1/arrow.webp", "fxHit": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/089cbf45a4ace02fbf429da00d4f0f95eb3ddae03eed249843e0cdcb6b039bc8/assets/skill-grand-png-v1/bullet-impact.png", "fxBanner": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/06931be46d97c401d8a86e2e88e638781e813169df860cc70b1ad5a3d5312f70/assets/signature-motifs-v1/banner.webp", "fxShield": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/94fc7dd398fb14b27bb9ba8d1e6e9805b2d84b8d453878ce5410b7a2923f48bc/assets/skill-grand-png-v1/shield.png", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp", "throneStage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a5db897b3cdf3870d136013821d6cd0d730ea5a7964cb030efb73e89adeadda0.webp", "terrainAtlas": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/hex-trial--painted-obstacles--300f58f3123ec771.webp", "assets/roster/kodama-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9525a37ce2e19e171c6c4195ecd17135ca35d4d696f798ef83ae1e0514801038/assets/roster/kodama-melee.webp", "assets/roster/demonlord-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/524dd196c9b43429c8ec0c4db066f1b43b319a9c46d0eed37d1fbd6a7b3dca7f/assets/roster/demonlord-ranged.webp", "assets/roster/pixie-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/94b94813aa6c251b1fe2c97935266a41f59b8b91317a5ac3870d681edf734bb9/assets/roster/pixie-ranged.webp", "assets/signature-portraits-v9/at_grenade-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/e51988c2acf70cf29aa5e26c5bd5d5597d93cbfd2e55f7562f6a4b5f3e3cf487/assets/signature-portraits-v9/at_grenade-female.png", "assets/signature-portraits-v9/at_grenade-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/89c0fc43ef5024d8ab1870013b6a61197aec6d5803ffebe8dca6bf997d76e3fb/assets/signature-portraits-v9/at_grenade-male.png", "assets/roster/pixie-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ef3dda830aef76081b20ee704c0e11ea982c72ff2fb7c7d5944f0f4976269fd1/assets/roster/pixie-melee.webp", "assets/roster/demonlord-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a0ac314473c6581b0c59df9cb80fe1f6ebbc5e88372d2753d81155dfbcbd0022/assets/roster/demonlord-windup.webp", "assets/melee-contact-png-v1/phoenix-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/1e99f8d86a98c79f0f626392bab6ac701194eb6313e2edff17d043827af21de2/assets/melee-contact-png-v1/phoenix-meleeEffect.png", "assets/roster/phoenix-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/cb861ac4915ad42f2dcc40561e1479a6b8a9cc92f127c5f1a359790bf58399da/assets/roster/phoenix-melee.webp", "assets/melee-contact-png-v1/swordsman-female-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/901990d3a96e8bc1b7d6ead0b10196542797e0fa32af4efb45cbca906c1171f9/assets/melee-contact-png-v1/swordsman-female-meleeEffect.png", "assets/roster/kodama-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c65e8509b544273e51030619e79325f063a88f7bbae1b319a142f97ca072108b/assets/roster/kodama-ranged.webp", "assets/signature-portraits-v9/sh_army-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/6a140e487dcb382ffaee75be26deff9726fea3b8875afb025647c54eb4a57ba5/assets/signature-portraits-v9/sh_army-male.png", "assets/roster/phoenix-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/28f17e72bdb21e4e4cc4b987946c21f3d2d77e9d608176e134447ddd54eebd71/assets/roster/phoenix-ranged.webp", "assets/signature-portraits-v9/sw_whirl-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/44e20453c9acb4303d757ab439cf1c45a56253eba06f0f3043905f6d0e779e70/assets/signature-portraits-v9/sw_whirl-female.png", "assets/skill-grand-png-v1/flamethrower-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/02d4ae31045db9c4eef0f9fa4d41fdd42b85fc485ce5f1ff29ee1d5ae52305cd/assets/skill-grand-png-v1/flamethrower-impact.png", "assets/skill-grand-png-v1/bullet-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/089cbf45a4ace02fbf429da00d4f0f95eb3ddae03eed249843e0cdcb6b039bc8/assets/skill-grand-png-v1/bullet-impact.png", "assets/roster/redcap-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c4421a3fb8993a08b70a4ce91532afb221f57d920ad454d2cb9a89ce3cb27be5/assets/roster/redcap-ranged.webp", "assets/signature-motifs-v1/bomb.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0cd350d6ce7682c47904758ef4d4e6817207bc95fb4d4a662f2407771d6e0b88/assets/signature-motifs-v1/bomb.webp", "assets/roster/raiju-deity-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0f6b397db30a761e35cfc4e94b3625ca32958ea36026f4b57fa2a4be780ead5f/assets/roster/raiju-deity-melee.webp", "assets/roster/kodama-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9d22e41454031fda116e4719272b7eab74294731f4c9d8ddcf79d866d3f8aebb/assets/roster/kodama-windup.webp", "assets/skill-grand-png-v1/arcane-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ded2c274eb61364a7942964eadf34dfc8a01314cf210541fd9a15e46bc53a7ad/assets/skill-grand-png-v1/arcane-impact.png", "assets/signature-motifs-v1/banner.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/06931be46d97c401d8a86e2e88e638781e813169df860cc70b1ad5a3d5312f70/assets/signature-motifs-v1/banner.webp", "assets/melee-contact-png-v1/pixie-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/de35d9a7ae537c60d8bbd8898a7f286896313c76ef6acbf5ee243adb61c0fae1/assets/melee-contact-png-v1/pixie-meleeEffect.png", "assets/roster/raiju-deity-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/7fe539225747f9e603452aac5e5982b5d3aabece7cdfe09fa0ffc23d89538d83/assets/roster/raiju-deity-ranged.webp", "assets/vfx/projectiles/v3/melee.png.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/2679ccb4e7ca9fb07c7a3b7b8814d078f86cd43a2dfa4780535e314a75801d69/assets/vfx/projectiles/v3/melee.png.webp", "assets/skill-grand-png-v1/earth-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/358bd61f5b125fef2795c90bef2bc4fc08852f4ed5917801e771989b261c5cfb/assets/skill-grand-png-v1/earth-impact.png", "assets/roster/raiju-deity-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4517b96c191cd6666c00cd5b0fc3f7564b20e95079789e9fca1ce2a8c1b6e738/assets/roster/raiju-deity-windup.webp", "assets/skill-grand-png-v1/fireball-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/151334b02506edbe87ee537d3c553e55c13fa362893d69a402c9678aaadd3c17/assets/skill-grand-png-v1/fireball-impact.png", "assets/vfx/projectiles/v4/fire-high.png.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/6d4763991625ea3fa9933ca82ec541c89ab42f1b5f9f9e821361f6b1b43c37f8/assets/vfx/projectiles/v4/fire-high.png.webp", "assets/signature-portraits-v9/sw_whirl-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/277de83003698a306bf83b0221d9eb5c0c374644fd25da36ff4363899599c000/assets/signature-portraits-v9/sw_whirl-male.png", "assets/skill-vfx-v1/arrow.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/076645c5c7d7e05904f37d691a6808dd35ec8c341c13c93a76f65652651b22a8/assets/skill-vfx-v1/arrow.webp", "assets/tier-eight-v1/legendary-wave.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4a2bc651e1a3774728184e75a36d452ef691c30238b765f4008c8b08824efa2c/assets/tier-eight-v1/legendary-wave.png", "assets/melee-contact-png-v1/raiju-deity-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/fddb409ef323d27e14f62688748ce04e53cfd32a6ee1380a4ccfe7055ca85454/assets/melee-contact-png-v1/raiju-deity-meleeEffect.png", "assets/roster/pixie-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/991fe9f575febe8c59e6c14e96b1e632fa72226f16977a956e6d396fffabd4d3/assets/roster/pixie-windup.webp", "assets/roster/swordsman-female-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c7db28c8d5b9ffd9c9462d0af42ad4fa965c9902beaac4c3b2d1a38050c965a/assets/roster/swordsman-female-melee.webp", "assets/roster/redcap-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/65870d2beb0d62f6147770a9c92ac3a599d676b607835efc0ff884ade8794928/assets/roster/redcap-windup.webp", "assets/melee-contact-png-v1/kodama-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/1f4b515893248b32ef228755b83a7f876499007e357eb101a12239c255d493ad/assets/melee-contact-png-v1/kodama-meleeEffect.png", "assets/skill-grand-png-v1/wind-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/87a9302bdd3dd4be4c3213327e84d23d6ea2cea5d85e68fd997451618c5b0764/assets/skill-grand-png-v1/wind-impact.png", "assets/roster/swordsman-female-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4a1de937f5dc2f1201b1f1c50055258d8193475f582ca047e6e40fbbceba2986/assets/roster/swordsman-female-windup.webp", "assets/roster/swordsman-female-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4019a9d590b8d4f25f8263ec8d808466a14c9a1ce6275bb905c3c6e0e4db1f37/assets/roster/swordsman-female-ranged.webp", "assets/roster/phoenix-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/49fb51169bd7204d88109e7c9a006a9a1a9236072a4b98a7d0ca133634c5640c/assets/roster/phoenix-windup.webp", "assets/roster/demonlord-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ba0c0cafb230eeb63a628c3281b8b8016b88105098f5940465d9b82d7951e636/assets/roster/demonlord-melee.webp", "assets/roster/redcap-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/2abdbc104561c22a43cb8315cb738cbcdeae9825225c76c7dc674ae42cb76eee/assets/roster/redcap-melee.webp", "assets/signature-portraits-v9/sh_army-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/08a0a0484b5b975b56c2c3afc6354d77088e1b164a1cb5c93d219cc658901d79/assets/signature-portraits-v9/sh_army-female.png", "assets/tier-eight-v1/storm.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/faa6924f7834cdb6d0380b0fe693941f6c9be9ed155918eff2648ea6302828e8/assets/tier-eight-v1/storm.png", "assets/melee-contact-png-v1/demonlord-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/63fb78927bcaa5e76a3c57efac7b6e7024454b32810f15096d18a64d0cf90dd1/assets/melee-contact-png-v1/demonlord-meleeEffect.png", "assets/melee-contact-png-v1/redcap-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0f914bcc6dd04785dcbb2512e2d473b00379d30e301274be735227969f0c136e/assets/melee-contact-png-v1/redcap-meleeEffect.png"};</script><script>const HexOriginal=(()=>{
+</script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "fxSlam": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/7adfbe1cbcfdbedffe2950a42c31f944bd583bb83d99da661f1b1319096177e4/assets/vfx/projectiles/v3/slam.png.webp", "fxBlade": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/34841f526d939cac8315d8dbf1641d65ad70861f482fb2f6f6da9a9f0a646ab3/assets/vfx/projectiles/v3/crescent.png.webp", "fxWind": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/87a9302bdd3dd4be4c3213327e84d23d6ea2cea5d85e68fd997451618c5b0764/assets/skill-grand-png-v1/wind-impact.png", "fxFire": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/151334b02506edbe87ee537d3c553e55c13fa362893d69a402c9678aaadd3c17/assets/skill-grand-png-v1/fireball-impact.png", "fxBomb": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0cd350d6ce7682c47904758ef4d4e6817207bc95fb4d4a662f2407771d6e0b88/assets/signature-motifs-v1/bomb.webp", "fxArrow": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/076645c5c7d7e05904f37d691a6808dd35ec8c341c13c93a76f65652651b22a8/assets/skill-vfx-v1/arrow.webp", "fxHit": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/089cbf45a4ace02fbf429da00d4f0f95eb3ddae03eed249843e0cdcb6b039bc8/assets/skill-grand-png-v1/bullet-impact.png", "fxBanner": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/06931be46d97c401d8a86e2e88e638781e813169df860cc70b1ad5a3d5312f70/assets/signature-motifs-v1/banner.webp", "fxShield": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/94fc7dd398fb14b27bb9ba8d1e6e9805b2d84b8d453878ce5410b7a2923f48bc/assets/skill-grand-png-v1/shield.png", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp", "throneStage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a5db897b3cdf3870d136013821d6cd0d730ea5a7964cb030efb73e89adeadda0.webp", "terrainAtlas": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/hex-trial--painted-obstacles--300f58f3123ec771.webp", "assets/signature-skill-png-v1/am_meteor-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/82452a79733f444aeb8c0a5852913c9d6d7a0d683ed7a4b5cda21b1efa893ecd/assets/signature-skill-png-v1/am_meteor-male.png", "assets/tier-eight-v1/ancient-stone.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/dfb3db850de6368089595f39df5b1d17b305323f3168c3f8fab9380f0ac33ebc/assets/tier-eight-v1/ancient-stone.png", "assets/skill-grand-png-v1/flamethrower-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/02d4ae31045db9c4eef0f9fa4d41fdd42b85fc485ce5f1ff29ee1d5ae52305cd/assets/skill-grand-png-v1/flamethrower-impact.png", "assets/roster/swordsman-female-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c7db28c8d5b9ffd9c9462d0af42ad4fa965c9902beaac4c3b2d1a38050c965a/assets/roster/swordsman-female-melee.webp", "assets/melee-contact-png-v1/demonlord-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/63fb78927bcaa5e76a3c57efac7b6e7024454b32810f15096d18a64d0cf90dd1/assets/melee-contact-png-v1/demonlord-meleeEffect.png", "assets/roster/swordsman-female-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4019a9d590b8d4f25f8263ec8d808466a14c9a1ce6275bb905c3c6e0e4db1f37/assets/roster/swordsman-female-ranged.webp", "assets/signature-portraits-v9/at_grenade-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/89c0fc43ef5024d8ab1870013b6a61197aec6d5803ffebe8dca6bf997d76e3fb/assets/signature-portraits-v9/at_grenade-male.png", "assets/skill-vfx-v1/arrow.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/076645c5c7d7e05904f37d691a6808dd35ec8c341c13c93a76f65652651b22a8/assets/skill-vfx-v1/arrow.webp", "assets/roster/redcap-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/65870d2beb0d62f6147770a9c92ac3a599d676b607835efc0ff884ade8794928/assets/roster/redcap-windup.webp", "assets/roster/redcap-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/2abdbc104561c22a43cb8315cb738cbcdeae9825225c76c7dc674ae42cb76eee/assets/roster/redcap-melee.webp", "assets/skill-grand-png-v1/bullet-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/089cbf45a4ace02fbf429da00d4f0f95eb3ddae03eed249843e0cdcb6b039bc8/assets/skill-grand-png-v1/bullet-impact.png", "assets/roster/kodama-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9525a37ce2e19e171c6c4195ecd17135ca35d4d696f798ef83ae1e0514801038/assets/roster/kodama-melee.webp", "assets/roster/raiju-deity-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0f6b397db30a761e35cfc4e94b3625ca32958ea36026f4b57fa2a4be780ead5f/assets/roster/raiju-deity-melee.webp", "assets/roster/kodama-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9d22e41454031fda116e4719272b7eab74294731f4c9d8ddcf79d866d3f8aebb/assets/roster/kodama-windup.webp", "assets/roster/phoenix-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/cb861ac4915ad42f2dcc40561e1479a6b8a9cc92f127c5f1a359790bf58399da/assets/roster/phoenix-melee.webp", "assets/signature-portraits-v9/sw_whirl-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/277de83003698a306bf83b0221d9eb5c0c374644fd25da36ff4363899599c000/assets/signature-portraits-v9/sw_whirl-male.png", "assets/roster/demonlord-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ba0c0cafb230eeb63a628c3281b8b8016b88105098f5940465d9b82d7951e636/assets/roster/demonlord-melee.webp", "assets/signature-portraits-v9/sh_army-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/08a0a0484b5b975b56c2c3afc6354d77088e1b164a1cb5c93d219cc658901d79/assets/signature-portraits-v9/sh_army-female.png", "assets/melee-contact-png-v1/raiju-deity-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/fddb409ef323d27e14f62688748ce04e53cfd32a6ee1380a4ccfe7055ca85454/assets/melee-contact-png-v1/raiju-deity-meleeEffect.png", "assets/roster/swordsman-female-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4a1de937f5dc2f1201b1f1c50055258d8193475f582ca047e6e40fbbceba2986/assets/roster/swordsman-female-windup.webp", "assets/roster/phoenix-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/49fb51169bd7204d88109e7c9a006a9a1a9236072a4b98a7d0ca133634c5640c/assets/roster/phoenix-windup.webp", "assets/signature-portraits-v9/sh_army-male.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/6a140e487dcb382ffaee75be26deff9726fea3b8875afb025647c54eb4a57ba5/assets/signature-portraits-v9/sh_army-male.png", "assets/signature-motifs-v1/banner.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/06931be46d97c401d8a86e2e88e638781e813169df860cc70b1ad5a3d5312f70/assets/signature-motifs-v1/banner.webp", "assets/signature-portraits-v9/sw_whirl-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/44e20453c9acb4303d757ab439cf1c45a56253eba06f0f3043905f6d0e779e70/assets/signature-portraits-v9/sw_whirl-female.png", "assets/roster/kodama-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c65e8509b544273e51030619e79325f063a88f7bbae1b319a142f97ca072108b/assets/roster/kodama-ranged.webp", "assets/roster/pixie-melee.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ef3dda830aef76081b20ee704c0e11ea982c72ff2fb7c7d5944f0f4976269fd1/assets/roster/pixie-melee.webp", "assets/melee-contact-png-v1/pixie-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/de35d9a7ae537c60d8bbd8898a7f286896313c76ef6acbf5ee243adb61c0fae1/assets/melee-contact-png-v1/pixie-meleeEffect.png", "assets/roster/pixie-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/94b94813aa6c251b1fe2c97935266a41f59b8b91317a5ac3870d681edf734bb9/assets/roster/pixie-ranged.webp", "assets/skill-grand-png-v1/wind-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/87a9302bdd3dd4be4c3213327e84d23d6ea2cea5d85e68fd997451618c5b0764/assets/skill-grand-png-v1/wind-impact.png", "assets/roster/pixie-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/991fe9f575febe8c59e6c14e96b1e632fa72226f16977a956e6d396fffabd4d3/assets/roster/pixie-windup.webp", "assets/roster/raiju-deity-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4517b96c191cd6666c00cd5b0fc3f7564b20e95079789e9fca1ce2a8c1b6e738/assets/roster/raiju-deity-windup.webp", "assets/skill-grand-png-v1/earth-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/358bd61f5b125fef2795c90bef2bc4fc08852f4ed5917801e771989b261c5cfb/assets/skill-grand-png-v1/earth-impact.png", "assets/melee-contact-png-v1/kodama-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/1f4b515893248b32ef228755b83a7f876499007e357eb101a12239c255d493ad/assets/melee-contact-png-v1/kodama-meleeEffect.png", "assets/vfx/projectiles/v3/melee.png.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/2679ccb4e7ca9fb07c7a3b7b8814d078f86cd43a2dfa4780535e314a75801d69/assets/vfx/projectiles/v3/melee.png.webp", "assets/skill-grand-png-v1/arcane-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ded2c274eb61364a7942964eadf34dfc8a01314cf210541fd9a15e46bc53a7ad/assets/skill-grand-png-v1/arcane-impact.png", "assets/melee-contact-png-v1/phoenix-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/1e99f8d86a98c79f0f626392bab6ac701194eb6313e2edff17d043827af21de2/assets/melee-contact-png-v1/phoenix-meleeEffect.png", "assets/roster/raiju-deity-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/7fe539225747f9e603452aac5e5982b5d3aabece7cdfe09fa0ffc23d89538d83/assets/roster/raiju-deity-ranged.webp", "assets/tier-eight-v1/storm.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/faa6924f7834cdb6d0380b0fe693941f6c9be9ed155918eff2648ea6302828e8/assets/tier-eight-v1/storm.png", "assets/skill-grand-png-v1/fireball-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/151334b02506edbe87ee537d3c553e55c13fa362893d69a402c9678aaadd3c17/assets/skill-grand-png-v1/fireball-impact.png", "assets/roster/demonlord-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/524dd196c9b43429c8ec0c4db066f1b43b319a9c46d0eed37d1fbd6a7b3dca7f/assets/roster/demonlord-ranged.webp", "assets/signature-motifs-v1/bomb.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0cd350d6ce7682c47904758ef4d4e6817207bc95fb4d4a662f2407771d6e0b88/assets/signature-motifs-v1/bomb.webp", "assets/vfx/projectiles/v4/fire-high.png.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/6d4763991625ea3fa9933ca82ec541c89ab42f1b5f9f9e821361f6b1b43c37f8/assets/vfx/projectiles/v4/fire-high.png.webp", "assets/tier-eight-v1/legendary-wave.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/4a2bc651e1a3774728184e75a36d452ef691c30238b765f4008c8b08824efa2c/assets/tier-eight-v1/legendary-wave.png", "assets/melee-contact-png-v1/redcap-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/0f914bcc6dd04785dcbb2512e2d473b00379d30e301274be735227969f0c136e/assets/melee-contact-png-v1/redcap-meleeEffect.png", "assets/signature-portraits-v9/at_grenade-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/e51988c2acf70cf29aa5e26c5bd5d5597d93cbfd2e55f7562f6a4b5f3e3cf487/assets/signature-portraits-v9/at_grenade-female.png", "assets/roster/demonlord-windup.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a0ac314473c6581b0c59df9cb80fe1f6ebbc5e88372d2753d81155dfbcbd0022/assets/roster/demonlord-windup.webp", "assets/signature-portraits-v9/am_meteor-female.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/b03a97e629da16e3fbd66bca655277b6ead94d2ddcb06e57d74c89fe55e71842/assets/signature-portraits-v9/am_meteor-female.png", "assets/roster/redcap-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c4421a3fb8993a08b70a4ce91532afb221f57d920ad454d2cb9a89ce3cb27be5/assets/roster/redcap-ranged.webp", "assets/skill-grand-png-v1/meteor-impact.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/575082bce6d85ede64e252b5551e897fedfb22250bb55a487bf9096bfb49955f/assets/skill-grand-png-v1/meteor-impact.png", "assets/melee-contact-png-v1/swordsman-female-meleeEffect.png": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/901990d3a96e8bc1b7d6ead0b10196542797e0fa32af4efb45cbca906c1171f9/assets/melee-contact-png-v1/swordsman-female-meleeEffect.png", "assets/roster/phoenix-ranged.webp": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/28f17e72bdb21e4e4cc4b987946c21f3d2d77e9d608176e134447ddd54eebd71/assets/roster/phoenix-ranged.webp"};</script><script>const HexOriginal=(()=>{
 const m0=(()=>{function edgeGradient(direction,start,end,unit='%'){
  const outer=1;
  return `linear-gradient(${direction},transparent 0${unit},transparent ${outer}${unit},black ${start}${unit},black calc(100% - ${end}${unit}),transparent calc(100% - ${outer}${unit}),transparent 100%)`;
@@ -566,7 +669,7 @@ function addCombatOutcome(owner,kind,at,visual,rate){
 }
 
 return {combatOutcomeKind,addCombatOutcome};})();
-const m4=(()=>{const skillVisualProfiles={"fighting_aoe": {"name": "\u0e40\u0e15\u0e30\u0e01\u0e27\u0e32\u0e14", "icon": "assets/pvp-skills/fighting_aoe.webp", "type": "p", "element": "fighting", "archetype": "slam", "role": "damage", "palette": ["#efb57c", "#fff1c2"], "iconColor": "#c29e5b", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e40\u0e15\u0e30\u0e01\u0e27\u0e32\u0e14", "paintedIconReviewed": true}, "identity": {"key": "fighting_aoe", "seed": 3673913873, "flow": "burst", "form": "plume", "motifs": ["flare"], "rotation": 1.9722220547535922, "spread": 0.98, "tempo": 1.0899999999999999, "accent": "#c29e5b"}, "progression": {"mp": 10, "unlockLevel": null, "levelSource": null, "signature": null, "owner": null, "classId": null, "species": null, "rarity": "normal"}, "spectacle": {"intensity": 0.5889, "rank": 3, "previousRank": 2, "reason": "mp-level-band", "pulses": 2, "particles": 28, "halo": false, "trail": 1.032815041375656}}, "sw_whirl": {"name": "\u0e14\u0e32\u0e1a\u0e27\u0e32\u0e22\u0e38\u0e2b\u0e21\u0e38\u0e19", "icon": "assets/pvp-skills/sw_whirl.webp", "type": "p", "element": "flying", "archetype": "whirl", "role": "damage", "palette": ["#9cdaff", "#eafdff"], "iconColor": "#244265", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e14\u0e32\u0e1a\u0e27\u0e32\u0e22\u0e38\u0e2b\u0e21\u0e38\u0e19", "paintedIconReviewed": true}, "identity": {"key": "sw_whirl", "seed": 3431672576, "flow": "orbit", "form": "blade", "motifs": ["blade", "gust", "blade"], "rotation": 5.1661745859032155, "spread": 0.86, "tempo": 0.98, "accent": "#244265"}, "progression": {"mp": 9, "unlockLevel": 22, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e19\u0e31\u0e01\u0e14\u0e32\u0e1a"}, "owner": "\u0e19\u0e31\u0e01\u0e14\u0e32\u0e1a", "classId": "swordsman", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4141, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.5691368424055543}}, "at_grenade": {"name": "\u0e23\u0e30\u0e40\u0e1a\u0e34\u0e14\u0e21\u0e37\u0e2d", "icon": "assets/pvp-skills/at_grenade.webp", "type": "p", "element": "fire", "archetype": "explosion", "role": "damage", "palette": ["#ff8238", "#fff0b4"], "iconColor": "#872c10", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e23\u0e30\u0e40\u0e1a\u0e34\u0e14\u0e21\u0e37\u0e2d", "paintedIconReviewed": true}, "identity": {"key": "at_grenade", "seed": 3498100991, "flow": "dive", "form": "plume", "motifs": ["bomb", "spark", "cloud"], "rotation": 1.239183768915974, "spread": 0.89, "tempo": 1.13, "accent": "#872c10"}, "progression": {"mp": 10, "unlockLevel": 25, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e1e\u0e25\u0e1b\u0e37\u0e19\u0e43\u0e2b\u0e0d\u0e48"}, "owner": "\u0e1e\u0e25\u0e1b\u0e37\u0e19\u0e43\u0e2b\u0e0d\u0e48", "classId": "artillery", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4155, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.570080666375656}}, "ar_rain": {"name": "\u0e1d\u0e19\u0e18\u0e19\u0e39", "icon": "assets/pvp-skills/ar_rain.webp", "type": "p", "element": "normal", "archetype": "arrowRain", "role": "damage", "palette": ["#d4d7e1", "#fff5d8"], "iconColor": "#b88e6c", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e1d\u0e19\u0e18\u0e19\u0e39", "paintedIconReviewed": true}, "identity": {"key": "ar_rain", "seed": 3663522914, "flow": "rain", "form": "plume", "motifs": ["spark"], "rotation": 3.385938748868999, "spread": 0.91, "tempo": 0.98, "accent": "#b88e6c"}, "progression": {"mp": 9, "unlockLevel": 12, "levelSource": "class / additional / milestone skill table", "signature": null, "owner": "\u0e19\u0e31\u0e01\u0e18\u0e19\u0e39", "classId": "archer", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 0.4714, "rank": 2, "previousRank": 2, "reason": "mp-level-band", "pulses": 2, "particles": 24, "halo": false, "trail": 0.9564305924055544}}, "sh_army": {"name": "\u0e1a\u0e31\u0e0d\u0e0a\u0e32\u0e17\u0e31\u0e1e\u0e0b\u0e32\u0e21\u0e39\u0e44\u0e23", "icon": "assets/pvp-skills/sh_army.webp", "type": "buff", "element": "normal", "archetype": "empower", "role": "support", "palette": ["#122452", "#fff0ca"], "iconColor": "#122452", "tier": 2, "area": false, "hits": 1, "evidence": {"name": "\u0e1a\u0e31\u0e0d\u0e0a\u0e32\u0e17\u0e31\u0e1e\u0e0b\u0e32\u0e21\u0e39\u0e44\u0e23", "paintedIconReviewed": true}, "identity": {"key": "sh_army", "seed": 2439085489, "flow": "rise", "form": "plume", "motifs": ["banner", "banner", "shield"], "rotation": 2.949606435870417, "spread": 0.77, "tempo": 0.98, "accent": "#122452"}, "progression": {"mp": 14, "unlockLevel": 40, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e42\u0e0a\u0e01\u0e38\u0e19"}, "owner": "\u0e42\u0e0a\u0e01\u0e38\u0e19", "classId": "shogun", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4217, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.5741215139787728}}};
+const m4=(()=>{const skillVisualProfiles={"fighting_aoe": {"name": "\u0e40\u0e15\u0e30\u0e01\u0e27\u0e32\u0e14", "icon": "assets/pvp-skills/fighting_aoe.webp", "type": "p", "element": "fighting", "archetype": "slam", "role": "damage", "palette": ["#efb57c", "#fff1c2"], "iconColor": "#c29e5b", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e40\u0e15\u0e30\u0e01\u0e27\u0e32\u0e14", "paintedIconReviewed": true}, "identity": {"key": "fighting_aoe", "seed": 3673913873, "flow": "burst", "form": "plume", "motifs": ["flare"], "rotation": 1.9722220547535922, "spread": 0.98, "tempo": 1.0899999999999999, "accent": "#c29e5b"}, "progression": {"mp": 10, "unlockLevel": null, "levelSource": null, "signature": null, "owner": null, "classId": null, "species": null, "rarity": "normal"}, "spectacle": {"intensity": 0.5889, "rank": 3, "previousRank": 2, "reason": "mp-level-band", "pulses": 2, "particles": 28, "halo": false, "trail": 1.032815041375656}}, "sw_whirl": {"name": "\u0e14\u0e32\u0e1a\u0e27\u0e32\u0e22\u0e38\u0e2b\u0e21\u0e38\u0e19", "icon": "assets/pvp-skills/sw_whirl.webp", "type": "p", "element": "flying", "archetype": "whirl", "role": "damage", "palette": ["#9cdaff", "#eafdff"], "iconColor": "#244265", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e14\u0e32\u0e1a\u0e27\u0e32\u0e22\u0e38\u0e2b\u0e21\u0e38\u0e19", "paintedIconReviewed": true}, "identity": {"key": "sw_whirl", "seed": 3431672576, "flow": "orbit", "form": "blade", "motifs": ["blade", "gust", "blade"], "rotation": 5.1661745859032155, "spread": 0.86, "tempo": 0.98, "accent": "#244265"}, "progression": {"mp": 9, "unlockLevel": 22, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e19\u0e31\u0e01\u0e14\u0e32\u0e1a"}, "owner": "\u0e19\u0e31\u0e01\u0e14\u0e32\u0e1a", "classId": "swordsman", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4141, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.5691368424055543}}, "at_grenade": {"name": "\u0e23\u0e30\u0e40\u0e1a\u0e34\u0e14\u0e21\u0e37\u0e2d", "icon": "assets/pvp-skills/at_grenade.webp", "type": "p", "element": "fire", "archetype": "explosion", "role": "damage", "palette": ["#ff8238", "#fff0b4"], "iconColor": "#872c10", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e23\u0e30\u0e40\u0e1a\u0e34\u0e14\u0e21\u0e37\u0e2d", "paintedIconReviewed": true}, "identity": {"key": "at_grenade", "seed": 3498100991, "flow": "dive", "form": "plume", "motifs": ["bomb", "spark", "cloud"], "rotation": 1.239183768915974, "spread": 0.89, "tempo": 1.13, "accent": "#872c10"}, "progression": {"mp": 10, "unlockLevel": 25, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e1e\u0e25\u0e1b\u0e37\u0e19\u0e43\u0e2b\u0e0d\u0e48"}, "owner": "\u0e1e\u0e25\u0e1b\u0e37\u0e19\u0e43\u0e2b\u0e0d\u0e48", "classId": "artillery", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4155, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.570080666375656}}, "ar_rain": {"name": "\u0e1d\u0e19\u0e18\u0e19\u0e39", "icon": "assets/pvp-skills/ar_rain.webp", "type": "p", "element": "normal", "archetype": "arrowRain", "role": "damage", "palette": ["#d4d7e1", "#fff5d8"], "iconColor": "#b88e6c", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e1d\u0e19\u0e18\u0e19\u0e39", "paintedIconReviewed": true}, "identity": {"key": "ar_rain", "seed": 3663522914, "flow": "rain", "form": "plume", "motifs": ["spark"], "rotation": 3.385938748868999, "spread": 0.91, "tempo": 0.98, "accent": "#b88e6c"}, "progression": {"mp": 9, "unlockLevel": 12, "levelSource": "class / additional / milestone skill table", "signature": null, "owner": "\u0e19\u0e31\u0e01\u0e18\u0e19\u0e39", "classId": "archer", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 0.4714, "rank": 2, "previousRank": 2, "reason": "mp-level-band", "pulses": 2, "particles": 24, "halo": false, "trail": 0.9564305924055544}}, "sh_army": {"name": "\u0e1a\u0e31\u0e0d\u0e0a\u0e32\u0e17\u0e31\u0e1e\u0e0b\u0e32\u0e21\u0e39\u0e44\u0e23", "icon": "assets/pvp-skills/sh_army.webp", "type": "buff", "element": "normal", "archetype": "empower", "role": "support", "palette": ["#122452", "#fff0ca"], "iconColor": "#122452", "tier": 2, "area": false, "hits": 1, "evidence": {"name": "\u0e1a\u0e31\u0e0d\u0e0a\u0e32\u0e17\u0e31\u0e1e\u0e0b\u0e32\u0e21\u0e39\u0e44\u0e23", "paintedIconReviewed": true}, "identity": {"key": "sh_army", "seed": 2439085489, "flow": "rise", "form": "plume", "motifs": ["banner", "banner", "shield"], "rotation": 2.949606435870417, "spread": 0.77, "tempo": 0.98, "accent": "#122452"}, "progression": {"mp": 14, "unlockLevel": 40, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e42\u0e0a\u0e01\u0e38\u0e19"}, "owner": "\u0e42\u0e0a\u0e01\u0e38\u0e19", "classId": "shogun", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4217, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.5741215139787728}}, "rock_aoe": {"name": "\u0e2b\u0e34\u0e19\u0e16\u0e25\u0e48\u0e21", "icon": "assets/pvp-skills/rock_aoe.webp", "type": "p", "element": "rock", "archetype": "fallingRock", "role": "damage", "palette": ["#c2b5a1", "#f2e7cd"], "iconColor": "#9a613b", "tier": 1, "area": true, "hits": 1, "evidence": {"name": "\u0e2b\u0e34\u0e19\u0e16\u0e25\u0e48\u0e21", "paintedIconReviewed": true}, "identity": {"key": "rock_aoe", "seed": 1602512035, "flow": "rain", "form": "plume", "motifs": ["flare"], "rotation": 2.007128639793479, "spread": 0.94, "tempo": 0.98, "accent": "#9a613b"}, "progression": {"mp": 10, "unlockLevel": null, "levelSource": null, "signature": null, "owner": null, "classId": null, "species": null, "rarity": "normal"}, "spectacle": {"intensity": 0.5889, "rank": 3, "previousRank": 2, "reason": "mp-level-band", "pulses": 2, "particles": 28, "halo": false, "trail": 1.032815041375656}}, "am_meteor": {"name": "\u0e2d\u0e38\u0e01\u0e01\u0e32\u0e1a\u0e32\u0e15\u0e16\u0e25\u0e48\u0e21", "icon": "assets/pvp-skills/am_meteor.webp", "type": "m", "element": "rock", "archetype": "meteor", "role": "damage", "palette": ["#c2b5a1", "#f2e7cd"], "iconColor": "#ea7e37", "tier": 3, "area": true, "hits": 1, "evidence": {"name": "\u0e2d\u0e38\u0e01\u0e01\u0e32\u0e1a\u0e32\u0e15\u0e16\u0e25\u0e48\u0e21", "paintedIconReviewed": true}, "identity": {"key": "am_meteor", "seed": 4254859353, "flow": "rain", "form": "plume", "motifs": ["meteor", "meteor", "crack"], "rotation": 4.76474885794452, "spread": 0.91, "tempo": 1.03, "accent": "#ea7e37"}, "progression": {"mp": 22, "unlockLevel": 40, "levelSource": "class / additional / milestone skill table", "signature": {"kind": "job", "owner": "\u0e2d\u0e32\u0e23\u0e4c\u0e04\u0e40\u0e21\u0e08"}, "owner": "\u0e2d\u0e32\u0e23\u0e4c\u0e04\u0e40\u0e21\u0e08", "classId": "archmage", "species": null, "rarity": "normal"}, "spectacle": {"intensity": 1.4249, "rank": 7, "previousRank": 6, "reason": "job-unlock-15-to-44", "pulses": 4, "particles": 48, "halo": true, "trail": 1.576173844557493}}};
 return {skillVisualProfiles};})();
 const m5=(()=>{// Contact art is a separate asset role from travel art. Never resolve an impact
 // to a projectile, bottle, arrow, bullet, weapon or signature inventory motif.
@@ -701,7 +804,7 @@ const grandPngImages={
  wind:art["assets/skill-grand-png-v1/wind-impact.png"],
  nature:'assets/skill-grand-png-v1/nature-impact.png',
  music:'assets/skill-grand-png-v1/music-impact.png',
- meteor:'assets/skill-grand-png-v1/meteor-impact.png',
+ meteor:art["assets/skill-grand-png-v1/meteor-impact.png"],
  earth:art["assets/skill-grand-png-v1/earth-impact.png"],
  healing:'assets/skill-grand-png-v1/healing.png',
  shield:'assets/skill-grand-png-v1/shield.png',
@@ -743,7 +846,7 @@ function addGrandImages(owner,v,phase,recipe,presentation,{duration=700,delay=0,
 }
 
 return {grandPngImages,pngContact,addGrandImages};})();
-const m12=(()=>{const signatureSkillPngCatalog={"sw_whirl": {"female": {"path": art["assets/signature-portraits-v9/sw_whirl-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/sw_whirl-male.png"], "frames": 4}}, "at_grenade": {"female": {"path": art["assets/signature-portraits-v9/at_grenade-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/at_grenade-male.png"], "frames": 4}}, "sh_army": {"female": {"path": art["assets/signature-portraits-v9/sh_army-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/sh_army-male.png"], "frames": 4}}};
+const m12=(()=>{const signatureSkillPngCatalog={"sw_whirl": {"female": {"path": art["assets/signature-portraits-v9/sw_whirl-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/sw_whirl-male.png"], "frames": 4}}, "at_grenade": {"female": {"path": art["assets/signature-portraits-v9/at_grenade-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/at_grenade-male.png"], "frames": 4}}, "sh_army": {"female": {"path": art["assets/signature-portraits-v9/sh_army-female.png"], "frames": 4}, "male": {"path": art["assets/signature-portraits-v9/sh_army-male.png"], "frames": 4}}, "am_meteor": {"female": {"path": art["assets/signature-portraits-v9/am_meteor-female.png"], "frames": 4}, "male": {"path": art["assets/signature-skill-png-v1/am_meteor-male.png"], "frames": 4}}};
 return {signatureSkillPngCatalog};})();
 const m13=(()=>{const {softenVfxEdges}=m0;
 const {signatureSkillPngCatalog}=m12;
@@ -803,7 +906,7 @@ function spriteOrientation(art,angle){
 
 return {projectileOrientation,flightGeometry,spriteOrientation};})();
 const m15=(()=>{const {classWeapons}=m8;
-const tierEightAssets={legendary:art["assets/tier-eight-v1/legendary-wave.png"],eclipse:'assets/tier-eight-v1/eclipse-corona.png',lightning:'assets/tier-eight-v1/sky-lightning.png',fracture:'assets/tier-eight-v2/ground-fracture-raised.png',storm:art["assets/tier-eight-v1/storm.png"],blade:'assets/tier-eight-v1/blade-slash.png',boulder:'assets/tier-eight-v1/ancient-stone.png'};
+const tierEightAssets={legendary:art["assets/tier-eight-v1/legendary-wave.png"],eclipse:'assets/tier-eight-v1/eclipse-corona.png',lightning:'assets/tier-eight-v1/sky-lightning.png',fracture:'assets/tier-eight-v2/ground-fracture-raised.png',storm:art["assets/tier-eight-v1/storm.png"],blade:'assets/tier-eight-v1/blade-slash.png',boulder:art["assets/tier-eight-v1/ancient-stone.png"]};
 const hasStormName=v=>/พายุ|วายุ/.test(v.name);
 const stormArt=v=>({asset:'storm',kind:'vortex',path:tierEightAssets.storm,style:'storm',tint:v.element==='fire'?'sepia(.7) saturate(2) hue-rotate(325deg)':v.element==='grass'?'hue-rotate(285deg)':v.element==='dark'?'hue-rotate(65deg)':v.element==='ice'?'brightness(1.2)':'none'});
 function specialProjectile(v,actor={}){
@@ -1106,7 +1209,7 @@ function installDesignedSkillEffects(vfx,resolve){
 }
 
 return {visualPattern,designedContact,installDesignedSkillEffects};})();
-const m23=(()=>{const legacyAssets=art;const recipes=new Map(Object.entries({"sw_whirl": {"movement": "orbit", "palette": "steel", "motifs": ["blade", "gust", "blade"]}, "sh_army": {"movement": "rise", "palette": "gold", "motifs": ["banner", "banner", "shield"]}, "at_grenade": {"movement": "dive", "palette": "ember", "motifs": ["bomb", "spark", "cloud"]}}));const colors={
+const m23=(()=>{const legacyAssets=art;const recipes=new Map(Object.entries({"sw_whirl": {"movement": "orbit", "palette": "steel", "motifs": ["blade", "gust", "blade"]}, "sh_army": {"movement": "rise", "palette": "gold", "motifs": ["banner", "banner", "shield"]}, "am_meteor": {"movement": "rain", "palette": "fire", "motifs": ["meteor", "meteor", "crack"]}, "at_grenade": {"movement": "dive", "palette": "ember", "motifs": ["bomb", "spark", "cloud"]}}));const colors={
   steel:['#ecf7ff','#70badc'],gold:['#fff8bd','#ffac45'],electric:['#e2ffff','#6ea6ff'],
   violet:['#f2c7ff','#a77add'],void:['#f3a8ff','#7b5bde'],amber:['#fff0a5','#de8b46'],
   blood:['#ffd1c2','#ff4c59'],stone:['#f1d7ae','#bc8861'],sky:['#d9faff','#47cbec'],
@@ -1232,7 +1335,8 @@ const warmFamilies={
   sw_whirl:['wind-impact'],
   at_grenade:['fireball-impact','flamethrower-impact'],
   ar_rain:['bullet-impact','arcane-impact'],
-  sh_army:['arcane-impact']
+  sh_army:['arcane-impact'],
+  rock_aoe:['earth-impact','bullet-impact'],am_meteor:['meteor-impact','flamethrower-impact','fireball-impact']
 };
 function prepare(skill,actor){
   if(!warmFamilies[skill])return;
@@ -1334,8 +1438,18 @@ return m24;})();</script><script>(() => {
  let s,mode='walk',auto=false,busy=false,epoch=0,timer,paths=new Map(),valid=[],positions,range;
  let aim=null,rotation=0;
  const trialSkills=Object.keys(H.skills).filter(id=>H.skills[id].shape);
+ const deliveryText=sk=>sk.delivery==='sky'?'ตกจากฟ้า':sk.delivery==='projectile'?'ต้องมีแนวยิง':'';
+ function costLabel(id){
+   const sk=H.skills[id],remaining=H.cooldownLeft(s,H.current(s),id);
+   return sk.mp+' MP'+(remaining?' · รอ '+remaining+' ตา':sk.cooldown?' · พัก '+sk.cooldown+' ตา':'');
+ }
+ function hitLog(){
+   return s.lastHits.map(({original,recipient,amount})=>recipient===original?recipient.name+' −'+amount:
+     recipient.name+' รับแทน '+original.name+' −'+amount).join(' · ');
+ }
  function chooseSkill(id){
    if(busy||planning||auto||s.afterSkill||s.winner!==null||H.current(s).team)return;
+   if(H.skills[id]&&!H.available(s,H.current(s),id))return;
    mode=id;rotation=0;aim=null;
    if(H.skills[id]?.shape)HexOriginal.prepare(id,H.current(s));
    if(['ring','field'].includes(H.skills[id]?.shape))aim=H.current(s).pos;
@@ -1346,7 +1460,8 @@ return m24;})();</script><script>(() => {
 const areaEffects = (() => {
   const assetsBySkill = {
     fighting_aoe:['fxBlade','fxSlam'], sw_whirl:['fxWind','fxBlade'],
-    at_grenade:['fxBomb','fxFire'], ar_rain:['fxArrow','fxHit'], sh_army:['fxShield','fxBanner']
+    at_grenade:['fxBomb','fxFire'], ar_rain:['fxArrow','fxHit'], sh_army:['fxShield','fxBanner'],
+    rock_aoe:['assets/tier-eight-v1/ancient-stone.png','fxSlam'],am_meteor:['fxFire']
   };
   const images = new Map();
   function load(key) {
@@ -1397,7 +1512,7 @@ const areaEffects = (() => {
     const recipients=impact.targets.map(spriteCenter);
     const facing=Math.sign(aimPoint.x-origin.x)||(actor.team===0?1:-1)*(rightView()?-1:1);
     const dir=Math.atan2((aimPoint.y-origin.y)/floorScale,aimPoint.x-origin.x);
-    const contact={fighting_aoe:.30,sw_whirl:.32,at_grenade:.43,ar_rain:.54,sh_army:.38}[id];
+    const contact={fighting_aoe:.30,sw_whirl:.32,at_grenade:.43,ar_rain:.54,sh_army:.38,rock_aoe:.5,am_meteor:.5}[id];
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const speed=1.4;
     const fx=HexOriginal.create(original,id,actor,facing<0?'left':'right',speed);
@@ -1496,6 +1611,14 @@ const areaEffects = (() => {
           const arrival=.54+(i%3)*.077+Math.floor(i/3)*.025;
           pulse('fxHit',points[i],(t-arrival)/(1-arrival),56,42,10);
         }
+      }else if(id==='rock_aoe'||id==='am_meteor'){
+        for(const [i,p] of points.entries()){
+          const arrival=.48+(i%3)*.07;
+          const fall=(t-arrival+.36)/.36;
+          if(fall>=0&&fall<1)stamp(id==='rock_aoe'?'assets/tier-eight-v1/ancient-stone.png':'fxFire',
+            p.x+12*(1-fall),p.y-95*(1-fall)-9,27,36,.2,Math.min(1,fall*5));
+          pulse(id==='rock_aoe'?'fxSlam':'fxFire',p,(t-arrival)/(1-arrival),62,52,9);
+        }
       }else{
         const maxDistance=Math.max(...points.map(p=>Math.hypot(p.x-origin.x,(p.y-origin.y)/floorScale)))+radius;
         floorPaint(()=>{
@@ -1529,7 +1652,7 @@ const areaEffects = (() => {
             gesture=sprite?.animate([{translate:'0px 0px'},{translate:(-3*facing)+'px -3px',offset:.35},
               {translate:(5*facing)+'px -2px',offset:.75},{translate:'0px 0px'}],{duration:fx.timing.castDuration/speed});
           }
-          if(!travel&&elapsed>=launch){travel=true;pose(HexOriginal.releasePose(id));if(fx.hasTravel)fx.travel(casterAt,{x:aimPoint.x,y:aimPoint.y-10});}
+          if(!travel&&elapsed>=launch){travel=true;pose(HexOriginal.releasePose(id));if(fx.hasTravel)fx.travel(H.skills[id].delivery==='sky'?{x:aimPoint.x+20,y:aimPoint.y-100}:casterAt,{x:aimPoint.x,y:aimPoint.y-10});}
           if(!hit&&elapsed>=hitAt){hit=true;onImpact();originalImpact();}
           if(elapsed>=end){finish();return;}
           if(travel){
@@ -1623,8 +1746,12 @@ const areaEffects = (() => {
      const k=H.key(p),tile=tiles.get(k),v=positions.get(k),reachable=paths.get(k)?.length;
      const covered=range?.area.has(k),steps=range?.steps.get(v);
      const obstacle=s.blocked.get(k);
-     tile.setAttribute('class',['tile',reachable?'walk':'',v?(v.team?'foe':'ally'):'',covered?'cast-range':'',v===u&&!ended?'active':'',valid.includes(v)?((H.skills[mode].heal||H.skills[mode].speedBonus)?'target heal':'target'):''].join(' '));
-     tile.setAttribute('aria-label',where(p)+(v?' '+v.name+' HP '+v.hp+'/'+v.max:'')+(reachable?' เดิน '+reachable+' ช่อง':'')+(covered?' อยู่ในระยะสกิล':'')+(valid.includes(v)?' เลือกเป็นเป้าหมาย':steps>0?' '+stepLabel(steps):''));
+     const selectable=valid.includes(v)&&(sk.delivery!=='projectile'||covered);
+     tile.setAttribute('class',['tile',reachable?'walk':'',v?(v.team?'foe':'ally'):'',covered?'cast-range':'',v===u&&!ended?'active':'',selectable?((sk.heal||sk.range==='self')?'target heal':'target'):''].join(' '));
+     const screened=sk?.delivery==='projectile'&&(range||centers)&&!covered&&!centers?.has(k)&&
+       H.footprint(u).some(from=>H.distance(from,p)<=H.ranges[sk.range]);
+     if(screened)tile.classList.add('screened');
+     tile.setAttribute('aria-label',where(p)+(v?' '+v.name+' HP '+v.hp+'/'+v.max:'')+(reachable?' เดิน '+reachable+' ช่อง':'')+(covered?' อยู่ในระยะสกิล':'')+(screened?' แนวยิงถูกบัง':'')+(selectable?' เลือกเป็นเป้าหมาย':steps>0?' '+stepLabel(steps):''));
      if(obstacle){
        tile.classList.add('blocked');
        tile.setAttribute('aria-label',where(p)+' '+obstacle.name+' · เดินผ่านไม่ได้');
@@ -1653,13 +1780,18 @@ const areaEffects = (() => {
    $('walkLegend').hidden=!!range||aiming;$('rangeLegend').hidden=!range;
    $('turn').textContent='รอบ '+s.round+' · '+(ended?'จบการต่อสู้':u.team?'ตาศัตรู':'ตาฝ่ายเรา');
    $('actor').textContent=ended?(s.winner===0?'ฝ่ายเราชนะ':'ฝ่ายศัตรูชนะ'):u.name;
-   $('stats').textContent=ended?'':('HP '+u.hp+'/'+u.max+' · ความเร็ว '+H.effectiveSpeed(u)+(u.haste?' (บัฟเหลือ '+u.haste.turns+' ตา)':'')+(u.command?' · บัญชาทัพ '+u.command+' ตา':'')+' · ขนาด '+u.size+' ช่อง');
+   $('stats').textContent=ended?'':('HP '+u.hp+'/'+u.max+' · MP '+u.mp+'/90 · ความเร็ว '+H.effectiveSpeed(u)+(u.haste?' (บัฟเหลือ '+u.haste.turns+' ตา)':'')+(u.command?' · บัญชาทัพ '+u.command+' ตา':'')+(u.guard?' · คุ้มกันเพื่อนช่องติดกัน':'')+(u.charged?' · ชาร์จ ×'+u.charged:'')+' · ขนาด '+u.size+' ช่อง');
    $('hint').textContent=ended?'กดเริ่มใหม่เพื่อเล่นอีกครั้ง':busy?'กำลังออกคำสั่ง…':!manual?'กำลังเลือกคำสั่ง':s.afterSkill?'เดินหลังใช้สกิล หรือกดจบตาเพื่ออยู่ที่เดิม':mode==='walk'?(H.movementBudget(s)>s.spent?'แตะช่องเพื่อเดิน หรือเลือกสกิลด้านล่าง':'เดินครบแล้ว เลือกสกิลหรือจบตา'):valid.length?'แตะช่องของเป้าหมายที่สว่างเพื่อใช้ '+H.skills[mode].name:'ยังไม่มีเป้าหมายที่ใช้ท่านี้ได้ ลองเดินหรือเลือกท่าอื่น';
    $('aimPanel').hidden=!aiming;
    if(aiming){
-     const tip={arc:'แตะช่องประชิดสีฟ้าเพื่อเลือกทิศกวาด',ring:'วงรอบตัวผู้ใช้ · แตะช่องใต้ตัวละครเพื่อเลือกศูนย์กลาง',triangle:'แตะช่องสีฟ้าเพื่อเลือกจุดตก แล้วหมุนสามเหลี่ยมได้',burst:'แตะช่องสีฟ้าเพื่อเลือกจุดตกของฝนธนู',field:'บัฟทั้งฝ่าย · โจมตีกายภาพ +40% ป้องกันกายภาพ +30% และความเร็ว +15% นาน 3 ตา'};
+     const rate=sk.scale*u.strength;
+     const tip={arc:'แตะช่องประชิดสีฟ้าเพื่อเลือกทิศกวาด',ring:'แตะช่องใต้ตัวละครเพื่อเลือกศูนย์กลาง',triangle:'เลือกจุดตกที่แนวยิงโล่ง แล้วหมุนสามเหลี่ยมได้',burst:'เลือกจุดตกได้แม้มีสิ่งกีดขวาง',field:'บัฟทั้งฝ่าย · โจมตีกายภาพ +'+Math.round(40*rate)+'% ป้องกันกายภาพ +'+Math.round(30*rate)+'% ความเร็ว +'+Math.round(15*rate)+'% นาน 3 ตา'};
      $('hint').textContent=sk.name+' · '+tip[sk.shape];
-     $('aimSummary').textContent=impact?('พื้นที่ '+impact.area.size+' ช่อง · '+(impact.targets.map(t=>t.name).join('、')||'ไม่มีเป้าหมายในพื้นที่')):'เลือกพื้นที่ก่อนกดยืนยัน';
+     $('aimSummary').textContent=impact?('พื้นที่ '+impact.area.size+' ช่อง · '+(impact.targets.map(target=>{
+       if(sk.command)return target.name;
+       const recipient=H.protector(s,target);
+       return (recipient===target?target.name:recipient.name+' รับแทน '+target.name)+' −'+H.damage(sk,u,recipient)+' HP';
+     }).join('、')||'ไม่มีเป้าหมายในพื้นที่')):'เลือกพื้นที่ก่อนกดยืนยัน';
      $('confirmAim').disabled=!impact;$('cancelAim').disabled=false;
      $('rotateAim').hidden=sk.shape!=='triangle';$('rotateAim').disabled=!aim;
    }
@@ -1668,11 +1800,14 @@ const areaEffects = (() => {
    $('walk').disabled=!manual;$('pass').disabled=!manual;$('walk').setAttribute('aria-pressed',String(mode==='walk'));
    $('skills').replaceChildren();if(!ended&&!s.afterSkill)for(const id of u.kit){
      const sk=H.skills[id],b=document.createElement('button');b.append(sk.name);
-     const sub=document.createElement('small');sub.textContent=sk.speedBonus?'ตนเอง · SPD +'+(100*sk.speedBonus)+'% · '+sk.turns+' ตา':H.rangeNames[sk.range]+' · '+H.ranges[sk.range]+' ช่อง'+(sk.area?' · หมู่':'');b.append(sub);
-     b.dataset.skill=id;b.setAttribute('aria-pressed',String(mode===id));b.disabled=!manual;b.onclick=()=>chooseSkill(id);$('skills').append(b);
+     const sub=document.createElement('small');sub.textContent=[sk.speedBonus?'SPD +'+(100*sk.speedBonus)+'%':sk.guard?'คุ้มกันช่องติดกัน 3 ตา':sk.charge?'โจมตีครั้งหน้า ×'+sk.charge:H.rangeNames[sk.range]+' · '+H.ranges[sk.range]+' ช่อง',deliveryText(sk),costLabel(id)].filter(Boolean).join(' · ');b.append(sub);
+     b.dataset.skill=id;b.setAttribute('aria-pressed',String(mode===id));b.disabled=!manual||!H.available(s,u,id);b.onclick=()=>chooseSkill(id);$('skills').append(b);
    }
    $('areaMenu').hidden=!manual||s.afterSkill;
-   for(const b of $('areaSkills').children)b.setAttribute('aria-pressed',String(mode===b.dataset.areaSkill));
+   for(const b of $('areaSkills').children){
+     const id=b.dataset.areaSkill;b.setAttribute('aria-pressed',String(mode===id));b.disabled=!manual||!H.available(s,u,id);
+     b.querySelector('small').textContent=[H.skills[id].label,deliveryText(H.skills[id]),costLabel(id)].filter(Boolean).join(' · ');
+   }
    $('auto').setAttribute('aria-pressed',String(auto));$('auto').disabled=ended;
    $('queue').replaceChildren();if(!ended)for(let i=0;i<s.order.length;i++){
      const v=s.units.find(v=>v.id===s.order[(s.cursor+i)%s.order.length]);if(!v.hp)continue;
@@ -1699,13 +1834,13 @@ const areaEffects = (() => {
      faceToward(actor,spriteCenter(actor).x,aimCell?mid(aimCell).x:spriteCenter(target).x);
      drawActors();
    }
-   if(!sk.speedBonus)for(const v of affected)sprites.get(v.id)?.querySelector('image').classList.add('hit');
-   const oldHp=target.hp;
-   $('log').textContent=actor.name+' ใช้ '+sk.name+' → '+affected.map(v=>v.name).join('、')+(sk.speedBonus?' (SPD +'+(100*sk.speedBonus)+'%)':' ('+(sk.heal?'+':'−')+sk.power+' HP)');
+   const hitUnits=sk.power&&!sk.heal?affected.map(v=>H.protector(s,v)):affected;
+   if(sk.power)for(const v of hitUnits)sprites.get(v.id)?.firstChild.classList.add('hit');
+   $('log').textContent=actor.name+' ใช้ '+sk.name+' → '+affected.map(v=>v.name).join('、');
    await sleep(360);if(version!==epoch)return;
-   for(const v of affected)sprites.get(v.id)?.querySelector('image').classList.remove('hit');
+   for(const v of hitUnits)sprites.get(v.id)?.firstChild.classList.remove('hit');
    H.act(s,id,target);
-   if(!sk.heal&&!sk.speedBonus)$('log').textContent=actor.name+' ใช้ '+sk.name+' → '+target.name+' (−'+(oldHp-target.hp)+' HP)';
+   if(s.lastHits.length)$('log').textContent=actor.name+' ใช้ '+sk.name+' · '+hitLog();
  }
  async function select(p){
    if(planning){
@@ -1714,6 +1849,9 @@ const areaEffects = (() => {
      deploy(p);return;
    }
    if(busy||auto||H.current(s).team||s.winner!==null)return;
+   if(tiles.get(H.key(p)).classList.contains('screened')){
+     $('hint').textContent='แนวยิงถูกบัง ลองเดินเปลี่ยนมุมยิงหรือใช้ท่าที่ตกจากฟ้า';return;
+   }
    if(H.skills[mode]?.shape){
      if(H.aimCells(s,mode).some(c=>same(c,p))){aim=p;render()}
      return;
@@ -1833,12 +1971,13 @@ const areaEffects = (() => {
    drawActors();
    $('confirmAim').disabled=true;$('rotateAim').disabled=true;$('cancelAim').disabled=true;
    $('log').textContent=actor.name+' ใช้ '+H.skills[id].name+' · '+(impact.targets.map(t=>t.name).join('、')||'ไม่มีเป้าหมาย');
+   const hitUnits=impact.targets.map(v=>H.skills[id].command?v:H.protector(s,v));
    await areaEffects.play(id,p,actor,impact,version,()=>{
-     for(const v of impact.targets)sprites.get(v.id)?.firstChild.classList.add('hit');
+     for(const v of hitUnits)sprites.get(v.id)?.firstChild.classList.add('hit');
    });
    if(version!==epoch)return;
-   for(const v of impact.targets)sprites.get(v.id)?.firstChild.classList.remove('hit');
-   H.act(s,id,p,angle);ready();
+   for(const v of hitUnits)sprites.get(v.id)?.firstChild.classList.remove('hit');
+   H.act(s,id,p,angle);if(s.lastHits.length)$('log').textContent=actor.name+' ใช้ '+H.skills[id].name+' · '+hitLog();ready();
  };
  $('walk').onclick=()=>{if(!busy)chooseSkill('walk')};
  $('pass').onclick=()=>{if(!busy&&!auto&&!H.current(s).team&&s.winner===null){$('log').textContent=H.current(s).name+' จบตา';H.next(s);ready()}};
