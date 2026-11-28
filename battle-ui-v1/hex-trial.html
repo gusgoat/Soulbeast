@@ -15,11 +15,11 @@
 </style></head><body><main>
 <header><h1>สนามทดลองหกเหลี่ยม</h1><label>สนาม <select id="mode"><option value="normal">ปะทะ 3 ต่อ 3</option><option value="boss">ท้าบอสจอมมาร</option></select></label></header>
 <section class="field"><div class="head"><strong id="turn"></strong><span class="queue" id="queue" aria-label="ลำดับตา"></span></div><svg class="board" id="board" viewBox="0 0 610 319" role="group" aria-label="สนามรบหกเหลี่ยม"><g id="tiles"></g><g id="sprites" aria-hidden="true"></g><g id="gaps" aria-hidden="true" pointer-events="none"></g></svg></section>
-<section id="formation" class="panel"><h2>จัดทัพก่อนสู้</h2><p class="hint" id="placement" role="status">เลือกตัวละครแล้วแตะช่อง หรือลากไปวางในสามคอลัมน์ริมขวา</p><div id="roster"></div><div class="controls deploy-actions"><label>ฝั่งตอนสู้ <select id="side"><option value="left">ซ้าย</option><option value="right">ขวา</option></select></label><button id="start">เริ่มต่อสู้</button></div></section>
+<section id="formation" class="panel"><h2>จัดทัพก่อนสู้</h2><p class="hint" id="placement" role="status">เลือกตัวละครแล้วแตะช่อง หรือลากไปวางในสามคอลัมน์ริมขวา</p><div id="roster"></div><label class="controls"><input type="checkbox" id="fastTrial"> ทดลองเทพอสูรสายฟ้าที่ SPD 229 (เดิน 4 + 3 ช่อง)</label><div class="controls deploy-actions"><label>ฝั่งตอนสู้ <select id="side"><option value="left">ซ้าย</option><option value="right">ขวา</option></select></label><button id="start">เริ่มต่อสู้</button></div></section>
 <section id="combat" class="panel" hidden><div class="actor"><h2 id="actor"></h2><span class="stats" id="stats"></span></div><p class="hint" id="hint" aria-live="polite"></p>
 <div class="controls"><button id="walk">เดิน</button><span class="skills" id="skills"></span><button id="pass">จบตา</button></div></section>
 <div class="tools"><span class="legend" id="walkLegend"><b>▧</b> เดินได้</span><span class="legend" id="rangeLegend" hidden><b class="range-key">▧</b> ระยะสกิล　<i>◇</i> ใช้ได้ทันที　+เลข = ต้องเดินอีกกี่ช่อง</span><span><button id="auto" aria-pressed="false">ออโต้ทีม</button> <button id="reset">เริ่มใหม่</button></span></div>
-<p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ความเร็วต่ำกว่า 20 เดินได้ 1 ช่อง · 20–39 เดินได้ 2 ช่อง · 40–59 เดินได้ 3 ช่อง · 60 ขึ้นไปเดินได้ 4 ช่อง<br>เดินได้หลายจังหวะภายในจำนวนช่องที่เหลือ หรือยืนใช้สกิลได้ทันที เมื่อออกท่าหนึ่งครั้งจะจบตา<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่และบอสยืน 3 ช่องติดกันเป็นรูปสามเหลี่ยม ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
+<p class="log" id="log" role="status"></p><details><summary>กติกาการเดินและระยะสกิล</summary><p class="guide">ความเร็วต่ำกว่า 40 เดินได้ 1 ช่อง · 40–64 เดินได้ 2 ช่อง · 65–109 เดินได้ 3 ช่อง · 110 ขึ้นไปเดินได้ 4 ช่อง<br>เดินได้หลายจังหวะภายในจำนวนช่องที่เหลือ หรือยืนใช้สกิลได้ทันที ออกท่าได้หนึ่งครั้งต่อตา<br>ถ้าความเร็วเกิน 150 จะเดินหลังออกท่าได้อีก โดยใช้ความเร็วส่วนที่เกิน 150 เทียบเกณฑ์เดิม: 151–189 เพิ่ม 1 ช่อง · 190–214 เพิ่ม 2 ช่อง · 215–259 เพิ่ม 3 ช่อง · 260 ขึ้นไปเพิ่ม 4 ช่อง หรือกดจบตาเพื่ออยู่ที่เดิม<br>ระยะใกล้ 1 · กลาง 3 · ไกล 5 · ไกลมาก 7 ช่อง วัดจากช่องที่ใกล้ที่สุดระหว่างผู้ใช้กับเป้าหมาย<br>ตัวเล็กยืน 1 ช่อง ตัวใหญ่และบอสยืน 3 ช่องติดกันเป็นรูปสามเหลี่ยม ทุกช่องที่ตัวยืนต้องว่างตลอดทาง</p></details>
 </main><script>const HexBattle = (() => {
   const cols = 8, rows = 5;
   const dirs = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
@@ -63,11 +63,13 @@
     const origin=footprint(a,at);
     return Math.min(...footprint(b).map(p=>distanceToCell(origin,p)));
   }
-  const allowance = speed => speed<20?1:speed<40?2:speed<60?3:4;
-  function create(mode='normal') {
+  const allowance = speed => speed<40?1:speed<65?2:speed<110?3:4;
+  const bonusAllowance = speed => speed>150?allowance(speed-150):0;
+  function create(mode='normal',fastTrial=false) {
     const lineup=mode==='boss'?[...roster.filter(row=>row[2]===0),['demonlord','จอมมาร',1,3,40,360,6,2,['claw','flame','solar']]]:roster;
     const units=lineup.map(([id,name,team,size,speed,max,col,row,kit])=>({id,name,team,size,speed,max,hp:max,pos:cell(col,row),kit}));
-    return {units,order:[...units].sort((a,b)=>b.speed-a.speed).map(u=>u.id),cursor:0,round:1,spent:0,winner:null};
+    if(fastTrial)units.find(u=>u.id==='raiju-deity').speed=229;
+    return {units,order:[...units].sort((a,b)=>b.speed-a.speed).map(u=>u.id),cursor:0,round:1,spent:0,afterSkill:false,winner:null};
   }
   // Depth counts columns in from the player's outer edge on either side.
   function canDeploy(units,unit,pos) {
@@ -86,7 +88,8 @@
     }
   }
   const current = s => s.units.find(u=>u.id===s.order[s.cursor]);
-  function routes(s,budget=allowance(current(s).speed)-s.spent) {
+  const movementBudget = s => (s.afterSkill?bonusAllowance:allowance)(current(s).speed);
+  function routes(s,budget=movementBudget(s)-s.spent) {
     const u=current(s);
     const occupied=new Set(s.units.filter(v=>v!==u&&v.hp>0).flatMap(v=>footprint(v).map(key)));
     const queue=[{pos:u.pos,path:[]}],seen=new Map([[key(u.pos),[]]]);
@@ -103,12 +106,14 @@
   function move(s,p) {
     if(s.winner!==null)return null;
     const path=routes(s).get(key(p));if(!path?.length)return null;
-    current(s).pos=path.at(-1);s.spent+=path.length;return path;
+    current(s).pos=path.at(-1);s.spent+=path.length;
+    if(s.afterSkill&&s.spent===movementBudget(s))next(s);
+    return path;
   }
   const eligible = (u,v,sk) => v.hp>0&&(sk.heal?v.team===u.team&&v.hp<v.max:v.team!==u.team);
   function targets(s,id,at=current(s).pos) {
     const u=current(s),sk=skills[id];
-    if(s.winner!==null||!u.kit.includes(id)||!sk)return [];
+    if(s.winner!==null||s.afterSkill||!u.kit.includes(id)||!sk)return [];
     return s.units.filter(v=>eligible(u,v,sk)&&separation(u,v,at)<=ranges[sk.range]);
   }
   function rangePreview(s,id) {
@@ -133,13 +138,17 @@
       s.cursor=(s.cursor+1)%s.order.length;
       if(s.cursor===0)s.round++;
     }while(current(s).hp<=0);
-    s.spent=0;
+    s.spent=0;s.afterSkill=false;
   }
   function act(s,id,v) {
     const valid=targets(s,id);
     if(!valid.includes(v))return false;
     const sk=skills[id];
     for(const t of sk.area?valid:[v])t.hp=sk.heal?Math.min(t.max,t.hp+sk.power):Math.max(0,t.hp-sk.power);
+    if(bonusAllowance(current(s).speed)&&s.units.some(t=>t.team!==current(s).team&&t.hp>0)){
+      s.afterSkill=true;s.spent=0;
+      if(routes(s).size>1)return true;
+    }
     next(s);return true;
   }
   function plan(s) {
@@ -148,6 +157,12 @@
     for(const path of routes(s).values()){
       const at=path.at(-1)||actor.pos;
       const near=Math.min(...enemies.map(v=>separation(actor,v,at)));
+      if(s.afterSkill){
+        const ranged=actor.kit.some(id=>!skills[id].heal&&skills[id].range!=='near');
+        const score=(ranged?near:-near)-path.length*.03;
+        if(!best||score>best.score)best={at,score};
+        continue;
+      }
       let pick={at,score:-100-near-path.length*.03};
       for(const id of actor.kit){
         const sk=skills[id],valid=targets(s,id,at);
@@ -161,7 +176,7 @@
     }
     return best;
   }
-  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,create,canDeploy,loadFormation,current,routes,move,targets,rangePreview,act,next,plan};
+  return {cols,rows,cells,skills,ranges,rangeNames,cell,column,key,inside,distance,footprint,separation,allowance,bonusAllowance,movementBudget,create,canDeploy,loadFormation,current,routes,move,targets,rangePreview,act,next,plan};
 })();
 if(typeof module!=='undefined')module.exports=HexBattle;
 </script><script>const art={"swordsman-female": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/80688bf0ec435c54046f4e225caa7573435237e868c170894db2ea1a6bda4bb0/assets/roster/swordsman-female-idle.webp", "raiju-deity": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/c5299c24460758e2de894292cfcea8cebc3f889c12af4d2ac0b1453eb0c8b6ed/assets/roster/raiju-deity-idle.webp", "pixie": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/9c480d8154193aaf1fc58ba45b0af1e38e1428617937c9c41bb9ea067f0ef8bc/assets/roster/pixie-idle.webp", "redcap": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/916cc6ad2108addefc2d971228cadd7ab867d02ddeab961ff9e6615406f0d40a/assets/roster/redcap-idle.webp", "kodama": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/bdc6bb89bd4d0abe075efabe20ff546cae5a9c3a521bc8438a6ed312697dcbbb/assets/roster/kodama-idle.webp", "phoenix": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/ccfdad95e18eddd360370cfb856f83488b96bf3babaa8f88fb196761c1f63ebe/assets/roster/phoenix-idle.webp", "demonlord": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/f4dae32c6ebf77d7c42f2e600d000c3a9b86e3815d1eaf292e270b7c9b3c8df0/assets/roster/demonlord-idle.webp", "stage": "https://zycmmtvubzyxduxqpuzl.supabase.co/storage/v1/object/public/soulbeast-game-assets/battle-ui-v1/a686f6582c99df47d254bc0e8821cddd3c7809d58947b7ad4118af9658af42de.webp"};</script><script>(() => {
@@ -265,10 +280,11 @@ if(typeof module!=='undefined')module.exports=HexBattle;
    $('turn').textContent='รอบ '+s.round+' · '+(ended?'จบการต่อสู้':u.team?'ตาศัตรู':'ตาฝ่ายเรา');
    $('actor').textContent=ended?(s.winner===0?'ฝ่ายเราชนะ':'ฝ่ายศัตรูชนะ'):u.name;
    $('stats').textContent=ended?'':('HP '+u.hp+'/'+u.max+' · ความเร็ว '+u.speed+' · ขนาด '+u.size+' ช่อง');
-   $('hint').textContent=ended?'กดเริ่มใหม่เพื่อเล่นอีกครั้ง':busy?'กำลังออกคำสั่ง…':!manual?'กำลังเลือกคำสั่ง':mode==='walk'?(H.allowance(u.speed)>s.spent?'แตะช่องเพื่อเดิน หรือเลือกสกิลด้านล่าง':'เดินครบแล้ว เลือกสกิลหรือจบตา'):valid.length?'แตะช่องของเป้าหมายที่สว่างเพื่อใช้ '+H.skills[mode].name:'ยังไม่มีเป้าหมายที่ใช้ท่านี้ได้ ลองเดินหรือเลือกท่าอื่น';
-   $('walk').textContent='เดิน '+(H.allowance(u.speed)-s.spent)+'/'+H.allowance(u.speed);
+   $('hint').textContent=ended?'กดเริ่มใหม่เพื่อเล่นอีกครั้ง':busy?'กำลังออกคำสั่ง…':!manual?'กำลังเลือกคำสั่ง':s.afterSkill?'เดินหลังใช้สกิล หรือกดจบตาเพื่ออยู่ที่เดิม':mode==='walk'?(H.movementBudget(s)>s.spent?'แตะช่องเพื่อเดิน หรือเลือกสกิลด้านล่าง':'เดินครบแล้ว เลือกสกิลหรือจบตา'):valid.length?'แตะช่องของเป้าหมายที่สว่างเพื่อใช้ '+H.skills[mode].name:'ยังไม่มีเป้าหมายที่ใช้ท่านี้ได้ ลองเดินหรือเลือกท่าอื่น';
+   const budget=H.movementBudget(s);
+   $('walk').textContent=(s.afterSkill?'เดินหลังสกิล ':'เดิน ')+(budget-s.spent)+'/'+budget;
    $('walk').disabled=!manual;$('pass').disabled=!manual;$('walk').setAttribute('aria-pressed',String(mode==='walk'));
-   $('skills').replaceChildren();if(!ended)for(const id of u.kit){
+   $('skills').replaceChildren();if(!ended&&!s.afterSkill)for(const id of u.kit){
      const sk=H.skills[id],b=document.createElement('button');b.append(sk.name);
      const sub=document.createElement('small');sub.textContent=H.rangeNames[sk.range]+' · '+H.ranges[sk.range]+' ช่อง'+(sk.area?' · หมู่':'');b.append(sub);
      b.dataset.skill=id;b.setAttribute('aria-pressed',String(mode===id));b.disabled=!manual;b.onclick=()=>{mode=id;render()};$('skills').append(b);
@@ -315,7 +331,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
    const id=mode,v=positions.get(H.key(p)),version=epoch;
    const steps=range?.steps.get(v);
    if(steps>0){
-     const u=H.current(s),left=H.allowance(u.speed)-s.spent;
+     const u=H.current(s),left=H.movementBudget(s)-s.spent;
      $('hint').textContent=v.name+' · '+stepLabel(steps)+(Number.isFinite(steps)?' · ตานี้เดินได้อีก '+left+' ช่อง':'');
      return;
    }
@@ -331,7 +347,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
      const actor=H.current(s),choice=H.plan(s);busy=true;render();
      if(!same(actor.pos,choice.at))await walk(choice.at,version);
      if(version!==epoch)return;
-     if(choice.id)await cast(choice.id,choice.v,version);else H.next(s);
+     if(choice.id)await cast(choice.id,choice.v,version);else if(H.current(s)===actor)H.next(s);
      if(version===epoch)ready();
    },550);
  }
@@ -360,7 +376,7 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  }
  function reset(){
    epoch++;clearTimeout(timer);busy=false;auto=false;drag=null;planning=true;
-   s=H.create($('mode').value);H.loadFormation(allies(),saved);
+   s=H.create($('mode').value,$('fastTrial').checked);H.loadFormation(allies(),saved);
    selected=allies()[0];mode='walk';sprites.clear();$('sprites').replaceChildren();$('gaps').replaceChildren();
    $('queue').replaceChildren();$('turn').textContent='ตำแหน่งเริ่มต้น · จัดจากฝั่งขวา';
    $('roster').replaceChildren();
@@ -407,6 +423,6 @@ if(typeof module!=='undefined')module.exports=HexBattle;
  $('walk').onclick=()=>{mode='walk';render()};
  $('pass').onclick=()=>{if(!busy&&!auto&&!H.current(s).team&&s.winner===null){$('log').textContent=H.current(s).name+' จบตา';H.next(s);ready()}};
  $('auto').onclick=()=>{auto=!auto;render();schedule()};
- $('reset').onclick=reset;$('mode').onchange=reset;reset();
+ $('reset').onclick=reset;$('mode').onchange=reset;$('fastTrial').onchange=reset;reset();
 })();
 </script></body></html>
